@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.konan.target.Family
  * Constructs an Apple framework without a binary.
  */
 internal class FrameworkBuilder(
-        private val config: KonanConfig,
-        private val infoPListBuilder: InfoPListBuilder,
-        private val moduleMapBuilder: ModuleMapBuilder,
-        private val objCHeaderWriter: ObjCHeaderWriter,
-        private val mainPackageGuesser: MainPackageGuesser,
+    private val config: KonanConfig,
+    private val infoPListBuilder: InfoPListBuilder,
+    private val moduleMapBuilder: ModuleMapBuilder,
+    private val objCHeaderWriter: ObjCHeaderWriter,
+    private val mainPackageGuesser: MainPackageGuesser,
 ) {
     fun build(
             moduleDescriptor: ModuleDescriptor,

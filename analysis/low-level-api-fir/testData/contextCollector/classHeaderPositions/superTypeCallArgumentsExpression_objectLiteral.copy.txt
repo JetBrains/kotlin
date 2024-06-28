@@ -1,0 +1,43 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final class Nested : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public open class Base : R|kotlin/Any|
+
+FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpression_objectLiteral.kt
+    public open [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] param: Nested): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Base.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Base.Nested = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Base.Nested
+    public final [ResolvedTo(BODY_RESOLVE)] val child: R|test/Base| = object : R|test/Base| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/<anonymous>| {
+            super<R|test/Base|>(R|test/property|)
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|test/Base|

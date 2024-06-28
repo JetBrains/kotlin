@@ -1,4 +1,4 @@
-// !LANGUAGE: +JvmFieldInInterface +NestedClassesInAnnotations
+// LANGUAGE: +JvmFieldInInterface +NestedClassesInAnnotations
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

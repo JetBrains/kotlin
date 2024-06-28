@@ -1,10 +1,11 @@
+
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
-    if (x >= 0) {   // 4
-        return x    // 5
+    if (x >= 0) {   // 5
+        return x    // 6
     }
-    return bar(x)   // 7
+    return bar(x)   // 8
 }
 
 // FILE: test.kt
@@ -20,27 +21,37 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:13 box
-// foo.kt:4 foo
-// foo.kt:7 foo
-// test.kt:17 bar
-// test.kt:18 bar
-// foo.kt:4 foo
-// foo.kt:5 foo
-// test.kt:18 bar
-// test.kt:21 bar
-// foo.kt:7 foo
-// test.kt:13 box
+// EXPECTATIONS JVM_IR
 // test.kt:14 box
+// foo.kt:5 foo
+// foo.kt:8 foo
+// test.kt:18 bar
+// test.kt:19 bar
+// foo.kt:5 foo
+// foo.kt:6 foo
+// test.kt:19 bar
+// test.kt:22 bar
+// foo.kt:8 foo
+// test.kt:14 box
+// test.kt:15 box
 
 // EXPECTATIONS JS_IR
-// test.kt:13 box
-// foo.kt:4 foo
-// foo.kt:7 foo
-// test.kt:17 bar
-// test.kt:18 bar
-// foo.kt:4 foo
-// foo.kt:5 foo
-// test.kt:21 bar
 // test.kt:14 box
+// foo.kt:5 foo
+// foo.kt:8 foo
+// test.kt:18 bar
+// test.kt:19 bar
+// foo.kt:5 foo
+// foo.kt:6 foo
+// test.kt:22 bar
+// test.kt:15 box
+
+// EXPECTATIONS WASM
+// test.kt:14 $box (8, 4)
+// foo.kt:5 $foo (8, 13, 8, 8, 13, 8)
+// foo.kt:8 $foo (15, 11, 4)
+// test.kt:18 $bar (8, 12, 8)
+// test.kt:19 $bar (12, 8)
+// foo.kt:6 $foo (15, 8)
+// test.kt:22 $bar
+// test.kt:15 $box

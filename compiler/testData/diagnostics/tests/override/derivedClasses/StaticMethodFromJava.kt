@@ -1,5 +1,6 @@
 // MODULE: lib
-// FILE: test/J.java
+
+// FILE: test/Foo.java
 package test;
 
 class Foo<T> {
@@ -7,6 +8,9 @@ class Foo<T> {
         return null;
     }
 }
+
+// FILE: test/Bar.java
+package test;
 
 public class Bar extends Foo<String> {}
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 abstract class Fir2IrVisibilityConverter {
     object Default : Fir2IrVisibilityConverter() {
         override fun convertPlatformVisibility(visibility: Visibility): DescriptorVisibility {
-            error("Unknown visibility: $this")
+            error("Unknown visibility: $visibility")
         }
     }
 

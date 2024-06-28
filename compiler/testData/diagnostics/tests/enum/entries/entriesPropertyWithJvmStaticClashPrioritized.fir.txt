@@ -1,0 +1,34 @@
+FILE: entriesPropertyWithJvmStaticClashPrioritized.fir.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/jvm/JvmStatic|() public final val entries: R|kotlin/Int| = Int(0)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|A|.R|/A.entries*s|
+        R|kotlin/with|<R|A.Companion|, R|kotlin/Int|>(Q|A|, <L> = with@fun R|A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|special/anonymous|.R|/A.Companion.entries|
+        }
+        )
+        Q|A.Companion|.R|/A.Companion.entries|
+    }

@@ -1,17 +1,41 @@
 package
 
 public fun test_1(/*0*/ foo: Foo, /*1*/ x: kotlin.Any): kotlin.Unit
-public fun test_2(/*0*/ foo: Foo): kotlin.Int
+public fun test_2(/*0*/ foo: Foo, /*1*/ x: kotlin.Any): kotlin.Unit
+public fun test_3(/*0*/ foo: Foo): kotlin.Int
 
-public final class Foo {
-    public constructor Foo()
+public final class Bar : Foo {
+    public constructor Bar()
+    public final override /*1*/ inline /*fake_override*/ fun </*0*/ reified T> assertIs(/*0*/ value: kotlin.Any): kotlin.Unit
+        Returns(WILDCARD) -> value is T
+
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun myRequire(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
+    public final override /*1*/ /*fake_override*/ fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    public final fun test_1(/*0*/ x: kotlin.Any): kotlin.Unit
+    public final fun test_2(/*0*/ x: kotlin.Any): kotlin.Unit
+    public final fun test_3(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Foo {
+    public constructor Foo()
+    public final inline fun </*0*/ reified T> assertIs(/*0*/ value: kotlin.Any): kotlin.Unit
+        Returns(WILDCARD) -> value is T
+
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun myRequire(/*0*/ x: kotlin.Boolean): kotlin.Unit
+        Returns(WILDCARD) -> x
+
     public final fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
         CallsInPlace(block, EXACTLY_ONCE)
 
-    public final fun require(/*0*/ x: kotlin.Boolean): kotlin.Unit
-        Returns(WILDCARD) -> x
-
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

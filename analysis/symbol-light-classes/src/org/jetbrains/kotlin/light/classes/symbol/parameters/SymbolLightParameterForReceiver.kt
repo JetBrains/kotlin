@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,34 +8,38 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import com.intellij.psi.util.TypeConversionUtil
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAnnotationsMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
-    private val receiverPointer: KtSymbolPointer<KtReceiverParameterSymbol>,
+    private val receiverPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T =
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
         receiverPointer.withSymbol(ktModule, action)
 
     companion object {
         fun tryGet(
-            callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
+            callableSymbolPointer: KaSymbolPointer<KaCallableSymbol>,
             method: SymbolLightMethodBase
         ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
-            if (callableSymbol !is KtNamedSymbol) return@withSymbol null
+            if (callableSymbol !is KaNamedSymbol) return@withSymbol null
             if (!callableSymbol.isExtension) return@withSymbol null
             val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 
@@ -48,7 +52,7 @@ internal class SymbolLightParameterForReceiver private constructor(
     }
 
     private val _name: String by lazyPub {
-        AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
+        if (method is SymbolLightAnnotationsMethod) "p0" else AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = null
@@ -63,7 +67,9 @@ internal class SymbolLightParameterForReceiver private constructor(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _modifierList: PsiModifierList by lazyPub {
-        SymbolLightClassModifierList(
+        if (method is SymbolLightAnnotationsMethod)
+            SymbolLightClassModifierList(containingDeclaration = this)
+        else SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
@@ -73,7 +79,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
-                        receiver.type.let { if (it.isPrimitiveBacked) NullabilityType.Unknown else it.nullabilityType }
+                        receiver.type.let { if (it.isPrimitiveBacked) KaTypeNullability.UNKNOWN else it.nullability }
                     }
                 },
             ),
@@ -83,9 +89,23 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _type: PsiType by lazyPub {
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
-            ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
-                annotateByKtType(it.type, ktType, it, modifierList)
-            }
+            val psiType = ktType.asPsiType(
+                this,
+                allowErrorTypes = true,
+                getTypeMappingMode(ktType),
+                suppressWildcards = receiver.suppressWildcard() ?: method.suppressWildcards(),
+            )
+
+            if (method is SymbolLightAnnotationsMethod) {
+                val erased = TypeConversionUtil.erasure(psiType)
+                val name = erased.canonicalText
+                method.getPropertyTypeParameters()
+                    .firstOrNull { it.name == name }
+                    ?.superTypes
+                    ?.firstOrNull()
+                    ?.let { TypeConversionUtil.erasure(it) }
+                    ?: erased
+            } else psiType
         } ?: nonExistentType()
     }
 

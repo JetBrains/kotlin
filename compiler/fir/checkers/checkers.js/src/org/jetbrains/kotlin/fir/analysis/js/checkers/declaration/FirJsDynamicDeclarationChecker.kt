@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
@@ -14,9 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.delegateFieldsMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.types.ConeDynamicType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirJsDynamicDeclarationChecker : FirClassChecker() {
+object FirJsDynamicDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val delegatedFields = declaration.delegateFieldsMap ?: return
 
@@ -27,7 +28,7 @@ object FirJsDynamicDeclarationChecker : FirClassChecker() {
             // and it's a shape it couldn't have been accessed directly
             val initializer = delegate.fir.initializer ?: continue
 
-            if (initializer.typeRef.coneType is ConeDynamicType) {
+            if (initializer.resolvedType is ConeDynamicType) {
                 reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
             }
         }

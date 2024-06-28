@@ -1,0 +1,503 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(RAW_FIR)] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(RAW_FIR)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T2> createP2(): @Anno[Unresolved](LAZY_EXPRESSION) P2<@Anno[Unresolved](LAZY_EXPRESSION) T2> { LAZY_BLOCK }
+
+        }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(RAW_FIR)] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(RAW_FIR)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T2> createP2(): @Anno[Unresolved](LAZY_EXPRESSION) P2<@Anno[Unresolved](LAZY_EXPRESSION) T2> { LAZY_BLOCK }
+
+        }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(RAW_FIR)] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(RAW_FIR)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T2> createP2(): @Anno[Unresolved](LAZY_EXPRESSION) P2<@Anno[Unresolved](LAZY_EXPRESSION) T2> { LAZY_BLOCK }
+
+        }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(RAW_FIR)] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(RAW_FIR)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] T2> createP2(): @Anno[Unresolved](LAZY_EXPRESSION) P2<@Anno[Unresolved](LAZY_EXPRESSION) T2> { LAZY_BLOCK }
+
+        }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(SUPER_TYPES)] class P1<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(SUPER_TYPES)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] T2> createP2(): @Anno[Unresolved](LAZY_EXPRESSION) P2<@Anno[Unresolved](LAZY_EXPRESSION) T2> { LAZY_BLOCK }
+
+        }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(TYPES)] class P1<[ResolvedTo(TYPES)] T1> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(TYPES)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(TYPES)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+
+        }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| { LAZY_BLOCK }
+
+        }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+                ^createP2 P2#()
+            }
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+                ^createP2 P2#()
+            }
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] fun <[ResolvedTo(CONSTANT_EVALUATION)] T2> createP2(): R|@R|Anno|(String(return type))  P1.P2<@R|Anno|(String(nested return type))  T2, T1>| {
+                ^createP2 P2#()
+            }
+
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? inner [ResolvedTo(RAW_FIR)] class P2<[ResolvedTo(RAW_FIR)] T2, [ResolvedTo(STATUS)] Outer(T1)> : @Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1> {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>([ResolvedTo(RAW_FIR)] i: String): R|P1.P2<T2, T1>| {
+                    LAZY_super<@Anno[Unresolved](LAZY_EXPRESSION) P1<@Anno[Unresolved](LAZY_EXPRESSION) T1>>
+                }
+
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(RAW_FIR)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
+                ^createP2 P2#()
+            }
+
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public open [ResolvedTo(STATUS)] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final inner [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class P2<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2, [ResolvedTo(STATUS)] Outer(T1)> : R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>| {
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>([ResolvedTo(EXPECT_ACTUAL_MATCHING)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
+                    LAZY_super<R|@R|Anno|(String(P1 super type))  P1<@R|Anno|(String(nested P1 super type))  T1>|>
+                }
+
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2>(): R|P1.P2<T2, T1>| { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
+                ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type))  T2|>()
+            }
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSiteScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-constructorCallSiteScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] class P1<[ResolvedTo(BODY_RESOLVE)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P1] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|P1<T1>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner [ResolvedTo(BODY_RESOLVE)] class P2<[ResolvedTo(BODY_RESOLVE)] T2, [ResolvedTo(BODY_RESOLVE)] Outer(T1)> : R|@R|Anno|(str = String(P1 super type))  P1<@R|Anno|(str = String(nested P1 super type))  T1>| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(BODY_RESOLVE)] T2>([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/String|): R|P1.P2<T2, T1>| {
+                    super<R|@R|Anno|(str = String(P1 super type))  P1<@R|Anno|(str = String(nested P1 super type))  T1>|>()
+                }
+
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P2] P1<T1>.constructor<[ResolvedTo(BODY_RESOLVE)] T2>(): R|P1.P2<T2, T1>| {
+                    this@R|/P1|.this<R|P1.P2<T2, T1>|>(String(OK))
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T2> createP2(): R|@R|Anno|(str = String(return type))  P1.P2<@R|Anno|(str = String(nested return type))  T2, T1>| {
+                ^createP2 this@R|/P1|.R|SubstitutionOverride</P1.P2.P2>|<R|@R|Anno|(str = String(nested return type))  T2|>()
+            }
+
+        }
+

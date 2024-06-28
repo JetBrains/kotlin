@@ -1,10 +1,4 @@
 data class Test1 {
-  constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val stringArray: Array<String>
     field = stringArray
     get
@@ -40,6 +34,12 @@ data class Test1 {
   val doubleArray: DoubleArray
     field = doubleArray
     get
+
+  constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Array<String> {
     return <this>.#stringArray
@@ -81,8 +81,42 @@ data class Test1 {
     return Test1(stringArray = stringArray, charArray = charArray, booleanArray = booleanArray, byteArray = byteArray, shortArray = shortArray, intArray = intArray, longArray = longArray, floatArray = floatArray, doubleArray = doubleArray)
   }
 
-  override fun toString(): String {
-    return "Test1(" + "stringArray=" + dataClassArrayMemberToString(arg0 = <this>.#stringArray) + ", " + "charArray=" + dataClassArrayMemberToString(arg0 = <this>.#charArray) + ", " + "booleanArray=" + dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + ", " + "byteArray=" + dataClassArrayMemberToString(arg0 = <this>.#byteArray) + ", " + "shortArray=" + dataClassArrayMemberToString(arg0 = <this>.#shortArray) + ", " + "intArray=" + dataClassArrayMemberToString(arg0 = <this>.#intArray) + ", " + "longArray=" + dataClassArrayMemberToString(arg0 = <this>.#longArray) + ", " + "floatArray=" + dataClassArrayMemberToString(arg0 = <this>.#floatArray) + ", " + "doubleArray=" + dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test1 -> return false
+    }
+    val tmp_0: Test1 = other as Test1
+    when {
+      EQEQ(arg0 = <this>.#stringArray, arg1 = tmp_0.#stringArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#charArray, arg1 = tmp_0.#charArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#booleanArray, arg1 = tmp_0.#booleanArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#byteArray, arg1 = tmp_0.#byteArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#shortArray, arg1 = tmp_0.#shortArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#intArray, arg1 = tmp_0.#intArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#longArray, arg1 = tmp_0.#longArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#floatArray, arg1 = tmp_0.#floatArray).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#doubleArray, arg1 = tmp_0.#doubleArray).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -98,56 +132,22 @@ data class Test1 {
     return result
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is Test1 -> return false
-    }
-    val tmp0_other_with_cast: Test1 = other as Test1
-    when {
-      EQEQ(arg0 = <this>.#stringArray, arg1 = tmp0_other_with_cast.#stringArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#charArray, arg1 = tmp0_other_with_cast.#charArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#booleanArray, arg1 = tmp0_other_with_cast.#booleanArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#byteArray, arg1 = tmp0_other_with_cast.#byteArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#shortArray, arg1 = tmp0_other_with_cast.#shortArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#intArray, arg1 = tmp0_other_with_cast.#intArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#longArray, arg1 = tmp0_other_with_cast.#longArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#floatArray, arg1 = tmp0_other_with_cast.#floatArray).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#doubleArray, arg1 = tmp0_other_with_cast.#doubleArray).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "Test1(" + "stringArray=" + dataClassArrayMemberToString(arg0 = <this>.#stringArray) + ", " + "charArray=" + dataClassArrayMemberToString(arg0 = <this>.#charArray) + ", " + "booleanArray=" + dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + ", " + "byteArray=" + dataClassArrayMemberToString(arg0 = <this>.#byteArray) + ", " + "shortArray=" + dataClassArrayMemberToString(arg0 = <this>.#shortArray) + ", " + "intArray=" + dataClassArrayMemberToString(arg0 = <this>.#intArray) + ", " + "longArray=" + dataClassArrayMemberToString(arg0 = <this>.#longArray) + ", " + "floatArray=" + dataClassArrayMemberToString(arg0 = <this>.#floatArray) + ", " + "doubleArray=" + dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + ")"
   }
 
 }
 
 data class Test2<T : Any?> {
+  val genericArray: Array<T>
+    field = genericArray
+    get
+
   constructor(genericArray: Array<T>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val genericArray: Array<T>
-    field = genericArray
-    get
 
   operator fun component1(): Array<T> {
     return <this>.#genericArray
@@ -157,14 +157,6 @@ data class Test2<T : Any?> {
     return Test2<T>(genericArray = genericArray)
   }
 
-  override fun toString(): String {
-    return "Test2(" + "genericArray=" + dataClassArrayMemberToString(arg0 = <this>.#genericArray) + ")"
-  }
-
-  override fun hashCode(): Int {
-    return dataClassArrayMemberHashCode(arg0 = <this>.#genericArray)
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -172,25 +164,33 @@ data class Test2<T : Any?> {
     when {
       other !is Test2<T> -> return false
     }
-    val tmp0_other_with_cast: Test2<T> = other as Test2<T>
+    val tmp_1: Test2<T> = other as Test2<T>
     when {
-      EQEQ(arg0 = <this>.#genericArray, arg1 = tmp0_other_with_cast.#genericArray).not() -> return false
+      EQEQ(arg0 = <this>.#genericArray, arg1 = tmp_1.#genericArray).not() -> return false
     }
     return true
+  }
+
+  override fun hashCode(): Int {
+    return dataClassArrayMemberHashCode(arg0 = <this>.#genericArray)
+  }
+
+  override fun toString(): String {
+    return "Test2(" + "genericArray=" + dataClassArrayMemberToString(arg0 = <this>.#genericArray) + ")"
   }
 
 }
 
 data class Test3 {
+  val anyArrayN: Array<Any>?
+    field = anyArrayN
+    get
+
   constructor(anyArrayN: Array<Any>?) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val anyArrayN: Array<Any>?
-    field = anyArrayN
-    get
 
   operator fun component1(): Array<Any>? {
     return <this>.#anyArrayN
@@ -200,8 +200,18 @@ data class Test3 {
     return Test3(anyArrayN = anyArrayN)
   }
 
-  override fun toString(): String {
-    return "Test3(" + "anyArrayN=" + dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test3 -> return false
+    }
+    val tmp_2: Test3 = other as Test3
+    when {
+      EQEQ(arg0 = <this>.#anyArrayN, arg1 = tmp_2.#anyArrayN).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -211,18 +221,9 @@ data class Test3 {
     }
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is Test3 -> return false
-    }
-    val tmp0_other_with_cast: Test3 = other as Test3
-    when {
-      EQEQ(arg0 = <this>.#anyArrayN, arg1 = tmp0_other_with_cast.#anyArrayN).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "Test3(" + "anyArrayN=" + dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + ")"
   }
 
 }
+

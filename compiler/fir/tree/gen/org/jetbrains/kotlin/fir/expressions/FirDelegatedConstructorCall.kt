@@ -1,34 +1,38 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.delegatedConstructorCall]
  */
-
 abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall, FirContextReceiverArgumentListOwner {
-    abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
     abstract override val contextReceiverArguments: List<FirExpression>
     abstract val constructedTypeRef: FirTypeRef
-    abstract val dispatchReceiver: FirExpression
+    abstract val dispatchReceiver: FirExpression?
     abstract override val calleeReference: FirReference
+    abstract override val source: KtSourceElement?
     abstract val isThis: Boolean
     abstract val isSuper: Boolean
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedConstructorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
+        visitor.visitDelegatedConstructorCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
@@ -42,9 +46,12 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 
-    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    @FirImplementationDetail
+    abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 

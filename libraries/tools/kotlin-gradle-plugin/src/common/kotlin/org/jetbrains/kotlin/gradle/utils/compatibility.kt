@@ -21,19 +21,13 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.CopySpec
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.FileTree
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.WorkResult
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.util.GradleVersion
 import java.io.File
-import java.io.Serializable
 
 const val minSupportedGradleVersion = "6.8.3"
 
@@ -53,57 +47,6 @@ internal fun checkGradleCompatibility(
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
 
-internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val archiveOperations: Any? = try {
-        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.6
-        null
-    }
-
-    fun zipTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.zipTree(obj)
-            else -> project.zipTree(obj)
-        }
-    }
-
-    fun tarTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.tarTree(obj)
-            else -> project.tarTree(obj)
-        }
-    }
-}
-
-internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val fileSystemOperations: Any? = try {
-        (project as ProjectInternal).services.get(FileSystemOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.0
-        null
-    }
-
-    fun copy(action: (CopySpec) -> Unit): WorkResult? {
-        return when (fileSystemOperations) {
-            is FileSystemOperations -> fileSystemOperations.copy(action)
-            else -> project.copy(action)
-        }
-    }
-}
-
-// Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
-// See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
-internal interface LegacyTestDescriptorInternal : TestDescriptor {
-    override fun getParent(): TestDescriptorInternal?
-
-    fun getId(): Any?
-
-    fun getOwnerBuildOperationId(): Any?
-
-    fun getClassDisplayName(): String?
-}
-
 /**
  * According to [Gradle 7.3 release notes](https://docs.gradle.org/7.3/release-notes.html#allow-plugin-authors-to-declare-tasks-as-untracked)
  * [Task.doNotTrackState] is a better replacement for `Task.outputs.upToDateWhen { false }`
@@ -118,6 +61,18 @@ internal fun Task.doNotTrackStateCompat(because: String) {
 }
 
 /**
+ * According to [Gradle 7.6 release notes](https://docs.gradle.org/7.6/release-notes.html#introduced-ability-to-explain-why-a-task-was-skipped-with-a-message)
+ * [Task.onlyIf] has reason message`
+ */
+internal fun Task.onlyIfCompat(onlyIfReason: String, onlyIfSpec: Spec<in Task>) {
+    if (GradleVersion.current() < GradleVersion.version("7.6")) {
+        onlyIf(onlyIfSpec)
+    } else {
+        onlyIf(onlyIfReason, onlyIfSpec)
+    }
+}
+
+/**
  * [ArtifactCollection.getResolvedArtifacts] is available after 7.4 (inclusive)
  */
 internal fun ArtifactCollection.getResolvedArtifactsCompat(project: Project): Provider<Set<ResolvedArtifactResult>> =
@@ -126,3 +81,18 @@ internal fun ArtifactCollection.getResolvedArtifactsCompat(project: Project): Pr
     } else {
         project.provider { artifacts }
     }
+
+/**
+ * ValueSources with injected ExecOperations are supported with Configuration Cache in Gradle 7.5+
+ * https://docs.gradle.org/7.5/release-notes.html#running-external-processes-at-configuration-time
+ */
+internal fun <T> Project.valueSourceWithExecProviderCompat(
+    clazz: Class<out ValueSource<T, ValueSourceParameters.None>>
+): Provider<T> {
+    return if (GradleVersion.current() < GradleVersion.version("7.5")) {
+        val vs = project.objects.newInstance(clazz)
+        project.provider { vs.obtain() }
+    } else {
+        providers.of(clazz) { }
+    }
+}

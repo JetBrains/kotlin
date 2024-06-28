@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -37,26 +39,30 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     private val lombokService: LombokService
         get() = session.lombokService
 
-    private val cache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
-        session.firCachesFactory.createCache(::createGetters)
+    private val cache: FirCache<Pair<FirClassSymbol<*>, FirClassDeclaredMemberScope?>, Map<Name, FirJavaMethod>?, Nothing?> =
+        session.firCachesFactory.createCache(uncurry(::createGetters))
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        return cache.getValue(classSymbol)?.keys ?: emptySet()
+        return cache.getValue(classSymbol to context.declaredScope)?.keys ?: emptySet()
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner
         if (owner == null || !owner.isSuitableJavaClass()) return emptyList()
-        val getter = cache.getValue(owner)?.get(callableId.callableName) ?: return emptyList()
+        val getter = cache.getValue(owner to context.declaredScope)?.get(callableId.callableName) ?: return emptyList()
         return listOf(getter.symbol)
     }
 
-    private fun createGetters(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
+    private fun createGetters(classSymbol: FirClassSymbol<*>, declaredScope: FirClassDeclaredMemberScope?): Map<Name, FirJavaMethod>? {
         val fieldsWithGetter = computeFieldsWithGetter(classSymbol) ?: return null
         val globalAccessors = lombokService.getAccessors(classSymbol)
+        val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
         return fieldsWithGetter.mapNotNull { (field, getterInfo) ->
             val getterName = computeGetterName(field, getterInfo, globalAccessors) ?: return@mapNotNull null
+            if (explicitlyDeclaredFunctions[getterName]?.valueParameterSymbols?.isEmpty() == true) {
+                return@mapNotNull null
+            }
             val function = buildJavaMethod {
                 moduleData = field.moduleData
                 returnTypeRef = field.returnTypeRef

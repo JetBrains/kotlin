@@ -1,22 +1,5 @@
 package test
 
-object Foo {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val a: String
-    field = ""
-    get
-
-  fun foo(): String {
-    return ""
-  }
-
-}
-
 val test1: KProperty0<String>
   field = Foo::a
   get
@@ -32,3 +15,21 @@ val test2: KFunction0<String>
 val test2a: KFunction0<String>
   field = Foo::foo
   get
+
+object Foo {
+  val a: String
+    field = ""
+    get
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): String {
+    return ""
+  }
+
+}
+

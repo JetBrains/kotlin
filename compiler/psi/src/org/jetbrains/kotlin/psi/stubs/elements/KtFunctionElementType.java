@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
 
 import java.io.IOException;
 
@@ -51,7 +52,9 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
                 isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                psi.mayHaveContract()
+                psi.mayHaveContract(),
+                /* contract = */ null,
+                /* origin = */ null
         );
     }
 
@@ -67,7 +70,17 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         dataStream.writeBoolean(stub.hasBlockBody());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
-        dataStream.writeBoolean(stub.mayHaveContract());
+        boolean haveContract = stub.mayHaveContract();
+        dataStream.writeBoolean(haveContract);
+        if (stub instanceof KotlinFunctionStubImpl) {
+            KotlinFunctionStubImpl stubImpl = (KotlinFunctionStubImpl) stub;
+
+            if (haveContract) {
+                stubImpl.serializeContract(dataStream);
+            }
+
+            KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
+        }
     }
 
     @NotNull
@@ -84,10 +97,11 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
-
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
-                hasTypeParameterListBeforeFunctionName, mayHaveContract
+                hasTypeParameterListBeforeFunctionName, mayHaveContract,
+                mayHaveContract ? KotlinFunctionStubImpl.Companion.deserializeContract(dataStream) : null,
+                KotlinStubOrigin.deserialize(dataStream)
         );
     }
 

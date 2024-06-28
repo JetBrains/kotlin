@@ -13,6 +13,8 @@ dependencies {
     implementation(kotlinStdlib())
 }
 
+optInToUnsafeDuringIrConstructionAPI()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

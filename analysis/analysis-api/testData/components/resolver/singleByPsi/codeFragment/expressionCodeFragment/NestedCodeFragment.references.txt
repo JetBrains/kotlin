@@ -1,0 +1,3 @@
+KtNameReferenceExpression(157,160): 'bar'
+  KtSimpleNameReference:
+    (in ROOT) fun bar()

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Companion.isCompatibleOrWeakCompatible
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
 object ExpectActualInTheSameModuleChecker : DeclarationChecker {
@@ -29,7 +29,7 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
         val module = descriptor.module
         val actuals = ExpectedActualResolver.findActualForExpected(descriptor, module)
-            ?.filter { (compatibility, _) -> compatibility.isCompatibleOrWeakCompatible() }
+            ?.filter { (compatibility, _) -> compatibility.isCompatibleOrWeaklyIncompatible }
             ?.flatMap { (_, members) -> members }
             ?.takeIf(List<MemberDescriptor>::isNotEmpty) ?: return
 

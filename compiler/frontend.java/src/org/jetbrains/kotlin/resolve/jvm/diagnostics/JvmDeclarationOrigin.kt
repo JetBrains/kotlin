@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
@@ -17,12 +19,17 @@ enum class MemberKind { FIELD, METHOD }
 
 data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
 
-class JvmDeclarationOrigin(
+open class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,
     val descriptor: DeclarationDescriptor?,
     val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
+    // This property is used to get the original element in the sources, from which this declaration was generated.
+    // In the old JVM backend, it is just the PSI element. In JVM IR, it is the original IR element (before any deep copy).
+    open val originalSourceElement: Any?
+        get() = element
+
     override fun toString(): String =
         if (this == NO_ORIGIN) "NO_ORIGIN" else "origin=$originKind element=${element?.javaClass?.simpleName} descriptor=$descriptor"
 
@@ -79,9 +86,6 @@ val CollectionStub = JvmDeclarationOrigin(COLLECTION_STUB, null, null)
 
 fun AugmentedBuiltInApi(descriptor: CallableDescriptor): JvmDeclarationOrigin =
     JvmDeclarationOrigin(AUGMENTED_BUILTIN_API, null, descriptor)
-
-fun ErasedInlineClassOrigin(element: PsiElement?, descriptor: ClassDescriptor): JvmDeclarationOrigin =
-    JvmDeclarationOrigin(ERASED_INLINE_CLASS, element, descriptor)
 
 fun UnboxMethodOfInlineClass(descriptor: FunctionDescriptor): JvmDeclarationOrigin =
     JvmDeclarationOrigin(UNBOX_METHOD_OF_INLINE_CLASS, null, descriptor)

@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo1(a: Int?, b: Array<Array<Int>>) {
     b[a!!][a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>] = a

@@ -27,10 +27,22 @@ import org.jetbrains.kotlin.types.Variance
 @PublishedApi
 internal fun IrFactory.buildClass(builder: IrClassBuilder): IrClass = with(builder) {
     createClass(
-        startOffset, endOffset, origin,
-        IrClassSymbolImpl(),
-        name, kind, visibility, modality,
-        isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        symbol = IrClassSymbolImpl(),
+        kind = kind,
+        modality = modality,
+        isExternal = isExternal,
+        isCompanion = isCompanion,
+        isInner = isInner,
+        isData = isData,
+        isValue = isValue,
+        isExpect = isExpect,
+        isFun = isFun,
+        hasEnumEntries = hasEnumEntries,
     )
 }
 
@@ -43,9 +55,16 @@ inline fun IrFactory.buildClass(builder: IrClassBuilder.() -> Unit) =
 @PublishedApi
 internal fun IrFactory.buildField(builder: IrFieldBuilder): IrField = with(builder) {
     createField(
-        startOffset, endOffset, origin,
-        IrFieldSymbolImpl(),
-        name, type, visibility, isFinal, isExternal, isStatic,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        symbol = IrFieldSymbolImpl(),
+        type = type,
+        isFinal = isFinal,
+        isStatic = isStatic,
+        isExternal = isExternal,
     ).also {
         it.metadata = metadata
     }
@@ -80,11 +99,21 @@ fun IrClass.addField(
 @PublishedApi
 internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = with(builder) {
     createProperty(
-        startOffset, endOffset, origin,
-        IrPropertySymbolImpl(),
-        name, visibility, modality,
-        isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
-        containerSource,
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        modality = modality,
+        symbol = IrPropertySymbolImpl(),
+        isVar = isVar,
+        isConst = isConst,
+        isLateinit = isLateinit,
+        isDelegated = isDelegated,
+        isExternal = isExternal,
+        containerSource = containerSource,
+        isExpect = isExpect,
+        isFakeOverride = isFakeOverride,
     )
 }
 
@@ -108,6 +137,17 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
             this@addGetter.getter = getter
             getter.correspondingPropertySymbol = this@addGetter.symbol
             getter.parent = this@addGetter.parent
+        }
+    }
+
+inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+    IrFunctionBuilder().run {
+        name = Name.special("<set-${this@addSetter.name}>")
+        builder()
+        factory.buildFunction(this).also { setter ->
+            this@addSetter.setter = setter
+            setter.correspondingPropertySymbol = this@addSetter.symbol
+            setter.parent = this@addSetter.parent
         }
     }
 
@@ -154,24 +194,42 @@ inline fun IrProperty.addBackingField(builder: IrFieldBuilder.() -> Unit = {}): 
 
 @PublishedApi
 internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-    createFunction(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(),
-        name, visibility, modality, returnType,
-        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
-        containerSource,
+    createSimpleFunction(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        isInline = isInline,
+        isExpect = isExpect,
+        returnType = returnType,
+        modality = modality,
+        symbol = IrSimpleFunctionSymbolImpl(),
+        isTailrec = isTailrec,
+        isSuspend = isSuspend,
+        isOperator = isOperator,
+        isInfix = isInfix,
+        isExternal = isExternal,
+        containerSource = containerSource,
+        isFakeOverride = isFakeOverride,
     )
 }
 
 @PublishedApi
 internal fun IrFactory.buildConstructor(builder: IrFunctionBuilder): IrConstructor = with(builder) {
     return createConstructor(
-        startOffset, endOffset, origin,
-        IrConstructorSymbolImpl(),
-        SpecialNames.INIT,
-        visibility, returnType,
-        isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect,
-        containerSource = containerSource
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = SpecialNames.INIT,
+        visibility = visibility,
+        isInline = isInline,
+        isExpect = isExpect,
+        returnType = returnType,
+        symbol = IrConstructorSymbolImpl(),
+        isPrimary = isPrimary,
+        isExternal = isExternal,
+        containerSource = containerSource,
     )
 }
 
@@ -198,6 +256,7 @@ fun IrClass.addFunction(
     isStatic: Boolean = false,
     isSuspend: Boolean = false,
     isFakeOverride: Boolean = false,
+    isInline: Boolean = false,
     origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
@@ -211,6 +270,7 @@ fun IrClass.addFunction(
         this.visibility = visibility
         this.isSuspend = isSuspend
         this.isFakeOverride = isFakeOverride
+        this.isInline = isInline
         this.origin = origin
     }.apply {
         if (!isStatic) {
@@ -243,10 +303,18 @@ fun <D> buildReceiverParameter(
 ): IrValueParameter
         where D : IrDeclaration, D : IrDeclarationParent =
     parent.factory.createValueParameter(
-        startOffset, endOffset, origin,
-        IrValueParameterSymbolImpl(),
-        SpecialNames.THIS, -1, type, null, isCrossinline = false, isNoinline = false,
-        isHidden = false, isAssignable = false
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = SpecialNames.THIS,
+        type = type,
+        isAssignable = false,
+        symbol = IrValueParameterSymbolImpl(),
+        index = UNDEFINED_PARAMETER_INDEX,
+        varargElementType = null,
+        isCrossinline = false,
+        isNoinline = false,
+        isHidden = false,
     ).also {
         it.parent = parent
     }
@@ -254,9 +322,18 @@ fun <D> buildReceiverParameter(
 fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
         return createValueParameter(
-            startOffset, endOffset, origin,
-            IrValueParameterSymbolImpl(),
-            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, isAssignable
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            type = type,
+            isAssignable = isAssignable,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
+            varargElementType = varargElementType,
+            isCrossinline = isCrossInline,
+            isNoinline = isNoinline,
+            isHidden = isHidden
         ).also {
             it.parent = parent
         }
@@ -295,9 +372,14 @@ fun IrFunction.addValueParameter(name: Name, type: IrType, origin: IrDeclaration
 internal fun IrFactory.buildTypeParameter(builder: IrTypeParameterBuilder, parent: IrDeclarationParent): IrTypeParameter =
     with(builder) {
         createTypeParameter(
-            startOffset, endOffset, origin,
-            IrTypeParameterSymbolImpl(),
-            name, index, isReified, variance
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            symbol = IrTypeParameterSymbolImpl(),
+            variance = variance,
+            index = index,
+            isReified = isReified,
         ).also {
             it.superTypes = superTypes
             it.parent = parent

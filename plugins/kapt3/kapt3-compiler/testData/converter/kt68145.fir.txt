@@ -1,0 +1,50 @@
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface A {
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   // field: hidden:I
+ *   // synthetic method for annotations: getHidden$annotations()V
+ *   private final val hidden: kotlin/Int (* = ... *)
+ *     private final get
+ *
+ *   // field: value:Ljava/lang/String;
+ *   // synthetic method for annotations: getValue$annotations()V
+ *   internal final const val value: kotlin/String (* = ... *)
+ *     internal final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt68145Kt {
+    private static final int hidden = 1;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String value = "";
+
+    @A()
+    @java.lang.Deprecated()
+    private static void getHidden$annotations() {
+    }
+
+    @A()
+    @java.lang.Deprecated()
+    public static void getValue$annotations() {
+    }
+}

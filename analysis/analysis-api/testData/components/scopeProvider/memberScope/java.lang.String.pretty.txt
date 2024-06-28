@@ -1,0 +1,158 @@
+private val value: kotlin.CharArray!
+
+private open var hash: kotlin.Int
+
+open fun hash32(): kotlin.Int
+
+private open var hash32: kotlin.Int
+
+open val length: kotlin.Int
+  get()
+
+open fun isEmpty(): kotlin.Boolean
+
+open fun codePointAt(p0: kotlin.Int): kotlin.Int
+
+open fun codePointBefore(p0: kotlin.Int): kotlin.Int
+
+open fun codePointCount(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun offsetByCodePoints(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun getChars(p0: kotlin.CharArray!, p1: kotlin.Int)
+
+open fun getChars(p0: kotlin.Int, p1: kotlin.Int, p2: kotlin.CharArray!, p3: kotlin.Int)
+
+@kotlin.Deprecated(message = "Deprecated in Java")
+open fun getBytes(p0: kotlin.Int, p1: kotlin.Int, p2: kotlin.ByteArray!, p3: kotlin.Int)
+
+open fun getBytes(p0: kotlin.String!): kotlin.ByteArray!
+
+open fun getBytes(p0: java.nio.charset.Charset!): kotlin.ByteArray!
+
+open fun getBytes(): kotlin.ByteArray!
+
+open operator fun equals(p0: kotlin.Any?): kotlin.Boolean
+
+open fun contentEquals(p0: java.lang.StringBuffer!): kotlin.Boolean
+
+open fun contentEquals(p0: kotlin.CharSequence!): kotlin.Boolean
+
+open fun equalsIgnoreCase(p0: kotlin.String!): kotlin.Boolean
+
+open operator fun compareTo(p0: kotlin.String!): kotlin.Int
+
+open fun compareToIgnoreCase(p0: kotlin.String!): kotlin.Int
+
+open fun regionMatches(p0: kotlin.Int, p1: kotlin.String!, p2: kotlin.Int, p3: kotlin.Int): kotlin.Boolean
+
+open fun regionMatches(p0: kotlin.Boolean, p1: kotlin.Int, p2: kotlin.String!, p3: kotlin.Int, p4: kotlin.Int): kotlin.Boolean
+
+open fun startsWith(p0: kotlin.String!, p1: kotlin.Int): kotlin.Boolean
+
+open fun startsWith(p0: kotlin.String!): kotlin.Boolean
+
+open fun endsWith(p0: kotlin.String!): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun indexOf(p0: kotlin.Int): kotlin.Int
+
+open fun indexOf(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun indexOf(p0: kotlin.String!): kotlin.Int
+
+open fun indexOf(p0: kotlin.String!, p1: kotlin.Int): kotlin.Int
+
+private open fun indexOfSupplementary(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun lastIndexOf(p0: kotlin.Int): kotlin.Int
+
+open fun lastIndexOf(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun lastIndexOf(p0: kotlin.String!): kotlin.Int
+
+open fun lastIndexOf(p0: kotlin.String!, p1: kotlin.Int): kotlin.Int
+
+private open fun lastIndexOfSupplementary(p0: kotlin.Int, p1: kotlin.Int): kotlin.Int
+
+open fun substring(p0: kotlin.Int): kotlin.String!
+
+open fun substring(p0: kotlin.Int, p1: kotlin.Int): kotlin.String!
+
+open fun subSequence(p0: kotlin.Int, p1: kotlin.Int): kotlin.CharSequence
+
+open fun concat(p0: kotlin.String!): kotlin.String!
+
+open fun replace(p0: kotlin.Char, p1: kotlin.Char): kotlin.String!
+
+open fun replace(p0: kotlin.CharSequence!, p1: kotlin.CharSequence!): kotlin.String!
+
+open fun matches(p0: kotlin.String!): kotlin.Boolean
+
+open operator fun contains(p0: kotlin.CharSequence!): kotlin.Boolean
+
+open fun replaceFirst(p0: kotlin.String!, p1: kotlin.String!): kotlin.String!
+
+open fun replaceAll(p0: kotlin.String!, p1: kotlin.String!): kotlin.String!
+
+open fun split(p0: kotlin.String!, p1: kotlin.Int): kotlin.Array<kotlin.String!>!
+
+open fun split(p0: kotlin.String!): kotlin.Array<kotlin.String!>!
+
+open fun toLowerCase(p0: java.util.Locale!): kotlin.String!
+
+open fun toLowerCase(): kotlin.String!
+
+open fun toUpperCase(p0: java.util.Locale!): kotlin.String!
+
+open fun toUpperCase(): kotlin.String!
+
+open fun trim(): kotlin.String!
+
+open fun toString(): kotlin.String
+
+open fun toCharArray(): kotlin.CharArray!
+
+open fun intern(): kotlin.String!
+
+open operator fun get(p0: kotlin.Int): kotlin.Char
+
+private open class CaseInsensitiveComparator : java.util.Comparator<kotlin.String!>, java.io.Serializable
+
+constructor()
+
+constructor(p0: kotlin.String!)
+
+constructor(p0: kotlin.CharArray!)
+
+constructor(p0: kotlin.CharArray!, p1: kotlin.Int, p2: kotlin.Int)
+
+constructor(p0: kotlin.IntArray!, p1: kotlin.Int, p2: kotlin.Int)
+
+@kotlin.Deprecated(message = "Deprecated in Java")
+constructor(p0: kotlin.ByteArray!, p1: kotlin.Int, p2: kotlin.Int, p3: kotlin.Int)
+
+@kotlin.Deprecated(message = "Deprecated in Java")
+constructor(p0: kotlin.ByteArray!, p1: kotlin.Int)
+
+constructor(p0: kotlin.ByteArray!, p1: kotlin.Int, p2: kotlin.Int, p3: kotlin.String!)
+
+constructor(p0: kotlin.ByteArray!, p1: kotlin.Int, p2: kotlin.Int, p3: java.nio.charset.Charset!)
+
+constructor(p0: kotlin.ByteArray!, p1: kotlin.String!)
+
+constructor(p0: kotlin.ByteArray!, p1: java.nio.charset.Charset!)
+
+constructor(p0: kotlin.ByteArray!, p1: kotlin.Int, p2: kotlin.Int)
+
+constructor(p0: kotlin.ByteArray!)
+
+constructor(p0: java.lang.StringBuffer!)
+
+constructor(p0: java.lang.StringBuilder!)
+
+constructor(p0: kotlin.CharArray!, p1: kotlin.Boolean)
+
+@kotlin.Deprecated(message = "Deprecated in Java")
+constructor(p0: kotlin.Int, p1: kotlin.Int, p2: kotlin.CharArray!)

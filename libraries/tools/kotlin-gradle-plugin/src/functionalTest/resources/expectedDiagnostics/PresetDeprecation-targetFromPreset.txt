@@ -1,0 +1,1 @@
+[TargetFromPreset | WARNING] The targetFromPreset() API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration

@@ -1,3 +1,4 @@
+// PLATFORM_DEPENDANT_METADATA
 //ALLOW_AST_ACCESS
 // NO_CHECK_SOURCE_VS_BINARY
 //^ While compiling source, we do not store annotation default values, but we load them when reading compiled files

@@ -28,6 +28,33 @@ FILE: reassignOfNonLocalProperty_initializedProperties.kt
         )
             public get(): R|kotlin/String|
 
+        public final var b: R|kotlin/String| = String(hello)
+            public get(): R|kotlin/String| {
+                this@R|/Some|.R|/Some.x| = String(error)
+                this@R|/Some|.R|/y| = String(error)
+                R|/z| = String(error)
+                ^ this@R|/Some|.F|/Some.b|
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+                this@R|/Some|.R|/Some.x| = R|<local>/value|
+                this@R|/Some|.R|/y| = R|<local>/value|
+                R|/z| = R|<local>/value|
+                this@R|/Some|.F|/Some.b| = R|<local>/value|
+            }
+
+        public final var c: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                this@R|/Some|.R|/Some.x| = String(error)
+                this@R|/Some|.R|/y| = String(error)
+                R|/z| = String(error)
+                ^ String(hello)
+            }
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+                this@R|/Some|.R|/Some.x| = R|<local>/value|
+                this@R|/Some|.R|/y| = R|<local>/value|
+                R|/z| = R|<local>/value|
+            }
+
         public final fun test_1(): R|kotlin/Unit| {
             this@R|/Some|.R|/Some.x| = String(error)
             this@R|/Some|.R|/y| = String(error)

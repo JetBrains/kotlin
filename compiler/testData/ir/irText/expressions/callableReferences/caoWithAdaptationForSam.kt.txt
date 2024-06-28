@@ -4,7 +4,6 @@ fun interface IFoo {
 }
 
 fun interface IFoo2 : IFoo {
-
 }
 
 object A {
@@ -29,53 +28,49 @@ operator fun A.get(i: IFoo): Int {
   return 1
 }
 
-operator fun A.set(i: IFoo, newValue: Int) {
-}
-
 operator fun B.get(i: IFoo): Int {
   return 1
+}
+
+operator fun A.set(i: IFoo, newValue: Int) {
 }
 
 operator fun B.set(i: IFoo2, newValue: Int) {
 }
 
-fun withVararg(vararg xs: Int): Int {
-  return 42
-}
-
 fun test1() {
   { // BLOCK
-    val tmp0_array: A = A
-    val tmp2_sam: IFoo = { // BLOCK
+    val tmp_0: A = A
+    val tmp_1: IFoo = { // BLOCK
       local fun withVararg(p0: Int) {
         withVararg(xs = [p0]) /*~> Unit */
       }
 
       ::withVararg
     } /*-> IFoo */
-    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+    tmp_0.set(i = tmp_1, newValue = tmp_0.get(i = tmp_1).plus(other = 1))
   }
 }
 
 fun test2() {
   { // BLOCK
-    val tmp0_array: B = B
-    val tmp2_sam: IFoo2 = { // BLOCK
+    val tmp_2: B = B
+    val tmp_3: IFoo2 = { // BLOCK
       local fun withVararg(p0: Int) {
         withVararg(xs = [p0]) /*~> Unit */
       }
 
       ::withVararg
     } /*-> IFoo2 */
-    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+    tmp_2.set(i = tmp_3, newValue = tmp_2.get(i = tmp_3).plus(other = 1))
   }
 }
 
 fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
-    val tmp0_array: A = A
-    val tmp2_sam: IFoo = fn /*-> IFoo */
-    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+    val tmp_4: A = A
+    val tmp_5: IFoo = fn /*-> IFoo */
+    tmp_4.set(i = tmp_5, newValue = tmp_4.get(i = tmp_5).plus(other = 1))
   }
 }
 
@@ -83,9 +78,9 @@ fun test4(fn: Function1<Int, Unit>) {
   when {
     fn is IFoo -> { // BLOCK
       { // BLOCK
-        val tmp0_array: A = A
-        val tmp1_index0: Function1<Int, Unit> = fn
-        tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
+        val tmp_6: A = A
+        val tmp_7: Function1<Int, Unit> = fn
+        tmp_6.set(i = tmp_7 /*as IFoo */, newValue = tmp_6.get(i = tmp_7 /*as IFoo */).plus(other = 1))
       }
     }
   }
@@ -94,9 +89,9 @@ fun test4(fn: Function1<Int, Unit>) {
 fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
-    val tmp0_array: A = A
-    val tmp2_sam: IFoo = a /*as Function1<Int, Unit> */ /*-> IFoo */
-    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+    val tmp_8: A = A
+    val tmp_9: IFoo = a /*as Function1<Int, Unit> */ /*-> IFoo */
+    tmp_8.set(i = tmp_9, newValue = tmp_8.get(i = tmp_9).plus(other = 1))
   }
 }
 
@@ -104,8 +99,13 @@ fun test6(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   a as IFoo /*~> Unit */
   { // BLOCK
-    val tmp0_array: A = A
-    val tmp1_index0: Any = a
-    tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
+    val tmp_10: A = A
+    val tmp_11: Any = a
+    tmp_10.set(i = tmp_11 /*as IFoo */, newValue = tmp_10.get(i = tmp_11 /*as IFoo */).plus(other = 1))
   }
 }
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+

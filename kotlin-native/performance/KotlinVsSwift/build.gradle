@@ -20,9 +20,7 @@ task clean {
     subprojects.each {
         dependsOn it.getTasksByName('clean', true)[0]
     }
-    doLast {
-        delete "${buildDir.absolutePath}"
-    }
+    delete(layout.buildDirectory)
 }
 
 defaultTasks 'konanRun'

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -NOTHING_TO_INLINE
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 
 @PublishedApi
 internal class InternalClassPrivateConstructor private constructor() {
@@ -31,9 +31,9 @@ internal open class InternalClassProtectedConstructor protected constructor() {
 }
 
 inline fun publicInline() {
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalClassPrivateConstructor<!>()
-    InternalClassPrivateConstructor.<!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>invoke<!>()
-    <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>InternalClassProtectedConstructor<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>InternalClassPrivateConstructor<!>()
+    InternalClassPrivateConstructor.<!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>invoke<!>()
+    <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>InternalClassProtectedConstructor<!>()
 }
 
 internal inline fun internalInline() {

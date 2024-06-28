@@ -7,6 +7,8 @@ plugins {
 }
 
 val robolectricClasspath by configurations.creating
+val robolectricDependency by configurations.creating
+
 val androidExtensionsRuntimeForTests by configurations.creating
 val layoutLib by configurations.creating
 val layoutLibApi by configurations.creating
@@ -34,11 +36,12 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":kotlin-android-extensions-runtime"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(commonDependency("junit:junit"))
+    testApi(kotlinTest("junit"))
+    testImplementation(libs.junit4)
+
+    robolectricDependency("org.robolectric:android-all:5.0.2_r3-robolectric-r0")
 
     robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
-    robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
     embedded(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
@@ -50,6 +53,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }
@@ -64,10 +68,19 @@ javadocJar()
 
 testsJar()
 
+val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")
+val prepareRobolectricDependencies by tasks.registering(Copy::class) {
+    from(robolectricDependency)
+    into(robolectricDependencyDir)
+}
+
 projectTest {
     dependsOn(androidExtensionsRuntimeForTests)
     dependsOn(robolectricClasspath)
+
+    dependsOn(prepareRobolectricDependencies)
     dependsOn(":dist")
+
     workingDir = rootDir
     useAndroidJar()
 
@@ -85,6 +98,10 @@ projectTest {
     doFirst {
         systemProperty("androidExtensionsRuntime.classpath", androidExtensionsRuntimeProvider.get())
         systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
+
+        systemProperty("robolectric.offline", "true")
+        systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
+
         systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
         systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)
     }

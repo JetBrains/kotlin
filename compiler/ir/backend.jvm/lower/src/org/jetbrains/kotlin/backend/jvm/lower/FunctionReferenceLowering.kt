@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.*
@@ -39,17 +39,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SERIALIZABLE_LAMBDA_ANNOTATION_FQ_NAME
 
-internal val functionReferencePhase = makeIrFilePhase(
-    ::FunctionReferenceLowering,
+@PhaseDescription(
     name = "FunctionReference",
     description = "Construct instances of anonymous KFunction subclasses for function references"
 )
-
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val crossinlineLambdas = HashSet<IrSimpleFunction>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == JvmLoweredStatementOrigin.INLINE_LAMBDA
+        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || origin == LoweredStatementOrigins.INLINE_LAMBDA
 
     // `suspend` function references are the same as non-`suspend` ones, just with an extra continuation parameter;
     // however, suspending lambdas require different generation implemented in SuspendLambdaLowering
@@ -69,16 +67,16 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     }
 
     private val shouldGenerateIndySamConversions =
-        context.state.samConversionsScheme == JvmClosureGenerationScheme.INDY
+        context.config.samConversionsScheme == JvmClosureGenerationScheme.INDY
 
     private val shouldGenerateIndyLambdas =
-        context.state.lambdasScheme == JvmClosureGenerationScheme.INDY
+        context.config.lambdasScheme == JvmClosureGenerationScheme.INDY
 
     private val shouldGenerateLightweightLambdas =
-        shouldGenerateIndyLambdas && context.state.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
+        shouldGenerateIndyLambdas && context.config.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
 
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override fun visitBlock(expression: IrBlock): IrExpression {
         if (!expression.origin.isLambda)
@@ -180,7 +178,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     .getLambdaMetafactoryArguments(reference, samSuperType, false)
             if (lambdaMetafactoryArguments is LambdaMetafactoryArguments) {
                 return wrapSamConversionArgumentWithIndySamConversion(expression) { samType ->
-                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
+                    wrapWithIndySamConversion(samType, lambdaMetafactoryArguments, expression.startOffset, expression.endOffset)
                 }
             } else if (lambdaMetafactoryArguments is MetafactoryArgumentsResult.Failure.FunctionHazard) {
                 // Try wrapping function with a proxy local function and see if that helps.
@@ -310,7 +308,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 targetCall.putTypeArgument(typeParameterIndex, reference.getTypeArgument(typeParameterIndex))
             }
 
-            val proxyFunBody = IrBlockBodyImpl(startOffset, endOffset).also { proxyFun.body = it }
+            val proxyFunBody = context.irFactory.createBlockBody(startOffset, endOffset).also { proxyFun.body = it }
             when {
                 targetFun.returnType.isUnit() -> {
                     proxyFunBody.statements.add(targetCall)
@@ -399,11 +397,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     private fun wrapWithIndySamConversion(
         samType: IrType,
-        lambdaMetafactoryArguments: LambdaMetafactoryArguments
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
     ): IrCall {
         val notNullSamType = samType.makeNotNull()
             .removeAnnotations { it.type.classFqName in specialNullabilityAnnotationsFqNames }
-        return context.createJvmIrBuilder(currentScope!!).run {
+        return context.createJvmIrBuilder(currentScope!!, startOffset, endOffset).run {
             // See [org.jetbrains.kotlin.backend.jvm.JvmSymbols::indyLambdaMetafactoryIntrinsic].
             irCall(jvmIndyLambdaMetafactoryIntrinsic, notNullSamType).apply {
                 putTypeArgument(0, notNullSamType)
@@ -461,7 +461,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
 
         private val useOptimizedSuperClass =
-            context.state.generateOptimizedCallableReferenceSuperClasses
+            context.config.generateOptimizedCallableReferenceSuperClasses
 
         // This code is partially duplicated in IrUtils getAdapteeFromAdaptedForReferenceFunction
         // The difference is utils version supports ReturnableBlock, but returns called function instead of call node.

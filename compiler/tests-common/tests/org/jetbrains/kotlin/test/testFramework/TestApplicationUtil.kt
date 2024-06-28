@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.test.testFramework
 
 import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.utils.rethrow
-import java.lang.reflect.Field
 
 fun resetApplicationToNull(old: Application?) {
     if (old != null) return
@@ -17,9 +16,7 @@ fun resetApplicationToNull(old: Application?) {
 
 fun resetApplicationToNull() {
     try {
-        val ourApplicationField: Field = ApplicationManager::class.java.getDeclaredField("ourApplication")
-        ourApplicationField.setAccessible(true)
-        ourApplicationField.set(null, null)
+        KotlinCoreEnvironment.resetApplicationManager()
     } catch (e: Exception) {
         throw rethrow(e)
     }

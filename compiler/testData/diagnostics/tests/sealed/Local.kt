@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+typealias TA = Sealed
+
 sealed class Sealed {
     object First: Sealed()
     open class NonFirst: Sealed() {
@@ -6,6 +8,7 @@ sealed class Sealed {
         object Third: NonFirst()
         fun foo(): Int {
             val s = object: <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Sealed<!>() {}
+            val s2 = object: <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>TA<!>() {}
             class Local: <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Sealed<!>() {}
             return s.hashCode()
         }

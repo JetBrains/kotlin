@@ -1,0 +1,67 @@
+package test
+
+@kotlin.PublishedApi internal val prop: kotlin.Int
+    internal fun `<get-prop>`(): kotlin.Int
+@kotlin.PublishedApi internal val prop2: kotlin.Int
+    internal fun `<get-prop2>`(): kotlin.Int
+@kotlin.PublishedApi internal var prop3: kotlin.Int
+    internal fun `<get-prop3>`(): kotlin.Int
+    internal fun `<set-prop3>`(/*0*/ value: kotlin.Int): kotlin.Unit
+@kotlin.PublishedApi internal fun method(): kotlin.Unit
+
+internal final class Internal {
+    @kotlin.PublishedApi internal constructor Internal()
+    /*primary*/ @kotlin.PublishedApi internal constructor Internal(/*0*/ foo: kotlin.String)
+    public final val foo: kotlin.String
+        public final fun `<get-foo>`(): kotlin.String
+    @kotlin.PublishedApi internal final val prop: kotlin.Int
+        internal final fun `<get-prop>`(): kotlin.Int
+    @kotlin.PublishedApi internal final val prop2: kotlin.Int
+        internal final fun `<get-prop2>`(): kotlin.Int
+    @kotlin.PublishedApi internal final var prop3: kotlin.Int
+        internal final fun `<get-prop3>`(): kotlin.Int
+        internal final fun `<set-prop3>`(/*0*/ value: kotlin.Int): kotlin.Unit
+    @kotlin.PublishedApi internal final fun method(): kotlin.Unit
+
+    @kotlin.PublishedApi internal final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+}
+
+public final class Public {
+    @kotlin.PublishedApi internal constructor Public()
+    /*primary*/ @kotlin.PublishedApi internal constructor Public(/*0*/ foo: kotlin.String)
+    public final val foo: kotlin.String
+        public final fun `<get-foo>`(): kotlin.String
+    @kotlin.PublishedApi internal final val prop: kotlin.Int
+        internal final fun `<get-prop>`(): kotlin.Int
+    @kotlin.PublishedApi internal final val prop2: kotlin.Int
+        internal final fun `<get-prop2>`(): kotlin.Int
+    @kotlin.PublishedApi internal final var prop3: kotlin.Int
+        internal final fun `<get-prop3>`(): kotlin.Int
+        internal final fun `<set-prop3>`(/*0*/ value: kotlin.Int): kotlin.Unit
+    @kotlin.PublishedApi internal final fun method(): kotlin.Unit
+
+    @kotlin.PublishedApi internal final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+}
+
+@kotlin.PublishedApi internal final class Published {
+    @kotlin.PublishedApi internal constructor Published()
+    /*primary*/ @kotlin.PublishedApi internal constructor Published(/*0*/ foo: kotlin.String)
+    public final val foo: kotlin.String
+        public final fun `<get-foo>`(): kotlin.String
+    @kotlin.PublishedApi internal final val prop: kotlin.Int
+        internal final fun `<get-prop>`(): kotlin.Int
+    @kotlin.PublishedApi internal final val prop2: kotlin.Int
+        internal final fun `<get-prop2>`(): kotlin.Int
+    @kotlin.PublishedApi internal final var prop3: kotlin.Int
+        internal final fun `<get-prop3>`(): kotlin.Int
+        internal final fun `<set-prop3>`(/*0*/ value: kotlin.Int): kotlin.Unit
+    @kotlin.PublishedApi internal final fun method(): kotlin.Unit
+
+    @kotlin.PublishedApi internal final class Nested {
+        /*primary*/ public constructor Nested()
+    }
+}

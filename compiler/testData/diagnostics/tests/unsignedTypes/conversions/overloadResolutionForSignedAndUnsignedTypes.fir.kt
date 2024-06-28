@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 
 fun foo(x: Int): Int = 0
 
@@ -21,7 +21,7 @@ fun test() {
     foo(1) checkType { _<Int>() }
     foo(1u) checkType { _<String>() }
 
-    <!NONE_APPLICABLE!>foo<!>(2147483648) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<String>() }
+    foo(<!ARGUMENT_TYPE_MISMATCH!>2147483648<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     foo(2147483647 + 1) checkType { _<Int>() }
 
     fooByte(1) checkType { _<Int>() }

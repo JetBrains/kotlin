@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 
 plugins {
     kotlin("multiplatform")
@@ -8,7 +9,7 @@ plugins {
 
 kotlin {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    targetHierarchy.default {
+    applyHierarchyTemplate(KotlinHierarchyTemplate.default) {
         common {
             group("concurrent") {
                 withJvm()
@@ -37,10 +38,10 @@ kotlin {
     iosSimulatorArm64()
 
     mingwX64()
-    mingwX86()
 
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 
     targets.withType<KotlinNativeTarget>().forEach { target ->

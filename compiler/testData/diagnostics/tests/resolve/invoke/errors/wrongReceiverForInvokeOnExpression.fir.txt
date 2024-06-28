@@ -1,0 +1,25 @@
+FILE: wrongReceiverForInvokeOnExpression.fir.kt
+    public final fun test1(): R|kotlin/Unit| {
+        fun R|kotlin/String|.<anonymous>(i: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/i|
+        }
+        .R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Int|><None of the following candidates is applicable because of receiver type mismatch: [kotlin/Function2.invoke]>#|(Int(1), Int(1))
+        label@fun R|kotlin/String|.<anonymous>(i: R|kotlin/Int|): R|kotlin/Int| <inline=Unknown>  {
+            ^@label R|<local>/i|
+        }
+        .R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Int|><None of the following candidates is applicable because of receiver type mismatch: [kotlin/Function2.invoke]>#|(Int(1), Int(1))
+    }
+    public final fun test2(f: R|kotlin/String.(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|><None of the following candidates is applicable because of receiver type mismatch: [kotlin/Function2.invoke]>#|(Int(11), Int(1))
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function2.invoke>#|(Int(11))
+    }
+    public final fun test3(): R|kotlin/Unit| {
+        local final fun foo(): R|kotlin/String.(kotlin/Int) -> kotlin/Unit| {
+            ^foo fun R|kotlin/String|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+        }
+
+        R|<local>/foo|().R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|><None of the following candidates is applicable because of receiver type mismatch: [kotlin/Function2.invoke]>#|(Int(1), Int(1))
+    }

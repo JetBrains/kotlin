@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.konan.properties
 import org.jetbrains.kotlin.konan.file.*
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.ByteArrayOutputStream
+import java.io.OutputStream
+import java.io.StringWriter
 
 typealias Properties = java.util.Properties
 
@@ -21,15 +23,26 @@ fun File.loadProperties(): Properties {
 
 fun loadProperties(path: String): Properties = File(path).loadProperties()
 
+/**
+ * Standard properties writer has two issues, which prevents build reproducibility
+ *
+ * 1. The order of lines is not defined
+ * 2. It uses platform-specific end-of-lines
+ *
+ * This function deals with both issues
+ */
 fun File.saveProperties(properties: Properties) {
-    val byteStream = ByteArrayOutputStream()
-    byteStream.use {
-        properties.store(it, null)
-    }
+    val rawData = StringWriter().apply {
+        properties.store(this, null)
+    }.toString()
 
-    // TODO: don't act like this
+    val lines = rawData
+        .split(System.lineSeparator())
+        .filterNot { it.isEmpty() || it.startsWith("#") }
+        .sorted()
+
     outputStream().use {
-        it.write(String(byteStream.toByteArray()).split("\n").drop(1).joinToString("\n").toByteArray())
+        it.write(lines.joinToString("\n", postfix = "\n").toByteArray())
     }
 }
 

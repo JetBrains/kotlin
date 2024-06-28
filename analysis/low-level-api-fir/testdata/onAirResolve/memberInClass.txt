@@ -1,3 +1,0 @@
-public final [BODY_RESOLVE] fun <[BODY_RESOLVE] K> niewbe([BODY_RESOLVE] a: R|kotlin/Char|, [BODY_RESOLVE] b: R|kotlin/Double|): R|kotlin/String| {
-    ^niewbe String(Trololo)
-}

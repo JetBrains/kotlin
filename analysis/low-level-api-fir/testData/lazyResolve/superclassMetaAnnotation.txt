@@ -1,0 +1,391 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Impl : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Impl : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Impl : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(RAW_FIR)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(COMPANION_GENERATION)] class Impl : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? [ResolvedTo(TYPES)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(RAW_FIR)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @Anno[Unresolved]() public abstract [ResolvedTo(SUPER_TYPES)] class Base : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Impl : R|main/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            LAZY_super<Base>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lib.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class MetaAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MetaAnno] constructor(): R|lib/MetaAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @MetaAnno[Unresolved]() public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|lib/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    @R|lib/Anno|[Types]() public abstract [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Impl : R|main/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            super<R|main/Base|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
+    @R|lib/Anno|[Types]() public abstract [ResolvedTo(BODY_RESOLVE)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor(): R|main/Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Impl : R|main/Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Impl] constructor(): R|main/Impl| {
+            super<R|main/Base|>()
+        }
+
+    }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -39,7 +39,15 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
+@PhaseDescription(
+    name = "Properties",
+    description = "Move fields and accessors for properties to their classes, " +
+            "replace calls to default property accessors with field accesses, " +
+            "remove unused accessors and create synthetic methods for property annotations"
+)
+internal class JvmPropertiesLowering(
+    private val backendContext: JvmBackendContext
+) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.accept(this, null)
     }
@@ -51,7 +59,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val simpleFunction = expression.symbol.owner
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         expression.transformChildrenVoid()
 
@@ -83,13 +91,13 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         // to get the backing field which would no longer exist.
         val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
         if (inInlineFunctionScope) return false
-        val backingField = property.resolveFakeOverride()!!.backingField
+        val backingField = property.resolveFakeOverrideOrFail().backingField
         return backingField?.parent == currentClass?.irElement &&
                 backingField?.origin == JvmLoweredDeclarationOrigin.COMPANION_PROPERTY_BACKING_FIELD
     }
 
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
+        val backingField = irProperty.resolveFakeOverrideOrFail().backingField!!
         return patchReceiver(
             irSetField(
                 patchFieldAccessReceiver(expression, irProperty),
@@ -100,7 +108,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
-        val backingField = irProperty.resolveFakeOverride()!!.backingField!!
+        val backingField = irProperty.resolveFakeOverrideOrFail().backingField!!
         val patchedReceiver = patchFieldAccessReceiver(expression, irProperty)
         return if (irProperty.isLateinit) {
             irBlock {
@@ -174,7 +182,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             //   generate two properties like that; should this be the getter's return type instead?
             isStatic = true, returnType = backendContext.irBuiltIns.unitType, visibility = declaration.visibility
         ).apply {
-            body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+            body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             annotations = declaration.annotations
         }
 
@@ -218,12 +226,12 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
 
         private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
             val baseName =
-                if (state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+                if (config.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
                     val getter = property.getter
                     if (getter != null) {
                         val needsMangling =
                             getter.extensionReceiverParameter?.type?.getRequiresMangling(includeInline = true, includeMFVC = false) == true ||
-                                    (state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+                                    (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                         defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
                     } else JvmAbi.getterName(property.name.asString())

@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +InlineClassImplementationByDelegation
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +InlineClassImplementationByDelegation
 // SKIP_TXT
 
 interface IFoo

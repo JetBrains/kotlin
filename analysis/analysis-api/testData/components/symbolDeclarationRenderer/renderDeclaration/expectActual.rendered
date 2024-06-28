@@ -1,12 +1,12 @@
-class MyClass
+expect class MyClass
 
-fun foo(): String
+expect fun foo(): String
 
-val x: Int
+expect val x: Int
 
-class MyClass
+actual class MyClass
 
-fun foo(): String
+actual fun foo(): String
 
-val x: Int
+actual val x: Int
 

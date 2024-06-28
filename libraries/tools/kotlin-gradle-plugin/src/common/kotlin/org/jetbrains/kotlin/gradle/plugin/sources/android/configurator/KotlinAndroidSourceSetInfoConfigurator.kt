@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.BaseVariant
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal object KotlinAndroidSourceSetInfoConfigurator : KotlinAndroidSourceSetConfigurator {
-    override fun configureWithVariant(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, variant: BaseVariant) {
+    override fun configureWithVariant(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
+    ) {
         val info = kotlinSourceSet.androidSourceSetInfo.asMutable()
         info.androidVariantType = variant.type
         info.androidVariantNames.add(variant.name)

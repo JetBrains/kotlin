@@ -17,27 +17,52 @@
 package org.jetbrains.kotlin.codegen.inline
 
 object SMAPParser {
-    /*null smap means that there is no any debug info in file (e.g. sourceName)*/
-    @JvmStatic
-    fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
-        if (mappingInfo != null && mappingInfo.isNotEmpty()) {
-            parseOrNull(mappingInfo)?.let { return it }
-        }
-        if (source == null || source.isEmpty() || methodStartLine > methodEndLine) {
-            return SMAP(listOf())
-        }
-        val mapping = FileMapping(source, path).apply {
-            mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
-        }
-        return SMAP(listOf(mapping))
-    }
-
     fun parseOrNull(mappingInfo: String): SMAP? =
-        parseStratum(mappingInfo, KOTLIN_STRATA_NAME, parseStratum(mappingInfo, KOTLIN_DEBUG_STRATA_NAME, null))
+        if (mappingInfo.isNotEmpty())
+            parseStratum(mappingInfo, KOTLIN_STRATA_NAME, parseStratum(mappingInfo, KOTLIN_DEBUG_STRATA_NAME, null))
+        else
+            null
+
+    private class SMAPTokenizer(private val text: String, private val headerString: String) : Iterator<String> {
+
+        private var pos = 0
+        private var currentLine: String? = null
+
+        init {
+            advance()
+            while (currentLine != null && currentLine != headerString) {
+                advance()
+            }
+            if (currentLine == headerString) {
+                advance()
+            }
+        }
+
+        private fun advance() {
+            if (pos >= text.length) {
+                currentLine = null
+                return
+            }
+            val fromPos = pos
+            while (pos < text.length && text[pos] != '\n' && text[pos] != '\r') pos++
+            currentLine = text.substring(fromPos, pos)
+            pos++
+        }
+
+        override fun hasNext(): Boolean {
+            return currentLine != null
+        }
+
+        override fun next(): String {
+            val res = currentLine ?: throw NoSuchElementException()
+            advance()
+            return res
+        }
+    }
 
     private fun parseStratum(mappingInfo: String, stratum: String, callSites: SMAP?): SMAP? {
         val fileMappings = linkedMapOf<Int, FileMapping>()
-        val iterator = mappingInfo.lineSequence().dropWhile { it != "${SMAP.STRATA_SECTION} $stratum" }.drop(1).iterator()
+        val iterator = SMAPTokenizer(mappingInfo, "${SMAP.STRATA_SECTION} $stratum")
         // JSR-045 allows the line section to come before the file section, but we don't generate SMAPs like this.
         if (!iterator.hasNext() || iterator.next() != SMAP.FILE_SECTION) return null
 

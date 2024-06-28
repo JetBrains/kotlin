@@ -10,7 +10,7 @@ group = "org.jetbrains.sample"
 version = "1.0.0-SNAPSHOT"
 
 kotlin {
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
     jvm()
     iosX64()
     iosArm64()

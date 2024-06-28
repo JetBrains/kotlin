@@ -1,17 +1,17 @@
 public final class BackingFields /* one.BackingFields*/ {
-  private final int withBackingFieldProperty;
+  private final int withBackingFieldProperty = 9 /* initializer type: int */;
 
-  private final int withBackingFieldPropertyWithDummyGetter;
+  private final int withBackingFieldPropertyWithDummyGetter = 10 /* initializer type: int */;
 
-  private final int withBackingFieldPropertyWithLocalDeclaration;
+  private final int withBackingFieldPropertyWithLocalDeclaration = 5 /* initializer type: int */;
 
-  private final int withBackingFieldPropertyWithNestedLocalDeclaration;
+  private final int withBackingFieldPropertyWithNestedLocalDeclaration = 7 /* initializer type: int */;
 
-  private int withBackingFieldVariableWithDummyGetter;
+  private int withBackingFieldVariableWithDummyGetter = 12 /* initializer type: int */;
 
-  private int withBackingFieldVariableWithDummyGetterAndSetter;
+  private int withBackingFieldVariableWithDummyGetterAndSetter = 11 /* initializer type: int */;
 
-  private int withBackingFieldVariableWithDummySetter;
+  private int withBackingFieldVariableWithDummySetter = 13 /* initializer type: int */;
 
   public  BackingFields();//  .ctor()
 

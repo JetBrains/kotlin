@@ -13,10 +13,10 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
-import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
@@ -43,7 +41,7 @@ import kotlin.test.assertTrue
 
 class BuildKotlinToolingMetadataTest {
 
-    private val project = ProjectBuilder.builder().build().also { addBuildEventsListenerRegistryMock(it) } as ProjectInternal
+    private val project = ProjectBuilder.builder().build() as ProjectInternal
     private val multiplatformExtension get() = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
     private val jsExtension get() = project.extensions.getByType(KotlinJsProjectExtension::class.java)
 
@@ -75,13 +73,11 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("com.android.application")
         project.plugins.apply("kotlin-multiplatform")
 
-        disableLegacyWarning(project)
-
         val android = project.extensions.getByType(BaseExtension::class.java)
         val kotlin = multiplatformExtension
 
         android.compileSdkVersion(28)
-        kotlin.android()
+        kotlin.androidTarget()
         kotlin.jvm()
         kotlin.js {
             nodejs()
@@ -125,7 +121,7 @@ class BuildKotlinToolingMetadataTest {
         val android = project.extensions.getByType(BaseExtension::class.java)
         val kotlin = multiplatformExtension
         android.compileSdkVersion(28)
-        kotlin.android()
+        kotlin.androidTarget()
         android.compileOptions.setSourceCompatibility(JavaVersion.VERSION_1_6)
         android.compileOptions.setTargetCompatibility(JavaVersion.VERSION_1_8)
         project.evaluate()
@@ -142,7 +138,9 @@ class BuildKotlinToolingMetadataTest {
         project.plugins.apply("kotlin-multiplatform")
         val kotlin = multiplatformExtension
         val jvm = kotlin.jvm()
+        @Suppress("DEPRECATION")
         jvm.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_12)
+        @Suppress("DEPRECATION")
         jvm.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME).compilerOptions.options.jvmTarget.set(JvmTarget.JVM_10)
 
         assertEquals(
@@ -161,14 +159,13 @@ class BuildKotlinToolingMetadataTest {
         val metadata = getKotlinToolingMetadata()
         val linuxTarget = metadata.projectTargets.single { it.platformType == native.name }
         assertEquals(KonanTarget.LINUX_X64.name, linuxTarget.extras.native?.konanTarget)
-        assertEquals(project.konanVersion.toString(), linuxTarget.extras.native?.konanVersion)
+        assertEquals(project.nativeProperties.kotlinNativeVersion.get(), linuxTarget.extras.native?.konanVersion)
         assertEquals(KotlinAbiVersion.CURRENT.toString(), linuxTarget.extras.native?.konanAbiVersion)
     }
 
     @Test
     fun js() {
         project.plugins.apply("org.jetbrains.kotlin.js")
-        disableLegacyWarning(project)
         val kotlin = jsExtension
         kotlin.js { nodejs() }
 

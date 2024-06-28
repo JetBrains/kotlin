@@ -1,0 +1,6 @@
+public abstract interface JavaBeanAbstractGetter : R|kotlin/Any| {
+    public abstract fun getRed(): R|kotlin/Int|
+
+    public abstract fun getBlue(): R|kotlin/Int|
+
+}

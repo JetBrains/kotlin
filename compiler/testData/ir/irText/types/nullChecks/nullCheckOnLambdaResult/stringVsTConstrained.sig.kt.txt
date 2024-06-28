@@ -1,0 +1,12 @@
+// CHECK:
+//   Mangled name: #testWithNullCheck(kotlin.Array<kotlin.String>){}
+//   Public signature: /testWithNullCheck|7420857220126640924[0]
+//   Public signature debug description: testWithNullCheck(kotlin.Array<kotlin.String>){}
+fun testWithNullCheck(xs: Array<String>): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #useTConstrained(kotlin.Array<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /useTConstrained|-7115678268313457255[0]
+//   Public signature debug description: useTConstrained(kotlin.Array<0:0>;kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+fun <T : Any?> useTConstrained(xs: Array<T>, fn: Function0<T>): T
+

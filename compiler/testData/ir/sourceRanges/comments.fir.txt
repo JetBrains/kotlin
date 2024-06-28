@@ -1,0 +1,51 @@
+@0:0..34:0 FILE fqName:<root> fileName:/comments.kt
+  @1:0..33:1 CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @1:0..33:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]
+      @1:0..33:1 BLOCK_BODY
+        @1:0..33:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @1:0..33:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    @8:4..10:36 CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
+      @8:52..79 CONSTRUCTOR visibility:private <> ($this:<root>.Foo, x:kotlin.Int) returnType:<root>.Foo.Inner [primary]
+        @8:52..79 VALUE_PARAMETER name:<this> type:<root>.Foo
+        @8:72..78 VALUE_PARAMETER name:x index:0 type:kotlin.Int
+        @8:52..79 BLOCK_BODY
+          @8:52..79 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          @8:52..79 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
+      @8:4..10:36 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        @8:4..10:36 VALUE_PARAMETER name:<this> type:kotlin.Any
+        @8:4..10:36 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      @8:4..10:36 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        @8:4..10:36 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @8:4..10:36 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        @8:4..10:36 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @8:4..10:36 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo.Inner
+    @18:4..20:39 FUN name:foo visibility:protected modality:OPEN <> ($this:<root>.Foo, y:kotlin.Int) returnType:kotlin.Unit
+      @18:4..20:39 VALUE_PARAMETER name:<this> type:<root>.Foo
+      @18:27..33 VALUE_PARAMETER name:y index:0 type:kotlin.Int
+      @18:35..20:39 BLOCK_BODY
+    @25:4..27:25 PROPERTY name:x visibility:public modality:FINAL [val]
+      @25:4..27:25 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        @25:17..19 EXPRESSION_BODY
+          @25:17..19 CONST Int type=kotlin.Int value=42
+      @27:8..25 FUN name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:kotlin.Int
+        @27:8..25 VALUE_PARAMETER name:<this> type:<root>.Foo
+        @27:16..25 BLOCK_BODY
+          @27:25..25 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Foo'
+            @27:16..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              @27:16..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                @27:16..21 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-x>' type=<root>.Foo origin=null
+              @27:24..25 CONST Int type=kotlin.Int value=1
+    @30:4..32:5 FUN name:test visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:kotlin.Unit
+      @30:4..32:5 VALUE_PARAMETER name:<this> type:<root>.Foo
+      @30:15..32:5 BLOCK_BODY
+        @31:8..41 CALL 'protected open fun foo (y: kotlin.Int): kotlin.Unit declared in <root>.Foo' type=kotlin.Unit origin=null
+          @31:8..41 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=null
+          @31:38..40 CONST Int type=kotlin.Int value=42
+    @1:0..33:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @1:0..33:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @1:0..33:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @1:0..33:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @1:0..33:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @1:0..33:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @1:0..33:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @1:0..33:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Foo

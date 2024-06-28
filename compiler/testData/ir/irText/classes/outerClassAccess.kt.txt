@@ -1,24 +1,5 @@
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun foo() {
-  }
-
   inner class Inner {
-    constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    fun test() {
-      <this>.foo()
-    }
-
     inner class Inner2 {
       constructor() /* primary */ {
         super/*Any*/()
@@ -37,6 +18,26 @@ class Outer {
 
     }
 
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun test() {
+      <this>.foo()
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo() {
   }
 
 }
+

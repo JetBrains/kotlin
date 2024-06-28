@@ -23,7 +23,8 @@ internal val ConstValue.llvmType: LLVMTypeRef
     get() = this.llvm.type
 
 internal interface ConstPointer : ConstValue {
-    fun getElementPtr(llvm: CodegenLlvmHelpers, index: Int): ConstPointer = ConstGetElementPtr(llvm, this, index)
+    fun getElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, index: Int): ConstPointer =
+            ConstGetElementPtr(llvm, pointeeType, this, index)
 }
 
 internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
@@ -34,8 +35,8 @@ internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
     override val llvm = value
 }
 
-private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointer: ConstPointer, index: Int) : ConstPointer {
-    override val llvm = LLVMConstInBoundsGEP(pointer.llvm, cValuesOf(llvm.int32(0), llvm.int32(index)), 2)!!
+private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, pointer: ConstPointer, index: Int) : ConstPointer {
+    override val llvm = LLVMConstInBoundsGEP2(pointeeType, pointer.llvm, cValuesOf(llvm.int32(0), llvm.int32(index)), 2)!!
     // TODO: squash multiple GEPs
 }
 
@@ -97,6 +98,8 @@ internal val RuntimeAware.kObjHeader: LLVMTypeRef
     get() = runtime.objHeaderType
 internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
     get() = pointerType(kObjHeader)
+internal val RuntimeAware.kObjHeaderPtrReturnType: LlvmRetType
+    get() = LlvmRetType(kObjHeaderPtr, isObjectType = true)
 internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
     get() = pointerType(kObjHeaderPtr)
 internal val RuntimeAware.kArrayHeader: LLVMTypeRef
@@ -116,28 +119,9 @@ internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
 
 internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType, 0)!!
 
-internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
-    // Note that type is usually function pointer, so we have to dereference it.
-    return LLVMCountParamTypes(LLVMGetElementType(functionType))
-}
-
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
     return LLVMConstIntGetZExtValue(value)
-}
-
-internal fun ContextUtils.isObjectReturn(functionType: LLVMTypeRef) : Boolean {
-    // Note that type is usually function pointer, so we have to dereference it.
-    val returnType = LLVMGetReturnType(LLVMGetElementType(functionType))!!
-    return isObjectType(returnType)
-}
-
-internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
-    return isObjectType(value.type)
-}
-
-internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
-    return type == kObjHeaderPtr || type == kArrayHeaderPtr
 }
 
 /**
@@ -156,12 +140,12 @@ internal fun LLVMValueRef.getAsCString() : String {
 }
 
 
-internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
+internal fun getGlobalFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
     return getGlobalType(ptrToFunction)
 }
 
 internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
-    return LLVMGetElementType(ptrToGlobal.type)!!
+    return LLVMGlobalGetValueType(ptrToGlobal)!!
 }
 
 internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): LLVMValueRef {
@@ -194,11 +178,15 @@ private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value:
         // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
         // Runtime is linked into stdlib module only, so import runtime global from it.
         val global = importGlobal(name, value.llvmType)
-        val initializer = generateFunctionNoRuntime(this, functionType(llvm.voidType, false), "") {
+        val initializerProto = LlvmFunctionSignature(LlvmRetType(llvm.voidType)).toProto(
+                name = "",
+                origin = null,
+                LLVMLinkage.LLVMPrivateLinkage
+        )
+        val initializer = generateFunctionNoRuntime(this, initializerProto) {
             store(value.llvm, global)
             ret(null)
         }
-        LLVMSetLinkage(initializer, LLVMLinkage.LLVMPrivateLinkage)
 
         llvm.otherStaticInitializers += initializer
     } else {
@@ -241,15 +229,15 @@ internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
     }
 }
 
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int): AddressAccess {
-    return if (isObjectType(type)) {
+internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int, isObjectType: Boolean): AddressAccess {
+    return if (isObjectType) {
         val index = llvm.tlsCount++
         require(llvm.runtime.pointerAlignment % alignment == 0)
         TLSAddressAccess(index)
     } else {
         // TODO: This will break if Workers get decoupled from host threads.
         GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
-            LLVMSetThreadLocalMode(it, llvm.tlsMode)
+            LLVMSetThreadLocalMode(it, LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel)
             LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
             LLVMSetAlignment(it, alignment)
         })

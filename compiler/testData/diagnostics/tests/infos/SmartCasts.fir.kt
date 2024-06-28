@@ -111,12 +111,12 @@ fun f13(a : A?) {
     <!UNRESOLVED_REFERENCE!>c<!>.bar()
   }
 
-  if (!(a is B) || !(a is C)) {
+  if (!(a is B) || !(<!USELESS_IS_CHECK!>a is C<!>)) {
   }
   else {
   }
 
-  if (!(a is B) || !(a is C)) {
+  if (!(a is B) || !(<!USELESS_IS_CHECK!>a is C<!>)) {
   }
 
   if (!(a is B)) return

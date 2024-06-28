@@ -79,7 +79,7 @@ public inline fun Timer.scheduleAtFixedRate(time: Date, period: Long, crossinlin
 
 // exposed as public
 @PublishedApi
-internal fun timer(name: String?, daemon: Boolean) = if (name == null) Timer(daemon) else Timer(name, daemon)
+internal fun timer(name: String?, daemon: Boolean): Timer = if (name == null) Timer(daemon) else Timer(name, daemon)
 
 /**
  * Creates a timer that executes the specified [action] periodically, starting after the specified [initialDelay]

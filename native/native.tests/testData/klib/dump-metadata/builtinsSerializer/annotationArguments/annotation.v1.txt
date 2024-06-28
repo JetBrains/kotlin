@@ -1,0 +1,61 @@
+library {
+  // module name: <annotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnotationArray
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/Empty
+    // class name: test/JustAnnotation
+
+    // signature: test/AnnotationArray|null[0]
+    public final annotation class test/AnnotationArray : kotlin/Annotation {
+
+      // signature: test/AnnotationArray.<init>|-6014246659175253914[0]
+      public constructor(annotationArray: kotlin/Array<test/JustAnnotation>)
+
+      // signature: test/AnnotationArray.annotationArray|8313552415425816993[0]
+      public final val annotationArray: kotlin/Array<test/JustAnnotation>
+        // signature: test/AnnotationArray.annotationArray.<get-annotationArray>|9152756390547890002[0]
+        public final get
+    }
+
+    // signature: test/C1|null[0]
+    @test/JustAnnotation(annotation = test/Empty())
+    @test/AnnotationArray(annotationArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/C2|null[0]
+    @test/AnnotationArray(annotationArray = [test/JustAnnotation(annotation = test/Empty()), test/JustAnnotation(annotation = test/Empty())])
+    public final class test/C2 : kotlin/Any {
+
+      // signature: test/C2.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Empty|null[0]
+    public final annotation class test/Empty : kotlin/Annotation {
+
+      // signature: test/Empty.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/JustAnnotation|null[0]
+    public final annotation class test/JustAnnotation : kotlin/Annotation {
+
+      // signature: test/JustAnnotation.<init>|5792502191508234832[0]
+      public constructor(annotation: test/Empty)
+
+      // signature: test/JustAnnotation.annotation|-5849805091355678126[0]
+      public final val annotation: test/Empty
+        // signature: test/JustAnnotation.annotation.<get-annotation>|6966823876819433685[0]
+        public final get
+    }
+  }
+}

@@ -8,3 +8,12 @@ package org.jetbrains.kotlin.generators.gradle.dsl
 import java.util.*
 
 fun String.capitalizeUS() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString() }
+
+internal fun lowerCamelCaseName(vararg nameParts: String?): String {
+    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
+    return nonEmptyParts.drop(1).joinToString(
+        separator = "",
+        prefix = nonEmptyParts.firstOrNull().orEmpty(),
+        transform = String::capitalizeUS
+    )
+}

@@ -1,0 +1,18 @@
+FILE: main.kt
+    public abstract interface B<T> : R|kotlin/Any| {
+        public open fun foo(x: R|T|): R|kotlin/String| {
+            ^foo String(B)
+        }
+
+    }
+    public abstract interface D : R|B<kotlin/Int>| {
+    }
+    public final class E : R|A|, R|D| {
+        public constructor(): R|E| {
+            super<R|A|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/E.E|().R|SubstitutionOverride</D.foo: R|kotlin/String|>|(Int(42))
+    }

@@ -22,7 +22,6 @@ class CirTreeClassDeserializerTest : AbstractCirTreeDeserializerTest() {
         assertNull(clazz.companion, "Expected class *not* having a companion")
         assertFalse(clazz.isInner, "Expected class *not* being inner")
         assertFalse(clazz.isCompanion, "Expected class *not* being companion")
-        assertFalse(clazz.isExternal, "Expected class *not* being external")
         assertFalse(clazz.isValue, "Expected class *not* being value")
         assertFalse(clazz.isData, "Expected class *not* being data class")
         assertTrue(clazz.supertypes.isEmpty(), "Expected class not having any explicit supertypes")

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Foo<K>
 
 fun <K> buildFoo(builderAction: Foo<K>.() -> Unit): Foo<K> = Foo()

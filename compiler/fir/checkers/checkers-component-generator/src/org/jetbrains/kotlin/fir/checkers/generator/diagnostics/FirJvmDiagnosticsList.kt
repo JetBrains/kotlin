@@ -7,39 +7,52 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
-        val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
-
         val OVERRIDE_CANNOT_BE_STATIC by error<PsiElement>()
-        val JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val JVM_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val JVM_STATIC_ON_CONST_OR_JVM_FIELD by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
-        val JVM_STATIC_ON_EXTERNAL_IN_INTERFACE by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION by error<PsiElement>()
+        val JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION by error<PsiElement>()
+        val JVM_STATIC_ON_NON_PUBLIC_MEMBER by error<PsiElement>()
+        val JVM_STATIC_ON_CONST_OR_JVM_FIELD by error<PsiElement>()
+        val JVM_STATIC_ON_EXTERNAL_IN_INTERFACE by error<PsiElement>()
 
-        val INAPPLICABLE_JVM_NAME by error<PsiElement>()
+        val INAPPLICABLE_JVM_NAME by error<PsiElement>() {
+            isSuppressible = true
+        }
         val ILLEGAL_JVM_NAME by error<PsiElement>()
 
         val FUNCTION_DELEGATE_MEMBER_NAME_CLASH by error<PsiElement>(PositioningStrategy.DECLARATION_NAME)
 
         val VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION by error<PsiElement>()
         val JVM_INLINE_WITHOUT_VALUE_CLASS by error<PsiElement>()
+
+        val WRONG_NULLABILITY_FOR_JAVA_OVERRIDE by warning<PsiElement>(PositioningStrategy.OVERRIDE_MODIFIER) {
+            parameter<FirCallableSymbol<*>>("override")
+            parameter<FirCallableSymbol<*>>("base")
+        }
+
+        val ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE by error<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirNamedFunctionSymbol>("hidden")
+            parameter<String>("overrideDescription")
+            parameter<FirNamedFunctionSymbol>("regular")
+        }
+
+        val NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION by error<KtDeclaration>(PositioningStrategy.NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
@@ -47,16 +60,38 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
+
+        val RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<String>("messageSuffix")
+        }
+        val NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("actualType")
+            parameter<ConeKotlinType>("expectedType")
+            parameter<String>("messageSuffix")
+        }
+
+        val TYPE_MISMATCH_WHEN_FLEXIBILITY_CHANGES by warning<PsiElement> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
     }
 
     val TYPE_PARAMETERS by object : DiagnosticGroup("Type parameters") {
         val UPPER_BOUND_CANNOT_BE_ARRAY by error<PsiElement>()
+        val UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("expectedUpperBound")
+            parameter<ConeKotlinType>("actualUpperBound")
+        }
+        val UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS by warning<PsiElement> {
+            parameter<ConeKotlinType>("expectedUpperBound")
+            parameter<ConeKotlinType>("actualUpperBound")
+        }
     }
 
     val ANNOTATIONS by object : DiagnosticGroup("annotations") {
         val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
-        val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
-        val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_ABSTRACT by error<KtAnnotationEntry>()
         val SYNCHRONIZED_IN_INTERFACE by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
@@ -86,9 +121,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
-        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement> {
-            parameter<String>("name")
-        }
         val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
     }
 
@@ -109,18 +141,24 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error<PsiElement>()
     }
 
-    val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
-        val JVM_DEFAULT_NOT_IN_INTERFACE by error<PsiElement>()
-        val JVM_DEFAULT_IN_JVM6_TARGET by error<PsiElement> {
-            parameter<String>("annotation")
+    val MODULES by object : DiagnosticGroup("JVM Modules") {
+        val JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE by error<PsiElement> {
+            parameter<String>("moduleName")
         }
-        val JVM_DEFAULT_REQUIRED_FOR_OVERRIDE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val JAVA_MODULE_DOES_NOT_READ_UNNAMED_MODULE by error<PsiElement>()
+        val JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE by error<PsiElement>() {
+            parameter<String>("moduleName")
+            parameter<String>("packageName")
+            isSuppressible = true
+        }
+    }
+
+    val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
         val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("annotation")
         }
         val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION by error<KtElement>()
         val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE by error<KtElement>()
-        val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
     val EXTERNAL_DECLARATION by object : DiagnosticGroup("External Declaration") {
@@ -132,7 +170,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
     val REPEATABLE by object : DiagnosticGroup("Repeatable Annotations") {
         val NON_SOURCE_REPEATED_ANNOTATION by error<KtAnnotationEntry>()
-        val REPEATED_ANNOTATION_TARGET6 by error<KtAnnotationEntry>()
         val REPEATED_ANNOTATION_WITH_CONTAINER by error<KtAnnotationEntry> {
             parameter<ClassId>("name")
             parameter<ClassId>("explicitContainerName")
@@ -167,6 +204,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
     }
 
+    val INLINE by object : DiagnosticGroup("Inline") {
+        val INLINE_FROM_HIGHER_PLATFORM by error<PsiElement> {
+            parameter<String>("inlinedBytecodeVersion")
+            parameter<String>("currentModuleBytecodeVersion")
+        }
+    }
+
     val MISC by object : DiagnosticGroup("Misc") {
         val INAPPLICABLE_JVM_FIELD by error<KtAnnotationEntry> {
             parameter<String>("message")
@@ -175,14 +219,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("message")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
-        val DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
-            DefaultMethodsCallFromJava6TargetError,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        )
-        val INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
-            DefaultMethodsCallFromJava6TargetError,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        )
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError<PsiElement>(ProhibitConcurrentHashMapContains)
         val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError<PsiElement>(
@@ -190,9 +226,13 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             PositioningStrategy.SPREAD_OPERATOR
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
-        val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error<PsiElement> {
-            parameter<ClassId>("containerClass")
-            parameter<ClassId>("shadowingClass")
+        val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
+        val SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FirNamedFunctionSymbol>("originalSymbol")
+            parameter<Name>("functionName")
+        }
+        val JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<FirPropertySymbol>("kotlinProperty")
         }
     }
 }

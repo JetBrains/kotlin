@@ -46,7 +46,7 @@ There are multiple kinds of tests. Here are some of them:
 Such tests must contain a `fn box(): String` function. If this function returns `"OK"`,
 the test is considered passed, and if it returns anything else, the test is considered failed.
 - Line number tests, located in `js/js.translator/testData/lineNumbers`. These are to ensure that the debug info in the generated JavaScript matches some expectation.
-The expectation is written in a comment staring with `// LINES(JS):` or `// LINES(JS_IR):`.
+The expectation is written in a comment staring with `// LINES(JS_IR):` or `// LINES(ClassicFrontend JS):` or `// LINES(FIR JS_IR):`.
 These comments contain a list of line numbers in the test file that the compiler output is generated from.
 The actual line numbers can be viewed in the generated JS file whose name ends with `-lines.js`.
 - TypeScript export tests, located in `js/js.translator/testData/typescript-export`.

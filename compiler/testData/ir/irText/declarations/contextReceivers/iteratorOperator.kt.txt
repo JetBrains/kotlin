@@ -1,14 +1,14 @@
 data class Counter {
+  var i: Int
+    field = i
+    get
+    set
+
   constructor(i: Int = 0) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var i: Int
-    field = i
-    get
-    set
 
   operator fun component1(): Int {
     return <this>.#i
@@ -18,14 +18,6 @@ data class Counter {
     return Counter(i = i)
   }
 
-  override fun toString(): String {
-    return "Counter(" + "i=" + <this>.#i + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#i.hashCode()
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -33,25 +25,33 @@ data class Counter {
     when {
       other !is Counter -> return false
     }
-    val tmp0_other_with_cast: Counter = other as Counter
+    val tmp_0: Counter = other as Counter
     when {
-      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+      EQEQ(arg0 = <this>.#i, arg1 = tmp_0.#i).not() -> return false
     }
     return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override fun toString(): String {
+    return "Counter(" + "i=" + <this>.#i + ")"
   }
 
 }
 
 data class CounterConfig {
+  val max: Int
+    field = max
+    get
+
   constructor(max: Int = 10) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val max: Int
-    field = max
-    get
 
   operator fun component1(): Int {
     return <this>.#max
@@ -61,14 +61,6 @@ data class CounterConfig {
     return CounterConfig(max = max)
   }
 
-  override fun toString(): String {
-    return "CounterConfig(" + "max=" + <this>.#max + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#max.hashCode()
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -76,27 +68,35 @@ data class CounterConfig {
     when {
       other !is CounterConfig -> return false
     }
-    val tmp0_other_with_cast: CounterConfig = other as CounterConfig
+    val tmp_1: CounterConfig = other as CounterConfig
     when {
-      EQEQ(arg0 = <this>.#max, arg1 = tmp0_other_with_cast.#max).not() -> return false
+      EQEQ(arg0 = <this>.#max, arg1 = tmp_1.#max).not() -> return false
     }
     return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#max.hashCode()
+  }
+
+  override fun toString(): String {
+    return "CounterConfig(" + "max=" + <this>.#max + ")"
   }
 
 }
 
 class CounterIterator : Iterator<Int> {
   private /* final field */ val contextReceiverField0: CounterConfig
-  constructor(_context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
-    super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
-    /* <init>() */
-
-  }
-
   private val counter: Counter
     field = counter
     private get
+
+  constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = $context_receiver_0
+    /* <init>() */
+
+  }
 
   override operator fun hasNext(): Boolean {
     return less(arg0 = <this>.<get-counter>().<get-i>(), arg1 = <this>.#contextReceiverField0.<get-max>())
@@ -104,31 +104,24 @@ class CounterIterator : Iterator<Int> {
 
   override operator fun next(): Int {
     return { // BLOCK
-      val tmp0_this: Counter = <this>.<get-counter>()
+      val tmp_2: Counter = <this>.<get-counter>()
       { // BLOCK
-        val tmp1: Int = tmp0_this.<get-i>()
-        tmp0_this.<set-i>(<set-?> = tmp1.inc())
-        tmp1
+        val tmp_3: Int = tmp_2.<get-i>()
+        tmp_2.<set-i>(<set-?> = tmp_3.inc())
+        tmp_3
       }
     }
   }
 
 }
 
-operator fun Counter.iterator(_context_receiver_0: CounterConfig): CounterIterator {
-  return with<CounterConfig, CounterIterator>(receiver = _context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
-    return CounterIterator(_context_receiver_0 = $this$with, counter = <this>)
-  }
-)
-}
-
 fun box(): String {
   var result: Int = 0
   with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
     { // BLOCK
-      val tmp0_iterator: CounterIterator = Counter().iterator(_context_receiver_0 = $this$with)
-      while (tmp0_iterator.hasNext()) { // BLOCK
-        val i: Int = tmp0_iterator.next()
+      val tmp_4: CounterIterator = Counter().iterator($context_receiver_0 = $this$with)
+      while (tmp_4.hasNext()) { // BLOCK
+        val i: Int = tmp_4.next()
         { // BLOCK
           result = result.plus(other = i)
         }
@@ -141,3 +134,11 @@ fun box(): String {
     else -> "fail"
   }
 }
+
+operator fun Counter.iterator($context_receiver_0: CounterConfig): CounterIterator {
+  return with<CounterConfig, CounterIterator>(receiver = $context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
+    return CounterIterator($context_receiver_0 = $this$with, counter = <this>)
+  }
+)
+}
+

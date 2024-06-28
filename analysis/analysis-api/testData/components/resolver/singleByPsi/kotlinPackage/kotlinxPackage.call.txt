@@ -1,0 +1,15 @@
+KtNameReferenceExpression(52,55): 'bar'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlinx/pckg/bar(): kotlin.Unit
+          valueParameters = []
+          callableId = kotlinx/pckg/bar
+      typeArgumentsMapping = {}
+      argumentMapping = {}

@@ -283,6 +283,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: ClosureBuilder?) {
             super.visitFunctionAccess(expression, data)
+            processScriptCapturing(expression.dispatchReceiver, expression.symbol.owner, data)
             processMemberAccess(expression.symbol.owner, data)
         }
 
@@ -308,6 +309,17 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
                 (it.owner as? IrConstructor)?.closureBuilder ?: it
             }
             typeParameterContainerScopeBuilder?.seeType(expression.type)
+        }
+
+        private fun processScriptCapturing(receiverExpression: IrExpression?, declaration: IrDeclaration, data: ClosureBuilder?) {
+            if (receiverExpression == null) {
+                val parent = declaration.parent
+                if (parent is IrScript) {
+                    data?.seeVariable(parent.thisReceiver!!.symbol)
+                } else if (parent is IrClass && parent.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
+                    data?.seeVariable(parent.thisReceiver!!.symbol)
+                }
+            }
         }
 
         private fun processMemberAccess(declaration: IrDeclaration, parentClosure: ClosureBuilder?) {

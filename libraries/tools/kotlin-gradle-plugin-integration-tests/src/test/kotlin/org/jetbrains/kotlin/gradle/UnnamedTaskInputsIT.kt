@@ -52,7 +52,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
     @DisplayName("MPP")
     @GradleTest
     fun inputsMpp(gradleVersion: GradleVersion) {
-        project("multiplatformProject", gradleVersion) {
+        project("hierarchical-mpp-multi-modules", gradleVersion) {
             enableLocalBuildCache(localBuildCacheDir)
 
             build("assemble") {
@@ -70,6 +70,7 @@ class UnnamedTaskInputsIT : KGPBaseTest() {
 
             build("assemble") {
                 assertNoUnnamedInputsOutputs()
+                assertNoBuildWarnings(expectedK2KaptWarnings)
             }
         }
     }

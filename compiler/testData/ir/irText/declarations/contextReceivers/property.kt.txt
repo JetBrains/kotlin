@@ -9,6 +9,6 @@ interface B {
 }
 
 val c: Int
-  get(_context_receiver_0: A, _context_receiver_1: B): Int {
-    return _context_receiver_0.a().plus(other = _context_receiver_1.b())
+  get($context_receiver_0: A, $context_receiver_1: B): Int {
+    return $context_receiver_0.a().plus(other = $context_receiver_1.b())
   }

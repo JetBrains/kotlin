@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/whenGuards.kt:13:18: error: the feature "when guards" is experimental and should be enabled explicitly
+    is Status.Ok if status.info.isEmpty() -> "no data"
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/whenGuards.kt:15:21: error: the feature "when guards" is experimental and should be enabled explicitly
+    is Status.Error if status.problem == Problem.CONNECTION -> "problems with connection"
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/whenGuards.kt:16:21: error: the feature "when guards" is experimental and should be enabled explicitly
+    is Status.Error if status.problem == Problem.AUTHENTICATION -> "could not be authenticated"
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+COMPILATION_ERROR

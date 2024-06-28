@@ -574,8 +574,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             mapDefaultCallback(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)),
             signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
             calleeType, returnKotlinType,
-            if (jvmTarget >= JvmTarget.JVM_1_8) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
-            isDefaultMethodInInterface, boxInlineClassBeforeInvoke
+            isInterfaceMember, isDefaultMethodInInterface, boxInlineClassBeforeInvoke
         )
     }
 
@@ -611,6 +610,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
                 val isAccessor = property is AccessorForPropertyDescriptor
                 val propertyName = if (isAccessor)
+                    @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                     (property as AccessorForPropertyDescriptor).accessorSuffix
                 else
                     property.name.asString()
@@ -1367,7 +1367,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             return JvmClassName.byClassId(ownerClassId).internalName
         }
 
-        private val FAKE_CLASS_ID_FOR_BUILTINS = ClassId(FqName("kotlin.jvm.internal"), FqName("Intrinsics.Kotlin"), false)
+        private val FAKE_CLASS_ID_FOR_BUILTINS = ClassId(FqName("kotlin.jvm.internal"), FqName("Intrinsics.Kotlin"), isLocal = false)
 
         private fun getPackageMemberContainingClassesInfo(descriptor: DescriptorWithContainerSource): ContainingClassesInfo? {
             val containingDeclaration = descriptor.containingDeclaration
@@ -1426,6 +1426,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
             SimpleClassicTypeSystemContext.hasNothingInNonContravariantPosition(kotlinType)
 
         fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
+            if (type.isError()) {
+                // We cannot access type arguments for an unresolved type
+                return false
+            }
+
             val typeConstructor = type.typeConstructor()
 
             for (i in 0 until type.argumentsCount()) {
@@ -1484,28 +1489,44 @@ class KotlinTypeMapper @JvmOverloads constructor(
             mode: TypeMappingMode,
             mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
         ) {
-            for ((parameter, argument) in parameters.zipWithNulls(arguments)) {
+            processGenericArguments(
+                arguments,
+                parameters,
+                mode,
+                processUnboundedWildcard = {
+                    signatureVisitor.writeUnboundedWildcard()
+                },
+                processTypeArgument = { _, type, projectionKind, parameterVariance, newMode ->
+                    signatureVisitor.writeTypeArgument(projectionKind)
+                    mapType(type, signatureVisitor, newMode)
+                    signatureVisitor.writeTypeArgumentEnd()
+                }
+            )
+        }
+
+        fun TypeSystemCommonBackendContext.processGenericArguments(
+            arguments: List<TypeArgumentMarker>,
+            parameters: List<TypeParameterMarker>,
+            mode: TypeMappingMode,
+            processUnboundedWildcard: () -> Unit,
+            processTypeArgument: (index: Int, type: KotlinTypeMarker, projectionKind: Variance, parameterVariance: Variance, mode: TypeMappingMode) -> Unit,
+        ) {
+            for ((index, pair) in parameters.zipWithNulls(arguments).withIndex()) {
+                val (parameter, argument) = pair
                 if (argument == null) break
                 if (argument.isStarProjection() ||
                     // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
                     argument.getType().isNothing() && parameter?.getVariance() == TypeVariance.IN
                 ) {
-                    signatureVisitor.writeUnboundedWildcard()
+                    processUnboundedWildcard()
                 } else {
                     val argumentMode = mode.updateArgumentModeFromAnnotations(argument.getType(), this)
                     val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
-
-                    signatureVisitor.writeTypeArgument(projectionKind)
-
                     val parameterVariance = parameter?.getVariance()?.convertVariance() ?: Variance.INVARIANT
-                    mapType(
-                        argument.getType(), signatureVisitor,
-                        argumentMode.toGenericArgumentMode(
-                            getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
-                        )
+                    val newMode = argumentMode.toGenericArgumentMode(
+                        getEffectiveVariance(parameterVariance, argument.getVariance().convertVariance())
                     )
-
-                    signatureVisitor.writeTypeArgumentEnd()
+                    processTypeArgument(index, argument.getType(), projectionKind, parameterVariance, newMode)
                 }
             }
         }

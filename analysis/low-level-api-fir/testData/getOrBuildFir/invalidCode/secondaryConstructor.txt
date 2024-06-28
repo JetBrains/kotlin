@@ -1,0 +1,21 @@
+KT element: KtDeclarationModifierList
+FIR element: FirDanglingModifierListImpl
+FIR source kind: DanglingModifierList
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class JsQualifier : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=JsQualifier] constructor(): R|JsQualifier| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/String|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=JsQualifier] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] <DANGLING MODIFIER: Top level declaration expected>
+    }

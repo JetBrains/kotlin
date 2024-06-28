@@ -1,0 +1,33 @@
+library {
+  // module name: <simple.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Class
+
+    // signature: test/Class|null[0]
+    public final class test/Class : kotlin/Any {
+
+      // signature: test/Class.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/Class.member|-5369299060503369718[0]
+      public final fun member(): kotlin/Nothing?
+    }
+
+    package {
+
+      // signature: test/extension|-6620817981111883314[0]
+      public final fun <T#0 /* T */> T#0.extension(): T#0?
+
+      // signature: test/function|894692402108510399[0]
+      public final fun function(int: kotlin/Int, string: kotlin/String /* = ... */): test/Class
+
+      // signature: test/property|4634558160746314112[0]
+      public final val property: kotlin/Unit
+        // signature: test/property.<get-property>|4838831487146901942[0]
+        public final get
+    }
+  }
+}

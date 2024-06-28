@@ -1,38 +1,3 @@
-object Delegate {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  operator fun getValue(thisRef: Any?, kProp: Any): Int {
-    return 1
-  }
-
-  operator fun setValue(thisRef: Any?, kProp: Any, value: Int) {
-  }
-
-}
-
-open class C {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var varWithPrivateSet: Int
-    field = 1
-    get
-    private set
-
-  var varWithProtectedSet: Int
-    field = 1
-    get
-    protected set
-
-}
-
 val valWithBackingField: Int
   field = 1
   get
@@ -63,21 +28,9 @@ val test_varWithBackingFieldAndAccessors: KMutableProperty0<Int>
   field = ::varWithBackingFieldAndAccessors
   get
 
-val valWithAccessors: Int
-  get(): Int {
-    return 1
-  }
-
 val test_valWithAccessors: KProperty0<Int>
   field = ::valWithAccessors
   get
-
-var varWithAccessors: Int
-  get(): Int {
-    return 1
-  }
-  set(value: Int) {
-  }
 
 val test_varWithAccessors: KMutableProperty0<Int>
   field = ::varWithAccessors
@@ -129,3 +82,51 @@ val test_varWithPrivateSet: KProperty1<C, Int>
 val test_varWithProtectedSet: KProperty1<C, Int>
   field = C::varWithProtectedSet
   get
+
+open class C {
+  var varWithPrivateSet: Int
+    field = 1
+    get
+    private set
+
+  var varWithProtectedSet: Int
+    field = 1
+    get
+    protected set
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object Delegate {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun getValue(thisRef: Any?, kProp: Any): Int {
+    return 1
+  }
+
+  operator fun setValue(thisRef: Any?, kProp: Any, value: Int) {
+  }
+
+}
+
+val valWithAccessors: Int
+  get(): Int {
+    return 1
+  }
+
+var varWithAccessors: Int
+  get(): Int {
+    return 1
+  }
+  set(value: Int) {
+  }
+

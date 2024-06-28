@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
+import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiAnnotationParameterList
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtElement
@@ -15,6 +16,14 @@ internal sealed class SymbolLightAbstractAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,
 ) : KtLightElementBase(parent), PsiAnnotationParameterList {
     override val kotlinOrigin: KtElement? get() = (parent as SymbolLightAbstractAnnotation).kotlinOrigin?.valueArgumentList
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitAnnotationParameterList(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -23,7 +32,7 @@ internal inline fun SymbolLightAbstractAnnotation.symbolLightAnnotationParameter
 }
 
 internal fun SymbolLightAbstractAnnotation.symbolLightAnnotationParameterList(
-    arguments: List<KtNamedAnnotationValue>,
+    arguments: List<AnnotationArgument>,
 ): SymbolLightAbstractAnnotationParameterList = if (arguments.isNotEmpty()) {
     SymbolLightLazyAnnotationParameterList(this, lazyOf(arguments))
 } else {
@@ -31,5 +40,5 @@ internal fun SymbolLightAbstractAnnotation.symbolLightAnnotationParameterList(
 }
 
 internal inline fun SymbolLightAbstractAnnotation.symbolLightAnnotationParameterList(
-    crossinline argumentsComputer: () -> List<KtNamedAnnotationValue>,
+    crossinline argumentsComputer: () -> List<AnnotationArgument>,
 ): SymbolLightAbstractAnnotationParameterList = SymbolLightLazyAnnotationParameterList(this, lazyPub { argumentsComputer() })

@@ -1,0 +1,7 @@
+java.lang.AssertionError: Recursion detected on input: function under LockBasedStorageManager@71c18c53 (TopDownAnalyzer for JVM)
+	at org.jetbrains.kotlin.resolve.lazy.descriptors.AbstractLazyMemberScope.getContributedFunctions(AbstractLazyMemberScope.kt:97)
+	at org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope.getContributedFunctions(ChainedMemberScope.kt:41)
+	at org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter.getContributedFunctions(AbstractScopeAdapter.kt:40)
+	at org.jetbrains.kotlin.resolve.lazy.FileScopeFactory$currentPackageScope$1.getContributedFunctions(FileScopeFactory.kt:289)
+	at org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt.getContributedFunctionsAndConstructors(TowerLevels.kt:474)
+	at org.jetbrains.kotlin.resolve.calls.tower.TowerLevelsKt.access$getContributedFunctionsAndConstructors(TowerLevels.kt:1)

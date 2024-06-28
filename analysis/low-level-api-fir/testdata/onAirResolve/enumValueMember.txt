@@ -1,3 +1,0 @@
-public final [BODY_RESOLVE] fun box(): R|kotlin/Int| {
-    ^box Int(0)
-}

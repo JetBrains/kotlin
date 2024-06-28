@@ -13,7 +13,7 @@ FILE fqName:test fileName:/boundInlineAdaptedReference.kt
         GET_VAR 's: kotlin.String declared in test.id' type=kotlin.String origin=null
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun foo (x: kotlin.Function0<kotlin.Unit>): kotlin.Unit [inline] declared in test' type=kotlin.Unit origin=null
+      CALL 'public final fun foo (x: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in test' type=kotlin.Unit origin=null
         x: BLOCK type=kotlin.Function0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:id visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:kotlin.String

@@ -26,7 +26,7 @@ echo "BUILD_NUMBER=$BUILD_NUMBER"
 echo "KOTLIN_NATIVE_VERSION=$KOTLIN_NATIVE_VERSION"
 
 # Update versions in pom.xml
-mvn -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true -f libraries/pom.xml versions:set
+./libraries/mvnw -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=true -f libraries/pom.xml versions:set
 
 # Build part of kotlin and publish it to the local maven repository and to build/repo directory
 ./gradlew \
@@ -39,7 +39,7 @@ mvn -DnewVersion=$DEPLOY_VERSION -DgenerateBackupPoms=false -DprocessAllModules=
   publish publishToMavenLocal
 
 # Build maven part and publish it to the same build/repo
-mvn \
+./libraries/mvnw \
   -f libraries/pom.xml \
   clean deploy \
   -Ddeploy-url=file://$(pwd)/build/repo \
@@ -50,6 +50,8 @@ mkdir -p build/repo-reproducible
 cp -R build/repo/. build/repo-reproducible
 # maven-metadata contains lastUpdated section with the build time
 find build/repo-reproducible -name "maven-metadata.xml*" -exec rm -rf {} \;
+# spdx SBOM contains creationInfo with datetime
+find build/repo-reproducible -name "*.spdx.json*" -exec rm -rf {} \;
 # Each file has own timestamp that would affect zip file hash if not aligned
 find build/repo-reproducible -exec touch -t "198001010000" {} \;
 cd build/repo-reproducible && find . -type f | sort | zip -X reproducible-maven-$DEPLOY_VERSION.zip -@ && cd -

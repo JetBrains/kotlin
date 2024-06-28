@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 abstract class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
@@ -95,7 +96,7 @@ abstract class ConstantValueGenerator(
                     startOffset, endOffset,
                     constantType,
                     arrayElementType.toIrType(),
-                    constantValue.value.mapNotNull {
+                    constantValue.value.memoryOptimizedMapNotNull {
                         // For annotation arguments, the type of every subexpression can be inferred from the type of the parameter;
                         // for arbitrary constants, we should always take the type inferred by the frontend.
                         val newExpectedType = arrayElementType.takeIf { expectedType != null }
@@ -108,33 +109,43 @@ abstract class ConstantValueGenerator(
                 //  TODO: in `annotationWithKotlinProperty`, `@Foo(KotlinClass.FOO_INT)` is parsed as if `KotlinClass.FOO_INT`
                 //    is an EnumValue when it's a read of a `const val` with an Int type. Not using `expectedType` somewhat masks
                 //    that - we silently fail to translate the argument because `enumEntryDescriptor` is an error class.
-                val enumEntryDescriptor =
-                    constantValueType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
-                        ?: throw AssertionError("No such enum entry ${constantValue.enumEntryName} in $constantType")
-                if (enumEntryDescriptor !is ClassDescriptor) {
-                    throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
-                }
-                if (!DescriptorUtils.isEnumEntry(enumEntryDescriptor)) {
-                    // Error class descriptor for an unresolved entry.
-                    // TODO this `null` may actually reach codegen if the annotation is on an interface member's default implementation,
-                    //      as any bridge generated in an implementation of that interface will have a copy of the annotation. See
-                    //      `missingEnumReferencedInAnnotationArgumentIr` in `testData/compileKotlinAgainstCustomBinaries`: replace
-                    //      `open class B` with `interface B` and watch things break. (`KClassValue` below likely has a similar problem.)
-                    return null
-                }
-                IrGetEnumValueImpl(
-                    startOffset, endOffset,
-                    constantType,
-                    symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                val enumEntryDescriptor = constantValueType.memberScope.getContributedClassifier(
+                    constantValue.enumEntryName,
+                    NoLookupLocation.FROM_BACKEND
                 )
+
+                when {
+                    enumEntryDescriptor == null -> {
+                        // Missing enum entry. Probably it's gone in newer version of the library.
+                        return null
+                    }
+                    enumEntryDescriptor !is ClassDescriptor -> {
+                        throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
+                    }
+                    !DescriptorUtils.isEnumEntry(enumEntryDescriptor) -> {
+                        // Error class descriptor for an unresolved entry.
+                        // TODO this `null` may actually reach codegen if the annotation is on an interface member's default implementation,
+                        //      as any bridge generated in an implementation of that interface will have a copy of the annotation. See
+                        //      `missingEnumReferencedInAnnotationArgumentIr` in `testData/compileKotlinAgainstCustomBinaries`: replace
+                        //      `open class B` with `interface B` and watch things break. (`KClassValue` below likely has a similar problem.)
+                        return null
+                    }
+                    else -> IrGetEnumValueImpl(
+                        startOffset, endOffset,
+                        constantType,
+                        symbolTable.descriptorExtension.referenceEnumEntry(enumEntryDescriptor)
+                    )
+                }
             }
 
             is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value, constantKtType)
 
             is KClassValue -> {
                 val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
-                if (classifierKtType.isError) null
-                else {
+                if (classifierKtType.isError) {
+                    // The classifier type contains error class descriptor. Probably the classifier is gone in newer version of the library.
+                    null
+                } else {
                     val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
                         ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 
@@ -156,21 +167,18 @@ abstract class ConstantValueGenerator(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrConstructorCall? {
         val annotationType = realType ?: annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
-        if (annotationClassDescriptor !is ClassDescriptor) return null
-        if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
+        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-        assert(
-            DescriptorUtils.isAnnotationClass(annotationClassDescriptor) ||
-                    (allowErrorTypeInAnnotations && annotationClassDescriptor is ErrorClassDescriptor)
-        ) {
-            "Annotation class expected: $annotationClassDescriptor"
+        when (annotationClassDescriptor) {
+            is NotFoundClasses.MockClassDescriptor -> return null
+            is ErrorClassDescriptor -> if (!allowErrorTypeInAnnotations) return null
+            else -> if (!DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) return null
         }
 
         val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor
             ?: annotationClassDescriptor.constructors.singleOrNull()
             ?: throw AssertionError("No constructor for annotation class $annotationClassDescriptor")
-        val primaryConstructorSymbol = symbolTable.referenceConstructor(primaryConstructorDescriptor)
+        val primaryConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(primaryConstructorDescriptor)
 
         val (startOffset, endOffset) = extractAnnotationOffsets(annotationDescriptor)
 

@@ -1,0 +1,13 @@
+/deprecatedError.kt:14:13: error: using 'C' is an error. alas
+fun test(c: C) {
+            ^
+/deprecatedError.kt:15:5: error: using 'foo(String): Unit' is an error. alas
+    foo("")
+    ^^^
+/deprecatedError.kt:16:5: error: using 'C' is an error. alas
+    C()
+    ^
+/deprecatedError.kt:17:5: error: using 'bar: Int' is an error. alas
+    bar
+    ^^^
+

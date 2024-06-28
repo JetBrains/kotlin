@@ -1,5 +1,5 @@
 FILE: derivedClass.kt
-    public? open class Base<T> : R|kotlin/Any| {
+    public open class Base<T> : R|kotlin/Any| {
         public? constructor<T>(x: T): R|Base<T>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -8,7 +8,7 @@ FILE: derivedClass.kt
             public? get(): T
 
     }
-    public? final? class Derived<T : Any> : Base<T> {
+    public final? class Derived<T : Any> : Base<T> {
         public? constructor<T : Any>(x: T): R|Derived<T>| {
             LAZY_super<Base<T>>
         }

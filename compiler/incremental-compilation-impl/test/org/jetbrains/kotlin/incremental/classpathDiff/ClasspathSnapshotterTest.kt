@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.TestSourceFile
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.File
 
 private val testDataDir =
@@ -32,7 +31,7 @@ class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
     fun testSimpleClass() {
         val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.kt")
         val actualSnapshot = sourceFile.compileAndSnapshot().toGson()
-        val expectedSnapshot = sourceFile.getExpectedSnapshotFile().readText()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotText()
 
         assertEquals(expectedSnapshot, actualSnapshot)
 
@@ -56,7 +55,7 @@ class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
         val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.kt")
         val classFile = sourceFile.compileSingle()
         val actualSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL).toGson()
-        val expectedSnapshot = sourceFile.getExpectedSnapshotFile(ClassSnapshotGranularity.CLASS_LEVEL).readText()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotText(ClassSnapshotGranularity.CLASS_LEVEL)
 
         assertEquals(expectedSnapshot, actualSnapshot)
 
@@ -104,7 +103,7 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
     fun testSimpleClass() {
         val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.java")
         val actualSnapshot = sourceFile.compileAndSnapshot().toGson()
-        val expectedSnapshot = sourceFile.getExpectedSnapshotFile().readText()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotText()
 
         assertEquals(expectedSnapshot, actualSnapshot)
 
@@ -127,7 +126,7 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
         val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.java")
         val classFile = sourceFile.compileSingle()
         val actualSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL).toGson()
-        val expectedSnapshot = sourceFile.getExpectedSnapshotFile(ClassSnapshotGranularity.CLASS_LEVEL).readText()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotText(ClassSnapshotGranularity.CLASS_LEVEL)
 
         assertEquals(expectedSnapshot, actualSnapshot)
 
@@ -136,10 +135,10 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
     }
 }
 
-private fun TestSourceFile.getExpectedSnapshotFile(granularity: ClassSnapshotGranularity? = null): File {
+private fun TestSourceFile.getExpectedSnapshotText(granularity: ClassSnapshotGranularity? = null): String {
     val relativePath = sourceFile.unixStyleRelativePath.substringBeforeLast(".") + ".json"
     val expectedSnapshotDirName = if (granularity == null) "expected-snapshot" else "expected-snapshot-${granularity.name}"
-    return sourceFile.baseDir.resolve("../$expectedSnapshotDirName/$relativePath")
+    return sourceFile.baseDir.resolve("../$expectedSnapshotDirName/$relativePath").readText().trimEnd()
 }
 
 private fun String.assertContains(vararg elements: String) {

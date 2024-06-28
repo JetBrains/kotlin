@@ -1,0 +1,54 @@
+public final inline fun <T> R|T|.also(block: R|(T) -> kotlin/Unit|): R|T|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+
+
+public final inline fun <T> R|T|.apply(block: R|T.() -> kotlin/Unit|): R|T|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+
+
+public final inline fun <T, R> R|T|.let(block: R|(T) -> R|): R|R|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+
+
+public final inline fun repeat(times: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        CallsInPlace(action, UNKNOWN)
+    >
+
+
+public final inline fun <R> run(block: R|() -> R|): R|R|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+
+
+public final inline fun <T, R> R|T|.run(block: R|T.() -> R|): R|R|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >
+
+
+public final inline fun <T> R|T|.takeIf(predicate: R|(T) -> kotlin/Boolean|): R|T?|
+    [R|Contract description]
+     <
+        CallsInPlace(predicate, EXACTLY_ONCE)
+    >
+
+
+public final inline fun <T, R> with(receiver: R|T|, block: R|T.() -> R|): R|R|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >

@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.konan.library
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -12,12 +11,6 @@ import org.jetbrains.kotlin.util.Logger
 interface SearchPathResolverWithTarget<L: KotlinLibrary>: SearchPathResolver<L> {
     val target: KonanTarget
 }
-
-fun defaultResolver(
-        repositories: List<String>,
-        target: KonanTarget,
-        distribution: Distribution
-): SearchPathResolverWithTarget<KonanLibrary> = defaultResolver(repositories, emptyList(), target, distribution)
 
 fun defaultResolver(
     repositories: List<String>,
@@ -82,7 +75,7 @@ internal class KonanLibraryProperResolver(
         val candidatePath = candidate.libraryFile.absolutePath
 
         if (!candidate.targetList.contains(resolverTarget.visibleName)) {
-            logger.warning("skipping $candidatePath. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}")
+            logger.strongWarning("KLIB resolver: Skipping '$candidatePath'. The target doesn't match. Expected '$resolverTarget', found ${candidate.targetList}.")
             return false
         }
 

@@ -1,0 +1,3 @@
+source(new File(basedir, "../../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLine("Hello from inline Kotlin script using java!")

@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices CFCGTypes CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MapKit Metal OpenGLCommon Photos QuartzCore Security cups darwin libkern osx posix
+depends = AVFAudio AVFoundation AppKit ApplicationServices AudioToolbox CFCGTypes CFNetwork CloudKit CoreAudio CoreAudioTypes CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MapKit MediaToolbox Metal OpenGLCommon Photos QuartzCore Security Symbols UniformTypeIdentifiers cups darwin libkern osx posix
 language = Objective-C
 package = platform.PhotosUI
 modules = PhotosUI

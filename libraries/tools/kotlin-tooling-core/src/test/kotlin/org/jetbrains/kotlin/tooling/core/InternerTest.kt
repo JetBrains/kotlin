@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.tooling.core
 
 import org.junit.Test
+import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
 class InternerTest {
@@ -36,5 +37,8 @@ class InternerTest {
         assertSame(sample1A, interner.getOrPut(sample1B))
         assertSame(sample0A, interner.getOrPut(sample0A))
         assertSame(sample0A, interner.getOrPut(sample0B))
+
+        interner.clear()
+        assertNotSame(sample0A, interner.getOrPut(Sample(0)))
     }
 }

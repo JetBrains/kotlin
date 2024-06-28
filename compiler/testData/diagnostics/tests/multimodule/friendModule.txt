@@ -35,3 +35,8 @@ package p {
 package
 
 public fun test(): kotlin.Unit
+
+// -- Module: <m3> --
+package
+
+public fun test3(): kotlin.Unit

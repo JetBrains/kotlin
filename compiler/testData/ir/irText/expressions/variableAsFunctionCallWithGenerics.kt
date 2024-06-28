@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 val <T : CharSequence> T.gk: () -> T
     get() = { -> this }
 

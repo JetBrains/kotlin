@@ -9,8 +9,14 @@ import org.jetbrains.kotlin.konan.util.Named
 import java.io.Serializable
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
-const val DEPRECATED_TARGET_MESSAGE = "Target is deprecated and will be removed soon. See: $DEPRECATION_LINK"
+const val DEPRECATED_TARGET_MESSAGE = "Target is no longer available. See: $DEPRECATION_LINK"
 
+const val REMOVED_TARGET_MESSAGE =
+    "The support for this target and related APIs (Family, Architecture, etc.) has been removed from Kotlin. " +
+            "This specific API is kept solely to provide a readable error message. Usages of this API can be safely removed from your code.\n" +
+            "Refer to https://kotl.in/native-targets-support for details on currently supported targets"
+
+@Suppress("ClassName")
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named, Serializable {
     object ANDROID_X64 : KonanTarget("android_x64", Family.ANDROID, Architecture.X64)
     object ANDROID_X86 : KonanTarget("android_x86", Family.ANDROID, Architecture.X86)
@@ -33,19 +39,35 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object MACOS_ARM64 : KonanTarget("macos_arm64", Family.OSX, Architecture.ARM64)
     object LINUX_ARM64 : KonanTarget("linux_arm64", Family.LINUX, Architecture.ARM64)
 
-    // Deprecated targets. TODO: add deprecations
-    // Deprecation is not declared right now because otherwise compilation of the project will fail, because warnings will be reported
-    object IOS_ARM32 : KonanTarget("ios_arm32", Family.IOS, Architecture.ARM32)
-    object WATCHOS_X86 : KonanTarget("watchos_x86", Family.WATCHOS, Architecture.X86)
     object LINUX_ARM32_HFP : KonanTarget("linux_arm32_hfp", Family.LINUX, Architecture.ARM32)
-    object LINUX_MIPS32 : KonanTarget("linux_mips32", Family.LINUX, Architecture.MIPS32)
-    object LINUX_MIPSEL32 : KonanTarget("linux_mipsel32", Family.LINUX, Architecture.MIPSEL32)
-    object MINGW_X86 : KonanTarget("mingw_x86", Family.MINGW, Architecture.X86)
-    object WASM32 : KonanTarget("wasm32", Family.WASM, Architecture.WASM32)
 
-    // Tunable targets
-    class ZEPHYR(val subName: String, val genericName: String = "zephyr") :
-        KonanTarget("${genericName}_$subName", Family.ZEPHYR, Architecture.ARM32)
+    /**
+     * Removed targets. References are left just to provide a readable diagnostic message (as opposed to
+     * plain "unresolved reference error").
+     *
+     * Note that removed targets do not extend [KonanTarget] in order to make it possible to drop them references
+     * to them from the codebase without breaking exhaustive `when`s.
+     */
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object IOS_ARM32
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object WATCHOS_X86
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object LINUX_MIPS32
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object LINUX_MIPSEL32
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object MINGW_X86
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object WASM32
+
+    @Deprecated(message = REMOVED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)
+    object ZEPHYR
 
     override fun toString() = name
 
@@ -54,18 +76,33 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
         val predefinedTargets: Map<String, KonanTarget> by lazy {
             listOf(
                 ANDROID_X64, ANDROID_X86, ANDROID_ARM32, ANDROID_ARM64,
-                IOS_ARM32, IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64,
-                WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
+                IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64,
+                WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X64,
                 WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64,
                 TVOS_ARM64, TVOS_X64, TVOS_SIMULATOR_ARM64,
                 LINUX_X64,
-                MINGW_X86, MINGW_X64,
+                MINGW_X64,
                 MACOS_X64, MACOS_ARM64,
-                LINUX_ARM64, LINUX_ARM32_HFP, LINUX_MIPS32, LINUX_MIPSEL32,
-                WASM32
+                LINUX_ARM64, LINUX_ARM32_HFP
             ).associateBy { it.name }
         }
 
-        val deprecatedTargets = setOf(WATCHOS_X86, IOS_ARM32, LINUX_ARM32_HFP, MINGW_X86, LINUX_MIPS32, LINUX_MIPSEL32, WASM32)
+        val deprecatedTargets = setOf(LINUX_ARM32_HFP)
+        val toleratedDeprecatedTargets = setOf(LINUX_ARM32_HFP)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return when {
+            this === other -> true
+            other !is KonanTarget -> false
+            else -> this.name == other.name && this.family == other.family && this.architecture == other.architecture
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + family.hashCode()
+        result = 31 * result + architecture.hashCode()
+        return result
     }
 }

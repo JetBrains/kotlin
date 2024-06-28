@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 fun Any.foo1() : (i : Int) -> Unit {
     return {}
 }

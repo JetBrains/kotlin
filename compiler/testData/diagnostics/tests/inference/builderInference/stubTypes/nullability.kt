@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
+// LANGUAGE: +UnrestrictedBuilderInference
+// DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
 
 // FILE: main.kt

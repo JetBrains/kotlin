@@ -1,7 +1,20 @@
-// !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 // FULL_JDK
+
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-213
+ * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: inheritance, overriding -> paragraph 7 -> sentence 1
+ * NUMBER: 8
+ * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
+ * ISSUES: KT-27825
+ */
+
+
 
 // MODULE: base
 // FILE: AbstractClassCase1.kt

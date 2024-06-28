@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 
 fun foo(x: Int) {
@@ -21,32 +22,39 @@ fun box() {
     foo(0)
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:20 box
-// test.kt:4 foo
-// test.kt:5 foo
-// test.kt:8 foo
-// test.kt:12 foo
-// test.kt:13 foo
-// test.kt:17 foo
+// EXPECTATIONS JVM_IR
 // test.kt:21 box
-// test.kt:4 foo
-// test.kt:8 foo
+// test.kt:5 foo
+// test.kt:6 foo
 // test.kt:9 foo
-// test.kt:12 foo
-// test.kt:15 foo
-// test.kt:17 foo
+// test.kt:13 foo
+// test.kt:14 foo
+// test.kt:18 foo
 // test.kt:22 box
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:10 foo
+// test.kt:13 foo
+// test.kt:16 foo
+// test.kt:18 foo
+// test.kt:23 box
 
 // EXPECTATIONS JS_IR
-// test.kt:20 box
-// test.kt:4 foo
-// test.kt:8 foo
-// test.kt:12 foo
-// test.kt:17 foo
 // test.kt:21 box
-// test.kt:4 foo
-// test.kt:8 foo
-// test.kt:12 foo
-// test.kt:17 foo
+// test.kt:18 foo
 // test.kt:22 box
+// test.kt:18 foo
+// test.kt:23 box
+
+// EXPECTATIONS WASM
+// test.kt:21 $box (8, 4)
+// test.kt:5 $foo (8, 12, 8, 8, 12, 8)
+// test.kt:6 $foo (8, 8, 8, 8)
+// test.kt:9 $foo (8, 12, 8, 8, 12, 8)
+// test.kt:13 $foo (8, 12, 8, 8, 12, 8)
+// test.kt:14 $foo (8, 8, 8, 8)
+// test.kt:18 $foo (1, 1)
+// test.kt:22 $box (8, 4)
+// test.kt:10 $foo (8, 8, 8, 8)
+// test.kt:16 $foo (8, 8, 8, 8)
+// test.kt:23 $box

@@ -82,7 +82,7 @@ internal fun parseDouble(string: String): Double {
     if (tryParseWord("Infinity")) {
         parseUnsignificants()
         if (index != string.length) numberFormatError(string)
-        return if (!isNegative) Double.POSITIVE_INFINITY else -Double.NEGATIVE_INFINITY
+        return if (!isNegative) Double.POSITIVE_INFINITY else Double.NEGATIVE_INFINITY
     }
 
     val numberBuilder = StringBuilder()

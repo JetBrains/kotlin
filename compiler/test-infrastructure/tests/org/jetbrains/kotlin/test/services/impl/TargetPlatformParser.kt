@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
@@ -34,8 +34,8 @@ object TargetPlatformParser {
         val target = when {
             platformString == JVM -> JvmTarget.DEFAULT
             !platformString.startsWith(JDK) -> return null
-            else -> JvmTarget.values().find { it.name == platformString }
-                ?: error("JvmTarget \"$platformString\" not found.\nAvailable targets: ${JvmTarget.values().joinToArrayString()}")
+            else -> JvmTarget.entries.find { it.name == platformString }
+                ?: error("JvmTarget \"$platformString\" not found.\nAvailable targets: ${JvmTarget.entries.joinToArrayString()}")
         }
         return JdkPlatform(target)
     }

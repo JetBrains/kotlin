@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
+import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.test.assertEquals
+import kotlin.test.fail
 
 internal class CompilerOptionsIT : KGPBaseTest() {
 
@@ -18,18 +23,21 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     @DisplayName("Allows to set kotlinOptions.freeCompilerArgs on task execution with warning")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_3
+        minVersion = TestVersions.Gradle.G_7_3,
+        // In Gradle 8.0 there is logic to filter logger messages that contain compiler options configured by `kotlin-dsl` plugin
+        // https://github.com/gradle/gradle/blob/master/subprojects/kotlin-dsl-plugins/src/main/kotlin/org/gradle/kotlin/dsl/plugins/dsl/KotlinDslCompilerPlugins.kt#L70-L73
+        maxVersion = TestVersions.Gradle.G_7_6,
     )
     @GradleTest
     internal fun compatibleWithKotlinDsl(gradleVersion: GradleVersion) {
         project("buildSrcWithKotlinDslAndKgp", gradleVersion) {
             gradleProperties
                 .appendText(
-                """
+                    """
                 |
                 |systemProp.org.gradle.kotlin.dsl.precompiled.accessors.strict=true
                 """.trimMargin()
-            )
+                )
 
             build("tasks") {
                 assertOutputContains("kotlinOptions.freeCompilerArgs were changed on task :compileKotlin execution phase:")
@@ -92,7 +100,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble") {
                 assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3)
             }
         }
@@ -121,19 +129,16 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """
                 |
                 |kotlin.options.suppressFreeCompilerArgsModificationWarning=true
-                |# to enable the :compileKotlinMetadata task
-                |kotlin.mpp.enableCompatibilityMetadataVariant=true
                 """.trimMargin()
             )
 
             val compileTasks = listOf(
-                "compileKotlinMetadata",
-                "compileKotlinJvmWithJava",
+                "compileCommonMainKotlinMetadata",
                 "compileKotlinJvmWithoutJava",
                 "compileKotlinJs",
                 // we do not allow modifying free args for K/N at execution time
             )
-            build(*compileTasks.toTypedArray(), buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(*compileTasks.toTypedArray()) {
                 assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
             }
         }
@@ -146,7 +151,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 """
@@ -158,18 +162,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                val compilerArgs = output
-                    .lineSequence()
-                    .first {
-                        it.contains("Kotlin compiler args:")
-                    }
-                    .substringAfter("Kotlin compiler args:")
-
                 val expectedOptIn = "-opt-in kotlin.RequiresOptIn,my.CustomOptIn"
-                assert(compilerArgs.contains(expectedOptIn)) {
-                    printBuildOutput()
-                    "compiler arguments does not contain '$expectedOptIn' - actual value: $compilerArgs"
-                }
+                assertCompilerArgument(":compileKotlin", expectedOptIn, logLevel = LogLevel.INFO)
             }
         }
     }
@@ -181,7 +175,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -201,12 +194,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinJvm6", forceOutput = true) {
+            build("compileKotlinJvm6") {
                 assertTasksExecuted(":compileKotlinJvm6")
-                assert(output.contains("-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation")) {
-                    printBuildOutput()
-                    "Output does not contain '-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation'!"
-                }
+                assertCompilerArgument(
+                    ":compileKotlinJvm6",
+                    "-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn",
+                    logLevel = LogLevel.INFO
+                )
             }
         }
     }
@@ -217,7 +211,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     fun combinesOptInFromLanguageSettingsNative(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
-            gradleVersion = gradleVersion
+            gradleVersion = gradleVersion,
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -234,6 +228,9 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 |        macos64Main {
                 |            languageSettings.optIn("my.custom.OptInAnnotation")
                 |        }
+                |        macosArm64Main {
+                |            languageSettings.optIn("my.custom.OptInAnnotation")
+                |        }
                 |    }
                 |}
                 |
@@ -245,24 +242,22 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                assert(
-                    output.contains("-opt-in=another.custom.UnderOptIn") &&
-                            output.contains("-opt-in=my.custom.OptInAnnotation")
-                ) {
-                    printBuildOutput()
-                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
-                }
+                val taskOutput = getOutputForTask(":compileNativeMainKotlinMetadata", logLevel = LogLevel.INFO)
+                val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
+                assertEquals(
+                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
+                )
             }
 
             build("compileKotlinLinux64") {
                 assertTasksExecuted(":compileKotlinLinux64")
-                assert(
-                    output.contains("-opt-in=another.custom.UnderOptIn") &&
-                            output.contains("-opt-in=my.custom.OptInAnnotation")
-                ) {
-                    printBuildOutput()
-                    "Output does not contain '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'!"
-                }
+                val taskOutput = getOutputForTask(":compileKotlinLinux64", logLevel = LogLevel.INFO)
+                val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
+                assertEquals(
+                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
+                )
             }
         }
     }
@@ -284,17 +279,13 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinHost", forceOutput = true) {
-                val expectedOptIn = listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=my.CustomOptIn")
-                val optInArgs = output
-                    .substringAfter("Arguments = [")
-                    .substringBefore("]")
-                    .lines()
-                    .filter { it.trim() in expectedOptIn }
-
-                assert(optInArgs.size == 2) {
-                    printBuildOutput()
-                    "compiler arguments does not contain '${expectedOptIn.joinToString()}': ${optInArgs.joinToString()}"
+            build("compileKotlinHost") {
+                val expectedOptIn = listOf("kotlin.RequiresOptIn", "my.CustomOptIn")
+                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
+                if (arguments.optIn?.toList() != listOf("kotlin.RequiresOptIn", "my.CustomOptIn")) {
+                    fail(
+                        "compiler arguments does not contain expected optIns'${expectedOptIn.joinToString()}': ${arguments.optIn}"
+                    )
                 }
             }
         }
@@ -307,7 +298,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -320,18 +310,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                val compilerArgs = output
-                    .lineSequence()
-                    .first {
-                        it.contains("Kotlin compiler args:")
-                    }
-                    .substringAfter("Kotlin compiler args:")
-
-                val expectedArg = "-progressive"
-                assert(compilerArgs.contains(expectedArg)) {
-                    printBuildOutput()
-                    "compiler arguments does not contain '$expectedArg' - actual value: $compilerArgs"
-                }
+                assertCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
             }
         }
     }
@@ -343,21 +322,9 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             build("compileKotlin") {
-                val compilerArgs = output
-                    .lineSequence()
-                    .first {
-                        it.contains("Kotlin compiler args:")
-                    }
-                    .substringAfter("Kotlin compiler args:")
-
-                val expectedArg = "-progressive"
-                assert(!compilerArgs.contains(expectedArg)) {
-                    printBuildOutput()
-                    "compiler arguments contains '$expectedArg' - actual value: $compilerArgs"
-                }
+                assertNoCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
             }
         }
     }
@@ -369,7 +336,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -384,18 +350,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                val compilerArgs = output
-                    .lineSequence()
-                    .first {
-                        it.contains("Kotlin compiler args:")
-                    }
-                    .substringAfter("Kotlin compiler args:")
-
-                val expectedArg = "-progressive"
-                assert(compilerArgs.contains(expectedArg)) {
-                    printBuildOutput()
-                    "compiler arguments does not contain '$expectedArg' - actual value: $compilerArgs"
-                }
+                assertCompilerArgument(":compileKotlin", "-progressive", logLevel = LogLevel.INFO)
             }
         }
     }
@@ -418,7 +373,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinHost", forceOutput = true) {
+            build("compileKotlinHost") {
                 val expectedArg = "-progressive"
                 val compilerArgs = output
                     .substringAfter("Arguments = [")
@@ -429,6 +384,174 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 assert(progressiveArg != null) {
                     printBuildOutput()
                     "compiler arguments does not contain '$expectedArg': ${compilerArgs.joinToString()}"
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-57823: should be possible to configure native module name via compilation")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun passesModuleNameFromNativeCompilation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    targets {
+                |        named("linux64", org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.class) {
+                |            compilations.all {
+                |                compilerOptions.options.moduleName.set("i-am-your-module-name")
+                |            }
+                |        }
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileNativeMainKotlinMetadata") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:sample-lib_nativeMain")
+                }
+            }
+
+            build(":compileKotlinLinux64") {
+                assertTasksExecuted(":compileKotlinLinux64")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinux64") {
+                    assertCommandLineArgumentsContain("-module-name", "i-am-your-module-name")
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-57823: uses archivesName value for native compilation module name convention")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun nativeCompilationModuleNameConvention(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+        ) {
+            if (gradleVersion < GradleVersion.version("7.1")) {
+                buildGradle.append("archivesBaseName = \"myNativeLib\"")
+            } else {
+                buildGradle.append("base.archivesName.set(\"myNativeLib\")")
+            }
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileNativeMainKotlinMetadata") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:myNativeLib_nativeMain")
+                }
+            }
+
+            build(":compileKotlinLinux64") {
+                assertTasksExecuted(":compileKotlinLinux64")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinux64") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:myNativeLib")
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Syncs languageSettings changes to the related compiler options")
+    @MppGradlePluginTests
+    fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
+        project("mpp-default-hierarchy", gradleVersion) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |kotlin.sourceSets.configureEach {
+                |    languageSettings.apiVersion = "1.7"
+                |    languageSettings.languageVersion = "1.8"
+                |}
+                |
+                |tasks.register("printCompilerOptions") {
+                |    dependsOn(kotlinTaskToCheck)
+                |    def tasksContainer = project.tasks
+                |    doLast {
+                |        def kotlinTask = tasks.getByName(kotlinTaskToCheck) as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<?>
+                |        logger.warn("###AV:${'$'}{kotlinTask.compilerOptions.apiVersion.getOrNull()}")
+                |        logger.warn("###LV:${'$'}{kotlinTask.compilerOptions.languageVersion.getOrNull()}")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            listOf(
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinJvm",
+                "compileNativeMainKotlinMetadata",
+                "compileLinuxMainKotlinMetadata",
+                "compileAppleMainKotlinMetadata",
+                "compileIosMainKotlinMetadata",
+                "compileKotlinLinuxX64",
+                "compileKotlinLinuxArm64",
+                "compileKotlinIosX64",
+                "compileKotlinIosArm64"
+            ).forEach { task ->
+                build("printCompilerOptions", "-PkotlinTaskToCheck=$task") {
+                    assertOutputContains("###AV:KOTLIN_1_7")
+                    assertOutputContains("###LV:KOTLIN_1_8")
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Syncs compiler option changes to the related language settings")
+    @MppGradlePluginTests
+    fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
+        project("mpp-default-hierarchy", gradleVersion) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).all {
+                |    compilerOptions {
+                |        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7
+                |        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
+                |    }
+                |}
+                |
+                |tasks.register("printLanguageSettingsOptions") {
+                |    doLast {
+                |        def languageSettings = kotlin.sourceSets.getByName(kotlinSourceSet).languageSettings
+                |        logger.warn("")
+                |        logger.warn("###AV:${'$'}{languageSettings.apiVersion}")
+                |        logger.warn("###LV:${'$'}{languageSettings.languageVersion}")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            listOf(
+                "commonMain",
+                "jvmMain",
+                "nativeMain",
+                "linuxMain",
+                "appleMain",
+                "iosMain",
+                "linuxX64Main",
+                "linuxArm64Main",
+                "iosX64Main",
+                "iosArm64Main",
+            ).forEach { sourceSet ->
+                build("printLanguageSettingsOptions", "-PkotlinSourceSet=${sourceSet}") {
+                    assertOutputContains("###AV:1.7")
+                    assertOutputContains("###LV:1.8")
                 }
             }
         }

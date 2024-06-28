@@ -1,0 +1,23 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /SuperClass.count
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: true
+  isVal: false
+  location: CLASS
+  modality: OPEN
+  name: count
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/Int!
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: SuperClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

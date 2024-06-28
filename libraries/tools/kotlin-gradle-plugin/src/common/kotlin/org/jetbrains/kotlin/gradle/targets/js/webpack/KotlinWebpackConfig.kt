@@ -7,20 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
-import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
@@ -29,101 +23,55 @@ import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
-    @Internal
     val npmProjectDir: Provider<File>? = null,
-    @Input
     var mode: Mode = Mode.DEVELOPMENT,
-    @Internal
     var entry: File? = null,
-    @Nested
-    @Optional
     var output: KotlinWebpackOutput? = null,
-    @Internal
     var outputPath: File? = null,
-    @Input
-    @Optional
     var outputFileName: String? = entry?.name,
-    @get:PathSensitive(PathSensitivity.NAME_ONLY)
-    @get:Optional
-    @get:IgnoreEmptyDirectories
-    @get:NormalizeLineEndings
-    @get:InputDirectory
     var configDirectory: File? = null,
-    @Input
-    @Optional
+    var reportEvaluatedConfigFile: File? = null,
     var devServer: DevServer? = null,
-    @Input
+    var watchOptions: WatchOptions? = null,
     var experiments: MutableSet<String> = mutableSetOf(),
-    @Nested
     override val rules: KotlinWebpackRulesContainer,
-    @Input
-    @Optional
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
-    @Input
     var showProgress: Boolean = false,
     var optimization: Optimization? = null,
-    @Input
     var sourceMaps: Boolean = false,
-    @Input
     var export: Boolean = true,
-    @Input
     var progressReporter: Boolean = false,
-    @Internal
-    @Optional
     var progressReporterPathFilter: File? = null,
-    @Input
-    var resolveFromModulesFirst: Boolean = false,
-    @Input
-    val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
+    var resolveFromModulesFirst: Boolean = false
 ) : WebpackRulesDsl {
 
-    @get:Input
-    @get:Optional
     val entryInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeOrAbsolute(npmProjectDir) }
 
-    @get:Input
-    @get:Optional
     val outputPathInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
 
-    @get:Input
-    @get:Optional
     val progressReporterPathFilterInput: String?
         get() = npmProjectDir?.get()?.let { npmProjectDir -> progressReporterPathFilter?.relativeOrAbsolute(npmProjectDir) }
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
-            it.add(versions.kotlinJsTestRunner)
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpack,
-                    versions.webpack4
-                )
+                versions.webpack
             )
             it.add(
-                webpackMajorVersion.choose(
-                    versions.webpackCli,
-                    versions.webpackCli3
-                )
+                versions.webpackCli
             )
-            it.add(versions.formatUtil)
 
             if (sourceMaps) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.sourceMapLoader,
-                        versions.sourceMapLoader1
-                    )
+                    versions.sourceMapLoader
                 )
             }
 
             if (devServer != null) {
                 it.add(
-                    webpackMajorVersion.choose(
-                        versions.webpackDevServer,
-                        versions.webpackDevServer3
-                    )
+                    versions.webpackDevServer
                 )
             }
 
@@ -143,7 +91,7 @@ data class KotlinWebpackConfig(
     data class DevServer(
         var open: Any = true,
         var port: Int? = null,
-        var proxy: MutableMap<String, Any>? = null,
+        var proxy: MutableList<Proxy>? = null,
         var static: MutableList<String>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null
@@ -157,20 +105,25 @@ data class KotlinWebpackConfig(
             ) : Serializable
         }
 
-        data class App(
-            var browser: Browser
-        ) : Serializable {
-            data class Browser(
-                var name: String,
-                var args: List<String>
-            ) : Serializable
-        }
+        data class Proxy(
+            val context: MutableList<String>,
+            val target: String,
+            val pathRewrite: MutableMap<String, String>? = null,
+            val secure: Boolean? = null,
+            val changeOrigin: Boolean? = null
+        ) : Serializable
     }
 
     @Suppress("unused")
     data class Optimization(
-        var runtimeChunk: Any,
-        var splitChunks: Any
+        var runtimeChunk: Any?,
+        var splitChunks: Any?
+    ) : Serializable
+
+    @Suppress("unused")
+    data class WatchOptions(
+        var aggregateTimeout: Int? = null,
+        var ignored: Any? = null
     ) : Serializable
 
     fun save(configFile: File) {
@@ -205,7 +158,6 @@ data class KotlinWebpackConfig(
             appendSourceMaps()
             appendOptimization()
             appendDevServer()
-            appendProgressReporter()
             rules.forEach { rule ->
                 if (rule.active) {
                     with(rule) { appendToWebpackConfig() }
@@ -231,44 +183,21 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendDevServer() {
-        if (devServer == null) return
+        if (devServer != null) {
 
-        appendLine("// dev server")
-
-        if (devServer!!.open !is DevServer.App) {
+            appendLine("// dev server")
             appendLine("config.devServer = ${json(devServer!!)};")
-        } else {
-            val open = devServer!!.open as DevServer.App
-
-            val jsonO = Gson().toJsonTree(devServer!!).asJsonObject
-
-            jsonO.add(
-                "open",
-                JsonObject().apply {
-                    add(
-                        "app",
-                        JsonObject().apply {
-                            addProperty("name", "${"$"}browserName${"$"}")
-                            add("arguments", Gson().toJsonTree(open.browser.args).asJsonArray)
-                        }
-                    )
-                }
-            )
-
-            //language=ES6
-            appendLine(
-                """
-                // noinspection JSUnnecessarySemicolon
-                ;(function(config) {
-                    const apps = require('kotlin-test-js-runner/detect-correct-browser');
-                    const browserName = apps[${open.browser.name.jsQuoted()}]
-                    config.devServer = ${json(jsonO).replace("\"${"$"}browserName${"$"}\"", "browserName.bin")}
-                })(config);
-            """.trimIndent()
-            )
+            appendLine()
         }
 
-        appendLine()
+        if (watchOptions == null) return
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                config.watchOptions = ${json(watchOptions!!)};
+            """.trimIndent()
+        )
     }
 
     private fun Appendable.appendExperiments() {
@@ -289,22 +218,15 @@ data class KotlinWebpackConfig(
             """
                 // source maps
                 config.module.rules.push({
-                        test: /\.js${'$'}/,
+                        test: /\.m?js${'$'}/,
                         use: ["source-map-loader"],
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                ${
-                webpackMajorVersion.choose(
-                    "config.ignoreWarnings = [/Failed to parse source map/]",
-                    """
-                config.stats = config.stats || {}
-                Object.assign(config.stats, config.stats, {
-                    warningsFilter: [/Failed to parse source map/]
-                })
-                """
-                )
-            }
+                config.ignoreWarnings = [
+                    /Failed to parse source map/,
+                    /Accessing import\.meta directly is unsupported \(only property access or destructuring is supported\)/
+                ]
                 
             """.trimIndent()
         )
@@ -323,25 +245,25 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendEntry() {
-        if (
-            entry == null
-            || outputPath == null
-            || output == null
-        )
-            return
-
-        val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
+        if (entry != null) {
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 // entry
                 config.entry = {
                     main: [require('path').resolve(__dirname, ${entryInput!!.jsQuoted()})]
                 };
-                
+                """.trimIndent()
+            )
+        }
+
+        if (output != null) {
+            val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
+
+            //language=JavaScript 1.8
+            appendLine(
+                """
                 config.output = {
-                    path: require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()}),
                     filename: (chunkData) => {
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName!!.jsQuoted()}
@@ -351,7 +273,19 @@ data class KotlinWebpackConfig(
                     ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
-                
+                """.trimIndent()
+            )
+        }
+
+        if (
+            outputPath == null
+        )
+            return
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                config.output.path = require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()})
             """.trimIndent()
         )
     }
@@ -382,34 +316,6 @@ data class KotlinWebpackConfig(
             """
                 // resolve modules
                 config.resolve.modules.unshift(${entry!!.parent.jsQuoted()})
-                
-            """.trimIndent()
-        )
-    }
-
-    private fun Appendable.appendProgressReporter() {
-        if (!progressReporter) return
-
-        //language=ES6
-        appendLine(
-            """
-                // Report progress to console
-                // noinspection JSUnnecessarySemicolon
-                ;(function(config) {
-                    const webpack = require('webpack');
-                    const handler = (percentage, message, ...args) => {
-                        const p = percentage * 100;
-                        let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
-                        ${
-                if (progressReporterPathFilterInput == null) "" else """
-                            msg = msg.replace(require('path').resolve(__dirname, ${progressReporterPathFilterInput!!.jsQuoted()}), '');
-                        """.trimIndent()
-            };
-                        console.log(msg);
-                    };
-            
-                    config.plugins.push(new webpack.ProgressPlugin(handler))
-                })(config);
                 
             """.trimIndent()
         )

@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -52,7 +52,7 @@ val test6 = generate {
 
 val test7 = generate {
     yield(<!TYPE_MISMATCH!>"baz"<!>)
-    genericExtension<Int>()
+    <!RECEIVER_TYPE_MISMATCH!>genericExtension<!><Int>()
 }
 
 val test8 = generate {

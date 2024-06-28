@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.isImmutable
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
 
@@ -272,7 +269,6 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctio
     when (callee) {
         is IrConstructorSymbol -> irCall(callee, type)
         is IrSimpleFunctionSymbol -> irCall(callee, type)
-        else -> throw AssertionError("Unexpected callee: $callee")
     }
 
 fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol): IrCall =
@@ -294,6 +290,15 @@ fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin? = n
         callee.typeParameters.size, callee.valueParameters.size,
         origin, superQualifierSymbol
     )
+
+fun IrBuilderWithScope.irCallWithSubstitutedType(callee: IrFunction, typeArguments: List<IrType>): IrMemberAccessExpression<*> {
+    val argsMap = callee.typeParameters.map { it.symbol }.zip(typeArguments).toMap()
+    return irCall(callee.symbol, callee.returnType.substitute(argsMap), typeArguments)
+}
+
+fun IrBuilderWithScope.irCallWithSubstitutedType(callee: IrFunctionSymbol, typeArguments: List<IrType>): IrMemberAccessExpression<*> {
+    return irCallWithSubstitutedType(callee.owner, typeArguments)
+}
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
     IrDelegatingConstructorCallImpl(
@@ -339,6 +344,12 @@ fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
 
 fun IrBuilderWithScope.irSamConversion(argument: IrExpression, type: IrType) =
     typeOperator(type, argument, IrTypeOperator.SAM_CONVERSION, type)
+
+fun IrBuilderWithScope.irByte(value: Byte) =
+    IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)
+
+fun IrBuilderWithScope.irShort(value: Short) =
+    IrConstImpl.short(startOffset, endOffset, context.irBuiltIns.shortType, value)
 
 fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intType) =
     IrConstImpl.int(startOffset, endOffset, type, value)

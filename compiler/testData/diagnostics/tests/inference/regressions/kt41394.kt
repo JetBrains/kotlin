@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
-// !LANGUAGE: +InferenceCompatibility
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
+// LANGUAGE: +InferenceCompatibility
 
 fun <T, VR : T> foo(x: T, fn: (VR?, T) -> Unit) {}
 

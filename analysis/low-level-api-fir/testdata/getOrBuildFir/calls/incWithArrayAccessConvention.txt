@@ -1,6 +1,0 @@
-KT element: KtPostfixExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredIncrementOrDecrement
-
-FIR element rendered:
-R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<unary>|.R|/A.inc|())

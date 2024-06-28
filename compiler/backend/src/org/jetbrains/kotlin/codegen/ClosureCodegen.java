@@ -173,15 +173,13 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         v.defineClass(
                 element,
-                state.getClassFileVersion(),
+                state.getConfig().getClassFileVersion(),
                 ACC_FINAL | ACC_SUPER | visibilityFlag | getSyntheticAccessFlagForLambdaClass(classDescriptor),
                 asmType.getInternalName(),
                 sw.makeJavaGenericSignature(),
                 superClassAsmType.getInternalName(),
                 superInterfaceAsmTypes
         );
-
-        initDefaultSourceMappingIfNeeded();
 
         v.visitSource(element.getContainingFile().getName(), null);
     }
@@ -295,7 +293,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         boolean publicAbi = InlineUtil.isInPublicInlineScope(frontendFunDescriptor);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state.getConfig(), KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);
             return Unit.INSTANCE;
         });

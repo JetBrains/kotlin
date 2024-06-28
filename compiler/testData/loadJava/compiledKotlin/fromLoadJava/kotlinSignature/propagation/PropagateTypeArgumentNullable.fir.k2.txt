@@ -1,0 +1,32 @@
+public abstract interface PropagateTypeArgumentNullable : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun outS(p: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit|
+
+        public abstract fun invOutS(p: R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/String?>>|): R|kotlin/Unit|
+
+        public abstract fun outOutS(p: R|kotlin/collections/List<kotlin/collections/List<kotlin/String?>>|): R|kotlin/Unit|
+
+        public abstract fun outR(): R|kotlin/collections/List<kotlin/String?>|
+
+        public abstract fun invR(): R|kotlin/collections/MutableList<kotlin/String?>|
+
+        public abstract fun invOutR(): R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/String?>>|
+
+    }
+
+    public abstract interface Sub : R|test/PropagateTypeArgumentNullable.Super| {
+        public abstract fun outS(p: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit|
+
+        public abstract fun invOutS(p: R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/String?>>|): R|kotlin/Unit|
+
+        public abstract fun outOutS(p: R|kotlin/collections/List<kotlin/collections/List<kotlin/String?>>|): R|kotlin/Unit|
+
+        public abstract fun outR(): R|kotlin/collections/List<kotlin/String?>|
+
+        public abstract fun invR(): R|kotlin/collections/MutableList<kotlin/String?>|
+
+        public abstract fun invOutR(): R|kotlin/collections/MutableList<kotlin/collections/List<kotlin/String?>>|
+
+    }
+
+}

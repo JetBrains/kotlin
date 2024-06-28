@@ -19,16 +19,16 @@ fun test3(): String {
 
 fun test4(ns: String?): String? {
   return { // BLOCK
-    val tmp1_safe_receiver: Function0<String>? = { // BLOCK
-      val tmp0_safe_receiver: String? = ns
+    val tmp_0: Function0<String>? = { // BLOCK
+      val tmp_1: String? = ns
       when {
-        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver.k()
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> tmp_1.k()
       }
     }
     when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.invoke()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.invoke()
     }
   }
 }

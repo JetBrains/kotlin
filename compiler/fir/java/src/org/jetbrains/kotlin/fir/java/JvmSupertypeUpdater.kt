@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.hasAnnotationSafe
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -25,10 +22,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUpdater() {
@@ -36,7 +34,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     override fun updateSupertypesIfNeeded(firClass: FirClass, scopeSession: ScopeSession) {
         if (firClass !is FirRegularClass || !firClass.isData ||
-            !firClass.hasAnnotationSafe(StandardClassIds.Annotations.JvmRecord, session)
+            !firClass.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmRecord, session)
         ) return
         var anyFound = false
         var hasExplicitSuperClass = false
@@ -65,7 +63,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     private class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
         companion object {
-            val recordType = StandardClassIds.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
+            val recordType = JvmStandardClassIds.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
         }
 
         override fun <E : FirElement> transformElement(element: E, data: ScopeSession): E {
@@ -79,6 +77,9 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         override fun transformConstructor(constructor: FirConstructor, data: ScopeSession): FirStatement {
             return constructor.transformDelegatedConstructor(this, data)
         }
+
+        override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: ScopeSession) =
+            transformConstructor(errorPrimaryConstructor, data)
 
         override fun transformDelegatedConstructorCall(
             delegatedConstructorCall: FirDelegatedConstructorCall,
@@ -98,13 +99,13 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             }
 
             val recordConstructorSymbol = recordType.lookupTag.toFirRegularClassSymbol(session)
-                ?.unsubstitutedScope(session, data, withForcedTypeCalculator = false)
+                ?.unsubstitutedScope(session, data, withForcedTypeCalculator = false, memberRequiredPhase = null)
                 ?.getDeclaredConstructors()
                 ?.firstOrNull { it.fir.valueParameters.isEmpty() }
 
             if (recordConstructorSymbol != null) {
                 val newReference = buildResolvedNamedReference {
-                    name = StandardClassIds.Java.Record.shortClassName
+                    name = JvmStandardClassIds.Java.Record.shortClassName
                     resolvedSymbol = recordConstructorSymbol
                 }
                 delegatedConstructorCall.replaceCalleeReference(newReference)

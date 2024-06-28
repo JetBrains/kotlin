@@ -9,10 +9,10 @@ package kotlin.test
  * Describes the result of an assertion execution.
  */
 public external interface AssertionResult {
-    val result: Boolean
-    val expected: Any?
-    val actual: Any?
-    val lazyMessage: () -> String?
+    public val result: Boolean
+    public val expected: Any?
+    public val actual: Any?
+    public val lazyMessage: () -> String?
 }
 
 internal var assertHook: (AssertionResult) -> Unit = { _ -> }

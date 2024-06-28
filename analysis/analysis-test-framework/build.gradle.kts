@@ -1,23 +1,31 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
 dependencies {
-    testApi(kotlinStdlib())
-    testApi(intellijCore())
-    testApiJUnit5()
+    testImplementation(kotlinStdlib())
+    testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(project(":analysis:analysis-internal-utils"))
-    testApi(project(":compiler:psi"))
-    testApi(project(":analysis:kt-references"))
+    testImplementation(project(":compiler:psi"))
+    testImplementation(project(":analysis:kt-references"))
     testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":analysis:analysis-api-providers"))
-    testApi(project(":analysis:analysis-api"))
+    testApi(projectTests(":compiler:tests-common"))
+    testImplementation(project(":analysis:analysis-api-platform-interface"))
+    testImplementation(project(":analysis:analysis-api"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testApi(project(":analysis:analysis-api-impl-barebone"))
-    testApi(project(":analysis:analysis-api-impl-base"))
+    testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testImplementation(project(":analysis:analysis-api-impl-barebone"))
+    testImplementation(project(":analysis:analysis-api-impl-base"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 
 sourceSets {
@@ -33,7 +41,11 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 
 testsJar()
 
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+    compilerOptions.optIn.addAll(
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+    )
 }

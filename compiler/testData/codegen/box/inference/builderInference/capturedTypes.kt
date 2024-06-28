@@ -1,5 +1,7 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
+// LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
+// ISSUE: KT-61250
+// IGNORE_BACKEND_K2: ANY
 
 // FILE: main.kt
 import kotlin.experimental.ExperimentalTypeInference

@@ -256,7 +256,7 @@ ij_java_wrap_comments = false
 ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
 
-[{*.gradle.kts,*.kt,*.kts,*.main.kts,KotlinBuildPusher}]
+[{*.gradle.kts,*.kt,*.kts,*.main.kts}]
 ij_kotlin_align_in_columns_case_branch = false
 ij_kotlin_align_multiline_binary_operation = false
 ij_kotlin_align_multiline_extends_list = false

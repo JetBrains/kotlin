@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 description = "Kotlin Mock Runtime for Tests"
 
 plugins {
@@ -22,24 +20,16 @@ dependencies {
     builtins(project(":core:builtins"))
 }
 
-sourceSets {
-    "main" {
-        java.apply {
-            srcDir(File(buildDir, "src"))
-        }
-    }
-    "test" {}
-}
-
 val copySources by task<Sync> {
-    val stdlibProjectDir = project(":kotlin-stdlib").projectDir
+    val stdlibProjectDir = file("$rootDir/libraries/stdlib/jvm")
 
     from(stdlibProjectDir.resolve("runtime"))
         .include("kotlin/TypeAliases.kt",
                  "kotlin/text/TypeAliases.kt")
     from(stdlibProjectDir.resolve("src"))
         .include("kotlin/collections/TypeAliases.kt",
-                 "kotlin/enums/EnumEntriesSerializationProxy.kt")
+                 "kotlin/enums/EnumEntriesSerializationProxy.kt",
+                 "kotlin/enums/EnumEntriesJVM.kt")
     from(stdlibProjectDir.resolve("../src"))
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",
@@ -49,19 +39,41 @@ val copySources by task<Sync> {
                  "kotlin/enums/EnumEntries.kt",
                  "kotlin/collections/AbstractList.kt",
                  "kotlin/io/Serializable.kt")
-    into(File(buildDir, "src"))
+    into(layout.buildDirectory.dir("src"))
 }
 
-tasks.withType<KotlinCompile> {
+sourceSets {
+    "main" {
+        java.srcDir(copySources)
+    }
+    "test" {}
+}
+
+tasks.compileKotlin {
     dependsOn(copySources)
+    val commonSources = listOf(
+        "kotlin/enums/EnumEntries.kt"
+    ).map { copySources.get().destinationDir.resolve(it) }
+    @Suppress("DEPRECATION")
     kotlinOptions {
+        languageVersion = "1.9"
+        apiVersion = "2.0"
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
+            "-Xexpect-actual-classes",
             "-Xmulti-platform",
             "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.contracts.ExperimentalContracts"
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=kotlin.ExperimentalMultiplatform",
+            "-Xsuppress-api-version-greater-than-language-version-error",
         )
         moduleName = "kotlin-stdlib"
+    }
+    doFirst {
+        @Suppress("DEPRECATION")
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xcommon-sources=${commonSources.joinToString(File.pathSeparator)}",
+        )
     }
 }
 
@@ -78,6 +90,6 @@ publishing {
     }
 
     repositories {
-        maven("${rootProject.buildDir}/internal/repo")
+        maven(rootProject.layout.buildDirectory.dir("internal/repo"))
     }
 }

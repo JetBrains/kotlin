@@ -3,14 +3,10 @@ fun box(): String {
   when {
     EQEQ(arg0 = r, arg1 = "").not() -> { // BLOCK
     }
-    else -> { // BLOCK
-      r = r.plus(other = "O")
-    }
+    else -> r = r.plus(other = "O")
   }
   when {
-    EQEQ(arg0 = r, arg1 = "O") -> { // BLOCK
-      r = r.plus(other = "K")
-    }
+    EQEQ(arg0 = r, arg1 = "O") -> r = r.plus(other = "K")
   }
   return r
 }

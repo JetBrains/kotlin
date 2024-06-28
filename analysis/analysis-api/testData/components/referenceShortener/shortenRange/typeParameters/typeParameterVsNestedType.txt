@@ -1,0 +1,19 @@
+Before shortening: context(MyClass.MyType)
+    class Nested<Other : MyClass.MyType> : Base<MyClass.MyType>()
+with default settings:
+[type] MyClass.MyType
+[type] MyClass.MyType
+[type] MyClass.MyType
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] MyClass.MyType
+[type] MyClass.MyType
+[type] MyClass.MyType
+with SHORTEN_AND_IMPORT:
+[type] MyClass.MyType
+[type] MyClass.MyType
+[type] MyClass.MyType
+with SHORTEN_AND_STAR_IMPORT:
+[type] MyClass.MyType
+[type] MyClass.MyType
+[type] MyClass.MyType

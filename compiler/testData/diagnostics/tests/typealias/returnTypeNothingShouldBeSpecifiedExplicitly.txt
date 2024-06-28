@@ -1,6 +1,9 @@
 package
 
 public val testVal: N /* = kotlin.Nothing */
+public val testValN: kotlin.Nothing
 public val testValWithGetter: N /* = kotlin.Nothing */
+public val testValWithGetterN: kotlin.Nothing
 public fun testFun(): N /* = kotlin.Nothing */
+public fun testFunN(): kotlin.Nothing
 public typealias N = kotlin.Nothing

@@ -1,4 +1,4 @@
-// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE
+// DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
 // WITH_STDLIB
 
 @Deprecated("don't use i")
@@ -35,4 +35,4 @@ val j: Int = 2
 val j2: Int = 2
 
 @java.lang.Deprecated
-val j2: Int = 2
+val j3: Int = 2

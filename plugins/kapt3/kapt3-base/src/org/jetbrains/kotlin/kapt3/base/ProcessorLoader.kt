@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.incremental.getIncrementalProcessorsFromClasspath
@@ -18,7 +16,6 @@ import java.io.InputStream
 import java.net.URLClassLoader
 import java.util.zip.ZipFile
 import javax.annotation.processing.Processor
-import kotlin.collections.LinkedHashSet
 
 class LoadedProcessors(val processors: List<IncrementalProcessor>, val classLoader: ClassLoader)
 

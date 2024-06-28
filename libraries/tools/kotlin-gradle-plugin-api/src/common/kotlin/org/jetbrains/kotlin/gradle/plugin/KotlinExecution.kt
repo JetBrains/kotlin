@@ -11,6 +11,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinExecution.ExecutionSource
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * An execution of Kotlin code. Executions in a single family (e.g. test runs) are distinguished by [Named.getName].
  * Names may not be unique across different execution families, such as test runs of different targets.
  *
@@ -26,11 +27,15 @@ interface KotlinExecution<out SourceType : ExecutionSource> : Named {
     val executionSource: SourceType
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinTargetExecution<out SourceType : ExecutionSource> : KotlinExecution<SourceType> {
     val target: KotlinTarget
 }
 
 /**
+ * @suppress TODO: KT-58858 add documentation
  * An execution source that is produced by a [compilation].
  *
  * See also: [CompilationExecutionSourceSupport].
@@ -39,6 +44,9 @@ interface CompilationExecutionSource<CompilationType : KotlinCompilation<*>> : E
     val compilation: CompilationType
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @Suppress("deprecation")
 interface CompilationExecutionSourceSupport<in T : KotlinCompilationToRunnableFiles<*>> {
     /**
@@ -52,6 +60,9 @@ interface CompilationExecutionSourceSupport<in T : KotlinCompilationToRunnableFi
     fun setExecutionSourceFrom(compilation: T)
 }
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface ExecutionTaskHolder<T : Task> {
     val executionTask: TaskProvider<T>
 }

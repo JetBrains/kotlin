@@ -1,0 +1,215 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(java.util.ArrayList<kotlin.Int?>?){}
+  //   Public signature: /B.foo|7592105095753077284[0]
+  //   Public signature debug description: foo(java.util.ArrayList<kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(a: ArrayList<Int?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /B.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  override fun bar(): ArrayList<Int>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar2(){}kotlin.IntArray
+  //   Public signature: /B.bar2|-8055315912654410759[0]
+  //   Public signature debug description: bar2(){}kotlin.IntArray
+  override fun bar2(): IntArray
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar3(){}kotlin.Array<kotlin.String>
+  //   Public signature: /B.bar3|-7432065339324572011[0]
+  //   Public signature debug description: bar3(){}kotlin.Array<kotlin.String>
+  override fun bar3(): Array<String>
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.collections.MutableList<kotlin.Int>){}
+  //   Public signature: /B.foo|-316185058744300957[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Int>){}
+  override fun foo(a: MutableList<Int>): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(kotlin.IntArray?){}
+  //   Public signature: /B.foo2|-6609251298444867546[0]
+  //   Public signature debug description: foo2(kotlin.IntArray?){}
+  override fun foo2(a: IntArray?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo3(kotlin.Array<out|kotlin.String>?){}
+  //   Public signature: /B.foo3|-4739896332992694741[0]
+  //   Public signature debug description: foo3(kotlin.Array<out|kotlin.String>?){}
+  override fun foo3(a: Array<out String>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+abstract class D : Java2, KotlinInterface {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /D.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  override fun bar(): ArrayList<Int>
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar2(){}kotlin.IntArray
+  //   Public signature: /D.bar2|-8055315912654410759[0]
+  //   Public signature debug description: bar2(){}kotlin.IntArray
+  override fun bar2(): IntArray
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar3(){}kotlin.Array<kotlin.String>
+  //   Public signature: /D.bar3|-7432065339324572011[0]
+  //   Public signature debug description: bar3(){}kotlin.Array<kotlin.String>
+  override fun bar3(): Array<String>
+
+  // CHECK:
+  //   Mangled name: D#foo(java.util.ArrayList<kotlin.Int>){}
+  //   Public signature: /D.foo|-787171505211988164[0]
+  //   Public signature debug description: foo(java.util.ArrayList<kotlin.Int>){}
+  override fun foo(o: ArrayList<Int>): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo2(kotlin.IntArray?){}
+  //   Public signature: /D.foo2|-6609251298444867546[0]
+  //   Public signature debug description: foo2(kotlin.IntArray?){}
+  override fun foo2(a: IntArray?): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo3(kotlin.Array<out|kotlin.String>?){}
+  //   Public signature: /D.foo3|-4739896332992694741[0]
+  //   Public signature debug description: foo3(kotlin.Array<out|kotlin.String>?){}
+  override fun foo3(a: Array<out String>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A : Java1, Java2 {
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}java.util.ArrayList<kotlin.Int?>?
+  //   Public signature: /A.bar|6344786471503787921[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int?>?
+  abstract /* fake */ override fun bar(): ArrayList<Int?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar2(){}kotlin.IntArray?
+  //   Public signature: /A.bar2|7869366897572982626[0]
+  //   Public signature debug description: bar2(){}kotlin.IntArray?
+  abstract /* fake */ override fun bar2(): IntArray?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar3(){}kotlin.Array<out|kotlin.String?>?
+  //   Public signature: /A.bar3|-7409723980073717000[0]
+  //   Public signature debug description: bar3(){}kotlin.Array<out|kotlin.String?>?
+  abstract /* fake */ override fun bar3(): Array<out String?>?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.collections.MutableList<kotlin.Int?>?){}
+  //   Public signature: /A.foo|-3600187289102144184[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(a: MutableList<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo(java.util.ArrayList<kotlin.Int?>?){}
+  //   Public signature: /A.foo|7592105095753077284[0]
+  //   Public signature debug description: foo(java.util.ArrayList<kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(a: ArrayList<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(kotlin.IntArray?){}
+  //   Public signature: /A.foo2|-6609251298444867546[0]
+  //   Public signature debug description: foo2(kotlin.IntArray?){}
+  abstract /* fake */ override fun foo2(a: IntArray?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo3(kotlin.Array<out|kotlin.String?>?){}
+  //   Public signature: /A.foo3|-5098562074278287466[0]
+  //   Public signature debug description: foo3(kotlin.Array<out|kotlin.String?>?){}
+  abstract /* fake */ override fun foo3(a: Array<out String?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+interface C : Java2, KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /C.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  abstract /* fake */ override fun bar(): ArrayList<Int>
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar2(){}kotlin.IntArray?
+  //   Public signature: /C.bar2|7869366897572982626[0]
+  //   Public signature debug description: bar2(){}kotlin.IntArray?
+  abstract /* fake */ override fun bar2(): IntArray?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar3(){}kotlin.Array<out|kotlin.String?>?
+  //   Public signature: /C.bar3|-7409723980073717000[0]
+  //   Public signature debug description: bar3(){}kotlin.Array<out|kotlin.String?>?
+  abstract /* fake */ override fun bar3(): Array<out String?>?
+
+  // CHECK:
+  //   Mangled name: C#foo(java.util.ArrayList<kotlin.Int?>?){}
+  //   Public signature: /C.foo|7592105095753077284[0]
+  //   Public signature debug description: foo(java.util.ArrayList<kotlin.Int?>?){}
+  abstract /* fake */ override fun foo(a: ArrayList<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(kotlin.IntArray?){}
+  //   Public signature: /C.foo2|-6609251298444867546[0]
+  //   Public signature debug description: foo2(kotlin.IntArray?){}
+  abstract /* fake */ override fun foo2(a: IntArray?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo3(kotlin.Array<out|kotlin.String?>?){}
+  //   Public signature: /C.foo3|-5098562074278287466[0]
+  //   Public signature debug description: foo3(kotlin.Array<out|kotlin.String?>?){}
+  abstract /* fake */ override fun foo3(a: Array<out String?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /KotlinInterface.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  abstract fun bar(): ArrayList<Int>
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(java.util.ArrayList<kotlin.Int>){}
+  //   Public signature: /KotlinInterface.foo|-787171505211988164[0]
+  //   Public signature debug description: foo(java.util.ArrayList<kotlin.Int>){}
+  abstract fun foo(o: ArrayList<Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit

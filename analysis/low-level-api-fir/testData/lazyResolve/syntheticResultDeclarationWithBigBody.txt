@@ -1,0 +1,217 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(TYPES)] get(): <implicit>
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(STATUS)] get(): <implicit>
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
+
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = foo#(LAZY_EXPRESSION)
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
+            ^foo action#()
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
+            }
+            )
+        }
+        )
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Unit|
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
+            ^foo action#()
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
+            }
+            )
+        }
+        )
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Unit|
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
+            ^foo action#()
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
+            }
+            )
+        }
+        )
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Unit|
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
+            ^foo action#()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
+            }
+            )
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] syntheticResultDeclarationWithBigBody.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-syntheticResultDeclarationWithBigBody.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> foo([ResolvedTo(BODY_RESOLVE)] action: R|() -> T|): R|T| {
+            ^foo R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
+            }
+            )
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+

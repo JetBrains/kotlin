@@ -18,8 +18,8 @@ object StringPlus : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction =
-        IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE)) {
+    ): IntrinsicFunction =
+        IntrinsicFunction.create(expression, signature, classCodegen, listOf(AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE)) {
             it.invokestatic(
                 IntrinsicMethods.INTRINSICS_CLASS_NAME,
                 "stringPlus",

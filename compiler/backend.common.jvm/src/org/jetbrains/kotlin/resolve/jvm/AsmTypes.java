@@ -90,6 +90,8 @@ public class AsmTypes {
 
     public static final Type DEFAULT_CONSTRUCTOR_MARKER = Type.getObjectType("kotlin/jvm/internal/DefaultConstructorMarker");
 
+    public static final Type ENUM_ENTRIES = Type.getObjectType("kotlin/enums/EnumEntries");
+
     @NotNull
     private static Type reflect(@NotNull String className) {
         return Type.getObjectType("kotlin/reflect/" + className);

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 package n
 
 fun <T> foo(t: T, t1: T) {}

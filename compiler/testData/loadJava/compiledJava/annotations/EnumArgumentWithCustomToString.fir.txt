@@ -1,10 +1,10 @@
 public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
-    @R|test/EnumArgumentWithCustomToString.EnumAnno|(value = R|test/EnumArgumentWithCustomToString.E.CAKE|) @R|test/EnumArgumentWithCustomToString.EnumArrayAnno|(value = <implicitArrayOf>(R|test/EnumArgumentWithCustomToString.E.CAKE|, R|test/EnumArgumentWithCustomToString.E.CAKE|)) public/*package*/ open fun annotated(): R|kotlin/Unit|
+    @R|test/EnumArgumentWithCustomToString.EnumAnno|(value = test/EnumArgumentWithCustomToString.E.CAKE) @R|test/EnumArgumentWithCustomToString.EnumArrayAnno|(value = <implicitArrayOf>(test/EnumArgumentWithCustomToString.E.CAKE, test/EnumArgumentWithCustomToString.E.CAKE)) public/*package*/ open fun annotated(): R|kotlin/Unit|
 
     public constructor(): R|test/EnumArgumentWithCustomToString|
 
     public final enum class E : R|kotlin/Enum<test/EnumArgumentWithCustomToString.E!>| {
-        public final static enum entry CAKE: R|@EnhancedNullability test/EnumArgumentWithCustomToString.E|
+        public final static enum entry CAKE: R|test/EnumArgumentWithCustomToString.E|
         public final static fun values(): R|kotlin/Array<test/EnumArgumentWithCustomToString.E>| {
         }
 
@@ -20,7 +20,7 @@ public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
 
     }
     public final annotation class EnumArrayAnno : R|kotlin/Annotation| {
-        public constructor(vararg value: R|kotlin/Array<test/EnumArgumentWithCustomToString.E>|): R|test/EnumArgumentWithCustomToString.EnumArrayAnno|
+        public constructor(vararg value: R|kotlin/Array<out test/EnumArgumentWithCustomToString.E>|): R|test/EnumArgumentWithCustomToString.EnumArrayAnno|
 
     }
 }

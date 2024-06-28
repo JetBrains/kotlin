@@ -6,7 +6,7 @@ final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeyS
     public final <null> method getKey(p0: java.lang.Integer): java.lang.Long
     public synthetic bridge <null> method getKey(p0: java.lang.Object): java.lang.Object
     enclosing method TKt.main(LDataStream;)V
-    public final static field <null> INSTANCE: TKt$main$1
+    public final static field <LTKt$main$1<TIN;TKEY;>;> INSTANCE: TKt$main$1
     inner (anonymous) class TKt$main$1
 }
 
@@ -18,7 +18,7 @@ final class<<IN:Ljava/lang/Object;KEY:Ljava/lang/Object;>Ljava/lang/Object;LKeyS
     public final <null> method getKey(p0: java.lang.Integer): java.lang.Long
     public synthetic bridge <null> method getKey(p0: java.lang.Object): java.lang.Object
     enclosing method TKt.main(LDataStream;)V
-    public final static field <null> INSTANCE: TKt$main$2
+    public final static field <LTKt$main$2<TIN;TKEY;>;> INSTANCE: TKt$main$2
     inner (anonymous) class TKt$main$2
 }
 

@@ -1,20 +1,4 @@
 KtClass:
-  line: 3
-  name: SingleInterface
-  qualifier: abc.SingleInterface
-  light: SymbolLightClassForInterface
-    name: SingleInterface
-    qualifier: abc.SingleInterface
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
   line: 5
   name: BaseInterface1
   qualifier: abc.BaseInterface1
@@ -85,5 +69,21 @@ KtClass:
     supers: [
       ClsClassImpl: Object (java.lang.Object)
       SymbolLightClassForInterface: InterfaceWithBase (abc.InterfaceWithBase)
+    ]
+
+KtClass:
+  line: 3
+  name: SingleInterface
+  qualifier: abc.SingleInterface
+  light: SymbolLightClassForInterface
+    name: SingleInterface
+    qualifier: abc.SingleInterface
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
     ]
 

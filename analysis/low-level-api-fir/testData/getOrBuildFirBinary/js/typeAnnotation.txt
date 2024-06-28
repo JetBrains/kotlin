@@ -1,0 +1,9 @@
+KT element: KtProperty
+KT element text:
+public val prop: @Y kotlin.Int /* compiled code */
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val prop: R|@R|Y|()  kotlin/Int|
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Y|()  kotlin/Int|

@@ -107,7 +107,8 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
     }
 
     protected static String toParseTreeText(PsiElement file,  boolean skipSpaces, boolean printRanges) {
-        return DebugUtil.psiToString(file, skipSpaces, printRanges);
+        boolean showWhitespaces = !skipSpaces;
+        return DebugUtil.psiToString(file, showWhitespaces, printRanges);
     }
 
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {

@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
 // FILE: a.kt
 package a
 
@@ -26,9 +26,9 @@ import _
 
 fun baz() {
     a.A1("") // resolved to B constructor, OK
-    a.A2("") // resolved to B constructor, INVISIBLE_MEMBER because type alias is private, OK
+    a.<!INVISIBLE_REFERENCE!>A2<!>("") // resolved to B constructor, INVISIBLE_MEMBER because type alias is private, OK
 
     a.A3("") checkType { _<String>() }
 
-    val x: <!INVISIBLE_REFERENCE!>a.A2<!> = B("") // A2 is unresolved because it's private in file, OK
+    val x: a.<!INVISIBLE_REFERENCE!>A2<!> = B("") // A2 is unresolved because it's private in file, OK
 }

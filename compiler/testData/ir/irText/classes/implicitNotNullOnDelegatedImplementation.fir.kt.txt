@@ -1,8 +1,3 @@
-interface IFoo {
-  abstract fun foo(): String
-
-}
-
 class K1 : JFoo {
   constructor() /* primary */ {
     super/*JFoo*/()
@@ -48,6 +43,7 @@ class K4 : JUnrelatedFoo, IFoo {
 }
 
 class TestJFoo : IFoo {
+  private /* final field */ val $$delegate_0: JFoo = JFoo()
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -57,12 +53,11 @@ class TestJFoo : IFoo {
   override fun foo(): String {
     return <this>.#$$delegate_0.foo() /*!! String */
   }
-
-  private /* final field */ val $$delegate_0: JFoo = JFoo()
 
 }
 
 class TestK1 : IFoo {
+  private /* final field */ val $$delegate_0: K1 = K1()
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -72,12 +67,11 @@ class TestK1 : IFoo {
   override fun foo(): String {
     return <this>.#$$delegate_0.foo() /*!! String */
   }
-
-  private /* final field */ val $$delegate_0: K1 = K1()
 
 }
 
 class TestK2 : IFoo {
+  private /* final field */ val $$delegate_0: K2 = K2()
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -87,12 +81,11 @@ class TestK2 : IFoo {
   override fun foo(): String {
     return <this>.#$$delegate_0.foo()
   }
-
-  private /* final field */ val $$delegate_0: K2 = K2()
 
 }
 
 class TestK3 : IFoo {
+  private /* final field */ val $$delegate_0: K3 = K3()
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -103,11 +96,10 @@ class TestK3 : IFoo {
     return <this>.#$$delegate_0.foo()
   }
 
-  private /* final field */ val $$delegate_0: K3 = K3()
-
 }
 
 class TestK4 : IFoo {
+  private /* final field */ val $$delegate_0: K4 = K4()
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -118,7 +110,10 @@ class TestK4 : IFoo {
     return <this>.#$$delegate_0.foo() /*!! String */
   }
 
-  private /* final field */ val $$delegate_0: K4 = K4()
+}
+
+interface IFoo {
+  abstract fun foo(): String
 
 }
 

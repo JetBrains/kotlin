@@ -1,5 +1,5 @@
 FILE: noParameterTypRefInPrimaryConstructor.kt
-    public? final? class X : R|kotlin/Any| {
+    public final? class X : R|kotlin/Any| {
         public? constructor(x: <ERROR TYPE REF: No type for parameter>): R|X| {
             LAZY_super<R|kotlin/Any|>
         }

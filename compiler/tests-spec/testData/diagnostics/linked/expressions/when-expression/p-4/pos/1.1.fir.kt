@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 // FULL_JDK
 
@@ -36,7 +37,7 @@ fun case1() {
     val when3 = when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
-        <!DUPLICATE_LABEL_IN_WHEN!>JavaEnum.Val_2<!> -> { }
+        <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>JavaEnum.Val_2<!> -> { }
     }
 }
 
@@ -56,7 +57,7 @@ fun case2() {
     }
     val when3: Any = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         false -> { }
-        <!DUPLICATE_LABEL_IN_WHEN!>false<!> -> { }
+        <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>false<!> -> { }
         !false -> { }
     }
 }
@@ -77,7 +78,7 @@ fun case3() {
     val when3: Any = when (a) {
         true -> { }
         false -> { }
-        <!DUPLICATE_LABEL_IN_WHEN!>false<!> -> { }
+        <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>false<!> -> { }
     }
 }
 
@@ -101,7 +102,7 @@ fun case4() {
     val when3 = when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
-        is  <!DUPLICATE_LABEL_IN_WHEN!>SClass.B<!> ->{ }
+        is  <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>SClass.B<!> ->{ }
         is  SClass.C ->{ }
     }
 }

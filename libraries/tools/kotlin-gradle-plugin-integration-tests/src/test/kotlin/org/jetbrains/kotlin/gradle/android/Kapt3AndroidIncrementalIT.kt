@@ -136,9 +136,10 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
             appProject.buildGradle.modify {
                 //language=Gradle
                 """
-                apply plugin: 'org.jetbrains.kotlin.kapt'
-                $it
-                """.trimIndent()
+                |plugins {
+                |   id("org.jetbrains.kotlin.kapt")
+                |${it.substringAfter("plugins {")}
+                """.trimMargin()
             }
 
             build(":app:testDebugUnitTest")
@@ -185,12 +186,12 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
                         .resolve(useUtilFileName).relativeTo(projectPath)
                     assertCompiledKotlinSources(
                         listOf(affectedFile),
-                        getOutputForTask("app:kaptGenerateStubsDebugKotlin"),
+                        getOutputForTask(":app:kaptGenerateStubsDebugKotlin"),
                         errorMessageSuffix = " in task ':app:kaptGenerateStubsDebugKotlin"
                     )
                     assertCompiledKotlinSources(
                         listOf(affectedFile),
-                        getOutputForTask("app:compileDebugKotlin"),
+                        getOutputForTask(":app:compileDebugKotlin"),
                         errorMessageSuffix = " in task ':app:compileDebugKotlin"
                     )
                 }
@@ -204,7 +205,7 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
     }
 }
 
-@DisplayName("android with kapt3 incremental build tests with precise compilation outputs backup")
-class Kapt3AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("android with kapt3 incremental build tests with disabled precise compilation outputs backup")
+open class Kapt3AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }

@@ -1,6 +1,0 @@
-KT element: KtUserType
-FIR element: FirResolvedTypeRefImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/Int?|

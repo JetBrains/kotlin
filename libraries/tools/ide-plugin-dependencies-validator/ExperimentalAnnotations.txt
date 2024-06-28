@@ -1,0 +1,10 @@
+# The list of experimental Kotlin stdlib annotations.
+# Declarations from kotlin stdlib marked with those annotations cannot be used in the projects
+# that are published for the IJ Kotlin plugin to avoid stdlib binary compatibility problems.
+# See KT-62510 for details.
+# The list should be updated as new experimental annotations are added or removed from the stdlib.
+kotlin.ExperimentalStdlibApi
+kotlin.io.path.ExperimentalPathApi
+kotlin.io.encoding.ExperimentalEncodingApi
+kotlin.time.ExperimentalTime
+kotlin.ExperimentalUnsignedTypes

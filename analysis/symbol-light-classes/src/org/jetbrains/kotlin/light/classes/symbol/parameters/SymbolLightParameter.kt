@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiModifierList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
@@ -16,12 +16,11 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 internal class SymbolLightParameter(
-    ktAnalysisSession: KtAnalysisSession,
-    parameterSymbol: KtValueParameterSymbol,
+    ktAnalysisSession: KaSession,
+    parameterSymbol: KaValueParameterSymbol,
     containingMethod: SymbolLightMethodBase
 ) : SymbolLightParameterCommon(ktAnalysisSession, parameterSymbol, containingMethod) {
     private val isConstructorParameterSymbol = containingMethod.isConstructor
@@ -39,14 +38,8 @@ internal class SymbolLightParameter(
                         AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                     }.toOptionalFilter(),
                 ),
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
         )
     }
-
-    private val isVararg: Boolean by lazyPub {
-        parameterSymbolPointer.withSymbol(ktModule) { it.isVararg }
-    }
-
-    override fun isVarArgs() = isVararg
 }

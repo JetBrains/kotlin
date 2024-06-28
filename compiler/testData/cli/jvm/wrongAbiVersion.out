@@ -3,12 +3,14 @@ compiler/testData/cli/jvm/wrongAbiVersionLib/bin/META-INF/main.kotlin_module: er
 compiler/testData/cli/jvm/wrongAbiVersion.kt:3:12: error: class 'ClassWithWrongAbiVersion' was compiled with an incompatible version of Kotlin. The actual metadata version is 0.30.0, but the compiler version $ABI_VERSION$ can read versions up to $ABI_VERSION_NEXT$.
 The class is loaded from $TESTDATA_DIR$/wrongAbiVersionLib/bin/ClassWithWrongAbiVersion.class
 fun foo(x: ClassWithWrongAbiVersion) {
-           ^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference: bar
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'bar'.
     bar()
-    ^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of receiver type mismatch:
-public fun String.replaceIndent(newIndent: String = ...): String defined in kotlin.text
+    ^^^
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:21: error: argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.
     1.replaceIndent(2, 3)
-      ^
+                    ^
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:24: error: too many arguments for 'fun String.replaceIndent(newIndent: String = ...): String'.
+    1.replaceIndent(2, 3)
+                       ^
 COMPILATION_ERROR

@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
 import java.io.File
 
-abstract class AbstractLoadJavaWithPsiClassReadingTest : AbstractLoadJavaTest() {
+abstract class AbstractLoadJavaWithPsiClassReadingTest : AbstractLoadJavaTest(), FrontendBackendConfiguration {
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        configureIrFir(configuration)
+        super.updateConfiguration(configuration)
+    }
+
     override fun usePsiClassFilesReading() = true
 
     override fun getExpectedFile(expectedFileName: String): File {

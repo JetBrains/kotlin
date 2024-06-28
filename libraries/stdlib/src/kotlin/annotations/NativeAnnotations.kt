@@ -5,6 +5,7 @@
 
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
@@ -14,6 +15,7 @@ import kotlin.experimental.ExperimentalObjCRefinement
  * [externName] controls the name of top level function, [shortName] controls the short name.
  * If [externName] is empty, no top level declaration is being created.
  */
+@ExperimentalNativeApi
 @SinceKotlin("1.5")
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
@@ -48,7 +50,7 @@ public expect annotation class CName(val externName: String = "", val shortName:
 )
 @Retention(AnnotationRetention.BINARY)
 @OptionalExpectation
-expect annotation class FreezingIsDeprecated
+public expect annotation class FreezingIsDeprecated
 
 /**
  * Instructs the Kotlin compiler to use a custom Objective-C and/or Swift name for this class, property, parameter or function.
@@ -65,32 +67,35 @@ expect annotation class FreezingIsDeprecated
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCName
+@SinceKotlin("1.8")
 public expect annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
 /**
- * Meta-annotation that instructs the Kotlin compiler to remove the annotated function or property from the public Objective-C API.
+ * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.
  *
  * Annotation processors that refine the public Objective-C API can annotate their annotations with this meta-annotation
  * to have the original declarations automatically removed from the public API.
  *
- * Note: only annotations with [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
+ * Note: only annotations with [AnnotationTarget.CLASS], [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
  */
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class HidesFromObjC()
 
 /**
- * Instructs the Kotlin compiler to remove this function or property from the public Objective-C API.
+ * Instructs the Kotlin compiler to remove this class, function or property from the public Objective-C API.
  */
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class HiddenFromObjC()
 
 /**
@@ -110,6 +115,7 @@ public expect annotation class HiddenFromObjC()
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class RefinesInSwift()
 
 /**
@@ -124,4 +130,6 @@ public expect annotation class RefinesInSwift()
 @MustBeDocumented
 @OptionalExpectation
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public expect annotation class ShouldRefineInSwift()
+

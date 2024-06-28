@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
@@ -19,10 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 
-object FirInapplicableLateinitChecker : FirPropertyChecker() {
+object FirInapplicableLateinitChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isLateInit || declaration.returnTypeRef is FirErrorTypeRef) {
             return
@@ -64,8 +68,20 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
             reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
         }
 
+        if (declaration.isExtension) {
+            reporter.reportError(declaration.source, "is not allowed on extension properties", context)
+        }
+
+        if (declaration.contextReceivers.isNotEmpty()) {
+            reporter.reportError(declaration.source, "is not allowed on properties with context receivers", context)
+        }
+
+        if (declaration.isAbstract) {
+            reporter.reportError(declaration.source, "is not allowed on abstract properties", context)
+        }
+
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {
-            val declarationType = declaration.returnTypeRef.coneType
+            val declarationType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
             val variables = if (declaration.isLocal) "local variables" else "properties"
             when {
                 declarationType.isUnsignedType -> reporter.reportError(

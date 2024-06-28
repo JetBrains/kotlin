@@ -1,12 +1,15 @@
-import org.gradle.util.VersionNumber
-
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion 22
+    namespace 'org.jetbrains.kotlin.gradle.test.androidalfa'
 
     sourceSets {
         main.java.srcDirs += 'src/main/java2'
@@ -39,37 +42,14 @@ android {
         }
     }
 
-    publishNonDefault true
-
-    kotlinOptions {
-        noJdk = true
+    if (GradleVersion.current() < GradleVersion.version("8.5")) {
+        publishNonDefault true
     }
-
     lintOptions.abortOnError = false
 }
 
-if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {
-    configurations {
-        flavor1DebugCompile
-        flavor1ReleaseCompile
-        flavor2DebugCompile
-        flavor2ReleaseCompile
-    }
-
-    dependencies {
-        flavor1DebugCompile project(path: ':Lib', configuration: 'flavor1Debug')
-        flavor1ReleaseCompile project(path: ':Lib', configuration: 'flavor1Release')
-        flavor2DebugCompile project(path: ':Lib', configuration: 'flavor2Debug')
-        flavor2ReleaseCompile project(path: ':Lib', configuration: 'flavor2Release')
-    }
-}
-else {
-    dependencies {
-        implementation project(":Lib")
-    }
-}
-
 dependencies {
+    implementation project(":Lib")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation'junit:junit:4.13.2'
 }

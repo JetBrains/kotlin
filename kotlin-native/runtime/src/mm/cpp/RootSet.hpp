@@ -8,7 +8,7 @@
 
 #include "GlobalsRegistry.hpp"
 #include "ShadowStack.hpp"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 
 struct ObjHeader;
@@ -18,6 +18,7 @@ namespace mm {
 
 class ThreadData;
 
+// TODO: Extremely useless class. Remove.
 class ThreadRootSet {
 public:
     enum class Source {
@@ -78,6 +79,7 @@ private:
     ThreadLocalStorage& tls_;
 };
 
+// TODO: Extremely useless class. Remove.
 class GlobalRootSet {
 public:
     enum class Source {
@@ -86,7 +88,7 @@ public:
     };
 
     struct Value {
-        ObjHeader*& object;
+        ObjHeader* object;
         Source source;
 
         bool operator==(const Value& rhs) const noexcept { return object == rhs.object && source == rhs.source; }
@@ -123,12 +125,12 @@ public:
         Phase phase_;
         union {
             GlobalsRegistry::Iterator globalsIterator_;
-            StableRefRegistry::Iterator stableRefsIterator_;
+            SpecialRefRegistry::RootsIterator specialRefsIterator_;
         };
     };
 
-    GlobalRootSet(GlobalsRegistry& globalsRegistry, StableRefRegistry& stableRefRegistry) noexcept :
-        globalsIterable_(globalsRegistry.LockForIter()), stableRefsIterable_(stableRefRegistry.LockForIter()) {}
+    GlobalRootSet(GlobalsRegistry& globalsRegistry, SpecialRefRegistry& stableRefRegistry) noexcept :
+        globalsIterable_(globalsRegistry.LockForIter()), specialRefsIterable_(stableRefRegistry.roots()) {}
     GlobalRootSet() noexcept;
 
     Iterator begin() noexcept { return Iterator(Iterator::begin, *this); }
@@ -138,7 +140,7 @@ private:
     // TODO: These use separate locks, which is inefficient, and slightly dangerous. In practice it's
     //       fine, because this is the only place where these two locks are taken simultaneously.
     GlobalsRegistry::Iterable globalsIterable_;
-    StableRefRegistry::Iterable stableRefsIterable_;
+    SpecialRefRegistry::RootsIterable specialRefsIterable_;
 };
 
 } // namespace mm

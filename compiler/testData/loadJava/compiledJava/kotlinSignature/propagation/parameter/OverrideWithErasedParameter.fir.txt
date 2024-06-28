@@ -1,10 +1,10 @@
 public abstract interface OverrideWithErasedParameter : R|kotlin/Any| {
-    public abstract interface Sub<T : R|kotlin/Any!|> : R|test/OverrideWithErasedParameter.Super<ft<T & Any, T?>>| {
+    public abstract interface Sub<T : R|kotlin/Any!|> : R|test/OverrideWithErasedParameter.Super<T!>| {
         public abstract fun foo(o: R|kotlin/Any!|): R|kotlin/Unit|
 
     }
     public abstract interface Super<T : R|kotlin/Any!|> : R|kotlin/Any| {
-        public abstract fun foo(t: R|ft<T & Any, T?>|): R|kotlin/Unit|
+        public abstract fun foo(t: R|T!|): R|kotlin/Unit|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

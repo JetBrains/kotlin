@@ -1,9 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
@@ -16,23 +19,15 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
 class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var calleeReference: FirReference = FirStubReference
     lateinit var tryBlock: FirBlock
@@ -42,7 +37,7 @@ class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuil
     override fun build(): FirTryExpression {
         return FirTryExpressionImpl(
             source,
-            typeRef,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             calleeReference,
             tryBlock,
@@ -56,7 +51,7 @@ class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuil
 @OptIn(ExperimentalContracts::class)
 inline fun buildTryExpression(init: FirTryExpressionBuilder.() -> Unit): FirTryExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirTryExpressionBuilder().apply(init).build()
 }

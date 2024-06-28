@@ -16,15 +16,13 @@
 
 #if KONAN_OBJC_INTEROP
 
-#import <Foundation/NSDictionary.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 
 #import "Exceptions.h"
 #import "ObjCExport.h"
 #import "Porting.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 
 #import "ObjCExportErrors.h"
 
@@ -48,9 +46,12 @@ extern "C" RUNTIME_NORETURN void Kotlin_ObjCExport_trapOnUndeclaredException(KRe
 static char kotlinExceptionOriginChar;
 
 static bool isExceptionOfType(KRef exception, const TypeInfo** types) {
-  if (types) for (int i = 0; types[i] != nullptr; ++i) {
-    // TODO: use fast instance check when possible.
-    if (IsInstance(exception, types[i])) return true;
+  if (types) {
+    const TypeInfo* type = exception->type_info();
+    for (int i = 0; types[i] != nullptr; ++i) {
+      // TODO: use fast instance check when possible.
+      if (IsSubtype(type, types[i])) return true;
+    }
   }
 
   return false;

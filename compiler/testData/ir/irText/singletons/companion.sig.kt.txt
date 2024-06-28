@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: Z
+//   Public signature: /Z|null[0]
+class Z {
+  // CHECK:
+  //   Mangled name: Z.Companion
+  //   Public signature: /Z.Companion|null[0]
+  companion object Companion {
+    // CHECK:
+    //   Mangled name: Z.Companion#<init>(){}
+    //   Public signature: /Z.Companion.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    private constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Z.Companion#test(){}
+    //   Public signature: /Z.Companion.test|6620506149988718649[0]
+    //   Public signature debug description: test(){}
+    fun test(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Z#<init>(){}
+  //   Public signature: /Z.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Z#test2(){}
+  //   Public signature: /Z.test2|4279114864133353152[0]
+  //   Public signature debug description: test2(){}
+  fun test2(): Unit
+
+}
+

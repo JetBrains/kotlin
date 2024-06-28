@@ -1,0 +1,6 @@
+@one.Anno
+var topLevelVariableWithAnnotations: kotlin.Long
+  @one.Anno
+  get()
+  @one.Anno
+  set(@one.Anno value: kotlin.Long)

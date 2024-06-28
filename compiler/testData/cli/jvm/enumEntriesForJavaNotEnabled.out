@@ -9,5 +9,5 @@ compiler or generated code. Use it at your own risk!
 
 compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.kt:4:49: error: the feature "enum entries" is disabled
     val entries = java.util.concurrent.TimeUnit.entries
-                                                ^
+                                                ^^^^^^^
 COMPILATION_ERROR

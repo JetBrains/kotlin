@@ -1,3 +1,4 @@
+// IGNORE_TREE_ACCESS: KT-64898
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -11,3 +12,9 @@ val delegate = object: ReadWriteProperty<Any?, Int> {
 val value by delegate
 
 var variable by delegate
+
+interface Base {
+}
+
+class Derived(b: Base) : Base by b {
+}

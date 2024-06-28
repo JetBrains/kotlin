@@ -1,0 +1,28 @@
+@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>
+  context -> FirNamedFunctionSymbol /implicitType
+  anchor -> [FirNamedFunctionSymbol /withType]
+
+@R|Anno|(number = R|/privateConstant|)  kotlin/Int
+  context -> FirNamedFunctionSymbol /implicitType
+  anchor -> [FirNamedFunctionSymbol /withType]
+
+FILE: [ResolvedTo(IMPORTS)] declaration.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstant: R|kotlin/Int| = Int(0)
+        private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
+        internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
+    }
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /withType]] fun implicitType(): R|@R|Anno|(number = R|/internalConstant|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant|)  kotlin/Int>| {
+        ^implicitType R|/withType|()
+    }

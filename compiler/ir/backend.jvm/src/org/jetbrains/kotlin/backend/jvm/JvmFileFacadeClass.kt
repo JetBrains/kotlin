@@ -6,28 +6,31 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.util.DeserializableClass
+import org.jetbrains.kotlin.ir.util.deserializedIr
 import org.jetbrains.kotlin.name.Name
 
-class JvmFileFacadeClass(
+fun createJvmFileFacadeClass(
     origin: IrDeclarationOrigin,
     name: Name,
     source: SourceElement,
-    private val deserializeIr: (IrClass) -> Boolean,
-) : IrClassImpl(
-    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
-    IrClassSymbolImpl(), name, ClassKind.CLASS, DescriptorVisibilities.PUBLIC, Modality.FINAL,
-    source = source
-), DeserializableClass {
-
-    private var irLoaded: Boolean? = null
-
-    override fun loadIr(): Boolean {
-        return irLoaded ?: deserializeIr(this).also { irLoaded = it }
-    }
+    deserializeIr: (IrClass) -> Boolean,
+) = IrFactoryImpl.createClass(
+    startOffset = UNDEFINED_OFFSET,
+    endOffset = UNDEFINED_OFFSET,
+    origin = origin,
+    symbol = IrClassSymbolImpl(),
+    name = name,
+    kind = ClassKind.CLASS,
+    visibility = DescriptorVisibilities.PUBLIC,
+    modality = Modality.FINAL,
+    source = source,
+).apply {
+    this.deserializedIr = lazy { deserializeIr(this) }
 }

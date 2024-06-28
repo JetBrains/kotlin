@@ -1,0 +1,53 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A {
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B : A {
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract /* fake */ override fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: B#bar(){}
+  //   Public signature: /B.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
+  abstract fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+interface C : A {
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract /* fake */ override fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: C#baz(){}
+  //   Public signature: /C.baz|-7957790288607863798[0]
+  //   Public signature debug description: baz(){}
+  abstract fun baz(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B){}
+//   Public signature: /test|3809392349795657853[0]
+//   Public signature debug description: test(B){}
+fun test(param: B): Unit

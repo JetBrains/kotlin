@@ -1,6 +1,5 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
-
+// WITH_STDLIB
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
@@ -14,9 +13,8 @@ open class A : S1, S2
 
 class B : A()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual interface S1 {
     fun o(): S = "O"

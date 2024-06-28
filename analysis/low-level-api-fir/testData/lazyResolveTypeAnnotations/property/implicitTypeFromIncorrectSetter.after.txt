@@ -1,0 +1,31 @@
+@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol low/resolveMe
+  anchor -> [FirPropertySymbol low/resolveMe]
+
+@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol low/resolveMe
+  anchor -> [FirPropertySymbol low/resolveMe]
+
+@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol low/resolveMe
+  anchor -> [FirPropertySymbol low/resolveMe]
+
+FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetter.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=low/Anno.position] position: R|kotlin/String|): R|low/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: <ERROR TYPE REF: Unresolved name: field>
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: field> {
+            ^ <Unresolved name: field>#
+        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|@R|low/Anno|(position = <strcat>(String(setter parameter type ), R|low/prop|))  kotlin/collections/List<@R|low/Anno|(position = <strcat>(String(setter nested parameter type ), R|low/prop|))  kotlin/collections/Collection<@R|low/Anno|(position = <strcat>(String(setter nested nested parameter type ), R|low/prop|))  kotlin/String>>|): R|kotlin/Unit| {
+            ^ value#
+        }

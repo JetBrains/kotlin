@@ -33,8 +33,8 @@ object IrIllegalArgumentException : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
-        return object : IrIntrinsicFunction(expression, signature, classCodegen, listOf(JAVA_STRING_TYPE)) {
+    ): IntrinsicFunction {
+        return object : IntrinsicFunction(expression, signature, classCodegen, listOf(JAVA_STRING_TYPE)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokespecial(
                     exceptionTypeDescriptor.internalName,
@@ -51,7 +51,7 @@ object IrIllegalArgumentException : IntrinsicMethod() {
                 data: BlockInfo,
                 expression: IrFunctionAccessExpression
             ): StackValue {
-                codegen.markLineNumber(expression)
+                with(codegen) { expression.markLineNumber(startOffset = true) }
                 v.anew(exceptionTypeDescriptor)
                 v.dup()
                 return super.invoke(v, codegen, data, expression)

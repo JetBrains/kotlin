@@ -1,21 +1,14 @@
-fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E {
-  return null as E
+interface Base<in E : Any?> {
 }
 
 interface Derived<in E : Any?> : Base<E> {
-
-}
-
-interface Base<in E : Any?> {
-
 }
 
 interface Receiver<out E : Any?> {
-
 }
 
-fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {
-  return null as C
+fun box(): String {
+  return "OK"
 }
 
 fun <R : Any?> foo(r: Receiver<R>): R {
@@ -25,6 +18,11 @@ fun <R : Any?> foo(r: Receiver<R>): R {
 )
 }
 
-fun box(): String {
-  return "OK"
+fun <E : Any?> produce(block: @ExtensionFunctionType Function1<Derived<E>, Unit>): E {
+  return null as E
 }
+
+fun <E : Any?, C : Base<E>> Receiver<E>.toChannel(destination: C): C {
+  return null as C
+}
+

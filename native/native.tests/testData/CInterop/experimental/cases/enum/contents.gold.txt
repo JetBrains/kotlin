@@ -1,0 +1,79 @@
+library {
+  // module name: <dependency.def>
+
+  library fragment {
+    // package name: dependency
+
+    // class name: dependency/E1
+    // class name: dependency/E1.Companion
+    // class name: dependency/E1.Var
+    // class name: dependency/E1.Var.Companion
+
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public final enum class dependency/E1 : kotlin/Enum<dependency/E1>, kotlinx/cinterop/CEnum {
+
+      private constructor(value: kotlin/UInt)
+
+      public open val value: kotlin/UInt
+        public open /* non-default */ get
+
+      // companion object: Companion
+
+      // nested class: Var
+
+      // nested class: Companion
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 0u)
+      ONE,
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 1u)
+      TWO,
+
+      @kotlinx/cinterop/internal/ConstantValue.UInt(value = 2u)
+      THREE,
+    }
+
+    public final companion object dependency/E1.Companion {
+
+      private constructor()
+
+      @kotlin/Deprecated(message = "Will be removed.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+      public final fun byValue(value: kotlin/UInt): dependency/E1
+    }
+
+    public final class dependency/E1.Var : kotlinx/cinterop/CEnumVar {
+
+      public constructor(rawPtr: kotlin/native/internal/NativePtr /* = kotlinx/cinterop/NativePtr^ */)
+
+      public final var value: dependency/E1
+        public final /* non-default */ external get
+        public final /* non-default */ external set(value: dependency/E1)
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    @kotlinx/cinterop/internal/CEnumVarTypeSize(size = 4)
+    @kotlin/Deprecated(message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = kotlin/ReplaceWith(imports = [], expression = ""), level = kotlin/DeprecationLevel.WARNING)
+    public final companion object dependency/E1.Var.Companion : kotlinx/cinterop/CPrimitiveVar.Type {
+
+      private constructor()
+    }
+
+    package {
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final const val EIGHT: kotlin/UInt /* = dependency/E2^ */ /* = 8u */
+        public final get
+
+      @kotlinx/cinterop/ExperimentalForeignApi
+      public final const val FOUR: kotlin/UInt /* = dependency/E2^ */ /* = 4u */
+        public final get
+
+      public typealias E2 = kotlin/UInt /* = kotlin/UInt */
+
+      public typealias E2Var = kotlinx/cinterop/UIntVarOf<dependency/E2^> /* = kotlinx/cinterop/UIntVarOf<kotlin/UInt /* = dependency/E2^ */> */
+    }
+  }
+}

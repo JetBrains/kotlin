@@ -17,27 +17,15 @@
 package org.jetbrains.kotlin.kapt3
 
 import com.intellij.openapi.project.Project
-import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.tree.Pretty
-import com.sun.tools.javac.tree.TreeMaker
-import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.base.kapt3.AptMode.APT_ONLY
-import org.jetbrains.kotlin.base.kapt3.AptMode.WITH_COMPILATION
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.util.ServiceLoaderLite
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -47,18 +35,17 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
-import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
+import org.jetbrains.kotlin.kapt3.base.AptMode.APT_ONLY
+import org.jetbrains.kotlin.kapt3.base.AptMode.WITH_COMPILATION
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt3.base.util.info
-import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -66,10 +53,6 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
-import java.io.StringWriter
-import java.io.Writer
-import java.net.URLClassLoader
-import javax.annotation.processing.Processor
 
 class ClasspathBasedKapt3Extension(
     options: KaptOptions,
@@ -82,16 +65,8 @@ class ClasspathBasedKapt3Extension(
     private var processorLoader: ProcessorLoader? = null
 
     override fun loadProcessors(): LoadedProcessors {
-        val efficientProcessorLoader = object : ProcessorLoader(options, logger) {
-            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
-                when (classLoader) {
-                    is URLClassLoader -> ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
-                    else -> super.doLoadProcessors(classpath, classLoader)
-                }
-        }
-
-        this.processorLoader = efficientProcessorLoader
-        return efficientProcessorLoader.loadProcessors()
+        this.processorLoader = EfficientProcessorLoader(options, logger)
+        return processorLoader!!.loadProcessors()
     }
 
     override fun analysisCompleted(
@@ -270,19 +245,15 @@ abstract class AbstractKapt3Extension(
             type = "java-production"
         )
 
-        val isIrBackend = options.flags[KaptFlag.USE_JVM_IR]
         val generationState = GenerationState.Builder(project, builderFactory, module, bindingContext, configuration)
             .targetId(targetId)
-            .isIrBackend(isIrBackend)
             .build()
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(
                 files,
                 generationState,
-                if (isIrBackend)
-                    JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
-                else DefaultCodegenFactory
+                JvmIrCodegenFactory(configuration, configuration[CLIConfigurationKeys.PHASE_CONFIG])
             )
         }
 
@@ -369,37 +340,8 @@ abstract class AbstractKapt3Extension(
     protected abstract fun loadProcessors(): LoadedProcessors
 }
 
-internal fun JCTree.prettyPrint(context: Context): String {
-    return StringWriter().apply { PrettyWithWorkarounds(context, this, false).printStat(this@prettyPrint) }.toString()
-}
 
-private class PrettyWithWorkarounds(private val context: Context, val out: Writer, sourceOutput: Boolean) : Pretty(out, sourceOutput) {
-    companion object {
-        private const val ENUM = Flags.ENUM.toLong()
-    }
-
-    override fun print(s: Any) {
-        out.write(s.toString())
-    }
-
-    override fun visitVarDef(tree: JCTree.JCVariableDecl) {
-        if ((tree.mods.flags and ENUM) != 0L) {
-            // Pretty does not print annotations for enum values for some reason
-            printExpr(TreeMaker.instance(context).Modifiers(0, tree.mods.annotations))
-
-            if (isJava11OrLater()) {
-                // Print enums fully, there is an issue when using Pretty in JDK 11.
-                // See https://youtrack.jetbrains.com/issue/KT-33052.
-                print("/*public static final*/ ${tree.name}")
-                tree.init?.let { print(" /* = $it */") }
-                return
-            }
-        }
-        super.visitVarDef(tree)
-    }
-}
-
-private inline fun <T> measureTimeMillis(block: () -> T): Pair<Long, T> {
+inline fun <T> measureTimeMillis(block: () -> T): Pair<Long, T> {
     val start = System.currentTimeMillis()
     val result = block()
     return Pair(System.currentTimeMillis() - start, result)

@@ -1,0 +1,14 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:Bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      BLOCK_BODY
+        CALL 'public final fun Foo (text: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in p3' type=kotlin.Unit origin=null
+          text: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              annotations:
+                MyComposable
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.Bar'
+                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

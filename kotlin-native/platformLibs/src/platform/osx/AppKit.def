@@ -1,7 +1,10 @@
-depends = ApplicationServices CFCGTypes CFNetwork CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security cups darwin libkern osx posix
+depends = ApplicationServices CFCGTypes CFNetwork CloudKit CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security Symbols cups darwin libkern osx posix
 language = Objective-C
 package = platform.AppKit
 modules = AppKit
 
 compilerOpts = -framework AppKit
 linkerOpts = -framework AppKit
+
+strictEnums = NSBezierPathElement
+objcClassesIncludingCategories = NSImage NSProgressIndicator

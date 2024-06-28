@@ -83,6 +83,7 @@ class InlinerCycleReporter(
 
         } finally {
             if (!inlineCallInfos.isEmpty()) {
+                @Suppress("DEPRECATION") // KT-65247
                 if (inlineCallInfos.last.call == call) {
                     inlineCallInfos.removeLast()
                 }

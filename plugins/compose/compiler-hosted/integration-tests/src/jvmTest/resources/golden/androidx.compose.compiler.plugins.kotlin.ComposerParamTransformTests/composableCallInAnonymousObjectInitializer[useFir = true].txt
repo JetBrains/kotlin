@@ -1,0 +1,68 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(inputs: List<Int>) {
+    val objs = inputs.map {
+        object {
+            init {
+                Foo()
+            }
+
+            val state = Foo()
+            val value by Foo()
+        }
+    }
+    objs.forEach {
+        println(it.state)
+        println(it.value)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(inputs: List<Int>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(inputs)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val objs = inputs.map { it: Int ->
+      val tmp0_return = <block>{
+        object {
+          init {
+            Foo(%composer, 0)
+          }
+          val state: State<Int> = Foo(%composer, 0)
+          val value: State<Int> = Foo(%composer, 0)
+            get() {
+              return <this>.value%delegate.getValue(<this>, ::value)
+            }
+        }
+      }
+      tmp0_return
+    }
+    objs.forEach { it: <no name provided> ->
+      println(it.state)
+      println(it.value)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(inputs, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

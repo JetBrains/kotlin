@@ -1,4 +1,5 @@
-// !CHECK_TYPE
+// ISSUE: KT-63072
+// CHECK_TYPE
 
 interface A<R, T: A<R, T>> {
     fun r(): R

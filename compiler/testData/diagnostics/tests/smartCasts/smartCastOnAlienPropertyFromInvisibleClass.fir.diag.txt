@@ -1,0 +1,3 @@
+/B.kt:(133,134): error: Smart cast to 'kotlin.String' is impossible, because 'x' is a public API property declared in different module.
+
+/B.kt:(265,268): error: Smart cast to 'kotlin.String' is impossible, because 'x' is a public API property declared in different module.

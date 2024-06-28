@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: JVM_IR
 // ^ Disables a language feature introduced in 1.4. This test checks old backend's behavior and is needed as long as we support language version 1.3.
 // FIR status: don't support legacy feature
-// !LANGUAGE: -NoConstantValueAttributeForNonConstVals
+// LANGUAGE: -NoConstantValueAttributeForNonConstVals
 
 class C {
     val testClassVal = 100

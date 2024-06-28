@@ -6,32 +6,26 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.sourcesDir
 import org.jetbrains.kotlin.commonizer.stdlib
-import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeStdlib
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
-import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.gradle.utils.konanDistribution
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
-    private val logger: Logger = Logging.getLogger(IdeNativePlatformDependencyResolver::class.java)
-
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
-        val konanDistribution = KonanDistribution(sourceSet.project.konanHome)
-        val stdlibFile = KonanDistribution(sourceSet.project.konanHome).stdlib
+        val konanDistribution = sourceSet.project.konanDistribution
+        val stdlibFile = konanDistribution.stdlib
 
         val klibExtra = try {
             val kotlinLibrary = resolveSingleFileKlib(
@@ -41,7 +35,6 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
 
             KlibExtra(kotlinLibrary)
         } catch (error: Throwable) {
-            logger.error("Failed to resolve Native Stdlib", error)
             null
         }
 
@@ -63,6 +56,8 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
     }
 
     fun nativeStdlibCoordinates(project: Project): IdeaKotlinBinaryCoordinates = IdeaKotlinBinaryCoordinates(
-        "org.jetbrains.kotlin.native", "stdlib", project.konanVersion.toString(),
+        group = "org.jetbrains.kotlin.native",
+        module = "stdlib",
+        version = project.nativeProperties.kotlinNativeVersion.get(),
     )
 }

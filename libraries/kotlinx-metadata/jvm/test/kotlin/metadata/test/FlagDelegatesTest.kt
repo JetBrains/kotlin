@@ -1,0 +1,222 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package kotlin.metadata.test
+
+import kotlin.metadata.*
+import org.junit.Test
+import kotlin.metadata.internal.FlagImpl
+import kotlin.metadata.internal._flagAccess
+import kotlin.reflect.KMutableProperty0
+import kotlin.test.*
+
+class FlagDelegatesTest {
+    private class Private
+
+    public class Public {
+        public fun f(): String = ""
+    }
+
+    @Test
+    fun testVisibilityFlags() {
+        val p1 = Private::class.java.readMetadataAsKmClass()
+        val p2 = Public::class.java.readMetadataAsKmClass()
+
+        assertEquals(Visibility.PRIVATE, p1.visibility)
+        assertEquals(Visibility.PUBLIC, p2.visibility)
+
+        assertTrue(Flag.IS_PRIVATE(_flagAccess(p1)))
+        assertTrue(Flag.IS_PUBLIC(_flagAccess(p2)))
+
+        p1.visibility = Visibility.PUBLIC
+        p2.visibility = Visibility.INTERNAL
+
+        assertFalse(Flag.IS_PRIVATE(_flagAccess(p1)))
+        assertFalse(Flag.IS_PUBLIC(_flagAccess(p2)))
+
+        assertTrue(Flag.IS_PUBLIC(_flagAccess(p1)))
+        assertTrue(Flag.IS_INTERNAL(_flagAccess(p2)))
+
+        val f = assertNotNull(p2.functions.find { it.name == "f" })
+        assertEquals(Visibility.PUBLIC, f.visibility)
+        f.visibility = Visibility.PRIVATE
+        assertFalse(Flag.IS_PUBLIC(_flagAccess(f)))
+        assertTrue(Flag.IS_PRIVATE(_flagAccess(f)))
+    }
+
+    @Test
+    fun testBooleanFlags() {
+        val klass = Public::class.java.readMetadataAsKmClass()
+        fun doTest(prop: KMutableProperty0<Boolean>, flags: () -> Int, rawFlag: FlagImpl) {
+            assertFalse(prop.get())
+            assertFalse(rawFlag(flags()))
+
+            prop.set(true)
+
+            assertTrue(prop.get())
+            assertTrue(rawFlag(flags()))
+        }
+
+
+        doTest(klass::isData, { _flagAccess(klass) }, Flag.Class.IS_DATA)
+        val f = klass.functions.single { it.name == "f" }
+        doTest(f::isOperator, { _flagAccess(f) }, Flag.Function.IS_OPERATOR)
+        val rt = f.returnType
+        doTest(rt::isNullable, { _flagAccess(rt) }, Flag.Type.IS_NULLABLE)
+    }
+
+    @Suppress("UNUSED_PARAMETER", "unused")
+    class PropertiesContainer {
+        val defaultVal: String = ""
+
+        var defaultVar: String = ""
+
+        val getterVal: String get() = "foo"
+
+        var getterSetterFieldVar: String = ""
+            get() = field + "a"
+            set(param) {
+                field = param + "b"
+            }
+
+        var getterSetterNoFieldVar: String
+            get() = ""
+            set(param) {
+                // no
+            }
+
+        var getterSetterNoFieldNoParamVar: String
+            get() = ""
+            set(_) {
+                // no
+            }
+
+        var defaultSetterVar: String = ""
+            get() = "foo"
+
+        var defaultGetterVar: String = ""
+            set(param) {
+                field = param.takeLast(0)
+            }
+
+        inline var noinlineModifierVar: () -> String
+            get() = { "" }
+            set(noinline param) {
+                param()
+            }
+
+    }
+
+    @Test
+    fun testPropertyAccessors() {
+        val klass = PropertiesContainer::class.java.readMetadataAsKmClass()
+        val propMap = klass.properties.associateBy { it.name }
+
+        fun assertProperty(
+            name: String,
+            isVarProp: Boolean,
+            getterNotDefault: Boolean,
+            setterNotDefault: Boolean?,
+            setterParamCheck: (KmValueParameter?) -> Unit = { assertNull(it, "Should not be a setter parameter for $name") },
+        ) {
+            with(propMap.getValue(name)) {
+                assertEquals(listOf(isVarProp, isVarProp), listOf(isVar, setter != null), "for $name")
+                assertEquals(visibility, getter.visibility, "for $name")
+                assertEquals(getterNotDefault, getter.isNotDefault, "for $name")
+
+                assertEquals(isVarProp, setter != null, "for $name")
+                assertEquals(setterNotDefault, setter?.isNotDefault, "for $name")
+                assertEquals(if (isVarProp) visibility else null, setter?.visibility, "for $name")
+
+                setterParamCheck(setterParameter)
+            }
+        }
+
+        assertProperty("defaultVal", false, false, null)
+        assertProperty("defaultVar", true, false, false)
+        assertProperty("getterVal", false, true, null)
+
+        assertProperty("getterSetterFieldVar", true, true, true) {
+            assertEquals("param", it?.name)
+        }
+
+        // Same as with field
+        assertProperty("getterSetterNoFieldVar", true, true, true) {
+            assertEquals("param", it?.name)
+        }
+
+        assertProperty("getterSetterNoFieldNoParamVar", true, true, true) {
+            assertEquals(true, it?.name == "_") // KT-62582 (K2 should have _ here despite a special name is used in K1)
+            // K1 version
+            // assertEquals(true, it?.name?.contains("anonymous parameter"))
+        }
+
+        assertProperty("defaultSetterVar", true, true, false)
+        assertProperty("defaultGetterVar", true, false, true) {
+            assertEquals("param", it?.name)
+        }
+
+        assertProperty("noinlineModifierVar", true, true, true) {
+            assertEquals("param", it?.name)
+            assertEquals(true, it?.isNoinline)
+        }
+
+    }
+
+    class X {
+
+        val x2 = 2
+        fun x22() = 2
+        val x3 = x22()
+
+        companion object Y {
+            val y2 = 2
+            const val y3 = 3
+        }
+    }
+
+    @Test
+    fun testHasConstantExample() {
+        class X {
+            val a = 1
+            val b = a
+
+            fun x() = 2
+            val c = x()
+        }
+
+        val props = X::class.java.readMetadataAsKmClass().properties.associateBy { it.name }
+        props.values.forEach { assertFalse(it.isConst, it.name) }
+        assertTrue(props.getValue("a").hasConstant)
+        assertFalse(props.getValue("b").hasConstant)
+        assertFalse(props.getValue("c").hasConstant)
+    }
+
+    interface I {
+        val x: Int
+    }
+
+    class Foo(i: I) : I by i {
+        val props: Map<String, Int> = mapOf()
+
+        val y: Int by props
+    }
+
+    @Test
+    fun testDelegation() {
+        val foo = Foo::class.java.readMetadataAsKmClass()
+        val props = foo.properties.associateBy { it.name }
+        with(props["x"]!!) {
+            //assertEquals(MemberKind.DELEGATION, kind) // TODO: KT-62581 (uncomment after bootstrapping, remove TODO)
+            assertFalse(isDelegated)
+            assertFalse(getter.isNotDefault)
+        }
+        with(props["y"]!!) {
+            assertEquals(MemberKind.DECLARATION, kind)
+            assertTrue(isDelegated)
+            assertTrue(getter.isNotDefault)
+        }
+    }
+}

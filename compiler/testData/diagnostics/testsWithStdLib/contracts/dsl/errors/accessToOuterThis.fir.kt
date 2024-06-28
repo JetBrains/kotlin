@@ -1,6 +1,6 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -SENSELESS_COMPARISON
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -SENSELESS_COMPARISON
 
 import kotlin.contracts.*
 
@@ -27,9 +27,9 @@ class Foo {
         }
 
         fun A?.goodWithReceiver() {
-            <!WRONG_IMPLIES_CONDITION!>contract {
+            contract {
                 returns() implies (this@goodWithReceiver != null)
-            }<!>
+            }
         }
 
         fun A?.badWithReceiver() {

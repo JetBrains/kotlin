@@ -1,0 +1,47 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}result
+  //   Public signature: /C.result|456251868630197251[0]
+  //   Public signature debug description: {}result
+  val result: String
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-result>(){}kotlin.String
+    //   Public signature: /C.result.<get-result>|8441547134620975366[0]
+    //   Public signature debug description: <get-result>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-result>(){}
+    //   Public signature: /C.result.<get-result>|7945192536455394063[0]
+    //   Public signature debug description: <get-result>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #contextual(kotlin.Function1<C,kotlin.String>){}kotlin.String
+//   Public signature: /contextual|-248785556334643583[0]
+//   Public signature debug description: contextual(kotlin.Function1<C,kotlin.String>){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #contextual(kotlin.Function1<C,kotlin.String>){}
+//   Public signature: /contextual|-8388542031730591420[0]
+//   Public signature debug description: contextual(kotlin.Function1<C,kotlin.String>){}
+fun contextual(f: Function1<C, String>): String
+

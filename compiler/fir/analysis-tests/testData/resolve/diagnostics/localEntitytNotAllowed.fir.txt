@@ -27,12 +27,12 @@ FILE: localEntitytNotAllowed.kt
             }
 
             local final object D : R|kotlin/Any| {
-                private constructor(): R|A.<anonymous>.D| {
+                private constructor(): R|<local>/<anonymous>.D| {
                     super<R|kotlin/Any|>()
                 }
 
                 local final object G : R|kotlin/Any| {
-                    private constructor(): R|A.<anonymous>.D.G| {
+                    private constructor(): R|<local>/<anonymous>.D.G| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -52,12 +52,12 @@ FILE: localEntitytNotAllowed.kt
 
         public final fun b(): R|kotlin/Unit| {
             local final object E : R|kotlin/Any| {
-                private constructor(): R|A.E| {
+                private constructor(): R|<local>/E| {
                     super<R|kotlin/Any|>()
                 }
 
                 local final object F : R|kotlin/Any| {
-                    private constructor(): R|A.E.F| {
+                    private constructor(): R|<local>/E.F| {
                         super<R|kotlin/Any|>()
                     }
 

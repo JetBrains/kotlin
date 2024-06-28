@@ -1,0 +1,49 @@
+@kotlin.Metadata
+public final class C$Companion {
+    // source: 'synchronizedFlag.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synchronized final @kotlin.jvm.JvmStatic method testJvmStatic(): void
+    public final inner class C$Companion
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'synchronizedFlag.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: C$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    private final static method lambda$lambda$0(p0: C): kotlin.Unit
+    public final @org.jetbrains.annotations.NotNull method lambda(): kotlin.jvm.functions.Function0
+    private synchronized final method testAccessor(): void
+    public synchronized final static @kotlin.jvm.JvmStatic method testJvmStatic(): void
+    public final inner class C$Companion
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IC {
+    // source: 'synchronizedFlag.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): IC
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public synchronized final static method testInlineClassFun-impl(p0: int): void
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class SynchronizedFlagKt {
+    // source: 'synchronizedFlag.kt'
+    public synthetic static method testJvmOverloads$default(p0: int, p1: int, p2: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method testJvmOverloads(): void
+    public synchronized final static @kotlin.jvm.JvmOverloads method testJvmOverloads(p0: int): void
+}

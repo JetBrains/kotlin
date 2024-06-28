@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +BooleanElvisBoundSmartCasts
+// LANGUAGE: +BooleanElvisBoundSmartCasts
 // See KT-20752
 
 class Unstable {

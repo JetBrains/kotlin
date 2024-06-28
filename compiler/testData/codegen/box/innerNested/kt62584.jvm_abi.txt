@@ -1,0 +1,15 @@
+MODULE main
+	CLASS C$bar$L2.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[.C$bar$L1<T#0>]
+				K2
+					[.C$bar$L1]
+	CLASS Kt62584Kt$baz$L2.class
+		CLASS METADATA
+			Property: class.metadata.superTypes
+				K1
+					[.Kt62584Kt$baz$L1<kotlin/String, T#0>]
+				K2
+					[.Kt62584Kt$baz$L1<kotlin/String>]

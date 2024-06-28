@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // SAM_CONVERSIONS: INDY
+// LAMBDAS: INDY
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 1 java/lang/invoke/LambdaMetafactory
+// 2 java/lang/invoke/LambdaMetafactory
 
 // FILE: extensionLambda2.kt
 fun samExtLambda(ext: String.(String) -> String) = Sam(ext)

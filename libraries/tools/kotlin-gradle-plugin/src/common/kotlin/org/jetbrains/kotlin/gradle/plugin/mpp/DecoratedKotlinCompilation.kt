@@ -8,9 +8,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
+@Suppress("DEPRECATION")
 @InternalKotlinGradlePluginApi
 abstract class DecoratedKotlinCompilation<T : KotlinCommonOptions> internal constructor(
     internal val compilation: KotlinCompilationImpl,
@@ -18,10 +19,12 @@ abstract class DecoratedKotlinCompilation<T : KotlinCommonOptions> internal cons
     override fun toString(): String = compilation.toString()
 }
 
+@Suppress("DEPRECATION")
 internal inline val <reified T : KotlinCommonOptions> InternalKotlinCompilation<T>.decoratedInstance: DecoratedKotlinCompilation<T>
     get() = if (this is DecoratedKotlinCompilation<T>) this
     else (target.compilations.getByName(compilationName).internal.castKotlinOptionsType<T>() as DecoratedKotlinCompilation<T>)
 
+@Suppress("DEPRECATION")
 internal inline val <reified T : KotlinCommonOptions> InternalKotlinCompilation<T>.decoratedInstanceOrNull: DecoratedKotlinCompilation<T>?
     get() = if (this is DecoratedKotlinCompilation<T>) this
     else (target.compilations.findByName(compilationName)?.internal?.castKotlinOptionsType<T>() as? DecoratedKotlinCompilation<T>)

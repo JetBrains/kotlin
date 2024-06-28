@@ -3,20 +3,29 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <array>
 #include <type_traits>
+#include <vector>
 
 #include "KAssert.h"
 #include "Memory.h"
+#include "ReferenceOps.hpp"
 #include "TypeInfo.h"
 #include "Types.h"
 #include "Utils.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin {
 namespace test_support {
 
 // TODO: Some concepts from here can be used in production code.
+
+template<typename Host>
+using RefFieldPtr = mm::RefField Host::*;
+
+template<typename Host>
+using NoRefFields = std::array<RefFieldPtr<Host>, 0>;
 
 class TypeInfoHolder : private Pinned {
 private:
@@ -27,7 +36,7 @@ private:
         virtual ~Builder() = default;
 
         int32_t instanceSize_ = 0;
-        std_support::vector<int32_t> objOffsets_;
+        std::vector<int32_t> objOffsets_;
         int32_t objOffsetsCount_ = 0;
         int32_t flags_ = 0;
         int32_t instanceAlignment_ = 8;
@@ -94,23 +103,39 @@ public:
         typeInfo_.instanceAlignment_ = builder.instanceAlignment_;
     }
 
+    template<>
+    class ArrayBuilder<mm::RefField> : public ArrayBuilder<ObjHeader*> {};
+
     TypeInfo* typeInfo() noexcept { return &typeInfo_; }
 
 private:
     TypeInfo typeInfo_{};
-    std_support::vector<int32_t> objOffsets_;
+    std::vector<int32_t> objOffsets_;
+};
+
+class Any : private Pinned {
+public:
+    ObjHeader* header() noexcept { return &header_; }
+
+    void installMetaObject() noexcept { (void)header()->meta_object(); }
+
+protected:
+    Any() noexcept = default;
+    ~Any() = default;
+
+    ObjHeader header_;
 };
 
 template <typename Payload>
-class Object : private Pinned {
+class Object : public Any {
 public:
     class FieldIterator {
     public:
         FieldIterator(Object& owner, size_t index) noexcept : owner_(owner), index_(index) {}
 
-        ObjHeader*& operator*() noexcept {
+        mm::RefField& operator*() noexcept {
             auto* header = &owner_.header_;
-            return *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(header) + header->type_info()->objOffsets_[index_]);
+            return *reinterpret_cast<mm::RefField*>(reinterpret_cast<uintptr_t>(header) + header->type_info()->objOffsets_[index_]);
         }
 
         FieldIterator& operator++() noexcept {
@@ -133,7 +158,7 @@ public:
 
         size_t size() const noexcept { return owner_.header_.type_info()->objOffsetsCount_; }
 
-        ObjHeader*& operator[](size_t index) noexcept { return *FieldIterator(owner_, index); }
+        mm::RefField& operator[](size_t index) noexcept { return *FieldIterator(owner_, index); }
 
         FieldIterator begin() noexcept { return FieldIterator(owner_, 0); }
         FieldIterator end() noexcept { return FieldIterator(owner_, size()); }
@@ -160,15 +185,12 @@ public:
         header_.typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     }
 
-    ObjHeader* header() noexcept { return &header_; }
-
     Payload& operator*() noexcept { return payload_; }
     Payload* operator->() noexcept { return &payload_; }
 
     FieldIterable fields() noexcept { return FieldIterable(*this); }
 
 private:
-    ObjHeader header_;
     Payload payload_{};
 };
 
@@ -178,8 +200,7 @@ TypeInfoHolder::ObjectBuilder<Payload>::ObjectBuilder() noexcept {
     char c;
     Object<Payload>& object = *reinterpret_cast<Object<Payload>*>(&c);
     auto& payload = *object;
-    using Field = ObjHeader* Payload::*;
-    for (Field field : Payload::kFields) {
+    for (RefFieldPtr<Payload> field : Payload::kFields) {
         auto& actualField = payload.*field;
         objOffsets_.push_back(reinterpret_cast<uintptr_t>(&actualField) - reinterpret_cast<uintptr_t>(object.header()));
     }
@@ -191,7 +212,7 @@ namespace internal {
 
 // Array types are predetermined, use one of the subclasses below.
 template <typename Payload, size_t ElementCount>
-class Array : private Pinned {
+class Array : public Any {
 public:
     static Array<Payload, ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
         static_assert(std::is_trivially_destructible_v<Array>, "Array destructor is not guaranteed to be called.");
@@ -210,29 +231,28 @@ public:
                 TypeInfoHolder{TypeInfoHolder::ArrayBuilder<Payload>()}.typeInfo()->IsLayoutCompatible(typeInfo),
                 "constructing array from incompatible type info");
         header_.typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
-        header_.count_ = ElementCount;
+        count_ = ElementCount;
     }
 
-    ObjHeader* header() noexcept { return header_.obj(); }
-    ArrayHeader* arrayHeader() noexcept { return &header_; }
+    ArrayHeader* arrayHeader() noexcept { return header()->array(); }
 
     std::array<Payload, ElementCount>& elements() noexcept { return elements_; }
 
 private:
-    ArrayHeader header_;
-    std::array<Payload, ElementCount> elements_{};
+    uint32_t count_;
+    alignas(ArrayHeader) std::array<Payload, ElementCount> elements_{};
 };
 
 } // namespace internal
 
 template <size_t ElementCount>
-class ObjectArray : public internal::Array<ObjHeader*, ElementCount> {
+class ObjectArray : public internal::Array<mm::RefField, ElementCount> {
 public:
     static ObjectArray<ElementCount>& FromArrayHeader(ArrayHeader* arr) noexcept {
-        return static_cast<ObjectArray<ElementCount>&>(internal::Array<ObjHeader*, ElementCount>::FromArrayHeader(arr));
+        return static_cast<ObjectArray<ElementCount>&>(internal::Array<mm::RefField, ElementCount>::FromArrayHeader(arr));
     }
 
-    ObjectArray() noexcept : internal::Array<ObjHeader*, ElementCount>(theArrayTypeInfo) {}
+    ObjectArray() noexcept : internal::Array<mm::RefField, ElementCount>(theArrayTypeInfo) {}
 };
 
 template <size_t ElementCount>
@@ -333,6 +353,32 @@ public:
     }
 
     String() noexcept : internal::Array<KChar, ElementCount>(theStringTypeInfo) {}
+};
+
+struct RegularWeakReferenceImplPayload {
+    void* weakRef;
+    void* referred;
+
+    static constexpr test_support::NoRefFields<RegularWeakReferenceImplPayload> kFields{};
+};
+
+extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader*);
+
+class RegularWeakReferenceImpl : public Object<RegularWeakReferenceImplPayload> {
+public:
+    static RegularWeakReferenceImpl& FromObjHeader(ObjHeader* obj) noexcept {
+        RuntimeAssert(obj->type_info() == theRegularWeakReferenceImplTypeInfo, "Invalid type");
+        return static_cast<RegularWeakReferenceImpl&>(Object::FromObjHeader(obj));
+    }
+
+    RegularWeakReferenceImpl() noexcept : Object(theRegularWeakReferenceImplTypeInfo) {}
+
+    OBJ_GETTER0(get) noexcept { RETURN_RESULT_OF(Konan_RegularWeakReferenceImpl_get, header()); }
+
+    ObjHeader* get() noexcept {
+        ObjHeader* result;
+        return get(&result);
+    }
 };
 
 } // namespace test_support

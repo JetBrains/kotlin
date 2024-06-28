@@ -1,0 +1,20 @@
+package
+
+public open class Class {
+    public constructor Class()
+    public final val kotlin.Int.test: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun kotlin.Int.test(): kotlin.Unit
+}
+
+public final class MyClass1 : Class {
+    public constructor MyClass1()
+    public final override /*1*/ /*fake_override*/ val kotlin.Int.test: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun kotlin.Int.test(): kotlin.Unit
+}
+

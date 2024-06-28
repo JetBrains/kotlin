@@ -52,7 +52,8 @@ internal fun collectNewDirtySources(
                         globalSerializationBindings,
                         data.lastOrNull(),
                         targetId,
-                        configuration
+                        configuration,
+                        actualizedExpectDeclarations = null
                     )
                     data.push(serializer)
                     body(serializer)
@@ -72,7 +73,7 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
-                    val metadata = FirMetadataSource.File(listOf(file))
+                    val metadata = FirMetadataSource.File(file)
                     withMetadataSerializer(metadata, data) {
                         file.acceptChildren(this, data)
                         // TODO: compare package fragments?
@@ -132,7 +133,8 @@ internal fun collectNewDirtySources(
         visitFirFiles(output)
     }
 
-    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) =
+        changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
 
     val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
 

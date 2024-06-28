@@ -1,0 +1,125 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  inline fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(){}
+  //   Public signature: /A.foo2|-9099664023625270343[0]
+  //   Public signature debug description: foo2(){}
+  open external fun foo2(): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo3(){}
+  //   Public signature: /A.foo3|-7010019271447432065[0]
+  //   Public signature debug description: foo3(){}
+  open suspend fun foo3(): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo4(0:0){0§<kotlin.Any?>}
+  //   Public signature: /A.foo4|-2196272918061172213[0]
+  //   Public signature debug description: foo4(0:0){0§<kotlin.Any?>}
+  inline fun <reified T : Any?> foo4(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : A, Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override inline fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(){}
+  //   Public signature: /B.foo2|-9099664023625270343[0]
+  //   Public signature debug description: foo2(){}
+  external /* fake */ override fun foo2(): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo3(){}
+  //   Public signature: /B.foo3|-7010019271447432065[0]
+  //   Public signature debug description: foo3(){}
+  /* fake */ override suspend fun foo3(): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo4(){}
+  //   Public signature: /B.foo4|-6020267482604528061[0]
+  //   Public signature debug description: foo4(){}
+  abstract /* fake */ override fun foo4(): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo4(0:0){0§<kotlin.Any?>}
+  //   Public signature: /B.foo4|-2196272918061172213[0]
+  //   Public signature debug description: foo4(0:0){0§<kotlin.Any?>}
+  /* fake */ override inline fun <reified T : Any?> foo4(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : A, Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override inline fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo4(0:0){0§<kotlin.Any?>}
+  //   Public signature: /C.foo4|-2196272918061172213[0]
+  //   Public signature debug description: foo4(0:0){0§<kotlin.Any?>}
+  /* fake */ override inline fun <reified T : Any?> foo4(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(){}
+  //   Public signature: /C.foo2|-9099664023625270343[0]
+  //   Public signature debug description: foo2(){}
+  override fun foo2(): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo3(){}
+  //   Public signature: /C.foo3|-7010019271447432065[0]
+  //   Public signature debug description: foo3(){}
+  override suspend fun foo3(): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo4(){}
+  //   Public signature: /C.foo4|-6020267482604528061[0]
+  //   Public signature debug description: foo4(){}
+  override fun foo4(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B;C){}
+//   Public signature: /test|-6359441584037827810[0]
+//   Public signature debug description: test(B;C){}
+suspend fun test(b: B, c: C): Unit

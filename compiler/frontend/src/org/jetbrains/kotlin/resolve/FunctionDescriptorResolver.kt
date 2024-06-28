@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.HashMultimap
-import com.intellij.openapi.diagnostic.ControlFlowException
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.util.AstLoadingFilter
@@ -72,7 +70,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLi
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
-
 
 class FunctionDescriptorResolver(
     private val typeResolver: TypeResolver,
@@ -132,21 +129,19 @@ class FunctionDescriptorResolver(
             CallableMemberDescriptor.Kind.DECLARATION,
             function.toSourceElement()
         )
-        return computeInNonCancelableSection {
-            initializeFunctionDescriptorAndExplicitReturnType(
-                containingDescriptor,
-                scope,
-                function,
-                functionDescriptor,
-                trace,
-                expectedFunctionType,
-                dataFlowInfo,
-                inferenceSession
-            )
-            initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo, inferenceSession)
-            BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
-            functionDescriptor
-        }
+        initializeFunctionDescriptorAndExplicitReturnType(
+            containingDescriptor,
+            scope,
+            function,
+            functionDescriptor,
+            trace,
+            expectedFunctionType,
+            dataFlowInfo,
+            inferenceSession
+        )
+        initializeFunctionReturnTypeBasedOnFunctionBody(scope, function, functionDescriptor, trace, dataFlowInfo, inferenceSession)
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor)
+        return functionDescriptor
     }
 
     private fun initializeFunctionReturnTypeBasedOnFunctionBody(
@@ -187,124 +182,117 @@ class FunctionDescriptorResolver(
         dataFlowInfo: DataFlowInfo,
         inferenceSession: InferenceSession?
     ) {
-        try {
-            val headerScope = LexicalWritableScope(
-                scope, functionDescriptor, true,
-                TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER
+        val headerScope = LexicalWritableScope(
+            scope, functionDescriptor, true,
+            TraceBasedLocalRedeclarationChecker(trace, overloadChecker), LexicalScopeKind.FUNCTION_HEADER
+        )
+
+        val typeParameterDescriptors =
+            descriptorResolver.resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
+        descriptorResolver.resolveGenericBounds(function, functionDescriptor, headerScope, typeParameterDescriptors, trace)
+
+        val receiverTypeRef = function.receiverTypeReference
+        val receiverType =
+            if (receiverTypeRef != null) {
+                typeResolver.resolveType(headerScope, receiverTypeRef, trace, true)
+            } else {
+                if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
+            }
+
+        val contextReceivers = function.contextReceivers
+        val contextReceiverTypes =
+            if (function is KtFunctionLiteral) expectedFunctionType.getContextReceiversTypes()
+            else contextReceivers
+                .mapNotNull {
+                    val typeReference = it.typeReference() ?: return@mapNotNull null
+                    val type = typeResolver.resolveType(headerScope, typeReference, trace, true)
+                    ContextReceiverTypeWithLabel(type, it.labelNameAsName())
+                }
+
+
+        val valueParameterDescriptors =
+            createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType, inferenceSession)
+
+        headerScope.freeze()
+
+        val returnType = function.typeReference?.let { typeResolver.resolveType(headerScope, it, trace, true) }
+
+        val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, container))
+        val modality = resolveMemberModalityFromModifiers(
+            function, getDefaultModality(container, visibility, function.hasBody()),
+            trace.bindingContext, container
+        )
+
+        val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function, inferenceSession)
+        val userData = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any>().apply {
+            if (contractProvider != null) {
+                put(ContractProviderKey, contractProvider)
+            }
+
+            if (receiverType != null && expectedFunctionType.functionTypeExpected() && !expectedFunctionType.annotations.isEmpty()) {
+                put(DslMarkerUtils.FunctionTypeAnnotationsKey, expectedFunctionType.annotations)
+            }
+        }
+
+        val extensionReceiver = receiverType?.let {
+            val splitter = AnnotationSplitter(storageManager, it.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createExtensionReceiverParameterForCallable(
+                functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
-
-            val typeParameterDescriptors =
-                descriptorResolver.resolveTypeParametersForDescriptor(functionDescriptor, headerScope, scope, function.typeParameters, trace)
-            descriptorResolver.resolveGenericBounds(function, functionDescriptor, headerScope, typeParameterDescriptors, trace)
-
-            val receiverTypeRef = function.receiverTypeReference
-            val receiverType =
-                if (receiverTypeRef != null) {
-                    typeResolver.resolveType(headerScope, receiverTypeRef, trace, true)
-                } else {
-                    if (function is KtFunctionLiteral) expectedFunctionType.getReceiverType() else null
-                }
-
-            val contextReceivers = function.contextReceivers
-            val contextReceiverTypes =
-                if (function is KtFunctionLiteral) expectedFunctionType.getContextReceiversTypes()
-                else contextReceivers
-                    .mapNotNull {
-                        val typeReference = it.typeReference() ?: return@mapNotNull null
-                        val type = typeResolver.resolveType(headerScope, typeReference, trace, true)
-                        ContextReceiverTypeWithLabel(type, it.labelNameAsName())
-                    }
-
-
-            val valueParameterDescriptors =
-                createValueParameterDescriptors(function, functionDescriptor, headerScope, trace, expectedFunctionType, inferenceSession)
-
-            headerScope.freeze()
-
-            val returnType = function.typeReference?.let { typeResolver.resolveType(headerScope, it, trace, true) }
-
-            val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, container))
-            val modality = resolveMemberModalityFromModifiers(
-                function, getDefaultModality(container, visibility, function.hasBody()),
-                trace.bindingContext, container
+        }
+        val contextReceiverDescriptors = contextReceiverTypes.mapIndexedNotNull { index, contextReceiver ->
+            val splitter = AnnotationSplitter(storageManager, contextReceiver.type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            DescriptorFactory.createContextReceiverParameterForCallable(
+                functionDescriptor,
+                contextReceiver.type,
+                contextReceiver.label,
+                splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER),
+                index
             )
+        }
 
-            val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function, inferenceSession)
-            val userData = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any>().apply {
-                if (contractProvider != null) {
-                    put(ContractProviderKey, contractProvider)
-                }
-
-                if (receiverType != null && expectedFunctionType.functionTypeExpected() && !expectedFunctionType.annotations.isEmpty()) {
-                    put(DslMarkerUtils.FunctionTypeAnnotationsKey, expectedFunctionType.annotations)
+        if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            val labelNameToReceiverMap = HashMultimap.create<String, ReceiverParameterDescriptor>()
+            if (receiverTypeRef != null && extensionReceiver != null) {
+                receiverTypeRef.nameForReceiverLabel()?.let {
+                    labelNameToReceiverMap.put(it, extensionReceiver)
                 }
             }
-
-            val extensionReceiver = receiverType?.let {
-                val splitter = AnnotationSplitter(storageManager, it.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
-                DescriptorFactory.createExtensionReceiverParameterForCallable(
-                    functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
-                )
-            }
-            val contextReceiverDescriptors = contextReceiverTypes.mapIndexedNotNull { index, contextReceiver ->
-                val splitter = AnnotationSplitter(storageManager, contextReceiver.type.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
-                DescriptorFactory.createContextReceiverParameterForCallable(
-                    functionDescriptor,
-                    contextReceiver.type,
-                    contextReceiver.label,
-                    splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER),
-                    index
-                )
-            }
-
-            if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
-                val labelNameToReceiverMap = HashMultimap.create<String, ReceiverParameterDescriptor>()
-                if (receiverTypeRef != null && extensionReceiver != null) {
-                    receiverTypeRef.nameForReceiverLabel()?.let {
-                        labelNameToReceiverMap.put(it, extensionReceiver)
+            contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
+                .forEach { (contextReceiverDescriptor, i) ->
+                    contextReceivers[i].name()?.let {
+                        labelNameToReceiverMap.put(it, contextReceiverDescriptor)
                     }
                 }
-                contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
-                    .forEach { (contextReceiverDescriptor, i) ->
-                        contextReceivers[i].name()?.let {
-                            labelNameToReceiverMap.put(it, contextReceiverDescriptor)
-                        }
-                    }
 
-                trace.record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, functionDescriptor, labelNameToReceiverMap)
-            }
+            trace.record(BindingContext.DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP, functionDescriptor, labelNameToReceiverMap)
+        }
 
-            functionDescriptor.initialize(
-                extensionReceiver,
-                getDispatchReceiverParameterIfNeeded(container),
-                contextReceiverDescriptors,
-                typeParameterDescriptors,
-                valueParameterDescriptors,
-                returnType,
-                modality,
-                visibility,
-                userData.takeIf { it.isNotEmpty() }
-            )
+        functionDescriptor.initialize(
+            extensionReceiver,
+            getDispatchReceiverParameterIfNeeded(container),
+            contextReceiverDescriptors,
+            typeParameterDescriptors,
+            valueParameterDescriptors,
+            returnType,
+            modality,
+            visibility,
+            userData.takeIf { it.isNotEmpty() }
+        )
 
-            functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
-            functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
-            functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
-            functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
-            functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
-            functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
-            functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
-                    container is ClassDescriptor && container.isExpect
-            functionDescriptor.isActual = function.hasActualModifier()
+        functionDescriptor.isOperator = function.hasModifier(KtTokens.OPERATOR_KEYWORD)
+        functionDescriptor.isInfix = function.hasModifier(KtTokens.INFIX_KEYWORD)
+        functionDescriptor.isExternal = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+        functionDescriptor.isInline = function.hasModifier(KtTokens.INLINE_KEYWORD)
+        functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
+        functionDescriptor.isSuspend = function.hasModifier(KtTokens.SUSPEND_KEYWORD)
+        functionDescriptor.isExpect = container is PackageFragmentDescriptor && function.hasExpectModifier() ||
+                container is ClassDescriptor && container.isExpect
+        functionDescriptor.isActual = function.hasActualModifier()
 
-            receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
-            for (valueParameterDescriptor in valueParameterDescriptors) {
-                ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
-            }
-        } catch (e: Exception) {
-            if (e is ControlFlowException) {
-                throw IllegalStateException("Method should be run under nonCancelableSection", e)
-            }
-            throw e
+        receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.annotations) }
+        for (valueParameterDescriptor in valueParameterDescriptors) {
+            ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
         }
     }
 
@@ -345,7 +333,7 @@ class FunctionDescriptorResolver(
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.single()
                 val it = ValueParameterDescriptorImpl(
-                    functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
+                    functionDescriptor, null, 0, Annotations.EMPTY, StandardNames.IMPLICIT_LAMBDA_PARAMETER_NAME,
                     expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
@@ -463,27 +451,22 @@ class FunctionDescriptorResolver(
             TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
             LexicalScopeKind.CONSTRUCTOR_HEADER
         )
-        return computeInNonCancelableSection {
-            if (declarationToTrace is PsiElement)
-                trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
-            val constructor = constructorDescriptor.initialize(
-                resolveValueParameters(
-                    constructorDescriptor, parameterScope, valueParameters, trace, null, inferenceSession
-                ),
-                resolveVisibilityFromModifiers(
-                    modifierList,
-                    DescriptorUtils.getDefaultConstructorVisibility(
-                        classDescriptor,
-                        languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
-                    )
-                )
+        val constructor = constructorDescriptor.initialize(
+            resolveValueParameters(
+                constructorDescriptor, parameterScope, valueParameters, trace, null, inferenceSession
+            ),
+            resolveVisibilityFromModifiers(
+                modifierList,
+                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor, languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage))
             )
-            constructor.returnType = classDescriptor.defaultType
-            if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
-                CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
-            }
-            constructor
+        )
+        constructor.returnType = classDescriptor.defaultType
+        if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
+            CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
         }
+        if (declarationToTrace is PsiElement)
+            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
+        return constructor
     }
 
     private fun resolveValueParameters(
@@ -494,67 +477,57 @@ class FunctionDescriptorResolver(
         expectedParameterTypes: List<KotlinType>?,
         inferenceSession: InferenceSession?
     ): List<ValueParameterDescriptor> {
-        try {
-            val result = ArrayList<ValueParameterDescriptor>()
+        val result = ArrayList<ValueParameterDescriptor>()
 
-            for (i in valueParameters.indices) {
-                val valueParameter = valueParameters[i]
-                val typeReference = valueParameter.typeReference
-                val expectedType = expectedParameterTypes?.let { if (i < it.size) it[i] else null }?.takeUnless { TypeUtils.noExpectedType(it) }
+        for (i in valueParameters.indices) {
+            val valueParameter = valueParameters[i]
+            val typeReference = valueParameter.typeReference
+            val expectedType = expectedParameterTypes?.let { if (i < it.size) it[i] else null }?.takeUnless { TypeUtils.noExpectedType(it) }
 
-                val type: KotlinType
-                if (typeReference != null) {
-                    type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
-                    if (expectedType != null) {
-                        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
-                            trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
-                        }
+            val type: KotlinType
+            if (typeReference != null) {
+                type = typeResolver.resolveType(parameterScope, typeReference, trace, true)
+                if (expectedType != null) {
+                    if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(expectedType, type)) {
+                        trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(valueParameter, expectedType))
                     }
+                }
+            } else {
+                type = if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
+                    val containsErrorType = TypeUtils.contains(expectedType) { it.isError }
+                    if (expectedType == null || containsErrorType) {
+                        trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
+                    }
+
+                    expectedType ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
                 } else {
-                    type = if (isFunctionLiteral(functionDescriptor) || isFunctionExpression(functionDescriptor)) {
-                        val containsErrorType = TypeUtils.contains(expectedType) { it.isError }
-                        if (expectedType == null || containsErrorType) {
-                            trace.report(CANNOT_INFER_PARAMETER_TYPE.on(valueParameter))
-                        }
-
-                        expectedType ?: TypeUtils.CANNOT_INFER_FUNCTION_PARAM_TYPE
-                    } else {
-                        trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
-                        ErrorUtils.createErrorType(ErrorTypeKind.MISSED_TYPE_FOR_PARAMETER, valueParameter.nameAsSafeName.toString())
-                    }
+                    trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter))
+                    ErrorUtils.createErrorType(ErrorTypeKind.MISSED_TYPE_FOR_PARAMETER, valueParameter.nameAsSafeName.toString())
                 }
+            }
 
-                if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary) {
-                    val isConstructor = functionDescriptor is ConstructorDescriptor
-                    with(modifiersChecker.withTrace(trace)) {
-                        checkParameterHasNoValOrVar(
-                            valueParameter,
-                            if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
-                        )
-                    }
+            if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary) {
+                val isConstructor = functionDescriptor is ConstructorDescriptor
+                with(modifiersChecker.withTrace(trace)) {
+                    checkParameterHasNoValOrVar(
+                        valueParameter,
+                        if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
+                    )
                 }
-
-                val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(
-                    parameterScope, functionDescriptor, valueParameter, i, type, trace, Annotations.EMPTY, inferenceSession
-                )
-
-                // Do not report NAME_SHADOWING for lambda destructured parameters as they may be not fully resolved at this time
-                ExpressionTypingUtils.checkVariableShadowing(parameterScope, trace, valueParameterDescriptor)
-
-                parameterScope.addVariableDescriptor(valueParameterDescriptor)
-                result.add(valueParameterDescriptor)
             }
-            return result
-        } catch (e: Exception) {
-            if (e is ControlFlowException) {
-                throw IllegalStateException("Method should be run under nonCancelableSection", e)
-            }
-            throw e
+
+            val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(
+                parameterScope, functionDescriptor, valueParameter, i, type, trace, Annotations.EMPTY, inferenceSession
+            )
+
+            // Do not report NAME_SHADOWING for lambda destructured parameters as they may be not fully resolved at this time
+            ExpressionTypingUtils.checkVariableShadowing(parameterScope, trace, valueParameterDescriptor)
+
+            parameterScope.addVariableDescriptor(valueParameterDescriptor)
+            result.add(valueParameterDescriptor)
         }
+        return result
     }
 
     private data class ContextReceiverTypeWithLabel(val type: KotlinType, val label: Name?)
 }
-
-private fun <T> computeInNonCancelableSection(action: () -> T): T =
-    ProgressManager.getInstance().computeInNonCancelableSection<T, Exception>(action)

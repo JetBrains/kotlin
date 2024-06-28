@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.junit.Assert
 import org.junit.Test
@@ -210,7 +211,10 @@ class EncodeSignatureTest {
             val psiFile = psiManager.findFile(file) as KtFile
 
             val configuration = environment.configuration.copy()
-            configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
+            configuration.put(
+                JSConfigurationKeys.LIBRARIES,
+                listOf(StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath)
+            )
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "sample")
 
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(

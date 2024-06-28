@@ -5,9 +5,9 @@
 
     <servers>
         <server>
-            <id>jetbrains-kotlin</id>
-            <username>tc-kotlin</username>
-            <password>${tc-kotlin.password}</password>
+            <id>deploy-server</id>
+            <username>${kotlin.build.deploy-username}</username>
+            <password>${kotlin.build.deploy-password}</password>
         </server>
         <server>
             <id>jetbrains-kotlin-github</id>

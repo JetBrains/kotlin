@@ -1,0 +1,4 @@
+KtNameReferenceExpression(151,154): 'bar'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'bar'.>

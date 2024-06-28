@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
-import org.jetbrains.kotlin.js.test.converters.extension
+import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.testOld.*
@@ -26,13 +27,13 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
 const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
-    return JsEnvironmentConfigurator.getJsArtifactSimpleName(testServices, name) + "-js-" + filePath
+    return JsEnvironmentConfigurator.getKlibArtifactSimpleName(testServices, name) + "-js-" + filePath
 }
 
 fun TestModule.getNameFor(file: TestFile, testServices: TestServices): String {
@@ -49,7 +50,7 @@ private fun extractJsFiles(
     fun copyInputJsFile(module: TestModule, inputJsFile: TestFile): String {
         val newName = module.getNameFor(inputJsFile, testServices)
         val targetFile = File(outputDir, newName)
-        targetFile.writeText(inputJsFile.originalContent)
+        targetFile.writeText(inputJsFile.originalContent.trim())
         return targetFile.absolutePath
     }
 
@@ -67,7 +68,7 @@ private fun extractJsFiles(
     return before to after
 }
 
-fun getAdditionalFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
+fun getAdditionalFilePaths(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
     return getAdditionalFiles(testServices, mode, true).map { it.absolutePath }
 }
 
@@ -99,7 +100,7 @@ fun getAdditionalFiles(
     return additionalFiles
 }
 
-fun getAdditionalMainFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
+fun getAdditionalMainFilePaths(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
     return getAdditionalMainFiles(testServices, mode, shouldCopyFiles = true).map { it.absolutePath }
 }
 
@@ -131,11 +132,11 @@ fun testWithModuleSystem(testServices: TestServices): Boolean {
     val globalDirectives = testServices.moduleStructure.allDirectives
     val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(getMainModule(testServices))
     val mainModuleKind = configuration[JSConfigurationKeys.MODULE_KIND]
-    return mainModuleKind != ModuleKind.PLAIN && NO_JS_MODULE_SYSTEM !in globalDirectives
+    return mainModuleKind != ModuleKind.PLAIN && mainModuleKind != ModuleKind.ES && NO_JS_MODULE_SYSTEM !in globalDirectives
 }
 
 fun getModeOutputFilePath(testServices: TestServices, module: TestModule, mode: TranslationMode): String {
-    return JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + module.kind.extension
+    return JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode).finalizePath(module.kind)
 }
 
 fun getAllFilesForRunner(
@@ -156,12 +157,13 @@ fun getAllFilesForRunner(
 
             val outputFile = getModeOutputFilePath(testServices, module, mode)
             val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules, mode)
-            val additionalFiles = getAdditionalFilePathes(testServices, mode)
-            val additionalMainFiles = getAdditionalMainFilePathes(testServices, mode)
+            val additionalFiles = getAdditionalFilePaths(testServices, mode)
+            val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 
             outputs.dependencies.forEach { (moduleId, _) ->
                 paths += outputFile.augmentWithModuleName(moduleId)
             }
+
             paths += outputFile
 
             result[mode] = additionalFiles + inputJsFilesBefore + paths + commonFiles + additionalMainFiles + inputJsFilesAfter
@@ -170,8 +172,8 @@ fun getAllFilesForRunner(
         return result
     } else {
         val (inputJsFilesBefore, inputJsFilesAfter) = extractJsFiles(testServices, testServices.moduleStructure.modules)
-        val additionalFiles = getAdditionalFilePathes(testServices)
-        val additionalMainFiles = getAdditionalMainFilePathes(testServices)
+        val additionalFiles = getAdditionalFilePaths(testServices)
+        val additionalMainFiles = getAdditionalMainFilePaths(testServices)
         // Old BE
         val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
         val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES)

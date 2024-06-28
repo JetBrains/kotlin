@@ -1,0 +1,12 @@
+FILE: dnnTypeWithAdditionalNullableBound.kt
+    public final fun <T : R|kotlin/CharSequence|> f(x: R|T & Any|): R|kotlin/Unit| {
+    }
+    public final class A<T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/CharSequence|>(x: R|T & Any|): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T & Any| = R|<local>/x|
+            public get(): R|T & Any|
+
+    }

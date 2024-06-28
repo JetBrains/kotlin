@@ -1,0 +1,40 @@
+package a.b.c;
+
+/**
+ * public final class a/b/c/A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package a.b.typealias.c;
+
+/**
+ * public final class a/b/typealias/c/E : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class E {
+
+    public E() {
+        super();
+    }
+}

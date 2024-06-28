@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.SimpleTypeRemapper
@@ -88,23 +87,24 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
         private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper) {
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
                 val newName = Name.identifier("${declaration.name.asString()}\$accessor\$$fileHash")
-                return declaration.factory.createFunction(
-                    declaration.startOffset, declaration.endOffset,
-                    mapDeclarationOrigin(declaration.origin),
-                    symbolRemapper.getDeclaredFunction(declaration.symbol),
-                    newName,
-                    DescriptorVisibilities.INTERNAL,
-                    declaration.modality,
-                    IrUninitializedType,
+                return declaration.factory.createSimpleFunction(
+                    startOffset = declaration.startOffset,
+                    endOffset = declaration.endOffset,
+                    origin = mapDeclarationOrigin(declaration.origin),
+                    name = newName,
+                    visibility = DescriptorVisibilities.INTERNAL,
                     isInline = declaration.isInline,
-                    isExternal = declaration.isExternal,
+                    isExpect = declaration.isExpect,
+                    returnType = null,
+                    modality = declaration.modality,
+                    symbol = symbolRemapper.getDeclaredSimpleFunction(declaration.symbol),
                     isTailrec = declaration.isTailrec,
                     isSuspend = declaration.isSuspend,
                     isOperator = declaration.isOperator,
                     isInfix = declaration.isInfix,
-                    isExpect = declaration.isExpect,
-                    isFakeOverride = declaration.isFakeOverride,
+                    isExternal = declaration.isExternal,
                     containerSource = declaration.containerSource,
+                    isFakeOverride = declaration.isFakeOverride,
                 ).apply {
                     assert(declaration.overriddenSymbols.isEmpty()) { "Top level function overrides nothing" }
                     transformFunctionChildren(declaration)

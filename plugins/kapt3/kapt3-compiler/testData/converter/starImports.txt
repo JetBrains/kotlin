@@ -1,0 +1,71 @@
+import kotlin.io.encoding.*;
+
+/**
+ * package {
+ *
+ *   // field: base64:Lkotlin/io/encoding/Base64;
+ *   // getter: getBase64()Lkotlin/io/encoding/Base64;
+ *   // setter: setBase64(Lkotlin/io/encoding/Base64;)V
+ *   public final var base64: kotlin/io/encoding/Base64?
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ResolvedKt {
+
+    public ResolvedKt() {
+        super();
+    }
+    @org.jetbrains.annotations.Nullable()
+    private static kotlin.io.encoding.Base64 base64;
+
+    @org.jetbrains.annotations.Nullable()
+    public static final kotlin.io.encoding.Base64 getBase64() {
+        return null;
+    }
+
+    public static final void setBase64(@org.jetbrains.annotations.Nullable()
+    kotlin.io.encoding.Base64 p0) {
+    }
+}
+
+////////////////////
+
+
+import kotlin.io.encoding.*;
+
+/**
+ * package {
+ *
+ *   // field: base65:Lerror/NonExistentClass;
+ *   // getter: getBase65()Lerror/NonExistentClass;
+ *   // setter: setBase65(Lerror/NonExistentClass;)V
+ *   public final var base65: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class UnresolvedKt {
+
+    public UnresolvedKt() {
+        super();
+    }
+    @org.jetbrains.annotations.Nullable()
+    private static Base65 base65;
+
+    @org.jetbrains.annotations.Nullable()
+    public static final Base65 getBase65() {
+        return null;
+    }
+
+    public static final void setBase65(@org.jetbrains.annotations.Nullable()
+    Base65 p0) {
+    }
+}

@@ -1,0 +1,30 @@
+KtPrefixExpression(47,58): '++foo.value'
+  KaSuccessCallInfo:
+    call = KaCompoundVariableAccessCall:
+      compoundAccess = IncOrDecOperation:
+        kind = INC
+        precedence = PREFIX
+        operationPartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = foo.value
+            isSafeNavigation = false
+            type = kotlin.Int
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+            valueParameters = []
+            callableId = kotlin/Int.inc
+      variablePartiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = foo
+          isSafeNavigation = false
+          type = CInt32VarX<kotlin.Int>
+        signature = KaVariableSignature:
+          name = value
+          receiverType = CInt32VarX<kotlin.Int>
+          returnType = kotlin.Int
+          symbol = var value: T
+          callableId = /value

@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.reflect.KMutableProperty1
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
@@ -41,6 +43,84 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             ThrowableRunnable { enableICFixture.tearDown() },
             ThrowableRunnable { super.tearDown() }
         ).run()
+    }
+
+    fun testJpsBuildReportIC() {
+
+        val reportDir = workDir.resolve("buildReport")
+
+        @Suppress("UNREACHABLE_CODE")
+        fun getReportFile(): File {
+            return Files.list(reportDir.toPath()).let {
+                val files = it.toArray()
+                val singleFile = (files.singleOrNull() as Path?).also {
+                    it ?: fail("The directory must contain a single file, but got: $files")
+                }
+
+                return singleFile?.toFile()!!
+            }
+        }
+
+        fun assertFileContains(
+            file: File,
+            vararg expectedText: String,
+        ) {
+            val text = file.readText()
+            val textNotInTheFile = expectedText.filterNot { text.contains(it) }
+            assert(textNotInTheFile.isEmpty()) {
+                """
+                |$file does not contain:
+                |${textNotInTheFile.joinToString(separator = "\n")}
+                |
+                |actual file content:
+                |"$text"
+                |       
+                """.trimMargin()
+            }
+        }
+
+        fun validateAndDeleteReportFile(vararg expectedText: String) {
+            assertTrue(reportDir.exists())
+            val reportFile = getReportFile()
+            assertFileContains(reportFile, *expectedText)
+            reportFile.delete()
+        }
+
+        val reportMetricsList = arrayOf(
+            "Task 'kotlinProject' finished in",
+            "Task info:",
+            "Kotlin language version: 2.0",
+            "Time metrics:",
+            "Jps iteration:",
+            "Compiler code analysis:",
+            "Compiler code generation:"
+        )
+
+        fun testImpl() {
+            assertTrue("Daemon was not enabled!", isDaemonEnabled())
+            doTest()
+
+            validateAndDeleteReportFile(
+                *reportMetricsList,
+                "Changed files: [${workDir.resolve("src/Foo.kt").path}, ${workDir.resolve("src/main.kt").path}]"
+            )
+
+            val mainKt = File(workDir, "src/main.kt")
+            change(mainKt.path, "fun main() {}")
+
+            buildAllModules().assertSuccessful()
+
+            validateAndDeleteReportFile(
+                *reportMetricsList,
+                "Changed files: [${workDir.resolve("src/main.kt").path}]"
+            )
+        }
+
+        withDaemon {
+            withSystemProperty("kotlin.build.report.file.output_dir", reportDir.path) {
+                testImpl()
+            }
+        }
     }
 
     fun testJpsDaemonIC() {

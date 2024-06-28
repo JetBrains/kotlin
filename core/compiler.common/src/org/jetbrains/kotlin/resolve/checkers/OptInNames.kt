@@ -22,8 +22,9 @@ object OptInNames {
     val OPT_IN_ANNOTATION_CLASS = Name.identifier("markerClass")
     val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
-    fun buildDefaultDiagnosticMessage(prefix: String, markerName: String): String {
-        return "$prefix with '@$markerName' or '@OptIn($markerName::class)'"
+    fun buildDefaultDiagnosticMessage(prefix: String, markerName: String, isSubclassOptInApplicable: Boolean = false): String {
+        return if (isSubclassOptInApplicable) "$prefix with '@$markerName', '@OptIn($markerName::class)' or '@SubclassOptInRequired($markerName::class)'"
+        else "$prefix with '@$markerName' or '@OptIn($markerName::class)'"
     }
 
     fun buildMessagePrefix(verb: String): String =

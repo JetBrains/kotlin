@@ -20,8 +20,12 @@ dependencies {
     testImplementation(project(":compiler:cli"))
 
     testImplementation(intellijCore())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
@@ -40,6 +44,8 @@ sourceSets {
         generatedTestDir()
     }
 }
+
+publish()
 
 runtimeJar()
 sourcesJar()

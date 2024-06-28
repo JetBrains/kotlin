@@ -33,12 +33,12 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern MODULE_PREFIX_PATTERN = Pattern.compile("//\\s*MODULE:.*\n");
+    private static final Pattern MODULE_PREFIX_PATTERN = Pattern.compile("//\\s*MODULE:.*(?:\\r\\n|\\n)");
     private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)" +                         // name
                                                                   "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*" + // dependencies
                                                                   "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*" + // friends
-                                                                  "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\n");   // dependsOn
-    private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
+                                                                  "(?:\\(([^()]*(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?(?:\\r\\n|\\n)");   // dependsOn
+    private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)(?:\\r\\n|\\n)");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 

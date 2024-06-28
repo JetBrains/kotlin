@@ -28,6 +28,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     var res = "OK"
     builder {
         crossinlineMe {

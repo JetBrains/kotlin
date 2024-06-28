@@ -1,5 +1,5 @@
-// !LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType -DisableCompatibilityModeForNewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType -DisableCompatibilityModeForNewInference
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KFunction1
 
@@ -15,6 +15,7 @@ object Scope {
 
     fun test() {
         bar(<!COMPATIBILITY_WARNING!>::foo<!>)
+        bar(<!ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE!>Scope::foo<!>)
     }
 }
 
@@ -23,5 +24,13 @@ object Local {
 
     fun test() {
         bar(<!ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE!>::baz<!>)
+    }
+}
+
+object WrongType {
+    fun foo(x: String, y: Int = 0) {} // (3)
+
+    fun test() {
+        bar(::foo) // Should resolve to (1) because (3) has wrong type on top of being adapted
     }
 }

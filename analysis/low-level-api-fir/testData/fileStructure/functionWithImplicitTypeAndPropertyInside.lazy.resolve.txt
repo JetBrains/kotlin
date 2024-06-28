@@ -1,0 +1,24 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndPropertyInside.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] number: R|kotlin/Int|): R|myPack/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }
+    @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val localAnnotationProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val expressionAnnotationProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/setterAnnotationProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val setterAnnotationProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    @R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty|) public final const [ResolvedTo(BODY_RESOLVE)] val receiverAnnotationProperty: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction(): R|kotlin/Unit| {
+        ^topLevelFunction R|kotlin/run|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            @R|myPack/Anno|[Types](number = R|myPack/localAnnotationProperty|) [ResolvedTo(BODY_RESOLVE)] lvar @RECEIVER:R|myPack/Anno|[Types](number = R|myPack/receiverAnnotationProperty|) R|kotlin/Int|.variableToResolve: R|kotlin/String| = @R|myPack/Anno|[Types](number = R|myPack/expressionAnnotationProperty|) String(str)
+        }
+        )
+    }

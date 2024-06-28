@@ -47,17 +47,22 @@ object StrictEqualityTypeChecker {
 
 }
 
-object ErrorTypesAreEqualToAnything : KotlinTypeChecker {
+open class IsErrorTypeEqualToAnythingTypeChecker(
+    private val typeChecker: NewKotlinTypeCheckerImpl,
+    private val isErrorTypeEqualToAnything: Boolean,
+) : KotlinTypeChecker {
     override fun isSubtypeOf(subtype: KotlinType, supertype: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run {
-            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).isSubtypeOf(subtype.unwrap(), supertype.unwrap())
+        typeChecker.run {
+            createClassicTypeCheckerState(isErrorTypeEqualToAnything).isSubtypeOf(subtype.unwrap(), supertype.unwrap())
         }
 
     override fun equalTypes(a: KotlinType, b: KotlinType): Boolean =
-        NewKotlinTypeChecker.Default.run {
-            createClassicTypeCheckerState(isErrorTypeEqualsToAnything = true).equalTypes(a.unwrap(), b.unwrap())
+        typeChecker.run {
+            createClassicTypeCheckerState(isErrorTypeEqualToAnything).equalTypes(a.unwrap(), b.unwrap())
         }
 }
+
+object ErrorTypesAreEqualToAnything : IsErrorTypeEqualToAnythingTypeChecker(NewKotlinTypeChecker.Default, isErrorTypeEqualToAnything = true)
 
 interface NewKotlinTypeChecker : KotlinTypeChecker {
     val kotlinTypeRefiner: KotlinTypeRefiner

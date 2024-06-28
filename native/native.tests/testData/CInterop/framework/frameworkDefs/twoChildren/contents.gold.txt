@@ -1,13 +1,28 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    var child1: Int
-        @CCall(id = "knifunptr_pod10_child1_getter") get
-        @CCall(id = "knifunptr_pod11_child1_setter") set
-    var child2: Int
-        @CCall(id = "knifunptr_pod12_child2_getter") get
-        @CCall(id = "knifunptr_pod13_child2_setter") set
-    var umbrella: Int
-        @CCall(id = "knifunptr_pod14_umbrella_getter") get
-        @CCall(id = "knifunptr_pod15_umbrella_setter") set
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final var child1: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_child1_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_child1_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var child2: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_child2_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_child2_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var umbrella: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_umbrella_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_umbrella_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

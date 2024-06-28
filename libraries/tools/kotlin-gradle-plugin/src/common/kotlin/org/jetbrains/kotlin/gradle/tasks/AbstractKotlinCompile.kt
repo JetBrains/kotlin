@@ -5,75 +5,69 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.logging.Logging
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.work.ChangeType
-import org.gradle.work.Incremental
-import org.gradle.work.InputChanges
-import org.gradle.work.NormalizeLineEndings
+import org.gradle.work.*
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
+import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
-import org.jetbrains.kotlin.gradle.internal.AbstractKotlinCompileArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
-import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING
 import org.jetbrains.kotlin.gradle.plugin.UsesBuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompileKotlinTaskMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
-import org.jetbrains.kotlin.gradle.report.UsesBuildReportsService
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
-import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
-import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
-import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures
 import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
 
+private const val ABI_SNAPSHOT_FILE_NAME = "abi-snapshot.bin"
+
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
     objectFactory: ObjectFactory,
-    workerExecutor: WorkerExecutor
+    workerExecutor: WorkerExecutor,
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
     UsesBuildMetricsService,
-    UsesBuildReportsService,
     UsesIncrementalModuleInfoBuildService,
     UsesCompilerSystemPropertiesService,
     UsesVariantImplementationFactories,
     UsesBuildFinishedListenerService,
+    UsesClassLoadersCachingBuildService,
+    UsesKotlinToolingDiagnostics,
+    UsesBuildIdProviderService,
+    UsesBuildFusService,
     BaseKotlinCompile {
 
     init {
         cacheOnlyIfEnabledForKotlin()
     }
 
-    private val layout = project.layout
+    @get:Inject
+    internal abstract val projectLayout: ProjectLayout
 
     @get:Inject
     internal abstract val fileSystemOperations: FileSystemOperations
@@ -85,6 +79,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal abstract val taskBuildLocalStateDirectory: DirectoryProperty
+
+    @get:Nested
+    abstract val compilerOptions: KotlinCommonCompilerOptions
 
     @get:Internal
     internal val buildHistoryFile
@@ -105,17 +102,27 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal open fun isIncrementalCompilationEnabled(): Boolean =
         incremental
 
-    @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
+    // This allows us to treat friendPaths as Input rather than InputFiles
     @get:Input
-    abstract val ownModuleName: Property<String>
+    internal val friendPathsSet: Set<String>
+        get() {
+            val buildDirFile = projectLayout.buildDirectory.asFile.get()
+            return friendPaths
+                .filter { it.exists() }
+                .map { it.normalize().relativeTo(buildDirFile).invariantSeparatorsPath }.toSet()
+        }
 
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
 
+    @get:Input
+    @get:Optional
+    abstract val explicitApiMode: Property<ExplicitApiMode>
+
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 
-    internal fun reportingSettings() = buildReportsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
+    internal fun reportingSettings() = buildMetricsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
@@ -141,23 +148,26 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     val abiSnapshotFile
-        get() = taskBuildCacheableOutputDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+        get() = taskBuildCacheableOutputDirectory.file(ABI_SNAPSHOT_FILE_NAME)
 
     @get:Input
     val abiSnapshotRelativePath: Property<String> = objectFactory.property(String::class.java).value(
         //TODO update to support any jar changes
-        "$name/${IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME}"
+        "$name/${ABI_SNAPSHOT_FILE_NAME}"
     )
 
     @get:Internal
     internal val friendSourceSets = objectFactory.listProperty(String::class.java)
+
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
         .property(
-            objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project, incrementalModuleInfoProvider)
+            objectFactory.newInstance<GradleCompileTaskProvider>(this, project, incrementalModuleInfoProvider)
         )
 
     @get:Internal
@@ -176,7 +186,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                         defaultKotlinJavaToolchain
                             .map {
                                 val toolsJar = it.currentJvmJdkToolsJar.orNull
-                                GradleCompilerRunnerWithWorkers(
+                                createGradleCompilerRunner(
                                     taskProvider,
                                     toolsJar,
                                     CompilerExecutionSettings(
@@ -185,7 +195,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                         useDaemonFallbackStrategy.get()
                                     ),
                                     params.first,
-                                    workerExecutor
+                                    workerExecutor,
+                                    runViaBuildToolsApi.get(),
+                                    classLoadersCachingService,
+                                    buildFinishedListenerService,
+                                    buildIdService,
+                                    buildFusService.orNull?.getFusMetricsConsumer()
                                 )
                             }
                     }
@@ -198,45 +213,21 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val keepIncrementalCompilationCachesInMemory: Property<Boolean>
 
+    /** See [org.jetbrains.kotlin.incremental.IncrementalCompilationFeatures.enableUnsafeIncrementalCompilationForMultiplatform] */
     @get:Internal
-    internal abstract val suppressExperimentalIcOptimizationsWarning: Property<Boolean>
+    internal abstract val enableUnsafeIncrementalCompilationForMultiplatform: Property<Boolean>
 
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
-    private fun notifyUserAboutExperimentalICOptimizations() {
-        if (suppressExperimentalIcOptimizationsWarning.get()) {
-            return
-        }
-        if (!preciseCompilationResultsBackup.get() && !keepIncrementalCompilationCachesInMemory.get()) {
-            return
-        }
-        val key = "experimental-ic-optimizations"
-        buildFinishedListenerService.get().onCloseOnceByKey(key) {
-            Logging.getLogger(key).warn(
-                """
-                
-                The build has experimental Kotlin incremental compilation optimizations enabled.
-                If you notice incorrect compilation results after enabling it, please file a bug report at https://kotl.in/issue/experimental-ic-optimizations
-                
-                You can suppress this warning by adding `${KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING}=true` to the gradle.properties
-                """.trimIndent()
-            )
-        }
-    }
-
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        notifyUserAboutExperimentalICOptimizations()
         val buildMetrics = metrics.get()
-        buildMetrics.addTimeMetric(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
-        buildMetrics.measure(BuildTime.OUT_OF_WORKER_TASK_ACTION) {
-            KotlinBuildStatsService.applyIfInitialised {
-                if (name.contains("Test"))
-                    it.report(BooleanMetrics.TESTS_EXECUTED, true)
-                else
-                    it.report(BooleanMetrics.COMPILATION_STARTED, true)
+        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+            buildFusService.orNull?.reportFusMetrics {
+                CompileKotlinTaskMetrics.collectMetrics(name, compilerOptions, it)
             }
             validateCompilerClasspath()
             systemPropertiesService.get().startIntercept()
@@ -247,13 +238,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
-                            layout.buildDirectory,
-                            layout.buildDirectory.dir("snapshot/kotlin/$name"),
+                            projectLayout.buildDirectory,
+                            projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),
                             outputsToRestore = allOutputFiles() - taskOutputsBackupExcludes.get(),
-                            logger
+                            GradleKotlinLogger(logger),
                         ).also {
                             it.createSnapshot()
                         }
@@ -286,6 +277,18 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             commonSourceSet
         )
 
+    /**
+     * Entry point for getting IC feature toggles in Gradle. Child classes should override it
+     * if they have a platform-specific Input.
+     */
+    protected open fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
+        return IncrementalCompilationFeatures(
+            preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
+            keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
+            enableUnsafeIncrementalCompilationForMultiplatform = enableUnsafeIncrementalCompilationForMultiplatform.get(),
+        )
+    }
+
     private fun executeImpl(
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
@@ -300,12 +303,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             return
         }
 
-        val args = prepareCompilerArguments()
+        val args = createCompilerArguments()
+
         taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
         callCompilerAsync(
             args,
-            allKotlinSources,
             inputChanges,
             taskOutputsBackup
         )
@@ -315,7 +318,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         inputChanges: InputChanges,
         incrementalProps: List<FileCollection>
     ) = if (!inputChanges.isIncremental) {
-        ChangedFiles.Unknown()
+        SourcesChanges.Unknown
     } else {
         incrementalProps
             .fold(mutableListOf<File>() to mutableListOf<File>()) { (modified, removed), prop ->
@@ -329,7 +332,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                 modified to removed
             }
             .run {
-                ChangedFiles.Known(first, second)
+                SourcesChanges.Known(first, second)
             }
     }
 
@@ -339,25 +342,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
      */
     internal abstract fun callCompilerAsync(
         args: T,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     )
-
-    @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by lazy {
-        AbstractKotlinCompileArgumentsContributor(
-            KotlinCompileArgumentsProvider(this)
-        )
-    }
-
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        abstractKotlinCompileArgumentsContributor.contributeArguments(
-            args,
-            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
-        )
-        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
-            args.reportPerf = true
-        }
-    }
 }

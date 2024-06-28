@@ -1,0 +1,26 @@
+@kotlin.Metadata
+public final class SimpleLock {
+    // source: 'SimpleLockTest.kt'
+    private synthetic final static field _locked$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _locked$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method get_locked$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_locked$volatile(): int
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method set_locked$volatile(p0: int): void
+    public final method withLock(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class SimpleLockTest {
+    // source: 'SimpleLockTest.kt'
+    public method <init>(): void
+    public final method withLock(): void
+}
+
+@kotlin.Metadata
+public final class SimpleLockTestKt {
+    // source: 'SimpleLockTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

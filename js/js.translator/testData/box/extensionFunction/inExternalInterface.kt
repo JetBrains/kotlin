@@ -1,4 +1,4 @@
-// !LANGUAGE: +JsEnableExtensionFunctionInExternals
+// LANGUAGE: +JsEnableExtensionFunctionInExternals
 
 external interface Foo {
     fun foo(): String.() -> Unit

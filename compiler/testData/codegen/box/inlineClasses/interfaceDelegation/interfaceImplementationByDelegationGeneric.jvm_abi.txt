@@ -1,0 +1,19 @@
+MODULE main
+	CLASS Test.class
+		CLASS METADATA
+			K1
+				getK()Ljava/lang/String;
+			K2
+				---
+			K1
+				getOk()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				k
+			K1
+				---
+			K2
+				ok

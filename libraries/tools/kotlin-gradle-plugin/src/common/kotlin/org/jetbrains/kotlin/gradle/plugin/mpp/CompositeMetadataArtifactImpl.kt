@@ -73,7 +73,7 @@ internal class CompositeMetadataArtifactImpl(
 
             In this case, return null
              */
-            if (artifactFile.containsDirectory(sourceSetName)) MetadataBinaryImpl(this, artifactFile) else null
+            if (artifactFile.containsKlibDirectory(sourceSetName)) MetadataBinaryImpl(this, artifactFile) else null
         }
 
         override val cinteropMetadataBinaries: List<CompositeMetadataArtifactContent.CInteropMetadataBinary> by lazy {
@@ -131,7 +131,7 @@ internal class CompositeMetadataArtifactImpl(
             }
 
             val libraryPath = "${containingSourceSetContent.sourceSetName}/"
-            if (!artifactFile.containsDirectory(libraryPath)) return false
+            if (!artifactFile.containsKlibDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
             artifactFile.zip.copyPartially(file, libraryPath)
 
@@ -176,7 +176,7 @@ internal class CompositeMetadataArtifactImpl(
             val cinteropMetadataDirectoryPath = ensureValidZipDirectoryPath(cinteropMetadataDirectory)
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"
-            if (!artifactFile.containsDirectory(libraryPath)) return false
+            if (!artifactFile.containsKlibDirectory(libraryPath)) return false
             file.parentFile.mkdirs()
             artifactFile.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
 
@@ -186,7 +186,7 @@ internal class CompositeMetadataArtifactImpl(
 
     /**
      * Interface to the underlying [zip][file] that only opens the file lazily and keeps references to
-     * all [entries] and infers all potential directory paths (see [directoryPaths] and [containsDirectory])
+     * all [entries] and infers all potential directory paths (see [directoryPaths] and [containsKlibDirectory])
      */
     private class ArtifactFile(private val file: File) : Closeable {
 
@@ -210,21 +210,18 @@ internal class CompositeMetadataArtifactImpl(
         }
 
         /**
-         * All potential directory paths, including inferred directory paths when the [zip] file does
-         * not include directory entries.
-         * @see collectAllDirectoryPaths
-         */
-        val directoryPaths: Set<String> by lazy { collectAllDirectoryPaths(entries) }
-
-        /**
-         * Check if the underlying [zip] file contains this directory.
-         * Note: This check also works for zip files that did not include directory entries.
+         * Check if the underlying [zip] file contains klib at [path].
+         * Note: This check also works for zip files that did not include any klibs.
          * This will return true, if any other zip-entry is placed inside this directory [path]
          */
-        fun containsDirectory(path: String): Boolean {
-            val validPath = ensureValidZipDirectoryPath(path)
-            if (zip.getEntry(validPath) != null) return true
-            return validPath in directoryPaths
+        fun containsKlibDirectory(path: String): Boolean {
+            // Checking for manifest file in "default" folder is considered "good enough" to say that it is a KLIB
+            // There are three possible states of content in the subdirectory of Composite Metadata Artifact
+            // 1. Klib
+            // 2. resources or mix klib + resources (FIXME: KT-66563)
+            // 3. empty directory. In case if something went wrong with publication. Like Task was skipped for some reason.
+            val pathToTheManifestFile = ensureValidZipDirectoryPath(path) + "default/manifest"
+            return zip.getEntry(pathToTheManifestFile) != null
         }
 
         private fun ensureNotClosed() {
@@ -239,32 +236,3 @@ internal class CompositeMetadataArtifactImpl(
         }
     }
 }
-
-/**
- * Zip files are not **forced** to include entries for directories.
- * In order to do preliminary checks, if some directory is present in Zip Files it is
- * often useful to infer the directories included in any Zip File by looking into file entries
- * and inferring their directories.
- */
-private fun collectAllDirectoryPaths(entries: List<ZipEntry>): Set<String> {
-    /*
-    The 'root' directory is represented as empty String in ZipFile
-     */
-    val set = hashSetOf("")
-
-    entries.forEach { entry ->
-        if (entry.isDirectory) {
-            set.add(entry.name)
-            return@forEach
-        }
-
-        /* Collect all 'intermediate' directories found by looking at the files path */
-        val pathParts = entry.name.split("/")
-        pathParts.runningReduce { currentPath, nextPart ->
-            set.add("$currentPath/")
-            "$currentPath/$nextPart"
-        }
-    }
-    return set
-}
-

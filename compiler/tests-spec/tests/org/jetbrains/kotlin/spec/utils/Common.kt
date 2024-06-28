@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.utils
@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.LINKED_TESTS_PATH
 import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.utils.models.NotLinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.utils.parsers.BasePatterns
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withSpaces
 import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
 import org.jetbrains.kotlin.spec.utils.parsers.NotLinkedSpecTestPatterns
-import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withSpaces
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -27,8 +27,8 @@ enum class TestType(val type: String) {
     NEGATIVE("neg");
 
     companion object {
-        private val map = values().associateBy(TestType::type)
-        val joinedValues = values().joinToString("|").withSpaces()
+        private val map = entries.associateBy(TestType::type)
+        val joinedValues = entries.joinToString("|").withSpaces()
 
         fun fromValue(type: String) = map[type]
     }
@@ -51,7 +51,7 @@ enum class TestArea(val testDataPath: String) {
     CODEGEN_BOX("codegen/box");
 
     companion object {
-        val joinedValues = values().joinToString("|").withSpaces()
+        val joinedValues = entries.joinToString("|").withSpaces()
     }
 }
 

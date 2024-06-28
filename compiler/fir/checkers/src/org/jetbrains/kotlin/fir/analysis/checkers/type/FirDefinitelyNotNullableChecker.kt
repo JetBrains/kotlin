@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.types.*
 
-object FirDefinitelyNotNullableChecker : FirTypeRefChecker() {
+object FirDefinitelyNotNullableChecker : FirTypeRefChecker(MppCheckerKind.Common) {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val intersection = (typeRef as? FirResolvedTypeRef)?.delegatedTypeRef as? FirIntersectionTypeRef ?: return
 
@@ -19,7 +20,7 @@ object FirDefinitelyNotNullableChecker : FirTypeRefChecker() {
             reporter.reportOn(intersection.source, FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE, context)
         }
 
-        if (!intersection.isLeftValidForDefinitelyNotNullable) {
+        if (!intersection.isLeftValidForDefinitelyNotNullable(context.session)) {
             reporter.reportOn(intersection.leftType.source, FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION, context)
         }
 

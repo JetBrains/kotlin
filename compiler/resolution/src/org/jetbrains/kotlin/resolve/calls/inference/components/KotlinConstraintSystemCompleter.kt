@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionC
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.resolve.calls.model.MultiLambdaBuilderInferenceRestriction
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -281,7 +282,7 @@ class KotlinConstraintSystemCompleter(
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
         // (after analysing a lambda with the builder inference)
         // otherwise we don't continue and report "not enough type information" error
-        return variableForFixation?.hasProperConstraint == true
+        return variableForFixation?.isReady == true
     }
 
     private fun transformToAtomWithNewFunctionalExpectedType(
@@ -321,7 +322,7 @@ class KotlinConstraintSystemCompleter(
             topLevelType
         ) ?: return false
 
-        if (!variableForFixation.hasProperConstraint) return false
+        if (!variableForFixation.isReady) return false
 
         fixVariable(this, notFixedTypeVariables.getValue(variableForFixation.variable), topLevelAtoms, diagnosticsHolder)
 
@@ -342,7 +343,7 @@ class KotlinConstraintSystemCompleter(
                 postponedArguments, completionMode, topLevelType,
             ) ?: break
 
-            assert(!variableForFixation.hasProperConstraint) {
+            assert(!variableForFixation.isReady) {
                 "At this stage there should be no remaining variables with proper constraints"
             }
 
@@ -453,14 +454,23 @@ class KotlinConstraintSystemCompleter(
 
     private fun reportWarningIfFixedIntoDeclaredUpperBounds(
         diagnosticsHolder: KotlinDiagnosticsHolder,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
+        resultType: KotlinTypeMarker
     ) {
-        val areAllConstraintFromDeclaredUpperBounds = variableWithConstraints.constraints.all {
-            val position = it.position.from
-            position is BuilderInferenceSubstitutionConstraintPosition<*, *> && position.isFromNotSubstitutedDeclaredUpperBound
+        var upperBoundType: KotlinTypeMarker? = null
+        val constraintFromDeclaredUpperBoundExists = variableWithConstraints.constraints.any { constraint ->
+            val position = constraint.position.from.let { basicPosition ->
+                if (basicPosition is IncorporationConstraintPosition) basicPosition.from else basicPosition
+            }
+            if (position is BuilderInferenceSubstitutionConstraintPosition<*> && position.isFromNotSubstitutedDeclaredUpperBound) {
+                upperBoundType = constraint.type
+                true
+            } else {
+                false
+            }
         }
 
-        if (areAllConstraintFromDeclaredUpperBounds) {
+        if (constraintFromDeclaredUpperBoundExists && upperBoundType == resultType) {
             diagnosticsHolder.addDiagnostic(
                 KotlinConstraintSystemDiagnostic(InferredIntoDeclaredUpperBounds(variableWithConstraints.typeVariable))
             )
@@ -478,7 +488,7 @@ class KotlinConstraintSystemCompleter(
         val variable = variableWithConstraints.typeVariable
         val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
-        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints)
+        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints, resultType)
 
         c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
     }

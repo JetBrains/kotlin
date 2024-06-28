@@ -20,6 +20,8 @@ class CompositeMetadataArtifactTest {
     @get:Rule
     val temporaryFolder = TemporaryFolder()
 
+    private val KLIB_MANIFEST_PATH = "default/manifest"
+
     @Test
     fun `empty jar - contains no metadataBinary and no cinteropMetadataBinaries`() {
         val primaryArtifactContent = temporaryFolder.newFolder()
@@ -59,7 +61,7 @@ class CompositeMetadataArtifactTest {
     fun `stub metadata library - can be unzipped`() {
         val testSourceSetName = "testSourceSetName"
         val primaryArtifactContent = temporaryFolder.newFolder()
-        val stubFile = primaryArtifactContent.resolve(testSourceSetName).resolve("stub.txt")
+        val stubFile = primaryArtifactContent.resolve(testSourceSetName).resolve(KLIB_MANIFEST_PATH)
         stubFile.parentFile.mkdirs()
         stubFile.writeText("stub!")
 
@@ -93,8 +95,9 @@ class CompositeMetadataArtifactTest {
             val unzippedMetadataFile = metadataOutputDirectory.resolve("unzipped")
             unzipTo(unzippedMetadataFile, metadataFile)
 
-            assertEquals(setOf(unzippedMetadataFile.resolve("stub.txt")), unzippedMetadataFile.listFiles().orEmpty().toSet())
-            assertEquals("stub!", unzippedMetadataFile.resolve("stub.txt").readText())
+            val actualUnzippedFiles = unzippedMetadataFile.walkTopDown().filter { it.isFile }.toSet()
+            assertEquals(setOf(unzippedMetadataFile.resolve(KLIB_MANIFEST_PATH)), actualUnzippedFiles)
+            assertEquals("stub!", unzippedMetadataFile.resolve(KLIB_MANIFEST_PATH).readText())
         }
     }
 
@@ -128,21 +131,21 @@ class CompositeMetadataArtifactTest {
         /* Setup Artifact content */
         val primaryArtifactContent = temporaryFolder.newFolder()
 
-        primaryArtifactContent.resolve("sourceSetA/sourceSetAStub1.txt")
+        primaryArtifactContent.resolve("sourceSetA/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
-            .writeText("Content of sourceSetA stub1")
+            .writeText("Content of sourceSetA Metadata KLIB")
 
-        primaryArtifactContent.resolve("sourceSetA/nested/sourceSetAStub2.txt")
+        primaryArtifactContent.resolve("sourceSetA/sourceSetAStub.txt")
             .withParentDirectoriesCreated()
-            .writeText("Content of sourceSetB stub2")
+            .writeText("Resource file mixed with sourceSetA Metadata KLIB")
 
-        primaryArtifactContent.resolve("sourceSetB/sourceSetBStub1.txt")
+        primaryArtifactContent.resolve("sourceSetB/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
             .writeText("Content of sourceSetB stub1")
 
-        primaryArtifactContent.resolve("sourceSetB/nested/sourceSetBStub2.txt")
+        primaryArtifactContent.resolve("sourceSetWithResourcesOnly/stub.txt")
             .withParentDirectoriesCreated()
-            .writeText("Content of sourceSetB stub2")
+            .writeText("Resource file with klib content")
 
         /* Create metadata jar */
         val primaryArtifactFile = temporaryFolder.newFile("metadata.jar")
@@ -154,7 +157,8 @@ class CompositeMetadataArtifactTest {
             kotlinProjectStructureMetadata = createProjectStructureMetadata(
                 sourceSetBinaryLayout = mapOf(
                     "sourceSetA" to SourceSetMetadataLayout.KLIB,
-                    "sourceSetB" to SourceSetMetadataLayout.METADATA
+                    "sourceSetB" to SourceSetMetadataLayout.METADATA,
+                    "sourceSetWithResourcesOnly" to SourceSetMetadataLayout.KLIB,
                 )
             ),
             primaryArtifactFile = primaryArtifactFile,
@@ -195,6 +199,9 @@ class CompositeMetadataArtifactTest {
                     "Expected correct content of extracted 'sourceSetA'"
                 )
             }
+
+            /* even though there is sourceSetWithResourcesOnly directory, there is no metadata KLIB in it */
+            assertNull(artifactContent.getSourceSet("sourceSetWithResourcesOnly").metadataBinary)
         }
     }
 
@@ -203,7 +210,7 @@ class CompositeMetadataArtifactTest {
         /* Setup Artifact content */
         val primaryArtifactContent = temporaryFolder.newFolder()
 
-        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0/stub0")
+        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
             .writeText("stub0 content")
 
@@ -211,11 +218,11 @@ class CompositeMetadataArtifactTest {
             .withParentDirectoriesCreated()
             .writeText("stub1 content")
 
-        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA1/stub2")
+        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA1/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
             .writeText("stub2 content")
 
-        primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0/stub3")
+        primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0/$KLIB_MANIFEST_PATH")
             .withParentDirectoriesCreated()
             .writeText("stub3 content")
 

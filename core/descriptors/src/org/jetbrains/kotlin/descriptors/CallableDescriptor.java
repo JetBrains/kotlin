@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.descriptors;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.mpp.CallableSymbolMarker;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
 import java.util.List;
 
 public interface CallableDescriptor extends DeclarationDescriptorWithVisibility, DeclarationDescriptorNonRoot,
-                                            Substitutable<CallableDescriptor> {
+                                            Substitutable<CallableDescriptor>, CallableSymbolMarker {
     @NotNull
     @ReadOnly
     List<ReceiverParameterDescriptor> getContextReceiverParameters();

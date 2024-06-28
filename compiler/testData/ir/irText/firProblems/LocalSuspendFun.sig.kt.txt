@@ -1,0 +1,16 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #useMemo(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /useMemo|-5878263003233931724[0]
+//   Public signature debug description: useMemo(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #useMemo(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+//   Public signature: /useMemo|-3060604648637761528[0]
+//   Public signature debug description: useMemo(kotlin.Function0<0:0>){0§<kotlin.Any?>}
+fun <T : Any?> useMemo(callback: Function0<T>): T
+

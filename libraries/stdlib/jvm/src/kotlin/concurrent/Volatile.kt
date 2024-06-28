@@ -14,7 +14,5 @@ package kotlin.concurrent
  * For example, if the property getter or setter make several operations with the backing field,
  * a _property_ operation, i.e. reading or setting it through these accessors, is not guaranteed to be atomic.
  */
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("1.9")
-@ExperimentalStdlibApi
 public actual typealias Volatile = kotlin.jvm.Volatile

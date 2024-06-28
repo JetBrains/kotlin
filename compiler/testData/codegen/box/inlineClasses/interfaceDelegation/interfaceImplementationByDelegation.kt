@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
-
+// JVM_ABI_K1_K2_DIFF: KT-63828
 interface IFoo {
     fun getO(): String
     val k: String

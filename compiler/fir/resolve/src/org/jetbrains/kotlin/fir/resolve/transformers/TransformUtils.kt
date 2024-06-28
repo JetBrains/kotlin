@@ -6,23 +6,25 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjectionOut
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.createArrayType
 
-internal fun FirValueParameter.transformVarargTypeToArrayType() {
+internal fun FirValueParameter.transformVarargTypeToArrayType(session: FirSession) {
     if (isVararg) {
-        this.transformTypeToArrayType()
+        this.transformTypeToArrayType(session)
     }
 }
 
-internal fun FirCallableDeclaration.transformTypeToArrayType() {
+internal fun FirCallableDeclaration.transformTypeToArrayType(session: FirSession) {
     val returnTypeRef = this.returnTypeRef
     require(returnTypeRef is FirResolvedTypeRef)
     // If the delegated type is already resolved, it means we have already created a resolved array type for this vararg type declaration.
@@ -30,7 +32,7 @@ internal fun FirCallableDeclaration.transformTypeToArrayType() {
     if (returnTypeRef.delegatedTypeRef is FirResolvedTypeRef &&
         returnTypeRef.delegatedTypeRef?.source?.kind == KtFakeSourceElementKind.ArrayTypeFromVarargParameter
     ) return
-    val returnType = returnTypeRef.coneType
+    val returnType = returnTypeRef.coneType.fullyExpandedType(session)
 
     replaceReturnTypeRef(
         buildResolvedTypeRef {

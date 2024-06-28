@@ -10,7 +10,6 @@ val depenencyProjects = arrayOf(
     ":compiler:test-infrastructure",
     ":compiler:tests-common-new",
     ":compiler:tests-for-compiler-generator",
-    ":compiler:visualizer",
     ":js:js.tests",
     ":compiler:tests-java8",
     ":core:descriptors.runtime",
@@ -24,8 +23,8 @@ dependencies {
     }
 
     testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
-    testRuntimeOnly(platform(commonDependency("org.junit:junit-bom")))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly(platform(libs.junit.bom))
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         testRuntimeOnly(project(":core:descriptors.runtime"))

@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
-
-class Platform(val configurables: Configurables) 
-    : Configurables by configurables {
+class Platform(val configurables: Configurables) : Configurables by configurables {
 
     val clang: ClangArgs.Native by lazy {
         ClangArgs.Native(configurables)
@@ -35,15 +32,25 @@ class Platform(val configurables: Configurables)
 }
 
 class PlatformManager private constructor(private val serialized: Serialized) :
-        HostManager(serialized.distribution, serialized.experimental), java.io.Serializable {
+    HostManager(), java.io.Serializable {
 
-    constructor(konanHome: String, experimental: Boolean = false) : this(Distribution(konanHome), experimental)
-    constructor(distribution: Distribution, experimental: Boolean = false) : this(Serialized(distribution, experimental))
+    // TODO(KT-66500): elevate to an error after the bootstrap
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated("Kept temporary, should be removed after the bootstrap")
+    constructor(konanHome: String, experimental: Boolean = false, konanDataDir: String? = null) : this(Distribution(konanHome, konanDataDir = konanDataDir))
+
+    // TODO(KT-66500): elevate to an error after the bootstrap
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated("Kept temporary, should be removed after the bootstrap")
+    constructor(distribution: Distribution, experimental: Boolean = false) : this(Serialized(distribution))
+
+    constructor(konanHome: String, konanDataDir: String? = null) : this(Distribution(konanHome, konanDataDir = konanDataDir))
+    constructor(distribution: Distribution) : this(Serialized(distribution))
 
     private val distribution by serialized::distribution
 
     private val loaders = enabled.map {
-        it to loadConfigurables(it, distribution.properties, DependencyProcessor.defaultDependenciesRoot.absolutePath)
+        it to loadConfigurables(it, distribution.properties, distribution.dependenciesDir)
     }.toMap()
 
     private val platforms = loaders.map {
@@ -57,15 +64,20 @@ class PlatformManager private constructor(private val serialized: Serialized) :
 
     private fun writeReplace(): Any = serialized
 
+    /**
+     * This class inherits Serializable to put it into a `org.gradle.api.provider.Property`, which is necessary in kotlin.git build.
+     * It is not necessary to maintain the stable and predictably changing `serialVersionUUID` for this class (read below why).
+     *
+     * # Why serialVersionUUID doesn't matter
+     * Gradle uses Serializable for Gradle Configuration Cache. Whenever a buildscript classpath changes, Gradle entirely discards that
+     * cache and re-builds it from scratch. So, whenever any changes in [PlatformManager.Serialized]-class happen, the cache will be
+     * rebuild from scratch.
+     * So, there cases where we try to deserialize a binary representation of [PlatformManager.Serialized] with a class with a newer
+     * version should be impossible.
+     */
     private data class Serialized(
-            val distribution: Distribution,
-            val experimental: Boolean
+        val distribution: Distribution,
     ) : java.io.Serializable {
-        companion object {
-            private const val serialVersionUID: Long = 0L
-        }
-
         private fun readResolve(): Any = PlatformManager(this)
     }
 }
-

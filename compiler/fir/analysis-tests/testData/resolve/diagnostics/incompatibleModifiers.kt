@@ -1,3 +1,4 @@
+// LANGUAGE: +DataClassCopyRespectsConstructorVisibility
 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>public<!> class B
 <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> <!INCOMPATIBLE_MODIFIERS!>internal<!> class C
 
@@ -13,7 +14,7 @@ inline fun foo(
 
 <!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>open<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class H(val i: Int)
 <!INCOMPATIBLE_MODIFIERS!>sealed<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class I(val i: Int)
-<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class J(val i: Int)
+<!INCOMPATIBLE_MODIFIERS, INLINE_CLASS_DEPRECATED!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class J(val i: Int)
 
 abstract class K {
     <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> val i1: Int = 0

@@ -1,0 +1,11 @@
+@Anno(<strcat>(String(nested nested bar ), prop#))
+owner -> FirNamedFunctionSymbol <local>/bar
+context -> FirNamedFunctionSymbol <local>/bar from FirRegularClassSymbol <local>/LocalIntoLocal from FirAnonymousInitializerSymbol <init> from FirRegularClassSymbol util/A
+
+@Anno(<strcat>(String(nested bar ), prop#))
+owner -> FirNamedFunctionSymbol <local>/bar
+context -> FirNamedFunctionSymbol <local>/bar from FirRegularClassSymbol <local>/LocalIntoLocal from FirAnonymousInitializerSymbol <init> from FirRegularClassSymbol util/A
+
+@Anno(<strcat>(String(bar ), prop#))
+owner -> FirNamedFunctionSymbol <local>/bar
+context -> FirNamedFunctionSymbol <local>/bar from FirRegularClassSymbol <local>/LocalIntoLocal from FirAnonymousInitializerSymbol <init> from FirRegularClassSymbol util/A

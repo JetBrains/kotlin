@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ir.getAdapteeFromAdaptedForReferenceFunction
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -60,9 +61,9 @@ import org.jetbrains.kotlin.name.Name
  * ```
  */
 internal class FunctionReferenceLowering(val generationState: NativeGenerationState) : FileLoweringPass {
-    private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
-
     companion object {
+        private val DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL = IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
+
         fun isLoweredFunctionReference(declaration: IrDeclaration): Boolean =
                 declaration.origin == DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     }
@@ -342,7 +343,10 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 val remappedSuperType = (samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}"))
                         .typeWith(samSuperType.remappedTypeArguments())
                 superTypes += remappedSuperType
-                transformedSuperMethod = remappedSuperType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
+                transformedSuperMethod = remappedSuperType.classOrNull!!.functions.single {
+                    val function = it.owner
+                    function.modality == Modality.ABSTRACT && function.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD
+                }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
                 if (isSuspend) {
@@ -355,7 +359,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     transformedSuperMethod = functionClass.invokeFun!!
                 }
             }
-            val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
+            val originalSuperMethod = transformedSuperMethod.suspendFunction ?: transformedSuperMethod
             buildInvokeMethod(originalSuperMethod)
 
             functionReferenceClass.superTypes += superTypes
@@ -538,22 +542,20 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             returnType = functionReturnType
             isSuspend = superFunction.isSuspend
         }.apply {
+            attributeOwnerId = functionReference.attributeOwnerId
             val function = this
 
             function.createDispatchReceiverParameter()
 
             extensionReceiverParameter = superFunction.extensionReceiverParameter?.copyTo(function)
 
-            valueParameters += superFunction.valueParameters.mapIndexed { index, parameter ->
-                parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
-                        type = functionParameterTypes[index])
-            }
-
             overriddenSymbols += superFunction.symbol
+
+            val valueParameters = mutableListOf<IrValueParameter>()
 
             body = context.createIrBuilder(function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
                 +irReturn(
-                        irCall(functionReference.symbol).apply {
+                        irCall(referencedFunction).apply {
                             var unboundIndex = 0
                             val unboundArgsSet = unboundFunctionParameters.toSet()
                             for (parameter in functionParameters) {
@@ -568,8 +570,29 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                                             if (parameter == referencedFunction.extensionReceiverParameter
                                                     && extensionReceiverParameter != null)
                                                 irGet(extensionReceiverParameter!!)
-                                            else
-                                                irGet(valueParameters[unboundIndex++])
+                                            else {
+                                                // Sometimes FE resolves type as an intersection type which gets approximated to Nothing,
+                                                // so try to get the type from the referenced function in such a case.
+                                                // NOTE: the JVM counterpart of this lowering takes all the types from the referenced function
+                                                // for lambdas and SAM conversions, but it can't be done here because of the different
+                                                // lowerings order (in K/N the LocalDeclarationsLowering has already been applied by this point,
+                                                // and lambdas might have their own type parameters, copied from the outer scopes, and it
+                                                // gets really messy to try to substitute them to the correct ones).
+                                                val valueParameter = if ((samSuperType != null || isLambda)
+                                                        && functionParameterTypes[unboundIndex].isNothing()
+                                                ) {
+                                                    parameter.copyTo(
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            type = parameter.type)
+                                                } else {
+                                                    superFunction.valueParameters[unboundIndex].copyTo(
+                                                            function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, unboundIndex,
+                                                            type = functionParameterTypes[unboundIndex])
+                                                }
+                                                ++unboundIndex
+                                                valueParameters.add(valueParameter)
+                                                irGet(valueParameter)
+                                            }
                                         }
                                 when (parameter) {
                                     referencedFunction.dispatchReceiverParameter -> dispatchReceiver = argument
@@ -585,6 +608,8 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         }
                 )
             }
+
+            this.valueParameters = valueParameters
         }
     }
 }

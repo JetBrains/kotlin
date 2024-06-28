@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package a.b.c.test.enum
 
 enum class Enum {

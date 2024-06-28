@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 package test
 
 var <P> P.anotherJavaClass: java.lang.Class<P>

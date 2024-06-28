@@ -1,0 +1,10 @@
+// CHECK JVM_IR:
+//   Mangled name: #runMe(){}
+//   Public signature: /runMe|1754039929145531074[0]
+//   Public signature debug description: runMe(){}
+// CHECK JS_IR NATIVE:
+//   Mangled name: #runMe(){}
+//   Public signature: /runMe|1754039929145531074[0]
+//   Public signature debug description: runMe(){}
+fun runMe(): Unit
+

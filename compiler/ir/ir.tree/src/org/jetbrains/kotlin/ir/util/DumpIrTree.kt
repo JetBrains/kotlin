@@ -27,64 +27,103 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String =
+fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     try {
         StringBuilder().also { sb ->
-            accept(DumpIrTreeVisitor(sb, normalizeNames, stableOrder), "")
+            accept(DumpIrTreeVisitor(sb, options), "")
         }.toString()
     } catch (e: Exception) {
-        "(Full dump is not available: ${e.message})\n" + render()
+        "(Full dump is not available: ${e.message})\n" + render(options)
     }
 
-fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
+fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
     if (shouldSkipDump()) return ""
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, normalizeNames), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, options), null)
     return sb.toString()
 }
+
+/**
+ * @property normalizeNames Rename temporary local variables using a stable naming scheme
+ * @property stableOrder Print declarations in a sorted order
+ * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
+ * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
+ *   the file facade class (see [IrDeclarationOrigin.FILE_CLASS]) TODO: use [isHiddenDeclaration] instead.
+ * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered
+ *   declaration references.
+ * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
+ * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
+ * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property isHiddenDeclaration The filter that can be used to exclude some declarations from printing.
+ */
+data class DumpIrTreeOptions(
+    val normalizeNames: Boolean = false,
+    val stableOrder: Boolean = false,
+    val verboseErrorTypes: Boolean = true,
+    val printFacadeClassInFqNames: Boolean = true,
+    val printFlagsInDeclarationReferences: Boolean = true,
+    val renderOriginForExternalDeclarations: Boolean = true,
+    val printSignatures: Boolean = false,
+    val printTypeAbbreviations: Boolean = true,
+    val printModuleName: Boolean = true,
+    val printFilePath: Boolean = true,
+    val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
+)
 
 private fun IrFile.shouldSkipDump(): Boolean {
     val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
     return entry.lineStartOffsetsAreEmpty
 }
 
+/**
+ * Sorts the declarations in the list using the result of [IrDeclaration.render] as the sorting key.
+ *
+ * The exceptions for which relative order is preserved as it matters for code generation:
+ *  * Properties with backing field
+ *  * Anonymous initializers
+ *  * Enum entries
+ *  * Fields
+ */
+internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
+    val strictOrder = hashMapOf<IrDeclaration, Int>()
+
+    var idx = 0
+
+    forEach {
+        val shouldPreserveRelativeOrder = when (it) {
+            is IrProperty -> it.backingField != null && !it.isConst
+            is IrAnonymousInitializer, is IrEnumEntry, is IrField -> true
+            else -> false
+        }
+        if (shouldPreserveRelativeOrder) {
+            strictOrder[it] = idx++
+        }
+    }
+
+    return sortedWith { a, b ->
+        val strictA = strictOrder[a] ?: Int.MAX_VALUE
+        val strictB = strictOrder[b] ?: Int.MAX_VALUE
+
+        if (strictA == strictB) {
+            val rA = a.render()
+            val rB = b.render()
+            rA.compareTo(rB)
+        } else strictA - strictB
+    }
+}
+
 class DumpIrTreeVisitor(
     out: Appendable,
-    normalizeNames: Boolean = false,
-    private val stableOrder: Boolean = false
+    private val options: DumpIrTreeOptions = DumpIrTreeOptions(),
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
+    private val elementRenderer = RenderIrElementVisitor(options)
     private fun IrType.render() = elementRenderer.renderType(this)
 
-    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> {
-        if (!stableOrder) return this
+    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (options.stableOrder) stableOrdered() else this
 
-        val strictOrder = mutableMapOf<IrDeclaration, Int>()
-
-        var idx = 0
-
-        forEach {
-            if (it is IrProperty && it.backingField != null && !it.isConst) {
-                strictOrder[it] = idx++
-            }
-            if (it is IrAnonymousInitializer) {
-                strictOrder[it] = idx++
-            }
-        }
-
-        return sortedWith { a, b ->
-            val strictA = strictOrder[a] ?: Int.MAX_VALUE
-            val strictB = strictOrder[b] ?: Int.MAX_VALUE
-
-            if (strictA == strictB) {
-                val rA = a.render()
-                val rB = b.render()
-                rA.compareTo(rB)
-            } else strictA - strictB
-        }
-    }
+    private fun IrDeclaration.isHidden(): Boolean = options.isHiddenDeclaration(this)
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {
@@ -115,6 +154,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
@@ -125,6 +165,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
@@ -132,12 +173,14 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
         }
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
@@ -170,6 +213,7 @@ class DumpIrTreeVisitor(
         )
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.typeParameters.dumpElements()
@@ -180,6 +224,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
@@ -190,6 +235,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitField(declaration: IrField, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.initializer?.accept(this, "")
@@ -208,6 +254,7 @@ class DumpIrTreeVisitor(
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
+        if (declaration.isHidden()) return
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.initializerExpression?.accept(this, "init")
@@ -292,6 +339,14 @@ class DumpIrTreeVisitor(
 
     private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
         getTypeArgument(index)?.render() ?: "<none>"
+
+    override fun visitBlock(expression: IrBlock, data: String) {
+        if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
+        expression.dumpLabeledElementWith(data) {
+            expression.inlinedElement.dumpInternal("inlinedElement")
+            expression.acceptChildren(this, "")
+        }
+    }
 
     override fun visitGetField(expression: IrGetField, data: String) {
         expression.dumpLabeledElementWith(data) {
@@ -421,9 +476,9 @@ class DumpTreeFromSourceLineVisitor(
     val fileEntry: IrFileEntry,
     private val lineNumber: Int,
     out: Appendable,
-    normalizeNames: Boolean = false
+    options: DumpIrTreeOptions,
 ) : IrElementVisitorVoid {
-    private val dumper = DumpIrTreeVisitor(out, normalizeNames)
+    private val dumper = DumpIrTreeVisitor(out, options)
 
     override fun visitElement(element: IrElement) {
         if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {

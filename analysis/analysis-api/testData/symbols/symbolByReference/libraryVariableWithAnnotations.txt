@@ -1,0 +1,190 @@
+KaKotlinPropertySymbol:
+  annotations: [
+    one/Anno()
+      psi: null
+  ]
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(one/topLevelVariableWithAnnotations)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Long
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  callableId: one/topLevelVariableWithAnnotations
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: [
+      one/Anno()
+        psi: null
+    ]
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Long
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: true
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: topLevelVariableWithAnnotations
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Long
+  setter: KaPropertySetterSymbol:
+    annotations: [
+      one/Anno()
+        psi: null
+    ]
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    parameter: KaValueParameterSymbol:
+      annotations: [
+        one/Anno()
+          psi: null
+      ]
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: value
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Long
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KaLibraryModule "Library lib"
+      deprecationStatus: null
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Unit
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: [
+          one/Anno()
+            psi: null
+        ]
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Long
+        visibility: PUBLIC
+        getContainingFileSymbol: null
+        getContainingJvmClassName: null
+        getContainingModule: KaLibraryModule "Library lib"
+        deprecationStatus: null
+    ]
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: one.LibKt
+    getContainingModule: KaLibraryModule "Library lib"
+    deprecationStatus: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: one.LibKt
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getTopLevelVariableWithAnnotations
+  javaSetterName: setTopLevelVariableWithAnnotations
+  setterDeprecationStatus: null

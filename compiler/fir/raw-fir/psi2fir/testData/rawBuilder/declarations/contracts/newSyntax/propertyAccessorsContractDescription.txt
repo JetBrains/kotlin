@@ -1,5 +1,5 @@
 FILE: propertyAccessorsContractDescription.kt
-    public? final? class MyClass : R|kotlin/Any| {
+    public final? class MyClass : R|kotlin/Any| {
         public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
@@ -17,7 +17,7 @@ FILE: propertyAccessorsContractDescription.kt
             }
 
     }
-    public? final? class AnotherClass : R|kotlin/Any| {
+    public final? class AnotherClass : R|kotlin/Any| {
         public? [ContainingClassKey=AnotherClass] constructor(multiplier: Int): R|AnotherClass| {
             super<R|kotlin/Any|>()
         }
@@ -39,7 +39,7 @@ FILE: propertyAccessorsContractDescription.kt
             }
 
     }
-    public? final? class SomeClass : R|kotlin/Any| {
+    public final? class SomeClass : R|kotlin/Any| {
         public? [ContainingClassKey=SomeClass] constructor(multiplier: Int?): R|SomeClass| {
             super<R|kotlin/Any|>()
         }

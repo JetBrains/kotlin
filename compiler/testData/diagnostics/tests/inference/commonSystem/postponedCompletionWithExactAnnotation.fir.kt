@@ -1,10 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface ISample
 
 fun <K> elvisSimple(x: K?, y: K): K = y
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "HIDDEN")
+@Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER", "HIDDEN")
 fun <K> elvisExact(x: K?, y: K): @kotlin.internal.Exact K = y
 
 fun <T : Number> materialize(): T? = TODO()

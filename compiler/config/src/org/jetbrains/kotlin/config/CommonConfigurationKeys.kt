@@ -1,25 +1,13 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 
 object CommonConfigurationKeys {
@@ -48,6 +36,9 @@ object CommonConfigurationKeys {
     val ENUM_WHEN_TRACKER = CompilerConfigurationKey.create<EnumWhenTracker>("enum when tracker")
 
     @JvmField
+    val IMPORT_TRACKER = CompilerConfigurationKey.create<ImportTracker>("import tracker")
+
+    @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
 
     @JvmField
@@ -60,7 +51,7 @@ object CommonConfigurationKeys {
     val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP module structure")
 
     @JvmField
-    val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expect/actual linker")
+    val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("Produce metadata klib")
 
     @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
@@ -70,24 +61,32 @@ object CommonConfigurationKeys {
         CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 
     @JvmField
-    val KLIB_RELATIVE_PATH_BASES =
-        CompilerConfigurationKey.create<Collection<String>>("Provides a path from which relative paths in klib are being computed")
-
-    @JvmField
-    val KLIB_NORMALIZE_ABSOLUTE_PATH =
-        CompilerConfigurationKey.create<Boolean>("Normalize absolute paths in klib (replace file separator with '/')")
-
-    @JvmField
-    val PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS =
-        CompilerConfigurationKey.create<Boolean>("Turn on the checks on uniqueness of signatures")
-
-    @JvmField
     val INCREMENTAL_COMPILATION =
         CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 
     @JvmField
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS =
         CompilerConfigurationKey.create<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
+
+    @JvmField
+    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("Ignore errors from IrConstTransformer")
+
+    @JvmField
+    val EVALUATED_CONST_TRACKER =
+        CompilerConfigurationKey.create<EvaluatedConstTracker>("Keeps track of all evaluated by IrInterpreter constants")
+
+    @JvmField
+    val MESSAGE_COLLECTOR_KEY = CompilerConfigurationKey.create<MessageCollector>("message collector")
+
+    @JvmField
+    val VERIFY_IR = CompilerConfigurationKey.create<IrVerificationMode>("IR verification mode")
+
+    @JvmField
+    val ENABLE_IR_VISIBILITY_CHECKS = CompilerConfigurationKey.create<Boolean>("Check pre-lowering IR for visibility violations")
+
+    @JvmField
+    val ENABLE_IR_VISIBILITY_CHECKS_AFTER_INLINING =
+        CompilerConfigurationKey.create<Boolean>("Check post-inlining IR for visibility violations")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -96,3 +95,12 @@ var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
 
 val LanguageVersionSettings.isLibraryToSourceAnalysisEnabled: Boolean
     get() = getFlag(AnalysisFlags.libraryToSourceAnalysis)
+
+val LanguageVersionSettings.areExpectActualClassesStable: Boolean
+    get() {
+        return getFlag(AnalysisFlags.muteExpectActualClassesWarning) || supportsFeature(LanguageFeature.ExpectActualClasses)
+    }
+
+var CompilerConfiguration.messageCollector: MessageCollector
+    get() = get(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    set(value) = put(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY, value)

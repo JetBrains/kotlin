@@ -9,11 +9,10 @@ import kotlinBuildProperties
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationVariant
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -24,12 +23,19 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.ExecClang
+import org.jetbrains.kotlin.PlatformManagerPlugin
 import org.jetbrains.kotlin.cpp.*
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.SanitizerKind
 import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+import org.jetbrains.kotlin.konan.target.enabledTargets
 import org.jetbrains.kotlin.testing.native.GoogleTestExtension
 import org.jetbrains.kotlin.utils.capitalized
+import java.time.Duration
 import javax.inject.Inject
 
 private fun String.snakeCaseToUpperCamelCase() = split('_').joinToString(separator = "") { it.capitalized }
@@ -91,6 +97,19 @@ private fun Configuration.targetVariant(target: TargetWithSanitizer): Configurat
         attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target)
     }
 }
+private fun Project.executorsClasspathConfiguration() = configurations.getOrCreate("executorsClasspath") {
+    description = "Classpath of executors CLI"
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+    defaultDependencies {
+        add(project.dependencies.project(":native:executors"))
+    }
+}
 
 private abstract class RunGTestSemaphore : BuildService<BuildServiceParameters.None>
 private abstract class CompileTestsSemaphore : BuildService<BuildServiceParameters.None>
@@ -100,36 +119,38 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         this.factory = { target ->
             project.objects.newInstance<Target>(this, target)
         }
-    }
 
-    /**
-     * Outgoing configuration with `main` parts of all modules.
-     */
-    val compileBitcodeMainElements = project.compileBitcodeElements(MAIN_SOURCE_SET_NAME)
+        /**
+         * Outgoing configuration with `main` parts of all modules.
+         */
+        project.compileBitcodeElements(MAIN_SOURCE_SET_NAME)
 
-    /**
-     * Outgoing configuration with `testFixtures` parts of all modules.
-     */
-    val compileBitcodeTestFixturesElements = project.compileBitcodeElements(TEST_FIXTURES_SOURCE_SET_NAME) {
-        outgoing {
-            capability(CppConsumerPlugin.testFixturesCapability(project))
+        /**
+         * Outgoing configuration with `testFixtures` parts of all modules.
+         */
+        project.compileBitcodeElements(TEST_FIXTURES_SOURCE_SET_NAME) {
+            outgoing {
+                capability(CppConsumerPlugin.testFixturesCapability(project))
+            }
         }
-    }
 
-    /**
-     * Outgoing configuration with `test` parts of all modules.
-     */
-    val compileBitcodeTestElements = project.compileBitcodeElements(TEST_SOURCE_SET_NAME) {
-        outgoing {
-            capability(CppConsumerPlugin.testCapability(project))
+        /**
+         * Outgoing configuration with `test` parts of all modules.
+         */
+        project.compileBitcodeElements(TEST_SOURCE_SET_NAME) {
+            outgoing {
+                capability(CppConsumerPlugin.testCapability(project))
+            }
         }
+
+        project.executorsClasspathConfiguration()
     }
 
     // TODO: These should be set by the plugin users.
     private val DEFAULT_CPP_FLAGS = listOfNotNull(
             "-gdwarf-2".takeIf { project.kotlinBuildProperties.getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false) },
             "-std=c++17",
-            "-Werror",
+            // "-Werror", // See https://youtrack.jetbrains.com/issue/KT-67730
             "-O2",
             "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
             "-Wall",
@@ -137,13 +158,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             "-Wno-unused-parameter",  // False positives with polymorphic functions.
     )
 
-    private val targetList = with(project) {
-        provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
-    }
-
     private val allTestsTasks by lazy {
         val name = project.name.capitalized
-        targetList.get().associateBy(keySelector = { it }, valueTransform = {
+        val platformManager = project.extensions.getByType<PlatformManager>()
+        enabledTargets(platformManager).associateBy(keySelector = { it.visibleName }, valueTransform = {
             project.tasks.register("${it}${name}Tests") {
                 description = "Runs all $name tests for $it"
                 group = VERIFICATION_TASK_GROUP
@@ -194,17 +212,19 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          */
         abstract val dependencies: ListProperty<TaskProvider<*>>
 
-        protected abstract val onlyIf: ListProperty<Spec<in SourceSet>>
+        protected abstract val onlyIf: ListProperty<Spec<in KonanTarget>>
 
         /**
          * Builds this source set only if [spec] is satisfied.
          */
-        fun onlyIf(spec: Spec<in SourceSet>) {
+        fun onlyIf(spec: Spec<in KonanTarget>) {
             this.onlyIf.add(spec)
         }
 
         private val compilationDatabase = project.extensions.getByType<CompilationDatabaseExtension>()
-        private val execClang = project.extensions.getByType<ExecClang>()
+        private val platformManager = project.extensions.getByType<PlatformManager>()
+        private val execClang = ExecClang.create(project.objects, platformManager)
+        private val nativeDependencies = project.extensions.getByType<NativeDependenciesExtension>()
 
         /**
          * Compiles source files into bitcode files.
@@ -226,29 +246,30 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.inputFiles.setIncludes(this@SourceSet.inputFiles.includes)
                 this.inputFiles.setExcludes(this@SourceSet.inputFiles.excludes)
                 this.workingDirectory.set(module.compilerWorkingDirectory)
-                // TODO: Should depend only on the toolchain needed to build for the _target
-                dependsOn(":kotlin-native:dependencies:update")
+                dependsOn(nativeDependencies.llvmDependency)
+                dependsOn(nativeDependencies.targetDependency(_target))
                 dependsOn(this@SourceSet.dependencies)
+                val specs = this@SourceSet.onlyIf
+                val target = target
                 onlyIf {
-                    this@SourceSet.onlyIf.get().all { it.isSatisfiedBy(this@SourceSet) }
+                    specs.get().all { it.isSatisfiedBy(target) }
                 }
             }
             compilationDatabase.target(_target) {
                 entry {
-                    val compileTask = this@apply.get()
-                    val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name)
-                    directory.set(compileTask.workingDirectory)
-                    files.setFrom(compileTask.inputFiles)
-                    arguments.set(args)
+                    val compileTask: TaskProvider<ClangFrontend> = this@apply
+                    directory.set(compileTask.flatMap { it.workingDirectory })
+                    files.setFrom(compileTask.map { it.inputFiles })
+                    arguments.set(compileTask.map { listOf(execClang.resolveExecutable(it.compiler.get())) + it.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name) })
                     // Only the location of output file matters, compdb does not depend on the compilation result.
-                    output.set(compileTask.outputDirectory.locationOnly.map { it.asFile.absolutePath })
+                    output.set(compileTask.flatMap { it.outputDirectory.locationOnly.map { it.asFile.absolutePath }})
                 }
                 task.configure {
                     // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
                     // compdb task should also have these dependencies. This way the generated database will point to the
                     // code that actually exists.
-                    // TODO: Should depend only on the toolchain needed to build for the _target
-                    dependsOn(":kotlin-native:dependencies:update")
+                    dependsOn(nativeDependencies.llvmDependency)
+                    dependsOn(nativeDependencies.targetDependency(_target))
                     dependsOn(this@SourceSet.dependencies)
                 }
             }
@@ -259,12 +280,15 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          */
         val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
             configure {
+                notCompatibleWithConfigurationCache("When GoogleTest are not downloaded llvm-link is missing arguments")
                 this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
                 this.inputFiles.from(compileTask)
                 this.outputFile.set(this@SourceSet.outputFile)
                 this.arguments.set(module.linkerArgs)
+                val specs = this@SourceSet.onlyIf
+                val target = target
                 onlyIf {
-                    this@SourceSet.onlyIf.get().all { it.isSatisfiedBy(this@SourceSet) }
+                    specs.get().all { it.isSatisfiedBy(target) }
                 }
             }
             project.compileBitcodeElements(this@SourceSet.name).targetVariant(_target).artifact(this)
@@ -358,39 +382,42 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             }
         }
 
+        private val project by owner::project
+
+        init {
+
+            /**
+             * Outgoing configuration with `main` part of this module.
+             */
+            project.moduleCompileBitcodeElements(name, MAIN_SOURCE_SET_NAME) {
+                outgoing {
+                    capability(CppConsumerPlugin.moduleCapability(project, this@Module.name))
+                }
+            }
+
+            /**
+             * Outgoing configuration with `testFixtures` part of this module.
+             */
+            project.moduleCompileBitcodeElements(name, TEST_FIXTURES_SOURCE_SET_NAME) {
+                outgoing {
+                    capability(CppConsumerPlugin.moduleTestFixturesCapability(project, this@Module.name))
+                }
+            }
+
+            /**
+             * Outgoing configuration with `test` part of this module.
+             */
+            project.moduleCompileBitcodeElements(name, TEST_SOURCE_SET_NAME) {
+                outgoing {
+                    capability(CppConsumerPlugin.moduleTestCapability(project, this@Module.name))
+                }
+            }
+        }
+
         val target by _target::target
         val sanitizer by _target::sanitizer
 
         override fun getName() = name
-
-        private val project by owner::project
-
-        /**
-         * Outgoing configuration with `main` part of this module.
-         */
-        val compileBitcodeMainElements = project.moduleCompileBitcodeElements(name, MAIN_SOURCE_SET_NAME) {
-            outgoing {
-                capability(CppConsumerPlugin.moduleCapability(project, this@Module.name))
-            }
-        }
-
-        /**
-         * Outgoing configuration with `testFixtures` part of this module.
-         */
-        val compileBitcodeTestFixturesElements = project.moduleCompileBitcodeElements(name, TEST_FIXTURES_SOURCE_SET_NAME) {
-            outgoing {
-                capability(CppConsumerPlugin.moduleTestFixturesCapability(project, this@Module.name))
-            }
-        }
-
-        /**
-         * Outgoing configuration with `test` part of this module.
-         */
-        val compileBitcodeTestElements = project.moduleCompileBitcodeElements(name, TEST_SOURCE_SET_NAME) {
-            outgoing {
-                capability(CppConsumerPlugin.moduleTestCapability(project, this@Module.name))
-            }
-        }
 
         /**
          * Directory where module sources are located. By default `src/<module name>`.
@@ -427,12 +454,12 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          * Extra tqsk dependencies to be used for all [SourceSet]s.
          */
         abstract val dependencies: ListProperty<TaskProvider<*>>
-        protected abstract val onlyIf: ListProperty<Spec<in Module>>
+        protected abstract val onlyIf: ListProperty<Spec<in KonanTarget>>
 
         /**
          * Builds this module only if [spec] is satisfied.
          */
-        fun onlyIf(spec: Spec<in Module>) {
+        fun onlyIf(spec: Spec<in KonanTarget>) {
             this.onlyIf.add(spec)
         }
 
@@ -448,8 +475,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                         this.inputFiles.from(this@Module.srcRoot.dir("cpp"))
                         this.headersDirs.setFrom(this@Module.headersDirs)
                         dependencies.set(this@Module.dependencies)
+                        val specs = this@Module.onlyIf
+                        val target = target
                         onlyIf {
-                            this@Module.onlyIf.get().all { it.isSatisfiedBy(this@Module) }
+                            specs.get().all { it.isSatisfiedBy(target) }
                         }
                     }
                 }
@@ -489,9 +518,13 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             maxParallelUsages.set(1)
         }
 
-        // TODO: remove when tests compilation does not consume so much memory.
         private val compileTestsSemaphore = project.gradle.sharedServices.registerIfAbsent("compileTestsSemaphore", CompileTestsSemaphore::class.java) {
-            maxParallelUsages.set(5)
+            // TODO: Make the default always null when tests compilation stops consuming so much memory.
+            val defaultParallelism = if (project.kotlinBuildProperties.isTeamcityBuild) 2 else null
+            val parallelism = project.kotlinBuildProperties.getOrNull("kotlin.native.runtimeTestsCompilationParallelism")?.toString()?.toInt() ?: defaultParallelism
+            parallelism?.let {
+                maxParallelUsages.set(it)
+            }
         }
 
         private val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
@@ -602,12 +635,26 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 filter.set(project.findProperty("gtest_filter") as? String)
                 tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
                 this.target.set(target)
+                this.executionTimeout.set(
+                        (project.findProperty("gtest_timeout") as? String)?.let {
+                            Duration.parse("PT${it}")
+                        } ?: Duration.ofMinutes(5))
+                this.executorsClasspath.from(project.executorsClasspathConfiguration())
+                this.distPath.set(project.project(":kotlin-native").projectDir.absolutePath)
+                this.dataDirPath.set(project.kotlinBuildProperties.getOrNull("konan.data.dir") as String?)
 
                 usesService(runGTestSemaphore)
             }
 
             owner.allTestsTasks[target.name]!!.configure {
                 dependsOn(runTask)
+            }
+
+            // TODO: Support tsan natively on macOS arm64.
+            if (target == KonanTarget.MACOS_X64 && sanitizer == SanitizerKind.THREAD) {
+                owner.allTestsTasks[KonanTarget.MACOS_ARM64.name]!!.configure {
+                    dependsOn(runTask)
+                }
             }
         }
     }
@@ -642,9 +689,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
  */
 open class CompileToBitcodePlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.apply<PlatformManagerPlugin>()
         project.apply<CppConsumerPlugin>()
         project.apply<CompilationDatabasePlugin>()
         project.apply<GitClangFormatPlugin>()
+        project.apply<NativeDependenciesPlugin>()
         project.extensions.create<CompileToBitcodeExtension>("bitcode", project)
     }
 }

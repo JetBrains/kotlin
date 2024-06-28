@@ -1,23 +1,26 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /y
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /y
+  compilerVisibility: Public
   contextReceivers: [
     KtContextReceiver:
       label: null
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Int
     KtContextReceiver:
       label: s
-      type: KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/String
   ]
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -26,17 +29,20 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: y
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Unit
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(contextReceiversOnFunction.kt)
+  getContainingJvmClassName: ContextReceiversOnFunctionKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

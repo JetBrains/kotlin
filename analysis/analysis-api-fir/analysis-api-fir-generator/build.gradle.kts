@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":generators"))
     implementation(project(":compiler:resolution.common"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
@@ -18,7 +19,7 @@ dependencies {
      the same as it is in `:fir:tree:tree-generator` module to the project be imported correctly
      */
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 
     implementation(project(":compiler:psi"))
 }

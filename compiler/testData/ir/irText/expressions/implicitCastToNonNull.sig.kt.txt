@@ -1,0 +1,46 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.String?){}kotlin.Int
+//   Public signature: /test1|-5345400542874052925[0]
+//   Public signature debug description: test1(kotlin.String?){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.String?){}
+//   Public signature: /test1|-2987894258831182637[0]
+//   Public signature debug description: test1(kotlin.String?){}
+fun test1(x: String?): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(0:0){0§<kotlin.CharSequence?>}kotlin.Int
+//   Public signature: /test2|-7282113506340032628[0]
+//   Public signature debug description: test2(0:0){0§<kotlin.CharSequence?>}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(0:0){0§<kotlin.CharSequence?>}
+//   Public signature: /test2|-8782669618551409801[0]
+//   Public signature debug description: test2(0:0){0§<kotlin.CharSequence?>}
+fun <T : CharSequence?> test2(x: T): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Any){0§<kotlin.CharSequence?>}kotlin.Int
+//   Public signature: /test3|7450825797678601496[0]
+//   Public signature debug description: test3(kotlin.Any){0§<kotlin.CharSequence?>}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.Any){0§<kotlin.CharSequence?>}
+//   Public signature: /test3|7453698813177303629[0]
+//   Public signature debug description: test3(kotlin.Any){0§<kotlin.CharSequence?>}
+inline fun <reified T : CharSequence?> test3(x: Any): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.Any?){0§<kotlin.CharSequence>}kotlin.Int
+//   Public signature: /test4|-5896625443167857513[0]
+//   Public signature debug description: test4(kotlin.Any?){0§<kotlin.CharSequence>}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.Any?){0§<kotlin.CharSequence>}
+//   Public signature: /test4|-668443391893184404[0]
+//   Public signature debug description: test4(kotlin.Any?){0§<kotlin.CharSequence>}
+inline fun <reified T : CharSequence> test4(x: Any?): Int
+
+// CHECK:
+//   Mangled name: #test5(0:0;kotlin.Function1<0:1,kotlin.Unit>){0§<0:1?>;1§<kotlin.Any?>}
+//   Public signature: /test5|-2340660044410176183[0]
+//   Public signature debug description: test5(0:0;kotlin.Function1<0:1,kotlin.Unit>){0§<0:1?>;1§<kotlin.Any?>}
+fun <T : S?, S : Any?> test5(x: T, fn: Function1<S, Unit>): Unit
+

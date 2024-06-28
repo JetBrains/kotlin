@@ -1,18 +1,7 @@
 abstract enum class X : Enum<X> {
-  private constructor() /* primary */ {
-    super/*Enum*/<X>()
-    /* <init>() */
-
-  }
 
   B = B()
   private enum entry class B : X {
-    private constructor() /* primary */ {
-      super/*X*/()
-      /* <init>() */
-
-    }
-
     val value2: String
       field = "OK"
       get
@@ -24,20 +13,33 @@ abstract enum class X : Enum<X> {
 
       override get
 
+    private constructor() /* primary */ {
+      super/*X*/()
+      /* <init>() */
+
+    }
+
   }
 
-  abstract val value: Function0<String>
-    abstract get
+  private constructor() /* primary */ {
+    super/*Enum*/<X>()
+    /* <init>() */
 
-  fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
+  }
 
   fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
 
+  fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
+
   val entries: EnumEntries<X>
     get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
+
+  abstract val value: Function0<String>
+    abstract get
 
 }
 
 fun box(): String {
   return X.B.<get-value>().invoke()
 }
+

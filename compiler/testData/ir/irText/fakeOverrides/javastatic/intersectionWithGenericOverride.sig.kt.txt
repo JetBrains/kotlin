@@ -1,0 +1,143 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /A.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  /* fake */ override fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Number){}
+  //   Public signature: /A.foo|97687418835402471[0]
+  //   Public signature debug description: foo(kotlin.Number){}
+  /* fake */ override fun foo(t: Number): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Number;kotlin.Int){}
+  //   Public signature: /A.foo|-582544100250830393[0]
+  //   Public signature debug description: foo(kotlin.Number;kotlin.Int){}
+  /* fake */ override fun foo(t: Number, t2: Int): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /A.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  /* fake */ override fun <T : Any?> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: A#test1(){}
+  //   Public signature: /A.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
+  fun test1(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#test2(){}kotlin.Int
+  //   Public signature: /A.test2|5542371834528279174[0]
+  //   Public signature debug description: test2(){}kotlin.Int
+  fun test2(): Int
+
+  // CHECK:
+  //   Mangled name: A#test3(){}
+  //   Public signature: /A.test3|-3759735065270951803[0]
+  //   Public signature debug description: test3(){}
+  fun test3(): Unit
+
+  // CHECK:
+  //   Mangled name: A#test4(){}
+  //   Public signature: /A.test4|5588455914500386239[0]
+  //   Public signature debug description: test4(){}
+  fun test4(): Unit
+
+  // CHECK:
+  //   Mangled name: A#test5(){}
+  //   Public signature: /A.test5|-2461239215881954159[0]
+  //   Public signature debug description: test5(){}
+  fun test5(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#test1(){}
+  //   Public signature: /B.test1|4297044443957252634[0]
+  //   Public signature debug description: test1(){}
+  fun test1(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#test2(){}kotlin.Int
+  //   Public signature: /B.test2|5542371834528279174[0]
+  //   Public signature debug description: test2(){}kotlin.Int
+  fun test2(): Int
+
+  // CHECK:
+  //   Mangled name: B#test3(){}
+  //   Public signature: /B.test3|-3759735065270951803[0]
+  //   Public signature debug description: test3(){}
+  fun test3(): Unit
+
+  // CHECK:
+  //   Mangled name: B#test4(){}
+  //   Public signature: /B.test4|5588455914500386239[0]
+  //   Public signature debug description: test4(){}
+  fun test4(): Unit
+
+  // CHECK:
+  //   Mangled name: B#test5(){}
+  //   Public signature: /B.test5|-2461239215881954159[0]
+  //   Public signature debug description: test5(){}
+  fun test5(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /KotlinInterface.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(kotlin.Number){}
+  //   Public signature: /KotlinInterface.foo|97687418835402471[0]
+  //   Public signature debug description: foo(kotlin.Number){}
+  fun foo(t: Number): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(kotlin.Number;kotlin.Int){}
+  //   Public signature: /KotlinInterface.foo|-582544100250830393[0]
+  //   Public signature debug description: foo(kotlin.Number;kotlin.Int){}
+  fun foo(t: Number, t2: Int): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /KotlinInterface.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  fun <T : Any?> foo(t: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

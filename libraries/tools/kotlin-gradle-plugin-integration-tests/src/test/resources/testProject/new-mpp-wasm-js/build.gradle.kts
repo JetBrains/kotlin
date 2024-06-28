@@ -8,9 +8,9 @@ repositories {
 }
 
 kotlin {
-    wasm {
+    wasmJs {
         moduleName = "redefined-wasm-module-name"
-        d8 {
+        <JsEngine> {
         }
         binaries.executable()
     }

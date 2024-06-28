@@ -1,0 +1,28 @@
+KaUsualClassType:
+  abbreviatedType: KaUsualClassType:
+    abbreviatedType: null
+    annotations: []
+    classId: expansion/StringAlias
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: StringAlias
+        symbol: KaTypeAliasSymbol(expansion/StringAlias)
+        typeArguments: []
+    ]
+    symbol: KaTypeAliasSymbol(expansion/StringAlias)
+    typeArguments: []
+  annotations: []
+  classId: kotlin/String
+  nullability: NULLABLE
+  qualifiers: [
+    qualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+
+Rendered type:
+expansion.StringAlias

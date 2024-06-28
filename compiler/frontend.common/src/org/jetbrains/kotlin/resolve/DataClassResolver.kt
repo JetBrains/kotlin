@@ -16,7 +16,7 @@ object DataClassResolver {
 
     fun isComponentLike(name: Name): Boolean = isComponentLike(name.asString())
 
-    private fun isComponentLike(name: String): Boolean {
+    fun isComponentLike(name: String): Boolean {
         if (!name.startsWith(DATA_CLASS_COMPONENT_PREFIX)) return false
 
         try {

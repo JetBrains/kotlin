@@ -1,0 +1,63 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
+val test1: KFunction1<A<String>, Unit>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.reflect.KFunction1<A<kotlin.String>,kotlin.Unit>
+  //   Public signature: /test1.<get-test1>|-8244328064209217442[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.reflect.KFunction1<A<kotlin.String>,kotlin.Unit>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
+val test2: KProperty1<A<String>, Int>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.reflect.KProperty1<A<kotlin.String>,kotlin.Int>
+  //   Public signature: /test2.<get-test2>|7010452964682738138[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.reflect.KProperty1<A<kotlin.String>,kotlin.Int>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
+  get
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A<T : Any?> {
+  // CHECK:
+  //   Mangled name: A{}bar
+  //   Public signature: /A.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
+  val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-bar>(){}kotlin.Int
+    //   Public signature: /A.bar.<get-bar>|-7403724005139201014[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-bar>(){}
+    //   Public signature: /A.bar.<get-bar>|6880642144337645699[0]
+    //   Public signature debug description: <get-bar>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  fun foo(): Unit
+
+}
+

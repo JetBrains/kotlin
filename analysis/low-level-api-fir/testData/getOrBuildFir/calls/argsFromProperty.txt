@@ -1,0 +1,15 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] argsFromProperty.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-argsFromProperty.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val bar: R|kotlin/Int| = this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

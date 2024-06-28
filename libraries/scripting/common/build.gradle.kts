@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -11,7 +10,7 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApi(commonDependency("junit"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -19,10 +18,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package"
-    )
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 publish()
@@ -30,10 +27,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-// 1.9 level breaks Kotlin Gradle plugins via changes in enums (KT-48872)
-// We limit api and LV until KGP will stop using Kotlin compiler directly (KT-56574)
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-}

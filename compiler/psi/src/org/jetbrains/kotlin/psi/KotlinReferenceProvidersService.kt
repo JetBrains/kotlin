@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference

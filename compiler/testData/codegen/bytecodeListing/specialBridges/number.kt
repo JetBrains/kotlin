@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// ^ see KT-42578
-
 abstract class AbstractNumber : Number()
 
 class MyNumber : Number() {

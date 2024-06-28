@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Issue: KT-37621
 
 class Inv<T>

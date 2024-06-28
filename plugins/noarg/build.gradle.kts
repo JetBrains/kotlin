@@ -16,7 +16,9 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":kotlin-noarg-compiler-plugin.cli"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
@@ -25,6 +27,9 @@ dependencies {
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testApi(intellijCore())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testRuntimeOnly(toolsJar())
 }
 
 optInToExperimentalCompilerApi()
@@ -38,6 +43,8 @@ sourceSets {
 }
 
 optInToExperimentalCompilerApi()
+
+publish()
 
 runtimeJar()
 sourcesJar()

@@ -1,5 +1,6 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
+
 
 import kotlin.contracts.*
 

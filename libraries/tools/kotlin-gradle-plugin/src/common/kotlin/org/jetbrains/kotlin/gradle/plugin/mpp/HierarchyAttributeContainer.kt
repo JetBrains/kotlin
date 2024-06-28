@@ -50,11 +50,11 @@ class HierarchyAttributeContainer(
 
     override fun isEmpty(): Boolean = lazyAttributesMap.isEmpty() &&
             attributesMap.isEmpty() &&
-            (parent?.keySet().orEmpty().filter(filterParentAttributes).isEmpty())
+            (parent?.keySet().orEmpty().toSet().none(filterParentAttributes))
 
     override fun keySet(): Set<Attribute<*>> = lazyAttributesMap.keys +
             attributesMap.keys +
-            parent?.keySet().orEmpty().filter(filterParentAttributes)
+            parent?.keySet().orEmpty().toSet().filter(filterParentAttributes)
 
     override fun <T : Any> attribute(key: Attribute<T>, value: T): AttributeContainer {
         val checkedValue = requireNotNull(value as Any?) { "null values for attributes are not supported" }

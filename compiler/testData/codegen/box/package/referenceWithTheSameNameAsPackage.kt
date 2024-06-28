@@ -1,4 +1,5 @@
 // WITH_STDLIB
+
 // FILE: messages/foo.kt
 
 package messages

@@ -1,6 +1,6 @@
 FILE: test.kt
     public final fun foo(tag: R|XmlTag|, name: R|kotlin/String|): R|kotlin/collections/List<XmlTag>| {
-        lval result: R|kotlin/collections/List<XmlTag>| = R|<local>/tag|.R|/PsiElement.children|.R|kotlin/collections/filterIsInstance|<R|XmlTag|>().R|kotlin/collections/filter|<R|XmlTag|>(<L> = filter@fun <anonymous>(it: R|XmlTag|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+        lval result: R|kotlin/collections/List<XmlTag>| = R|<local>/tag|.R|/PsiElement.children|.R|kotlin/collections/filterIsInstance|<R|XmlTag|>().R|kotlin/collections/filter|<R|@NoInfer XmlTag|>(<L> = filter@fun <anonymous>(it: R|@NoInfer XmlTag|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
             ^ ==(R|<local>/it|.R|/XmlTag.localName|, R|<local>/name|)
         }
         )

@@ -12,7 +12,8 @@ plugins {
 val toolsPath = "../../tools"
 val targetExtension = "Macos"
 
-project.extra["platformManager"] = PlatformManager(projectDir.parentFile.parentFile.absolutePath, false)
+val konanDataDir = if (project.hasProperty("konan.data.dir")) project.property("konan.data.dir").toString() else null
+project.extra["platformManager"] = PlatformManager(buildDistribution(projectDir.parentFile.parentFile.absolutePath, konanDataDir), false)
 swiftBenchmark {
     applicationName = "swiftInterop"
     commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin/report", "src", "../shared/src/main/kotlin")

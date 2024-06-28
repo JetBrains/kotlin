@@ -113,9 +113,16 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
     }
 
     private val _absentArguments = ReflectProperties.lazySoft {
+        val parameters = parameters
         val parameterSize = parameters.size + (if (isSuspend) 1 else 0)
         val flattenedParametersSize =
-            if (parametersNeedMFVCFlattening.value) parameters.sumOf { getParameterTypeSize(it) } else parameters.size
+            if (parametersNeedMFVCFlattening.value) {
+                parameters.sumOf {
+                    if (it.kind == KParameter.Kind.VALUE) getParameterTypeSize(it) else 0
+                }
+            } else {
+                parameters.count { it.kind == KParameter.Kind.VALUE }
+            }
         val maskSize = (flattenedParametersSize + Integer.SIZE - 1) / Integer.SIZE
 
         // Array containing the actual function arguments, masks, and +1 for DefaultConstructorMarker or MethodHandle.
@@ -125,7 +132,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
         parameters.forEach { parameter ->
             if (parameter.isOptional && !parameter.type.isInlineClassType) {
                 // For inline class types, the javaType refers to the underlying type of the inline class,
-                // but we have to pass null in order to mark the argument as absent for InlineClassAwareCaller.
+                // but we have to pass null in order to mark the argument as absent for ValueClassAwareCaller.
                 arguments[parameter.index] = defaultPrimitiveValue(parameter.type.javaType)
             } else if (parameter.isVararg) {
                 arguments[parameter.index] = defaultEmptyArray(parameter.type)

@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
@@ -259,11 +260,45 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     /** Regression test for KT-55021. */
     @Test
     fun testRenameFileFacade() {
+        // Check that classpath changes computation doesn't fail.
+        // Ideally, the returned changes should be empty (renaming a file facade alone shouldn't cause any `LookupSymbol`s to change), but
+        // it is currently not the case. However, this is just a small inefficiency, not an IC-correctness bug.
         val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testRenameFileFacade/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "someFunction", scope = "com.example"),
                 LookupSymbol(name = "someProperty", scope = "com.example"),
+            ),
+            fqNames = setOf("com.example")
+        ).assertEquals(changes)
+    }
+
+    /** Regression test for KT-58289.*/
+    @Test
+    fun testChangedAnnotations() {
+        // Note: Currently we detect changes to annotations on Kotlin classes, but not annotations on properties and functions, so the
+        // following changes are missing: `SomeClass.propertyWithChangedAnnotation` and `SomeClass.functionWithChangedAnnotation`.
+        // Once all annotations are added to Kotlin metadata (KT-57919), we should be able to detect changes to them (i.e., we'll need to
+        // update this test assertion then).
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testChangedAnnotations/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "SomeClassWithChangedAnnotation", scope = "com.example"),
+            ),
+            fqNames = setOf(
+                "com.example.SomeClassWithChangedAnnotation",
+            )
+        ).assertEquals(changes)
+    }
+
+    /** Regression test for KT-58986.*/
+    @Test
+    fun testDelegatedProperties() {
+        // Check that classpath changes computation doesn't fail
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testDelegatedProperties/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "delegatedProperty", scope = "com.example"),
             ),
             fqNames = setOf("com.example")
         ).assertEquals(changes)

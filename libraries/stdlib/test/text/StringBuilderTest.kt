@@ -5,7 +5,9 @@
 
 package test.text
 
-import test.testOnJvm
+import test.TestPlatform
+import test.testOnlyOn
+import test.testExceptOn
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.text.*
@@ -39,11 +41,11 @@ class StringBuilderTest {
     fun deprecatedAppend() {
         val chars = charArrayOf('a', 'b', 'c', 'd')
         val sb = StringBuilder()
-        testOnJvm {
+        testOnlyOn(TestPlatform.Jvm) {
             sb.append(chars, 1, 2) // Should fail after KT-15220 gets fixed
             assertEquals("bc", sb.toString())
         }
-        if (sb.isEmpty()) {
+        testExceptOn(TestPlatform.Jvm) {
             assertFailsWith<NotImplementedError> {
                 sb.append(chars, 1, 2)
             }
@@ -254,10 +256,11 @@ class StringBuilderTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION")
     fun capacityTest() {
-//        assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS
-
+        testExceptOn(TestPlatform.Js) {
+            assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS
+        }
         StringBuilder("string builder from string capacity test").let { sb ->
             assertTrue(sb.capacity() >= sb.length)
         }
@@ -269,8 +272,32 @@ class StringBuilderTest {
             repeat(Random.nextInt(35, 62)) { sb.insert(0, "s") }
             sb.ensureCapacity(1)
             assertTrue(sb.capacity() >= sb.length)
+            sb.ensureCapacity(-1) // negative argument is ignored
+            assertTrue(sb.capacity() >= sb.length)
             sb.ensureCapacity(sb.length * 10)
-//            assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS
+            testExceptOn(TestPlatform.Js) {
+                assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS
+            }
+        }
+    }
+
+    @Test
+    fun overflow() = testExceptOn(TestPlatform.Js) {
+        class CharSeq(override val length: Int) : CharSequence {
+            override fun get(index: Int): Char =
+                throw IllegalStateException("Not expected to be called")
+
+            override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+                throw IllegalStateException("Not expected to be called")
+        }
+
+        val initialContent = "a".repeat(20)
+        val bigCharSeq = CharSeq(Int.MAX_VALUE - initialContent.length + 1)
+        assertFailsWith<Error> { // OutOfMemoryError
+            StringBuilder(initialContent).append(bigCharSeq)
+        }
+        assertFailsWith<Error> { // OutOfMemoryError
+            StringBuilder(initialContent).insert(5, bigCharSeq)
         }
     }
 

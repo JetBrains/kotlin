@@ -69,7 +69,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
 
             return nonDefault.singleOrNull()
                 ?: throw InvalidCardinalityException(
-                    "Request $request cannot be satisfied because there is more than one type registered\n" +
+                    "$containerId: Request $request cannot be satisfied because there is more than one type registered\n" +
                             "Clashed registrations: ${entry.joinToString()}"
                 )
         }
@@ -86,7 +86,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
     }
 
     fun dump(printer: PrintStream): Unit = with(printer) {
-        val heading = "Container: $myId"
+        val heading = containerId
         println(heading)
         println("=".repeat(heading.length))
         println()
@@ -107,6 +107,8 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         }
     }
 
+    val containerId
+        get() = "Container: $myId"
 
     fun resolveMultiple(request: Type, context: ValueResolveContext): Iterable<ValueDescriptor> {
         registerDependency(request, context)
@@ -132,7 +134,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
 
     fun compose(context: ComponentResolveContext) {
         if (state != ComponentStorageState.Initial)
-            throw ContainerConsistencyException("Container $myId was already composed.")
+            throw ContainerConsistencyException("$containerId $myId was already composed.")
 
         state = ComponentStorageState.Initialized
         composeDescriptors(context, descriptors)
@@ -216,7 +218,7 @@ class ComponentStorage(private val myId: String, parent: ComponentStorage?) : Va
         val classInfo = instance::class.java.getInfo()
 
         classInfo.setterInfos.forEach { (method) ->
-            val methodBinding = method.bindToMethod(context)
+            val methodBinding = method.bindToMethod(containerId, context)
             methodBinding.invoke(instance)
         }
     }

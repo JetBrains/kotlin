@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.TestWithWorkingDir
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.LookupStorage
 import org.jetbrains.kotlin.incremental.LookupSymbol
@@ -52,7 +50,7 @@ class RelocatableCachesTest : TestWithWorkingDir() {
         val storageRoot = projectRoot.storageRoot
         val fileToPathConverter = RelativeFileToPathConverter(projectRoot)
         val icContext = IncrementalCompilationContext(
-            pathConverter = fileToPathConverter,
+            pathConverterForSourceFiles = fileToPathConverter,
             storeFullFqNamesInLookupCache = storeFullFqNames,
         )
         val lookupStorage = LookupStorage(storageRoot, icContext)
@@ -75,7 +73,7 @@ class RelocatableCachesTest : TestWithWorkingDir() {
         val filesToAdd = if (reverseFiles) files.reversedSet() else files
         val lookupsToAdd = if (reverseLookups) lookups.reversedMultiMap() else lookups
         lookupStorage.addAll(lookupsToAdd, filesToAdd)
-        lookupStorage.flush(memoryCachesOnly = false)
+        lookupStorage.flush()
     }
 
     private val File.storageRoot: File

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 
@@ -24,6 +23,6 @@ class CliAndroidPackageFragmentProviderExtension(private val isExperimental: Boo
     override fun isExperimental(moduleInfo: ModuleInfo?): Boolean = isExperimental
 
     override fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager? {
-        return ServiceManager.getService(project, AndroidLayoutXmlFileManager::class.java)
+        return project.getService(AndroidLayoutXmlFileManager::class.java)
     }
 }

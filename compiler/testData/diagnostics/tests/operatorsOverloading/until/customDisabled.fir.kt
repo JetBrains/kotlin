@@ -1,4 +1,4 @@
-// !LANGUAGE: -RangeUntilOperator
+// LANGUAGE: -RangeUntilOperator
 
 class A {
     operator fun rangeUntil(other: A): Iterable<A> = TODO()

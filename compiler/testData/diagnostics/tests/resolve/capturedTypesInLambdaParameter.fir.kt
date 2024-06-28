@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class B<E>
 
 fun <T> B<T>.foo(f: (T) -> Unit) {}

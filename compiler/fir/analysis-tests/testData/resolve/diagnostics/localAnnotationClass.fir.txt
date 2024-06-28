@@ -1,19 +1,19 @@
 FILE: localAnnotationClass.kt
     public final fun foo(): R|kotlin/Unit| {
         local final annotation class Ann : R|kotlin/Annotation| {
-            public constructor(): R|Ann| {
+            public constructor(): R|<local>/Ann| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        @R|Ann|() local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+        @R|<local>/Ann|() local final class Local : R|kotlin/Any| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
             local final annotation class Nested : R|kotlin/Annotation| {
-                public constructor(): R|Local.Nested| {
+                public constructor(): R|<local>/Local.Nested| {
                     super<R|kotlin/Any|>()
                 }
 

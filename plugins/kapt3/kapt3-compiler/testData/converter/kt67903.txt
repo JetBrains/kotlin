@@ -1,0 +1,80 @@
+@kotlin.jvm.JvmInline()
+/**
+ * public final value class Data : kotlin/Any {
+ *
+ *   // signature: constructor-impl(I)I
+ *   public constructor(value: kotlin/Int)
+ *
+ *   // signature: equals-impl(ILjava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode-impl(I)I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString-impl(I)Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: value:I
+ *   // getter: getValue()I
+ *   public final val value: kotlin/Int
+ *     public final get
+ *
+ *   // underlying property: value
+ *
+ *   // underlying type: kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Data {
+
+    public Data() {
+        super();
+    }
+    private final int value = 0;
+
+    public final int getValue() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public boolean equals(java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public java.lang.String toString() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * package {
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // signature: foo-6iM29E0(I)V
+ *   public final fun Data.foo(): kotlin/Unit
+ *
+ *   // getter: getBar-6iM29E0(I)I
+ *   public final val Data.bar: kotlin/Int
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt67903Kt {
+
+    public Kt67903Kt() {
+        super();
+    }
+}

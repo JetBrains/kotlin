@@ -42,6 +42,7 @@ STEP 7:
         D : l2pair.kt
         D : l2string.kt
         D : l2func.kt
+    removed file: l2pair.kt, l2string.kt, l2func.kt
 STEP 8:
     dependencies: lib1
     updated imports: l2int.kt

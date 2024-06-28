@@ -7,11 +7,11 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 @kotlin.Metadata
 final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$specializedSam$1 {
     // source: 't.kt'
-    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
+    <(Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;)V> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic bridge <null> method get(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull <null> method get(): java.lang.String
+    public final <null> method get(): java.lang.String
     enclosing method TKt.specializedSam(Lkotlin/jvm/functions/Function0;)Ljava/lang/String;
-    synthetic final field <null> $f: kotlin.jvm.functions.Function0
+    synthetic final field <Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;> $f: kotlin.jvm.functions.Function0
     inner (anonymous) class TKt$specializedSam$1
 }
 

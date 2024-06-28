@@ -2,7 +2,7 @@ public open class ClassObjectArrayInParam : R|kotlin/Any| {
     public constructor(): R|test/ClassObjectArrayInParam|
 
     public final annotation class Anno : R|kotlin/Annotation| {
-        public constructor(vararg value: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|test/ClassObjectArrayInParam.Anno|
+        public constructor(vararg value: R|kotlin/Array<out kotlin/reflect/KClass<*>>|): R|test/ClassObjectArrayInParam.Anno|
 
     }
     @R|test/ClassObjectArrayInParam.Anno|(value = <implicitArrayOf>(<getClass>(<getClass>(R|test/ClassObjectArrayInParam!|)), <getClass>(<getClass>(R|test/ClassObjectArrayInParam.Nested!|)), <getClass>(<getClass>(R|kotlin/String!|)), <getClass>(<getClass>(R|ft<Raw type kotlin/collections/MutableList<kotlin/Any?>, kotlin/collections/List<*>?>|)), <getClass>(<getClass>(R|ft<kotlin/Array<ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>, kotlin/Array<out ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>?>|)), <getClass>(<getClass>(R|ft<kotlin/Array<kotlin/IntArray!>, kotlin/Array<out kotlin/IntArray!>?>|)), <getClass>(<getClass>(R|kotlin/Unit|)))) public open class Nested : R|kotlin/Any| {

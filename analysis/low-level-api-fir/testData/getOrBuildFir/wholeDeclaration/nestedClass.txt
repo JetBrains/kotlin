@@ -1,0 +1,31 @@
+KT element: KtClass
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
+        super<R|kotlin/Any|>()
+    }
+
+    public final [ResolvedTo(STATUS)] fun y(): R|kotlin/String|
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
+    public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|Y.X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] fun y(): R|kotlin/String|
+
+        }
+
+    }

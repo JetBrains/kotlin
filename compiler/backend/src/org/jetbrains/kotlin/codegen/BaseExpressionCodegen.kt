@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.inline.InlineScopesGenerator
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putReifiedOperationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind
@@ -35,6 +36,8 @@ interface BaseExpressionCodegen {
     val typeSystem: TypeSystemCommonBackendContext
 
     val lastLineNumber: Int
+
+    val inlineScopesGenerator: InlineScopesGenerator?
 
     fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages)
 

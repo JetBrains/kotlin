@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.runner
@@ -45,7 +34,7 @@ object Main {
             val validValues = "${GUESS.argName} (default), ${CLASSFILE.argName}, ${JAR.argName}, ${SCRIPT.argName} (or .<script filename extension>)"
 
             fun fromArg(name: String): HowToRun? =
-                HowToRun.values().find { it.argName == name }
+                HowToRun.entries.find { it.argName == name }
         }
     }
 
@@ -82,83 +71,89 @@ object Main {
                 arguments.addAll(args.copyOfRange(i+1, args.size))
             }
 
-            if ("-help" == arg || "-h" == arg) {
-                printUsageAndExit()
-            }
-            else if ("-version" == arg) {
-                printVersionAndExit()
-            }
-            else if ("-classpath" == arg || "-cp" == arg) {
-                for (path in next().split(File.pathSeparator).filter(String::isNotEmpty)) {
-                    classpath.addPath(path)
+            when {
+                "-help" == arg || "-h" == arg -> {
+                    printUsageAndExit()
                 }
-            }
-            else if ("-compiler-path" == arg) {
-                for (path in next().split(File.pathSeparator).filter(String::isNotEmpty)) {
-                    compilerClasspath.addPath(path)
+                "-version" == arg -> {
+                    printVersionAndExit()
                 }
-            }
-            else if ("-howtorun" == arg) {
-                if (howtorun != HowToRun.GUESS) {
-                    throw RunnerException("-howtorun is already set to ${howtorun.argName}")
+                "-classpath" == arg || "-cp" == arg -> {
+                    for (path in next().split(File.pathSeparator).filter(String::isNotEmpty)) {
+                        classpath.addPath(path)
+                    }
                 }
-                val howToRunArg = next()
-                if (howToRunArg.startsWith(".")) {
-                    howtorun = HowToRun.SCRIPT
-                    compilerArguments.add("-Xdefault-script-extension=$howToRunArg")
-                } else {
-                    howtorun = HowToRun.fromArg(howToRunArg)
-                        ?: throw RunnerException("invalid argument to the option -howtorun $howToRunArg, valid arguments are: ${HowToRun.validValues}")
+                "-compiler-path" == arg -> {
+                    for (path in next().split(File.pathSeparator).filter(String::isNotEmpty)) {
+                        compilerClasspath.addPath(path)
+                    }
                 }
-            }
-            else if ("-expression" == arg || "-e" == arg) {
-                if (howtorun != HowToRun.GUESS && howtorun != HowToRun.SCRIPT) {
-                    throw RunnerException("expression evaluation is not compatible with -howtorun argument ${howtorun.argName}")
+                "-howtorun" == arg -> {
+                    if (howtorun != HowToRun.GUESS) {
+                        throw RunnerException("-howtorun is already set to ${howtorun.argName}")
+                    }
+                    val howToRunArg = next()
+                    if (howToRunArg.startsWith(".")) {
+                        howtorun = HowToRun.SCRIPT
+                        compilerArguments.add("-Xdefault-script-extension=$howToRunArg")
+                    } else {
+                        howtorun = HowToRun.fromArg(howToRunArg)
+                            ?: throw RunnerException("invalid argument to the option -howtorun $howToRunArg, valid arguments are: ${HowToRun.validValues}")
+                    }
                 }
-                setRunner(ExpressionRunner(next()))
-                restAsArguments()
-                break
-            }
-            else if ("-no-stdlib" == arg) {
-                noStdLib = true
-                compilerArguments.add(arg)
-            }
-            else if ("-no-reflect" == arg) {
-                noReflect = true
-                compilerArguments.add(arg)
-            }
-            else if (arg.startsWith("-X")) {
-                compilerArguments.add(arg)
-            }
-            else if (arg.startsWith("-")) {
-                throw RunnerException("unknown option: $arg")
-            }
-            else if (howtorun == HowToRun.JAR || (howtorun == HowToRun.GUESS && arg.endsWith(".jar"))) {
-                setRunner(JarRunner(arg))
-                restAsArguments()
-                break
-            }
-            else if (howtorun == HowToRun.SCRIPT || (howtorun == HowToRun.GUESS && arg.endsWith(".kts"))) {
-                setRunner(ScriptRunner(arg))
-                restAsArguments()
-                break
-            }
-            else {
-                val workingDir = File(".")
-                val classFile = File(arg)
+                "-expression" == arg || "-e" == arg -> {
+                    if (howtorun != HowToRun.GUESS && howtorun != HowToRun.SCRIPT) {
+                        throw RunnerException("expression evaluation is not compatible with -howtorun argument ${howtorun.argName}")
+                    }
+                    setRunner(ExpressionRunner(next()))
+                    restAsArguments()
+                    break
+                }
+                "-no-stdlib" == arg -> {
+                    noStdLib = true
+                    compilerArguments.add(arg)
+                }
+                "-no-reflect" == arg -> {
+                    noReflect = true
+                    compilerArguments.add(arg)
+                }
+                arg.startsWith("-X") -> {
+                    compilerArguments.add(arg)
+                }
+                "-language-version" == arg -> {
+                    compilerArguments.add(arg)
+                    compilerArguments.add(next())
+                }
+                arg.startsWith("-") -> {
+                    throw RunnerException("unknown option: $arg")
+                }
+                howtorun == HowToRun.JAR || howtorun == HowToRun.GUESS && arg.endsWith(".jar") -> {
+                    setRunner(JarRunner(arg))
+                    restAsArguments()
+                    break
+                }
+                howtorun == HowToRun.SCRIPT || howtorun == HowToRun.GUESS && arg.endsWith(".kts") -> {
+                    setRunner(ScriptRunner(arg))
+                    restAsArguments()
+                    break
+                }
+                else -> {
+                    val workingDir = File(".")
+                    val classFile = File(arg)
 
-                // Allow running class files with '.class' extension.
-                // In order to infer its fully qualified name, it should be located in the current working directory or a subdirectory of it
-                val className =
-                    if (arg.endsWith(".class") && classFile.exists() && classFile.canonicalPath.contains(workingDir.canonicalPath)) {
-                        classFile.canonicalFile.toRelativeString(workingDir.canonicalFile)
-                            .removeSuffix(".class")
-                            .replace(File.separatorChar, '.')
-                    } else arg
+                    // Allow running class files with '.class' extension.
+                    // In order to infer its fully qualified name, it should be located in the current working directory or a subdirectory of it
+                    val className =
+                        if (arg.endsWith(".class") && classFile.exists() && classFile.canonicalPath.contains(workingDir.canonicalPath)) {
+                            classFile.canonicalFile.toRelativeString(workingDir.canonicalFile)
+                                .removeSuffix(".class")
+                                .replace(File.separatorChar, '.')
+                        } else arg
 
-                setRunner(MainClassRunner(className))
-                restAsArguments()
-                break
+                    setRunner(MainClassRunner(className))
+                    restAsArguments()
+                    break
+                }
             }
             i++
         }

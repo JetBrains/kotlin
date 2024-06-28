@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
-import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -79,7 +76,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
-            if (propertyParent.isAnnotationClass || propertyParent.superTypes.any { it.isJavaLangRecord() }) return propertyName
+
+            if (propertyParent.isAnnotationClass) return propertyName
+
+            for (i in propertyParent.superTypes.indices) {
+                if (propertyParent.superTypes[i].isJavaLangRecord()) return propertyName
+            }
 
             // The enum property getters <get-name> and <get-ordinal> have special names which also
             // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
@@ -99,7 +101,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun IrType.isJavaLangRecord() = getClass()!!.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME)
 
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
-        val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
+        val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.config.languageVersionSettings)
 
         val suffix = if (function.isTopLevel) {
             if (function.isInvisibleInMultifilePart()) function.parentAsClass.name.asString() else null
@@ -119,13 +121,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
     private fun IrSimpleFunction.isInvisibleInMultifilePart(): Boolean =
         name.asString() != "<clinit>" &&
-                (parent as? IrClass)?.attributeOwnerId in context.multifileFacadeForPart.keys &&
+                (parent as? IrClass)?.multifileFacadeForPart != null &&
                 (DescriptorVisibilities.isPrivate(suspendFunctionOriginal().visibility) ||
                         originalForDefaultAdapter?.isInvisibleInMultifilePart() == true)
 
     private fun IrSimpleFunction.getInternalFunctionForManglingIfNeeded(): IrSimpleFunction? {
         if (visibility == DescriptorVisibilities.INTERNAL &&
             origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR &&
+            origin != JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR &&
             origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
             origin != IrDeclarationOrigin.PROPERTY_DELEGATE &&
             !isPublishedApi()
@@ -175,17 +178,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             return typeMapper.mapType(returnType, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod), sw, materialized)
         }
 
-        val typeMappingModeFromAnnotation =
-            typeSystem.extractTypeMappingModeFromAnnotation(
-                declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
-            )
-        if (typeMappingModeFromAnnotation != null) {
-            return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw, materialized)
-        }
-
-        val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
-
-        return typeMapper.mapType(returnType, mappingMode, sw, materialized)
+        val mode = getTypeMappingModeForReturnType(typeSystem, declaration, returnType)
+        return typeMapper.mapType(returnType, mode, sw, materialized)
     }
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
@@ -247,29 +241,23 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         sw.writeParametersStart()
 
-        val contextReceivers = function.valueParameters.subList(0, function.contextReceiverParametersCount)
-        for (contextReceiver in contextReceivers) {
-            writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
+        for (i in 0 until function.contextReceiverParametersCount) {
+            val contextReceiver = function.valueParameters[i]
+            writeParameter(sw, false, contextReceiver.type, function)
         }
 
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
+            writeParameter(sw, false, receiverParameter.type, function)
         }
 
-        val regularValueParameters =
-            function.valueParameters.subList(function.contextReceiverParametersCount, function.valueParameters.size)
-        for (parameter in regularValueParameters) {
-            val kind = when (parameter.origin) {
-                JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS -> JvmMethodParameterKind.OUTER
-                JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER -> JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL
-                else -> JvmMethodParameterKind.VALUE
-            }
+        for (i in function.contextReceiverParametersCount until function.valueParameters.size) {
+            val parameter = function.valueParameters[i]
             val type =
                 if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, kind, type, function, materialized)
+            writeParameter(sw, parameter.isSkippedInGenericSignature, type, function, materialized)
         }
 
         sw.writeReturnType()
@@ -285,7 +273,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
         // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
-        if (specialSignatureInfo != null && function !in context.functionsWithSpecialBridges) {
+        if (specialSignatureInfo != null && !function.hasSpecialBridge) {
             val newGenericSignature = specialSignatureInfo.replaceValueParametersIn(signature.genericsSignature)
             return JvmMethodGenericSignature(signature.asmMethod, signature.valueParameters, newGenericSignature)
         }
@@ -314,31 +302,78 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         private val context: JvmBackendContext
     ) : IrBasedSimpleFunctionDescriptor(owner) {
         override fun getOverriddenDescriptors(): List<FunctionDescriptor> =
-            context.getOverridesWithoutStubs(owner).map {
+            (owner.overridesWithoutStubs ?: owner.overriddenSymbols).map {
                 IrBasedSimpleFunctionDescriptorWithOriginalOverrides(it.owner, context)
             }
     }
 
-    // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
-    // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
-    fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
-        if (irFunction !is IrSimpleFunction) return false
-        if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
-        if (irFunction.isFromJava()) return false
-        if (irFunction.valueParameters.size != 1) return false
-        val valueParameterType = irFunction.valueParameters[0].type
-        if (!valueParameterType.unboxInlineClass().isInt()) return false
-        return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
+    companion object {
+        // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
+        // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
+        fun shouldBoxSingleValueParameterForSpecialCaseOfRemove(irFunction: IrFunction): Boolean {
+            if (irFunction !is IrSimpleFunction) return false
+            if (irFunction.name.asString() != "remove" && !irFunction.name.asString().startsWith("remove-")) return false
+            if (irFunction.isFromJava()) return false
+            if (irFunction.valueParameters.size != 1) return false
+            val valueParameterType = irFunction.valueParameters[0].type
+            if (!valueParameterType.unboxInlineClass().isInt()) return false
+            return irFunction.allOverridden(false).any { it.parent.kotlinFqName == StandardNames.FqNames.mutableCollection }
+        }
+
+        fun getTypeMappingModeForReturnType(
+            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, returnType: IrType
+        ): TypeMappingMode = with(typeSystem) {
+            val isAnnotationMethod = declaration.parent.let { it is IrClass && it.isAnnotationClass }
+            extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
+            ) ?: getOptimalModeForReturnType(returnType, isAnnotationMethod)
+        }
+
+        fun getTypeMappingModeForParameter(
+            typeSystem: IrTypeSystemContext, declaration: IrDeclaration, type: IrType
+        ): TypeMappingMode = with(typeSystem) {
+            extractTypeMappingModeFromAnnotation(
+                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
+            )
+                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
+                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
+                } else {
+                    getOptimalModeForValueParameter(type)
+                }
+        }
+
+        private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean
+            get() = this is IrSimpleFunction && allOverridden().any {
+                it.fqNameWhenAvailable.isMethodWithDeclarationSiteWildcardsFqName
+            }
+
+        private fun IrDeclaration.suppressWildcardsMode(): Boolean? =
+            parentsWithSelf.mapNotNull { declaration ->
+                when (declaration) {
+                    is IrField -> {
+                        // Annotations on properties (JvmSuppressWildcards has PROPERTY, not FIELD, in its targets) have been moved
+                        // to the synthetic "$annotations" method, but the copy can still be found via the property symbol.
+                        declaration.correspondingPropertySymbol?.owner?.getSuppressWildcardsAnnotationValue()
+                    }
+                    is IrAnnotationContainer -> declaration.getSuppressWildcardsAnnotationValue()
+                    else -> null
+                }
+            }.firstOrNull()
+
+        private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
+            getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
+                if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
+            }
     }
 
     private fun writeParameter(
         sw: JvmSignatureWriter,
-        kind: JvmMethodParameterKind,
+        isSkippedInGenericSignature: Boolean,
         type: IrType,
         function: IrFunction,
         materialized: Boolean = true
     ) {
-        sw.writeParameterType(kind)
+        sw.writeParameterType(JvmMethodParameterKind.VALUE, isSkippedInGenericSignature)
         writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }
@@ -353,52 +388,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             return
         }
 
-        val mode = with(typeSystem) {
-            extractTypeMappingModeFromAnnotation(
-                declaration.suppressWildcardsMode(), type, isForAnnotationParameter = false, mapTypeAliases = false
-            )
-                ?: if (declaration.isMethodWithDeclarationSiteWildcards && !declaration.isStaticInlineClassReplacement && type.argumentsCount() != 0) {
-                    TypeMappingMode.GENERIC_ARGUMENT // Render all wildcards
-                } else {
-                    typeSystem.getOptimalModeForValueParameter(type)
-                }
-        }
-
+        val mode = getTypeMappingModeForParameter(typeSystem, declaration, type)
         typeMapper.mapType(type, mode, sw, materialized)
     }
-
-    private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean
-        get() = this is IrSimpleFunction && allOverridden().any {
-            it.fqNameWhenAvailable.isMethodWithDeclarationSiteWildcardsFqName
-        }
-
-    private fun IrDeclaration.suppressWildcardsMode(): Boolean? =
-        parentsWithSelf.mapNotNull { declaration ->
-            when (declaration) {
-                is IrField -> {
-                    // Annotations on properties (JvmSuppressWildcards has PROPERTY, not FIELD, in its targets) have been moved
-                    // to the synthetic "$annotations" method, but the copy can still be found via the property symbol.
-                    declaration.correspondingPropertySymbol?.owner?.getSuppressWildcardsAnnotationValue()
-                }
-                is IrAnnotationContainer -> declaration.getSuppressWildcardsAnnotationValue()
-                else -> null
-            }
-        }.firstOrNull()
-
-    private fun IrAnnotationContainer.getSuppressWildcardsAnnotationValue(): Boolean? =
-        getAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)?.run {
-            if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
-        }
 
     // TODO get rid of 'caller' argument
     fun mapToCallableMethod(expression: IrCall, caller: IrFunction?): IrCallableMethod {
         val callee = expression.symbol.owner
-        val calleeParent = expression.superQualifierSymbol?.owner
-            ?: expression.dispatchReceiver?.type?.classOrNull?.owner?.let {
-                // Calling Object class methods on interfaces is permitted, but they're not interface methods.
-                if (it.isJvmInterface && callee.isMethodOfAny()) context.irBuiltIns.anyClass.owner else it
-            }
-            ?: callee.parentAsClass // Static call or type parameter
+        val calleeParent = expression.superQualifierSymbol?.owner ?: callee.parentAsClass
         val owner = typeMapper.mapOwner(calleeParent)
 
         val isInterface = calleeParent.isJvmInterface
@@ -443,10 +440,13 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         mapAsmMethod(findSuperDeclaration(function, isSuperCall))
 
     private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction =
-        findSuperDeclaration(function, isSuperCall, context.state.jvmDefaultMode)
+        findSuperDeclaration(function, isSuperCall, context.config.jvmDefaultMode)
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
-        if (irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
+        if (
+            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT
+        ) {
             return null
         }
 
@@ -455,7 +455,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     }
 
     private val IrSimpleFunction.isBuiltIn: Boolean
-        get() = getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
+        get() = getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
                 (parent as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
 
     // From BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm, BuiltinMethodsWithDifferentJvmName.getJvmName
@@ -464,11 +464,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         if (!isBuiltIn) return null
         return allOverridden(includeSelf = true)
             .filter { it.isBuiltIn }
-            .mapNotNull {
+            .firstNotNullOfOrNull {
                 val signature = it.computeJvmSignature()
                 SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME[signature]?.asString()
             }
-            .firstOrNull()
     }
 
     private fun IrSimpleFunction.getBuiltinSpecialPropertyGetterName(): String? {
@@ -502,7 +501,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                         ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 }
                 is IrMaybeDeserializedClass ->
-                    return current.moduleName
+                    return current.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 is IrExternalPackageFragment -> {
                     val source = current.containerSource ?: return null
                     return (source as? JvmPackagePartSource)?.moduleName
@@ -518,7 +517,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             is IrConstructor ->
                 irFun
             is IrSimpleFunction ->
-                findSuperDeclaration(irFun, false, context.state.jvmDefaultMode)
+                findSuperDeclaration(irFun, false, context.config.jvmDefaultMode)
             else ->
                 throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
         }

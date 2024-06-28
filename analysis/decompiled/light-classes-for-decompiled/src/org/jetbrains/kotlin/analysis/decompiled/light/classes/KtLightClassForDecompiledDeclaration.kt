@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 internal inline fun <R : PsiElement, T> R.cachedValueWithLibraryTracker(
     crossinline computer: () -> T,
 ): T = CachedValuesManager.getCachedValue(this) {
-    CachedValueProvider.Result.createSingleDependency(computer(), project.createAllLibrariesModificationTracker())
+    CachedValueProvider.Result.createSingleDependency(
+        computer(),
+        KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker,
+    )
 }
 
 open class KtLightClassForDecompiledDeclaration(
@@ -44,7 +47,7 @@ open class KtLightClassForDecompiledDeclaration(
         ClassInnerStuffCache(
             /* aClass = */ this,
             /* generateEnumMethods = */ true,
-            /* modificationTracker = */ project.createAllLibrariesModificationTracker(),
+            /* modificationTrackers = */ listOf(KotlinModificationTrackerService.getInstance(project).allLibrariesModificationTracker),
         )
     }
 
@@ -57,14 +60,13 @@ open class KtLightClassForDecompiledDeclaration(
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
-        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
-    } ?: PsiMethod.EMPTY_ARRAY
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getImplementsList(): PsiReferenceList? = clsDelegate.implementsList
@@ -77,7 +79,7 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getContainingClass(): PsiClass? = parent as? PsiClass
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
         clsDelegate.isInheritorDeep(baseClass, classToByPass)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> =
@@ -104,6 +106,7 @@ open class KtLightClassForDecompiledDeclaration(
     )
 
     override fun isEnum(): Boolean = clsDelegate.isEnum
+    override fun isRecord(): Boolean = clsDelegate.isRecord
     override fun getExtendsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getExtendsListTypes(this)
     override fun getTypeParameterList(): PsiTypeParameterList? = clsDelegate.typeParameterList
     override fun isAnnotationType(): Boolean = clsDelegate.isAnnotationType

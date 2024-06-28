@@ -13,6 +13,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle74"
@@ -86,18 +87,6 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(
-    objectFactory: ObjectFactory
-) : AbstractKotlinPm20PluginWrapper(objectFactory) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
     override fun apply(project: Project) {
         project.applyPlugin<KotlinPluginWrapper>()
@@ -133,8 +122,15 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
 
 open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     override fun apply(project: Project) {
-        warnAboutKotlin12xMppDeprecation(project)
         project.applyPlugin<KotlinCommonPluginWrapper>()
+        warnAboutKotlin12xMppDeprecation(project)
+    }
+}
+
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
     }
 }
 
@@ -142,4 +138,13 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
         MppTestReportHelperG74.MppTestReportHelperVariantFactoryG74()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG74.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG74.Factory()
+    factories[UnameExecutor.UnameExecutorVariantFactory::class] =
+        UnameExecutorG74.UnameExecutorVariantFactoryG74()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG74.Factory()
+    factories[AttributesConfigurationHelper.AttributeConfigurationHelperVariantFactory::class] =
+        AttributeConfigurationHelperVariantFactoryG74()
 }

@@ -1,6 +1,0 @@
-KT element: KtConstructorDelegationCall
-FIR element: FirDelegatedConstructorCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-this<R|A|>(Int(1))

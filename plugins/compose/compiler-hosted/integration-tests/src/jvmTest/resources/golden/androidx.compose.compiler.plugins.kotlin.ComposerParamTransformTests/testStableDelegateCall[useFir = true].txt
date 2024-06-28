@@ -1,0 +1,82 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+import kotlin.reflect.KProperty
+
+class Foo
+
+@Composable
+inline operator fun Foo.getValue(thisObj: Any?, property: KProperty<*>): Foo = this
+
+@Composable
+fun test(foo: Foo) {
+    val delegated by foo
+    used(delegated)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class Foo {
+  static val %stable: Int = 0
+}
+@Composable
+fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): Foo {
+  sourceInformationMarkerStart(%composer, <>, "CC(getValue)P(1):Test.kt#2487m")
+  val tmp0 = <this>
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun test(foo: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(test)<delega...>:Test.kt#2487m")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val delegated by {
+      val delegated%delegate = foo
+      @Composable
+      get(%composer: Composer?, %changed: Int) {
+        sourceInformationMarkerStart(%composer, <>, "C<foo>:Test.kt#2487m")
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b00110000)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        sourceInformationMarkerEnd(%composer)
+        return tmp0
+      }
+    }
+    used(<get-delegated>(%composer, 0))
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    test(foo, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

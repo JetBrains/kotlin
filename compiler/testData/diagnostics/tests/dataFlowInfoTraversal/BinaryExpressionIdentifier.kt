@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 infix fun Int.compareTo(o: Int) = 0
 

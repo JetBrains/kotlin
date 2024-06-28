@@ -1,4 +1,5 @@
-// !LANGUAGE: +FunctionalInterfaceConversion
+// FIR_IDENTICAL
+// LANGUAGE: +FunctionalInterfaceConversion
 
 fun interface Good {
     fun invoke()

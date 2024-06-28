@@ -14,6 +14,7 @@ namespace kotlin {
 // finalizer must never try to reference them.
 
 bool HasFinalizers(ObjHeader* object) noexcept;
+bool HasFinalizersDataInObject(ObjHeader* object) noexcept;
 void RunFinalizers(ObjHeader* object) noexcept;
 
 void SetFinalizerHookForTesting(void (*hook)(ObjHeader*)) noexcept;

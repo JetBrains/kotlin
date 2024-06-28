@@ -36,7 +36,7 @@ fun KotlinToolingVersion(kotlinVersion: KotlinVersion, classifier: String? = nul
 }
 
 @Deprecated(
-    "Use KotlinToolingVersion instead. Scheduled for removal with Kotlin 1.9",
+    "Use KotlinToolingVersion instead. Scheduled for removal with Kotlin 2.0",
     replaceWith = ReplaceWith("KotlinToolingVersion(kotlinVersionString)")
 )
 fun KotlinToolingVersionOrNull(kotlinVersionString: String): KotlinToolingVersion? {

@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63828
 interface FooTrait {
         val propertyTest: String
 }

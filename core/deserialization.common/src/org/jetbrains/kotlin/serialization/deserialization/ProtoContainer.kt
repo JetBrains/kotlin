@@ -29,6 +29,7 @@ sealed class ProtoContainer(
 
         val kind: ProtoBuf.Class.Kind = Flags.CLASS_KIND.get(classProto.flags) ?: ProtoBuf.Class.Kind.CLASS
         val isInner: Boolean = Flags.IS_INNER.get(classProto.flags)
+        val isData: Boolean = Flags.IS_DATA.get(classProto.flags)
 
         override fun debugFqName(): FqName = classId.asSingleFqName()
     }

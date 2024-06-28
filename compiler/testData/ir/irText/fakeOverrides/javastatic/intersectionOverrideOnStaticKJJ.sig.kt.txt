@@ -1,0 +1,53 @@
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.String?
+  //   Public signature: /B.bar|-8496476735448691706[0]
+  //   Public signature debug description: bar(){}kotlin.String?
+  abstract /* fake */ override fun bar(): String?
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.String?){}
+  //   Public signature: /B.foo|-7402282804178432687[0]
+  //   Public signature debug description: foo(kotlin.String?){}
+  abstract /* fake */ override fun foo(t: String?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.String
+  //   Public signature: /C.bar|1214702899383694193[0]
+  //   Public signature debug description: bar(){}kotlin.String
+  override fun bar(): String
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.String){}
+  //   Public signature: /C.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(t: String): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B;C){}
+//   Public signature: /test|-6359441584037827810[0]
+//   Public signature debug description: test(B;C){}
+fun test(b: B, c: C): Unit

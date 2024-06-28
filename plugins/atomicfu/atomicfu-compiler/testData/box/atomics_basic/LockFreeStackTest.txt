@@ -1,0 +1,47 @@
+@kotlin.Metadata
+final class LockFreeStack$Node {
+    // source: 'LockFreeStackTest.kt'
+    private final @org.jetbrains.annotations.Nullable field next: LockFreeStack$Node
+    private final field value: java.lang.Object
+    public method <init>(p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: LockFreeStack$Node): void
+    public final @org.jetbrains.annotations.Nullable method getNext(): LockFreeStack$Node
+    public final method getValue(): java.lang.Object
+    private final inner class LockFreeStack$Node
+}
+
+@kotlin.Metadata
+public final class LockFreeStack {
+    // source: 'LockFreeStackTest.kt'
+    private synthetic final static field top$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field top$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method clear(): void
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final static method getTop$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getTop$volatile(): java.lang.Object
+    public final method isEmpty(): boolean
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    public final @org.jetbrains.annotations.Nullable method popLoop(): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method popUpdate(): java.lang.Object
+    public final method pushLoop(p0: java.lang.Object): void
+    public final method pushUpdate(p0: java.lang.Object): void
+    private synthetic final method setTop$volatile(p0: java.lang.Object): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private final inner class LockFreeStack$Node
+}
+
+@kotlin.Metadata
+public final class LockFreeStackTest {
+    // source: 'LockFreeStackTest.kt'
+    public method <init>(): void
+    public final method testClear(): void
+    public final method testPushPopLoop(): void
+    public final method testPushPopUpdate(): void
+}
+
+@kotlin.Metadata
+public final class LockFreeStackTestKt {
+    // source: 'LockFreeStackTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

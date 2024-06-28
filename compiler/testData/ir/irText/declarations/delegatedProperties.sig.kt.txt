@@ -1,0 +1,97 @@
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
+val test1: Int /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+//   Public signature debug description: {}test4
+var test4: Any /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.Any
+  //   Public signature: /test4.<get-test4>|-6534367907772852251[0]
+  //   Public signature debug description: <get-test4>(){}kotlin.Any
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
+  //   Public signature debug description: <get-test4>(){}
+  get(): Any
+  // CHECK:
+  //   Mangled name: #<set-test4>(kotlin.Any){}
+  //   Public signature: /test4.<set-test4>|128813287573470091[0]
+  //   Public signature debug description: <set-test4>(kotlin.Any){}
+  set(<set-?>: Any): Unit
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}map
+  //   Public signature: /C.map|7076745113644856434[0]
+  //   Public signature debug description: {}map
+  val map: MutableMap<String, Any>
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-map>(){}kotlin.collections.MutableMap<kotlin.String,kotlin.Any>
+    //   Public signature: /C.map.<get-map>|-8717997113067483919[0]
+    //   Public signature debug description: <get-map>(){}kotlin.collections.MutableMap<kotlin.String,kotlin.Any>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-map>(){}
+    //   Public signature: /C.map.<get-map>|4042543427940588392[0]
+    //   Public signature debug description: <get-map>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: C{}test2
+  //   Public signature: /C.test2|2517758057000911509[0]
+  //   Public signature debug description: {}test2
+  val test2: Int /* by */
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-test2>(){}kotlin.Int
+    //   Public signature: /C.test2.<get-test2>|-8779933517717592707[0]
+    //   Public signature debug description: <get-test2>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-test2>(){}
+    //   Public signature: /C.test2.<get-test2>|-5218942532816206869[0]
+    //   Public signature debug description: <get-test2>(){}
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: C{}test3
+  //   Public signature: /C.test3|7677556066983021166[0]
+  //   Public signature debug description: {}test3
+  var test3: Any /* by */
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-test3>(){}kotlin.Any
+    //   Public signature: /C.test3.<get-test3>|-7091348225606608458[0]
+    //   Public signature debug description: <get-test3>(){}kotlin.Any
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-test3>(){}
+    //   Public signature: /C.test3.<get-test3>|-7333791615083236686[0]
+    //   Public signature debug description: <get-test3>(){}
+    get(): Any
+    // CHECK:
+    //   Mangled name: C#<set-test3>(kotlin.Any){}
+    //   Public signature: /C.test3.<set-test3>|1934506036485889165[0]
+    //   Public signature debug description: <set-test3>(kotlin.Any){}
+    set(<set-?>: Any): Unit
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.collections.MutableMap<kotlin.String,kotlin.Any>){}
+  //   Public signature: /C.<init>|1811770173759787848[0]
+  //   Public signature debug description: <init>(kotlin.collections.MutableMap<kotlin.String,kotlin.Any>){}
+  constructor(map: MutableMap<String, Any>) /* primary */
+
+}
+

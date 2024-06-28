@@ -1,2 +1,0 @@
-Resolved to:
-0: (in java.util) open class HashSet<E : kotlin.Any!> : java.util.AbstractSet<(E & kotlin.Any..E?)>(), kotlin.Cloneable, java.io.Serializable, kotlin.collections.MutableSet<E>

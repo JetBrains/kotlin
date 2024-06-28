@@ -1,0 +1,196 @@
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+abstract class E : Java1 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#add(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.add|-5986090388026932451[0]
+  //   Public signature debug description: add(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun add(element: @EnhancedNullability Any?): Boolean
+
+  // CHECK:
+  //   Mangled name: E#add(kotlin.Int;kotlin.Any?{EnhancedNullability}){}
+  //   Public signature: /E.add|6239812882338845322[0]
+  //   Public signature debug description: add(kotlin.Int;kotlin.Any?{EnhancedNullability}){}
+  /* fake */ override fun add(index: Int, element: @EnhancedNullability Any?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#addAll(kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.addAll|-5255485977914273331[0]
+  //   Public signature debug description: addAll(kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun addAll(elements: @EnhancedNullability Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.addAll|-8796714502043537184[0]
+  //   Public signature debug description: addAll(kotlin.Int;kotlin.collections.Collection<kotlin.Any?>{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun addAll(index: Int, elements: @EnhancedNullability Collection<Any?>): Boolean
+
+  // CHECK:
+  //   Mangled name: E#clear(){}
+  //   Public signature: /E.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#clone(){}kotlin.Any{EnhancedNullability}
+  //   Public signature: /E.clone|178802004086941196[0]
+  //   Public signature debug description: clone(){}kotlin.Any{EnhancedNullability}
+  /* fake */ override fun clone(): @EnhancedNullability Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#contains(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.contains|8753434238909728898[0]
+  //   Public signature debug description: contains(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun contains(element: @EnhancedNullability Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /E.containsAll|7057326425365175105[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  /* fake */ override fun containsAll(elements: Collection<Any?>): Boolean
+
+  // CHECK:
+  //   Mangled name: E#ensureCapacity(kotlin.Int){}
+  //   Public signature: /E.ensureCapacity|-7913402150632352615[0]
+  //   Public signature debug description: ensureCapacity(kotlin.Int){}
+  /* fake */ override fun ensureCapacity(p0: Int): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(other: @EnhancedNullability Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#get(kotlin.Int){}kotlin.Any?{EnhancedNullability}
+  //   Public signature: /E.get|-5300912049483714805[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Any?{EnhancedNullability}
+  /* fake */ override operator fun get(index: Int): @EnhancedNullability Any?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#hashCode(){}kotlin.Int
+  //   Public signature: /E.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#indexOf(kotlin.Any?{EnhancedNullability}){}kotlin.Int
+  //   Public signature: /E.indexOf|-23119642662624689[0]
+  //   Public signature debug description: indexOf(kotlin.Any?{EnhancedNullability}){}kotlin.Int
+  /* fake */ override fun indexOf(element: @EnhancedNullability Any?): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#isEmpty(){}kotlin.Boolean
+  //   Public signature: /E.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /E.iterator|5209183249781014428[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override operator fun iterator(): @EnhancedNullability MutableIterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#lastIndexOf(kotlin.Any?{EnhancedNullability}){}kotlin.Int
+  //   Public signature: /E.lastIndexOf|-2894732914974618509[0]
+  //   Public signature debug description: lastIndexOf(kotlin.Any?{EnhancedNullability}){}kotlin.Int
+  /* fake */ override fun lastIndexOf(element: @EnhancedNullability Any?): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /E.listIterator|9085299506388071801[0]
+  //   Public signature debug description: listIterator(){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override fun listIterator(): @EnhancedNullability MutableListIterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /E.listIterator|943240675884260208[0]
+  //   Public signature debug description: listIterator(kotlin.Int){}kotlin.collections.MutableListIterator<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override fun listIterator(index: Int): @EnhancedNullability MutableListIterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#remove(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /E.remove|5889602773215073339[0]
+  //   Public signature debug description: remove(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun remove(element: @EnhancedNullability Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#removeAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /E.removeAll|2083414713666946876[0]
+  //   Public signature debug description: removeAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  /* fake */ override fun removeAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#removeAt(kotlin.Int){}kotlin.Any?{EnhancedNullability}
+  //   Public signature: /E.removeAt|4725866102208590817[0]
+  //   Public signature debug description: removeAt(kotlin.Int){}kotlin.Any?{EnhancedNullability}
+  /* fake */ override fun removeAt(p0: Int): @EnhancedNullability Any?
+
+  // CHECK:
+  //   Mangled name: E#removeRange(kotlin.Int;kotlin.Int){}
+  //   Public signature: /E.removeRange|7632320944993890593[0]
+  //   Public signature debug description: removeRange(kotlin.Int;kotlin.Int){}
+  protected_and_package /* fake */ override fun removeRange(p0: Int, p1: Int): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /E.retainAll|-4369081002402657372[0]
+  //   Public signature debug description: retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  /* fake */ override fun retainAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#set(kotlin.Int;kotlin.Any?{EnhancedNullability}){}kotlin.Any?{EnhancedNullability}
+  //   Public signature: /E.set|-1329887672320845825[0]
+  //   Public signature debug description: set(kotlin.Int;kotlin.Any?{EnhancedNullability}){}kotlin.Any?{EnhancedNullability}
+  /* fake */ override operator fun set(index: Int, element: @EnhancedNullability Any?): @EnhancedNullability Any?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /E.subList|-2625343716108283264[0]
+  //   Public signature debug description: subList(kotlin.Int;kotlin.Int){}kotlin.collections.MutableList<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override fun subList(fromIndex: Int, toIndex: Int): @EnhancedNullability MutableList<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toArray(){}kotlin.Array<out|kotlin.Any?>?
+  //   Public signature: /E.toArray|-8468800257910341540[0]
+  //   Public signature debug description: toArray(){}kotlin.Array<out|kotlin.Any?>?
+  /* fake */ override fun toArray(): Array<out Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toArray(kotlin.Array<out|kotlin.Any?>?){0§<kotlin.Any?>}kotlin.Array<out|kotlin.Any?>?
+  //   Public signature: /E.toArray|5867798891017880795[0]
+  //   Public signature debug description: toArray(kotlin.Array<out|kotlin.Any?>?){0§<kotlin.Any?>}kotlin.Array<out|kotlin.Any?>?
+  /* fake */ override fun <T : Any?> toArray(p0: Array<out Any?>?): Array<out Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toString(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /E.toString|7581629773206850948[0]
+  //   Public signature debug description: toString(){}kotlin.String{EnhancedNullability}
+  /* fake */ override fun toString(): @EnhancedNullability String
+
+  // CHECK:
+  //   Mangled name: E#trimToSize(){}
+  //   Public signature: /E.trimToSize|-5937642362792008740[0]
+  //   Public signature debug description: trimToSize(){}
+  /* fake */ override fun trimToSize(): Unit
+
+  // CHECK:
+  //   Mangled name: E{}size
+  //   Public signature: /E.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-size>(){}kotlin.Int
+    //   Public signature: /E.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+}

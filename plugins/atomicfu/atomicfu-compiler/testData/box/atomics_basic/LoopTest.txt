@@ -1,0 +1,72 @@
+@kotlin.Metadata
+public final class LoopTest$A {
+    // source: 'LoopTest.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public final inner class LoopTest$A
+}
+
+@kotlin.Metadata
+public final class LoopTest {
+    // source: 'LoopTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field a1$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a1$volatile: int
+    private synthetic final static field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field b$volatile: int
+    private synthetic final static field l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field l$volatile: long
+    private synthetic final static field r$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field r$volatile: java.lang.Object
+    private synthetic final static field rs$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field rs$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method atomicfuBooleanLoopTest(): void
+    public final method atomicfuGetAndUpdateTest(): void
+    public final method atomicfuIntLoopTest(): void
+    public final method atomicfuLongLoopTest(): void
+    public final method atomicfuLoopTest(): void
+    public final method atomicfuRefLoopTest(): void
+    public final method atomicfuUpdateAndGetTest(): void
+    public final method atomicfuUpdateTest(): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getA1$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA1$volatile(): int
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): long
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getB$volatile(): int
+    private synthetic final static method getL$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getL$volatile(): long
+    private synthetic final static method getR$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getR$volatile(): java.lang.Object
+    private synthetic final static method getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getRs$volatile(): java.lang.Object
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setA1$volatile(p0: int): void
+    private synthetic final method setB$volatile(p0: int): void
+    private synthetic final method setL$volatile(p0: long): void
+    private synthetic final method setR$volatile(p0: java.lang.Object): void
+    private synthetic final method setRs$volatile(p0: java.lang.Object): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): long
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    public final inner class LoopTest$A
+}
+
+@kotlin.Metadata
+public final class LoopTestKt {
+    // source: 'LoopTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

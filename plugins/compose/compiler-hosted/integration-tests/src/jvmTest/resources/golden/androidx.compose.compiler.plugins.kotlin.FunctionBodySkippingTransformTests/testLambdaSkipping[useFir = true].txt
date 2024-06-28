@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+fun LazyListScope.Example(items: LazyPagingItems<User>) {
+    itemsIndexed(items) { index, user ->
+        print("Hello World")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun LazyListScope.Example(items: LazyPagingItems<User>) {
+  itemsIndexed(items, ComposableSingletons%TestKt.lambda-1)
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: @[ExtensionFunctionType] Function5<LazyItemScope, Int, User?, Composer, Int, Unit> = composableLambdaInstance(<>, false) { index: Int, user: User?, %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b010000000001 != 0b010000000000 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      print("Hello World")
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

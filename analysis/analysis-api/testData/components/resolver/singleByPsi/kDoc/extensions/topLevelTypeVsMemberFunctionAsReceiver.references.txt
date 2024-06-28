@@ -1,0 +1,14 @@
+<caret_1>:
+  KDocName(96,103): 'Foo.ext'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(113,116): 'Foo'
+    KDocReference:
+      (in test.WithMember) fun Foo()
+
+<caret_3>:
+  KDocName(137,140): 'Foo'
+    KDocReference:
+      (in test.WithMember) fun Foo()

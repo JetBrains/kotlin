@@ -1,0 +1,15 @@
+KaDataFlowExitPointSnapshot:
+  defaultExpressionInfo = null
+  hasEscapingJumps = false
+  hasJumps = false
+  hasMultipleJumpKinds = false
+  hasMultipleJumpTargets = false
+  jumpExpressions = []
+  returnValueType = null
+  valuedReturnExpressions = []
+  variableReassignments = [
+    VariableReassignment:
+      expression = x += 1
+      isAugmented = true
+      variable = var x: kotlin.Int
+  ]

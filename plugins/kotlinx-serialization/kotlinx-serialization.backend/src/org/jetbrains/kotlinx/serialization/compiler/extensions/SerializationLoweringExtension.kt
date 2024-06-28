@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,21 +18,15 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.findDeclaration
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
-import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationDependencies
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationJsDependenciesClassIds
@@ -65,14 +59,20 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     internal val arrayValueGetter = irBuiltIns.arrayClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
         .single { it.name.asString() == "get" }
 
+    internal val intArrayOfFunctionSymbol =
+        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("intArrayOf"))).first()
+
     // Kotlin stdlib declarations
-    internal val jvmFieldClassSymbol = referenceClass(StandardClassIds.Annotations.JvmField)!!
+    internal val jvmFieldClassSymbol = referenceClass(JvmStandardClassIds.Annotations.JvmField)!!
 
     internal val lazyModeClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_MODE_FQ))!!.owner
     internal val lazyModePublicationEnumEntry =
         lazyModeClass.enumEntries().single { it.name == SerializationDependencies.LAZY_PUBLICATION_MODE_NAME }
+    // There can be several transitive dependencies on kotlin-stdlib in IDE sources,
+    // as well as several definitions of stdlib functions, including `kotlin.lazy`;
+    // in that case `referenceFunctions` might return more than one valid definition of the same function.
     internal val lazyFunctionSymbol =
-        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).single {
+        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("lazy"))).first {
             it.owner.valueParameters.size == 2 && it.owner.valueParameters[0].type == lazyModeClass.defaultType
         }
     internal val lazyClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_FQ))!!.owner
@@ -118,6 +118,7 @@ private inline fun IrClass.runPluginSafe(block: () -> Unit) {
     try {
         block()
     } catch (e: Throwable) {
+        rethrowIntellijPlatformExceptionIfNeeded(e)
         throw when (e) {
             is VirtualMachineError, is ThreadDeath -> e
             else -> CompilationException(

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // FULL_JDK
 
 import java.nio.CharBuffer

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SuspendFunctionAsSupertype
+// LANGUAGE: +SuspendFunctionAsSupertype
 // SKIP_TXT
 // FIR_IDENTICAL
 // DIAGNOSTICS: -ABSTRACT_MEMBER_NOT_IMPLEMENTED

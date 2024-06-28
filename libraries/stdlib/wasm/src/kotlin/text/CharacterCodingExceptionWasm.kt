@@ -11,5 +11,5 @@ package kotlin.text
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
 public actual open class CharacterCodingException(message: String?) : Exception(message) {
-    actual constructor() : this(null)
+    public actual constructor() : this(null)
 }

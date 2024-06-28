@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
+// KT-58549
 
 //test [], get and iterator calls
 fun test(createIntNotLong: Boolean): String {

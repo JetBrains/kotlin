@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class ConeIntegerLiteralConstantTypeImpl(
     value: Long,
@@ -34,7 +35,6 @@ class ConeIntegerLiteralConstantTypeImpl(
         return getApproximatedTypeImpl(expectedType)
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
         fun create(
             value: Long,
@@ -84,7 +84,7 @@ class ConeIntegerLiteralConstantTypeImpl(
         }
 
         private fun createType(classId: ClassId): ConeClassLikeType {
-            return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
+            return ConeClassLikeTypeImpl(classId.toLookupTag(), EMPTY_ARRAY, false)
         }
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
@@ -140,14 +140,21 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 
 private object ConeIntegerLiteralTypeExtensions {
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
-        return listOf(
-            createClassLikeType(StandardClassIds.Number),
+        val comparableSuperType =
             ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
-        )
+
+        return if (type.possibleTypes.none { it.isUnsignedTypeOrNullableUnsignedType }) {
+            listOf(
+                createClassLikeType(StandardClassIds.Number),
+                comparableSuperType,
+            )
+        } else {
+            listOf(comparableSuperType)
+        }
     }
 
     fun createClassLikeType(classId: ClassId): ConeClassLikeType {
-        return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
+        return ConeClassLikeTypeImpl(classId.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, false)
     }
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {

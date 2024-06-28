@@ -1,0 +1,67 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] localDeclarationsInAccessor.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                local final [ResolvedTo(BODY_RESOLVE)] class Inner : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Inner| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] var i: R|kotlin/Int| = Int(2)
+                        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                             {
+                                [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = this@R|<local>/Inner|.F|<local>/i|
+                                this@R|<local>/Inner|.F|<local>/i| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                                R|<local>/<unary>|
+                            }
+
+                            ^ this@R|<local>/Inner|.F|<local>/i|
+                        }
+                        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val j: R|kotlin/Int| = Int(3)
+                        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                            this@R|<local>/Inner|.F|<local>/j| = Int(42)
+                            ^ this@R|<local>/Inner|.F|<local>/j|
+                        }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] fun innerMember(): R|kotlin/Unit| {
+                         {
+                            [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = this@R|/Outer|.F|/Outer.i|
+                            this@R|/Outer|.F|/Outer.i| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                            R|<local>/<unary>|
+                        }
+
+                    }
+
+                }
+
+                ^ this@R|/Outer|.F|/Outer.i|
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val j: R|kotlin/Int| = Int(4)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Unit| {
+                     {
+                        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = this@R|/Outer|.F|/Outer.j|
+                        this@R|/Outer|.F|/Outer.j| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                        R|<local>/<unary>|
+                    }
+
+                     {
+                        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = this@R|/Outer|.F|/Outer.j|
+                        this@R|/Outer|.F|/Outer.j| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                        R|<local>/<unary>|
+                    }
+
+                }
+
+                R|<local>/local|()
+                ^ this@R|/Outer|.F|/Outer.j|
+            }
+
+    }

@@ -1,9 +1,10 @@
 // TARGET_BACKEND: JVM_IR
+// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-56386 is fixed
 // IGNORE_BACKEND_K1: JVM_IR
-// Field VS property: case "reference", protected field, invisible property
+// IGNORE_BACKEND_K2: JVM_IR
+// Reason: KT-56386 is not fixed yet
 
 // FILE: BaseJava.java
-
 package base;
 
 public class BaseJava {
@@ -11,7 +12,6 @@ public class BaseJava {
 }
 
 // FILE: Derived.kt
-
 package derived
 
 import base.BaseJava

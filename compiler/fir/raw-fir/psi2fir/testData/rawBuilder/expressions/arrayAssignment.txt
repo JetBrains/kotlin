@@ -2,10 +2,12 @@ FILE: arrayAssignment.kt
     public? final? fun test(): R|kotlin/Unit| {
         lval x: <implicit> = intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3))
         x#.set#(IntegerLiteral(1), IntegerLiteral(0))
+        Unit
     }
     public? final? fun foo(): <implicit> {
         ^foo IntegerLiteral(1)
     }
     public? final? fun test2(): R|kotlin/Unit| {
         intArrayOf#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(3)).set#(foo#(), IntegerLiteral(1))
+        Unit
     }

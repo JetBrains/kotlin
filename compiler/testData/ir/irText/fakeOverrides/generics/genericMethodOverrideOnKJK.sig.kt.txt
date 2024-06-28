@@ -1,0 +1,121 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /A.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  abstract /* fake */ override fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: A#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /A.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  abstract /* fake */ override fun <T : Any?> foo(a: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /B.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  override fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: B#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /B.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  override fun <T : Any?> foo(a: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){0§<kotlin.Any?>}0:0{EnhancedNullability}
+  //   Public signature: /C.bar|6765732301291641606[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0{EnhancedNullability}
+  @Override
+  /* fake */ override fun <T : Any?> bar(): @EnhancedNullability T
+
+  // CHECK:
+  //   Mangled name: C#foo(0:0{EnhancedNullability}){0§<kotlin.Any?>}
+  //   Public signature: /C.foo|-2061655068181839688[0]
+  //   Public signature debug description: foo(0:0{EnhancedNullability}){0§<kotlin.Any?>}
+  @Override
+  /* fake */ override fun <T : Any?> foo(a: @EnhancedNullability T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /D.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  override fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: D#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /D.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  override fun <T : Any?> foo(a: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){0§<kotlin.Any?>}0:0
+  //   Public signature: /KotlinInterface.bar|-3730887172686175993[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0
+  abstract fun <T : Any?> bar(): T
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /KotlinInterface.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  abstract fun <T : Any?> foo(a: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit

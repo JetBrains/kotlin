@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.extensions
 
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.CallableId
@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 
 /**
- * Indicates methods and properties that are not available in backend after FIR
+ * Indicates methods and properties that are not available in backend after K2 compiler release
  *
- * Invocation of such methods in IR plugins if frontend was a FIR results in compiler crash.
+ * Invocation of such methods in IR plugins if frontend was K2 results in compiler crash.
  * It's still possible to use them in IR plugins with old frontend.
  */
-@RequiresOptIn("This API is not available after FIR")
+@RequiresOptIn("This API is deprecated. It will be removed after the release of K2 compiler")
 annotation class FirIncompatiblePluginAPI(val hint: String = "")
 
 interface IrPluginContext : IrGeneratorContext {
@@ -46,6 +46,7 @@ interface IrPluginContext : IrGeneratorContext {
     @FirIncompatiblePluginAPI
     val bindingContext: BindingContext
 
+    @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable
 
     @ObsoleteDescriptorBasedAPI
@@ -57,12 +58,20 @@ interface IrPluginContext : IrGeneratorContext {
     val platform: TargetPlatform?
 
     /**
+     * Use this service to:
+     * - add annotations to declarations if those annotations should be saved into metadata
+     * - register that declaration generated at IR stage will appear in compiled metadata
+     * This service properly works only in K2 compiler
+     */
+    val metadataDeclarationRegistrar: IrGeneratedDeclarationsRegistrar
+
+    /**
      * Returns a logger instance to post diagnostic messages from plugin
      *
      * @param pluginId the unique plugin ID to make it easy to distinguish in log
      * @return         the logger associated with specified ID
      */
-    fun createDiagnosticReporter(pluginId: String): IrMessageLogger
+    fun createDiagnosticReporter(pluginId: String): MessageCollector
 
     // The following API is experimental
     @FirIncompatiblePluginAPI("Use classId overload instead")

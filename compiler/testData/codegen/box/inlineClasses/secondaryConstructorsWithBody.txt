@@ -7,11 +7,23 @@ public final class SecondaryConstructorsWithBodyKt {
     public final static @org.jetbrains.annotations.NotNull method getL(): java.util.List
 }
 
+@kotlin.Metadata
+public final class VC$Inner {
+    // source: 'secondaryConstructorsWithBody.kt'
+    enclosing method VC.constructor-impl(D)I
+    private final field x: int
+    inner (local) class VC$Inner Inner
+    public method <init>(p0: int): void
+    public method <init>(p0: long): void
+    public final method getX(): int
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class VC {
     // source: 'secondaryConstructorsWithBody.kt'
     private final field x: int
+    inner (local) class VC$Inner Inner
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): VC
     public static method constructor-impl(p0: double): int

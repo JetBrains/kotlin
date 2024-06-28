@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun ifThen(x: Int?) {
     if (x!! == 0) {

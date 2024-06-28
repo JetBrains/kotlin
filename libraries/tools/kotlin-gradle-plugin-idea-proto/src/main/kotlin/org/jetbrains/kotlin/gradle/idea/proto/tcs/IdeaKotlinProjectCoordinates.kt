@@ -11,15 +11,28 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 
 internal fun IdeaKotlinProjectCoordinatesProto(coordinates: IdeaKotlinProjectCoordinates): IdeaKotlinProjectCoordinatesProto {
     return ideaKotlinProjectCoordinatesProto {
-        this.buildId = coordinates.buildId
+        this.buildName = coordinates.buildName
+        this.buildPath = coordinates.buildPath
         this.projectPath = coordinates.projectPath
         this.projectName = coordinates.projectName
     }
 }
 
 internal fun IdeaKotlinProjectCoordinates(proto: IdeaKotlinProjectCoordinatesProto): IdeaKotlinProjectCoordinates {
-    return IdeaKotlinProjectCoordinates(
-        buildId = proto.buildId,
+    return if (proto.hasBuildPath()) IdeaKotlinProjectCoordinates(
+        buildName = proto.buildName,
+        buildPath = proto.buildPath,
+        projectPath = proto.projectPath,
+        projectName = proto.projectName
+    )
+    /*
+    Coordinates were encoded w/o 'buildPath'.
+    This can happen if e.g. the data was produced by an older Kotlin Gradle Plugin (before 1.9.20),
+    or if the Kotlin Gradle Plugin was used with older Gradle versions (before 8.2), where this information was not present.
+    In this case, we will create the coordinates using the approximation used before 1.9.20: buildName is used as 'buildId'
+     */
+    else @Suppress("DEPRECATION") IdeaKotlinProjectCoordinates(
+        buildId = proto.buildName,
         projectPath = proto.projectPath,
         projectName = proto.projectName
     )

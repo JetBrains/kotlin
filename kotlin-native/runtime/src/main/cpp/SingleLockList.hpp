@@ -12,21 +12,21 @@
 #include <mutex>
 #include <type_traits>
 
-#include "Mutex.hpp"
+#include "concurrent/Mutex.hpp"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
 
 namespace kotlin {
 
 // TODO: Consider different locking mechanisms.
-template <typename Value, typename Mutex, typename Allocator = std_support::allocator<Value>>
+template <typename Value, typename Mutex, typename Allocator = std::allocator<Value>>
 class SingleLockList : private Pinned {
 public:
     class Node;
 
 private:
     using NodeAllocator = typename std::allocator_traits<Allocator>::template rebind_alloc<Node>;
-    using NodeOwner = std_support::unique_ptr<Node, std_support::allocator_deleter<Node, NodeAllocator>>;
+    using NodeOwner = std::unique_ptr<Node, std_support::allocator_deleter<Node, NodeAllocator>>;
 
 public:
     // TODO: Maybe just hide `Node` altogether?
@@ -48,7 +48,7 @@ public:
 
     class Iterator {
     public:
-        using difference_type = void;
+        using difference_type = std::ptrdiff_t;
         using value_type = Value;
         using pointer = Value*;
         using reference = Value&;

@@ -506,42 +506,6 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
-    @Test
-    fun testLongRunningCompilationWithReceiver() = test {
-        // This test normally completes in about 8-13s
-        // Removing skip* configuration parameters should slow down the test (2-3 times)
-
-        val conf = ScriptCompilationConfiguration {
-            jvm {
-                updateClasspath(classpathFromClass<TestReceiver1>())
-            }
-            implicitReceivers(TestReceiver1::class, TestReceiver2::class)
-            skipExtensionsResolutionForImplicits(KotlinType(TestReceiver1::class))
-            skipExtensionsResolutionForImplicitsExceptInnermost(KotlinType(TestReceiver2::class))
-        }
-
-        val writer = System.out.writer()
-        for (i in 1..200) {
-            run(longCompilationRun(writer, i, conf))
-            run {
-                compilationConfiguration = conf
-
-                code = """
-                    val x = xyz
-                """.trimIndent()
-                cursor = 11
-
-                expect {
-                    completions.mode = ComparisonType.EQUALS
-                    addCompletion("xyz1", "xyz1", "Int", "property")
-                    addCompletion("xyz2", "xyz2", "Int", "property")
-                }
-
-                loggingInfo = CSVLoggingInfo(complete = CSVLoggingInfoItem(writer, i, "complete;"))
-            }
-        }
-    }
-
     private val setupDefaultImportsCompletionRun: TestRunConfigurator = {
         compilationConfiguration = ScriptCompilationConfiguration {
             defaultImports(listOf("kotlin.math.atan"))
@@ -630,3 +594,41 @@ private fun longCompletionRun(writer: Writer, i: Int, conf: ScriptCompilationCon
     }
 }
 
+class ReplCompletionAndErrorsAnalysisLongRunningTest1 : TestCase() {
+
+    @Test
+    fun testLongRunningCompilationWithReceiver() = test {
+        // This test normally completes in about 8-13s
+        // Removing skip* configuration parameters should slow down the test (2-3 times)
+
+        val conf = ScriptCompilationConfiguration {
+            jvm {
+                updateClasspath(classpathFromClass<TestReceiver1>())
+            }
+            implicitReceivers(TestReceiver1::class, TestReceiver2::class)
+            skipExtensionsResolutionForImplicits(KotlinType(TestReceiver1::class))
+            skipExtensionsResolutionForImplicitsExceptInnermost(KotlinType(TestReceiver2::class))
+        }
+
+        val writer = System.out.writer()
+        for (i in 1..200) {
+            run(longCompilationRun(writer, i, conf))
+            run {
+                compilationConfiguration = conf
+
+                code = """
+                    val x = xyz
+                """.trimIndent()
+                cursor = 11
+
+                expect {
+                    completions.mode = ComparisonType.EQUALS
+                    addCompletion("xyz1", "xyz1", "Int", "property")
+                    addCompletion("xyz2", "xyz2", "Int", "property")
+                }
+
+                loggingInfo = CSVLoggingInfo(complete = CSVLoggingInfoItem(writer, i, "complete;"))
+            }
+        }
+    }
+}

@@ -1,0 +1,367 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public? final? [ResolvedTo(TYPES)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(STATUS)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun check(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun check(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar B#().foo#()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
+                    ^foo Null(null)
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar B#().foo#()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
+                    ^foo Null(null)
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun check(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar B#().foo#()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
+                    ^foo Null(null)
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.str] str: KClass<*>): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: KClass<*> = R|<local>/str|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun check(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar B#().foo#()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): @Anno[Unresolved](<getClass>(C#)) List<@Anno[Unresolved](<getClass>(C#)) Collection<@Anno[Unresolved](<getClass>(C#)) String>>? {
+                    ^foo Null(null)
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(RAW_FIR)] lval a: <implicit> = A#().bar#()
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.str] str: R|kotlin/reflect/KClass<*>|): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/reflect/KClass<*>| = R|<local>/str|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                ^bar this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|()
+            }
+
+            local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                    ^foo Null(null)
+                }
+
+                local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] localImplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.str] str: R|kotlin/reflect/KClass<*>|): R|second/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val str: R|kotlin/reflect/KClass<*>| = R|<local>/str|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun check(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                ^bar this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|()
+            }
+
+            local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                    ^foo Null(null)
+                }
+
+                local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = R|<local>/A.A|().R|<local>/bar|()
+    }

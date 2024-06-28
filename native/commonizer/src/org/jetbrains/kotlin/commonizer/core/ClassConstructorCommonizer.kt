@@ -17,7 +17,7 @@ class ClassConstructorCommonizer(
     private val visibility = VisibilityCommonizer.equalizing()
     private val typeParameterListCommonizer = TypeParameterListCommonizer(typeCommonizer)
     private val valueParametersCommonizer = CallableValueParametersCommonizer(typeCommonizer)
-    private val annotationsCommonizer: AnnotationsCommonizer = AnnotationsCommonizer()
+    private val annotationsCommonizer = AnnotationsCommonizer.asCommonizer()
 
     override fun commonizationResult(): CirClassConstructor? {
         val valueParameters = valueParametersCommonizer.result ?: return null

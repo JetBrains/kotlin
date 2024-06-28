@@ -1,0 +1,72 @@
+public annotation class Anno {
+    // source: 'classKinds.kt'
+}
+
+public final enum class Direction {
+    // source: 'classKinds.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: Direction[]
+    public final enum static field EAST: Direction
+    public final enum static field NORTH: Direction
+    public final enum static field SOUTH: Direction
+    public final enum static field WEST: Direction
+    private synthetic final static method $values(): Direction[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): Direction
+    public static method values(): Direction[]
+}
+
+public final class Generic {
+    // source: 'classKinds.kt'
+    public method <init>(): void
+    public method run(): void
+}
+
+public interface Intf {
+    // source: 'classKinds.kt'
+    public abstract method run(): void
+}
+
+public final class Operation$Add {
+    // source: 'classKinds.kt'
+    private final field firstValue: int
+    private final field secondValue: int
+    public method <init>(p0: int, p1: int): void
+    public final method getFirstValue(): int
+    public final method getSecondValue(): int
+    public final inner class Operation$Add
+}
+
+public final class Operation$Negate {
+    // source: 'classKinds.kt'
+    private final field value: int
+    public method <init>(p0: int): void
+    public final method getValue(): int
+    public final inner class Operation$Negate
+}
+
+public final class Operation$Subtract {
+    // source: 'classKinds.kt'
+    private final field minuend: int
+    private final field subtrahend: int
+    public method <init>(p0: int, p1: int): void
+    public final method getMinuend(): int
+    public final method getSubtrahend(): int
+    public final inner class Operation$Subtract
+}
+
+public abstract class Operation {
+    // source: 'classKinds.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class Operation$Add
+    public final inner class Operation$Negate
+    public final inner class Operation$Subtract
+}
+
+public abstract class Ordinary {
+    // source: 'classKinds.kt'
+    public method <init>(): void
+}

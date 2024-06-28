@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendFunctionsLowering<JsCommonBackendContext>(ctx) {
-
-    val coroutineSymbols = ctx.coroutineSymbols
+    private val coroutineSymbols = ctx.coroutineSymbols
 
     private val coroutineImplExceptionPropertyGetter = coroutineSymbols.coroutineImplExceptionPropertyGetter
     private val coroutineImplExceptionPropertySetter = coroutineSymbols.coroutineImplExceptionPropertySetter
@@ -179,7 +178,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
 
-        val localToPropertyMap = mutableMapOf<IrValueSymbol, IrFieldSymbol>()
+        val localToPropertyMap = hashMapOf<IrValueSymbol, IrFieldSymbol>()
         var localCounter = 0
         // TODO: optimize by using the same property for different locals.
         liveLocals.forEach {

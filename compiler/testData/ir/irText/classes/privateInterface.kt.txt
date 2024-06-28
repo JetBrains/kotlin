@@ -1,0 +1,53 @@
+open class C1 : I {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun barString(): String {
+    return "bar@C1"
+  }
+
+  override fun barUnit() {
+  }
+
+  override fun fooString(): String {
+    return "foo@C1"
+  }
+
+  override fun fooUnit() {
+  }
+
+}
+
+class C2 : C1 {
+  constructor() /* primary */ {
+    super/*C1*/()
+    /* <init>() */
+
+  }
+
+}
+
+private interface I {
+  fun barString(): String {
+    return "bar@I"
+  }
+
+  fun barUnit() {
+  }
+
+  fun bazString(): String {
+    return "baz@I"
+  }
+
+  fun bazUnit() {
+  }
+
+  abstract fun fooString(): String
+
+  abstract fun fooUnit()
+
+}
+

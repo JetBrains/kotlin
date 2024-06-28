@@ -26,13 +26,13 @@ FILE: main.kt
 
     }
     public final fun test_1(): R|kotlin/Unit| {
-        lval map: R|util/HashMap<kotlin/Int, kotlin/Int>| = R|util/HashMap.HashMap|<R|kotlin/Int|, R|kotlin/Int|>()
+        lval map: R|util/HashMap<kotlin/Int, kotlin/Int>| = R|util/HashMap.HashMap|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|, R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|>()
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval set: R|util/HashSet<kotlin/Int>| = R|util/HashSet.HashSet|<R|kotlin/Int|>()
     }
     public final fun test_3(): R|kotlin/Unit| {
-        lval list: R|foo/ArrayList<kotlin/Int>| = R|foo/ArrayList.ArrayList|<R|kotlin/Int|>()
+        lval list: R|foo/ArrayList<kotlin/Int>| = R|foo/ArrayList.ArrayList|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/Int) kotlin/Int!|>()
     }
     public final fun test_4(): R|kotlin/Unit| {
         lval list: R|foo/LinkedList<kotlin/Int>| = R|foo/LinkedList.LinkedList|<R|kotlin/Int|>()

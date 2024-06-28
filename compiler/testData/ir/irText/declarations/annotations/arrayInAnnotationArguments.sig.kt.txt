@@ -1,0 +1,70 @@
+// CHECK:
+//   Mangled name: TestAnnWithIntArray
+//   Public signature: /TestAnnWithIntArray|null[0]
+open annotation class TestAnnWithIntArray : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnnWithIntArray{}x
+  //   Public signature: /TestAnnWithIntArray.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: IntArray
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnnWithIntArray#<get-x>(){}kotlin.IntArray
+    //   Public signature: /TestAnnWithIntArray.x.<get-x>|-5699461780158713262[0]
+    //   Public signature debug description: <get-x>(){}kotlin.IntArray
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnnWithIntArray#<get-x>(){}
+    //   Public signature: /TestAnnWithIntArray.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnnWithIntArray#<init>(kotlin.IntArray){}
+  //   Public signature: /TestAnnWithIntArray.<init>|6811679238332965682[0]
+  //   Public signature debug description: <init>(kotlin.IntArray){}
+  constructor(x: IntArray) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestAnnWithStringArray
+//   Public signature: /TestAnnWithStringArray|null[0]
+open annotation class TestAnnWithStringArray : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnnWithStringArray{}x
+  //   Public signature: /TestAnnWithStringArray.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Array<String>
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnnWithStringArray#<get-x>(){}kotlin.Array<kotlin.String>
+    //   Public signature: /TestAnnWithStringArray.x.<get-x>|-709321774523398734[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Array<kotlin.String>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnnWithStringArray#<get-x>(){}
+    //   Public signature: /TestAnnWithStringArray.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnnWithStringArray#<init>(kotlin.Array<kotlin.String>){}
+  //   Public signature: /TestAnnWithStringArray.<init>|5393043463829665764[0]
+  //   Public signature debug description: <init>(kotlin.Array<kotlin.String>){}
+  constructor(x: Array<String>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
+@TestAnnWithIntArray(x = [1, 2, 3])
+@TestAnnWithStringArray(x = ["a", "b", "c"])
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
+@TestAnnWithIntArray(x = [4, 5, 6])
+@TestAnnWithStringArray(x = ["d", "e", "f"])
+fun test2(): Unit
+

@@ -1,7 +1,10 @@
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
+  inner class DerivedInnerClass : TestInnerClass {
+    constructor() /* primary */ {
+      <this>.super/*TestInnerClass*/()
+      /* <init>() */
+
+    }
 
   }
 
@@ -14,13 +17,11 @@ class Outer {
 
   }
 
-  inner class DerivedInnerClass : TestInnerClass {
-    constructor() /* primary */ {
-      <this>.super/*TestInnerClass*/()
-      /* <init>() */
-
-    }
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
 }
+

@@ -1,0 +1,393 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : SortedMap<Boolean, Boolean>, Map<Boolean, Boolean> {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#clear(){}
+  //   Public signature: /A.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  abstract /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#comparator(){}java.util.Comparator<in|kotlin.Boolean?>?
+  //   Public signature: /A.comparator|5589924097229555022[0]
+  //   Public signature debug description: comparator(){}java.util.Comparator<in|kotlin.Boolean?>?
+  abstract /* fake */ override fun comparator(): Comparator<in Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#compute(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.compute|4175412046172705961[0]
+  //   Public signature debug description: compute(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#computeIfAbsent(kotlin.Boolean?{EnhancedNullability};java.util.function.Function<in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.computeIfAbsent|2318086775890399186[0]
+  //   Public signature debug description: computeIfAbsent(kotlin.Boolean?{EnhancedNullability};java.util.function.Function<in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Function<in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#computeIfPresent(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.computeIfPresent|-4444435589895688498[0]
+  //   Public signature debug description: computeIfPresent(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#containsKey(kotlin.Boolean?){}kotlin.Boolean
+  //   Public signature: /A.containsKey|-8235831514988883911[0]
+  //   Public signature debug description: containsKey(kotlin.Boolean?){}kotlin.Boolean
+  abstract /* fake */ override fun containsKey(key: Boolean?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#containsValue(kotlin.Boolean?){}kotlin.Boolean
+  //   Public signature: /A.containsValue|-1908976232534565921[0]
+  //   Public signature debug description: containsValue(kotlin.Boolean?){}kotlin.Boolean
+  abstract /* fake */ override fun containsValue(value: Boolean?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#firstKey(){}kotlin.Boolean?
+  //   Public signature: /A.firstKey|2260152268809084632[0]
+  //   Public signature debug description: firstKey(){}kotlin.Boolean?
+  abstract /* fake */ override fun firstKey(): Boolean?
+
+  // CHECK:
+  //   Mangled name: A#forEach(java.util.function.BiConsumer<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /A.forEach|3878961874603336765[0]
+  //   Public signature debug description: forEach(java.util.function.BiConsumer<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun forEach(p0: @EnhancedNullability BiConsumer<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#get(kotlin.Boolean?){}kotlin.Boolean?
+  //   Public signature: /A.get|-7784602833684913808[0]
+  //   Public signature debug description: get(kotlin.Boolean?){}kotlin.Boolean?
+  abstract /* fake */ override operator fun get(key: Boolean?): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#headMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /A.headMap|3429232571675833436[0]
+  //   Public signature debug description: headMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun headMap(p0: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#isEmpty(){}kotlin.Boolean
+  //   Public signature: /A.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  abstract /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#lastKey(){}kotlin.Boolean?
+  //   Public signature: /A.lastKey|-5878782178389103210[0]
+  //   Public signature debug description: lastKey(){}kotlin.Boolean?
+  abstract /* fake */ override fun lastKey(): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#merge(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.merge|-2570739162911161248[0]
+  //   Public signature debug description: merge(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean, p2: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean, in @EnhancedNullability Boolean, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#put(kotlin.Boolean?;kotlin.Boolean?){}kotlin.Boolean?
+  //   Public signature: /A.put|-5368624398980599224[0]
+  //   Public signature debug description: put(kotlin.Boolean?;kotlin.Boolean?){}kotlin.Boolean?
+  abstract /* fake */ override fun put(key: Boolean?, value: Boolean?): Boolean?
+
+  // CHECK:
+  //   Mangled name: A#putAll(kotlin.collections.Map<out|kotlin.Boolean?,kotlin.Boolean?>){}
+  //   Public signature: /A.putAll|-226841264386034617[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|kotlin.Boolean?,kotlin.Boolean?>){}
+  abstract /* fake */ override fun putAll(from: Map<out Boolean?, Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#putIfAbsent(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.putIfAbsent|6516214788860106211[0]
+  //   Public signature debug description: putIfAbsent(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#remove(kotlin.Boolean?){}kotlin.Boolean?
+  //   Public signature: /A.remove|-5821443140623761137[0]
+  //   Public signature debug description: remove(kotlin.Boolean?){}kotlin.Boolean?
+  abstract /* fake */ override fun remove(key: Boolean?): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /A.replace|5218516597732619705[0]
+  //   Public signature debug description: replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.replace|4813966440904142311[0]
+  //   Public signature debug description: replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun replace(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?, p2: @EnhancedNullability Boolean?): Boolean
+
+  // CHECK:
+  //   Mangled name: A#replaceAll(java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /A.replaceAll|5359563359504799908[0]
+  //   Public signature debug description: replaceAll(java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun replaceAll(p0: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#subMap(kotlin.Boolean?;kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /A.subMap|-1324986874260553961[0]
+  //   Public signature debug description: subMap(kotlin.Boolean?;kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun subMap(p0: Boolean?, p1: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#tailMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /A.tailMap|-6557184974773795520[0]
+  //   Public signature debug description: tailMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun tailMap(p0: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK:
+  //   Mangled name: A{}entries
+  //   Public signature: /A.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  abstract /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.entries.<get-entries>|5073510598625478346[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
+
+  // CHECK:
+  //   Mangled name: A{}keys
+  //   Public signature: /A.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  abstract /* fake */ override val keys: @EnhancedNullability MutableSet<Boolean?>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /A.keys.<get-keys>|-3437886487554544497[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<Boolean?>
+
+  // CHECK:
+  //   Mangled name: A{}size
+  //   Public signature: /A.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  abstract /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-size>(){}kotlin.Int
+    //   Public signature: /A.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: A{}values
+  //   Public signature: /A.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  abstract /* fake */ override val values: @EnhancedNullability MutableCollection<Boolean?>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /A.values.<get-values>|2965564880775457094[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableCollection<Boolean?>
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : SortedMap<Boolean, Boolean>, Map<Boolean, Boolean> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#clear(){}
+  //   Public signature: /B.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  abstract /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#comparator(){}java.util.Comparator<in|kotlin.Boolean?>?
+  //   Public signature: /B.comparator|5589924097229555022[0]
+  //   Public signature debug description: comparator(){}java.util.Comparator<in|kotlin.Boolean?>?
+  abstract /* fake */ override fun comparator(): Comparator<in Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#compute(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.compute|4175412046172705961[0]
+  //   Public signature debug description: compute(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#computeIfAbsent(kotlin.Boolean?{EnhancedNullability};java.util.function.Function<in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.computeIfAbsent|2318086775890399186[0]
+  //   Public signature debug description: computeIfAbsent(kotlin.Boolean?{EnhancedNullability};java.util.function.Function<in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Function<in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#computeIfPresent(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.computeIfPresent|-4444435589895688498[0]
+  //   Public signature debug description: computeIfPresent(kotlin.Boolean?{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#containsKey(kotlin.Boolean?){}kotlin.Boolean
+  //   Public signature: /B.containsKey|-8235831514988883911[0]
+  //   Public signature debug description: containsKey(kotlin.Boolean?){}kotlin.Boolean
+  abstract /* fake */ override fun containsKey(key: Boolean?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#containsValue(kotlin.Boolean?){}kotlin.Boolean
+  //   Public signature: /B.containsValue|-1908976232534565921[0]
+  //   Public signature debug description: containsValue(kotlin.Boolean?){}kotlin.Boolean
+  abstract /* fake */ override fun containsValue(value: Boolean?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#firstKey(){}kotlin.Boolean?
+  //   Public signature: /B.firstKey|2260152268809084632[0]
+  //   Public signature debug description: firstKey(){}kotlin.Boolean?
+  abstract /* fake */ override fun firstKey(): Boolean?
+
+  // CHECK:
+  //   Mangled name: B#forEach(java.util.function.BiConsumer<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /B.forEach|3878961874603336765[0]
+  //   Public signature debug description: forEach(java.util.function.BiConsumer<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun forEach(p0: @EnhancedNullability BiConsumer<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#get(kotlin.Boolean?){}kotlin.Boolean?
+  //   Public signature: /B.get|-7784602833684913808[0]
+  //   Public signature debug description: get(kotlin.Boolean?){}kotlin.Boolean?
+  abstract /* fake */ override operator fun get(key: Boolean?): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#headMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /B.headMap|3429232571675833436[0]
+  //   Public signature debug description: headMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun headMap(p0: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#isEmpty(){}kotlin.Boolean
+  //   Public signature: /B.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  abstract /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#lastKey(){}kotlin.Boolean?
+  //   Public signature: /B.lastKey|-5878782178389103210[0]
+  //   Public signature debug description: lastKey(){}kotlin.Boolean?
+  abstract /* fake */ override fun lastKey(): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#merge(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.merge|-2570739162911161248[0]
+  //   Public signature debug description: merge(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean{EnhancedNullability};java.util.function.BiFunction<in|kotlin.Boolean{EnhancedNullability},in|kotlin.Boolean{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean, p2: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean, in @EnhancedNullability Boolean, out @EnhancedNullability Boolean?>): @EnhancedNullability Boolean?
+
+  // CHECK:
+  //   Mangled name: B#putAll(kotlin.collections.Map<out|kotlin.Boolean?,kotlin.Boolean?>){}
+  //   Public signature: /B.putAll|-226841264386034617[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|kotlin.Boolean?,kotlin.Boolean?>){}
+  abstract /* fake */ override fun putAll(from: Map<out Boolean?, Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#putIfAbsent(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.putIfAbsent|6516214788860106211[0]
+  //   Public signature debug description: putIfAbsent(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  //   Public signature: /B.replace|5218516597732619705[0]
+  //   Public signature debug description: replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?): @EnhancedNullability Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.replace|4813966440904142311[0]
+  //   Public signature debug description: replace(kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability};kotlin.Boolean?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun replace(p0: @EnhancedNullability Boolean?, p1: @EnhancedNullability Boolean?, p2: @EnhancedNullability Boolean?): Boolean
+
+  // CHECK:
+  //   Mangled name: B#replaceAll(java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /B.replaceAll|5359563359504799908[0]
+  //   Public signature debug description: replaceAll(java.util.function.BiFunction<in|kotlin.Boolean?{EnhancedNullability},in|kotlin.Boolean?{EnhancedNullability},out|kotlin.Boolean?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun replaceAll(p0: @EnhancedNullability BiFunction<in @EnhancedNullability Boolean?, in @EnhancedNullability Boolean?, out @EnhancedNullability Boolean?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#subMap(kotlin.Boolean?;kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /B.subMap|-1324986874260553961[0]
+  //   Public signature debug description: subMap(kotlin.Boolean?;kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun subMap(p0: Boolean?, p1: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#tailMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  //   Public signature: /B.tailMap|-6557184974773795520[0]
+  //   Public signature debug description: tailMap(kotlin.Boolean?){}java.util.SortedMap<kotlin.Boolean?,kotlin.Boolean?>?
+  abstract /* fake */ override fun tailMap(p0: Boolean?): SortedMap<Boolean?, Boolean?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#put(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean?
+  //   Public signature: /B.put|-3189627949496447371[0]
+  //   Public signature debug description: put(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean?
+  override fun put(key: Boolean, value: Boolean): Boolean?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#remove(kotlin.Boolean?){}kotlin.Boolean?
+  //   Public signature: /B.remove|-5821443140623761137[0]
+  //   Public signature debug description: remove(kotlin.Boolean?){}kotlin.Boolean?
+  override fun remove(key: Boolean?): Boolean?
+
+  // CHECK:
+  //   Mangled name: B{}entries
+  //   Public signature: /B.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  abstract /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.entries.<get-entries>|5073510598625478346[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Boolean?,kotlin.Boolean?>{EnhancedNullability}>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<Boolean?, Boolean?>>
+
+  // CHECK:
+  //   Mangled name: B{}keys
+  //   Public signature: /B.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  abstract /* fake */ override val keys: @EnhancedNullability MutableSet<Boolean?>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /B.keys.<get-keys>|-3437886487554544497[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableSet<Boolean?>
+
+  // CHECK:
+  //   Mangled name: B{}size
+  //   Public signature: /B.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  abstract /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-size>(){}kotlin.Int
+    //   Public signature: /B.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: B{}values
+  //   Public signature: /B.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  abstract /* fake */ override val values: @EnhancedNullability MutableCollection<Boolean?>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    //   Public signature: /B.values.<get-values>|2965564880775457094[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<kotlin.Boolean?>{EnhancedNullability}
+    abstract /* fake */ override get(): @EnhancedNullability MutableCollection<Boolean?>
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

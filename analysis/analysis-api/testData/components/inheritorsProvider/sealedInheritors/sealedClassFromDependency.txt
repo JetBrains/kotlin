@@ -1,0 +1,5 @@
+foo/bar/OneSealedChild
+class OneSealedChild : foo.bar.MySealedClass()
+
+foo/bar/TwoSealedChild
+class TwoSealedChild : foo.bar.MySealedClass()

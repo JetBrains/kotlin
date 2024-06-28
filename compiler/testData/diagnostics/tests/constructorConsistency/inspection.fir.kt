@@ -33,8 +33,8 @@ class SecondDerived : Second() {
     override fun foo() = y
 }
 
-open class Third {
-    open var x: String
+abstract class Third {
+    abstract var x: String
 
     constructor() {
         x = "X" // Non-final property access

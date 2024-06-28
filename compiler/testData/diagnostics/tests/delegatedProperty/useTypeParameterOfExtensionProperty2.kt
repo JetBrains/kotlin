@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
+// LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty

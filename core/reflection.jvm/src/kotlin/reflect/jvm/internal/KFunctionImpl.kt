@@ -19,7 +19,10 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
@@ -53,7 +56,7 @@ internal class KFunctionImpl private constructor(
         descriptor
     )
 
-    override val isBound: Boolean get() = rawBoundReceiver != CallableReference.NO_RECEIVER
+    override val isBound: Boolean get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)
@@ -62,11 +65,12 @@ internal class KFunctionImpl private constructor(
     override val name: String get() = descriptor.name.asString()
 
     override val caller: Caller<*> by lazy(PUBLICATION) caller@{
+        @Suppress("USELESS_CAST")
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)
-                container.findConstructorBySignature(jvmSignature.constructorDesc)
+                container.findConstructorBySignature(jvmSignature.constructorDesc) as Member?
             }
             is KotlinFunction -> {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
@@ -74,10 +78,10 @@ internal class KFunctionImpl private constructor(
                         descriptor, container, jvmSignature.methodDesc, descriptor.valueParameters
                     )
                 }
-                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc)
+                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc) as Member?
             }
-            is JavaMethod -> jvmSignature.method
-            is JavaConstructor -> jvmSignature.constructor
+            is JavaMethod -> jvmSignature.method as Member
+            is JavaConstructor -> jvmSignature.constructor as Member
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
                 return@caller AnnotationConstructorCaller(container.jClass, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)
@@ -100,18 +104,24 @@ internal class KFunctionImpl private constructor(
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
-        val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
-        val member: Member? = when (jvmSignature) {
-            is KotlinFunction -> {
+        @Suppress("USELESS_CAST")
+        val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
+            is KotlinFunction -> run {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
                     throw KotlinReflectionInternalError("${descriptor.containingDeclaration} cannot have default arguments")
                 }
-                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
+
+                getFunctionWithDefaultParametersForValueClassOverride(descriptor)?.let { defaultImplsFunction ->
+                    val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultImplsFunction) as KotlinFunction
+                    return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
+                }
+
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers)) as Member?
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc)
+                container.findDefaultConstructor(jvmSignature.constructorDesc) as Member?
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods
@@ -141,11 +151,32 @@ internal class KFunctionImpl private constructor(
         }?.createValueClassAwareCallerIfNeeded(descriptor, isDefault = true)
     }
 
+    private fun getFunctionWithDefaultParametersForValueClassOverride(descriptor: FunctionDescriptor): FunctionDescriptor? {
+        if (
+            descriptor.valueParameters.none { it.declaresDefaultValue() } &&
+            descriptor.containingDeclaration.isValueClass() &&
+            Modifier.isStatic(caller.member!!.modifiers)
+        ) {
+            // firstOrNull is used to mimic the wrong behaviour of regular class reflection as KT-40327 is not fixed.
+            // The behaviours equality is currently backed by codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt. 
+            return descriptor.overriddenTreeAsSequence(useOriginal = false)
+                .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+        }
+        return null
+    }
+
     private val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
+    // boundReceiver is unboxed receiver when the receiver is inline class.
+    // However, when the expected dispatch receiver type is an interface,
+    // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
+    private fun useBoxedBoundReceiver(member: Method) =
+        descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
+
     private fun createStaticMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundStatic(member, boundReceiver) else CallerImpl.Method.Static(member)
+        if (isBound) CallerImpl.Method.BoundStatic(member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver)
+        else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =
         if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)

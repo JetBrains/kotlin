@@ -1,0 +1,15 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] insidePlusAssignTarget.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>|): R|kotlin/Unit| {
+        R|<local>/x|.R|kotlin/collections/getOrPut|<R|kotlin/Int|, R|kotlin/collections/MutableList<kotlin/String>|>(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<V>] getOrPut@fun <anonymous>(): R|kotlin/collections/MutableList<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        }
+        ).R|kotlin/collections/plusAssign|<R|kotlin/String|>(String(str))
+    }

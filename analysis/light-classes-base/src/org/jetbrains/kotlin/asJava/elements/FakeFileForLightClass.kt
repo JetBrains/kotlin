@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,20 +20,29 @@ import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.SourceTreeToPsiMap
 import com.intellij.psi.impl.source.tree.TreeElement
 import com.intellij.psi.util.PsiUtil
-import com.intellij.reference.SoftReference
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.lang.ref.Reference
+import java.lang.ref.SoftReference
 
 open class FakeFileForLightClass(
     val ktFile: KtFile,
-    private val lightClass: () -> KtLightClass,
+    private val lightClass: KtLightClass,
     private val packageFqName: FqName = ktFile.packageFqName,
 ) : ClsFileImpl(ktFile.viewProvider) {
+    @Deprecated("A light class should be provided directly")
+    constructor(
+        ktFile: KtFile,
+        lightClass: () -> KtLightClass,
+        packageFqName: FqName = ktFile.packageFqName,
+    ) : this(
+        ktFile = ktFile,
+        lightClass = lightClass(),
+        packageFqName = packageFqName,
+    )
 
     override fun getVirtualFile(): VirtualFile =
         ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: super.getVirtualFile()
@@ -49,7 +58,7 @@ open class FakeFileForLightClass(
 
     override fun getStub() = createFakeJavaFileStub()
 
-    override fun getClasses() = arrayOf(lightClass())
+    override fun getClasses() = arrayOf(lightClass)
 
     override fun getNavigationElement() = ktFile
 
@@ -63,10 +72,10 @@ open class FakeFileForLightClass(
     private val myMirrorLock: Any = Any()
 
     override fun getMirror(): PsiElement {
-        SoftReference.dereference(myMirrorFileElement)?.let { return it.psi }
+        myMirrorFileElement?.get()?.let { return it.psi }
 
         val mirrorElement = synchronized(myMirrorLock) {
-            SoftReference.dereference(myMirrorFileElement)?.let { return@synchronized it }
+            myMirrorFileElement?.get()?.let { return@synchronized it }
 
             val file = this.virtualFile
             AstLoadingFilter.assertTreeLoadingAllowed(file)
@@ -92,29 +101,21 @@ open class FakeFileForLightClass(
     // this should be equal to current compiler target language level
     override fun getLanguageLevel() = LanguageLevel.JDK_1_8
 
-    override fun hashCode(): Int {
-        val thisClass = lightClass()
-        if (thisClass is KtLightClassForSourceDeclaration) return ktFile.hashCode()
-        return thisClass.hashCode()
-    }
+    override fun hashCode(): Int =
+        (lightClass.takeIf { it is KtLightClassForFacade && it.files.size > 1 } ?: ktFile).hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is FakeFileForLightClass) return false
-        val thisClass = lightClass()
-        val anotherClass = other.lightClass()
 
-        if (thisClass is KtLightClassForSourceDeclaration) {
-            return anotherClass is KtLightClassForSourceDeclaration && ktFile == other.ktFile
-        }
-
-        return thisClass == anotherClass
+        return (lightClass is KtLightClassForFacade && lightClass.files.size > 1 && lightClass == other.lightClass) ||
+                ktFile == other.ktFile
     }
 
     override fun isEquivalentTo(another: PsiElement?) = this == another
 
     override fun setPackageName(packageName: String) {
-        if (lightClass() is KtLightClassForFacade) {
+        if (lightClass is KtLightClassForFacade) {
             ktFile.packageDirective?.fqName = FqName(packageName)
         } else {
             super.setPackageName(packageName)

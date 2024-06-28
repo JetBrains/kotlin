@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
+import org.jetbrains.kotlin.backend.jvm.ir.isValueClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -31,7 +33,7 @@ object InlineClassAbi {
      * perform inline class mangling and so in the absence of jvm signatures in the metadata we need to avoid
      * inline class mangling as well in the function references used as arguments to the signature string intrinsic.
      */
-    object UNMANGLED_FUNCTION_REFERENCE : IrStatementOriginImpl("UNMANGLED_FUNCTION_REFERENCE")
+    val UNMANGLED_FUNCTION_REFERENCE by IrStatementOriginImpl
 
     /**
      * Unwraps inline class types to their underlying representation.
@@ -57,13 +59,16 @@ object InlineClassAbi {
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
      */
-    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
+    fun mangledNameFor(context: JvmBackendContext, irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
             assert(irFunction.constructedClass.isValue) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
+        }
+        if (irFunction.isAlreadyMangledMfvcFunction(context)) {
+            return irFunction.name
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
@@ -84,6 +89,9 @@ object InlineClassAbi {
 
         return Name.identifier("$base-${suffix ?: "impl"}")
     }
+
+    private fun IrFunction.isAlreadyMangledMfvcFunction(context: JvmBackendContext) =
+        context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[this]?.any { it is MultiFieldValueClassMapping } == true
 
     fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String? =
         hashSuffix(
@@ -107,7 +115,7 @@ object InlineClassAbi {
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
             if (addContinuation)
                 valueParameters.map { it.asInfoForMangling() } +
-                        InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isInline = false, isNullable = false)
+                        InfoForMangling(FqNameUnsafe("kotlin.coroutines.Continuation"), isValue = false, isNullable = false)
             else
                 valueParameters.map { it.asInfoForMangling() },
             returnType?.asInfoForMangling()
@@ -116,7 +124,7 @@ object InlineClassAbi {
     private fun IrType.asInfoForMangling(): InfoForMangling =
         InfoForMangling(
             erasedUpperBound.fqNameWhenAvailable!!.toUnsafe(),
-            isInline = isInlineClassType(),
+            isValue = isValueClassType(),
             isNullable = isNullable()
         )
 
@@ -126,7 +134,7 @@ object InlineClassAbi {
 
 fun IrType.getRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true): Boolean {
     val irClass = erasedUpperBound
-    return irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME && when {
+    return !irClass.isClassWithFqName(StandardNames.RESULT_FQ_NAME) && when {
         irClass.isSingleFieldValueClass -> includeInline
         irClass.isMultiFieldValueClass -> includeMFVC
         else -> false

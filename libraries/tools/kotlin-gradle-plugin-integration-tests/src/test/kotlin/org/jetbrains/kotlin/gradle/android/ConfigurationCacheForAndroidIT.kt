@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache in Android project")
 @AndroidGradlePluginTests
-@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     @DisplayName("works in android plus kapt project")
     @GradleAndroidTest

@@ -56,12 +56,12 @@ TEST(ThreadLocalStorageTest, Iterate) {
     tls.AddRecord(&key2, 2);
     tls.Commit();
 
-    std_support::vector<ObjHeader**> expected;
+    std::vector<ObjHeader**> expected;
     expected.push_back(tls.Lookup(&key1, 0));
     expected.push_back(tls.Lookup(&key2, 0));
     expected.push_back(tls.Lookup(&key2, 1));
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }
@@ -80,12 +80,12 @@ TEST(ThreadLocalStorageTest, AddRecordEmpty) {
     tls.AddRecord(&key3, 2);
     tls.Commit();
 
-    std_support::vector<ObjHeader**> expected;
+    std::vector<ObjHeader**> expected;
     expected.push_back(tls.Lookup(&key1, 0));
     expected.push_back(tls.Lookup(&key3, 0));
     expected.push_back(tls.Lookup(&key3, 1));
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }
@@ -101,10 +101,10 @@ TEST(ThreadLocalStorageTest, AddRecordSameSize) {
     tls.AddRecord(&key1, 1);
     tls.Commit();
 
-    std_support::vector<ObjHeader**> expected;
+    std::vector<ObjHeader**> expected;
     expected.push_back(tls.Lookup(&key1, 0));
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }
@@ -117,7 +117,7 @@ TEST(ThreadLocalStorageTest, NoRecords) {
 
     tls.Commit();
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }
@@ -132,7 +132,7 @@ TEST(ThreadLocalStorageTest, ClearEmpty) {
 
     tls.Clear();
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }
@@ -149,7 +149,7 @@ TEST(ThreadLocalStorageTest, ClearNonEmpty) {
 
     tls.Clear();
 
-    std_support::vector<ObjHeader**> actual;
+    std::vector<ObjHeader**> actual;
     for (auto item : tls) {
         actual.push_back(item);
     }

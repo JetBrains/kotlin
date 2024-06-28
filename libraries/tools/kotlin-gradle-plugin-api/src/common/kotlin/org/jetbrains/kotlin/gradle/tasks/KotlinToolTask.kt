@@ -9,15 +9,37 @@ import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 
+/**
+ * Represents a Kotlin task performing further processing of compiled code via additional Kotlin tools using configurable [toolOptions].
+ *
+ * Check [KotlinCommonCompilerToolOptions] inheritors (excluding [KotlinCommonCompilerToolOptions]) for the possible configuration
+ * options.
+ *
+ * @see [KotlinCommonCompilerToolOptions]
+ */
+@KotlinGradlePluginDsl
 interface KotlinToolTask<out TO : KotlinCommonCompilerToolOptions> : Task {
+
+    /**
+     * Represents the tool options used by a Kotlin task with reasonable configured defaults.
+     *
+     * Could be used to either get the values of currently configured options or to modify them.
+     */
     @get:Nested
     val toolOptions: TO
 
+    /**
+     * Configures the [toolOptions] with the provided configuration.
+     */
     fun toolOptions(configure: TO.() -> Unit) {
         configure(toolOptions)
     }
 
+    /**
+     * Configures the [toolOptions] with the provided configuration.
+     */
     fun toolOptions(configure: Action<in TO>) {
         configure.execute(toolOptions)
     }

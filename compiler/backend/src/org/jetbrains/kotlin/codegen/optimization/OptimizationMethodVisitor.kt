@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.optimization.boxing.PopBackwardPropagationTr
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.StackPeepholeOptimizationsTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.prepareForEmitting
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.temporaryVals.TemporaryVariablesEliminationTransformer
 import org.jetbrains.kotlin.codegen.optimization.transformer.CompositeMethodTransformer
@@ -40,7 +41,7 @@ class OptimizationMethodVisitor(
     name: String,
     desc: String,
     signature: String?,
-    exceptions: Array<String>?
+    exceptions: Array<out String>?
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
     val normalizationMethodTransformer = CompositeMethodTransformer(
         InplaceArgumentsMethodTransformer(),
@@ -69,7 +70,7 @@ class OptimizationMethodVisitor(
         normalizationMethodTransformer.transform("fake", methodNode)
         UninitializedStoresProcessor(methodNode).run()
 
-        if (!mandatoryTransformationsOnly && canBeOptimized(methodNode) && !generationState.disableOptimization) {
+        if (!mandatoryTransformationsOnly && canBeOptimized(methodNode) && !generationState.config.disableOptimization) {
             optimizationTransformer.transform("fake", methodNode)
         }
 
@@ -107,8 +108,9 @@ class OptimizationMethodVisitor(
                 // by anything other than a jump-targeted label, so those instructions consume no extra memory.
                 // To avoid checking all jumps, here we assume all labels are potentially targeted.
                 // (Effectively, all of this means that adding line numbers should not inhibit optimization.)
-                if ((it.type != AbstractInsnNode.LINE && it.type != AbstractInsnNode.FRAME && it.type != AbstractInsnNode.LABEL &&
-                            it.opcode != Opcodes.NOP) || it.next?.type == AbstractInsnNode.LABEL
+                val type = it.nodeType
+                if ((type != AbstractInsnNode.LINE && type != AbstractInsnNode.FRAME && type != AbstractInsnNode.LABEL &&
+                            it.opcode != Opcodes.NOP) || it.next?.nodeType == AbstractInsnNode.LABEL
                 ) result++
                 it = it.next
             }

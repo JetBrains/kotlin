@@ -1,0 +1,85 @@
+library {
+  // module name: <TopLevelFunctions.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: Foo
+
+    // signature: /A|null[0]
+    public final annotation class A : kotlin/Annotation {
+
+      // signature: /A.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: /B|null[0]
+    public final annotation class B : kotlin/Annotation {
+
+      // signature: /B.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: /a|a(){}[0]
+      @A
+      @B
+      public final fun a(): kotlin/Unit
+
+      // signature: /e|e@Foo(){}[0]
+      public final fun Foo.e(): kotlin/Unit
+
+      // signature: /f1|f1(Foo){}[0]
+      public final fun f1(x: Foo): kotlin/Unit
+
+      // signature: /f2|f2(Foo;Foo){}[0]
+      public final fun f2(x: Foo, y: Foo): kotlin/Int
+
+      // signature: /i1|i1(kotlin.Function0<Foo>){}[0]
+      public final inline fun i1(block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i2|i2(kotlin.Function0<Foo>){}[0]
+      public final inline fun i2(noinline block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i3|i3(kotlin.Function0<Foo>){}[0]
+      public final inline fun i3(crossinline block: kotlin/Function0<Foo>): kotlin/Unit
+
+      // signature: /i4|i4(kotlin.Function1<Foo,kotlin.Int>){}[0]
+      public final fun i4(block: kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i5|i5(kotlin.Function2<Foo,Foo,kotlin.Int>){}[0]
+      public final fun i5(block: kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i6|i6(kotlin.Function1<Foo,kotlin.Int>){}[0]
+      public final fun i6(block: @kotlin/ExtensionFunctionType kotlin/Function1<Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /i7|i7(kotlin.Function2<Foo,Foo,kotlin.Int>){}[0]
+      public final fun i7(block: @kotlin/ExtensionFunctionType kotlin/Function2<Foo, Foo, kotlin/Int>): kotlin/Unit
+
+      // signature: /t1|t1(Foo){0§<kotlin.Any?>}[0]
+      public final fun <T#0 /* T */> t1(x: Foo): kotlin/Unit
+
+      // signature: /t2|t2(0:0){0§<kotlin.Any?>}[0]
+      public final fun <T#0 /* T */> t2(x: T#0): kotlin/Unit
+
+      // signature: /t3|t3(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+      public final fun <T#0 /* T */, T#1 /* F */> t3(x: T#0, y: T#1): kotlin/Unit
+
+      // signature: /t4|t4(0:0){0§<kotlin.Any?>}[0]
+      public final inline fun <reified T#0 /* T */> t4(x: T#0): kotlin/Unit
+
+      // signature: /t5|t5(0:0){0§<kotlin.Number>}[0]
+      public final fun <T#0 /* T */ : kotlin/Number> t5(x: T#0): kotlin/Unit
+    }
+  }
+}

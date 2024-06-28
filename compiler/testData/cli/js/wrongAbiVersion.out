@@ -1,2 +1,0 @@
-error: file '$TESTDATA_DIR$/wrongAbiVersionLib/wrongAbiLib.meta.js' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 0.0.0, expected version is $ABI_VERSION$
-COMPILATION_ERROR

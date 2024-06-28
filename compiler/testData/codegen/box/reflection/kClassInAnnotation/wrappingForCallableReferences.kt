@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS, NATIVE, WASM
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals

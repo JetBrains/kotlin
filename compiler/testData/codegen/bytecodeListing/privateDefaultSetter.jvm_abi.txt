@@ -1,0 +1,21 @@
+MODULE main
+	CLASS Test.class
+		CLASS METADATA
+			PROPERTY getInternalProperty$main()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String
+			PROPERTY getProtectedProperty()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String
+			PROPERTY getPublicProperty()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

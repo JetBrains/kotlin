@@ -1,0 +1,64 @@
+open annotation class NoTarget : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.VALUE_PARAMETER])
+open annotation class ParameterOnly : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD])
+open annotation class PropValueField : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.PROPERTY])
+open annotation class PropertyOnly : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@Target(allowedTargets = [AnnotationTarget.PROPERTY])
+open annotation class PropertyOnly2 : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Foo {
+  @PropertyOnly
+  @PropertyOnly2
+  var param: Int
+    field = param
+    get
+    set
+
+  constructor(@NoTarget @PropValueField @ParameterOnly param: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

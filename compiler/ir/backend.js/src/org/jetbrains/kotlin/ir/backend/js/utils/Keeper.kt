@@ -14,7 +14,8 @@ class Keeper(private val keep: Set<String>) : IrElementVisitor<Unit, Keeper.Keep
     private val keptDeclarations: MutableSet<IrDeclaration> = mutableSetOf()
 
     fun shouldKeep(declaration: IrDeclaration): Boolean {
-        return declaration in keptDeclarations
+        return declaration in keptDeclarations ||
+                (declaration is IrOverridableDeclaration<*> && declaration.overriddenSymbols.any { shouldKeep(it.owner as IrDeclaration) })
     }
 
     override fun visitElement(element: IrElement, data: KeepData) {

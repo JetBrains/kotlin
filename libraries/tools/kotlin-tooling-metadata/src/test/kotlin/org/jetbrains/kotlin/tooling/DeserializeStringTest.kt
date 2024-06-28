@@ -18,7 +18,7 @@ class DeserializeStringTest {
             "buildSystem": "Gradle",
             "buildSystemVersion": "6.7",
             "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
-            "buildPluginVersion": "1.9.255-SNAPSHOT",
+            "buildPluginVersion": "2.0.255-SNAPSHOT",
             "projectSettings": {
               "isHmppEnabled": false,
               "isCompatibilityMetadataVariantEnabled": true
@@ -78,7 +78,7 @@ class DeserializeStringTest {
         assertEquals("Gradle", metadata.buildSystem)
         assertEquals("6.7", metadata.buildSystemVersion)
         assertEquals("org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper", metadata.buildPlugin)
-        assertEquals("1.9.255-SNAPSHOT", metadata.buildPluginVersion)
+        assertEquals("2.0.255-SNAPSHOT", metadata.buildPluginVersion)
         assertFalse(metadata.projectSettings.isHmppEnabled)
         assertTrue(metadata.projectSettings.isCompatibilityMetadataVariantEnabled)
         assertFalse(metadata.projectSettings.isKPMEnabled)
@@ -134,7 +134,7 @@ class DeserializeStringTest {
             "buildSystem": "Gradle",
             "buildSystemVersion": "7.1",
             "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
-            "buildPluginVersion": "1.9.255-SNAPSHOT",
+            "buildPluginVersion": "2.0.255-SNAPSHOT",
             "projectSettings": {
               "isHmppEnabled": false,
               "isCompatibilityMetadataVariantEnabled": true,
@@ -191,7 +191,7 @@ class DeserializeStringTest {
         assertEquals("Gradle", metadata.buildSystem)
         assertEquals("7.1", metadata.buildSystemVersion)
         assertEquals("org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper", metadata.buildPlugin)
-        assertEquals("1.9.255-SNAPSHOT", metadata.buildPluginVersion)
+        assertEquals("2.0.255-SNAPSHOT", metadata.buildPluginVersion)
         assertFalse(metadata.projectSettings.isHmppEnabled)
         assertTrue(metadata.projectSettings.isCompatibilityMetadataVariantEnabled)
         assertTrue(metadata.projectSettings.isKPMEnabled)

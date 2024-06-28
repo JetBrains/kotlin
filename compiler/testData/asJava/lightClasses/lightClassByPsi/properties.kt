@@ -1,5 +1,3 @@
-// IGNORE_FIR
-// Ignored due to KT-53573
 import kotlin.reflect.KProperty
 
 class Foo(a: Int, val b:Foo, var c:Boolean, private val d: List, protected val e: Long = 2) {
@@ -103,7 +101,7 @@ interface A {
     internal set
 }
 
-class Foo {
+class Foo2 {
   val foo get() = getMeNonNullFoo()
   val foo2: Foo get() = getMeNonNullFoo()
   fun getMeNonNullFoo() : Foo = Foo()

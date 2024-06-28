@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A
 class B
@@ -50,4 +50,3 @@ class E {
         }
     }
 }
-

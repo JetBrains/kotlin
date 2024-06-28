@@ -1,0 +1,14 @@
+public abstract interface AddNullabilityJavaSubtype : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/CharSequence|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/AddNullabilityJavaSubtype.Super| {
+        public abstract fun foo(): R|kotlin/String|
+
+    }
+
+}

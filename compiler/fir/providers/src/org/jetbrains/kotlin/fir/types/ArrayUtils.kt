@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.name.StandardClassIds
 
 val ConeKotlinType.isArrayOrPrimitiveArray: Boolean
-    get() = arrayElementType() != null
+    get() = arrayElementTypeArgument() != null
+
+fun ConeKotlinType.isArrayOrPrimitiveArray(checkUnsignedArrays: Boolean): Boolean {
+    return arrayElementTypeArgument(checkUnsignedArrays) != null
+}
 
 fun ConeKotlinType.createOutArrayType(nullable: Boolean = false, createPrimitiveArrayType: Boolean = true): ConeKotlinType {
     return ConeKotlinTypeProjectionOut(this).createArrayType(nullable, createPrimitiveArrayType)
@@ -28,20 +32,6 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
     }
 
     return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
-}
-
-fun ConeKotlinType.arrayElementType(): ConeKotlinType? {
-    val type = this.lowerBoundIfFlexible()
-    if (type !is ConeClassLikeType) return null
-    val classId = type.lookupTag.classId
-    if (classId == StandardClassIds.Array)
-        return (type.typeArguments.first() as ConeKotlinTypeProjection).type
-    val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: StandardClassIds.elementTypeByUnsignedArrayType[classId]
-    if (elementType != null) {
-        return elementType.constructClassLikeType(emptyArray(), isNullable = false)
-    }
-
-    return null
 }
 
 fun ConeKotlinType.varargElementType(): ConeKotlinType {

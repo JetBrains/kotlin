@@ -7,7 +7,9 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(toolsJarApi())
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 }

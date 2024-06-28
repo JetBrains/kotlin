@@ -1,19 +1,11 @@
 @kotlin.Metadata
-public final class LocalDelegatedPropertyKt$foo$x$1 {
-    // source: 'localDelegatedProperty.kt'
-    public final static field INSTANCE: kotlin.reflect.KMutableProperty0
-    static method <clinit>(): void
-    method <init>(): void
-    public method getName(): java.lang.String
-    public method getOwner(): kotlin.reflect.KDeclarationContainer
-    public method getSignature(): java.lang.String
-}
-
-@kotlin.Metadata
 public final class LocalDelegatedPropertyKt {
     // source: 'localDelegatedProperty.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     static method <clinit>(): void
+    public synthetic final static method access$foo$lambda-0(p0: java.lang.String): java.lang.String
+    private final static method foo$lambda-0(p0: java.lang.String): java.lang.String
+    private final static method foo$lambda-1(p0: java.lang.String, p1: java.lang.String): void
     public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.String
     public final static method setValue(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.Nullable p1: java.lang.Object, @org.jetbrains.annotations.Nullable p2: java.lang.Object, @org.jetbrains.annotations.NotNull p3: java.lang.String): void

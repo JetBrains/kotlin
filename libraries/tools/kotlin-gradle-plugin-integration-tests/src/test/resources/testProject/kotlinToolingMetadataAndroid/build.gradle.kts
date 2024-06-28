@@ -11,6 +11,7 @@ repositories {
 
 android {
     compileSdkVersion(23)
+    namespace = "kotlin.multiplatform.projects"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

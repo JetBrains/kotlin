@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.javaField
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -157,27 +157,67 @@ data class ExternalSystemNativeMainRunTask(
     }
 }
 
-class KotlinFacetSettings {
+interface IKotlinFacetSettings {
+    var version: Int
+    var useProjectSettings: Boolean
+    val mergedCompilerArguments: CommonCompilerArguments?
+    var compilerArguments: CommonCompilerArguments?
+    var compilerSettings: CompilerSettings?
+    var languageLevel: LanguageVersion?
+    var apiLevel: LanguageVersion?
+    var targetPlatform: TargetPlatform?
+    var externalSystemRunTasks: List<ExternalSystemRunTask>
+    var implementedModuleNames: List<String>
+    var dependsOnModuleNames: List<String>
+    var additionalVisibleModuleNames: Set<String>
+    var productionOutputPath: String?
+    var testOutputPath: String?
+    var kind: KotlinModuleKind
+    var sourceSetNames: List<String>
+    var isTestModule: Boolean
+    var externalProjectId: String
+    var isHmppEnabled: Boolean
+    val mppVersion: KotlinMultiplatformVersion?
+    var pureKotlinSourceFolders: List<String>
+
+    fun updateMergedArguments()
+}
+
+/*
+This function is needed as some setting values may not be present in compilerArguments
+but present in additional arguments instead, so we have to check both cases manually
+ */
+inline fun <reified A : CommonCompilerArguments> IKotlinFacetSettings.isCompilerSettingPresent(settingReference: KProperty1<A, Boolean>): Boolean {
+    val isEnabledByCompilerArgument = compilerArguments?.safeAs<A>()?.let(settingReference::get)
+    if (isEnabledByCompilerArgument == true) return true
+    val isEnabledByAdditionalSettings = run {
+        val stringArgumentName = settingReference.javaField?.getAnnotation(Argument::class.java)?.value ?: return@run null
+        compilerSettings?.additionalArguments?.contains(stringArgumentName, ignoreCase = true)
+    }
+    return isEnabledByAdditionalSettings ?: false
+}
+
+class KotlinFacetSettings: IKotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
         val CURRENT_VERSION = 5
         val DEFAULT_VERSION = 0
     }
+    override var version = CURRENT_VERSION
+    override var useProjectSettings: Boolean = true
 
-    var version = CURRENT_VERSION
-    var useProjectSettings: Boolean = true
-
-    var mergedCompilerArguments: CommonCompilerArguments? = null
-        private set
+    private var _mergedCompilerArguments: CommonCompilerArguments? = null
+    override val mergedCompilerArguments: CommonCompilerArguments?
+        get() = _mergedCompilerArguments
 
     // TODO: Workaround for unwanted facet settings modification on code analysis
     // To be replaced with proper API for settings update (see BaseKotlinCompilerSettings as an example)
-    fun updateMergedArguments() {
+    override fun updateMergedArguments() {
         val compilerArguments = compilerArguments
         val compilerSettings = compilerSettings
 
-        mergedCompilerArguments = if (compilerArguments != null) {
-            copyBean(compilerArguments).apply {
+        _mergedCompilerArguments = if (compilerArguments != null) {
+            compilerArguments.copyOf().apply {
                 if (compilerSettings != null) {
                     parseCommandLineArguments(compilerSettings.additionalArgumentsAsList, this)
                 }
@@ -186,33 +226,21 @@ class KotlinFacetSettings {
         } else null
     }
 
-    var compilerArguments: CommonCompilerArguments? = null
+    override var compilerArguments: CommonCompilerArguments? = null
         set(value) {
             field = value?.unfrozen()
             updateMergedArguments()
         }
 
-    var compilerSettings: CompilerSettings? = null
+    override var compilerSettings: CompilerSettings? = null
         set(value) {
             field = value?.unfrozen()
             updateMergedArguments()
         }
 
-    /*
-    This function is needed as some setting values may not be present in compilerArguments
-    but present in additional arguments instead, so we have to check both cases manually
-     */
-    inline fun <reified A : CommonCompilerArguments> isCompilerSettingPresent(settingReference: KProperty1<A, Boolean>): Boolean {
-        val isEnabledByCompilerArgument = compilerArguments?.safeAs<A>()?.let(settingReference::get)
-        if (isEnabledByCompilerArgument == true) return true
-        val isEnabledByAdditionalSettings = run {
-            val stringArgumentName = settingReference.findAnnotation<Argument>()?.value ?: return@run null
-            compilerSettings?.additionalArguments?.contains(stringArgumentName, ignoreCase = true)
-        }
-        return isEnabledByAdditionalSettings ?: false
-    }
 
-    var languageLevel: LanguageVersion?
+
+    override var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
             compilerArguments?.apply {
@@ -220,7 +248,7 @@ class KotlinFacetSettings {
             }
         }
 
-    var apiLevel: LanguageVersion?
+    override var apiLevel: LanguageVersion?
         get() = compilerArguments?.apiVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
             compilerArguments?.apply {
@@ -228,7 +256,7 @@ class KotlinFacetSettings {
             }
         }
 
-    var targetPlatform: TargetPlatform? = null
+    override var targetPlatform: TargetPlatform? = null
         get() {
             // This work-around is required in order to fix importing of the proper JVM target version and works only
             // for fully actualized JVM target platform
@@ -241,7 +269,7 @@ class KotlinFacetSettings {
             return field
         }
 
-    var externalSystemRunTasks: List<ExternalSystemRunTask> = emptyList()
+    override var externalSystemRunTasks: List<ExternalSystemRunTask> = emptyList()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -253,25 +281,25 @@ class KotlinFacetSettings {
         return targetPlatform?.toIdePlatform()
     }
 
-    var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
-    var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations
+    override var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
+    override var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations
 
-    var additionalVisibleModuleNames: Set<String> = emptySet()
+    override var additionalVisibleModuleNames: Set<String> = emptySet()
 
-    var productionOutputPath: String? = null
-    var testOutputPath: String? = null
+    override var productionOutputPath: String? = null
+    override var testOutputPath: String? = null
 
-    var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
-    var sourceSetNames: List<String> = emptyList()
-    var isTestModule: Boolean = false
+    override var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
+    override var sourceSetNames: List<String> = emptyList()
+    override var isTestModule: Boolean = false
 
-    var externalProjectId: String = ""
+    override var externalProjectId: String = ""
 
-    var isHmppEnabled: Boolean = false
+    override var isHmppEnabled: Boolean = false
         @Deprecated(message = "Use mppVersion.isHmppEnabled", ReplaceWith("mppVersion.isHmpp"))
         get
 
-    val mppVersion: KotlinMultiplatformVersion?
+    override val mppVersion: KotlinMultiplatformVersion?
         @Suppress("DEPRECATION")
         get() = when {
             isHmppEnabled -> KotlinMultiplatformVersion.M3
@@ -280,5 +308,5 @@ class KotlinFacetSettings {
             else -> null
         }
 
-    var pureKotlinSourceFolders: List<String> = emptyList()
+    override var pureKotlinSourceFolders: List<String> = emptyList()
 }

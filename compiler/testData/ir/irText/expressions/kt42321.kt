@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: JVM_IR
 // FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 // SKIP_KT_DUMP

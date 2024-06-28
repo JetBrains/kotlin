@@ -1,0 +1,53 @@
+@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirNamedFunctionSymbol foo/Obj.explicitType]
+
+FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] object Obj : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] constructor(): R|foo/Obj| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        private final const [ResolvedTo(STATUS)] val constant: <implicit> = LAZY_EXPRESSION
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Obj] get(): <implicit>
+
+        public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| {
+            ^explicitType IntegerLiteral(0)
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval localProperty: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| <inline=Unknown>  {
+            ^ Q|foo/Obj|.R|foo/Obj.explicitType|()
+        }
+        )
+    }

@@ -5,19 +5,26 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.RUN_DEX_CHECKER
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JvmForeignAnnotationsConfigurator
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.*
 
@@ -38,7 +45,7 @@ fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput
     jvmArtifactsHandlersStep(init = {})
 }
 
-private fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
+fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JvmPlatforms.defaultJvmPlatform
@@ -53,6 +60,7 @@ private fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDeb
         ::CommonEnvironmentConfigurator,
         ::JvmEnvironmentConfigurator,
         ::ScriptingEnvironmentConfigurator,
+        ::JvmForeignAnnotationsConfigurator,
     )
 
     useAdditionalSourceProviders(
@@ -85,6 +93,18 @@ fun TestConfigurationBuilder.useInlineHandlers() {
     applyDumpSmapDirective()
 }
 
+fun TestConfigurationBuilder.useIrInliner() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
+    }
+}
+
+fun TestConfigurationBuilder.useInlineScopesNumbers() {
+    defaultDirectives {
+        +LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
+    }
+}
+
 fun TestConfigurationBuilder.applyDumpSmapDirective() {
     forTestsMatching("compiler/testData/codegen/boxInline/smap/*") {
         defaultDirectives {
@@ -109,20 +129,6 @@ fun TestConfigurationBuilder.configureCommonHandlersForBoxTest() {
     }
 }
 
-fun TestConfigurationBuilder.configureCommonHandlersForSteppingTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        steppingHandlersForBackendStep()
-    }
-}
-
-fun TestConfigurationBuilder.configureCommonHandlersForLocalVariableTest() {
-    commonHandlersForCodegenTest()
-    configureJvmArtifactsHandlersStep {
-        localVariableHandlersForBackendStep()
-    }
-}
-
 fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     configureClassicFrontendHandlersStep {
         commonClassicFrontendHandlersForCodegenTest()
@@ -136,48 +142,57 @@ fun TestConfigurationBuilder.commonHandlersForCodegenTest() {
     }
 }
 
-fun HandlersStepBuilder<IrBackendInput>.dumpHandlersForConverterStep() {
-    useHandlers(::IrTreeVerifierHandler, ::IrTextDumpHandler)
+fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.dumpHandlersForConverterStep()
+        where InputArtifactKind : BackendKind<IrBackendInput> {
+    useHandlers(
+        ::IrTreeVerifierHandler,
+        ::IrTextDumpHandler,
+        ::IrMangledNameAndSignatureDumpHandler,
+    )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.dumpHandlersForBackendStep() {
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.dumpHandlersForBackendStep() {
     useHandlers(::BytecodeListingHandler)
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.boxHandlersForBackendStep() {
-    useHandlers(::JvmBoxRunner)
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.boxHandlersForBackendStep() {
+    useHandlers(
+        ::JvmBoxRunner
+    )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.steppingHandlersForBackendStep() {
-    useHandlers(::SteppingDebugRunner)
-}
-
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.localVariableHandlersForBackendStep() {
-    useHandlers(::LocalVariableDebugRunner)
-}
-
-fun HandlersStepBuilder<ClassicFrontendOutputArtifact>.commonClassicFrontendHandlersForCodegenTest() {
+fun HandlersStepBuilder<ClassicFrontendOutputArtifact, FrontendKinds.ClassicFrontend>.commonClassicFrontendHandlersForCodegenTest() {
     useHandlers(
         ::NoCompilationErrorsHandler,
     )
 }
 
-fun HandlersStepBuilder<FirOutputArtifact>.commonFirHandlersForCodegenTest() {
+fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersForCodegenTest() {
     useHandlers(
         ::NoFirCompilationErrorsHandler,
     )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.commonBackendHandlersForCodegenTest() {
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest() {
     useHandlers(
+        ::JvmBackendDiagnosticsHandler,
         ::NoJvmSpecificCompilationErrorsHandler,
         ::DxCheckerHandler,
     )
 }
 
-fun HandlersStepBuilder<BinaryArtifacts.Jvm>.inlineHandlers() {
+fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.inlineHandlers() {
     useHandlers(
         ::BytecodeInliningHandler,
         ::SMAPDumpHandler
     )
+}
+
+fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
+    defaultDirectives {
+        JvmEnvironmentConfigurationDirectives.JDK_KIND with jdkKind
+        JvmEnvironmentConfigurationDirectives.JVM_TARGET with jvmTarget
+        +ConfigurationDirectives.WITH_STDLIB
+        +CodegenTestDirectives.IGNORE_DEXING
+    }
 }

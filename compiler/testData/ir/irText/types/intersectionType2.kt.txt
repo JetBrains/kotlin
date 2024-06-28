@@ -1,31 +1,25 @@
-interface A<out T : Any?> {
+open class B : A<B>, Foo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
+  }
+
+}
+
+open class C : A<C>, Foo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface A<out T : Any?> {
 }
 
 interface Foo {
-
-}
-
-open class B : Foo, A<B> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-open class C : Foo, A<C> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-fun <T : Any?> run(fn: Function0<T>): T {
-  return fn.invoke()
 }
 
 fun foo(): Any {
@@ -40,3 +34,8 @@ fun foo(): Any {
   }
 )
 }
+
+fun <T : Any?> run(fn: Function0<T>): T {
+  return fn.invoke()
+}
+

@@ -7,21 +7,22 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.InitializersLoweringBase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrSetField
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
-class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context), ClassLoweringPass {
+@PhaseDescription(
+    name = "StaticInitializers",
+    description = "Move code from object init blocks and static field initializers to a new <clinit> function"
+)
+internal class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context), ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val staticInitializerStatements = extractInitializers(irClass) {
             // JVM implementations are required to generate initializers for all static fields with ConstantValue,
@@ -34,8 +35,9 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
                     JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE -> 1
                     IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 2
                     IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 3
-                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 4
-                    else -> 5
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES -> 4
+                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 5
+                    else -> 6
                 }
             }
             irClass.addFunction {
@@ -47,7 +49,8 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
                 returnType = context.irBuiltIns.unitType
                 visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }.apply {
-                body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements).patchDeclarationParents(this)
+                body = context.irFactory.createBlockBody(irClass.startOffset, irClass.endOffset, staticInitializerStatements)
+                    .patchDeclarationParents(this)
             }
         }
     }

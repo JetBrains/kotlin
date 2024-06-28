@@ -11,6 +11,8 @@ import kotlin.script.experimental.dependencies.ExternalDependenciesResolver.Opti
 
 open class RepositoryCoordinates(val string: String)
 
+data class ArtifactWithLocation(val artifact: String, val sourceCodeLocation: SourceCode.LocationWithId?)
+
 interface ExternalDependenciesResolver {
     interface Options {
         object Empty : Options {
@@ -25,11 +27,18 @@ interface ExternalDependenciesResolver {
     fun acceptsRepository(repositoryCoordinates: RepositoryCoordinates): Boolean
     fun acceptsArtifact(artifactCoordinates: String): Boolean
 
+    // Override one of the following methods
     suspend fun resolve(
         artifactCoordinates: String,
         options: Options = Options.Empty,
         sourceCodeLocation: SourceCode.LocationWithId? = null
-    ): ResultWithDiagnostics<List<File>>
+    ): ResultWithDiagnostics<List<File>> = resolve(listOf(ArtifactWithLocation(artifactCoordinates, sourceCodeLocation)), options)
+
+    suspend fun resolve(
+        artifactsWithLocations: List<ArtifactWithLocation>,
+        options: Options = Options.Empty,
+    ): ResultWithDiagnostics<List<File>> =
+        artifactsWithLocations.map { (artifact, location) -> resolve(artifact, options, location) }.asSuccessIfAny()
 
     fun addRepository(
         repositoryCoordinates: RepositoryCoordinates,
@@ -46,4 +55,3 @@ fun ExternalDependenciesResolver.addRepository(
     options: Options = Options.Empty,
     sourceCodeLocation: SourceCode.LocationWithId? = null
 ) = addRepository(RepositoryCoordinates(repositoryCoordinates), options, sourceCodeLocation)
-

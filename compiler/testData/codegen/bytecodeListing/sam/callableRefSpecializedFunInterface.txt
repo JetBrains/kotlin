@@ -5,25 +5,15 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 }
 
 @kotlin.Metadata
-synthetic final class<null>  TKt$sam$Sam$0 {
+synthetic final class<null>  TKt$specializedSam$1 {
     // source: 't.kt'
-    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
-    public <null> method equals(p0: java.lang.Object): boolean
-    public synthetic final <null> method get(): java.lang.Object
-    public <null> method getFunctionDelegate(): kotlin.Function
-    public <null> method hashCode(): int
-    enclosing method TKt.specializedSam()Ljava/lang/String;
-    private synthetic final field <null> function: kotlin.jvm.functions.Function0
-    inner (anonymous) class TKt$sam$Sam$0
-}
-
-@kotlin.Metadata
-synthetic final class<Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function0<Ljava/lang/String;>;>  TKt$specializedSam$1 {
-    // source: 't.kt'
+    public final <()Lkotlin/Function<*>;> method getFunctionDelegate(): kotlin.Function
     static <null> method <clinit>(): void
     <null> method <init>(): void
-    public synthetic bridge <null> method invoke(): java.lang.Object
-    public final @org.jetbrains.annotations.NotNull <null> method invoke(): java.lang.String
+    public final <null> method equals(p0: java.lang.Object): boolean
+    public synthetic bridge <null> method get(): java.lang.Object
+    public final <null> method get(): java.lang.String
+    public final <null> method hashCode(): int
     enclosing method TKt.specializedSam()Ljava/lang/String;
     public final static field <null> INSTANCE: TKt$specializedSam$1
     inner (anonymous) class TKt$specializedSam$1
@@ -35,6 +25,5 @@ public final class<null>  TKt {
     public final static <<T:Ljava/lang/Object;>(LSam<TT;>;)TT;> method expectsSam(@org.jetbrains.annotations.NotNull p0: Sam): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull <null> method foo(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull <null> method specializedSam(): java.lang.String
-    inner (anonymous) class TKt$sam$Sam$0
     inner (anonymous) class TKt$specializedSam$1
 }

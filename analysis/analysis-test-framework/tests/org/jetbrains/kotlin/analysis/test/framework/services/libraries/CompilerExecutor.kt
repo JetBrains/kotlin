@@ -1,69 +1,107 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
+import org.jetbrains.kotlin.analysis.test.framework.services.configuration.AnalysisApiJvmEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.div
-import kotlin.io.path.exists
-import kotlin.io.path.notExists
+import kotlin.io.path.*
 
-object CompilerExecutor {
-    fun compileLibrary(sourcesPath: Path, options: List<String>, compilationErrorExpected: Boolean): Path {
-        val library = sourcesPath / "library.jar"
-        val sourceFiles = sourcesPath.toFile().walkBottomUp()
-        val commands = buildList {
-            sourceFiles.mapTo(this) { it.absolutePath }
-            addAll(options)
-            add("-d")
-            add(library.absolutePathString())
-            add("-XXLanguage:-SkipStandaloneScriptsInSourceRoots")
-        }
-        try {
-            MockLibraryUtil.runJvmCompiler(commands)
+fun TestConfigurationBuilder.configureLibraryCompilationSupport() {
+    useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
+    useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
+    useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::AnalysisApiJvmEnvironmentConfigurator,
+        ::JsEnvironmentConfigurator
+    )
+}
+
+internal object CompilerExecutor {
+    fun compileLibrary(
+        compilerKind: CompilerKind,
+        sourcesPath: Path,
+        options: List<String>,
+        compilationErrorExpected: Boolean,
+        libraryName: String,
+        extraClasspath: List<String>,
+    ): Path {
+        val library = try {
+            compile(compilerKind, sourcesPath, options, libraryName, extraClasspath)
         } catch (e: Throwable) {
             if (!compilationErrorExpected) {
                 throw IllegalStateException("Unexpected compilation error while compiling library", e)
             }
+            null
         }
 
-        if (library.exists() && compilationErrorExpected) {
+        if (library?.exists() == true && compilationErrorExpected) {
             error("Compilation error expected but, code was compiled successfully")
         }
-        if (library.notExists()) {
+        if (library == null || library.notExists()) {
             throw LibraryWasNotCompiledDueToExpectedCompilationError()
         }
         return library
     }
 
-    fun parseCompilerOptionsFromTestdata(module: TestModule): List<String> = buildList {
-        module.directives[LanguageSettingsDirectives.API_VERSION].firstOrNull()?.let { apiVersion ->
-            addAll(listOf("-api-version", apiVersion.versionString))
+    private fun compile(
+        compilerKind: CompilerKind,
+        sourcesPath: Path,
+        options: List<String>,
+        libraryName: String,
+        extraClasspath: List<String>,
+    ): Path {
+        val sourceFiles = sourcesPath.toFile().walkBottomUp()
+        val library = when (compilerKind) {
+            CompilerKind.JVM -> sourcesPath / "$libraryName.jar"
+            CompilerKind.JS -> sourcesPath / "$libraryName.klib"
         }
 
-        module.directives[LanguageSettingsDirectives.LANGUAGE].firstOrNull()?.let {
-            add("-XXLanguage:$it")
+        when (compilerKind) {
+            CompilerKind.JVM -> {
+                val extraOptions = buildList {
+                    addAll(options)
+                    add("-XXLanguage:-${LanguageFeature.SkipStandaloneScriptsInSourceRoots.name}")
+                }
+
+                MockLibraryUtil.compileLibraryToJar(
+                    sourcesPath = sourcesPath.absolutePathString(),
+                    contentDir = sourcesPath.toFile(),
+                    jarName = libraryName,
+                    extraOptions = extraOptions,
+                    assertions = JUnit5Assertions,
+                    useJava11 = true,
+                    extraClasspath = extraClasspath,
+                )
+            }
+            CompilerKind.JS -> {
+                val commands = buildList {
+                    add(K2JSCompilerArguments::moduleName.cliArgument); add(libraryName)
+                    add(K2JSCompilerArguments::outputDir.cliArgument); add(library.parent.absolutePathString())
+                    add(K2JSCompilerArguments::irProduceKlibFile.cliArgument)
+                    sourceFiles.mapTo(this) { it.absolutePath }
+                    addAll(options)
+                }
+                MockLibraryUtil.runJsCompiler(commands)
+            }
         }
 
-        module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
-            addAll(listOf("-jvm-target", jvmTarget.description))
-        }
-
-        addAll(module.directives[Directives.COMPILER_ARGUMENTS])
+        return library
     }
 
-    object Directives : SimpleDirectivesContainer() {
-        val COMPILER_ARGUMENTS by stringDirective("List of additional compiler arguments")
-        val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
+    enum class CompilerKind {
+        JVM, JS
     }
 }
 

@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
+class WasmCompiledModuleFragment(
+    val irBuiltIns: IrBuiltIns,
+    generateTrapsInsteadOfExceptions: Boolean,
+) {
     val functions =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
     val globalFields =
@@ -33,9 +37,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>()
     val classITableInterfaceSlot =
         ReferencableAndDefinable<IrClassSymbol, Int>()
-    val classIds =
-        ReferencableElements<IrClassSymbol, Int>()
-    val interfaceId =
+    val typeIds =
         ReferencableElements<IrClassSymbol, Int>()
     val stringLiteralAddress =
         ReferencableElements<String, Int>()
@@ -50,7 +52,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ),
         emptyList()
     )
-    val tag = WasmTag(tagFuncType)
+    val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
 
     val typeInfo = ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
 
@@ -119,19 +121,19 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             wasmSymbol.bind(canonicalFunctionTypes.getValue(functionTypes.defined.getValue(irSymbol)))
         }
 
-        val klassIds = mutableMapOf<IrClassSymbol, Int>()
         var currentDataSectionAddress = 0
-        for (typeInfoElement in typeInfo.elements) {
-            val ir = typeInfo.wasmToIr.getValue(typeInfoElement)
-            klassIds[ir] = currentDataSectionAddress
-            currentDataSectionAddress += typeInfoElement.sizeInBytes
+        var interfaceId = 0
+        typeIds.unbound.forEach { (klassSymbol, wasmSymbol) ->
+            if (klassSymbol.owner.isInterface) {
+                interfaceId--
+                wasmSymbol.bind(interfaceId)
+            } else {
+                wasmSymbol.bind(currentDataSectionAddress)
+                currentDataSectionAddress += typeInfo.defined.getValue(klassSymbol).sizeInBytes
+            }
         }
-
         currentDataSectionAddress = alignUp(currentDataSectionAddress, INT_SIZE_BYTES)
         scratchMemAddr.bind(currentDataSectionAddress)
-
-        bind(classIds.unbound, klassIds)
-        interfaceId.unbound.onEachIndexed { index, entry -> entry.value.bind(index) }
 
         val stringDataSectionBytes = mutableListOf<Byte>()
         var stringDataSectionStart = 0
@@ -160,16 +162,30 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             val constData = ConstantDataIntegerArray("constant_array", constantArraySegment.first, integerSize)
             data.add(WasmData(WasmDataMode.Passive, constData.toBytes()))
         }
-        typeInfo.buildData(data, address = { klassIds.getValue(it) })
+
+        typeIds.unbound.forEach { (klassSymbol, typeId) ->
+            if (!klassSymbol.owner.isInterface) {
+                val instructions = mutableListOf<WasmInstr>()
+                WasmIrExpressionBuilder(instructions).buildConstI32(
+                    typeId.owner,
+                    SourceLocation.NoLocation("Compile time data per class")
+                )
+                val typeData = WasmData(
+                    WasmDataMode.Active(0, instructions),
+                    typeInfo.defined.getValue(klassSymbol).toBytes()
+                )
+                data.add(typeData)
+            }
+        }
 
         val masterInitFunctionType = WasmFunctionType(emptyList(), emptyList())
-        val masterInitFunction = WasmFunction.Defined("__init", WasmSymbol(masterInitFunctionType))
+        val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(masterInitFunctionType))
         with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
             initFunctions.sortedBy { it.priority }.forEach {
                 buildCall(WasmSymbol(it.function), SourceLocation.NoLocation("Generated service code"))
             }
         }
-        exports += WasmExport.Function("__init", masterInitFunction)
+        exports += WasmExport.Function("_initialize", masterInitFunction)
 
         val typeInfoSize = currentDataSectionAddress
         val memorySizeInPages = (typeInfoSize / 65_536) + 1
@@ -225,7 +241,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             elements = emptyList(),
             data = data,
             dataCount = true,
-            tags = listOf(tag)
+            tags = tags
         )
         module.calculateIds()
         return module
@@ -249,18 +265,6 @@ private fun irSymbolDebugDump(symbol: Any?): String =
         is IrClassSymbol -> "class ${symbol.owner.fqNameWhenAvailable}"
         else -> symbol.toString()
     }
-
-inline fun WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>.buildData(
-    into: MutableList<WasmData>,
-    address: (IrClassSymbol) -> Int
-) {
-    elements.mapTo(into) {
-        val id = address(wasmToIr.getValue(it))
-        val offset = mutableListOf<WasmInstr>()
-        WasmIrExpressionBuilder(offset).buildConstI32(id, SourceLocation.NoLocation("Compile time data per class"))
-        WasmData(WasmDataMode.Active(0, offset), it.toBytes())
-    }
-}
 
 fun alignUp(x: Int, alignment: Int): Int {
     assert(alignment and (alignment - 1) == 0) { "power of 2 expected" }

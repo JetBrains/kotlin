@@ -74,5 +74,5 @@ private inline fun <reified T : Any> castToBaseType(instance: Any): T {
  */
 @PublishedApi
 @SinceKotlin("1.2")
-internal fun apiVersionIsAtLeast(major: Int, minor: Int, patch: Int) =
+internal fun apiVersionIsAtLeast(major: Int, minor: Int, patch: Int): Boolean =
     KotlinVersion.CURRENT.isAtLeast(major, minor, patch)

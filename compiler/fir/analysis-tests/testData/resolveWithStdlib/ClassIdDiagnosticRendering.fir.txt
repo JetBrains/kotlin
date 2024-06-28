@@ -1,0 +1,48 @@
+FILE: ClassIdDiagnosticRendering.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalSubclassOptIn|)))
+    package a.b.c
+
+    @R|kotlin/RequiresOptIn|() public final annotation class Marker : R|kotlin/Annotation| {
+        public constructor(): R|a/b/c/Marker| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|a/b/c/Marker|() public final class Some : R|kotlin/Any| {
+        public constructor(): R|a/b/c/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|a/b/c/Some.Some|()
+    }
+    public final annotation class DummyAnnotation : R|kotlin/Annotation| {
+        public constructor(): R|a/b/c/DummyAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/SubclassOptInRequired|(markerClass = <getClass>(Q|a/b/c/DummyAnnotation|)) public open class IncorrectSubclassOptInArgumentMarker : R|kotlin/Any| {
+        public constructor(): R|a/b/c/IncorrectSubclassOptInArgumentMarker| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    internal abstract fun interface StableInterface : R|kotlin/Any| {
+        @R|a/b/c/Marker|() public abstract fun experimentalMethod(): R|kotlin/Unit|
+
+    }
+    public final fun testOverrides(): R|kotlin/Unit| {
+        object : R|a/b/c/StableInterface| {
+            private constructor(): R|a/b/c/<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override fun experimentalMethod(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final actual typealias TypealiasToKotlinPkg = R|kotlin/Deprecated|

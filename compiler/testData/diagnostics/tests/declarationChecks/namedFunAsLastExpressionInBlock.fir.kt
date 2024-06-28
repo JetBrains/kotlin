@@ -1,10 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
     val x = <!ANONYMOUS_FUNCTION_WITH_NAME!>fun named1(x: Int): Int { return 1 }<!>
-    x <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<Function1<Int, Int>>() }
+    x <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>Function1<Int, Int><!>>() }
 
     foo { <!ARGUMENT_TYPE_MISMATCH!>fun named2(): Int {return 1}<!> }
     foo({ <!ARGUMENT_TYPE_MISMATCH!>fun named3() = 1<!> })
@@ -26,15 +26,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> fun named8(): Int {return 1}
-        else -> fun named9() = 1
+        0 -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named8(): Int {return 1}<!>
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named9() = 1<!>
     }
 
     val x31 = when (1) {
         0 -> {
             fun named10(): Int {return 1}
         }
-        else -> fun named11() = 1
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named11() = 1<!>
     }
 
     val x4 = {

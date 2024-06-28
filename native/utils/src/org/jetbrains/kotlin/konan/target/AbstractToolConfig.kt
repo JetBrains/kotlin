@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 
-abstract class AbstractToolConfig(konanHome: String, userProvidedTargetName: String?, propertyOverrides: Map<String, String>) {
-    private val distribution = Distribution(konanHome, propertyOverrides = propertyOverrides)
+abstract class AbstractToolConfig(konanHome: String, userProvidedTargetName: String?, propertyOverrides: Map<String, String>, konanDataDir: String? = null) {
+    private val distribution = Distribution(konanHome, propertyOverrides = propertyOverrides, konanDataDir = konanDataDir)
     private val platformManager = PlatformManager(distribution)
     private val targetManager = platformManager.targetManager(userProvidedTargetName)
     private val host = HostManager.host

@@ -1,2 +1,2 @@
 // INFERENCE_HELPERS
-class A : <!UNRESOLVED_REFERENCE!>Undefined<!>(id(materialize()))
+class A : <!UNRESOLVED_REFERENCE!>Undefined<!>(<!CANNOT_INFER_PARAMETER_TYPE!>id<!>(<!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()))

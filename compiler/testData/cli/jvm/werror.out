@@ -1,5 +1,8 @@
 error: warnings found and -Werror specified
-compiler/testData/cli/jvm/werror.kt:2:6: warning: unnecessary non-null assertion (!!) on a non-null receiver of type String
-    s!!
-     ^
+compiler/testData/cli/jvm/werror.kt:2:13: warning: division by zero.
+    println(a / 0)
+            ^^^^^
+compiler/testData/cli/jvm/werror.kt:3:13: warning: division by zero.
+    println(b / 0)
+            ^^^^^
 COMPILATION_ERROR

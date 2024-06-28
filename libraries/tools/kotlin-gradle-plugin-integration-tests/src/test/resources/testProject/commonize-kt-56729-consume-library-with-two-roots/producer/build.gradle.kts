@@ -12,7 +12,7 @@ group = "org.jetbrains.sample"
 
 publishing {
     repositories {
-        maven(buildDir.resolve("repo"))
+        maven("<localRepo>")
     }
 }
 
@@ -20,7 +20,7 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    targetHierarchy.custom {
+    applyHierarchyTemplate {
         group("nativeCommon") {
             withNative()
         }

@@ -1,3 +1,4 @@
+
 inline fun test(crossinline l: () -> String) {
     {
         l()

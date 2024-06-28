@@ -1,4 +1,5 @@
 
+
 // FILE: test.kt
 
 fun box() {
@@ -11,24 +12,25 @@ fun box() {
     "OK"
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:5 box
-// EXPECTATIONS JVM
-// test.kt:6 box
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 box
-// test.kt:10 box
-// EXPECTATIONS JVM
-// test.kt:7 invoke
-// test.kt:8 invoke
 // EXPECTATIONS JVM_IR
-// test.kt:7 box$bar
-// test.kt:8 box$bar
-// EXPECTATIONS JVM JVM_IR
+// test.kt:6 box
+// test.kt:10 box
 // test.kt:11 box
+// test.kt:8 box$bar
+// test.kt:9 box$bar
 // test.kt:12 box
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:10 box
-// test.kt:8 box$bar
-// test.kt:12 box
+// test.kt:11 box
+// test.kt:9 box$bar
+// test.kt:13 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (4, 4, 4, 4)
+// test.kt:10 $box (4, 4, 4, 4)
+// test.kt:11 $box
+// test.kt:8 $box$bar (8, 8, 8, 8)
+// test.kt:9 $box$bar
+// test.kt:12 $box (4, 4, 4, 4)
+// test.kt:13 $box

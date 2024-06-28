@@ -1,4 +1,4 @@
 compiler/testData/cli/jvm/fileClassAndMultifileClassClash1.kt:1:1: error: duplicate JVM class name 'test/Util' generated from: Util, Util
 @file:JvmName("Util")
-^
+^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

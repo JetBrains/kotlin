@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
+object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirFunction && declaration !is FirProperty) return
+        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         require(declaration is FirCallableDeclaration)
         // if source is not null then this type was declared in source
         // so it can not be inferred to anonymous type
@@ -40,13 +42,20 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
          * 2. `val x = ...`
          * 3. `val x get() = ...`
          */
-        val typeRef = when (declaration) {
-            is FirProperty -> declaration.initializer?.typeRef ?: declaration.getter?.body?.singleExpressionType
-            is FirFunction -> declaration.body?.singleExpressionType
+        val (type, source) = when (declaration) {
+            is FirProperty -> {
+                declaration.initializer?.resolvedType?.let { it to declaration.source } ?: run {
+                    val getter = declaration.getter
+                    // Getter can have delegate call as the source, but diagnostic must be reported on KtDeclaration
+                    val getterDeclarationSource = if (declaration.delegate != null) declaration.source else getter?.source
+                    (getter?.body?.singleExpressionType to getterDeclarationSource)
+                }
+            }
+            is FirFunction -> declaration.body?.singleExpressionType to declaration.source
             else -> error("Should not be there")
-        } ?: return
+        }
 
-        checkTypeAndArguments(typeRef.coneType, context, reporter, declaration.source)
+        type?.let { checkTypeAndArguments(it, context, reporter, source) }
     }
 
     private fun checkTypeAndArguments(
@@ -76,5 +85,5 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
     }
 
     private val FirBlock.singleExpressionType
-        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.typeRef
+        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.resolvedType
 }

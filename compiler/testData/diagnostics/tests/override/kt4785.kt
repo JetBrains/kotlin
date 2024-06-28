@@ -1,3 +1,5 @@
+// ISSUES: KT-2491, KT-4785, KT-63741, KT-59400
+
 interface T {
     fun foo()
 }

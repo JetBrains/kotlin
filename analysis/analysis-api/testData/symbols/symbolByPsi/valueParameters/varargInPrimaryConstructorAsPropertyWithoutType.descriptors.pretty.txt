@@ -1,0 +1,3 @@
+class Foo(vararg ints: ERROR(No type specified for unknown element)) {
+  val ints: kotlin.Array<out ERROR(No type specified for unknown element)>
+}

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class Outer<out E, in F> {
     inner class Inner {
         fun unsafe1(x: <!TYPE_VARIANCE_CONFLICT_ERROR!>E<!>) {}

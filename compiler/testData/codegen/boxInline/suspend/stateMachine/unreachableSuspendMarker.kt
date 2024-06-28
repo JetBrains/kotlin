@@ -33,6 +33,7 @@ suspend fun withoutTryCatch(): String {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     var result = "FAIL 0"
     builder {
         result = try {

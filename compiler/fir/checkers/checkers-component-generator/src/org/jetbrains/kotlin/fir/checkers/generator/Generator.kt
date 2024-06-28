@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
-import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
-import org.jetbrains.kotlin.util.SmartPrinter
-import org.jetbrains.kotlin.util.withIndent
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 private typealias Alias = String
@@ -17,6 +15,8 @@ private typealias Fqn = String
 
 private const val CHECKERS_COMPONENT_INTERNAL_ANNOTATION = "@CheckersComponentInternal"
 private const val CHECKERS_COMPONENT_INTERNAL_FQN = "org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal"
+private const val MPP_CHECKER_KIND_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind"
+private const val MPP_CHECKER_WITH_KIND_FQN = "org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind"
 
 class Generator(
     private val configuration: CheckersConfiguration,
@@ -92,10 +92,13 @@ class Generator(
         val filename = "${composedComponentName}.kt"
         generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
-            printImports()
+            printImports(MPP_CHECKER_KIND_FQN, MPP_CHECKER_WITH_KIND_FQN)
             printGeneratedMessage()
-            println("class $composedComponentName : $checkersComponentName() {")
+            println("class $composedComponentName(val predicate: (FirCheckerWithMppKind) -> Boolean) : $checkersComponentName() {")
             withIndent {
+                println("constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })")
+                println()
+
                 // public overrides
                 for (alias in configuration.aliases.values) {
                     println("override ${alias.valDeclaration}")
@@ -125,10 +128,10 @@ class Generator(
                 println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
                     for (alias in configuration.aliases.values) {
-                        println("_${alias.fieldName} += checkers.${alias.fieldName}")
+                        println("checkers.${alias.fieldName}.filterTo(_${alias.fieldName}, predicate)")
                     }
                     for (fieldName in configuration.additionalCheckers.keys) {
-                        println("_$fieldName += checkers.$fieldName")
+                        println("checkers.$fieldName.filterTo(_$fieldName, predicate)")
                     }
                 }
                 println("}")
@@ -143,10 +146,11 @@ class Generator(
         println()
     }
 
-    private fun SmartPrinter.printImports() {
+    private fun SmartPrinter.printImports(vararg additionalImports: String) {
         val imports = buildList {
             addAll(configuration.additionalCheckers.values)
             add(CHECKERS_COMPONENT_INTERNAL_FQN)
+            addAll(additionalImports)
         }.sorted()
 
         for (fqn in imports) {

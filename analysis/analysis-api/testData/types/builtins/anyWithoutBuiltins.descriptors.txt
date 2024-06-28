@@ -1,0 +1,16 @@
+KaUsualClassType:
+  abbreviatedType: null
+  annotations: []
+  classId: kotlin/Any
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: Any
+      symbol: KaNamedClassSymbol(kotlin/Any)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/Any)
+  typeArguments: []
+
+Rendered type:
+kotlin.Any

@@ -1,0 +1,45 @@
+Module: lib-common
+FILE: module_lib-common_mppDependencyWithActualTypealiasAnnotation.kt
+    package foo
+
+    public final expect annotation class MyAnnotation : R|kotlin/Annotation| {
+    }
+FILE: module_lib-jvm_mppDependencyWithActualTypealiasAnnotation.kt
+    package foo
+
+    public final annotation class RealState : R|kotlin/Annotation| {
+        public constructor(): R|foo/RealState| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final actual typealias MyAnnotation = R|foo/RealState|
+Module: lib-jvm
+FILE: module_lib-common_mppDependencyWithActualTypealiasAnnotation.kt
+    package foo
+
+    public final expect annotation class MyAnnotation : R|kotlin/Annotation| {
+    }
+FILE: module_lib-jvm_mppDependencyWithActualTypealiasAnnotation.kt
+    package foo
+
+    public final annotation class RealState : R|kotlin/Annotation| {
+        public constructor(): R|foo/RealState| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final actual typealias MyAnnotation = R|foo/RealState|
+Module: main
+FILE: module_main_mppDependencyWithActualTypealiasAnnotation.kt
+    package foo
+
+    @R|{foo/MyAnnotation=} foo/RealState|() public final object CommonBenchmark : R|kotlin/Any| {
+        private constructor(): R|foo/CommonBenchmark| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

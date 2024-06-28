@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -23,8 +24,16 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 internal sealed class DeprecatedByAnnotation(
     val annotation: AnnotationDescriptor,
     override val target: DeclarationDescriptor,
-    override val propagatesToOverrides: Boolean
+    final override val propagatesToOverrides: Boolean,
+    final override val forcePropagationToOverrides: Boolean = false,
 ) : DescriptorBasedDeprecationInfo() {
+
+    init {
+        require(!forcePropagationToOverrides || propagatesToOverrides) {
+            "if something is `forcePropagationToOverrides`, it's expected that `propagatesToOverrides` == true, too"
+        }
+    }
+
     override val message: String?
         get() = (annotation.argumentValue("message") as? StringValue)?.value
 
@@ -37,8 +46,9 @@ internal sealed class DeprecatedByAnnotation(
     class StandardDeprecated(
         annotation: AnnotationDescriptor,
         target: DeclarationDescriptor,
-        propagatesToOverrides: Boolean
-    ) : DeprecatedByAnnotation(annotation, target, propagatesToOverrides) {
+        propagatesToOverrides: Boolean,
+        forcePropagationToOverrides: Boolean = false,
+    ) : DeprecatedByAnnotation(annotation, target, propagatesToOverrides, forcePropagationToOverrides) {
         override val deprecationLevel: DeprecationLevelValue
             get() = when ((annotation.argumentValue("level") as? EnumValue)?.enumEntryName?.asString()) {
                 "WARNING" -> WARNING
@@ -105,7 +115,14 @@ internal sealed class DeprecatedByAnnotation(
                 val level = computeLevelForDeprecatedSinceKotlin(deprecatedSinceKotlinAnnotation, apiVersion) ?: return null
                 return DeprecatedSince(deprecatedAnnotation, target, propagatesToOverrides, level)
             }
-            return StandardDeprecated(deprecatedAnnotation, target, propagatesToOverrides)
+            val forcePropagationToOverrides =
+                (deprecatedAnnotation as? BuiltInAnnotationDescriptor)?.forcePropagationDeprecationToOverrides == true
+            return StandardDeprecated(
+                deprecatedAnnotation,
+                target,
+                propagatesToOverrides || forcePropagationToOverrides,
+                forcePropagationToOverrides = forcePropagationToOverrides
+            )
         }
     }
 }
@@ -115,6 +132,8 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
         assert(deprecations.isNotEmpty())
         assert(deprecations.none { it is DeprecatedByOverridden })
     }
+
+    override val forcePropagationToOverrides: Boolean = deprecations.any { it.forcePropagationToOverrides }
 
     override val deprecationLevel: DeprecationLevelValue = deprecations.map(DescriptorBasedDeprecationInfo::deprecationLevel).minOrNull()!!
 

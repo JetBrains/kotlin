@@ -1,0 +1,23 @@
+val foo: kotlin.Int
+
+fun doFoo()
+
+internal val internalFoo: kotlin.Int
+
+internal fun internalDoFoo()
+
+private val privateFoo: kotlin.Int
+
+private fun privateDoFoo()
+
+val bar: kotlin.Int
+
+fun doBar()
+
+internal val internalBar: kotlin.Int
+
+internal fun internalDoBar()
+
+private val privateBar: kotlin.Int
+
+private fun privateDoBar()

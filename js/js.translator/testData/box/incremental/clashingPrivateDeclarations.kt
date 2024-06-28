@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // NO_COMMON_FILES
 // MODULE: lib
 // FILE: lib.kt

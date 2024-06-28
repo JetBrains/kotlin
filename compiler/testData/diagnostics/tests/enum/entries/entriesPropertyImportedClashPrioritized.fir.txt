@@ -1,0 +1,35 @@
+FILE: entriesPropertyImportedClashPrioritized.fir.kt
+    package foo
+
+    public final enum class A : R|kotlin/Enum<foo/A>| {
+        private constructor(): R|foo/A| {
+            super<R|kotlin/Enum<foo/A>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|foo/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val entries: R|kotlin/Int| = Int(0)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final static fun values(): R|kotlin/Array<foo/A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|foo/A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<foo/A>|
+            public get(): R|kotlin/enums/EnumEntries<foo/A>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|foo/A|.R|foo/A.entries*s|
+        R|kotlin/with|<R|foo/A.Companion|, R|kotlin/Int|>(Q|foo/A|, <L> = with@fun R|foo/A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|special/anonymous|.R|foo/A.Companion.entries|
+        }
+        )
+    }

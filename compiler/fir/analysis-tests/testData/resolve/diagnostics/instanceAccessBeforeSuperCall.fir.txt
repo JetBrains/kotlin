@@ -1,6 +1,6 @@
 FILE: instanceAccessBeforeSuperCall.kt
     public final class A : R|kotlin/Any| {
-        public constructor(x: R|kotlin/Int| = <Unresolved name: getSomeInt>#(), other: R|A| = this@R|/A|, header: R|kotlin/String| = <Unresolved name: keker>#): R|A| {
+        public constructor(x: R|kotlin/Int| = R|A|this@R|/A|.R|/A.getSomeInt|(), other: R|A| = this@R|/A|, header: R|kotlin/String| = R|A|this@R|/A|.R|/A.keker|): R|A| {
             super<R|kotlin/Any|>()
         }
 

@@ -33,6 +33,7 @@ value class ClassFlags(val flags: Long) {
     val isExpect: Boolean get() = IrFlags.IS_EXPECT_CLASS.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_CLASS.get(flags.toInt())
     val isFun: Boolean get() = IrFlags.IS_FUN_INTERFACE.get(flags.toInt())
+    val hasEnumEntries: Boolean get() = IrFlags.HAS_ENUM_ENTRIES.get(flags.toInt())
 
     companion object {
         fun encode(clazz: IrClass, languageVersionSettings: LanguageVersionSettings): Long {

@@ -1,0 +1,185 @@
+MODULE main
+	CLASS Tag.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */
+	CLASS Tag2.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag2;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+					K2
+						kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */
+	CLASS Tag3.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag3;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */
+	CLASS Tag4.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag4;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+					K2
+						kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */
+	CLASS Tag5.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag5;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */
+	CLASS Tag6.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag6;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<in T#0, kotlin/Unit> /* = Action^<in T#0> */
+					K2
+						kotlin/Function1<in @kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<in T#0> */
+	CLASS Tag7.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag7;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<T#0, kotlin/Unit> /* = Action^<T#0> */
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit> /* = Action^<T#0> */
+	CLASS Tag8.class
+		CLASS METADATA
+			CONSTRUCTOR <init>(Lkotlin/jvm/functions/Function1;)V
+				Property: class.metadata.constructor.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */)
+			FUNCTION copy(Lkotlin/jvm/functions/Function1;)LTag8;
+				Property: class.metadata.function.valueParameters
+					K1
+						(action: kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */ /* = ... */)
+					K2
+						(action: kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */ /* = ... */)
+			PROPERTY getAction()Lkotlin/jvm/functions/Function1;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/Function1<T#0, T#0> /* = Action2^<T#0> */
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0> /* = Action2^<T#0> */
+	CLASS CapturedTypesSubstitutionIntoAbbreviationKt.class
+		PACKAGE METADATA
+			TYPE ALIAS Action
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						kotlin/Function1<T#0, kotlin/Unit>
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit>
+				Property: class.metadata.typeAlias.expandedType
+					K1
+						kotlin/Function1<T#0, kotlin/Unit>
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, kotlin/Unit>
+			TYPE ALIAS Action2
+				Property: class.metadata.typeAlias.underlyingType
+					K1
+						kotlin/Function1<T#0, T#0>
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0>
+				Property: class.metadata.typeAlias.expandedType
+					K1
+						kotlin/Function1<T#0, T#0>
+					K2
+						kotlin/Function1<@kotlin/UnsafeVariance T#0, T#0>

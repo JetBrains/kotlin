@@ -1,6 +1,6 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +JvmStaticInInterface
-// !JVM_TARGET: 1.8
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +JvmStaticInInterface
+// JVM_TARGET: 1.8
 
 interface I {
     companion object {

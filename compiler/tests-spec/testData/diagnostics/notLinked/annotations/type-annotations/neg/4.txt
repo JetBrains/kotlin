@@ -1,18 +1,20 @@
 package
 
-public fun case_1(): Inv<@Ann kotlin.String>
+package sometest {
+    public fun case_1(): sometest.Inv<@sometest.Ann kotlin.String>
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
-    public constructor Ann(/*0*/ x: kotlin.Int)
-    public final val x: kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
-public final class Inv</*0*/ T> {
-    public constructor Inv</*0*/ T>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final class Inv</*0*/ T> {
+        public constructor Inv</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

@@ -1,0 +1,33 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val bytes: R|kotlin/ByteArray|
+        public get(): R|kotlin/ByteArray|
+
+    public final val shorts: R|kotlin/ShortArray|
+        public get(): R|kotlin/ShortArray|
+
+    public final val ints: R|kotlin/IntArray|
+        public get(): R|kotlin/IntArray|
+
+    public final val longs: R|kotlin/LongArray|
+        public get(): R|kotlin/LongArray|
+
+    public final val chars: R|kotlin/CharArray|
+        public get(): R|kotlin/CharArray|
+
+    public final val floats: R|kotlin/FloatArray|
+        public get(): R|kotlin/FloatArray|
+
+    public final val doubles: R|kotlin/DoubleArray|
+        public get(): R|kotlin/DoubleArray|
+
+    public final val booleans: R|kotlin/BooleanArray|
+        public get(): R|kotlin/BooleanArray|
+
+    public constructor(bytes: R|kotlin/ByteArray|, shorts: R|kotlin/ShortArray|, ints: R|kotlin/IntArray|, longs: R|kotlin/LongArray|, chars: R|kotlin/CharArray|, floats: R|kotlin/FloatArray|, doubles: R|kotlin/DoubleArray|, booleans: R|kotlin/BooleanArray|): R|test/Anno|
+
+}
+
+@R|test/Anno|(bytes = <implicitArrayOf>(Byte(42), Byte(-1)), shorts = <implicitArrayOf>(Short(-42), Short(0)), ints = <implicitArrayOf>(Int(42), Int(239)), longs = <implicitArrayOf>(Long(42), Long(239)), chars = <implicitArrayOf>(Char(a), Char(Z)), floats = <implicitArrayOf>(Float(2.72), Float(0.0)), doubles = <implicitArrayOf>(Double(42.0), Double(-3.14)), booleans = <implicitArrayOf>(Boolean(true), Boolean(false))) public final class Klass : R|kotlin/Any| {
+    public constructor(): R|test/Klass|
+
+}

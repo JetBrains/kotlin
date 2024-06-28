@@ -3,7 +3,7 @@
 
 package kotlin.collections
 
-internal object EmptySet : Set<Nothing>, Serializable {
+internal object EmptySet : Set<Nothing>, java.io.Serializable {
     private const val serialVersionUID: Long = 3406603774387020532
 
     override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()

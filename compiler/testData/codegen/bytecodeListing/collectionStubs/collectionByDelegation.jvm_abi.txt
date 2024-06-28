@@ -1,0 +1,103 @@
+MODULE main
+	CLASS DGenericCollection.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS DGenericSet.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS DGenericList.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS DGenericMap.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				entries
+			K1
+				getEntries()Ljava/util/Set;
+			K2
+				---
+			K1
+				getKeys()Ljava/util/Set;
+			K2
+				---
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				getValues()Ljava/util/Collection;
+			K2
+				---
+			K1
+				---
+			K2
+				keys
+			K1
+				---
+			K2
+				size
+			K1
+				---
+			K2
+				values
+	CLASS DGenericMapEntry.class
+		CLASS METADATA
+			K1
+				getKey()Ljava/lang/Object;
+			K2
+				---
+			K1
+				getValue()Ljava/lang/Object;
+			K2
+				---
+			K1
+				---
+			K2
+				key
+			K1
+				---
+			K2
+				value
+	CLASS DGenericCollectionBySet.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS DGenericCollectionByList.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size

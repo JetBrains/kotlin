@@ -1,0 +1,29 @@
+FILE: expressionsInQaSelectorsCornerCases.fir.kt
+    public final fun <T> R|T|.b(): R|kotlin/Int| {
+        ^b Int(10)
+    }
+    public final fun <T> R|kotlin/Int|.a(it: R|T|): R|kotlin/Int| {
+        ^a this@R|/a|
+    }
+    public final fun main(): R|kotlin/Unit| {
+        ::<Unresolved reference: b>#.<Unresolved name: invoke>#(Int(5)).<Unresolved name: inv>#()
+        ::<Unresolved reference: a>#.<Unresolved name: invoke>#(Int(5), Char(=)).<Unresolved name: inv>#()
+        lval c: R|@ExtensionFunctionType kotlin/reflect/KFunction1<kotlin/Int, kotlin/Int>| = Q|kotlin/Int|::R|/b<kotlin/Int>|
+        R|<local>/c|.R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|kotlin/Int|>|(Int(5)).R|kotlin/Int.inv|()
+        lval f: R|kotlin/Int.() -> kotlin/Int| = Q|kotlin/Int|::R|/b<kotlin/Int>|
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(Int(5)).R|kotlin/Int.inv|()
+        Q|kotlin/Int|::R|/b<kotlin/Int>|.R|SubstitutionOverride<kotlin/reflect/KFunction1.invoke: R|kotlin/Int|>|(Int(5)).R|kotlin/Int.inv|()
+        lval d: R|@ExtensionFunctionType kotlin/reflect/KFunction2<kotlin/Int, ERROR CLASS: Cannot infer argument for type parameter T, kotlin/Int>| = Q|kotlin/Int|::R|/a<CS errors: _synthetic/ACCEPT_SPECIFIC_TYPE_CALL>#|
+        R|<local>/d|.R|SubstitutionOverride<kotlin/reflect/KFunction2.invoke: R|kotlin/Int|>|(Int(5), Char(=)).R|kotlin/Int.inv|()
+        lval e: R|kotlin/Int.(kotlin/Char) -> kotlin/Int| = Q|kotlin/Int|::R|/a<kotlin/Char>|
+        R|<local>/e|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Int|>|(Int(5), Char(=)).R|kotlin/Int.inv|()
+    }
+    public final val <T> R|T|.x: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(10)
+        }
+    public final fun rain(): R|kotlin/Unit| {
+        <Unresolved name: x>#.<Unresolved name: invoke>#(Int(5)).<Unresolved name: inv>#()
+        ::<Unresolved reference: x>#.<Unresolved name: invoke>#(Int(5)).<Unresolved name: inv>#()
+        Q|kotlin/Int|::R|/x<kotlin/Int>|.R|SubstitutionOverride<kotlin/reflect/KProperty1.invoke: R|kotlin/Int|><Inapplicable(INAPPLICABLE): kotlin/reflect/KProperty1.invoke>#|(Int(5)).R|kotlin/Int.inv|()
+    }

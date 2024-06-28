@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/samOperators.kt
   FUN name:test1 visibility:public modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     BLOCK_BODY
-      CALL 'public open fun get (k: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
+      CALL 'public open fun get (k: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
         $this: GET_VAR '<this>: <root>.J declared in <root>.test1' type=<root>.J origin=null
         k: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-      CALL 'public open fun get (k: @[FlexibleNullability] java.lang.Runnable?, m: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
+      CALL 'public open fun get (k: @[FlexibleNullability] java.lang.Runnable?, m: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=GET_ARRAY_ELEMENT
         $this: GET_VAR '<this>: <root>.J declared in <root>.test1' type=<root>.J origin=null
         k: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
@@ -17,13 +17,13 @@ FILE fqName:<root> fileName:/samOperators.kt
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     BLOCK_BODY
-      CALL 'public open fun set (k: @[FlexibleNullability] java.lang.Runnable?, v: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=EQ
+      CALL 'public open fun set (k: @[FlexibleNullability] java.lang.Runnable?, v: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.J declared in <root>.test2' type=<root>.J origin=null
         k: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
         v: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-      CALL 'public open fun set (k: @[FlexibleNullability] java.lang.Runnable?, m: @[FlexibleNullability] java.lang.Runnable?, v: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=EQ
+      CALL 'public open fun set (k: @[FlexibleNullability] java.lang.Runnable?, m: @[FlexibleNullability] java.lang.Runnable?, v: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.J declared in <root>.test2' type=<root>.J origin=null
         k: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
@@ -34,11 +34,11 @@ FILE fqName:<root> fileName:/samOperators.kt
   FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     BLOCK_BODY
-      CALL 'public open fun plusAssign (i: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=PLUSEQ
+      CALL 'public open fun plusAssign (i: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<this>: <root>.J declared in <root>.test3' type=<root>.J origin=PLUSEQ
         i: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
-      CALL 'public open fun minusAssign (i: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit [operator] declared in <root>.J' type=kotlin.Unit origin=MINUSEQ
+      CALL 'public open fun minusAssign (i: @[FlexibleNullability] java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=MINUSEQ
         $this: GET_VAR '<this>: <root>.J declared in <root>.test3' type=<root>.J origin=MINUSEQ
         i: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           FUNCTION_REFERENCE 'public final fun f (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>

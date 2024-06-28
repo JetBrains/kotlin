@@ -1,0 +1,11 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			K1
+				getProp()Ljava/lang/Integer;
+			K2
+				---
+			K1
+				---
+			K2
+				prop

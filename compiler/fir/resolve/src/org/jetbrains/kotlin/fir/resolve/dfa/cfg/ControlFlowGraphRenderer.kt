@@ -10,16 +10,18 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
-import java.util.*
 
-class FirControlFlowGraphRenderVisitor(
+private class ControlFlowGraphRenderer(
     builder: StringBuilder,
-    private val renderLevels: Boolean = false
-) : FirVisitorVoid() {
+    private val options: ControlFlowGraphRenderOptions,
+) {
     companion object {
         private const val EDGE = " -> "
         private const val RED = "red"
@@ -33,22 +35,30 @@ class FirControlFlowGraphRenderVisitor(
     private var nodeCounter = 0
     private var clusterCounter = 0
 
-    override fun visitFile(file: FirFile) {
-        var name = file.name.replace(".", "_")
-        if (DIGIT_REGEX.matches(name.first().toString())) {
-            name = "_$name"
+    fun renderCompleteGraph(graphName: String, printNodesAndEdges: () -> Unit) {
+        var sanitizedName = graphName.replace(".", "_")
+        if (sanitizedName.isNotEmpty() && DIGIT_REGEX.matches(sanitizedName.first().toString())) {
+            sanitizedName = "_$sanitizedName"
         }
         printer
-            .println("digraph $name {")
+            .println("digraph $sanitizedName {")
             .pushIndent()
             .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
             .println("edge [penwidth=2]")
             .println()
-        visitElement(file)
+        printNodesAndEdges()
         printer
             .popIndent()
             .println("}")
+    }
+
+    fun renderPartialGraph(controlFlowGraph: ControlFlowGraph) {
+        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
+            .associateWithTo(linkedMapOf()) { nodeCounter++ }
+        printer.renderNodes(nodes.filterKeys { it.level >= controlFlowGraph.enterNode.level })
+        printer.renderEdges(nodes)
+        printer.println()
     }
 
     private fun Printer.renderNodes(nodes: Map<CFGNode<*>, Int>) {
@@ -59,13 +69,33 @@ class FirControlFlowGraphRenderVisitor(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            val label = buildString {
-                append(node.render().replace("\"", ""))
-                if (renderLevels) {
-                    append(" [${node.level}]")
+            if (options.renderFlow) {
+                // To maintain compatibility with existing CFG renders, only use HTML-like rendering if flow details are enabled.
+                val label = buildString {
+                    append("<TABLE BORDER=\"0\">")
+                    append("<TR><TD><B>")
+                    append(node.render().toHtmlLikeString())
+                    if (options.renderLevels) {
+                        append(" [${node.level}]")
+                    }
+                    append("</B></TD></TR>")
+                    if (node.flowInitialized) {
+                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">")
+                        append(node.renderFlowHtmlLike())
+                        append("</TD></TR>")
+                    }
+                    append("</TABLE>")
                 }
+                attributes += "label=< $label >"
+            } else {
+                val label = buildString {
+                    append(node.render().replace("\"", ""))
+                    if (options.renderLevels) {
+                        append(" [${node.level}]")
+                    }
+                }
+                attributes += "label=\"$label\""
             }
-            attributes += "label=\"$label\""
 
             when {
                 node.isDead -> "gray"
@@ -101,7 +131,9 @@ class FirControlFlowGraphRenderVisitor(
     private fun Printer.renderEdges(nodes: Map<CFGNode<*>, Int>) {
         for ((node, index) in nodes) {
             for ((style, group) in node.followingNodes.groupBy { node.edgeTo(it).style }.entries.sortedBy { it.key }) {
-                val mappedGroup = group.map { nodes.getValue(it) }.sorted()
+                val mappedGroup = group.map {
+                    nodes.getValue(it)
+                }.sorted()
                 print(index, EDGE, mappedGroup.joinToString(prefix = "{", postfix = "}", separator = " "))
                 style?.let { printWithNoIndent(" $it") }
                 printlnWithNoIndent(";")
@@ -117,23 +149,6 @@ class FirControlFlowGraphRenderVisitor(
         }
     }
 
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
-    }
-
-    override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
-        val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        if (controlFlowGraph.isSubGraph) return
-
-        // TODO: nodes are already in a topological order, but grouping nodes into clusters requires something more.
-        //  But what exactly? And is there a way to do `renderNodes` differently so that any topological order is ok?
-        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
-            .associateWithTo(linkedMapOf()) { nodeCounter++ }
-        printer.renderNodes(nodes)
-        printer.renderEdges(nodes)
-        printer.println()
-    }
-
     private fun Printer.enterCluster(color: String) {
         println("subgraph cluster_${clusterCounter++} {")
         pushIndent()
@@ -144,4 +159,117 @@ class FirControlFlowGraphRenderVisitor(
         popIndent()
         println("}")
     }
+
+    private fun CFGNode<*>.renderFlowHtmlLike(): String {
+        val flow = flow
+        val variables = flow.knownVariables + flow.implications.keys +
+                flow.implications.flatMap { it.value }.map { it.condition.variable } +
+                flow.implications.flatMap { it.value }.map { it.effect.variable }
+        return variables.sorted().joinToString(separator = "<BR/><BR/>") { variable ->
+            buildString {
+                append(variable.renderHtmlLike())
+                if (variable is RealVariable) {
+                    flow.getTypeStatement(variable)?.let {
+                        append("<BR/><B>types</B> ")
+                        append(it.exactType.toHtmlLikeString())
+                    }
+                    flow.implications[flow.unwrapVariable(variable)]?.let {
+                        for (implication in it) {
+                            append("<BR/><B>implication</B> ")
+                            append(implication.toHtmlLikeString())
+                        }
+                    }
+                }
+                flow.implications[variable]?.let {
+                    for (implication in it) {
+                        append("<BR/><B>implication</B> ")
+                        append(implication.toHtmlLikeString())
+                    }
+                }
+            }
+        }
+    }
+
+    private fun DataFlowVariable.renderHtmlLike(): String {
+        val variable = this
+        return buildString {
+            append("<B>")
+            append(variable)
+            append("</B>")
+
+            val callableId = variable.callableId
+            if (variable is RealVariable && callableId != null) {
+                append(" = ")
+                val receivers = listOfNotNull(
+                    variable.identifier.dispatchReceiver?.callableId?.toHtmlLikeString(),
+                    variable.identifier.extensionReceiver?.callableId?.toHtmlLikeString(),
+                )
+                when (receivers.size) {
+                    2 -> append(receivers.joinToString(prefix = "(", postfix = ")."))
+                    1 -> append(receivers.joinToString(postfix = "."))
+                }
+                append(callableId.toHtmlLikeString())
+            }
+            if (variable is SyntheticVariable) {
+                append(" = '")
+                append(variable.fir.render().toHtmlLikeString())
+                append("'")
+            }
+        }
+    }
+
+    private val DataFlowVariable.callableId: CallableId?
+        get() = ((this as? RealVariable)?.identifier?.symbol as? FirCallableSymbol<*>)?.callableId
+
+    /**
+     * Sanitize string for rendering with HTML-like syntax.
+     */
+    private fun Any.toHtmlLikeString(): String = toString()
+        .replace("&", "&amp;")
+        .replace(">", "&gt;")
+        .replace("<", "&lt;")
 }
+
+data class ControlFlowGraphRenderOptions(val renderLevels: Boolean = false, val renderFlow: Boolean = false)
+
+fun ControlFlowGraph.renderTo(builder: StringBuilder, options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()) {
+    ControlFlowGraphRenderer(builder, options).run {
+        renderCompleteGraph(name) {
+            renderPartialGraph(this@renderTo)
+        }
+    }
+}
+
+fun FirElement.renderControlFlowGraphTo(builder: StringBuilder, options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()) {
+    val graphName = (this@renderControlFlowGraphTo as? FirFile)?.name ?: ""
+    ControlFlowGraphRenderer(builder, options).run {
+        renderCompleteGraph(graphName) {
+            accept(
+                object : FirVisitorVoid() {
+                    override fun visitElement(element: FirElement) {
+                        element.acceptChildren(this)
+                    }
+
+                    override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
+                        val controlFlowGraph =
+                            (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
+                        if (controlFlowGraph.isSubGraph) return
+                        renderPartialGraph(controlFlowGraph)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Suppress("unused") // Can be used from the debugger
+fun ControlFlowGraph.render(options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()): String =
+    buildString {
+        renderTo(this, options)
+    }
+
+@Suppress("unused") // Can be used from the debugger
+fun FirElement.renderControlFlowGraph(options: ControlFlowGraphRenderOptions = ControlFlowGraphRenderOptions()): String =
+    buildString {
+        renderControlFlowGraphTo(this, options)
+    }

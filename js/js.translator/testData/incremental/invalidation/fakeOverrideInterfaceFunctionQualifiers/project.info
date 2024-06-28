@@ -1,26 +1,38 @@
 MODULES: lib1, lib2, main
 
-STEP 0..1:
+STEP 0:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2, main/m, main/m.export, main
+STEP 1:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2, main/m
 STEP 2:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2
 STEP 3:
     libs: lib1, lib2, main
-    dirty js: lib1
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2
 STEP 4:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib2, main
+    dirty js files:   lib2/class2, lib2/object2, main/m
 STEP 5:
     libs: lib1, lib2, main
-    dirty js: lib1
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
 STEP 6:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2, main/m
 STEP 7:
     libs: lib1, lib2, main
-    dirty js: lib1
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/class2, lib2/object2
 STEP 8:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib2, main
+    dirty js files:   lib2/class2, lib2/object2, main/m

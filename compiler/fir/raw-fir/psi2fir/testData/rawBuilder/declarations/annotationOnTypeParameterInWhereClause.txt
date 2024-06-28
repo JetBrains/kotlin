@@ -1,0 +1,16 @@
+FILE: annotationOnTypeParameterInWhereClause.kt
+    @Repeatable() @Target(AnnotationTarget#.TYPE_PARAMETER#) public final? annotation class TypeParameterAnn : R|kotlin/Annotation| {
+        public? [ContainingClassKey=TypeParameterAnn] constructor([CorrespondingProperty=/TypeParameterAnn.name] name: String): R|TypeParameterAnn| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+            public? [ContainingClassKey=TypeParameterAnn] get(): String
+
+    }
+    public final? class Foo<@TypeParameterAnn(String(T)) @TypeParameterAnn(String(Prohibit me!!!)) T : Any> : R|kotlin/Any| {
+        public? [ContainingClassKey=Foo] constructor<@TypeParameterAnn(String(T)) @TypeParameterAnn(String(Prohibit me!!!)) T : Any>(): R|Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -24,7 +24,6 @@ if (isMacos || isLinux || isWindows) {
     include(":libcurl")
     include(":videoplayer")
     include(":workers")
-    include(":coverage")
 }
 
 if (isMacos || isLinux) {

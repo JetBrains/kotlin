@@ -1,0 +1,26 @@
+FILE: dependencyWithoutFunctionalKindPlugin.kt
+    public final fun consumeRegularFunction(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun consumeSuspendFunction(block: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun consumeOurComposableFunction(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun test_1(block: R|() -> kotlin/Unit|, composableBlock: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|, suspendBlock: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+        R|org/jetbrains/kotlin/fir/plugin/consumeComposableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/fir/plugin/consumeComposableFunction|(R|<local>/composableBlock|)
+        R|org/jetbrains/kotlin/fir/plugin/consumeComposableFunction<Inapplicable(INAPPLICABLE): org/jetbrains/kotlin/fir/plugin/consumeComposableFunction>#|(R|<local>/suspendBlock|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = R|org/jetbrains/kotlin/fir/plugin/produceComposableFunction|()
+        R|/consumeRegularFunction<Inapplicable(INAPPLICABLE): /consumeRegularFunction>#|(R|<local>/block|)
+        R|/consumeSuspendFunction<Inapplicable(INAPPLICABLE): /consumeSuspendFunction>#|(R|<local>/block|)
+        R|/consumeOurComposableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/fir/plugin/consumeComposableFunction|(R|<local>/block|)
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = R|org/jetbrains/kotlin/fir/plugin/produceBoxedComposableFunction|().R|SubstitutionOverride<org/jetbrains/kotlin/fir/plugin/Box.value: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|>|
+        R|/consumeRegularFunction<Inapplicable(INAPPLICABLE): /consumeRegularFunction>#|(R|<local>/block|)
+        R|/consumeSuspendFunction<Inapplicable(INAPPLICABLE): /consumeSuspendFunction>#|(R|<local>/block|)
+        R|/consumeOurComposableFunction|(R|<local>/block|)
+        R|org/jetbrains/kotlin/fir/plugin/consumeComposableFunction|(R|<local>/block|)
+    }

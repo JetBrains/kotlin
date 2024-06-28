@@ -233,10 +233,12 @@ def force_create_directory(parent, name) -> Path:
 
 
 def llvm_build_commands(
-        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components
+        install_path, bootstrap_path, llvm_src, targets, build_targets, projects, runtimes, distribution_components, debug_cmake
 ) -> List[List[str]]:
     cmake_flags = construct_cmake_flags(bootstrap_path, install_path, projects, runtimes, targets, distribution_components)
-    cmake_command = [cmake, "-G", "Ninja"] + cmake_flags + [os.path.join(llvm_src, "llvm")]
+
+    debug_cmake_flag = ["--debug-trycompile"] if debug_cmake else []
+    cmake_command = [cmake, "-G", "Ninja"] + debug_cmake_flag + cmake_flags + [os.path.join(llvm_src, "llvm")]
     ninja_command = [ninja] + build_targets
     return [cmake_command, ninja_command]
 
@@ -297,6 +299,8 @@ def build_parser() -> argparse.ArgumentParser:
                         help="Override path to git")
     parser.add_argument("--isysroot", type=str, default=None,
                         help="(macOS only) Override path to macOS SDK")
+    parser.add_argument("--debug-cmake", action='store_true',
+                        help="Add --debug-trycompile flag to cmake to save temporary CMakeError.log")
     # Misc.
     parser.add_argument("--save-temporary-files", action='store_true',
                         help="Should intermediate build results be saved?")
@@ -352,7 +356,8 @@ def build_distribution(args):
             build_targets=build_targets,
             projects=projects,
             runtimes=runtimes,
-            distribution_components=args.distribution_components
+            distribution_components=args.distribution_components,
+            debug_cmake=args.debug_cmake,
         )
 
         os.chdir(build_dir)

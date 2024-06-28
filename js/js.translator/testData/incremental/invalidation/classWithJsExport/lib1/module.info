@@ -1,0 +1,12 @@
+STEP 0:
+    modifications:
+        U : lib.0.kt -> lib.kt
+    added file: lib.kt
+STEP 1:
+    modifications:
+        U : lib.1.kt -> lib.kt
+    modified ir: lib.kt
+STEP 2:
+    modifications:
+        U : lib.2.kt -> lib.kt
+    modified ir: lib.kt

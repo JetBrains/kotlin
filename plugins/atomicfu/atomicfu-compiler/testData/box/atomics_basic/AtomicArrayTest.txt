@@ -1,0 +1,53 @@
+@kotlin.Metadata
+public final class ARef {
+    // source: 'AtomicArrayTest.kt'
+    private final field n: int
+    public method <init>(p0: int): void
+    public final method component1(): int
+    public synthetic static method copy$default(p0: ARef, p1: int, p2: int, p3: java.lang.Object): ARef
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int): ARef
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getN(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+final class AtomicArrayClass {
+    // source: 'AtomicArrayTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field a$volatile: java.lang.Object
+    private synthetic final field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final field booleanArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field longArr: java.util.concurrent.atomic.AtomicLongArray
+    private synthetic final field refArr: java.util.concurrent.atomic.AtomicReferenceArray
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getA$volatile(): java.lang.Object
+    public synthetic final method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    public synthetic final method getBooleanArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
+    public synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final method setA$volatile(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class AtomicArrayTest {
+    // source: 'AtomicArrayTest.kt'
+    public method <init>(): void
+    public final method testAnyArray(): void
+    public final method testBooleanArray(): void
+    public final method testIntArray(): void
+    public final method testLongArray(): void
+    public final method testRefArray(): void
+}
+
+@kotlin.Metadata
+public final class AtomicArrayTestKt {
+    // source: 'AtomicArrayTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

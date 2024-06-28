@@ -98,7 +98,7 @@ private val KTypeProjection.javaType: Type
 private interface TypeImpl : Type {
     // This is a copy of [Type.getTypeName] which is present on JDK 8+.
     @Suppress(
-        "VIRTUAL_MEMBER_HIDDEN", "NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT"
+        "VIRTUAL_MEMBER_HIDDEN"
     ) // This is needed for cases when environment variable JDK_1_6 points to JDK 8+.
     fun getTypeName(): String
 }

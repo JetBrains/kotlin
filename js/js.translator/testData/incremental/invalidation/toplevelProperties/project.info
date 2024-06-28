@@ -2,28 +2,65 @@ MODULES: lib1, lib2, main
 
 STEP 0:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, main/m, main/m.export, main
 STEP 1:
     libs: lib1, lib2, main
-    dirty js: lib1
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
 STEP 2:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal
 STEP 3:
     libs: lib1, lib2, main
-    dirty js: lib1
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
 STEP 4..6:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVal
 STEP 7:
     libs: lib1, lib2, main
-    dirty js: lib1
-STEP 8..12:
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 8..9:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVar
+STEP 10:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVal
+STEP 11..12:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVar
 STEP 13:
     libs: lib1, lib2, main
-    dirty js: lib1
-STEP 14..21:
+    dirty js modules: lib1
+    dirty js files:   lib1/l1
+STEP 14..15:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineGlobalVar
+STEP 16..17:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2inlineExtensionProperty
+STEP 18:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2globalVar, lib2/l2inlineGlobalVal, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty
+STEP 19:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty
+STEP 20:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2inlineGlobalVal, lib2/l2inlineGlobalVar
+STEP 21:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2
+    dirty js files:   lib1/l1, lib2/l2, lib2/l2globalVal, lib2/l2globalVar, lib2/l2inlineGlobalVar, lib2/l2inlineExtensionProperty

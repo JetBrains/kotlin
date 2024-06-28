@@ -1,0 +1,12 @@
+KT element: KtArrayAccessExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayAccessExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(1))
+    }

@@ -6,6 +6,10 @@ FILE: interfaceWithSuperclass.kt
 
     }
     public abstract interface B : R|A| {
+        public error_constructor(): R|B| {
+            super<R|A|>()
+        }
+
     }
     public abstract interface C : R|kotlin/Any| {
     }
@@ -16,4 +20,9 @@ FILE: interfaceWithSuperclass.kt
 
     }
     public abstract interface E : R|A|, R|C|, R|D| {
+        public error_constructor(): R|E| {
+            super<R|A|>()
+            super<R|D|>()
+        }
+
     }

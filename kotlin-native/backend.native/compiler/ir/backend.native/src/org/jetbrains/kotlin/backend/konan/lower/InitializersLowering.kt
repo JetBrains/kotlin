@@ -7,29 +7,24 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.isPrimitiveType
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal class InitializersLowering(val context: CommonBackendContext) : ClassLoweringPass {
-
-    object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER : IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
-
-    object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER : IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
+    companion object {
+        val STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER = IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
+        val DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER = IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
+    }
 
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) return
@@ -61,6 +56,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                 }
 
                 override fun visitField(declaration: IrField): IrStatement {
+                    if (declaration.isStatic) return declaration
                     val initializer = declaration.initializer ?: return declaration
                     val startOffset = initializer.startOffset
                     val endOffset = initializer.endOffset
@@ -86,7 +82,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     // We shall keep initializer for constants for compile-time instantiation.
                     // We suppose that if the property is const, then its initializer is IrConst.
                     // If this requirement isn't satisfied, then PropertyAccessorInlineLowering can fail.
-                    declaration.initializer = if (isConst) IrExpressionBodyImpl(initExpression.shallowCopy()) else null
+                    declaration.initializer = if (isConst) context.irFactory.createExpressionBody(initExpression.shallowCopy()) else null
 
                     return declaration
                 }
@@ -109,29 +105,28 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val initializeFun =
-                IrFunctionImpl(
-                        startOffset, endOffset,
+                context.irFactory.createSimpleFunction(
+                        startOffset,
+                        endOffset,
                         DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
-                        IrSimpleFunctionSymbolImpl(),
                         "INITIALIZER".synthesizedName,
                         DescriptorVisibilities.PRIVATE,
-                        Modality.FINAL,
-                        context.irBuiltIns.unitType,
                         isInline = false,
-                        isSuspend = false,
-                        isExternal = false,
-                        isTailrec = false,
                         isExpect = false,
-                        isFakeOverride = false,
+                        context.irBuiltIns.unitType,
+                        Modality.FINAL,
+                        IrSimpleFunctionSymbolImpl(),
+                        isTailrec = false,
+                        isSuspend = false,
                         isOperator = false,
-                        isInfix = false
+                        isInfix = false,
                 ).apply {
                     parent = irClass
                     irClass.declarations.add(this)
 
                     createDispatchReceiverParameter()
 
-                    body = IrBlockBodyImpl(startOffset, endOffset, allInitializers)
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, allInitializers)
                 }
 
             for (initializer in allInitializers) {

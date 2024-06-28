@@ -1,0 +1,125 @@
+//
+// Source
+// ------------------------------------------
+
+package a
+
+import androidx.compose.runtime.Composable
+
+class Foo<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33>(
+    val t1: T1,
+    val t2: T2,
+    val t3: T3,
+    val t4: T4,
+    val t5: T5,
+    val t6: T6,
+    val t7: T7,
+    val t8: T8,
+    val t9: T9,
+    val t10: T10,
+    val t11: T11,
+    val t12: T12,
+    val t13: T13,
+    val t14: T14,
+    val t15: T15,
+    val t16: T16,
+    val t17: T17,
+    val t18: T18,
+    val t19: T19,
+    val t20: T20,
+    val t21: T21,
+    val t22: T22,
+    val t23: T23,
+    val t24: T24,
+    val t25: T25,
+    val t26: T26,
+    val t27: T27,
+    val t28: T28,
+    val t29: T29,
+    val t30: T30,
+    val t31: T31,
+    val t32: T32,
+    val t33: T33,
+)
+fun used(any: Any? = null) {}
+
+@Composable fun A(y: Any? = null) {
+    used(y)
+
+    A(
+        Foo(
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+        )
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = -1)
+class Foo<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33> (val t1: T1, val t2: T2, val t3: T3, val t4: T4, val t5: T5, val t6: T6, val t7: T7, val t8: T8, val t9: T9, val t10: T10, val t11: T11, val t12: T12, val t13: T13, val t14: T14, val t15: T15, val t16: T16, val t17: T17, val t18: T18, val t19: T19, val t20: T20, val t21: T21, val t22: T22, val t23: T23, val t24: T24, val t25: T25, val t26: T26, val t27: T27, val t28: T28, val t29: T29, val t30: T30, val t31: T31, val t32: T32, val t33: T33) {
+  static val %stable: Int = 0
+}
+fun used(any: Any? = null) { }
+@Composable
+fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<A(>:Test.kt#2p")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      y = null
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(y)
+    A(Foo(true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true), %composer, 0, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

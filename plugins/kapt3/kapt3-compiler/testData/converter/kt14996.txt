@@ -1,3 +1,15 @@
+/**
+ * package {
+ *
+ *   // signature: crashMe(Ljava/util/List;)Ljava/lang/CharSequence;
+ *   public final fun crashMe(values: kotlin/collections/List<kotlin/CharSequence>): kotlin/CharSequence
+ *
+ *   // signature: crashMe(Ljava/util/List;)Ljava/lang/String;
+ *   public final fun crashMe(values: kotlin/collections/List<kotlin/String>): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Kt14996Kt {
 

@@ -1,9 +1,3 @@
 expression: "42"
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: "42"
 constantValueKind: String
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: "42"
-constantLikeValueKind: String

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: Test.java
 public class Test {
     public <T> T with(Foo<T> matcher) {

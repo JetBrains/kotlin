@@ -44,13 +44,13 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val throwNPE = context.ir.symbols.throwNullPointerException
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
+    private val booleanNot = context.irBuiltIns.booleanNotSymbol
 
     private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
     private val isSuspendFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
 
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
-    private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
     private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf
     private val isExternalObjectSymbol = context.intrinsics.isExternalObject
@@ -276,8 +276,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 }
             }
 
-            private fun generateIsObjectCheck(argument: IrExpression) = JsIrBuilder.buildCall(isObjectSymbol).apply {
-                putValueArgument(0, argument)
+            private fun generateIsObjectCheck(argument: IrExpression) = JsIrBuilder.buildCall(booleanNot).apply {
+                dispatchReceiver = nullCheck(argument)
             }
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {

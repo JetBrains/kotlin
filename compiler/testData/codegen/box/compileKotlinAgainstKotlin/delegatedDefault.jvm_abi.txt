@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS lib/C.class
+		CLASS METADATA
+			FUNCTION f(Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/String /* = ... */)
+					K2
+						(x: kotlin/String)

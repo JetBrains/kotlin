@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.classFileContainsMethod
+import org.jetbrains.kotlin.backend.jvm.ir.extensionReceiverName
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticValueClassReplacement
+import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -33,6 +37,9 @@ class MemoizedInlineClassReplacements(
     val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
     val originalFunctionForMethodReplacement: MutableMap<IrFunction, IrFunction> = ConcurrentHashMap()
 
+    private val mangleCallsToJavaMethodsWithValueClasses =
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.MangleCallsToJavaMethodsWithValueClasses)
+
     /**
      * Get a replacement for a function or a constructor.
      */
@@ -43,7 +50,6 @@ class MemoizedInlineClassReplacements(
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticValueClassReplacement ||
-                        it in context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure ||
                         it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
@@ -74,21 +80,19 @@ class MemoizedInlineClassReplacements(
                     }
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
-                it is IrSimpleFunction && !it.isFromJava() &&
-                        (it.hasMangledParameters(includeMFVC = false) || mangleReturnTypes && it.hasMangledReturnType) ->
-                    createMethodReplacement(it)
+                it is IrSimpleFunction && it.needsReplacement -> createMethodReplacement(it)
 
                 else ->
                     null
             }
         }
 
-    override fun quickCheckIfFunctionIsNotApplicable(function: IrFunction) = !(
-            function.parent.let { (it is IrClass && it.isSingleFieldValueClass) } ||
-                    function.dispatchReceiverParameter?.type?.isInlineClassType() == true ||
-                    function.extensionReceiverParameter?.type?.isInlineClassType() == true ||
-                    function.valueParameters.any { it.type.isInlineClassType() } || function.returnType.isInlineClassType()
-            )
+    private val IrSimpleFunction.needsReplacement: Boolean
+        get() {
+            if (!hasMangledParameters(includeMFVC = false) && !(mangleReturnTypes && hasMangledReturnType)) return false
+            if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
+            return true
+        }
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -161,7 +165,7 @@ class MemoizedInlineClassReplacements(
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(
                 // The function's name will be mangled, so preserve the old receiver name.
-                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.state))
+                this, index = -1, name = Name.identifier(function.extensionReceiverName(context.config))
             )
             contextReceiverParametersCount = function.contextReceiverParametersCount
             valueParameters = function.valueParameters.mapIndexed { index, parameter ->
@@ -196,7 +200,7 @@ class MemoizedInlineClassReplacements(
             }
             function.extensionReceiverParameter?.let {
                 newValueParameters += it.copyTo(
-                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.state)),
+                    this, index = newValueParameters.size, name = Name.identifier(function.extensionReceiverName(context.config)),
                     origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
                 )
             }
@@ -216,12 +220,12 @@ class MemoizedInlineClassReplacements(
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
     ): IrSimpleFunction {
-        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.
         if (!useOldManglingScheme && replacement.name.asString().contains('-') && function.parentClassId != null) {
-            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverride(true)
+            val resolved = (function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstractOrFail()
             if (resolved?.parentClassId?.let { classFileContainsMethod(it, replacement, context) } == false) {
                 return buildReplacementInner(function, replacementOrigin, noFakeOverride, true, body)
             }
@@ -250,7 +254,7 @@ class MemoizedInlineClassReplacements(
             else ->
                 replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(context, function, mangleReturnTypes, useOldManglingScheme)
     }
 
     override fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor? = null

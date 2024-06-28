@@ -1,0 +1,7 @@
+FILE: userAny.kt
+    public open class Any : R|kotlin/Any| {
+        public? constructor(): R|user/Any| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

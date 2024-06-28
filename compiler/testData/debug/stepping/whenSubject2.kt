@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 
 fun foo(x: Int) {
@@ -22,156 +23,124 @@ fun box() {
     foo(21)
 }
 
-// JVM_IR uses the line number of the when for the table switch and therefore,
-// it stops on the subject line first, then on the when line (line 4 and 12), and
-// then goes to the right branch.
-
-// EXPECTATIONS JVM JVM_IR
-// test.kt:22 box
-// test.kt:5 foo
 // EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:7 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:8 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:8 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:16 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:16 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:7 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:15 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:8 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:8 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:16 foo
-// test.kt:5 foo
-// EXPECTATIONS JVM_IR
-// test.kt:4 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:9 foo
-// test.kt:13 foo
-// EXPECTATIONS JVM_IR
-// test.kt:12 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:16 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:15 foo
-// test.kt:12 foo
-// test.kt:19 foo
 // test.kt:23 box
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:8 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:10 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:9 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:17 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:10 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:17 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:8 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:16 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:10 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:9 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:17 foo
+// test.kt:6 foo
+// test.kt:5 foo
+// test.kt:10 foo
+// test.kt:14 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:17 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:16 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:24 box
 
 // EXPECTATIONS JS_IR
-// test.kt:22 box
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:7 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:8 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:16 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:15 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:8 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:16 foo
-// test.kt:5 foo
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:12 foo
-// test.kt:17 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:12 foo
-// test.kt:19 foo
-// test.kt:12 foo
-// test.kt:19 foo
 // test.kt:23 box
+// test.kt:5 foo
+// test.kt:8 foo
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:5 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:17 foo
+// test.kt:5 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:16 foo
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:5 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:17 foo
+// test.kt:5 foo
+// test.kt:13 foo
+// test.kt:18 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:13 foo
+// test.kt:20 foo
+// test.kt:24 box
+
+// EXPECTATIONS WASM
+// test.kt:23 $box (8, 4)
+// test.kt:6 $foo (9, 9, 9, 9, 9, 9, 9)
+// test.kt:8 $foo (8, 18, 14, 8, 8, 8, 8, 8, 8)
+// test.kt:9 $foo (18, 14, 18, 14)
+// test.kt:10 $foo (16, 16, 16, 16)
+// test.kt:14 $foo (9, 9, 9, 9, 9, 9, 9)
+// test.kt:16 $foo (8, 8, 8, 8, 18, 14, 8, 8, 8)
+// test.kt:18 $foo (16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16)
+// test.kt:13 $foo (4, 4, 4, 4, 4, 4, 4)
+// test.kt:20 $foo (1, 1, 1, 1, 1, 1, 1)
+// test.kt:17 $foo (18, 14, 18, 14)
+// test.kt:24 $box

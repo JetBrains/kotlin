@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: #test0(){}
+//   Public signature: /test0|-2819007353171228053[0]
+//   Public signature debug description: test0(){}
+fun test0(): Unit
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
+fun test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
+fun test3(): Unit
+
+// CHECK:
+//   Mangled name: #testLrmFoo1(kotlin.collections.List<kotlin.Int>){}
+//   Public signature: /testLrmFoo1|3318128046819540804[0]
+//   Public signature debug description: testLrmFoo1(kotlin.collections.List<kotlin.Int>){}
+fun testLrmFoo1(ints: List<Int>): Unit
+
+// CHECK:
+//   Mangled name: #testLrmFoo2(kotlin.collections.List<kotlin.Int>){}
+//   Public signature: /testLrmFoo2|-5288542979552034590[0]
+//   Public signature debug description: testLrmFoo2(kotlin.collections.List<kotlin.Int>){}
+fun testLrmFoo2(ints: List<Int>): Unit
+

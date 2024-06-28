@@ -1,0 +1,32 @@
+KtOperationReferenceExpression(159,161): '+='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = withOperator
+          isSafeNavigation = false
+          type = test.WithOperator
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = test/WithOperator.plusAssign(<dispatch receiver>: test.WithOperator, f: test.Foo): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = f
+              receiverType = null
+              returnType = test.Foo
+              symbol = f: test.Foo
+              callableId = null
+          ]
+          callableId = test/WithOperator.plusAssign
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        foo -> (KaVariableSignature:
+          name = f
+          receiverType = null
+          returnType = test.Foo
+          symbol = f: test.Foo
+          callableId = null)
+      }

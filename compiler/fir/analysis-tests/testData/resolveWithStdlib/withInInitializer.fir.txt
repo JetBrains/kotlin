@@ -19,8 +19,8 @@ FILE: withInInitializer.kt
         public final val data: R|First| = R|/First.First|(Int(42))
             public get(): R|First|
 
-        public final val test: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/with|<R|First|, R|kotlin/collections/List<kotlin/Int>|>(this@R|/Second|.R|/Second.data|, <L> = with@fun R|First|.<anonymous>(): R|kotlin/collections/List<kotlin/Int>| <inline=Inline, kind=EXACTLY_ONCE>  {
-            ^ this@R|/Second|.R|/Second.list|.R|kotlin/collections/filterIsInstance|<R|kotlin/Int|>().R|kotlin/collections/filter|<R|kotlin/Int|>(<L> = filter@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+        public final val test: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/with|<R|First|, R|kotlin/collections/List<@NoInfer kotlin/Int>|>(this@R|/Second|.R|/Second.data|, <L> = with@fun R|First|.<anonymous>(): R|kotlin/collections/List<@NoInfer kotlin/Int>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|/Second|.R|/Second.list|.R|kotlin/collections/filterIsInstance|<R|kotlin/Int|>().R|kotlin/collections/filter|<R|@NoInfer kotlin/Int|>(<L> = filter@fun <anonymous>(it: R|@NoInfer kotlin/Int|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
                 ^ ==(R|<local>/it|, this@R|special/anonymous|.R|/First.member|)
             }
             )

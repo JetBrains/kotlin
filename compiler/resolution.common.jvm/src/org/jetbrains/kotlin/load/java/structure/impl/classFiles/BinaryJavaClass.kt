@@ -1,24 +1,13 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
-import gnu.trove.THashMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
@@ -27,6 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.*
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
@@ -64,7 +54,7 @@ class BinaryJavaClass(
 
     // Short name of a nested class of this class -> access flags as seen in the InnerClasses attribute value.
     // Note that it doesn't include classes mentioned in other InnerClasses attribute values (those which are not nested in this class).
-    private val ownInnerClassNameToAccess: MutableMap<Name, Int> = THashMap()
+    private val ownInnerClassNameToAccess: MutableMap<Name, Int> = Object2ObjectOpenHashMap()
 
     override val innerClassNames get() = ownInnerClassNameToAccess.keys
 
@@ -79,8 +69,10 @@ class BinaryJavaClass(
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
-    override val permittedTypes = arrayListOf<JavaClassifierType>()
+    private val permittedTypesList: ArrayList<JavaClassifierType> = arrayListOf()
+    override val isSealed: Boolean get() = permittedTypesList.isNotEmpty()
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() = permittedTypesList.asSequence()
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
@@ -119,6 +111,7 @@ class BinaryJavaClass(
                 ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
             throw IllegalStateException("Could not read class: $virtualFile", e)
         }
     }
@@ -258,6 +251,6 @@ class BinaryJavaClass(
     }
 
     override fun visitPermittedSubclass(permittedSubclass: String?) {
-        permittedTypes.addIfNotNull(permittedSubclass?.convertInternalNameToClassifierType())
+        permittedTypesList.addIfNotNull(permittedSubclass?.convertInternalNameToClassifierType())
     }
 }

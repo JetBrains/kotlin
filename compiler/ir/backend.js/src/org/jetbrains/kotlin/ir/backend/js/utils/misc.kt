@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isMethodOfAny
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
@@ -106,6 +107,12 @@ fun IrBody.prependFunctionCall(
 
 fun JsCommonBackendContext.findUnitGetInstanceFunction(): IrSimpleFunction =
     mapping.objectToGetInstanceFunction[irBuiltIns.unitClass.owner]!!
+
+fun JsCommonBackendContext.findUnitInstanceField(): IrField =
+    mapping.objectToInstanceField[irBuiltIns.unitClass.owner]!!
+
+val JsCommonBackendContext.compileSuspendAsJsGenerator: Boolean
+    get() = configuration[JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR] == true
 
 fun IrDeclaration.isImportedFromModuleOnly(): Boolean {
     return isTopLevel && isEffectivelyExternal() && (getJsModule() != null && !isJsNonModule() || (parent as? IrAnnotationContainer)?.getJsModule() != null)

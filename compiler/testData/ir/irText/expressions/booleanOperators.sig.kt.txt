@@ -1,0 +1,40 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test1|1784310317697180459[0]
+//   Public signature debug description: test1(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /test1|4334636876570982581[0]
+//   Public signature debug description: test1(kotlin.Boolean;kotlin.Boolean){}
+fun test1(a: Boolean, b: Boolean): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test1x(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test1x|-1515408322066060577[0]
+//   Public signature debug description: test1x(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1x(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /test1x|5571934274519213675[0]
+//   Public signature debug description: test1x(kotlin.Boolean;kotlin.Boolean){}
+fun test1x(a: Boolean, b: Boolean): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test2|799203320988960255[0]
+//   Public signature debug description: test2(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /test2|7186870617663885862[0]
+//   Public signature debug description: test2(kotlin.Boolean;kotlin.Boolean){}
+fun test2(a: Boolean, b: Boolean): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2x(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+//   Public signature: /test2x|-4460874089779287126[0]
+//   Public signature debug description: test2x(kotlin.Boolean;kotlin.Boolean){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2x(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /test2x|-6733438950512439356[0]
+//   Public signature debug description: test2x(kotlin.Boolean;kotlin.Boolean){}
+fun test2x(a: Boolean, b: Boolean): Boolean
+

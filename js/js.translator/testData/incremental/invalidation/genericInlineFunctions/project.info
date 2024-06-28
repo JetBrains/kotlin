@@ -1,8 +1,14 @@
 MODULES: lib1, main, libProxy
 
-STEP 0..7:
+STEP 0:
     libs: lib1, main
-    dirty js: lib1, main
+    dirty js modules: lib1, main
+    dirty js files:   lib1/l1, main/m, main/m.export, main
+STEP 1..7:
+    libs: lib1, main
+    dirty js modules: lib1, main
+    dirty js files:   lib1/l1, main/m
 STEP 8..23:
     libs: lib1, libProxy, main
-    dirty js: lib1, libProxy, main
+    dirty js modules: lib1, libProxy, main
+    dirty js files:   lib1/l1, libProxy/proxy, main/m

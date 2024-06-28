@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
+import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Context, ResultTypeResolver.Context {
-    abstract val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     abstract override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
     abstract override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     abstract override val postponedTypeVariables: List<TypeVariableMarker>
@@ -32,7 +32,11 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     // mutable operations
     abstract fun addError(error: ConstraintSystemError)
 
-    abstract fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>)
+    abstract fun fixVariable(
+        variable: TypeVariableMarker,
+        resultType: KotlinTypeMarker,
+        position: FixVariableConstraintPosition<*>,
+    )
 
     abstract fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
     abstract fun resolveForkPointsConstraints()
@@ -64,7 +68,7 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
         completionMode: ConstraintSystemCompletionMode,
         analyze: (A) -> Unit
     ): Boolean {
-        if (completionMode == ConstraintSystemCompletionMode.FULL) {
+        if (completionMode.allLambdasShouldBeAnalyzed) {
             val argumentWithTypeVariableAsExpectedType = findPostponedArgumentWithRevisableExpectedType(postponedArguments)
 
             if (argumentWithTypeVariableAsExpectedType != null) {
@@ -115,4 +119,11 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
                 !it.typeConstructor().isClassTypeConstructor() && !it.typeConstructor().isTypeParameterTypeConstructor()
             }
         }.map { it.type }
+
+    /**
+     * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
+     * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
+     */
+    @K2Only
+    abstract fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R
 }

@@ -1,3 +1,0 @@
-Resolved to:
-0: (in kotlin.collections) fun <T> mutableListOf(vararg elements: T): kotlin.collections.MutableList<T>
-1: (in kotlin.collections) inline fun <T> mutableListOf(): kotlin.collections.MutableList<T>

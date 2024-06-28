@@ -74,6 +74,8 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
 
         int line = location != null ? location.getLine() : -1;
         int column = location != null ? location.getColumn() : -1;
+        int lineEnd = location != null ? location.getLineEnd() : -1;
+        int columnEnd = location != null ? location.getColumnEnd() : -1;
         String lineContent = location != null ? location.getLineContent() : null;
 
         String path = location != null ? getPath(location) : null;
@@ -122,7 +124,13 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             result.append(lineContent);
             result.append(LINE_SEPARATOR);
             result.append(StringsKt.repeat(" ", column - 1));
-            result.append("^");
+            if (lineEnd > line) {
+                result.append(StringsKt.repeat("^", lineContent.length() - column + 1));
+            } else if (lineEnd == line && columnEnd > column) {
+                result.append(StringsKt.repeat("^", columnEnd - column));
+            } else {
+                result.append("^");
+            }
         }
 
         return result.toString();

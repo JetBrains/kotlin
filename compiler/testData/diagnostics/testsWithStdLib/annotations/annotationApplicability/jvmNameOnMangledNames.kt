@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline class Foo(val x: Int) {
     <!INAPPLICABLE_JVM_NAME!>@JvmName("other")<!>

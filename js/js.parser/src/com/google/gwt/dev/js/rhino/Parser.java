@@ -186,6 +186,10 @@ public class Parser {
 
         Node nameNode;
         Node memberExprNode = null;
+
+        // For generators
+        boolean isGenerator = ts.matchToken(TokenStream.MUL);
+
         if (ts.matchToken(TokenStream.NAME)) {
             nameNode = nf.createName(ts.getString(), basePosition);
             if (!ts.matchToken(TokenStream.LP)) {
@@ -248,7 +252,7 @@ public class Parser {
             functionNumber = savedFunctionNumber;
         }
 
-        Node pn = nf.createFunction(nameNode, args, body, basePosition);
+        Node pn = nf.createFunction(nameNode, args, body, isGenerator, basePosition);
         if (memberExprNode != null) {
             pn = nf.createBinary(TokenStream.ASSIGN, TokenStream.NOP, memberExprNode, pn, basePosition);
         }
@@ -897,6 +901,9 @@ public class Parser {
         CodePosition position = ts.tokenPosition;
 
         switch (tt) {
+            case TokenStream.YIELD:
+                return nf.createUnary(TokenStream.YIELD, ts.getOp(), unaryExpr(ts), position);
+
             case TokenStream.UNARYOP:
                 return nf.createUnary(TokenStream.UNARYOP, ts.getOp(), unaryExpr(ts), position);
 

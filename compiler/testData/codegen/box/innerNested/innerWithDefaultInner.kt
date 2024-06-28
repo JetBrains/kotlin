@@ -1,8 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
-
-// KT-40686
-
-
 class Outer(val o: String, val oo: String) {
     inner class InnerArg(val i: String) {
         val result: String get() = o + i

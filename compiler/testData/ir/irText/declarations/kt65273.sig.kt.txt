@@ -1,0 +1,66 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A.B
+  //   Public signature: /A.B|null[0]
+  private abstract class B {
+    // CHECK:
+    //   Mangled name: A.B{}s
+    //   Public signature: /A.B.s|7217541905509134881[0]
+    //   Public signature debug description: {}s
+    val s: Any
+      // CHECK JVM_IR:
+      //   Mangled name: A.B#<get-s>(){}kotlin.Any
+      //   Public signature: /A.B.s.<get-s>|-6355491283316321221[0]
+      //   Public signature debug description: <get-s>(){}kotlin.Any
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: A.B#<get-s>(){}
+      //   Public signature: /A.B.s.<get-s>|-1662172381559511151[0]
+      //   Public signature debug description: <get-s>(){}
+      get
+
+    // CHECK:
+    //   Mangled name: A.B#<init>(){}
+    //   Public signature: /A.B.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: A.C
+  //   Public signature: /A.C|null[0]
+  private class C : B {
+    // CHECK:
+    //   Mangled name: A.C#<init>(){}
+    //   Public signature: /A.C.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: A.C{}s
+    //   Public signature: /A.C.s|7217541905509134881[0]
+    //   Public signature debug description: {}s
+    /* fake */ override val s: Any
+      // CHECK JVM_IR:
+      //   Mangled name: A.C#<get-s>(){}kotlin.Any
+      //   Public signature: /A.C.s.<get-s>|-6355491283316321221[0]
+      //   Public signature debug description: <get-s>(){}kotlin.Any
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: A.C#<get-s>(){}
+      //   Public signature: /A.C.s.<get-s>|-1662172381559511151[0]
+      //   Public signature debug description: <get-s>(){}
+      /* fake */ override get(): Any
+
+  }
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

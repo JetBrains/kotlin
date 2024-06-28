@@ -1,0 +1,11 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
+//   Public signature debug description: {}test
+val test: JEnum
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test>(){}JEnum
+  //   Public signature: /test.<get-test>|-6218625217141810690[0]
+  //   Public signature debug description: <get-test>(){}JEnum
+  get
+

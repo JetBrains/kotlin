@@ -1,0 +1,3 @@
+/unstableSmartCastOnInvokeReceiver.fir.kt:(162,177): error: Reference has a nullable type 'kotlin.Function0<kotlin.Int>?'. Use explicit '?.invoke' to make a function-like call instead.
+
+/unstableSmartCastOnInvokeReceiver.fir.kt:(252,267): error: Smart cast to 'kotlin.Function0<kotlin.Int>' is impossible, because 'interfaceMethod' is a property that has an open or custom getter. Use explicit '?.invoke' to make a function-like call instead.

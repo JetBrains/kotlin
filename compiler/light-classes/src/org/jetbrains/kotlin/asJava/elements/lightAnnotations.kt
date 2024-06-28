@@ -76,7 +76,9 @@ class KtLightAnnotationForSourceEntry(
             if (callEntry.key.declaresOrInheritsDefaultValue()) {
                 when (val psiElement = callEntry.key.source.getPsi()) {
                     is KtParameter ->
-                        return psiElement.defaultValue?.let { convertToLightAnnotationMemberValue(this, it) }
+                        return psiElement.defaultValue?.let { defaultValue ->
+                            convertToLightAnnotationMemberValue(ktLightAnnotationParameterList, defaultValue)
+                        }
 
                     is PsiAnnotationMethod ->
                         return psiElement.defaultValue

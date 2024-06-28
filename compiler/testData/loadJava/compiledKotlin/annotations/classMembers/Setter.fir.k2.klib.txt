@@ -1,0 +1,13 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}
+
+public final class Class : R|kotlin/Any| {
+    public final var property: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        @PROPERTY_SETTER:R|test/Anno|() public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/Class|
+
+}

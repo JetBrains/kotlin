@@ -1,0 +1,3 @@
+Substitutor: <map substitutor: {S = T}>
+Substituted callables:
+  foo(): T

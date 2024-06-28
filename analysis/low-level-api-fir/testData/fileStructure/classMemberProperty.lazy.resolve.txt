@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] classMemberProperty.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ this@R|/X|.F|/X.x|
+            }
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/X|.F|/X.x| = R|<local>/value|
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] var z: R|kotlin/Int| = Int(15)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

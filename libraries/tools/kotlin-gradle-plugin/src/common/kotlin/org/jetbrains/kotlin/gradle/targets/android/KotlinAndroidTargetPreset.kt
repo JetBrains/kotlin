@@ -7,36 +7,40 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.AndroidGradlePluginIsMissing
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 
 import javax.inject.Inject
 
+@DeprecatedTargetPresetApi
 abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
-) : KotlinTargetPreset<KotlinAndroidTarget> {
+) : InternalKotlinTargetPreset<KotlinAndroidTarget> {
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createTarget(name: String): KotlinAndroidTarget {
-        val result = project.objects.newInstance(
-            KotlinAndroidTarget::class.java,
-            name,
-            project
-        ).apply {
+    override fun createTargetInternal(name: String): KotlinAndroidTarget {
+
+        /*
+        Android Gradle Plugin is required:
+        Creating target will fail with Linkage Error instead
+
+        Could not create an instance of type org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget.
+            > Could not generate a decorated class for type KotlinAndroidTarget.
+            > com/android/build/gradle/api/BaseVariant
+         */
+        project.findAppliedAndroidPluginIdOrNull() ?: project.reportDiagnostic(AndroidGradlePluginIsMissing(Throwable()))
+
+        return project.objects.newInstance(KotlinAndroidTarget::class.java, name, project, true).apply {
+            @Suppress("DEPRECATION")
             preset = this@KotlinAndroidTargetPreset
-            targetUnderConstruction = this
+            project.dynamicallyApplyWhenAndroidPluginIsApplied({ this })
         }
-
-        project.dynamicallyApplyWhenAndroidPluginIsApplied({ result })
-
-        targetUnderConstruction = null
-
-        return result
     }
-
-    /** This is a way to check if there's an Android target being configured now despite it not being added to the `kotlin.targets` yet */
-    internal var targetUnderConstruction: KotlinAndroidTarget? = null
 
     companion object {
         const val PRESET_NAME = "android"

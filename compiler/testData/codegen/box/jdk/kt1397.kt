@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_COLLECTION_INHERITANCE
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: NATIVE
+// DONT_TARGET_EXACT_BACKEND: NATIVE
 
 class IntArrayList(): ArrayList<Int>() {
     override fun get(index: Int): Int = super.get(index)

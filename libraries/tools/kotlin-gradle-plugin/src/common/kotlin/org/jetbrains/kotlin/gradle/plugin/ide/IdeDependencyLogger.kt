@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.getOrNull
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 
 internal object IdeDependencyLogger : IdeDependencyEffect {
 

@@ -1,3 +1,5 @@
+// LANGUAGE: +MultiPlatformProjects
+
 object O {
     fun foo() {}
 }

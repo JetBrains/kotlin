@@ -10,7 +10,7 @@ description = "Common klib reader and writer"
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-util-io"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -18,13 +18,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        languageVersion = "1.4"
-        apiVersion = "1.4"
-        freeCompilerArgs += listOf("-Xsuppress-version-warnings")
-    }
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 

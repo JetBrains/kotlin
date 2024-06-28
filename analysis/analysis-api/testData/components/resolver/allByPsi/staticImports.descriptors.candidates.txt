@@ -1,0 +1,756 @@
+KtFile: 'main.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(31,46): 'package another'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(39,46): 'another'
+  NO_CANDIDATES
+
+KtImportList(48,282): 'import one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtImportDirective(48,77): 'import one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(55,77): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(55,62): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(55,58): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(59,62): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(63,77): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtImportDirective(78,111): 'import one.two.TopLevelObject.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(85,111): 'one.two.TopLevelObject.foo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(85,107): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(85,92): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(85,88): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(89,92): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(93,107): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(108,111): 'foo'
+  NO_CANDIDATES
+
+KtImportDirective(112,145): 'import one.two.TopLevelObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(119,145): 'one.two.TopLevelObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(119,141): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(119,126): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(119,122): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(123,126): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(127,141): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(142,145): 'bar'
+  NO_CANDIDATES
+
+KtImportDirective(146,188): 'import one.two.TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(153,188): 'one.two.TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(153,175): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(153,160): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(153,156): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(157,160): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(161,175): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(176,188): 'NestedObject'
+  NO_CANDIDATES
+
+KtImportDirective(189,235): 'import one.two.TopLevelObject.NestedObject.baz'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(196,235): 'one.two.TopLevelObject.NestedObject.baz'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(196,231): 'one.two.TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(196,218): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(196,203): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(196,199): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(200,203): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(204,218): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(219,231): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(232,235): 'baz'
+  NO_CANDIDATES
+
+KtImportDirective(236,282): 'import one.two.TopLevelObject.NestedObject.doo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(243,282): 'one.two.TopLevelObject.NestedObject.doo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(243,278): 'one.two.TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(243,265): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(243,250): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(243,246): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(247,250): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(251,265): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(266,278): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(279,282): 'doo'
+  NO_CANDIDATES
+
+KtNamedFunction(284,912): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(293,295): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(296,912): '{'
+  NO_CANDIDATES
+
+KtProperty(302,348): 'val explicitTopObject = one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(326,348): 'one.two.TopLevelObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(326,333): 'one.two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(326,329): 'one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(330,333): 'two'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(334,348): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtProperty(353,391): 'val importedTopObject = TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(377,391): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtProperty(397,435): 'val explicitFoo = TopLevelObject.foo()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(415,435): 'TopLevelObject.foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(415,429): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtCallExpression(430,435): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(430,433): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(433,435): '()'
+  NO_CANDIDATES
+
+KtProperty(440,463): 'val importedFoo = foo()'
+  NO_CANDIDATES
+
+KtCallExpression(458,463): 'foo()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(458,461): 'foo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.foo(<dispatch receiver>: one.two.TopLevelObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.foo
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(461,463): '()'
+  NO_CANDIDATES
+
+KtProperty(469,505): 'val explicitBar = TopLevelObject.bar'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(487,505): 'TopLevelObject.bar'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = bar
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val bar: kotlin.Int
+          callableId = one/two/TopLevelObject.bar
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(487,501): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(502,505): 'bar'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = bar
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val bar: kotlin.Int
+          callableId = one/two/TopLevelObject.bar
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(510,531): 'val importedBar = bar'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(528,531): 'bar'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject
+          type = one.two.TopLevelObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = bar
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = val bar: kotlin.Int
+          callableId = one/two/TopLevelObject.bar
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(537,591): 'val explicitNestedObject = TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(564,591): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(564,578): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(579,591): 'NestedObject'
+  NO_CANDIDATES
+
+KtProperty(596,635): 'val importedNestedObject = NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(623,635): 'NestedObject'
+  NO_CANDIDATES
+
+KtProperty(641,692): 'val explicitBaz = TopLevelObject.NestedObject.baz()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(659,692): 'TopLevelObject.NestedObject.baz()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject.NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(659,686): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(659,673): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(674,686): 'NestedObject'
+  NO_CANDIDATES
+
+KtCallExpression(687,692): 'baz()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject.NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(687,690): 'baz'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject.NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(690,692): '()'
+  NO_CANDIDATES
+
+KtProperty(697,739): 'val explicitNestedBaz = NestedObject.baz()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(721,739): 'NestedObject.baz()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(721,733): 'NestedObject'
+  NO_CANDIDATES
+
+KtCallExpression(734,739): 'baz()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(734,737): 'baz'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(737,739): '()'
+  NO_CANDIDATES
+
+KtProperty(744,767): 'val importedBaz = baz()'
+  NO_CANDIDATES
+
+KtCallExpression(762,767): 'baz()'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(762,765): 'baz'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = one/two/TopLevelObject.NestedObject.baz(<dispatch receiver>: one.two.TopLevelObject.NestedObject): kotlin.Unit
+          valueParameters = []
+          callableId = one/two/TopLevelObject.NestedObject.baz
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(765,767): '()'
+  NO_CANDIDATES
+
+KtProperty(773,822): 'val explicitDoo = TopLevelObject.NestedObject.doo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(791,822): 'TopLevelObject.NestedObject.doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject.NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtDotQualifiedExpression(791,818): 'TopLevelObject.NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(791,805): 'TopLevelObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(806,818): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(819,822): 'doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = TopLevelObject.NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(827,867): 'val explicitNestedDoo = NestedObject.doo'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(851,867): 'NestedObject.doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(851,863): 'NestedObject'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(864,867): 'doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = NestedObject
+          isSafeNavigation = false
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtProperty(872,893): 'val importedDoo = doo'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(890,893): 'doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtBinaryExpression(899,910): 'doo = "str"'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Write:
+        value = "str"
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(899,902): 'doo'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Write:
+        value = "str"
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtOperationReferenceExpression(903,904): '='
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaImplicitReceiverValue:
+          symbol = one/two/TopLevelObject.NestedObject
+          type = one.two.TopLevelObject.NestedObject
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = doo
+          receiverType = null
+          returnType = kotlin.String
+          symbol = var doo: kotlin.String
+          callableId = one/two/TopLevelObject.NestedObject.doo
+      simpleAccess = Write:
+        value = "str"
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtStringTemplateExpression(905,910): '"str"'
+  NO_CANDIDATES
+
+KtLiteralStringTemplateEntry(906,909): 'str'
+  NO_CANDIDATES

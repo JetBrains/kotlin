@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class LambdaTest {
+    // source: 'LambdaTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field rs$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field rs$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final static method access$getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getRs$volatile(): java.lang.Object
+    private final method inlineLambda(p0: java.lang.Object, p1: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    public final method loopInLambda1(p0: int): void
+    public final method loopInLambda2(p0: int): void
+    public final method loopInLambda2Ref(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setRs$volatile(p0: java.lang.Object): void
+    public final method test(): void
+}
+
+@kotlin.Metadata
+public final class LambdaTestKt {
+    // source: 'LambdaTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

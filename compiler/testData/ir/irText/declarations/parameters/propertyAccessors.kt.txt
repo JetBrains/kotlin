@@ -1,39 +1,3 @@
-val test1: Int
-  get(): Int {
-    return 42
-  }
-
-var test2: Int
-  get(): Int {
-    return 42
-  }
-  set(value: Int) {
-  }
-
-val String.testExt1: Int
-  get(): Int {
-    return 42
-  }
-
-var String.testExt2: Int
-  get(): Int {
-    return 42
-  }
-  set(value: Int) {
-  }
-
-val <T : Any?> T.testExt3: Int
-  get(): Int {
-    return 42
-  }
-
-var <T : Any?> T.testExt4: Int
-  get(): Int {
-    return 42
-  }
-  set(value: Int) {
-  }
-
 class Host<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
@@ -78,3 +42,40 @@ class Host<T : Any?> {
     }
 
 }
+
+val test1: Int
+  get(): Int {
+    return 42
+  }
+
+var test2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+val String.testExt1: Int
+  get(): Int {
+    return 42
+  }
+
+var String.testExt2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+val <T : Any?> T.testExt3: Int
+  get(): Int {
+    return 42
+  }
+
+var <T : Any?> T.testExt4: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+

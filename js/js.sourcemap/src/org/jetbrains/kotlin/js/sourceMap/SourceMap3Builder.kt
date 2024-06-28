@@ -4,7 +4,7 @@
  */
 package org.jetbrains.kotlin.js.sourceMap
 
-import gnu.trove.TObjectIntHashMap
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import java.io.File
 import java.io.IOException
@@ -17,20 +17,13 @@ class SourceMap3Builder(
     private val pathPrefix: String
 ) : SourceMapBuilder {
 
-    private class ObjectIntHashMap<T> : TObjectIntHashMap<T>() {
-        override fun get(key: T): Int {
-            val index = index(key)
-            return if (index < 0) -1 else _values[index]
-        }
-    }
-
     private val out = StringBuilder(8192)
 
-    private val sources = ObjectIntHashMap<SourceKey>()
+    private val sources = createOpenHashMap<SourceKey>()
     private val orderedSources = mutableListOf<String>()
     private val orderedSourceContentSuppliers = mutableListOf<Supplier<Reader?>>()
 
-    private val names = ObjectIntHashMap<String>()
+    private val names = createOpenHashMap<String>()
     private val orderedNames = mutableListOf<String>()
     private var previousNameIndex = 0
     private var previousPreviousNameIndex = 0
@@ -98,7 +91,7 @@ class SourceMap3Builder(
 
     private fun getSourceIndex(source: String, fileIdentity: Any?, contentSupplier: Supplier<Reader?>): Int {
         val key = SourceKey(source, fileIdentity)
-        var sourceIndex = sources[key]
+        var sourceIndex = sources.getInt(key)
         if (sourceIndex == -1) {
             sourceIndex = orderedSources.size
             sources.put(key, sourceIndex)
@@ -109,7 +102,7 @@ class SourceMap3Builder(
     }
 
     private fun getNameIndex(name: String): Int {
-        var nameIndex = names[name]
+        var nameIndex = names.getInt(name)
         if (nameIndex == -1) {
             nameIndex = orderedNames.size
             names.put(name, nameIndex)
@@ -172,6 +165,13 @@ class SourceMap3Builder(
     override fun addEmptyMapping() {
         if (!currentMappingIsEmpty) {
             startMapping(getCurrentOutputColumn())
+            currentMappingIsEmpty = true
+        }
+    }
+
+    fun addEmptyMapping(outputColumn: Int) {
+        if (!currentMappingIsEmpty) {
+            startMapping(outputColumn)
             currentMappingIsEmpty = true
         }
     }
@@ -242,4 +242,8 @@ class SourceMap3Builder(
          */
         private val fileIdentity: Any?
     )
+
+    private fun <T> createOpenHashMap() = Object2IntOpenHashMap<T>().apply {
+        defaultReturnValue(-1)
+    }
 }

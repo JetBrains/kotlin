@@ -16,12 +16,13 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class FirModifierRenderer {
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
+    protected val printer: FirPrinter get() = components.printer
 
     abstract fun renderModifiers(memberDeclaration: FirMemberDeclaration)
     abstract fun renderModifiers(backingField: FirBackingField)
     abstract fun renderModifiers(constructor: FirConstructor)
     abstract fun renderModifiers(propertyAccessor: FirPropertyAccessor)
+    abstract fun renderModifiers(anonymousFunction: FirAnonymousFunction)
     open fun renderModifiers(valueParameter: FirValueParameter) {
         if (valueParameter.isCrossinline) {
             renderModifier("crossinline")

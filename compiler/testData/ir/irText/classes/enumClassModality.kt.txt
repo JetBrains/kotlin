@@ -1,15 +1,77 @@
+abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
+
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum1 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum1*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Enum*/<TestAbstractEnum1>()
+    /* <init>() */
+
+  }
+
+  fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
+
+  abstract fun foo()
+
+  val entries: EnumEntries<TestAbstractEnum1>
+    get(): EnumEntries<TestAbstractEnum1> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
+
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum2 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum2*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Enum*/<TestAbstractEnum2>()
+    /* <init>() */
+
+  }
+
+  fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
+
+  val entries: EnumEntries<TestAbstractEnum2>
+    get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
 enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
+  X1 = TestFinalEnum1()
+
   private constructor() /* primary */ {
     super/*Enum*/<TestFinalEnum1>()
     /* <init>() */
 
   }
 
-  X1 = TestFinalEnum1()
+  fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
 
   val entries: EnumEntries<TestFinalEnum1>
     get(): EnumEntries<TestFinalEnum1> /* Synthetic body for ENUM_ENTRIES */
@@ -17,21 +79,21 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 }
 
 enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
-  private constructor(x: Int) /* primary */ {
-    super/*Enum*/<TestFinalEnum2>()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
 
   X1 = TestFinalEnum2(x = 1)
 
-  fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<TestFinalEnum2>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<TestFinalEnum2>
     get(): EnumEntries<TestFinalEnum2> /* Synthetic body for ENUM_ENTRIES */
@@ -39,20 +101,20 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 }
 
 enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
+  X1 = TestFinalEnum3()
+
   private constructor() /* primary */ {
     super/*Enum*/<TestFinalEnum3>()
     /* <init>() */
 
   }
 
-  X1 = TestFinalEnum3()
-
-  fun doStuff() {
-  }
+  fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
 
-  fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
+  fun doStuff() {
+  }
 
   val entries: EnumEntries<TestFinalEnum3>
     get(): EnumEntries<TestFinalEnum3> /* Synthetic body for ENUM_ENTRIES */
@@ -60,11 +122,6 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
 }
 
 open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
-  private constructor() /* primary */ {
-    super/*Enum*/<TestOpenEnum1>()
-    /* <init>() */
-
-  }
 
   X1 = X1()
   private enum entry class X1 : TestOpenEnum1 {
@@ -80,9 +137,15 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
 
   }
 
-  fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
+  private constructor() /* primary */ {
+    super/*Enum*/<TestOpenEnum1>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): TestOpenEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<TestOpenEnum1>
     get(): EnumEntries<TestOpenEnum1> /* Synthetic body for ENUM_ENTRIES */
@@ -90,11 +153,6 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
 }
 
 open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
-  private constructor() /* primary */ {
-    super/*Enum*/<TestOpenEnum2>()
-    /* <init>() */
-
-  }
 
   X1 = X1()
   private enum entry class X1 : TestOpenEnum2 {
@@ -109,46 +167,21 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
 
   }
 
-  open fun foo() {
-  }
-
-  fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
-
-  val entries: EnumEntries<TestOpenEnum2>
-    get(): EnumEntries<TestOpenEnum2> /* Synthetic body for ENUM_ENTRIES */
-
-}
-
-abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   private constructor() /* primary */ {
-    super/*Enum*/<TestAbstractEnum1>()
+    super/*Enum*/<TestOpenEnum2>()
     /* <init>() */
 
   }
 
-  X1 = X1()
-  private enum entry class X1 : TestAbstractEnum1 {
-    private constructor() /* primary */ {
-      super/*TestAbstractEnum1*/() /*~> Unit */
-      /* <init>() */
+  fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
 
-    }
+  fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
 
-    override fun foo() {
-    }
-
+  open fun foo() {
   }
 
-  abstract fun foo()
-
-  fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
-
-  val entries: EnumEntries<TestAbstractEnum1>
-    get(): EnumEntries<TestAbstractEnum1> /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<TestOpenEnum2>
+    get(): EnumEntries<TestOpenEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -157,31 +190,3 @@ interface IFoo {
 
 }
 
-abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
-  private constructor() /* primary */ {
-    super/*Enum*/<TestAbstractEnum2>()
-    /* <init>() */
-
-  }
-
-  X1 = X1()
-  private enum entry class X1 : TestAbstractEnum2 {
-    private constructor() /* primary */ {
-      super/*TestAbstractEnum2*/() /*~> Unit */
-      /* <init>() */
-
-    }
-
-    override fun foo() {
-    }
-
-  }
-
-  fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
-
-  val entries: EnumEntries<TestAbstractEnum2>
-    get(): EnumEntries<TestAbstractEnum2> /* Synthetic body for ENUM_ENTRIES */
-
-}

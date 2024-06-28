@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JsMainFunctionExecutionMode
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.UtilsKt
 
@@ -48,7 +50,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
             }
             kotlin.srcDir '../benchmarks/shared/src'
             kotlin.srcDir 'src/main/kotlin'
@@ -56,21 +58,13 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
             }
             kotlin.srcDir 'src/tests'
         }
         jvmTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-            }
         }
         jsTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-            }
         }
         nativeMain {
             dependsOn commonMain
@@ -78,16 +72,10 @@ kotlin {
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
         }
         jvmMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-jvm'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
         }
         jsMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-js'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
         }
@@ -100,10 +88,12 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm') {
             compilations.all {
-                tasks[compileKotlinTaskName].kotlinOptions {
-                    jvmTarget = '1.8'
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        jvmTarget = JvmTarget.JVM_1_8
+                        suppressWarnings = true
+                    }
                 }
-                tasks[compileKotlinTaskName].kotlinOptions.suppressWarnings = true
             }
         }
 
@@ -147,8 +137,8 @@ kotlin {
             }
         }
         fromPreset(presets.js, 'js') {
-            compilations.main.kotlinOptions {
-                main = "noCall"
+            compilations.main.compileTaskProvider.configure {
+                compilerOptions.main = JsMainFunctionExecutionMode.NO_CALL
             }
         }
 
@@ -193,7 +183,7 @@ def getMingwPath() {
     return directory
 }
 
-task assembleWeb(type: Sync) {
+tasks.register("assembleWeb", Sync) {
     def runtimeDependencies = kotlin.targets.js.compilations.main.runtimeDependencyFiles
     from(files {
         runtimeDependencies.collect { File file ->

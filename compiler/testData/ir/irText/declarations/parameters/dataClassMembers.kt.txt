@@ -1,10 +1,4 @@
 data class Test<T : Any?> {
-  constructor(x: T, y: String = "") /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: T
     field = x
     get
@@ -12,6 +6,12 @@ data class Test<T : Any?> {
   val y: String
     field = y
     get
+
+  constructor(x: T, y: String = "") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): T {
     return <this>.#x
@@ -25,8 +25,21 @@ data class Test<T : Any?> {
     return Test<T>(x = x, y = y)
   }
 
-  override fun toString(): String {
-    return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test<T> -> return false
+    }
+    val tmp_0: Test<T> = other as Test<T>
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#y, arg1 = tmp_0.#y).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -38,21 +51,9 @@ data class Test<T : Any?> {
     return result
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is Test<T> -> return false
-    }
-    val tmp0_other_with_cast: Test<T> = other as Test<T>
-    when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
   }
 
 }
+

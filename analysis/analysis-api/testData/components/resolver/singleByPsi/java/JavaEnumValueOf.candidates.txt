@@ -1,0 +1,33 @@
+KtNameReferenceExpression(74,81): 'valueOf'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = RetentionPolicy
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = java.lang.annotation.RetentionPolicy
+          symbol = java/lang/annotation/RetentionPolicy.valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy
+          valueParameters = [
+            KaVariableSignature:
+              name = value
+              receiverType = null
+              returnType = kotlin.String
+              symbol = value: kotlin.String
+              callableId = null
+          ]
+          callableId = java/lang/annotation/RetentionPolicy.valueOf
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "" -> (KaVariableSignature:
+          name = value
+          receiverType = null
+          returnType = kotlin.String
+          symbol = value: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

@@ -1,0 +1,41 @@
+packages: 1
+  generated
+classifiers: 2
+  class GenClass1
+    PSI: KtClass GenClass1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass GenClass1]
+  class GenClass2
+    PSI: KtClass GenClass2 [from extension2.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass GenClass2]
+callables: 5
+  fun genTopLevelFun1(foo: generated.GenClass2): kotlin.String
+    PSI: KtNamedFunction genTopLevelFun1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction genTopLevelFun1]
+  fun kotlin.String.genTopLevelExtension1(): kotlin.Int
+    PSI: KtNamedFunction genTopLevelExtension1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction genTopLevelExtension1]
+  val genTopLevelVal1: kotlin.String
+    PSI: KtProperty genTopLevelVal1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genTopLevelVal1]
+  var genTopLevelVar1: kotlin.String
+    PSI: KtProperty genTopLevelVar1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genTopLevelVar1]
+  val generated.GenClass2.genExtensionVal1: kotlin.Int
+    get()
+    PSI: KtProperty genExtensionVal1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genExtensionVal1]
+constructors: 0

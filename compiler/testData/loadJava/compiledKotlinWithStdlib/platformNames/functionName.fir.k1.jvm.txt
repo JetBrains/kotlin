@@ -1,0 +1,13 @@
+@R|test/A|(s = String(1)) @R|kotlin/jvm/JvmName|(name = String(bar)) public final fun foo(): R|kotlin/String|
+
+field:@FIELD:R|test/A|(s = String(2)) public final var v: R|kotlin/Int|
+    @R|test/A|(s = String(3)) @R|kotlin/jvm/JvmName|(name = String(vget)) public get(): R|kotlin/Int|
+    @R|test/A|(s = String(4)) @R|kotlin/jvm/JvmName|(name = String(vset)) public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
+
+public final annotation class A : R|kotlin/Annotation| {
+    public final val s: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(s: R|kotlin/String|): R|test/A|
+
+}

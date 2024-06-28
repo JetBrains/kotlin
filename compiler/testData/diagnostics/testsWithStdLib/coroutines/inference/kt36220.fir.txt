@@ -1,0 +1,31 @@
+FILE: kt36220.fir.kt
+    public final class TypeDefinition<KotlinType : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<KotlinType : R|kotlin/Any|>(): R|TypeDefinition<KotlinType>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun parse(parser: R|(@R|kotlin/ParameterName|(name = String(serializedValue))  kotlin/String) -> KotlinType?|): R|kotlin/Unit| {
+            ^parse R|kotlin/TODO|()
+        }
+
+        public final fun serialize(parser: R|(@R|kotlin/ParameterName|(name = String(value))  KotlinType) -> kotlin/Any?|): R|kotlin/Unit| {
+            ^serialize R|kotlin/TODO|()
+        }
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))) public final fun <KotlinType : R|kotlin/Any|> defineType(definition: R|TypeDefinition<KotlinType>.() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^defineType R|kotlin/TODO|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/defineType|<R|kotlin/Int|>(<L> = defineType@fun R|TypeDefinition<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.parse: R|kotlin/Unit|>|(<L> = parse@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int?| <inline=NoInline>  {
+                ^ R|<local>/it|.R|kotlin/text/toInt|()
+            }
+            )
+            this@R|special/anonymous|.R|SubstitutionOverride</TypeDefinition.serialize: R|kotlin/Unit|>|(<L> = serialize@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Any?| <inline=NoInline>  {
+                ^ R|<local>/it|.R|kotlin/toString<Inapplicable(RESOLVED_WITH_ERROR): kotlin/toString>#|()
+            }
+            )
+        }
+        )
+    }

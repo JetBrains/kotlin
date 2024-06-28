@@ -28,9 +28,6 @@ sealed class FirImplicitBuiltinTypeRef(
     override val delegatedTypeRef: FirTypeRef?
         get() = null
 
-    override val isFromStubType: Boolean
-        get() = false
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
@@ -105,6 +102,14 @@ class FirImplicitUIntTypeRef(
 class FirImplicitULongTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ULong)
+
+class FirImplicitUShortTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UShort)
+
+class FirImplicitUByteTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UByte)
 
 class FirImplicitNothingTypeRef(
     source: KtSourceElement?
@@ -241,5 +246,7 @@ fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImp
             extensionReceiverTypeArgument = type.typeArguments[1],
             propertyTypeArgument = type.typeArguments[2]
         )
+        is FirImplicitUByteTypeRef -> FirImplicitUByteTypeRef(newSource)
+        is FirImplicitUShortTypeRef -> FirImplicitUShortTypeRef(newSource)
     }
 }

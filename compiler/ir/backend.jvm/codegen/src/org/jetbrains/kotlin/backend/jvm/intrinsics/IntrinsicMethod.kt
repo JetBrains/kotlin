@@ -17,7 +17,7 @@ abstract class IntrinsicMethod : IntrinsicMarker {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction = TODO("implement toCallable() or invoke() of $this")
+    ): IntrinsicFunction = TODO("implement toCallable() or invoke() of $this")
 
     open fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
         with(codegen) {

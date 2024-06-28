@@ -10,25 +10,29 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.*
 
-class FirParcelizeCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
+class FirParcelizeCheckersExtension(
+    session: FirSession,
+    val parcelizeAnnotations: List<ClassId>
+) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-            get() = setOf(FirParcelizeAnnotationChecker)
+            get() = setOf(FirParcelizeAnnotationChecker(parcelizeAnnotations))
     }
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val classCheckers: Set<FirClassChecker>
-            get() = setOf(FirParcelizeClassChecker)
+            get() = setOf(FirParcelizeClassChecker(parcelizeAnnotations))
 
         override val propertyCheckers: Set<FirPropertyChecker>
-            get() = setOf(FirParcelizePropertyChecker)
+            get() = setOf(FirParcelizePropertyChecker(parcelizeAnnotations))
 
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-            get() = setOf(FirParcelizeFunctionChecker)
+            get() = setOf(FirParcelizeFunctionChecker(parcelizeAnnotations))
 
         override val constructorCheckers: Set<FirConstructorChecker>
-            get() = setOf(FirParcelizeConstructorChecker)
+            get() = setOf(FirParcelizeConstructorChecker(parcelizeAnnotations))
     }
 }

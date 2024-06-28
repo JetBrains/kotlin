@@ -5,6 +5,8 @@
 
 #include "Format.h"
 
+#include <cstdio>
+
 #include "Porting.h"
 
 using namespace kotlin;
@@ -23,7 +25,7 @@ std_support::span<char> kotlin::VFormatToSpan(std_support::span<char> buffer, co
         buffer.front() = '\0';
         return buffer;
     }
-    int written = konan::vsnprintf(buffer.data(), buffer.size(), format, args);
+    int written = std::vsnprintf(buffer.data(), buffer.size(), format, args);
     // Consider this a failure, nothing has been written. TODO: Should this be an exception/RuntimeAssert?
     if (written < 0) return buffer;
     // If `written` is larger than the buffer size, just pretend we filled the entire buffer (ignoring the trailing \0).

@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.util.Properties
 import java.io.FileReader
 
@@ -49,12 +49,15 @@ sourceSets["main"].kotlin {
     srcDir("../../../shared/src/library/kotlin")
     srcDir("../../../shared/src/main/kotlin")
     srcDir("../../benchmarks/shared/src/main/kotlin/report")
-    srcDir("../../../../native/utils/src")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs +=
-        listOf("-opt-in=kotlin.RequiresOptIn", "-opt-in=kotlin.ExperimentalStdlibApi")
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        listOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.ExperimentalStdlibApi",
+        )
+    )
 }
 
 dependencies {
@@ -66,7 +69,7 @@ dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
     val ktorVersion = "1.2.1"
     val slackApiVersion = "1.2.0"
-    val shadowVersion = "7.1.2"
+    val shadowVersion = "8.1.7"
     val metadataVersion = "0.0.1-dev-10"
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
@@ -82,6 +85,6 @@ dependencies {
 
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
+    implementation("io.github.goooler.shadow:shadow-gradle-plugin:$shadowVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }

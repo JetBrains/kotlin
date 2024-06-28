@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRe
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonTest
+import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeOriginalMetadataDependencyResolver
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -21,10 +23,11 @@ import org.junit.Test
 class IdeOriginalMetadataDependencyResolverTest {
 
     @Test
-    fun `test kotlin-stdlib-common`() {
+    fun `test kotlin-test-common`() {
+        val lastLegacyMetadataKotlinTestVersion = "1.9.20"
         val project = buildProject {
             enableDependencyVerification(false)
-            enableDefaultStdlibDependency(true)
+            enableDefaultStdlibDependency(false)
             applyMultiplatformPlugin()
             repositories.mavenLocal()
             repositories.mavenCentralCacheRedirector()
@@ -36,17 +39,15 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.linuxX64()
         kotlin.linuxArm64()
 
-        kotlin.targetHierarchy.default()
+        kotlin.sourceSets.commonTest.dependencies {
+            implementation("org.jetbrains.kotlin:kotlin-test-common:$lastLegacyMetadataKotlinTestVersion")
+        }
 
         project.evaluate()
 
-        val stdlibCommonSourceSets = listOf("commonMain", "commonTest").map(kotlin.sourceSets::getByName)
-
-        for (sourceSet in stdlibCommonSourceSets) {
-            IdeOriginalMetadataDependencyResolver.resolve(sourceSet).assertMatches(
-                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin.coreLibrariesVersion}")
-            )
-        }
+        IdeOriginalMetadataDependencyResolver.resolve(kotlin.sourceSets.commonTest.get()).assertMatches(
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-test-common:$lastLegacyMetadataKotlinTestVersion")
+        )
     }
 
     @Test
@@ -64,7 +65,7 @@ class IdeOriginalMetadataDependencyResolverTest {
         kotlin.jvm()
         kotlin.linuxX64()
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
 

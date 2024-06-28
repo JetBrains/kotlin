@@ -1,31 +1,15 @@
-fun use(s: String) {
-}
-
-fun testUse() {
-  use(s = notNullString() /*!! String */)
-}
-
-fun testLocalVal() {
-  val local: String = notNullString() /*!! String */
-}
-
-fun testReturnValue(): String {
-  return notNullString() /*!! String */
-}
-
 val testGlobalVal: String
   field = notNullString() /*!! String */
   get
-
-val testGlobalValGetter: String
-  get(): String {
-    return notNullString() /*!! String */
-  }
 
 fun testJUse() {
   use(s = nullString())
   use(s = notNullString())
   use(x = 42)
+}
+
+fun testLocalVal() {
+  val local: String = notNullString() /*!! String */
 }
 
 fun testLocalVarUse() {
@@ -34,3 +18,20 @@ fun testLocalVarUse() {
   val nns: String = notNullString() /*!! String */
   use(s = nns)
 }
+
+fun testReturnValue(): String {
+  return notNullString() /*!! String */
+}
+
+fun testUse() {
+  use(s = notNullString() /*!! String */)
+}
+
+fun use(s: String) {
+}
+
+val testGlobalValGetter: String
+  get(): String {
+    return notNullString() /*!! String */
+  }
+

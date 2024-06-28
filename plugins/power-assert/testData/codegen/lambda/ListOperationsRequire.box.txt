@@ -1,0 +1,13 @@
+---
+require(
+    value = list
+            |
+            [Jane, John]
+        .map { "Doe, $it" }
+         |
+         [Doe, Jane, Doe, John]
+        .any { it == "Scott, Michael" }
+         |
+         false
+)
+---

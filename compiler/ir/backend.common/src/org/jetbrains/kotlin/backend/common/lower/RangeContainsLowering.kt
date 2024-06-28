@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrStatement
@@ -34,17 +34,15 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-val rangeContainsLoweringPhase = makeIrFilePhase(
-    ::RangeContainsLowering,
-    name = "RangeContainsLowering",
-    description = "Optimizes calls to contains() for ClosedRanges"
-)
-
 /**
  * This lowering pass optimizes calls to contains() (`in` operator) for ClosedRanges.
  *
  * For example, the expression `X in A..B` is transformed into `A <= X && X <= B`.
  */
+@PhaseDescription(
+    name = "RangeContainsLowering",
+    description = "Optimizes calls to contains() for ClosedRanges"
+)
 class RangeContainsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val transformer = Transformer(context, container as IrSymbolOwner)
@@ -360,7 +358,10 @@ private class Transformer(
         return leastCommonPrimitiveNumericType(symbols, argumentType, commonBoundType)?.getClass()
     }
 
-    private fun leastCommonPrimitiveNumericType(symbols: Symbols, t1: IrType, t2: IrType): IrType? {
+    private fun leastCommonPrimitiveNumericType(symbols: Symbols, type1: IrType, type2: IrType): IrType? {
+        // In case of type parameters, use their upper bounds instead
+        val t1 = (type1 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
+        val t2 = (type2 as IrSimpleType).classifier.closestSuperClass()!!.defaultType
         val primitive1 = t1.getPrimitiveType()
         val primitive2 = t2.getPrimitiveType()
         val unsigned1 = t1.getUnsignedType()

@@ -13,9 +13,6 @@ import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinIconProviderService;
-
-import javax.swing.*;
 
 // Based on com.intellij.psi.impl.light.LightVariableBuilder
 public class LightVariableBuilder extends LightElement implements PsiVariable, NavigationItem {
@@ -95,10 +92,5 @@ public class LightVariableBuilder extends LightElement implements PsiVariable, N
     @Override
     protected boolean isVisibilitySupported() {
         return true;
-    }
-
-    @Override
-    public Icon getElementIcon(int flags) {
-        return KotlinIconProviderService.getInstance().getLightVariableIcon(this, flags);
     }
 }

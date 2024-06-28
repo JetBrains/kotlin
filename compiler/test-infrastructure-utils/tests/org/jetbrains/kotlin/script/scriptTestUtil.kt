@@ -22,3 +22,7 @@ fun loadScriptingPlugin(configuration: CompilerConfiguration) {
     }
     PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
 }
+
+fun loadScriptingPlugin(configuration: CompilerConfiguration, pluginClasspath: Collection<String>) {
+    PluginCliParser.loadPluginsSafe(pluginClasspath, emptyList(), emptyList(), configuration)
+}

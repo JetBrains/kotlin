@@ -1,0 +1,363 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=DataClass] get(): Boolean
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component2(): Boolean
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(COMPANION_GENERATION)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=DataClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(COMPANION_GENERATION)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=DataClass] get(): Boolean
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component2(): Boolean
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(SUPER_TYPES)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=DataClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(SUPER_TYPES)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=DataClass] get(): Boolean
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(SUPER_TYPES)] fun component2(): Boolean
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? data [ResolvedTo(TYPES)] class DataClass : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=DataClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+
+            public? final? [ResolvedTo(TYPES)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+            public? final operator [ResolvedTo(TYPES)] fun component2(): R|kotlin/Boolean|
+
+            public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=DataClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(CONTRACTS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(CONTRACTS)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(CONSTANT_EVALUATION)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=DataClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(CONSTANT_EVALUATION)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(CONSTANT_EVALUATION)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] dataComponent2Script.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-dataComponent2Script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+
+        }
+

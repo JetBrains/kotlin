@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
 import kotlin.native.internal.KClassImpl
@@ -15,7 +15,8 @@ import kotlin.reflect.KClass
  *
  * Otherwise returns `null`.
  */
-fun getOriginalKotlinClass(objCClass: ObjCClass): KClass<*>? {
+@BetaInteropApi
+public fun getOriginalKotlinClass(objCClass: ObjCClass): KClass<*>? {
     val typeInfo = getTypeInfoForClass(objCClass.objcPtr())
     if (typeInfo.isNull()) return null
 
@@ -28,7 +29,8 @@ fun getOriginalKotlinClass(objCClass: ObjCClass): KClass<*>? {
  *
  * Otherwise returns `null`.
  */
-fun getOriginalKotlinClass(objCProtocol: ObjCProtocol): KClass<*>? {
+@BetaInteropApi
+public fun getOriginalKotlinClass(objCProtocol: ObjCProtocol): KClass<*>? {
     val typeInfo = getTypeInfoForProtocol(objCProtocol.objcPtr())
     if (typeInfo.isNull()) return null
 
@@ -40,3 +42,4 @@ private external fun getTypeInfoForClass(ptr: NativePtr): NativePtr
 
 @GCUnsafeCall("Kotlin_ObjCInterop_getTypeInfoForProtocol")
 private external fun getTypeInfoForProtocol(ptr: NativePtr): NativePtr
+

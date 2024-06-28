@@ -27,15 +27,40 @@ class VariableFixationFinder(
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+        val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
+
+        /**
+         * See [org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.outerSystemVariablesPrefixSize]
+         */
+        val outerSystemVariablesPrefixSize: Int
+
+        val outerTypeVariables: Set<TypeConstructorMarker>?
+            get() =
+                when {
+                    outerSystemVariablesPrefixSize > 0 -> allTypeVariables.keys.take(outerSystemVariablesPrefixSize).toSet()
+                    else -> null
+                }
+
+        /**
+         * If not null, that property means that we should assume temporary them all as proper types when fixating some variables.
+         *
+         * By default, if that property is null, we assume all `allTypeVariables` as not proper.
+         *
+         * Currently, that is only used for `provideDelegate` resolution, see
+         * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
+         */
+        val typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>?
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
-    data class VariableForFixation(
+    class VariableForFixation(
         val variable: TypeConstructorMarker,
-        val hasProperConstraint: Boolean,
-        val hasOnlyTrivialProperConstraint: Boolean = false
-    )
+        private val hasProperConstraint: Boolean,
+        private val hasDependencyOnOuterTypeVariable: Boolean = false,
+    ) {
+        val isReady: Boolean get() = hasProperConstraint && !hasDependencyOnOuterTypeVariable
+    }
 
     fun findFirstVariableForFixation(
         c: Context,
@@ -43,14 +68,16 @@ class VariableFixationFinder(
         postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
-    ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
+    ): VariableForFixation? =
+        c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
 
     enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
+        OUTER_TYPE_VARIABLE_DEPENDENCY,
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
-        WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
+        ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
@@ -75,8 +102,10 @@ class VariableFixationFinder(
         isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+        dependencyProvider.isRelatedToOuterTypeVariable(variable) -> TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
+        // TODO: Consider removing this kind of readiness, see KT-63032
+        allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
@@ -120,10 +149,9 @@ class VariableFixationFinder(
         }
     }
 
-    private fun Context.variableHasTrivialOrNonProperConstraints(variable: TypeConstructorMarker): Boolean {
+    private fun Context.allConstraintsTrivialOrNonProper(variable: TypeConstructorMarker): Boolean {
         return notFixedTypeVariables[variable]?.constraints?.all { constraint ->
-            val isProperConstraint = isProperArgumentConstraint(constraint)
-            isProperConstraint && trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperConstraint
+            trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperArgumentConstraint(constraint)
         } ?: false
     }
 
@@ -142,7 +170,7 @@ class VariableFixationFinder(
         if (allTypeVariables.isEmpty()) return null
 
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this
+            notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this,
         )
 
         val candidate =
@@ -151,8 +179,8 @@ class VariableFixationFinder(
         return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
             TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
-            TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->
-                VariableForFixation(candidate, hasProperConstraint = true, hasOnlyTrivialProperConstraint = true)
+            TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY ->
+                VariableForFixation(candidate, hasProperConstraint = true, hasDependencyOnOuterTypeVariable = true)
 
             else -> VariableForFixation(candidate, true)
         }
@@ -182,7 +210,14 @@ class VariableFixationFinder(
                 && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { t -> !t.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) } }
+        isProperTypeForFixation(type, notFixedTypeVariables.keys) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
+
+    private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
+        val key = it.typeConstructor()
+        if (!notFixedTypeVariables.containsKey(key)) return false
+        if (typeVariablesThatAreCountedAsProperTypes?.contains(key) == true) return false
+        return true
+    }
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
@@ -221,8 +256,25 @@ class VariableFixationFinder(
     }
 }
 
-inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(type: KotlinTypeMarker, isProper: (KotlinTypeMarker) -> Boolean) =
-    isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
+/**
+ * Returns `false` for fixed type variables types even if `isProper(type) == true`
+ * Thus allowing only non-TVs types to be used for fixation on top level.
+ * While this limitation is important, it doesn't really limit final results because when we have a constraint like T <: E or E <: T
+ * and we're going to fix T into E, we assume that if E has some other constraints, they are being incorporated to T, so we would choose
+ * them instead of E itself.
+ */
+inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
+    type: KotlinTypeMarker,
+    notFixedTypeVariables: Set<TypeConstructorMarker>,
+    isProper: (KotlinTypeMarker) -> Boolean
+): Boolean {
+    // We don't allow fixing T into any top-level TV type, like T := F or T := F & Any
+    // Even if F is considered as a proper by `isProper` (e.g., it belongs to an outer CS)
+    // But at the same time, we don't forbid fixing into T := MutableList<F>
+    if (type.typeConstructor() in notFixedTypeVariables) return false
+
+    return isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
+}
 
 fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(baseType: KotlinTypeMarker): Set<KotlinTypeMarker> {
     if (baseType.isFlexible()) {

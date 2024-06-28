@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.handlers
 
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.test.utils.getTestChecker
 import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -20,16 +21,17 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val originalFileName = testServices.moduleStructure.originalTestDataFiles.first().nameWithoutExtension
-        val parentDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
+        val parentDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, translationMode = TranslationMode.PER_MODULE_DEV)
+        val kotlinJsFile = File(parentDir, "$originalFileName-kotlin_kotlin_v5.js").path
         val mainJsFile = File(parentDir, "${originalFileName}_v5.js").path
-        val libJsFile = File(parentDir, "$originalFileName-lib_v5.js").path
+        val libJsFile = File(parentDir, "$originalFileName-kotlin_lib_v5.js").path
         try {
-            getTestChecker(testServices).run(listOf(mainJsFile, libJsFile))
+            getTestChecker(testServices).run(listOf(kotlinJsFile, mainJsFile, libJsFile))
         } catch (e: RuntimeException) {
             testServices.assertions.assertTrue(e is IllegalStateException)
             val message = e.message!!
 
-            testServices.assertions.assertTrue("'lib'" in message) {
+            testServices.assertions.assertTrue("'kotlin_lib'" in message) {
                 "Exception message should contain reference to dependency (lib)"
             }
             testServices.assertions.assertTrue("'main'" in message) {

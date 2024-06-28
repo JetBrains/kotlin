@@ -1,0 +1,107 @@
+@Anno(<strcat>(String(nested nested Derived b parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.b
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+context -> FirNamedFunctionSymbol /Derived.component1
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(nested Derived b parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.b
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+context -> FirNamedFunctionSymbol /Derived.component1
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(Derived b parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.b
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.b
+context -> FirNamedFunctionSymbol /Derived.component1
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(b ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+
+@CONSTRUCTOR_PARAMETER:Anno(<strcat>(String(param: b ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/b from FirConstructorSymbol /Derived.Derived
+
+@Anno(<strcat>(String(nested nested Derived c parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.c
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+context -> FirNamedFunctionSymbol /Derived.component2
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(nested Derived c parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.c
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+context -> FirNamedFunctionSymbol /Derived.component2
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(Derived c parameter type ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirValueParameterSymbol <local>/c from FirConstructorSymbol /Derived.Derived
+context -> FirPropertySymbol /Derived.c
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.c
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /Derived.c
+context -> FirNamedFunctionSymbol /Derived.component2
+context -> FirValueParameterSymbol <local>/c from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(Derived constructor ), x#))
+owner -> FirConstructorSymbol /Derived.Derived
+context -> FirConstructorSymbol /Derived.Derived
+
+@Anno(<strcat>(String(nested nested super type call ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirRegularClassSymbol Derived
+
+@Anno(<strcat>(String(nested super type call ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirRegularClassSymbol Derived
+
+@Anno(<strcat>(String(Base super type call ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirConstructorSymbol /Derived.Derived
+context -> FirRegularClassSymbol Derived
+
+@PROPERTY_GETTER:Anno(<strcat>(String(get: b ), x#))
+owner -> FirPropertySymbol /Derived.b
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /Derived.b
+
+@Anno(<strcat>(String(b ), x#))
+owner -> FirPropertySymbol /Derived.b
+context -> FirPropertySymbol /Derived.b
+
+@PROPERTY:Anno(<strcat>(String(property: b ), x#))
+owner -> FirPropertySymbol /Derived.b
+context -> FirPropertySymbol /Derived.b
+
+@Anno(<strcat>(String(b ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(param: b ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirValueParameterSymbol <local>/b from FirNamedFunctionSymbol /Derived.copy
+
+@Anno(<strcat>(String(Derived ), x#))
+owner -> FirRegularClassSymbol Derived
+context -> FirRegularClassSymbol Derived

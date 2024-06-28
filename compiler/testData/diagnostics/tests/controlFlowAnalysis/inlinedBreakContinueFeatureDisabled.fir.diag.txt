@@ -1,0 +1,23 @@
+/inlinedBreakContinueFeatureDisabled.kt:(347,352): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(369,377): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(401,406): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(431,439): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(498,503): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(523,531): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(559,564): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(598,606): error: The feature "break continue in inline lambdas" is experimental and should be enabled explicitly
+
+/inlinedBreakContinueFeatureDisabled.kt:(680,685): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(691,696): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(718,726): error: 'break' or 'continue' crosses a function or class boundary.
+
+/inlinedBreakContinueFeatureDisabled.kt:(732,737): error: 'break' or 'continue' crosses a function or class boundary.

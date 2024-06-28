@@ -42,9 +42,10 @@ void RUNTIME_NORETURN ThrowNotImplementedError();
 void RUNTIME_NORETURN ThrowCharacterCodingException();
 void RUNTIME_NORETURN ThrowIllegalArgumentException();
 void RUNTIME_NORETURN ThrowIllegalStateException();
+void RUNTIME_NORETURN ThrowIllegalStateExceptionWithMessage(KConstRef message);
 void RUNTIME_NORETURN ThrowInvalidMutabilityException(KConstRef where);
 void RUNTIME_NORETURN ThrowIncorrectDereferenceException();
-void RUNTIME_NORETURN ThrowFileFailedToInitializeException();
+void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason);
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address);
 void RUNTIME_NORETURN ThrowFreezingException(KRef toFreeze, KRef blocker);
 // Prints out message of Throwable.

@@ -1,0 +1,43 @@
+// CHECK:
+//   Mangled name: {}testVal
+//   Public signature: /testVal|2839078120601828782[0]
+//   Public signature debug description: {}testVal
+@TestAnn(x = "testVal.property")
+val testVal: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVal>(){}kotlin.String
+  //   Public signature: /testVal.<get-testVal>|-8940261368877498423[0]
+  //   Public signature debug description: <get-testVal>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVal>(){}
+  //   Public signature: /testVal.<get-testVal>|-3119877793352707332[0]
+  //   Public signature debug description: <get-testVal>(){}
+  get
+
+// CHECK:
+//   Mangled name: TestAnn
+//   Public signature: /TestAnn|null[0]
+open annotation class TestAnn : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnn{}x
+  //   Public signature: /TestAnn.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnn#<get-x>(){}kotlin.String
+    //   Public signature: /TestAnn.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnn#<get-x>(){}
+    //   Public signature: /TestAnn.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnn#<init>(kotlin.String){}
+  //   Public signature: /TestAnn.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(x: String) /* primary */
+
+}
+

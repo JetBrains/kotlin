@@ -1,0 +1,3 @@
+Substitutor: <map substitutor: {M = K, N = I}> then <map substitutor: {K = T, I = X}>
+Substituted callables:
+  foo(): Pair<T, X>

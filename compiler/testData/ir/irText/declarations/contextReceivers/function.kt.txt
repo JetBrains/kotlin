@@ -1,23 +1,24 @@
 class C {
+  val c: Int
+    field = 42
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val c: Int
-    field = 42
-    get
-
-}
-
-fun foo(_context_receiver_0: C) {
-  _context_receiver_0.<get-c>() /*~> Unit */
 }
 
 fun bar(c: C) {
   with<C, Unit>(receiver = c, block = local fun C.<anonymous>() {
-    foo(_context_receiver_0 = $this$with)
+    foo($context_receiver_0 = $this$with)
   }
 )
 }
+
+fun foo($context_receiver_0: C) {
+  $context_receiver_0.<get-c>() /*~> Unit */
+}
+

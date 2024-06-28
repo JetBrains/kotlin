@@ -1,0 +1,64 @@
+// CHECK:
+//   Mangled name: {}p
+//   Public signature: /p|6715504260787941082[0]
+//   Public signature debug description: {}p
+var p: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-p>(){}kotlin.Int
+  //   Public signature: /p.<get-p>|5329635969197638839[0]
+  //   Public signature debug description: <get-p>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-p>(){}
+  //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  //   Public signature debug description: <get-p>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-p>(kotlin.Int){}
+  //   Public signature: /p.<set-p>|-6346582004572228570[0]
+  //   Public signature debug description: <set-p>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: AnnParam
+//   Public signature: /AnnParam|null[0]
+open annotation class AnnParam : Annotation {
+  // CHECK:
+  //   Mangled name: AnnParam#<init>(){}
+  //   Public signature: /AnnParam.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C{}p
+  //   Public signature: /C.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
+  var p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-p>(){}kotlin.Int
+    //   Public signature: /C.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-p>(){}
+    //   Public signature: /C.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
+    get
+    // CHECK:
+    //   Mangled name: C#<set-p>(kotlin.Int){}
+    //   Public signature: /C.p.<set-p>|-6346582004572228570[0]
+    //   Public signature debug description: <set-p>(kotlin.Int){}
+    set
+
+  // CHECK:
+  //   Mangled name: C#<init>(kotlin.Int){}
+  //   Public signature: /C.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(p: Int) /* primary */
+
+}
+

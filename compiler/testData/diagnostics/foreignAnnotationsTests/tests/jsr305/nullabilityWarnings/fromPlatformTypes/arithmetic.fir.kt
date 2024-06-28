@@ -10,40 +10,40 @@ public class J {
 }
 
 // FILE: k.kt
-fun test() {
-    var platformNN = J.staticNN
-    var platformN = J.staticN
-    var platformJ = J.staticJ
+var platformNN = J.staticNN
+var platformN = J.staticN
+var platformJ = J.staticJ
 
+fun test() {
     +platformNN
-    +platformN
+    +<!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     +platformJ
 
     ++platformNN
-    ++platformN
+    ++<!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     ++platformJ
 
     platformNN++
-    platformN++
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN++<!>
     platformJ++
 
     1 + platformNN
-    1 + platformN
+    1 + <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     1 + platformJ
 
     platformNN + 1
-    platformN + 1
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> + 1
     platformJ + 1
 
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
-    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformN
+    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformJ
 
     platformNN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
-    platformN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
     platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
 
     platformNN += 1
-    platformN += 1
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!> += 1
     platformJ += 1
 }

@@ -1,0 +1,307 @@
+element: this
+implicit receivers:
+  type: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/Receiver
+  owner symbol: KaFirAnonymousFunctionSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 4
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: test/Receiver.fromReceiver
+        compilerVisibility: Public
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: FINAL
+        name: fromReceiver
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Unit
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.equals
+        compilerVisibility: Public
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Boolean
+        typeParameters: []
+        valueParameters: [
+          KaValueParameterSymbol:
+            annotations: []
+            callableId: null
+            compilerVisibility: Public
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isActual: false
+            isCrossinline: false
+            isExpect: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVal: true
+            isVararg: false
+            location: LOCAL
+            modality: FINAL
+            name: other
+            origin: LIBRARY
+            receiverParameter: null
+            returnType: KaUsualClassType:
+              annotations: []
+              typeArguments: []
+              type: kotlin/Any?
+            visibility: PUBLIC
+        ]
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.hashCode
+        compilerVisibility: Public
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/Int
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+      KaNamedFunctionSymbol:
+        annotations: []
+        callableId: kotlin/Any.toString
+        compilerVisibility: Public
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        isTailRec: false
+        location: CLASS
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+    constructors: 1
+      KaConstructorSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        containingClassId: test/Receiver
+        contextReceivers: []
+        hasStableParameterNames: true
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isPrimary: true
+        location: CLASS
+        modality: FINAL
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: test/Receiver
+        typeParameters: []
+        valueParameters: []
+        visibility: PUBLIC
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 0
+    classifiers: 3
+      KaNamedClassSymbol:
+        annotations: []
+        classId: test/Receiver
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: Receiver
+        origin: SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
+        classId: test/Base
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: OPEN
+        name: Base
+        origin: SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+      KaNamedClassSymbol:
+        annotations: []
+        classId: test/Child
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: Child
+        origin: SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: test/Base
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 6
+
+  DefaultSimpleImportingScope, index = 7
+
+  ExplicitStarImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 9
+

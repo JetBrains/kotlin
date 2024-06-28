@@ -1,0 +1,69 @@
+/**
+ * public final class A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class A {
+
+    public A() {
+        super();
+    }
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   // field: ref1:Lkotlin/reflect/KClass;
+ *   // getter: getRef1()Lkotlin/reflect/KClass;
+ *   public final val ref1: kotlin/reflect/KClass<A>
+ *     public final get
+ *
+ *   // field: ref2:Lkotlin/reflect/KClass;
+ *   // getter: getRef2()Lkotlin/reflect/KClass;
+ *   public final val ref2: kotlin/reflect/KClass<A>
+ *     public final get
+ *
+ *   // field: ref3:Lkotlin/reflect/KClass;
+ *   // getter: getRef3()Lkotlin/reflect/KClass;
+ *   public final val ref3: kotlin/reflect/KClass<A> (* = TA^ *)
+ *     public final get
+ *
+ *   public typealias TA = kotlin/reflect/KClass<A> (* = kotlin/reflect/KClass<A> *)
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Kt66541Kt {
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.reflect.KClass<A> ref1 = null;
+
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.reflect.KClass<A> ref2 = null;
+
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.reflect.KClass<A> ref3 = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public static final kotlin.reflect.KClass<A> getRef1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final kotlin.reflect.KClass<A> getRef2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final kotlin.reflect.KClass<A> getRef3() {
+        return null;
+    }
+}

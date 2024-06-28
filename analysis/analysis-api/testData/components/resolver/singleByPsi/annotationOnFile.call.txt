@@ -1,0 +1,28 @@
+KtConstructorCalleeExpression(21,28): 'JvmName'
+  KaSuccessCallInfo:
+    call = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.jvm.JvmName
+          symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+          valueParameters = [
+            KaVariableSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "Foo" -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableId = null)
+      }

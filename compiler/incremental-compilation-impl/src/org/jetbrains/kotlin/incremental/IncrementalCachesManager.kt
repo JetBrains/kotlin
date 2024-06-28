@@ -50,25 +50,16 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
         val closer = Closer.create()
         caches.forEach {
-            closer.register(CacheCloser(it))
+            closer.register(it)
         }
         closer.close()
 
         isClosed = true
     }
 
-    private class CacheCloser(private val cache: BasicMapsOwner) : Closeable {
-
-        override fun close() {
-            // It's important to flush the cache when closing (see KT-53168)
-            cache.flush(memoryCachesOnly = false)
-            cache.close()
-        }
-    }
-
 }
 
-class IncrementalJvmCachesManager(
+open class IncrementalJvmCachesManager(
     icContext: IncrementalCompilationContext,
     outputDir: File?,
     cachesRootDir: File,

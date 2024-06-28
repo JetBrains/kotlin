@@ -25,11 +25,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
-object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
-    override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
-        false
-}
-
 class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     /**
      * Does not check names.

@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: MessageBusImpl
+//   Public signature: /MessageBusImpl|null[0]
+open class MessageBusImpl {
+  // CHECK:
+  //   Mangled name: MessageBusImpl{}parentBus
+  //   Public signature: /MessageBusImpl.parentBus|4372009635220349355[0]
+  //   Public signature debug description: {}parentBus
+  val parentBus: Any?
+    // CHECK JVM_IR:
+    //   Mangled name: MessageBusImpl#<get-parentBus>(){}kotlin.Any?
+    //   Public signature: /MessageBusImpl.parentBus.<get-parentBus>|-5686140196600425134[0]
+    //   Public signature debug description: <get-parentBus>(){}kotlin.Any?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: MessageBusImpl#<get-parentBus>(){}
+    //   Public signature: /MessageBusImpl.parentBus.<get-parentBus>|-4473545730438591287[0]
+    //   Public signature debug description: <get-parentBus>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: MessageBusImpl#<init>(){}
+  //   Public signature: /MessageBusImpl.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: RootBus
+//   Public signature: /RootBus|null[0]
+class RootBus : MessageBusImpl {
+  // CHECK:
+  //   Mangled name: RootBus#<init>(){}
+  //   Public signature: /RootBus.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: RootBus{}parentBus
+  //   Public signature: /RootBus.parentBus|4372009635220349355[0]
+  //   Public signature debug description: {}parentBus
+  /* fake */ override val parentBus: Any?
+    // CHECK JVM_IR:
+    //   Mangled name: RootBus#<get-parentBus>(){}kotlin.Any?
+    //   Public signature: /RootBus.parentBus.<get-parentBus>|-5686140196600425134[0]
+    //   Public signature debug description: <get-parentBus>(){}kotlin.Any?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: RootBus#<get-parentBus>(){}
+    //   Public signature: /RootBus.parentBus.<get-parentBus>|-4473545730438591287[0]
+    //   Public signature debug description: <get-parentBus>(){}
+    /* fake */ override get(): Any?
+
+}
+

@@ -1,25 +1,18 @@
 class O {
+  val o: String
+    field = o
+    get
+
   constructor(o: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val o: String
-    field = o
-    get
-
 }
 
 class OK {
   private /* final field */ val contextReceiverField0: O
-  constructor(_context_receiver_0: O, k: String) /* primary */ {
-    super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
-    /* <init>() */
-
-  }
-
   val k: String
     field = k
     get
@@ -28,12 +21,20 @@ class OK {
     field = <this>.#contextReceiverField0.<get-o>().plus(other = <this>.<get-k>())
     get
 
+  constructor($context_receiver_0: O, k: String) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = $context_receiver_0
+    /* <init>() */
+
+  }
+
 }
 
 fun box(): String {
   return with<O, String>(receiver = O(o = "O"), block = local fun O.<anonymous>(): String {
-    val ok: OK = OK(_context_receiver_0 = $this$with, k = "K")
+    val ok: OK = OK($context_receiver_0 = $this$with, k = "K")
     return ok.<get-result>()
   }
 )
 }
+

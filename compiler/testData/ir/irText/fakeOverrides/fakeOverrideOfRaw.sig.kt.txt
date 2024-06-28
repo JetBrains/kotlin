@@ -1,0 +1,23 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}List?
+  //   Public signature: /A.bar|-6805136188302315839[0]
+  //   Public signature debug description: bar(){}List?
+  /* fake */ override fun bar(): List?
+
+  // CHECK:
+  //   Mangled name: A#foo(List?){}
+  //   Public signature: /A.foo|-6260703452578085119[0]
+  //   Public signature debug description: foo(List?){}
+  /* fake */ override fun foo(a: List?): Unit
+
+}

@@ -25,12 +25,12 @@ FILE: kt41917.kt
 
         public final val implicit: R|kotlin/String|by R|/DummyDelegate.DummyDelegate|<R|kotlin/String|>(String(hello))
             public get(): R|kotlin/String| {
-                ^ this@R|/A|.D|/A.implicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|Stub (chain inference): TypeVariable(_V)|>|(this@R|/A|, ::R|/A.implicit|)
+                ^ this@R|/A|.D|/A.implicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|kotlin/String|>|(this@R|/A|, ::R|/A.implicit|)
             }
 
         public final val explicit: R|kotlin/String|by R|/DummyDelegate.DummyDelegate|<R|kotlin/String|>(String(hello))
             public get(): R|kotlin/String| {
-                ^ this@R|/A|.D|/A.explicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|Stub (chain inference): TypeVariable(_V)|>|(this@R|/A|, ::R|/A.explicit|)
+                ^ this@R|/A|.D|/A.explicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|kotlin/String|>|(this@R|/A|, ::R|/A.explicit|)
             }
 
     }

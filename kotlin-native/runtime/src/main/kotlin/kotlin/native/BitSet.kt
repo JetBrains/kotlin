@@ -11,10 +11,14 @@ package kotlin.native
  * @constructor creates an empty bit set with the specified [size]
  * @param size the size of one element in the array used to store bits.
  */
-public class BitSet(size: Int = ELEMENT_SIZE) {
+@ObsoleteNativeApi
+@Suppress("ACTUAL_WITHOUT_EXPECT") // actual visibility mismatch
+public actual class BitSet
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+actual constructor(size: Int = ELEMENT_SIZE) {
 
     @kotlin.native.internal.CanBePrecreated
-    companion object {
+    public companion object {
         // Default size of one element in the array used to store bits.
         private const val ELEMENT_SIZE = 64
         private const val MAX_BIT_OFFSET = ELEMENT_SIZE - 1
@@ -28,21 +32,21 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
         get() = size - 1
 
     /** Returns an index of the last bit that has `true` value. Returns -1 if the set is empty. */
-    val lastTrueIndex: Int
+    public val lastTrueIndex: Int
         get() = previousSetBit(size)
 
     /** True if this BitSet contains no bits set to true. */
-    val isEmpty: Boolean
+    public actual val isEmpty: Boolean
         get() = bits.all { it == ALL_FALSE }
 
     /** Actual number of bits available in the set. All bits with indices >= size assumed to be 0 */
-    var size: Int = size
+    public actual var size: Int = size
         private set
 
     /**
      * Creates a bit set of given [length] filling elements using [initializer]
      */
-    constructor(length: Int, initializer: (Int) -> Boolean): this(length) {
+    public constructor(length: Int, initializer: (Int) -> Boolean): this(length) {
         for (i in 0 until length) {
             set(i, initializer(i))
         }
@@ -134,17 +138,20 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     }
 
     /** Set the bit specified to the specified value. */
-    fun set(index: Int, value: Boolean = true) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun set(index: Int, value: Boolean = true) {
         ensureCapacity(index)
         val (elementIndex, offset) = index.asBitCoordinates
         setBitsWithMask(elementIndex, offset.asMask, value)
     }
 
     /** Sets the bits with indices between [from] (inclusive) and [to] (exclusive) to the specified value. */
-    fun set(from : Int, to: Int, value: Boolean = true) = set(from until to, value)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun set(from : Int, to: Int, value: Boolean = true): Unit = set(from until to, value)
 
     /** Sets the bits from the range specified to the specified value. */
-    fun set(range: IntRange, value: Boolean = true) {
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun set(range: IntRange, value: Boolean = true) {
         if (range.start < 0 || range.endInclusive < 0) {
             throw IndexOutOfBoundsException()
         }
@@ -171,31 +178,31 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
 
 
     /** Clears the bit specified */
-    fun clear(index: Int) = set(index, false)
+    public fun clear(index: Int): Unit = set(index, false)
     /** Clears the bits with indices between [from] (inclusive) and [to] (exclusive) to the specified value. */
-    fun clear(from : Int, to: Int) = set(from, to, false)
+    public fun clear(from : Int, to: Int): Unit = set(from, to, false)
     /** Clears the bit specified */
-    fun clear(range: IntRange) = set(range, false)
+    public fun clear(range: IntRange): Unit = set(range, false)
 
     /** Sets all bits in the BitSet to `false`. */
-    fun clear() {
+    public fun clear() {
         for (i in bits.indices) {
             bits[i] = ALL_FALSE
         }
     }
 
     /** Reverses the bit specified. */
-    fun flip(index: Int) {
+    public fun flip(index: Int) {
         ensureCapacity(index)
         val (elementIndex, offset) = index.asBitCoordinates
         flipBitsWithMask(elementIndex, offset.asMask)
     }
 
     /** Reverses the bits with indices between [from] (inclusive) and [to] (exclusive). */
-    fun flip(from: Int, to: Int) = flip(from until to)
+    public fun flip(from: Int, to: Int): Unit = flip(from until to)
 
     /** Reverses the bits from the range specified. */
-    fun flip(range: IntRange) {
+    public fun flip(range: IntRange) {
         if (range.start < 0 || range.endInclusive < 0) {
             throw IndexOutOfBoundsException()
         }
@@ -261,7 +268,8 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * Returns -1 if there is no such bits after [startIndex].
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
-    fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
 
     /**
      * Returns an index of a next bit which value is `false` after [startIndex] (inclusive).
@@ -269,14 +277,15 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * sequence of `false` bits after (size - 1)-th.
      * @throws IndexOutOfBoundException if [startIndex] < 0.
      */
-    fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
+    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+    public actual fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
 
     /**
      * Returns the biggest index of a bit which value is [lookFor] before [startIndex] (inclusive).
      * Returns -1 if there is no such bits before [startIndex].
      * If [startIndex] >= [size] returns -1
      */
-    fun previousBit(startIndex: Int, lookFor: Boolean): Int {
+    public fun previousBit(startIndex: Int, lookFor: Boolean): Int {
         var correctStartIndex = startIndex
         if (startIndex >= size) {
             // We assume that all bits after `size - 1` are 0. So we can return the start index if we are looking for 0.
@@ -322,7 +331,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * If [startIndex] >= size will search from (size - 1)-th bit.
      * @throws IndexOutOfBoundException if [startIndex] < -1.
      */
-    fun previousSetBit(startIndex: Int): Int = previousBit(startIndex, true)
+    public fun previousSetBit(startIndex: Int): Int = previousBit(startIndex, true)
 
     /**
      * Returns the biggest index of a bit which value is `false` before [startIndex] (inclusive).
@@ -331,10 +340,10 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
      * sequence of `false` bits after (size - 1)-th.
      * @throws IndexOutOfBoundException if [startIndex] < -1.
      */
-    fun previousClearBit(startIndex: Int): Int = previousBit(startIndex, false)
+    public fun previousClearBit(startIndex: Int): Int = previousBit(startIndex, false)
 
     /** Returns a value of a bit with the [index] specified. */
-    operator fun get(index: Int): Boolean {
+    public actual operator fun get(index: Int): Boolean {
         if (index < 0) {
             throw IndexOutOfBoundsException()
         }
@@ -359,16 +368,16 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     }
 
     /** Performs a logical and operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun and(another: BitSet) = doOperation(another, Long::and)
+    public actual fun and(another: BitSet): Unit = doOperation(another, Long::and)
 
     /** Performs a logical or operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun or(another: BitSet) = doOperation(another, Long::or)
+    public actual fun or(another: BitSet): Unit = doOperation(another, Long::or)
 
     /** Performs a logical xor operation over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun xor(another: BitSet) = doOperation(another, Long::xor)
+    public actual fun xor(another: BitSet): Unit = doOperation(another, Long::xor)
 
     /** Performs a logical and + not operations over corresponding bits of this and [another] BitSets. The result is saved in this BitSet. */
-    fun andNot(another: BitSet) {
+    public actual fun andNot(another: BitSet) {
         ensureCapacity(another.lastIndex)
         var index = 0
         while (index < another.bits.size) {
@@ -382,7 +391,7 @@ public class BitSet(size: Int = ELEMENT_SIZE) {
     }
 
     /** Returns true if the specified BitSet has any bits set to true that are also set to true in this BitSet. */
-    fun intersects(another: BitSet): Boolean =
+    public actual fun intersects(another: BitSet): Boolean =
             (0 until minOf(bits.size, another.bits.size)).any { bits[it] and another.bits[it] != 0L }
 
     override fun toString(): String {

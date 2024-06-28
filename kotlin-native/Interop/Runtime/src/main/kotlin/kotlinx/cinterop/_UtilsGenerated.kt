@@ -12,6 +12,7 @@ package kotlinx.cinterop
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Boolean> NativePlacement.alloc(value: T): BooleanVarOf<T> =
         alloc<BooleanVarOf<T>> { this.value = value }
 
@@ -19,6 +20,7 @@ public fun <T : Boolean> NativePlacement.alloc(value: T): BooleanVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Byte> NativePlacement.alloc(value: T): ByteVarOf<T> =
         alloc<ByteVarOf<T>> { this.value = value }
 
@@ -26,6 +28,7 @@ public fun <T : Byte> NativePlacement.alloc(value: T): ByteVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Short> NativePlacement.alloc(value: T): ShortVarOf<T> =
         alloc<ShortVarOf<T>> { this.value = value }
 
@@ -33,6 +36,7 @@ public fun <T : Short> NativePlacement.alloc(value: T): ShortVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Int> NativePlacement.alloc(value: T): IntVarOf<T> =
         alloc<IntVarOf<T>> { this.value = value }
 
@@ -40,6 +44,7 @@ public fun <T : Int> NativePlacement.alloc(value: T): IntVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Long> NativePlacement.alloc(value: T): LongVarOf<T> =
         alloc<LongVarOf<T>> { this.value = value }
 
@@ -47,6 +52,7 @@ public fun <T : Long> NativePlacement.alloc(value: T): LongVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : UByte> NativePlacement.alloc(value: T): UByteVarOf<T> =
         alloc<UByteVarOf<T>> { this.value = value }
 
@@ -54,6 +60,7 @@ public fun <T : UByte> NativePlacement.alloc(value: T): UByteVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : UShort> NativePlacement.alloc(value: T): UShortVarOf<T> =
         alloc<UShortVarOf<T>> { this.value = value }
 
@@ -61,6 +68,7 @@ public fun <T : UShort> NativePlacement.alloc(value: T): UShortVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : UInt> NativePlacement.alloc(value: T): UIntVarOf<T> =
         alloc<UIntVarOf<T>> { this.value = value }
 
@@ -68,6 +76,7 @@ public fun <T : UInt> NativePlacement.alloc(value: T): UIntVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : ULong> NativePlacement.alloc(value: T): ULongVarOf<T> =
         alloc<ULongVarOf<T>> { this.value = value }
 
@@ -75,6 +84,7 @@ public fun <T : ULong> NativePlacement.alloc(value: T): ULongVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Float> NativePlacement.alloc(value: T): FloatVarOf<T> =
         alloc<FloatVarOf<T>> { this.value = value }
 
@@ -82,6 +92,7 @@ public fun <T : Float> NativePlacement.alloc(value: T): FloatVarOf<T> =
  * Allocates variable with given value type and initializes it with given value.
  */
 @Suppress("FINAL_UPPER_BOUND")
+@ExperimentalForeignApi
 public fun <T : Double> NativePlacement.alloc(value: T): DoubleVarOf<T> =
         alloc<DoubleVarOf<T>> { this.value = value }
 

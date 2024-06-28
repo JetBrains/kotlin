@@ -12,29 +12,28 @@ dependencies {
     testImplementation(intellijCore()) // Should come before compiler, because of "progarded" stuff needed for tests
 
     testApi(project(":kotlin-script-runtime"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    
+
     testApi(kotlinStdlib())
 
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testApi(kotlinTest())
+    testCompileOnly(kotlinTest("junit"))
+    testImplementation(libs.junit4)
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(projectTests(":generators:test-generator"))
-    testApi(project(":compiler:ir.ir2cfg"))
     testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":kotlin-script-util"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
@@ -55,6 +54,7 @@ projectTest(
     defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
 ) {
     dependsOn(":dist")
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

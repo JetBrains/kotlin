@@ -4,6 +4,7 @@ public final class DefaultImpl {
     public method <init>(): void
     public deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public final inner class IFoo$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -12,6 +13,7 @@ public final class DefaultImpl2 {
     public method <init>(): void
     public deprecated @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public final inner class IFoo2$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -71,6 +73,7 @@ public final class IFoo2$DefaultImpls {
     // source: 'inheritingDeprecation.kt'
     public deprecated static @org.jetbrains.annotations.NotNull method getExtProp(@org.jetbrains.annotations.NotNull p0: IFoo2, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
     public deprecated static @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: IFoo2): java.lang.String
+    public final inner class IFoo$DefaultImpls
     public final inner class IFoo2$DefaultImpls
 }
 

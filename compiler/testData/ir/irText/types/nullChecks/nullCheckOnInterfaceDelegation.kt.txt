@@ -2,8 +2,17 @@
 // MODULE: main
 // FILE: nullCheckOnInterfaceDelegation.kt
 
-interface IFoo {
-  abstract fun foo(): String
+class Delegated : IFoo {
+  private /* final field */ val $$delegate_0: Derived = Derived()
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#$$delegate_0.foo() /*!! String */
+  }
 
 }
 
@@ -20,20 +29,12 @@ class Derived : A, IFoo {
 
 }
 
-class Delegated : IFoo {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  private /* final field */ val $$delegate_0: Derived = Derived()
-  override fun foo(): String {
-    return <this>.#$$delegate_0.foo() /*!! String */
-  }
+interface IFoo {
+  abstract fun foo(): String
 
 }
 
 fun testReturnValue(): String {
   return Delegated().foo()
 }
+

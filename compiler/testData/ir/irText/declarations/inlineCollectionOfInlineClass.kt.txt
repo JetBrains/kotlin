@@ -1,61 +1,63 @@
 value class IT {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
-  override fun toString(): String {
-    return "IT(" + "x=" + <this>.#x + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is IT -> return false
+    }
+    val tmp_0: IT = other as IT
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
     return <this>.#x.hashCode()
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      other !is IT -> return false
-    }
-    val tmp0_other_with_cast: IT = other as IT
-    when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "IT(" + "x=" + <this>.#x + ")"
   }
 
 }
 
 value class InlineMutableSet : MutableSet<IT> {
+  private val ms: MutableSet<IT>
+    field = ms
+    private get
+
   constructor(ms: MutableSet<IT>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  private val ms: MutableSet<IT>
-    field = ms
-    private get
-
-  override val size: Int
-    override get(): Int {
-      return <this>.<get-ms>().<get-size>()
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is InlineMutableSet -> return false
     }
-
-  override operator fun contains(element: IT): Boolean {
-    return <this>.<get-ms>().contains(element = element)
+    val tmp_1: InlineMutableSet = other as InlineMutableSet
+    when {
+      EQEQ(arg0 = <this>.#ms, arg1 = tmp_1.#ms).not() -> return false
+    }
+    return true
   }
 
-  override fun containsAll(elements: Collection<IT>): Boolean {
-    return <this>.<get-ms>().containsAll(elements = elements)
+  override fun hashCode(): Int {
+    return <this>.#ms.hashCode()
   }
 
-  override fun isEmpty(): Boolean {
-    return <this>.<get-ms>().isEmpty()
+  override fun toString(): String {
+    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
   }
 
   override fun add(element: IT): Boolean {
@@ -68,6 +70,18 @@ value class InlineMutableSet : MutableSet<IT> {
 
   override fun clear() {
     <this>.<get-ms>().clear()
+  }
+
+  override operator fun contains(element: IT): Boolean {
+    return <this>.<get-ms>().contains(element = element)
+  }
+
+  override fun containsAll(elements: Collection<IT>): Boolean {
+    return <this>.<get-ms>().containsAll(elements = elements)
+  }
+
+  override fun isEmpty(): Boolean {
+    return <this>.<get-ms>().isEmpty()
   }
 
   override operator fun iterator(): MutableIterator<IT> {
@@ -86,23 +100,10 @@ value class InlineMutableSet : MutableSet<IT> {
     return <this>.<get-ms>().retainAll(elements = elements)
   }
 
-  override fun toString(): String {
-    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#ms.hashCode()
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      other !is InlineMutableSet -> return false
+  override val size: Int
+    override get(): Int {
+      return <this>.<get-ms>().<get-size>()
     }
-    val tmp0_other_with_cast: InlineMutableSet = other as InlineMutableSet
-    when {
-      EQEQ(arg0 = <this>.#ms, arg1 = tmp0_other_with_cast.#ms).not() -> return false
-    }
-    return true
-  }
 
 }
+

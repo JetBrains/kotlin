@@ -1,0 +1,308 @@
+PsiJetFileStubImpl[package=test]
+KotlinStub$PACKAGE_DIRECTIVE
+  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+KotlinStub$IMPORT_LIST
+KotlinStub$CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
+  KotlinStub$MODIFIER_LIST[public final]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=TypeAliasExpansion]
+    KotlinStub$MODIFIER_LIST[public]
+    KotlinStub$VALUE_PARAMETER_LIST
+  KotlinStub$CLASS_BODY
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedStringAlias
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithString, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithString]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithNestedStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.NestedStringAlias
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.parameterizedListAliasWithParameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=parameterizedListAliasWithParameterizedListAliasWithStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.collections.List<kotlin.String (abbreviatedType: test.StringAlias)> (abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>)>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+                  KotlinStub$TYPE_ARGUMENT_LIST
+                    KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                      KotlinStub$TYPE_REFERENCE
+                        KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias
+                          KotlinStub$USER_TYPE
+                            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithTypeArgument]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedListAliasWithTypeArgument
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithAliasTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithAliasTypeArgument]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedListAliasWithAliasTypeArgument
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedListAliasWithNestedAliasTypeArgument, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedListAliasWithNestedAliasTypeArgument]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedListAliasWithNestedAliasTypeArgument
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.NestedStringAlias
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithString, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithString]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String>
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+                  KotlinStub$TYPE_ARGUMENT_LIST
+                    KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                      KotlinStub$TYPE_REFERENCE
+                        KotlinStub$USER_TYPE
+                          KotlinStub$USER_TYPE
+                            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.StringAlias)>
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+                  KotlinStub$TYPE_ARGUMENT_LIST
+                    KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                      KotlinStub$TYPE_REFERENCE
+                        KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias
+                          KotlinStub$USER_TYPE
+                            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedParameterizedListAliasWithNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedParameterizedListAliasWithNestedStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.NestedParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    abbreviatedType: test.ParameterizedListAlias<kotlin.String (abbreviatedType: test.NestedStringAlias)>
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=List]
+                  KotlinStub$TYPE_ARGUMENT_LIST
+                    KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                      KotlinStub$TYPE_REFERENCE
+                        KotlinStub$USER_TYPE    abbreviatedType: test.NestedStringAlias
+                          KotlinStub$USER_TYPE
+                            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.stringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=stringAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias?
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedStringAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NestedStringAlias?
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NullableStringAlias
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableStringAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NullableStringAlias?
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NestedNullableStringAlias
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nestedNullableStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nestedNullableStringAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NestedNullableStringAlias?
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAlias, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAlias]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NullableNestedStringAlias
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$PROPERTY[fqName=test.TypeAliasExpansion.nullableNestedStringAliasNullable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nullableNestedStringAliasNullable]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$NULLABLE_TYPE
+          KotlinStub$USER_TYPE    abbreviatedType: test.NullableNestedStringAlias?
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+    KotlinStub$FUN[fqName=test.TypeAliasExpansion.entryToString, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=entryToString]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$VALUE_PARAMETER_LIST
+        KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=entry]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE    abbreviatedType: test.EntryAlias
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$USER_TYPE
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Map]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Entry]
+              KotlinStub$TYPE_ARGUMENT_LIST
+                KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$USER_TYPE
+                        KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
+                KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$USER_TYPE
+                        KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    abbreviatedType: test.StringAlias
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=String]

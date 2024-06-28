@@ -1,0 +1,8 @@
+headerFilter = **/userSetupHint.h
+userSetupHint = <<HINT2>>
+---
+void bar(void);
+
+void testBar() {
+    bar();
+}

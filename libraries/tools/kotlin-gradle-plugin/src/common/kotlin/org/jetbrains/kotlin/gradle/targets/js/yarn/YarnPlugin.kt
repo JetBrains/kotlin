@@ -7,19 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.RESTORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -30,112 +25,87 @@ open class YarnPlugin : Plugin<Project> {
         }
 
         val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
-        val nodeJs = NodeJsRootPlugin.apply(this)
+        NodeJsRootPlugin.apply(project)
+        val nodeJs = this.kotlinNodeJsExtension
+        val nodeJsTaskProviders = this.kotlinNodeJsExtension
+
+        yarnRootExtension.platform.value(nodeJs.platform)
+            .disallowChanges()
+
+        nodeJs.packageManagerExtension.set(
+            yarnRootExtension
+        )
 
         val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
-            it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
+            it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+
+            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
+            it.description = "Download and install a local yarn version"
 
             it.configuration = provider {
-                this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
-                    .markResolvable()
+                this.project.configurations.detachedResolvable(this.project.dependencies.create(it.ivyDependency))
                     .also { conf -> conf.isTransitive = false }
             }
         }
 
-        val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
-            task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
-            task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
-            task.description = "Create root package.json"
-        }
-
-        configureRequiresNpmDependencies(project, rootPackageJson)
-
         val kotlinNpmInstall = tasks.named(KotlinNpmInstallTask.NAME)
         kotlinNpmInstall.configure {
-            it.dependsOn(rootPackageJson)
             it.dependsOn(setupTask)
-            it.inputs.property("ignoreScripts", { yarnRootExtension.ignoreScripts })
+            it.inputs.property("yarnIgnoreScripts", { yarnRootExtension.ignoreScripts })
         }
+
+        yarnRootExtension.nodeJsEnvironment.value(
+            project.provider {
+                nodeJs.requireConfigured()
+            }
+        ).disallowChanges()
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
             it.cleanableStoreProvider = provider { yarnRootExtension.requireConfigured().cleanableStore }
             it.description = "Clean unused local yarn version"
         }
 
-        val packageJsonUmbrella = nodeJs
-            .packageJsonUmbrellaTaskProvider
-
-        yarnRootExtension.rootPackageJsonTaskProvider.configure {
-            it.dependsOn(packageJsonUmbrella)
-        }
-
-        val storeYarnLock = tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
+        tasks.register(STORE_YARN_LOCK_NAME, YarnLockStoreTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
 
-            task.yarnLockMismatchReport = provider { yarnRootExtension.requireConfigured().yarnLockMismatchReport }
-            task.reportNewYarnLock = provider { yarnRootExtension.requireConfigured().reportNewYarnLock }
-            task.yarnLockAutoReplace = provider { yarnRootExtension.requireConfigured().yarnLockAutoReplace }
+            task.lockFileMismatchReport.value(
+                provider { yarnRootExtension.requireConfigured().yarnLockMismatchReport.toLockFileMismatchReport() }
+            ).disallowChanges()
+            task.reportNewLockFile.value(
+                provider { yarnRootExtension.requireConfigured().reportNewYarnLock }
+            ).disallowChanges()
+            task.lockFileAutoReplace.value(
+                provider { yarnRootExtension.requireConfigured().yarnLockAutoReplace }
+            ).disallowChanges()
         }
 
         tasks.register(UPGRADE_YARN_LOCK, YarnLockCopyTask::class.java) { task ->
             task.dependsOn(kotlinNpmInstall)
-            task.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            task.inputFile.set(nodeJs.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
             task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
             task.fileName.set(yarnRootExtension.lockFileName)
         }
 
-        val restoreYarnLock = tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
+        tasks.register(RESTORE_YARN_LOCK_NAME, YarnLockCopyTask::class.java) {
             val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
             it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
-            it.outputDirectory.set(nodeJs.rootPackageDir)
-            it.fileName.set("yarn.lock")
+            it.outputDirectory.set(nodeJs.rootPackageDirectory)
+            it.fileName.set(LockCopyTask.YARN_LOCK)
             it.onlyIf {
                 lockFile.exists()
             }
         }
 
-        kotlinNpmInstall.configure {
-            it.dependsOn(restoreYarnLock)
-        }
-    }
+        yarnRootExtension.preInstallTasks.value(
+            listOf(yarnRootExtension.restoreYarnLockTaskProvider)
+        ).disallowChanges()
 
-    // Yes, we need to break Task Configuration Avoidance here
-    // In case when we need to create package.json's files and execute kotlinNpmInstall,
-    // We need to configure all RequiresNpmDependencies tasks to install them,
-    // Because we need to persist yarn.lock
-    // We execute this block in configure phase of rootPackageJson to be sure,
-    // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
-    // https://youtrack.jetbrains.com/issue/KT-48241
-    private fun configureRequiresNpmDependencies(
-        project: Project,
-        rootPackageJson: TaskProvider<RootPackageJsonTask>
-    ) {
-        val fn: (Project) -> Unit = {
-            it.tasks.implementing(RequiresNpmDependencies::class)
-                .forEach {}
-        }
-        rootPackageJson.configure {
-            project.allprojects
-                .forEach { project ->
-                    if (it.state.executed) {
-                        fn(project)
-                    }
-                }
-        }
-
-        project.allprojects
-            .forEach {
-                if (!it.state.executed) {
-                    it.afterEvaluate { project ->
-                        rootPackageJson.configure {
-                            fn(project)
-                        }
-                    }
-                }
-            }
+        yarnRootExtension.postInstallTasks.value(
+            listOf(yarnRootExtension.storeYarnLockTaskProvider)
+        ).disallowChanges()
     }
 
     companion object {
@@ -144,5 +114,10 @@ open class YarnPlugin : Plugin<Project> {
             rootProject.plugins.apply(YarnPlugin::class.java)
             return rootProject.extensions.getByName(YarnRootExtension.YARN) as YarnRootExtension
         }
+
+        const val STORE_YARN_LOCK_NAME = "kotlinStoreYarnLock"
+        const val RESTORE_YARN_LOCK_NAME = "kotlinRestoreYarnLock"
+        const val UPGRADE_YARN_LOCK = "kotlinUpgradeYarnLock"
+        const val YARN_LOCK_MISMATCH_MESSAGE = "Lock file was changed. Run the `${UPGRADE_YARN_LOCK}` task to actualize lock file"
     }
 }

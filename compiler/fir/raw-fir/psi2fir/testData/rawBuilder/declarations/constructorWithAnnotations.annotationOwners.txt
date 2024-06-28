@@ -1,0 +1,23 @@
+@Anno(<strcat>(String(nested nested parameter type ), prop#))
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+
+@Anno(<strcat>(String(nested parameter type ), prop#))
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+
+@Anno(<strcat>(String(parameter type ), prop#))
+owner -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+context -> FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+
+@Anno(<strcat>(String(defaultValue ), prop#))
+owner -> FirConstructorSymbol /A.A
+context -> FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+
+@Anno(<strcat>(String(anonymousFunction return type ), prop#))
+owner -> FirConstructorSymbol /A.A
+context -> FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A
+
+@Anno(<strcat>(String(anonymousFunction parameter type ), prop#))
+owner -> FirConstructorSymbol /A.A
+context -> FirValueParameterSymbol <local>/i from FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param from FirConstructorSymbol /A.A

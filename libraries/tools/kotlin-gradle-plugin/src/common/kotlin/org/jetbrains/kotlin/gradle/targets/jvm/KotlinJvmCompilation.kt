@@ -7,26 +7,36 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.lenient
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
 open class KotlinJvmCompilation @Inject internal constructor(
-    compilation: KotlinCompilationImpl
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
-    KotlinCompilationWithResources<KotlinJvmOptions> {
+    compilation: KotlinCompilationImpl,
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilation),
+    DeprecatedKotlinCompilationWithResources<KotlinJvmOptions> {
 
     final override val target: KotlinJvmTarget = compilation.target as KotlinJvmTarget
 
-    override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
+    @Suppress("DEPRECATION")
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
     @Deprecated("Replaced with compileTaskProvider", replaceWith = ReplaceWith("compileTaskProvider"))
@@ -62,13 +72,33 @@ open class KotlinJvmCompilation @Inject internal constructor(
      * will be enabled after call to this method.
      */
     internal val compileJavaTaskProviderSafe: Provider<JavaCompile> = target.project.providers
-        .provider { if (target.withJavaEnabled) Unit else null }
-        .map {
-            project.javaSourceSets.getByName(compilationName).compileJavaTaskName
+        .provider { javaSourceSet.lenient.getOrNull() }
+        .flatMap { javaSourceSet ->
+            checkNotNull(javaSourceSet)
+            project.tasks.named(javaSourceSet.compileJavaTaskName, JavaCompile::class.java)
         }
-        .flatMap {
-            project.tasks.named(it, JavaCompile::class.java)
+
+
+    internal val javaSourceSet: Future<SourceSet?> get() = javaSourceSetImpl
+    private val javaSourceSetImpl: CompletableFuture<SourceSet?> = CompletableFuture<SourceSet?>().also { future ->
+        /**
+         * If no SourceSet was set until 'AfterFinaliseDsl', then user really did never call into 'withJava', hence
+         * we can complete the Future with 'null' notifying everybody, that there won't be any java source set associated with
+         * this compilation
+         */
+        target.project.launchInStage(AfterFinaliseDsl) {
+            if (!future.isCompleted) {
+                future.complete(null)
+            }
         }
+    }
+
+    internal fun maybeCreateJavaSourceSet(): SourceSet {
+        check(target.withJavaEnabled)
+        val sourceSet = target.project.javaSourceSets.maybeCreate(compilationName)
+        javaSourceSetImpl.complete(sourceSet)
+        return sourceSet
+    }
 
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")

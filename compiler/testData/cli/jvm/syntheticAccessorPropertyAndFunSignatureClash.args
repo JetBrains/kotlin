@@ -1,3 +1,4 @@
 $TESTDATA_DIR$/syntheticAccessorPropertyAndFunSignatureClash.kt
 -d
 $TEMP_DIR$
+-Xlambdas=class

@@ -9,6 +9,54 @@
 package kotlin.text
 
 /**
+ * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value.toInt())
+
+/**
+ * Appends the string representation of the specified short [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value.toInt())
+
+/**
+ * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value.toInt())
+
+/**
+ * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value.toInt())
+
+/**
  * Clears the content of this string builder making it empty and returns this instance.
  *
  * @sample samples.text.Strings.clearStringBuilder
@@ -34,7 +82,6 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
     this.replace(startIndex, endIndex, value)
@@ -49,7 +96,6 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteCharAt(index)
 
@@ -62,7 +108,6 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.delete(startIndex, endIndex)
 
@@ -79,10 +124,9 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) =
+public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length): Unit =
     this.getChars(startIndex, endIndex, destination, destinationOffset)
 
 /**
@@ -97,7 +141,6 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex - startIndex)
@@ -112,7 +155,6 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex)
@@ -131,7 +173,6 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex - startIndex)
@@ -150,7 +191,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex)
@@ -169,32 +209,32 @@ public inline fun StringBuilder.appendLine(value: StringBuilder?): StringBuilder
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Int): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Int): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Short): StringBuilder = append(value.toInt()).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Short): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Byte): StringBuilder = append(value.toInt()).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Byte): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Long): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Long): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Float): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Float): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
 
 
 private object SystemProperties {

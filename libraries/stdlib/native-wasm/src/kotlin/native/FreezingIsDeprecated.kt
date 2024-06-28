@@ -33,4 +33,4 @@ package kotlin.native
     AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
-actual annotation class FreezingIsDeprecated
+public actual annotation class FreezingIsDeprecated

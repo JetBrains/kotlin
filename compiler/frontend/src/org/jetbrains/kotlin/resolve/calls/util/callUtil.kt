@@ -154,7 +154,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
 }
 
 fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
-    val callExpressionTypes = arrayOf<Class<out KtElement>?>(
+    val callExpressionTypes = arrayOf(
         KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
         KtUnaryExpression::class.java, KtArrayAccessExpression::class.java
     )

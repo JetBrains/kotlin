@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.junit.Assume
 import java.nio.file.Path
@@ -22,7 +22,7 @@ import java.nio.file.Path
 open class AbstractSymbolLightClassesParentingTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -33,7 +33,13 @@ open class AbstractSymbolLightClassesParentingTestBase(
         val IGNORE_PARENTING_CHECK by directive(description = "Ignore the test")
     }
 
-    override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
+    override fun getRenderResult(
+        ktFile: KtFile,
+        ktFiles: List<KtFile>,
+        testDataFile: Path,
+        module: KtTestModule,
+        project: Project,
+    ): String {
         throw IllegalStateException("This test is not rendering light elements")
     }
 
@@ -41,7 +47,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
         Assume.assumeFalse("The test is not supported", Directives.IGNORE_PARENTING_CHECK in directives)
 
         // drop after KT-56882
-        val ignoreDecompiledClasses = stopIfCompilationErrorDirectivePresent
+        val ignoreDecompiledClasses = isTestAgainstCompiledCode
         return object : JavaElementVisitor() {
             private val declarationStack = ArrayDeque<PsiElement>()
 
@@ -138,8 +144,6 @@ open class AbstractSymbolLightClassesParentingTestBase(
             override fun visitField(field: PsiField) {
                 checkParentAndVisitChildren(field) { visitor ->
                     annotations.forEach { it.accept(visitor) }
-
-                    type.annotations.forEach { it.accept(visitor) }
                 }
             }
 
@@ -148,8 +152,6 @@ open class AbstractSymbolLightClassesParentingTestBase(
 
                 checkParentAndVisitChildren(method) { visitor ->
                     annotations.forEach { it.accept(visitor) }
-
-                    returnType?.annotations?.forEach { it.accept(visitor) }
                 }
             }
 
@@ -165,10 +167,43 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
+            override fun visitNameValuePair(pair: PsiNameValuePair) {
+                checkParentAndVisitChildren(pair) {
+                    value?.let(::checkAnnotationMemberValue)
+                }
+            }
+
+            override fun visitAnnotationParameterList(list: PsiAnnotationParameterList) {
+                checkParentAndVisitChildren(list) { visitor ->
+                    attributes.forEach { it.accept(visitor) }
+                }
+            }
+
+            private fun checkAnnotationMemberValue(memberValue: PsiAnnotationMemberValue) {
+                checkParentAndVisitChildren(memberValue) {
+                    if (this is PsiClassObjectAccessExpression) {
+                        checkDeclarationParent(this.operand)
+                    }
+
+                    if (this is PsiArrayInitializerMemberValue) {
+                        this.initializers.forEach(::checkAnnotationMemberValue)
+                    }
+                }
+            }
+
             private fun checkDeclarationParent(declaration: PsiElement) {
-                val expectedParent = declarationStack.lastOrNull() ?: return
+                // NB: we deliberately put these retrievals before the bail-out below so that we can catch any potential exceptions.
+                val context = declaration.context
                 val parent = declaration.parent
-                assertions.assertNotNull(parent) { "Parent should not be null for ${declaration::class} with text ${declaration.text}" }
+                // NB: for a legitimate `null` parent case, e.g., an anonymous object as a return value of reified inline function,
+                // it will not have an expected parent from the stack, and we can bail out early here.
+                val expectedParent = declarationStack.lastOrNull() ?: return
+                assertions.assertNotNull(context) {
+                    "context should not be null for ${declaration::class} with text ${declaration.text}"
+                }
+                assertions.assertNotNull(parent) {
+                    "Parent should not be null for ${declaration::class} with text ${declaration.text}"
+                }
                 assertions.assertEquals(expectedParent, parent) {
                     "Unexpected parent for ${declaration::class} with text ${declaration.text}"
                 }
@@ -179,43 +214,45 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 assertions.assertNotNull(owner)
 
                 val lastDeclaration = declarationStack.last()
-                val psiModifierListOwner = if (lastDeclaration is PsiModifierListOwner) {
-                    assertions.assertEquals(lastDeclaration.modifierList, owner)
-                    lastDeclaration
-                } else {
-                    (lastDeclaration as PsiModifierList).parent
-                } as PsiModifierListOwner
+                val psiModifierListOwner = when (lastDeclaration) {
+                    is PsiTypeParameter -> null
+                    is PsiModifierListOwner -> {
+                        assertions.assertEquals(lastDeclaration.modifierList, owner)
+                        lastDeclaration
+                    }
+                    else -> (lastDeclaration as PsiModifierList).parent as PsiModifierListOwner
+                }
 
                 if (!ignoreDecompiledClasses) {
                     when (psiModifierListOwner) {
-                        is PsiClass,
-                        is PsiParameter ->
-                            assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
-
-                        is PsiField,
-                        is PsiMethod ->
-                            assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
-
-                        else ->
-                            throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
+                        is PsiClass, is PsiParameter -> assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
+                        is PsiField, is PsiMethod -> assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
+                        null -> {}
+                        else -> throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class}")
                     }
                 }
 
-                val modifierList = psiModifierListOwner.modifierList!!
                 val qualifiedName = annotation.qualifiedName!!
-                assertions.assertTrue(modifierList.hasAnnotation(qualifiedName)) {
-                    "$qualifiedName is not found in $modifierList"
+                // This is a workaround for IDEA-346155 bug
+                if (!ignoreDecompiledClasses || owner !is PsiTypeParameter) {
+                    assertions.assertTrue(owner!!.hasAnnotation(qualifiedName)) {
+                        "$qualifiedName is not found in $owner"
+                    }
                 }
 
-                val anno = modifierList.findAnnotation(qualifiedName)
+                val anno = owner.findAnnotation(qualifiedName)
                 assertions.assertNotNull(anno) {
-                    "$qualifiedName is not found in $modifierList"
+                    "$qualifiedName is not found in $owner"
                 }
 
-                assertions.assertTrue(annotation == anno || modifierList.annotations.count { it.qualifiedName == qualifiedName } > 1)
+                assertions.assertTrue(annotation == anno || owner.annotations.count { it.qualifiedName == qualifiedName } > 1)
 
-                assertions.assertTrue(modifierList.annotations.any { it == annotation }) {
-                    "$annotation is not found in ${modifierList.annotations}"
+                assertions.assertTrue(owner.annotations.any { it == annotation }) {
+                    "$annotation is not found in ${owner.annotations}"
+                }
+
+                checkParentAndVisitChildren(annotation, notCheckItself = true) { visitor ->
+                    parameterList.accept(visitor)
                 }
             }
         }

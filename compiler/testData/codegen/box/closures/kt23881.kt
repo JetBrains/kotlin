@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
+// LAMBDAS: CLASS
 // WITH_STDLIB
 
 class ShouldBeCaptured

@@ -1,4 +1,16 @@
+val test1: KFunction1<A<String>, Unit>
+  field = A::foo
+  get
+
+val test2: KProperty1<A<String>, Int>
+  field = A::bar
+  get
+
 class A<T : Any?> {
+  val bar: Int
+    field = 42
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -8,16 +20,5 @@ class A<T : Any?> {
   fun foo() {
   }
 
-  val bar: Int
-    field = 42
-    get
-
 }
 
-val test1: KFunction1<A<String>, Unit>
-  field = A::foo
-  get
-
-val test2: KProperty1<A<String>, Int>
-  field = A::bar
-  get

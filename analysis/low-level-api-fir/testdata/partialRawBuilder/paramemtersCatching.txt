@@ -1,9 +1,0 @@
-public? final? fun test/classes/Outer.foo(): R|kotlin/Unit| {
-    lval <local>/z: <implicit> = object : R|kotlin/Any| {
-        private constructor(): R|<anonymous><X>| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-
-}

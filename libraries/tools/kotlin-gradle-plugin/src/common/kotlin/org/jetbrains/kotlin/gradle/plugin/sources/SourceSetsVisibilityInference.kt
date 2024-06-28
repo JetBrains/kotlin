@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 
 fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*>): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
-    fromCompilation.associateWithClosure.associate { it to it.allKotlinSourceSets }
+    fromCompilation.allAssociatedCompilations.associate { it to it.allKotlinSourceSets }
 
 fun getVisibleSourceSetsFromAssociateCompilations(
     sourceSet: KotlinSourceSet
@@ -39,9 +36,7 @@ internal fun getVisibleSourceSetsFromAssociateCompilations(
     return when (visibleInCompilations.size) {
         0 -> emptySet()
         1 -> visibleInCompilations.single()
-        else -> visibleInCompilations.first().toMutableSet().apply {
-            visibleInCompilations.subList(1, visibleInCompilations.size).forEach { retainAll(it) }
-        }
+        else -> visibleInCompilations.reduce { intersection, kotlinSourceSets -> intersection intersect kotlinSourceSets }
     }.toList()
 }
 
@@ -93,7 +88,7 @@ class UnsatisfiedSourceSetVisibilityException(
                     else "\n"
                 )
 
-                compilation.associateWith.forEach { appendCompilationRecursively(it, depth + 1) }
+                compilation.associatedCompilations.toList().forEach { appendCompilationRecursively(it, depth + 1) }
 
                 if (!isAssociatedCompilation) {
                     val missingRequiredSourceSets = requiredButNotVisible.filter { missingSourceSet ->
@@ -118,31 +113,4 @@ class UnsatisfiedSourceSetVisibilityException(
                 append("\n")
             }
         }
-}
-
-fun checkSourceSetVisibilityRequirements(project: Project) = checkSourceSetVisibilityRequirements(
-    project.kotlinExtension.sourceSets
-)
-
-internal fun checkSourceSetVisibilityRequirements(
-    sourceSets: Iterable<KotlinSourceSet>,
-) {
-    sourceSets.forEach { sourceSet ->
-        val requiredVisibility = sourceSet.requiresVisibilityOf
-        val inferredVisibility =
-            getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)
-
-        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.internal.withDependsOnClosure
-
-        if (requiredButNotVisible.isNotEmpty()) {
-            val compilations = sourceSet.internal.compilations
-
-            throw UnsatisfiedSourceSetVisibilityException(
-                sourceSet,
-                compilations,
-                inferredVisibility,
-                requiredButNotVisible
-            )
-        }
-    }
 }

@@ -1,4 +1,4 @@
-KtTypeScope:
+KaTypeScope:
 fun foo(x: kotlin.Int, y: Y): kotlin.collections.Map<kotlin.Int, Y>
 val map: kotlin.collections.Map<kotlin.Int, kotlin.String>
 fun equals(other: kotlin.Any?): kotlin.Boolean

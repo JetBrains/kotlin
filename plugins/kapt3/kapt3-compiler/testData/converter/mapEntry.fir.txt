@@ -1,0 +1,22 @@
+/**
+ * public abstract interface EntryHolder : kotlin/Any {
+ *
+ *   // signature: entry(Ljava/util/Map$Entry;)Ljava/util/Map$Entry;
+ *   public abstract fun entry(p: kotlin/collections/Map.Entry<kotlin/CharSequence, kotlin/collections/Map.Entry<kotlin/String, kotlin/Int>>): kotlin/collections/Map.Entry<kotlin/String, kotlin/Any>
+ *
+ *   // getter: getEntryProperty()Ljava/util/Map$Entry;
+ *   public abstract val entryProperty: kotlin/collections/Map.Entry<kotlin/String, kotlin/Any>
+ *     public abstract get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface EntryHolder {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> entry(@org.jetbrains.annotations.NotNull() java.util.Map.Entry<? extends java.lang.CharSequence, ? extends java.util.Map.Entry<java.lang.String, java.lang.Integer>> p);
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.util.Map.Entry<java.lang.String, java.lang.Object> getEntryProperty();
+}

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface I
 open class C
 

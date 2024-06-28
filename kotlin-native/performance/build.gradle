@@ -41,17 +41,15 @@ def globalProperties = new java.util.Properties()
 ext.kotlin_root = project.file("../..").absolutePath
 project.logger.info("kotlin_root: $kotlin_root")
 globalProperties.load(new java.io.FileReader(project.file("$kotlin_root/gradle.properties")))
-ext.kotlinNativeVersionInResources = true
 
-def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path), false)
+def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
+def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path, konanDataDir), false)
 def kotlinDist = null
 if (hasProperty("kotlin_dist")) {
     kotlinDist = file(findProperty("kotlin_dist"))
-    ext["notationMapping"] = [':kotlin-stdlib-common'                      : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-common'            : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-annotations-common': project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-junit'             : project.file("${kotlinDist}/kotlinc/lib/kotlin-test-junit.jar").absolutePath,
-                              ':kotlin-stdlib-jdk8'                        : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
+    ext["notationMapping"] = [':kotlin-stdlib-common' : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
+                              ':kotlin-test'          : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
+                              ':kotlin-stdlib-jdk8'   : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
     ext.targetList = []
 }
 
@@ -66,7 +64,7 @@ subprojects { proj ->
     proj.ext.platformManager = platformManager
     proj.ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(proj)
     proj.ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(proj)
-    proj.ext["kotlin.native.home"] = proj.projectDir.relativePath(UtilsKt.getKotlinNativeDist(project))
+    proj.ext["kotlin.native.home"] = UtilsKt.getKotlinNativeDist(project).toString()
     proj.ext["konan.home"] = proj.ext["kotlin.native.home"]
     proj.ext["kotlin.native.enabled"] = true
     proj.logger.info("${proj.name}<<<[kotlin.native.home] = ${proj.ext["kotlin.native.home"]}")
@@ -88,7 +86,7 @@ subprojects { proj ->
 
 def rootBuildDirectory = projectDir.parentFile
 
-task buildAnalyzer(type: GradleBuild) {
+tasks.register("buildAnalyzer", GradleBuild) {
     buildFile = "../tools/benchmarksAnalyzer/build.gradle"
     tasks = [":${getAnalyzerTargetName()}Binaries".toString()]
     startParameter.setProjectProperties(this.project.gradle.startParameter.projectProperties)
@@ -122,7 +120,7 @@ task clean {
         }
     }
     doLast {
-        delete "${buildDir.absolutePath}"
+        delete(layout.buildDirectory)
     }
 }
 
@@ -166,7 +164,7 @@ private def uploadBenchmarkResultToArtifactory(String fileName) {
         buildProperties.load(new FileInputStream(teamcityConfig))
         def password = buildProperties.getProperty("artifactory.apikey")
         MPPTools.uploadFileToArtifactory("${artifactoryUrl}", "${artifactoryRepo}",
-                uploadedFile, "${buildDir.absolutePath}/${fileName}", password)
+                uploadedFile, layout.buildDirectory.file(fileName).get().asFile.toString(), password)
     }
 }
 
@@ -176,7 +174,7 @@ task registerExternalBenchmarks {
         def reports = externalReports.split(';')
         def jsonReports = []
         reports.each {
-            def reportFile = new File(buildDir, it)
+            def reportFile = layout.buildDirectory.file(it).get().asFile
             if (!reportFile.exists())
                 return
 
@@ -222,20 +220,20 @@ task registerExternalBenchmarks {
                 properties += ["codeSize": MPPTools.toCodeSizeBenchmark(codeSize, status, name)]
             }
             def output = MPPTools.createJsonReport(properties)
-            def jsonFile = new File(buildDir, it.replace(".txt", ".json"))
+            def jsonFile = layout.buildDirectory.file(it.replace(".txt", ".json")).get().asFile
             jsonFile.write(output)
             jsonReports.add(jsonFile)
         }
         def merged = MPPTools.mergeReports(jsonReports)
         if (!merged.isEmpty()) {
-            mkdir buildDir.absolutePath
-            new File(buildDir, externalBenchmarksReport).write(merged)
+            mkdir layout.buildDirectory.get().asFile.absolutePath
+            layout.buildDirectory.file(externalBenchmarksReport).get().asFile.write(merged)
             uploadBenchmarkResultToArtifactory(externalBenchmarksReport)
         }
     }
 }
 
-task registerBuild(type: BuildRegister) {
+tasks.register("registerBuild", BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
     def uploadedFile = getUploadedFile(nativeJson)
     if (uploadedFile != null) {
@@ -252,7 +250,7 @@ task registerBuild(type: BuildRegister) {
     buildNumberSuffix = project.findProperty('buildNumberSuffix')
 }
 
-task registerExternalBuild(type: BuildRegister) {
+tasks.register("registerExternalBuild", BuildRegister) {
     onlyBranch = project.findProperty('kotlin.register.branch')
     def uploadedFile = getUploadedFile(externalBenchmarksReport)
     if (uploadedFile != null) {
@@ -269,14 +267,14 @@ registerExternalBenchmarks.finalizedBy registerExternalBuild
 def mergeReports(String fileName) {
     def reports = []
     subprojects.each {
-        def reportFile = new File("${it.buildDir.absolutePath}/${fileName}")
+        def reportFile = it.layout.buildDirectory.file(fileName).get().asFile
         if (reportFile.exists()) {
             reports.add(reportFile)
         }
     }
     def output = MPPTools.mergeReports(reports)
-    mkdir buildDir.absolutePath
-    new File("${buildDir.absolutePath}/${fileName}").write(output)
+    mkdir layout.buildDirectory.get().asFile.absolutePath
+    new File("${layout.buildDirectory.get().asFile.absolutePath}/${fileName}").write(output)
 }
 
 task mergeNativeReports {
@@ -313,7 +311,7 @@ task teamCityStat(type:Exec) {
         "--artifactory-url", "https://repo.labs.intellij.net/kotlin-native-benchmarks",
         "--teamcity-url", "http://buildserver.labs.intellij.net",
         "--server-url", findProperty("kotlin.native.performance.server.url")?.toString() ?: "http://localhost:3000",
-        "${buildDir.absolutePath}/${nativeJson}"
+        "${layout.buildDirectory.file(nativeJson).get().asFile}"
 }
 
 task cinterop {

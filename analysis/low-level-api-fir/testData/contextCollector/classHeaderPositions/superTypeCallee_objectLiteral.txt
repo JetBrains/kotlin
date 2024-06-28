@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] superTypeCallee_objectLiteral.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|test/Base.Nested| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val child: R|test/Base| = object : R|test/Base| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/<anonymous>| {
+            super<R|test/Base|>()
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|test/Base|

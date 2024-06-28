@@ -52,14 +52,17 @@ fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declaratio
         val allDeclarations = if (packageDecl != null) JavacList.of(packageDecl) + declarations else declarations
         topLevelMethod.invoke(this, allDeclarations) as JCTree.JCCompilationUnit
     } else {
-        TopLevel(JavacList.nil(), packageClause, declarations)
+        val topLevelMethod = TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
+        topLevelMethod.invoke(this, JavacList.nil<JCTree.JCAnnotation>(), packageClause, declarations) as JCTree.JCCompilationUnit
     }
 }
 
+// The cast is not useless on JDK 21
+@Suppress("USELESS_CAST")
 fun JCTree.JCCompilationUnit.getPackageNameJava9Aware(): JCTree? {
     return if (isJava9OrLater()) {
         JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackageName").invoke(this) as JCTree?
     } else {
-        this.packageName
+        this.packageName as JCTree?
     }
 }

@@ -5,86 +5,86 @@ digraph postponedLambdaInConstructor_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class A" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter function <init>" style="filled" fillcolor=red];
-            2 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            3 [label="Exit function <init>" style="filled" fillcolor=red];
-        }
-        4 [label="Exit class A" style="filled" fillcolor=red];
+        0 [label="Enter file postponedLambdaInConstructor.kt" style="filled" fillcolor=red];
+        1 [label="Exit file postponedLambdaInConstructor.kt" style="filled" fillcolor=red];
     }
     0 -> {1} [color=green];
-    0 -> {4} [style=dotted];
-    0 -> {1} [style=dashed];
-    1 -> {2};
-    2 -> {3};
-    3 -> {4} [color=green];
 
-    subgraph cluster_2 {
+    subgraph cluster_1 {
         color=red
-        5 [label="Enter class B" style="filled" fillcolor=red];
-        subgraph cluster_3 {
+        2 [label="Enter class A" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            6 [label="Enter property" style="filled" fillcolor=red];
-            7 [label="Access variable R|<local>/s|"];
-            8 [label="Exit property" style="filled" fillcolor=red];
+            3 [label="Enter function <init>" style="filled" fillcolor=red];
+            4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            5 [label="Exit function <init>" style="filled" fillcolor=red];
         }
+        6 [label="Exit class A" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {6} [style=dotted];
+    2 -> {3} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        7 [label="Enter class B" style="filled" fillcolor=red];
         subgraph cluster_4 {
             color=blue
-            9 [label="Enter function <init>" style="filled" fillcolor=red];
-            10 [label="Access variable R|<local>/s|"];
-            11 [label="Postponed enter to lambda"];
+            8 [label="Enter function <init>" style="filled" fillcolor=red];
             subgraph cluster_5 {
                 color=blue
-                12 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                9 [label="Function call arguments enter"];
+                10 [label="Access variable R|<local>/s|"];
+                11 [label="Postponed enter to lambda"];
                 subgraph cluster_6 {
                     color=blue
-                    13 [label="Enter block"];
-                    14 [label="Exit anonymous function expression"];
+                    12 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                     subgraph cluster_7 {
                         color=blue
-                        15 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        13 [label="Enter block"];
+                        14 [label="Exit anonymous function expression"];
                         subgraph cluster_8 {
                             color=blue
-                            16 [label="Enter block"];
-                            17 [label="Access variable R|<local>/it|"];
-                            18 [label="Exit block"];
+                            15 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                            subgraph cluster_9 {
+                                color=blue
+                                16 [label="Enter block"];
+                                17 [label="Access variable R|<local>/it|"];
+                                18 [label="Exit block"];
+                            }
+                            19 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                         }
-                        19 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                        20 [label="Exit block"];
                     }
-                    20 [label="Exit block"];
+                    21 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                 }
-                21 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                22 [label="Function call arguments exit"];
             }
-            22 [label="Postponed exit from lambda"];
-            23 [label="Function call: R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(...)" style="filled" fillcolor=yellow];
-            24 [label="Delegated constructor call: super<R|A|>(...)" style="filled" fillcolor=yellow];
-            25 [label="Exit function <init>" style="filled" fillcolor=red];
+            23 [label="Function call enter: R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(...)"];
+            24 [label="Postponed exit from lambda"];
+            25 [label="Function call exit: R|<local>/s|.R|kotlin/let|<R|kotlin/String|, R|() -> kotlin/String|>(...)" style="filled" fillcolor=yellow];
+            26 [label="Delegated constructor call: super<R|A|>(...)" style="filled" fillcolor=yellow];
+            27 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        26 [label="Exit class B" style="filled" fillcolor=red];
-    }
-    subgraph cluster_9 {
-        color=blue
-        27 [label="Enter function foo" style="filled" fillcolor=red];
         subgraph cluster_10 {
             color=blue
-            28 [label="Enter block"];
-            29 [label="Function call: this@R|/B|.R|/B.foo|()" style="filled" fillcolor=yellow];
-            30 [label="Exit block"];
+            28 [label="Enter property" style="filled" fillcolor=red];
+            29 [label="Access variable R|<local>/s|"];
+            30 [label="Exit property" style="filled" fillcolor=red];
         }
-        31 [label="Exit function foo" style="filled" fillcolor=red];
+        31 [label="Exit class B" style="filled" fillcolor=red];
     }
-    5 -> {6} [color=green];
-    5 -> {26} [style=dotted];
-    5 -> {6 9} [style=dashed];
-    6 -> {7};
-    7 -> {8};
-    8 -> {9} [color=green];
+    7 -> {8} [color=green];
+    7 -> {31} [style=dotted];
+    7 -> {8 28} [style=dashed];
+    8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12 23};
-    11 -> {22} [style=dotted];
+    11 -> {12 22};
+    11 -> {24} [style=dotted];
     11 -> {12} [style=dashed];
     12 -> {13};
     13 -> {14};
@@ -95,17 +95,41 @@ digraph postponedLambdaInConstructor_kt {
     17 -> {18};
     18 -> {19};
     20 -> {21};
-    21 -> {22};
-    22 -> {23} [color=green];
-    22 -> {24} [color=red];
-    23 -> {24};
-    24 -> {25};
-    25 -> {26} [color=green];
-    26 -> {27} [color=green];
-    26 -> {27} [style=dashed];
-    27 -> {28};
+    21 -> {24};
+    22 -> {23};
+    23 -> {25};
+    24 -> {25} [color=green];
+    24 -> {26} [color=red label="Postponed"];
+    25 -> {26};
+    26 -> {27};
+    27 -> {28} [color=green];
     28 -> {29};
     29 -> {30};
-    30 -> {31};
+    30 -> {31} [color=green];
+
+    subgraph cluster_11 {
+        color=red
+        32 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_12 {
+            color=blue
+            33 [label="Enter block"];
+            subgraph cluster_13 {
+                color=blue
+                34 [label="Function call arguments enter"];
+                35 [label="Function call arguments exit"];
+            }
+            36 [label="Function call enter: this@R|/B|.R|/B.foo|()"];
+            37 [label="Function call exit: this@R|/B|.R|/B.foo|()" style="filled" fillcolor=yellow];
+            38 [label="Exit block"];
+        }
+        39 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
 
 }

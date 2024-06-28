@@ -11,13 +11,21 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
-    abstract override val source: KtSourceElement?
+    /**
+     * Contains the original, unresolved [FirArgumentList] which contains [FirNamedArgumentExpression]s,
+     * whereas [FirNamedArgumentExpression]s are removed from `this` resolved argument list.
+     */
+    abstract val originalArgumentList: FirArgumentList?
     abstract val mapping: LinkedHashMap<FirExpression, FirValueParameter>
+
+    final override val source: KtSourceElement?
+        get() = originalArgumentList?.source
 
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()
@@ -38,10 +46,9 @@ abstract class FirResolvedArgumentList : FirAbstractArgumentList() {
 
 
 internal class FirResolvedArgumentListImpl(
-    override val source: KtSourceElement?,
-    mapping: LinkedHashMap<FirExpression, FirValueParameter>
+    override val originalArgumentList: FirArgumentList?,
+    mapping: LinkedHashMap<FirExpression, FirValueParameter>,
 ) : FirResolvedArgumentList() {
-
     override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = mapping
         private set
 
@@ -52,8 +59,8 @@ internal class FirResolvedArgumentListImpl(
 }
 
 internal class FirResolvedArgumentListForErrorCall(
-    override var source: KtSourceElement?,
-    private var _mapping: LinkedHashMap<FirExpression, FirValueParameter?>
+    override val originalArgumentList: FirArgumentList?,
+    private var _mapping: LinkedHashMap<FirExpression, out FirValueParameter?>,
 ) : FirResolvedArgumentList() {
 
     override var mapping: LinkedHashMap<FirExpression, FirValueParameter> = computeMapping()

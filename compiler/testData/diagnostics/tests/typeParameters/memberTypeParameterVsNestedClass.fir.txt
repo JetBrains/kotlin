@@ -1,0 +1,37 @@
+FILE: memberTypeParameterVsNestedClass.fir.kt
+    public final class OuterClass<OuterParam> : R|kotlin/Any| {
+        public constructor<OuterParam>(): R|OuterClass<OuterParam>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class OuterParam : R|kotlin/Any| {
+            public constructor(): R|OuterClass.OuterParam| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun <NestedParam : R|OuterParam|> foo(t: R|NestedParam|): R|kotlin/Unit| {
+            lval k: R|OuterParam| = R|<local>/t|
+            lval l: R|OuterParam| = R|/OuterClass.OuterParam.OuterParam<CS errors: /OuterClass.OuterParam.OuterParam>#|()
+        }
+
+        public final inner class Inner<NestedParam : R|OuterParam|, Outer(OuterParam)> : R|kotlin/Any| {
+            public OuterClass<OuterParam>.constructor<NestedParam : R|OuterParam|>(t: R|NestedParam|): R|OuterClass.Inner<NestedParam, OuterParam>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val k: R|OuterParam| = R|<local>/t|
+                public get(): R|OuterParam|
+
+            public final val l: R|OuterParam| = R|/OuterClass.OuterParam.OuterParam<CS errors: /OuterClass.OuterParam.OuterParam>#|()
+                public get(): R|OuterParam|
+
+            init {
+                lval m: R|OuterParam| = R|<local>/t|
+                lval n: R|OuterParam| = R|/OuterClass.OuterParam.OuterParam<CS errors: /OuterClass.OuterParam.OuterParam>#|()
+            }
+
+        }
+
+    }

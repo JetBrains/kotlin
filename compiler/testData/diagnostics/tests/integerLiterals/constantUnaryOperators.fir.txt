@@ -1,4 +1,4 @@
-FILE: constantUnaryOperators.kt
+FILE: constantUnaryOperators.fir.kt
     public final val i1: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(Int(2).R|kotlin/Int.times|(Int(3))).R|kotlin/Int.inv|()
         public get(): R|kotlin/Int|
     public final val l1: R|kotlin/Long| = Int(2).R|kotlin/Int.plus|(Int(2).R|kotlin/Int.times|(Int(3))).R|kotlin/Int.inv|().R|kotlin/Int.toLong|()

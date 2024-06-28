@@ -12,9 +12,9 @@ dependencies {
     api(project(":compiler:serialization"))
     api(project(":compiler:backend.common.jvm"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

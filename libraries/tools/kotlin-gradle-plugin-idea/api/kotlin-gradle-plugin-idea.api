@@ -1,219 +1,3 @@
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryCoordinates : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependencyCoordinates {
-	public abstract fun getGroup ()Ljava/lang/String;
-	public abstract fun getKotlinFragmentName ()Ljava/lang/String;
-	public abstract fun getKotlinModuleName ()Ljava/lang/String;
-	public abstract fun getModule ()Ljava/lang/String;
-	public abstract fun getVersion ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryCoordinatesImpl$Companion {
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryDependency : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependency {
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryCoordinates;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmCompilationOutput : java/io/Serializable {
-	public abstract fun getClassesDirs ()Ljava/util/Set;
-	public abstract fun getResourcesDir ()Ljava/io/File;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRoot : java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRoot$Companion;
-	public static final field RESOURCES_TYPE Ljava/lang/String;
-	public static final field SOURCES_TYPE Ljava/lang/String;
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-	public abstract fun getFile ()Ljava/io/File;
-	public abstract fun getType ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRoot$Companion {
-	public static final field RESOURCES_TYPE Ljava/lang/String;
-	public static final field SOURCES_TYPE Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRootKt {
-	public static final fun isResources (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRoot;)Z
-	public static final fun isSources (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmContentRoot;)Z
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependency : java/io/Serializable {
-	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependency$Companion;
-	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
-	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependencyCoordinates;
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependency$Companion {
-	public static final field CLASSPATH_BINARY_TYPE Ljava/lang/String;
-	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
-	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependencyCoordinates : java/io/Serializable {
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependencyKt {
-	public static final fun isClasspathType (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmResolvedBinaryDependency;)Z
-	public static final fun isDocumentationType (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmResolvedBinaryDependency;)Z
-	public static final fun isSourcesType (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmResolvedBinaryDependency;)Z
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragment : java/io/Serializable {
-	public abstract fun getContentRoots ()Ljava/util/List;
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentCoordinates;
-	public abstract fun getDependencies ()Ljava/util/List;
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmLanguageSettings;
-	public abstract fun getPlatforms ()Ljava/util/Set;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentCoordinates : java/io/Serializable, org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependencyCoordinates {
-	public abstract fun getFragmentName ()Ljava/lang/String;
-	public abstract fun getModule ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleCoordinates;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentCoordinatesKt {
-	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentCoordinates;)Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmDependency {
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentCoordinates;
-	public abstract fun getType ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type : java/lang/Enum, java/io/Serializable {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type$Companion;
-	public static final field Friend Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-	public static final field Refines Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-	public static final field Regular Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentDependency$Type;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragmentKt {
-	public static final fun getName (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragment;)Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmJsPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
-	public abstract fun isIr ()Z
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmJvmPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
-	public abstract fun getJvmTarget ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmLanguageSettings : java/io/Serializable {
-	public abstract fun getApiVersion ()Ljava/lang/String;
-	public abstract fun getCompilerPluginArguments ()Ljava/util/List;
-	public abstract fun getCompilerPluginClasspath ()Ljava/util/List;
-	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Set;
-	public abstract fun getFreeCompilerArgs ()Ljava/util/List;
-	public abstract fun getLanguageVersion ()Ljava/lang/String;
-	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Set;
-	public abstract fun isProgressiveMode ()Z
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModule : java/io/Serializable {
-	public abstract fun getCoordinates ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleCoordinates;
-	public abstract fun getFragments ()Ljava/util/List;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleCoordinates : java/io/Serializable {
-	public abstract fun getBuildId ()Ljava/lang/String;
-	public abstract fun getModuleClassifier ()Ljava/lang/String;
-	public abstract fun getModuleName ()Ljava/lang/String;
-	public abstract fun getProjectName ()Ljava/lang/String;
-	public abstract fun getProjectPath ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleCoordinatesKt {
-	public static final fun getPath (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleCoordinates;)Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModuleKt {
-	public static final fun getModuleClassifier (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModule;)Ljava/lang/String;
-	public static final fun getName (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmModule;)Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmNativePlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
-	public abstract fun getKonanTarget ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform : java/io/Serializable {
-	public abstract fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatformKt {
-	public static final fun isJs (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;)Z
-	public static final fun isJvm (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;)Z
-	public static final fun isNative (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;)Z
-	public static final fun isUnknown (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;)Z
-	public static final fun isWasm (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;)Z
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject : java/io/Serializable {
-	public abstract fun getCoreLibrariesVersion ()Ljava/lang/String;
-	public abstract fun getExplicitApiModeCliOption ()Ljava/lang/String;
-	public abstract fun getGradlePluginVersion ()Ljava/lang/String;
-	public abstract fun getKotlinNativeHome ()Ljava/io/File;
-	public abstract fun getModules ()Ljava/util/List;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectBinaryContainer : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectContainer {
-	public abstract fun getBinaryOrNull ()[B
-	public abstract fun getInstanceOrNull ()Ljava/lang/Void;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectBinaryContainer$DefaultImpls {
-	public static fun getBinaryOrNull (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectBinaryContainer;)[B
-	public static fun getInstanceOrNull (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectBinaryContainer;)Ljava/lang/Void;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectContainer : java/io/Serializable {
-	public abstract fun getBinaryOrNull ()[B
-	public abstract fun getInstanceOrNull ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-	public abstract fun getProject ()Ljava/lang/Object;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectContainerKt {
-	public static final fun IdeaKpmProjectContainer (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectInstanceContainer;
-	public static final fun IdeaKpmProjectContainer ([B)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectBinaryContainer;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectInstanceContainer : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectContainer {
-	public abstract fun getBinaryOrNull ()Ljava/lang/Void;
-	public abstract fun getInstanceOrNull ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-}
-
-public final class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectInstanceContainer$DefaultImpls {
-	public static fun getBinaryOrNull (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectInstanceContainer;)Ljava/lang/Void;
-	public static fun getInstanceOrNull (Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProjectInstanceContainer;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmResolvedBinaryDependency : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryDependency {
-	public abstract fun getBinaryFile ()Ljava/io/File;
-	public abstract fun getBinaryType ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmUnknownPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmUnresolvedBinaryDependency : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmBinaryDependency {
-	public abstract fun getCause ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmVariant : java/io/Serializable, org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmFragment {
-	public abstract fun getCompilationOutputs ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmCompilationOutput;
-	public abstract fun getPlatform ()Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform;
-	public abstract fun getVariantAttributes ()Ljava/util/Map;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmWasmPlatform : org/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmPlatform {
-}
-
 public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinBooleanExtrasSerializer : org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializer {
 	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinBooleanExtrasSerializer;
 	public fun deserialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Ljava/lang/Boolean;
@@ -298,18 +82,49 @@ public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinStringEx
 	public fun serialize (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/lang/String;)[B
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes : java/io/Serializable, java/util/Map, kotlin/jvm/internal/markers/KMappedMarker {
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributesKt {
+	public static final fun IdeaKotlinBinaryAttributes ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;
+	public static final fun IdeaKotlinBinaryAttributes (Ljava/util/Map;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability : java/io/Serializable {
+	public abstract fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability;
+	public abstract fun getGroup ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getVersion ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability$DefaultImpls {
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability;
+}
+
+public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapabilityKt {
+	public static final fun IdeaKotlinBinaryCapability (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCapability;
+}
+
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates : org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
 	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Set;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryCoordinates;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttributes ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryAttributes;
+	public final fun getCapabilities ()Ljava/util/Set;
+	public final fun getDisplayString ()Ljava/lang/String;
 	public final fun getGroup ()Ljava/lang/String;
+	public final fun getIdentityString ()Ljava/lang/String;
 	public final fun getModule ()Ljava/lang/String;
 	public final fun getSourceSetName ()Ljava/lang/String;
 	public final fun getVersion ()Ljava/lang/String;
@@ -400,13 +215,18 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifac
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates : java/io/Serializable, org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
 	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBuildId ()Ljava/lang/String;
+	public final fun getBuildName ()Ljava/lang/String;
+	public final fun getBuildPath ()Ljava/lang/String;
 	public final fun getProjectName ()Ljava/lang/String;
 	public final fun getProjectPath ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -446,6 +266,8 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordina
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBuildId ()Ljava/lang/String;
+	public final fun getBuildName ()Ljava/lang/String;
+	public final fun getBuildPath ()Ljava/lang/String;
 	public final fun getProject ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public final fun getProjectName ()Ljava/lang/String;
 	public final fun getProjectPath ()Ljava/lang/String;
@@ -545,10 +367,13 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/PrimitiveExtrasKt
 	public static final fun isNativeDistributionKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 	public static final fun isNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Z
 	public static final fun isNativeStdlibKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
+	public static final fun isOpaqueFileDependency (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;)Z
+	public static final fun isOpaqueFileDependencyKey ()Lorg/jetbrains/kotlin/tooling/core/Extras$Key;
 	public static final fun setCommonized (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
 	public static final fun setIdeaProjectLevel (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
 	public static final fun setNativeDistribution (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
 	public static final fun setNativeStdlib (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
+	public static final fun setOpaqueFileDependency (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinBinaryDependency;Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/extras/ProjectArtifactClasspathExtrasKt {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,7 +43,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
-        description = "Provide source compatibility with the specified version of Kotlin"
+        description = "Provide source compatibility with the specified version of Kotlin."
     )
     var languageVersion: String? = null
         set(value) {
@@ -66,7 +66,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
-        description = "Allow using declarations only from the specified version of bundled libraries"
+        description = "Allow using declarations from only the specified version of bundled libraries."
     )
     var apiVersion: String? = null
         set(value) {
@@ -77,7 +77,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-kotlin-home",
         valueDescription = "<path>",
-        description = "Path to the home directory of Kotlin compiler used for discovery of runtime libraries"
+        description = "Path to the Kotlin compiler home directory used for the discovery of runtime libraries."
     )
     var kotlinHome: String? = null
         set(value) {
@@ -92,11 +92,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",
-        description = "Enable progressive compiler mode.\n" +
-                "In this mode, deprecations and bug fixes for unstable code take effect immediately,\n" +
-                "instead of going through a graceful migration cycle.\n" +
-                "Code written in the progressive mode is backward compatible; however, code written in\n" +
-                "non-progressive mode may cause compilation errors in the progressive mode."
+        description = """Enable progressive compiler mode.
+In this mode, deprecations and bug fixes for unstable code take effect immediately
+instead of going through a graceful migration cycle.
+Code written in progressive mode is backward compatible; however, code written without
+progressive mode enabled may cause compilation errors in progressive mode."""
     )
     var progressiveMode = false
         set(value) {
@@ -104,7 +104,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file")
+    @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file.")
     var script = false
         set(value) {
             checkFrozen()
@@ -119,7 +119,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
         valueDescription = "<fq.name>",
-        description = "Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name"
+        description = "Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name."
     )
     var optIn: Array<String>? = null
         set(value) {
@@ -129,7 +129,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     // Advanced options
 
-    @Argument(value = "-Xno-inline", description = "Disable method inlining")
+    @Argument(value = "-Xno-inline", description = "Disable method inlining.")
     var noInline = false
         set(value) {
             checkFrozen()
@@ -138,7 +138,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xskip-metadata-version-check",
-        description = "Allow to load classes with bad metadata version and pre-release classes"
+        description = "Allow loading classes with bad metadata versions and pre-release classes."
     )
     var skipMetadataVersionCheck = false
         set(value) {
@@ -146,7 +146,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(value = "-Xskip-prerelease-check", description = "Allow to load pre-release classes")
+    @Argument(value = "-Xskip-prerelease-check", description = "Allow loading pre-release classes.")
     var skipPrereleaseCheck = false
         set(value) {
             checkFrozen()
@@ -155,7 +155,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xallow-kotlin-package",
-        description = "Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info"
+        description = "Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'."
     )
     var allowKotlinPackage = false
         set(value) {
@@ -163,21 +163,31 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(value = "-Xreport-output-files", description = "Report source to output files mapping")
+    @Argument(
+        value = "-Xstdlib-compilation",
+        description = "Enables special features which are relevant only for stdlib compilation.",
+    )
+    var stdlibCompilation = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(value = "-Xreport-output-files", description = "Report the source-to-output file mapping.")
     var reportOutputFiles = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath")
+    @Argument(value = "-Xplugin", valueDescription = "<path>", description = "Load plugins from the given classpath.")
     var pluginClasspaths: Array<String>? = null
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
+    @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin.")
     var pluginOptions: Array<String>? = null
         set(value) {
             checkFrozen()
@@ -187,8 +197,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xcompiler-plugin",
         valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
-        description = "Register compiler plugin",
-        delimiter = ""
+        description = "Register a compiler plugin.",
+        delimiter = Argument.Delimiters.none
     )
     var pluginConfigurations: Array<String>? = null
         set(value) {
@@ -196,14 +206,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
+    @Argument(value = "-Xmulti-platform", description = "Enable language support for multiplatform projects.")
     var multiPlatform = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xno-check-actual", description = "Do not check presence of 'actual' modifier in multi-platform projects")
+    @Argument(value = "-Xno-check-actual", description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.")
     var noCheckActual = false
         set(value) {
             checkFrozen()
@@ -213,7 +223,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xintellij-plugin-root",
         valueDescription = "<path>",
-        description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
+        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found."
     )
     var intellijPluginRoot: String? = null
         set(value) {
@@ -223,7 +233,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xnew-inference",
-        description = "Enable new experimental generic type inference algorithm"
+        description = "Enable the new experimental generic type inference algorithm."
     )
     var newInference = false
         set(value) {
@@ -233,7 +243,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xinline-classes",
-        description = "Enable experimental inline classes"
+        description = "Enable experimental inline classes."
     )
     var inlineClasses = false
         set(value) {
@@ -243,29 +253,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xlegacy-smart-cast-after-try",
-        description = "Allow var smart casts despite assignment in try block"
+        description = "Allow 'var' smart casts even in the presence of assignments in 'try' blocks."
     )
     var legacySmartCastAfterTry = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xeffect-system",
-        description = "Enable experimental language feature: effect system"
-    )
-    var effectSystem = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xread-deserialized-contracts",
-        description = "Enable reading of contracts from metadata"
-    )
-    var readDeserializedContracts = false
         set(value) {
             checkFrozen()
             field = value
@@ -291,17 +281,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(
-        value = "-Xproper-ieee754-comparisons",
-        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types"
-    )
-    var properIeee754Comparisons = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics")
+    @Argument(value = "-Xreport-perf", description = "Report detailed performance statistics.")
     var reportPerf = false
         set(value) {
             checkFrozen()
@@ -311,7 +291,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xdump-perf",
         valueDescription = "<path>",
-        description = "Dump detailed performance statistics to the specified file"
+        description = "Dump detailed performance statistics to the specified file."
     )
     var dumpPerf: String? = null
         set(value) {
@@ -321,7 +301,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xmetadata-version",
-        description = "Change metadata version of the generated binary files"
+        description = "Change the metadata version of the generated binary files."
     )
     var metadataVersion: String? = null
         set(value) {
@@ -332,8 +312,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xcommon-sources",
         valueDescription = "<path>",
-        description = "Sources of the common module that need to be compiled together with this module in the multi-platform mode.\n" +
-                "Should be a subset of sources passed as free arguments"
+        description = """Sources of the common module that need to be compiled together with this module in multiplatform mode.
+They should be a subset of sources passed as free arguments."""
     )
     var commonSources: Array<String>? = null
         set(value) {
@@ -342,18 +322,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-Xallow-result-return-type",
-        description = "Allow compiling code when `kotlin.Result` is used as a return type"
-    )
-    var allowResultReturnType = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xlist-phases",
-        description = "List backend phases"
+        description = "List backend phases."
     )
     var listPhases = false
         set(value) {
@@ -363,7 +333,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xdisable-phases",
-        description = "Disable backend phases"
+        description = "Disable backend phases."
     )
     var disablePhases: Array<String>? = null
         set(value) {
@@ -373,7 +343,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xverbose-phases",
-        description = "Be verbose while performing these backend phases"
+        description = "Be verbose while performing the given backend phases."
     )
     var verbosePhases: Array<String>? = null
         set(value) {
@@ -383,7 +353,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-dump-before",
-        description = "Dump backend state before these phases"
+        description = "Dump the backend's state before these phases."
     )
     var phasesToDumpBefore: Array<String>? = null
         set(value) {
@@ -393,7 +363,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-dump-after",
-        description = "Dump backend state after these phases"
+        description = "Dump the backend's state after these phases."
     )
     var phasesToDumpAfter: Array<String>? = null
         set(value) {
@@ -403,7 +373,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-dump",
-        description = "Dump backend state both before and after these phases"
+        description = "Dump the backend's state both before and after these phases."
     )
     var phasesToDump: Array<String>? = null
         set(value) {
@@ -413,7 +383,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xdump-directory",
-        description = "Dump backend state into directory"
+        description = "Dump the backend state into this directory."
     )
     var dumpDirectory: String? = null
         set(value) {
@@ -423,7 +393,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xdump-fqname",
-        description = "FqName of declaration that should be dumped"
+        description = "Dump the declaration with the given FqName."
     )
     var dumpOnlyFqName: String? = null
         set(value) {
@@ -433,7 +403,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-validate-before",
-        description = "Validate backend state before these phases"
+        description = "Validate the backend's state before these phases."
     )
     var phasesToValidateBefore: Array<String>? = null
         set(value) {
@@ -443,7 +413,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-validate-after",
-        description = "Validate backend state after these phases"
+        description = "Validate the backend's state after these phases."
     )
     var phasesToValidateAfter: Array<String>? = null
         set(value) {
@@ -453,7 +423,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xphases-to-validate",
-        description = "Validate backend state both before and after these phases"
+        description = "Validate the backend's state both before and after these phases."
     )
     var phasesToValidate: Array<String>? = null
         set(value) {
@@ -462,8 +432,43 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)."
+    )
+    var verifyIr: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility",
+        description = "Check for visibility violations in IR when validating it before running any lowerings. " +
+                "Only has effect if '-Xverify-ir' is not 'none'.",
+    )
+    var verifyIrVisibility: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xverify-ir-visibility-after-inlining",
+        description = """Check for visibility violations in IR when validating it after the function inlining phase.
+Only has effect if '-Xverify-ir' is not 'none'.
+This flag is deprecated and will soon be removed in favor of '-Xverify-ir-visibility'.
+""",
+    )
+    var verifyIrVisibilityAfterInlining: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xprofile-phases",
-        description = "Profile backend phases"
+        description = "Profile backend phases."
     )
     var profilePhases = false
         set(value) {
@@ -473,7 +478,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xcheck-phase-conditions",
-        description = "Check pre- and postconditions on phases"
+        description = "Check pre- and postconditions of IR lowering phases."
     )
     var checkPhaseConditions = false
         set(value) {
@@ -483,7 +488,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xcheck-sticky-phase-conditions",
-        description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions"
+        description = "Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'."
     )
     var checkStickyPhaseConditions = false
         set(value) {
@@ -493,8 +498,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleDeprecatedOption(
         message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        level = DeprecationLevel.WARNING,
-        removeAfter = "2.0.0",
+        level = DeprecationLevel.WARNING, // TODO: KT-65990 switch to ERROR in 2.1
+        removeAfter = LanguageVersion.KOTLIN_2_1,
     )
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -504,7 +509,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xuse-k2",
         deprecatedName = "-Xuse-fir",
-        description = "Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided"
+        description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet."
     )
     var useK2 = false
         set(value) {
@@ -514,7 +519,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xuse-fir-extended-checkers",
-        description = "Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready"
+        description = "Use extended analysis mode based on the frontend IR.\nWarning: This feature is not yet production-ready."
     )
     var useFirExtendedCheckers = false
         set(value) {
@@ -524,7 +529,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xuse-fir-ic",
-        description = "Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready"
+        description = "Compile using frontend IR internal incremental compilation.\nWarning: This feature is not yet production-ready."
     )
     var useFirIC = false
         set(value) {
@@ -534,7 +539,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xuse-fir-lt",
-        description = "Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready"
+        description = "Compile using the LightTree parser with the frontend IR."
     )
     var useFirLT = true
         set(value) {
@@ -543,36 +548,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-Xdisable-ultra-light-classes",
-        description = "Do not use the ultra light classes implementation"
+        value = "-Xmetadata-klib",
+        description = "Produce a klib that only contains the metadata of declarations.",
+        deprecatedName = "-Xexpect-actual-linker"
     )
-    var disableUltraLightClasses = false
+    var metadataKlib: Boolean = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(
-        value = "-Xuse-mixed-named-arguments",
-        description = "Enable Support named arguments in their own position even if the result appears as mixed"
-    )
-    var useMixedNamedArguments = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xexpect-actual-linker",
-        description = "Enable experimental expect/actual linker"
-    )
-    var expectActualLinker = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Don't enable the scripting plugin by default.")
     var disableDefaultScriptingPlugin = false
         set(value) {
             checkFrozen()
@@ -582,8 +568,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xexplicit-api",
         valueDescription = "{strict|warning|disable}",
-        description = "Force compiler to report errors on all public API declarations without explicit visibility or return type.\n" +
-                "Use 'warning' level to issue warnings instead of errors."
+        description = """Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
+Use the 'warning' level to issue warnings instead of errors."""
     )
     var explicitApi: String = ExplicitApiMode.DISABLED.state
         set(value) {
@@ -592,8 +578,21 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
+        value = "-XXexplicit-return-types",
+        valueDescription = "{strict|warning|disable}",
+        description = """Force the compiler to report errors on all public API declarations without an explicit return type.
+Use the 'warning' level to issue warnings instead of errors.
+This flag partially enables functionality of `-Xexplicit-api` flag, so please don't use them altogether"""
+    )
+    var explicitReturnTypes: String = ExplicitApiMode.DISABLED.state
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xinference-compatibility",
-        description = "Enable compatibility changes for generic type inference algorithm"
+        description = "Enable compatibility changes for the generic type inference algorithm."
     )
     var inferenceCompatibility = false
         set(value) {
@@ -603,7 +602,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xsuppress-version-warnings",
-        description = "Suppress warnings about outdated, inconsistent or experimental language or API versions"
+        description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions."
     )
     var suppressVersionWarnings = false
         set(value) {
@@ -611,10 +610,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
+    // TODO(KT-56076): remove this argument after stdlib started to be built with 2.0
+    @Argument(
+        value = "-Xsuppress-api-version-greater-than-language-version-error",
+        description = "Suppress error about API version greater than language version.\n" +
+                "Warning: This is temporary solution (see KT-63712) intended to be used only for stdlib build."
+    )
+    var suppressApiVersionGreaterThanLanguageVersionError: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(
         value = "-Xextended-compiler-checks",
-        description = "Enable additional compiler checks that might provide verbose diagnostic information for certain errors.\n" +
-                "Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code."
+        description = """Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
+Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code."""
     )
     var extendedCompilerChecks = false
         set(value) {
@@ -623,10 +634,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-Xbuiltins-from-sources",
-        description = "Compile builtIns from sources"
+        value = "-Xexpect-actual-classes",
+        description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
+Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
     )
-    var builtInsFromSources = false
+    var expectActualClasses = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xconsistent-data-class-copy-visibility",
+        description = "The effect of this compiler flag is the same as applying @ConsistentCopyVisibility annotation to all data classes in the module. " +
+                "See https://youtrack.jetbrains.com/issue/KT-11914"
+    )
+    var consistentDataClassCopyVisibility = false
         set(value) {
             checkFrozen()
             field = value
@@ -634,7 +657,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xunrestricted-builder-inference",
-        description = "Eliminate builder inference restrictions like allowance of returning type variables of a builder inference call"
+        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls."
     )
     var unrestrictedBuilderInference = false
         set(value) {
@@ -644,8 +667,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xenable-builder-inference",
-        description = "Use the builder inference by default, for all calls with lambdas which can't be resolved without it.\n" +
-                "The corresponding calls' declarations may not be marked with @BuilderInference."
+        description = """Use builder inference by default for all calls with lambdas that can't be resolved without it.
+The corresponding calls' declarations may not be marked with @BuilderInference."""
     )
     var enableBuilderInference = false
         set(value) {
@@ -655,7 +678,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xself-upper-bound-inference",
-        description = "Support inferring type arguments based on only self upper bounds of the corresponding type parameters"
+        description = "Support inferring type arguments from the self-type upper bounds of the corresponding type parameters."
     )
     var selfUpperBoundInference = false
         set(value) {
@@ -665,7 +688,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xcontext-receivers",
-        description = "Enable experimental context receivers"
+        description = "Enable experimental context receivers."
     )
     var contextReceivers = false
         set(value) {
@@ -674,51 +697,38 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-Xklib-relative-path-base",
-        description = "Provide a base paths to compute source's relative paths in klib (default is empty)"
+        value = "-Xmulti-dollar-interpolation",
+        description = "Enable experimental multi-dollar interpolation."
     )
-    var relativePathBases: Array<String>? = null
+    var multiDollarInterpolation = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(
-        value = "-Xklib-normalize-absolute-path",
-        description = "Normalize absolute paths in klibs"
-    )
-    var normalizeAbsolutePath = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xklib-enable-signature-clash-checks",
-        description = "Enable the checks on uniqueness of signatures"
-    )
-    var enableSignatureClashChecks = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation")
+    @Argument(value = "-Xenable-incremental-compilation", description = "Enable incremental compilation.")
     var incrementalCompilation: Boolean? = null
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render internal names of warnings and errors")
+    @Argument(value = "-Xrender-internal-diagnostic-names", description = "Render the internal names of warnings and errors.")
     var renderInternalDiagnosticNames = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow to compile any scripts along with regular Kotlin sources")
+    @Argument(value = "-Xallow-any-scripts-in-source-roots", description = "Allow compiling scripts along with regular Kotlin sources.")
     var allowAnyScriptsInSourceRoots = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(value = "-Xreport-all-warnings", description = "Report all warnings even if errors are found.")
+    var reportAllWarnings = false
         set(value) {
             checkFrozen()
             field = value
@@ -727,14 +737,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xfragments",
         valueDescription = "<fragment name>",
-        description = "Declares all known fragments of a multiplatform compilation"
+        description = "Declare all known fragments of a multiplatform compilation."
     )
     var fragments: Array<String>? = null
 
     @Argument(
         value = "-Xfragment-sources",
         valueDescription = "<fragment name>:<path>",
-        description = "Adds sources to a specific fragment of a multiplatform compilation",
+        description = "Add sources to a specific fragment of a multiplatform compilation.",
     )
     var fragmentSources: Array<String>? = null
         set(value) {
@@ -745,9 +755,39 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xfragment-refines",
         valueDescription = "<fromModuleName>:<onModuleName>",
-        description = "Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation",
+        description = "Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.",
     )
     var fragmentRefines: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xignore-const-optimization-errors",
+        description = "Ignore all compilation exceptions while optimizing some constant expressions."
+    )
+    var ignoreConstOptimizationErrors = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xdont-warn-on-error-suppression",
+        description = "Don't report warnings when errors are suppressed. This only affects K2."
+    )
+    var dontWarnOnErrorSuppression = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xwhen-guards",
+        description = "Enable language support for when guards."
+    )
+    var whenGuards = false
         set(value) {
             checkFrozen()
             field = value
@@ -766,17 +806,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 )
             }
             put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
-            put(AnalysisFlags.expectActualLinker, expectActualLinker)
+            put(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
-            put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
+            ExplicitApiMode.fromString(explicitReturnTypes)?.also { put(AnalysisFlags.explicitReturnTypes, it) } ?: collector.report(
+                CompilerMessageSeverity.ERROR,
+                "Unknown value for parameter -XXexplicit-return-types: '$explicitReturnTypes'. Value should be one of ${ExplicitApiMode.availableValues()}"
+            )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
-            put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
+            put(AnalysisFlags.stdlibCompilation, stdlibCompilation)
+            put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
+            put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }
     }
 
@@ -784,6 +829,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         HashMap<LanguageFeature, LanguageFeature.State>().apply {
             if (multiPlatform) {
                 put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
+            }
+
+            if (consistentDataClassCopyVisibility) {
+                put(LanguageFeature.DataClassCopyRespectsConstructorVisibility, LanguageFeature.State.ENABLED)
             }
 
             if (unrestrictedBuilderInference) {
@@ -817,29 +866,20 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
             }
 
-            if (effectSystem) {
-                put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED)
-            }
-
-            if (readDeserializedContracts) {
-                put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
-            }
-
-            if (properIeee754Comparisons) {
-                put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
-            }
-
-            if (useMixedNamedArguments) {
-                put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
-            }
-
             if (inferenceCompatibility) {
                 put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
             }
 
+            if (whenGuards) {
+                put(LanguageFeature.WhenGuards, LanguageFeature.State.ENABLED)
+            }
+
+            if (multiDollarInterpolation) {
+                put(LanguageFeature.MultiDollarInterpolation, LanguageFeature.State.ENABLED)
+            }
+
             if (progressiveMode) {
-                LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
+                LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular
                     // breaking change manually instead of turning off whole progressive mode
                     if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
@@ -858,7 +898,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (internalArguments.isNotEmpty()) {
                 configureLanguageFeaturesFromInternalArgs(collector)
             }
+
+            configureExtraLanguageFeatures(this)
         }
+
+    protected open fun configureExtraLanguageFeatures(map: HashMap<LanguageFeature, LanguageFeature.State>) {}
 
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
@@ -942,6 +986,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         checkIrSupport(languageVersionSettings, collector)
 
         checkPlatformSpecificSettings(languageVersionSettings, collector)
+        checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector)
 
         return languageVersionSettings
     }
@@ -952,10 +997,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         collector: MessageCollector
     ) {
         if (apiVersion > ApiVersion.createByLanguageVersion(languageVersion)) {
-            collector.report(
-                CompilerMessageSeverity.ERROR,
-                "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
-            )
+            if (!suppressApiVersionGreaterThanLanguageVersionError) {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "-api-version (${apiVersion.versionString}) cannot be greater than -language-version (${languageVersion.versionString})"
+                )
+            }
+        } else if (suppressApiVersionGreaterThanLanguageVersionError) {
+            collector.report(WARNING, "Useless suppress -Xsuppress-api-version-greater-than-language-version-error")
         }
     }
 
@@ -1024,6 +1073,22 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         // backend-specific
     }
 
+    private fun checkExplicitApiAndExplicitReturnTypesAtTheSameTime(collector: MessageCollector) {
+        if (explicitApi == ExplicitApiMode.DISABLED.state || explicitReturnTypes == ExplicitApiMode.DISABLED.state) return
+        if (explicitApi != explicitReturnTypes) {
+            collector.report(
+                CompilerMessageSeverity.ERROR,
+                """
+                    '-Xexplicit-api' and '-XXexplicit-return-types' flags cannot have different values at the same time.
+                    Consider use only one of those flags
+                    Passed:
+                      '-Xexplicit-api=${explicitApi}'
+                      '-XXexplicit-return-types=${explicitReturnTypes}'
+                    """.trimIndent()
+            )
+        }
+    }
+
     private enum class VersionKind(val text: String) {
         LANGUAGE("Language"), API("API")
     }
@@ -1052,12 +1117,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         if (value == null) null
         else LanguageVersion.fromVersionString(value)
             ?: run {
-                val versionStrings = LanguageVersion.values().filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
+                val versionStrings = LanguageVersion.entries.filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
                 val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
                 collector.report(CompilerMessageSeverity.ERROR, message, null)
                 null
             }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    class DummyImpl : CommonCompilerArguments()
+    class DummyImpl : CommonCompilerArguments() {
+        override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())
+    }
 }

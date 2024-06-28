@@ -1,0 +1,3 @@
+val constructorPropertyWithAnnotations: kotlin.Short
+  @one.Anno
+  get()

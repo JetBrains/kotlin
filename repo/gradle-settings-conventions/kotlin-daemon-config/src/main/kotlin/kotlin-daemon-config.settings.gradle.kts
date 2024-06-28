@@ -5,12 +5,7 @@ gradle.afterProject {
     plugins.withType<KotlinBasePlugin> {
         tasks.withType<CompileUsingKotlinDaemon>().configureEach {
             // Should be in sync with 'gradle-settings-conventions/gradle.properties'
-            kotlinDaemonJvmArguments.set(
-                listOf(
-                    "-Xmx3g",
-                    "-Dkotlin.js.compiler.legacy.force_enabled=true"
-                )
-            )
+            kotlinDaemonJvmArguments.set(listOf("-Xmx3g"))
         }
     }
 }

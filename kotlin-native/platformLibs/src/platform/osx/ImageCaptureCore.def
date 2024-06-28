@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security cups darwin libkern osx posix
+depends = AppKit ApplicationServices CFCGTypes CFNetwork CloudKit Cocoa CoreData CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security Symbols cups darwin libkern osx posix
 language = Objective-C
 package = platform.ImageCaptureCore
 modules = ImageCaptureCore

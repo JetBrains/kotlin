@@ -1,4 +1,5 @@
-// !LANGUAGE: +SafeCastCheckBoundSmartCasts
+// ISSUE: KT-56744
+// LANGUAGE: +SafeCastCheckBoundSmartCasts
 interface SomeClass {
     val data: Any?
 }
@@ -42,8 +43,8 @@ fun f(a: SomeClass?) {
         // 'aa' cannot be cast to SomeSubClass
         aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
-        (aa as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (aa as SomeSubClass).foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
+        (aa <!CAST_NEVER_SUCCEEDS!>as<!> SomeSubClass).foo
     }
     val b = (aa as? SomeSubClass)?.foo
     aa = null
@@ -51,8 +52,8 @@ fun f(a: SomeClass?) {
         // 'aa' cannot be cast to SomeSubClass
         aa<!UNSAFE_CALL!>.<!>hashCode()
         aa.<!UNRESOLVED_REFERENCE!>foo<!>
-        (aa as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
-        (aa as SomeSubClass).foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
+        (aa <!CAST_NEVER_SUCCEEDS!>as<!> SomeSubClass).foo
     }
     aa = a
     val c = aa as? SomeSubClass
@@ -60,7 +61,7 @@ fun f(a: SomeClass?) {
         // 'c' can be cast to SomeSubClass
         aa.hashCode()
         aa.foo
-        (aa as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (aa <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
         c.hashCode()
         c.foo
     }

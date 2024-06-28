@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -223,7 +222,7 @@ class PsiSourceCompilerForInline(
         // This is all available in the `Callable` passed to `PsiInlineCodegen.genCallInner`, but it's not forwarded through the inliner...
         var result = state.typeMapper.mapDefaultMethod(functionDescriptor, context.contextKind)
         if (result.name.contains("-") &&
-            !state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) &&
+            !state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures &&
             classFileContainsMethod(functionDescriptor, state, result) == false
         ) {
             state.typeMapper.useOldManglingRulesForFunctionAcceptingInlineClass = true

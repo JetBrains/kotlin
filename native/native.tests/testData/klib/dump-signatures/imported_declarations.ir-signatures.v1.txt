@@ -1,0 +1,15 @@
+// Declared signatures: 1
+imported/test|6620506149988718649[0]
+
+// Imported signatures: 11
+bar/publicVal.<get-publicVal>|1629535235632860507[0]
+bar/publicVal|7143563926198876043[0]
+foo/PublicClass.<init>|-5182794243525578284[0]
+foo/PublicClass|null[0]
+foo/publicFun|-6665644650067461598[0]
+kotlin.collections/List|null[0]
+kotlin/Any|null[0]
+kotlin/CharSequence|null[0]
+kotlin/String|null[0]
+kotlin/Unit|null[0]
+kotlin/toString|-1490169857175896877[0]

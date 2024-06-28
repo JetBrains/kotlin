@@ -1,13 +1,18 @@
 @kotlin.Metadata
-synthetic final class SuspendMainKt$$$main {
-    private synthetic final field args: java.lang.String[]
-    synthetic method <init>(p0: java.lang.String[]): void
-    public synthetic final method invoke(p0: java.lang.Object): java.lang.Object
+synthetic final class SuspendMainKt$main$2 {
+    // source: 'suspendMain.kt'
+    enclosing method SuspendMainKt.main([Ljava/lang/String;)V
+    private synthetic field args: java.lang.String[]
+    inner (anonymous) class SuspendMainKt$main$2
+    method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class SuspendMainKt {
     // source: 'suspendMain.kt'
+    inner (anonymous) class SuspendMainKt$main$2
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic static method main(p0: java.lang.String[]): void
 }

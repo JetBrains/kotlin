@@ -44,29 +44,6 @@ public class ReflectProperties {
         }
     }
 
-    // A delegate for a lazy property, whose initializer may be invoked multiple times including simultaneously from different threads
-    public static class LazyVal<T> extends Val<T> {
-        private final Function0<T> initializer;
-        private volatile Object value = null;
-
-        public LazyVal(@NotNull Function0<T> initializer) {
-            this.initializer = initializer;
-        }
-
-        @Override
-        public T invoke() {
-            Object cached = value;
-            if (cached != null) {
-                return unescape(cached);
-            }
-
-            T result = initializer.invoke();
-            value = escape(result);
-
-            return result;
-        }
-    }
-
     // A delegate for a lazy property on a soft reference, whose initializer may be invoked multiple times
     // including simultaneously from different threads
     public static class LazySoftVal<T> extends Val<T> implements Function0<T> {
@@ -95,11 +72,6 @@ public class ReflectProperties {
 
             return result;
         }
-    }
-
-    @NotNull
-    public static <T> LazyVal<T> lazy(@NotNull Function0<T> initializer) {
-        return new LazyVal<T>(initializer);
     }
 
     @NotNull

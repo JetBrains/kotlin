@@ -1,13 +1,13 @@
 data class TestData {
+  val nn: Nothing?
+    field = nn
+    get
+
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val nn: Nothing?
-    field = nn
-    get
 
   operator fun component1(): Nothing? {
     return <this>.#nn
@@ -17,17 +17,6 @@ data class TestData {
     return TestData(nn = nn)
   }
 
-  override fun toString(): String {
-    return "TestData(" + "nn=" + <this>.#nn + ")"
-  }
-
-  override fun hashCode(): Int {
-    return when {
-      EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
-      else -> <this>.#nn.hashCode()
-    }
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -35,28 +24,11 @@ data class TestData {
     when {
       other !is TestData -> return false
     }
-    val tmp0_other_with_cast: TestData = other as TestData
+    val tmp_0: TestData = other as TestData
     when {
-      EQEQ(arg0 = <this>.#nn, arg1 = tmp0_other_with_cast.#nn).not() -> return false
+      EQEQ(arg0 = <this>.#nn, arg1 = tmp_0.#nn).not() -> return false
     }
     return true
-  }
-
-}
-
-value class TestInline {
-  constructor(nn: Nothing?) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val nn: Nothing?
-    field = nn
-    get
-
-  override fun toString(): String {
-    return "TestInline(" + "nn=" + <this>.#nn + ")"
   }
 
   override fun hashCode(): Int {
@@ -66,15 +38,44 @@ value class TestInline {
     }
   }
 
+  override fun toString(): String {
+    return "TestData(" + "nn=" + <this>.#nn + ")"
+  }
+
+}
+
+value class TestInline {
+  val nn: Nothing?
+    field = nn
+    get
+
+  constructor(nn: Nothing?) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       other !is TestInline -> return false
     }
-    val tmp0_other_with_cast: TestInline = other as TestInline
+    val tmp_1: TestInline = other as TestInline
     when {
-      EQEQ(arg0 = <this>.#nn, arg1 = tmp0_other_with_cast.#nn).not() -> return false
+      EQEQ(arg0 = <this>.#nn, arg1 = tmp_1.#nn).not() -> return false
     }
     return true
   }
 
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#nn, arg1 = null) -> 0
+      else -> <this>.#nn.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "TestInline(" + "nn=" + <this>.#nn + ")"
+  }
+
 }
+

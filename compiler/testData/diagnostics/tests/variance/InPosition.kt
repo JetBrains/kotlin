@@ -1,4 +1,4 @@
-// !LANGUAGE: -TrailingCommas
+// LANGUAGE: -TrailingCommas
 
 interface In<in T>
 interface Out<out T>

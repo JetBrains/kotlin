@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
-//   Reason: KT-56756
+// TARGET_BACKEND: JVM_IR
 // FILE: j/J.java
 
 package j;
@@ -21,6 +20,6 @@ fun test() {
 }
 
 // @KKt.class:
-// 1 LDC "a"
+// 0 LDC "a"
 // 0 checkExpressionValueIsNotNull
-// 1 checkNotNullExpressionValue
+// 1 checkNotNull

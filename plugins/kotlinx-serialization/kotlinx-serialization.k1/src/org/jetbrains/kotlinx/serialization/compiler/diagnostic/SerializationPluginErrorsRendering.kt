@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
@@ -108,9 +111,29 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE
         )
         MAP.put(
+            SerializationErrors.ABSTRACT_SERIALIZER_TYPE,
+            "Custom serializer ''{1}'' on serializable type ''{0}'' can not be instantiated. It is not allowed to specify the interface, abstract or sealed class as a custom serializer.",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
             SerializationErrors.LOCAL_SERIALIZER_USAGE,
             "Class ''{0}'' can't be used as a serializer since it is local",
             Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT,
+            "Custom serializer ''{0}'' can not be used for ''{1}'' since it has an invalid number of parameters in primary constructor: {2}",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+        MAP.put(
+            SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE,
+            "Custom serializer ''{0}'' can not be used for ''{1}'', type of parameter ''{2}'' in serializer's primary constructor should be ''KSerializer''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
         )
         MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,
@@ -164,6 +187,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
             "@MetaSerializable annotation should be used only on top-level annotation classes. Usage on nested annotation classes is deprecated and will yield errors in the future."
         )
+        MAP.put(
+           SerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
+           "Repeatable serial info annotations can not be inheritable. Either remove @Repeatable or use a regular @SerialInfo annotation."
+        )
 
         MAP.put(
             SerializationErrors.EXTERNAL_SERIALIZER_USELESS,
@@ -183,6 +210,24 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             "Cannot generate external serializer ''{0}'': class ''{1}'' is defined in another module",
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
+            SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR,
+            "Cannot generate external serializer ''{0}'': it must have a constructor with {2} value parameters, because class ''{1}'' has type parameters",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            CommonRenderers.STRING
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_USELESS,
+            "@KeepGeneratedSerializer annotation is useless here, it is acceptable to use it only on classes marked with @Serializable(CustomSerializer::class)"
+        )
+
+        MAP.put(
+            SerializationErrors.KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC,
+            "@KeepGeneratedSerializer annotation is not applicable for abstract or sealed classes and interfaces"
         )
     }
 }

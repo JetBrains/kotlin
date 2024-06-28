@@ -1,0 +1,6 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+          CALL 'public final fun bar (): kotlin.Int declared in p2' type=kotlin.Int origin=null

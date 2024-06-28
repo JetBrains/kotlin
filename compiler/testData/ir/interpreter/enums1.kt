@@ -23,3 +23,11 @@ const val f1 = <!EVALUATED: `2`!>enumValues<EnumClass>().size<!>
 const val f2 = <!EVALUATED: `VALUE1`!>enumValueOf<EnumClass>("VALUE1").name<!>
 
 const val j1 = <!EVALUATED: `VALUE1, VALUE2`!>enumValues<EnumClass>().joinToString { it.name }<!>
+
+@CompileTimeCalculation
+fun getEnumValue(flag: Boolean): EnumClass {
+	return if (flag) EnumClass.VALUE1 else EnumClass.VALUE2
+}
+
+const val conditional1 = <!EVALUATED: `VALUE1`!>getEnumValue(true).name<!>
+const val conditional2 = <!EVALUATED: `VALUE2`!>getEnumValue(false).name<!>

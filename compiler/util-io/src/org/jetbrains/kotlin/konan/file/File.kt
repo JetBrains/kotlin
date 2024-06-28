@@ -28,8 +28,9 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.toAbsolutePath().toString()
     val absoluteFile: File
         get() = File(absolutePath)
-    val canonicalPath: String
-        get() = javaPath.toFile().canonicalPath
+    val canonicalPath: String by lazy {
+        javaPath.toFile().canonicalPath
+    }
     val canonicalFile: File
         get() = File(canonicalPath)
 
@@ -37,6 +38,8 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.fileName.toString().removeSuffixIfPresent(separator) // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
     val extension: String
         get() = name.substringAfterLast('.', "")
+    val nameSegments: List<String>
+        get() = javaPath.map { it.fileName.toString() }
     val parent: String
         get() = javaPath.parent.toString()
     val parentFile: File
@@ -54,6 +57,18 @@ data class File constructor(internal val javaPath: Path) {
         get() = Files.newDirectoryStream(javaPath).use { stream -> stream.map(::File) }
     val listFilesOrEmpty: List<File>
         get() = if (exists) listFiles else emptyList()
+
+	// A fileKey is an object that uniquely identifies the given file.
+	val fileKey: Any
+	    get() {
+            // It is not guaranteed that all filesystems have fileKey. If not we fall
+            // back on canonicalPath which can be significantly slower to get.
+            var key = Files.readAttributes(javaPath, BasicFileAttributes::class.java).fileKey()
+            if (key == null) {
+                key = this.canonicalPath
+            }
+            return key
+        }
 
     fun child(name: String) = File(this, name)
     fun startsWith(another: File) = javaPath.startsWith(another.javaPath)

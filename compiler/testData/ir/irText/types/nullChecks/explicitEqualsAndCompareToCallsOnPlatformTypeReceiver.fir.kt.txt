@@ -1,24 +1,24 @@
-fun JavaClass.testPlatformEqualsPlatform(): Boolean {
-  return <this>.null0().equals(other = <this>.null0())
-}
-
-fun JavaClass.testPlatformEqualsKotlin(): Boolean {
-  return <this>.null0().equals(other = 0.0)
+fun JavaClass.testKotlinCompareToPlatform(): Int {
+  return 0.0.compareTo(other = <this>.null0() /*!! Double */)
 }
 
 fun JavaClass.testKotlinEqualsPlatform(): Boolean {
   return 0.0.equals(other = <this>.null0())
 }
 
-fun JavaClass.testPlatformCompareToPlatform(): Int {
-  return <this>.null0().compareTo(other = <this>.null0() /*!! Double */)
-}
-
 fun JavaClass.testPlatformCompareToKotlin(): Int {
   return <this>.null0().compareTo(other = 0.0)
 }
 
-fun JavaClass.testKotlinCompareToPlatform(): Int {
-  return 0.0.compareTo(other = <this>.null0() /*!! Double */)
+fun JavaClass.testPlatformCompareToPlatform(): Int {
+  return <this>.null0().compareTo(other = <this>.null0() /*!! Double */)
+}
+
+fun JavaClass.testPlatformEqualsKotlin(): Boolean {
+  return <this>.null0().equals(other = 0.0)
+}
+
+fun JavaClass.testPlatformEqualsPlatform(): Boolean {
+  return <this>.null0().equals(other = <this>.null0())
 }
 

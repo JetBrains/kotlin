@@ -98,7 +98,7 @@ class IrSourceCompilerForInline(
     override fun generateFinallyBlocks(finallyNode: MethodNode, curFinallyDepth: Int, returnType: Type, afterReturnLabel: Label, target: Label?) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.smap, codegen.reifiedTypeParametersUsages
+            sourceMapper, codegen.reifiedTypeParametersUsages
         ).also {
             it.finallyDepth = curFinallyDepth
         }.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
@@ -106,7 +106,25 @@ class IrSourceCompilerForInline(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val isCallInsideSameModuleAsCallee: Boolean
-        get() = callee.module == codegen.irFunction.module
+        get() {
+            val inlineFunModule = callee.fileOrNull?.module
+            val currentlyGeneratedFunModule = codegen.irFunction.fileOrNull?.module
+            check(currentlyGeneratedFunModule != null) {
+                "There is no module for function ${codegen.irFunction.name}:\n${codegen.irFunction.render()}"
+            }
+
+            return if (inlineFunModule == null) {
+                callee.module == codegen.irFunction.module
+            } else {
+                // Check by IR is needed for the evaluate expression in IDE.
+                // When we compile some code fragment with inline function call
+                // that has an anonymous object in callee, we will get incorrect behavior.
+                // Code fragment is wrapped in `EvaluatorModuleDescriptor` and we accidentally
+                // think that inline call and callee are in different modules that leads to an error in
+                // `AnonymousObjectTransformer.doTransform`.
+                inlineFunModule == currentlyGeneratedFunModule
+            }
+        }
 
     override val isFinallyMarkerRequired: Boolean
         get() = codegen.isFinallyMarkerRequired

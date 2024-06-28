@@ -19,7 +19,7 @@ fun test_2(cond: Boolean?) {
         false -> 2
     }
 
-    val x = when (cond) {
+    val y = when (cond) {
         true -> 1
         false -> 2
         null -> 3

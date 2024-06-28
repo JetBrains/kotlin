@@ -1,21 +1,22 @@
 // TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
 // WITH_REFLECT
 
 annotation class A(vararg val strings: String)
 
-@A(*arrayOf("foo", "bar"), "baz")
+@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), <!EVALUATED("baz")!>"baz"<!>)
 class B
 
-@A("baz", *arrayOf("foo", "bar"), "xyz")
+@A(<!EVALUATED("baz")!>"baz"<!>, *arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), <!EVALUATED("xyz")!>"xyz"<!>)
 class C
 
-@A(*arrayOf("foo", "bar", "xyz"))
+@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>, <!EVALUATED("xyz")!>"xyz"<!>))
 class D
 
-@A("foo", "baz", "bar")
+@A(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("baz")!>"baz"<!>, <!EVALUATED("bar")!>"bar"<!>)
 class E
 
-@A(*arrayOf("foo", "bar"), *arrayOf("baz", "xyz"))
+@A(*arrayOf(<!EVALUATED("foo")!>"foo"<!>, <!EVALUATED("bar")!>"bar"<!>), *arrayOf(<!EVALUATED("baz")!>"baz"<!>, <!EVALUATED("xyz")!>"xyz"<!>))
 class F
 
 fun box(): String {

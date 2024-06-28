@@ -1,11 +1,34 @@
 MODULES: lib1, lib2, main
 
-STEP 0..3:
+STEP 0:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib1/l1b, lib2/l2a, main/m, main/m.export, main
+STEP 1:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib1/l1c, lib2/l2a, lib2/l2b, main/m
+STEP 2:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib1/l1b, lib1/l1c, lib2/l2a, lib2/l2b, main/m
+STEP 3:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib1/l1c, lib2/l2b, main/m
 STEP 4:
     libs: lib1, lib2, main
-    dirty js: lib1
-STEP 5..8:
+    dirty js modules: lib1
+    dirty js files:   lib1/l1c
+STEP 5:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1b, lib2/l2b, main/m
+STEP 6:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib2/l2b, main/m
+STEP 7..8:
+    libs: lib1, lib2, main
+    dirty js modules: lib1, lib2, main
+    dirty js files:   lib1/l1a, lib1/l1b, lib1/l1c, lib2/l2a, lib2/l2b, main/m

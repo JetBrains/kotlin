@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.utils.SmartList
 class FirPackageMemberScope(
     val fqName: FqName,
     val session: FirSession,
-    private val symbolProvider: FirSymbolProvider = session.symbolProvider
+    private val symbolProvider: FirSymbolProvider = session.symbolProvider,
+    private val excludedNames: Set<Name> = emptySet(),
 ) : FirScope() {
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
@@ -34,6 +36,7 @@ class FirPackageMemberScope(
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         if (name.asString().isEmpty()) return
+        if (name in excludedNames) return
 
         val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)
@@ -46,6 +49,8 @@ class FirPackageMemberScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (name in excludedNames) return
+
         val symbols = functionCache.getOrPut(name) {
             symbolProvider.getTopLevelFunctionSymbols(fqName, name)
         }
@@ -55,6 +60,8 @@ class FirPackageMemberScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        if (name in excludedNames) return
+
         val symbols = propertyCache.getOrPut(name) {
             symbolProvider.getTopLevelPropertySymbols(fqName, name)
         }
@@ -66,4 +73,4 @@ class FirPackageMemberScope(
     override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
 }
 
-val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
+val PACKAGE_MEMBER: ScopeSessionKey<FqName, FirPackageMemberScope> = scopeSessionKey()

@@ -8,7 +8,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.buildCallKindWithCustomResolutionSequence
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -48,6 +53,8 @@ abstract class AbstractCandidateInfoProvider(
             containingDeclarations = emptyList(), // TODO - maybe we should pass declarations from context here (no visible differences atm)
             containingFile = firFile,
             isImplicitInvoke = false,
+            resolutionMode = ResolutionMode.ContextIndependent,
+            isUsedAsGetClassReceiver = false,
             session = firSession,
         )
     }

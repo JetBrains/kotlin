@@ -13,7 +13,7 @@ FILE: m1.kt
 
         protected abstract fun createDatabaseRetriever(database: R|D|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<out D, D, S>|
 
-        protected abstract inner class AbstractDatabaseRetriever<D : R|m1/BasicDatabase|, D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|> : R|m1/BaseIntrospector.AbstractRetriever<D, S>| {
+        protected abstract inner class AbstractDatabaseRetriever<D : R|m1/BasicDatabase|, Outer(D) : R|m1/BasicDatabase|, Outer(S) : R|m1/BasicSchema|> : R|m1/BaseIntrospector.AbstractRetriever<D, S>| {
             protected m1/BaseIntrospector<D, S>.constructor<D : R|m1/BasicDatabase|>(database: R|D|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<D, D, S>| {
                 this@R|m1/BaseIntrospector|.super<R|m1/BaseIntrospector.AbstractRetriever<D, S>|>()
             }
@@ -23,7 +23,7 @@ FILE: m1.kt
 
         }
 
-        protected abstract inner class AbstractRetriever<D : R|m1/BasicDatabase|, S : R|m1/BasicSchema|> : R|kotlin/Any| {
+        protected abstract inner class AbstractRetriever<Outer(D) : R|m1/BasicDatabase|, Outer(S) : R|m1/BasicSchema|> : R|kotlin/Any| {
             public m1/BaseIntrospector<D, S>.constructor(): R|m1/BaseIntrospector.AbstractRetriever<D, S>| {
                 super<R|kotlin/Any|>()
             }
@@ -56,7 +56,7 @@ FILE: m2.kt
 
         protected open override fun createDatabaseRetriever(database: R|m2/SqliteRoot|): R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
             ^createDatabaseRetriever object : R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>| {
-                private constructor(): R|<anonymous>| {
+                private constructor(): R|m2/<anonymous>| {
                     this@R|m2/SqliteIntrospector|.super<R|m1/BaseIntrospector.AbstractDatabaseRetriever<m2/SqliteRoot, m2/SqliteRoot, m2/SqliteSchema>|>(R|<local>/database|)
                 }
 

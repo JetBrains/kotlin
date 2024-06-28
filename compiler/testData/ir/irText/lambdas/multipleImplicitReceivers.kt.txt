@@ -1,3 +1,18 @@
+interface IFoo {
+  val A.foo: B
+    get(): B {
+      return B
+    }
+
+}
+
+interface IInvoke {
+  operator fun B.invoke(): Int {
+    return 42
+  }
+
+}
+
 object A {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -16,21 +31,6 @@ object B {
 
 }
 
-interface IFoo {
-  val A.foo: B
-    get(): B {
-      return B
-    }
-
-}
-
-interface IInvoke {
-  operator fun B.invoke(): Int {
-    return 42
-  }
-
-}
-
 fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
   with<A, Int>(receiver = A, block = local fun A.<anonymous>(): Int {
     return with<IFoo, Int>(receiver = fooImpl, block = local fun IFoo.<anonymous>(): Int {
@@ -43,3 +43,4 @@ fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
   }
 ) /*~> Unit */
 }
+

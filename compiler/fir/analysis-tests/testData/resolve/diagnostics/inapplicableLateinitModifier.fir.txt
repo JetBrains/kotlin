@@ -20,7 +20,7 @@ FILE: inapplicableLateinitModifier.kt
             ^ D|/kest|.R|/Delegate.getValue|(Null(null), ::R|/kest|)
         }
         public set(<set-?>: R|kotlin/String|): R|kotlin/Unit| {
-            D|/kest|.R|/Delegate.setValue|(Null(null), ::R|/kest|, R|<local>/kest|)
+            ^ D|/kest|.R|/Delegate.setValue|(Null(null), ::R|/kest|, R|<local>/kest|)
         }
     public final lateinit var good: R|kotlin/String|
         public get(): R|kotlin/String|

@@ -16,14 +16,11 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
-import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 
-@OptIn(ExternalVariantApi::class)
 fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarget {
     val project = this.project
     val androidExtension = project.extensions.getByType<LibraryExtension>()
@@ -55,8 +52,14 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         apiElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+            )
         }
 
         /*
@@ -64,8 +67,14 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         runtimeElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider { project.objects.named("7.4.0-beta02") } /* For demo */
+            )
         }
 
         /*
@@ -73,8 +82,16 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
         In this example we hardcoded AGP version 7.4.0-beta02 as demo
         */
         sourcesElements.configure { _, configuration ->
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
-            configuration.attributes.attribute(AgpVersionAttr.ATTRIBUTE, project.objects.named("7.4.0-beta02")) /* For demo */
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+            )
+            configuration.attributes.attributeProvider(
+                AgpVersionAttr.ATTRIBUTE,
+                project.provider {
+                    project.objects.named("7.4.0-beta02") /* For demo */
+                }
+            )
         }
 
         /*
@@ -83,14 +100,30 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
          */
         apiElementsPublished.configure { _, configuration ->
             /* TODO w/ Google: Find a way to deprecate this attribute */
-            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attributeProvider(
+                KotlinPlatformType.attribute,
+                project.provider { KotlinPlatformType.androidJvm }
+            )
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider {
+                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                }
+            )
         }
 
         runtimeElementsPublished.configure { _, configuration ->
             /* TODO w/ Google: Find a way to deprecate this attribute */
-            configuration.attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.androidJvm)
-            configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+            configuration.attributes.attributeProvider(
+                KotlinPlatformType.attribute,
+                project.provider { KotlinPlatformType.androidJvm }
+            )
+            configuration.attributes.attributeProvider(
+                TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                project.provider {
+                    project.objects.named(TargetJvmEnvironment.ANDROID)
+                }
+            )
         }
 
         configureIdeImport {
@@ -98,7 +131,7 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 AndroidBootClasspathIdeDependencyResolver(project),
                 constraint = IdeMultiplatformImport.SourceSetConstraint { sourceSet -> sourceSet.android != null },
                 phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-                level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+                priority = IdeMultiplatformImport.Priority.normal
             )
         }
     }
@@ -168,7 +201,10 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 artifactType: CLASSES_JAR
          */
         androidTarget.apiElementsConfiguration.outgoing.variants.create("classes").let { variant ->
-            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.attributes.attributeProvider(
+                AndroidArtifacts.ARTIFACT_TYPE,
+                project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+            )
             variant.artifact(mainCompilation.output.classesDirs.singleFile) {
                 it.builtBy(mainCompilation.output.classesDirs)
             }
@@ -181,7 +217,10 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 artifactType: CLASSES_JAR
          */
         androidTarget.runtimeElementsConfiguration.outgoing.variants.create("classes").let { variant ->
-            variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+            variant.attributes.attributeProvider(
+                AndroidArtifacts.ARTIFACT_TYPE,
+                project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+            )
             variant.artifact(mainCompilation.output.classesDirs.singleFile) {
                 it.builtBy(mainCompilation.output.classesDirs)
             }

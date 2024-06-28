@@ -1,0 +1,28 @@
+FILE: whileLoopNotNull.fir.kt
+    public final fun R|kotlin/Int?|.swap(): R|kotlin/Int| {
+        ^swap Int(1)
+    }
+    public final fun R|kotlin/Int|.swap(): R|kotlin/Int?| {
+        ^swap Null(null)
+    }
+    public final var result: R|kotlin/Boolean| = Boolean(false)
+        public get(): R|kotlin/Boolean|
+        public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final fun b(): R|kotlin/Boolean| {
+        R|/result| = R|/result|.R|kotlin/Boolean.not|()
+        ^b R|/result|
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int?| = Int(1)
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                while(R|/b|()) {
+                    lval tmp: R|kotlin/Int| = R|<local>/x|.R|/swap|()
+                    R|<local>/x| = R|<local>/tmp|
+                }
+
+                R|<local>/x|.R|kotlin/Int.plus|(Int(1))
+            }
+        }
+
+    }

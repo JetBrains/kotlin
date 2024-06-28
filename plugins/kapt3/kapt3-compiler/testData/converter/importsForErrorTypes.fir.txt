@@ -1,0 +1,17 @@
+/**
+ * package {
+ *
+ *   // signature: test()Ljava/lang/Object;
+ *   public final fun test(): kotlin/Any?
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ImportsForErrorTypesKt {
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.Object test() {
+        return null;
+    }
+}

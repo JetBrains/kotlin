@@ -1,0 +1,135 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: Int): <implicit> { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: Int): <implicit> { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: Int): <implicit> { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] param: Int): <implicit> { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] param: Int): <implicit> { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionParameterScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] functionParameterScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-functionParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+

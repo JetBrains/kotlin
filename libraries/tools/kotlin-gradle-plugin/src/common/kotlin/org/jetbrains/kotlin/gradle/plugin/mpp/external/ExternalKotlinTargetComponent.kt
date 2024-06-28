@@ -10,16 +10,17 @@ import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromPublicationDelegateAndProject
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class ExternalKotlinTargetComponent(
-    val targetProvider: TargetProvider
-) : KotlinTargetComponentWithPublication, ComponentWithCoordinates {
+    val targetProvider: TargetProvider,
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication, ComponentWithCoordinates {
 
     /*
     Target creation requires this component. We will provide the target once it is required
@@ -37,7 +38,7 @@ internal class ExternalKotlinTargetComponent(
     /* Required for getting correct coordinates */
     override var publicationDelegate: MavenPublication? = null
 
-    override val target: KotlinTarget by lazy { targetProvider() }
+    override val target: DecoratedExternalKotlinTarget by lazy { targetProvider() }
 
     override val publishable: Boolean
         get() = target.publishable
@@ -60,6 +61,23 @@ internal class ExternalKotlinTargetComponent(
 
     override fun getCoordinates(): ModuleVersionIdentifier =
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
+
+    private val _usages: Set<DefaultKotlinUsageContext> by lazy {
+        val compilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            ?: error("Missing conventional '${KotlinCompilation.MAIN_COMPILATION_NAME}' compilation in '$target'")
+
+        setOf(
+            DefaultKotlinUsageContext(compilation, COMPILE, target.apiElementsPublishedConfiguration.name),
+            DefaultKotlinUsageContext(compilation, RUNTIME, target.runtimeElementsPublishedConfiguration.name),
+            DefaultKotlinUsageContext(
+                compilation = compilation,
+                mavenScope = null,
+                dependencyConfigurationName = target.sourcesElementsPublishedConfiguration.name,
+                includeIntoProjectStructureMetadata = false,
+                publishOnlyIf = { target.isSourcesPublishable }
+            )
+        )
+    }
+
+    override fun getUsages(): Set<KotlinUsageContext> = _usages.filter { it.publishOnlyIf.predicate() }.toSet()
 }
-
-

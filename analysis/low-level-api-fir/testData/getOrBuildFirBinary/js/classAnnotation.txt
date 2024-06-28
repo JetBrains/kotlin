@@ -1,0 +1,12 @@
+KT element: KtClass
+KT element text:
+@Y public final class Cls public constructor() {
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|Y|() public final [ResolvedTo(BODY_RESOLVE)] class Cls : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Cls] constructor(): R|Cls|
+
+}

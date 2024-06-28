@@ -1,3 +1,6 @@
+// STRIP_METADATA
+// TODO: Re-enable metadata generation
+
 package test
 
 class Test<T : CharSequence, N : Number> {

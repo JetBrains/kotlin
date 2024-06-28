@@ -1,0 +1,16 @@
+@kotlin.Metadata
+public final class test/C {
+    // source: 'C.kt'
+    public method <init>(): void
+    private final static method f$lambda$0(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method f(): java.lang.String
+    private final static method g$lambda$1(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method g(): kotlin.jvm.functions.Function0
+    public inner class A$B
+}
+
+@kotlin.Metadata
+public final class test/CKt {
+    // source: 'C.kt'
+    public final static method eval(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+}

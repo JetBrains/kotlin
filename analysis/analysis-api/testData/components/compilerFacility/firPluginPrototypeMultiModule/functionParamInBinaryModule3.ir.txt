@@ -1,0 +1,26 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:ArticleScreenContent visibility:private modality:FINAL <> (title:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      VALUE_PARAMETER name:title index:0 type:kotlin.String
+      BLOCK_BODY
+        CALL 'public final fun Scaffold (x: @[MyComposable] kotlin.Function0<@[MyComposable] kotlin.Function0<kotlin.Unit>>): kotlin.Unit declared in p3' type=kotlin.Unit origin=null
+          x: FUN_EXPR type=kotlin.Function0<@[MyComposable] kotlin.Function0<kotlin.Unit>> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[MyComposable] kotlin.Function0<kotlin.Unit>
+              annotations:
+                MyComposable
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[MyComposable] kotlin.Function0<kotlin.Unit> declared in <root>.ArticleScreenContent'
+                  FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+                      annotations:
+                        MyComposable
+                      BLOCK_BODY
+                        CALL 'private final fun TopAppBar (title: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                          title: GET_VAR 'title: kotlin.String declared in <root>.ArticleScreenContent' type=kotlin.String origin=null
+    FUN name:TopAppBar visibility:private modality:FINAL <> (title:kotlin.String) returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      VALUE_PARAMETER name:title index:0 type:kotlin.String
+      BLOCK_BODY

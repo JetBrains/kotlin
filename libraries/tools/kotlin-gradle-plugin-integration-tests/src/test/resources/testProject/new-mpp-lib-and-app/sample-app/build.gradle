@@ -1,94 +1,99 @@
-buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
 }
 
-apply plugin: 'kotlin-multiplatform'
+group = "com.example"
+version = "1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    // NB: Build of this module depends on 'sample-lib' publication. You need to add the local
-    // repository where 'sample-lib' artifacts are published.
-}
+def shouldBeJs = true
 
 kotlin {
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation 'com.example:sample-lib:1.0'
-            }
+    if (shouldBeJs) {
+        js("nodeJs") {
+            nodejs()
         }
-        allJvm {
-            dependsOn commonMain
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        jvm6Main {
-            dependsOn allJvm
-        }
-        jvm8Main {
-            dependsOn allJvm
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-            }
-        }
-        nodeJsMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-            }
-        }
+
+        wasmJs()
     }
-
-    js('nodeJs') {
-        nodejs {
-
-        }
-    }
-
-    wasm()
 
     targets {
-        fromPreset(presets.jvm, 'jvm6') {
-        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
+        fromPreset(presets.jvm, "jvm6") {
+            attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
         }
-        fromPreset(presets.jvm, 'jvm8') {
-        	attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
+        fromPreset(presets.jvm, "jvm8") {
+            attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 
-             compilations.main {
+            compilations.main {
                 tasks.getByName(compileKotlinTaskName) {
                     kotlinOptions {
                         jvmTarget = '1.8'
                     }
                 }
-             }
+            }
         }
 
-        fromPreset(presets.linuxX64, 'linux64')
-
-        configure([findByName('linux64')]) {
+        fromPreset(presets.linuxX64, "linux64") {
             binaries.executable("main", [DEBUG]) {
                 entryPoint = "com.example.app.native.main"
             }
-            
+
             binaries.all {
                 // Check that linker options are correctly passed to the compiler.
                 linkerOpts = ['-L.']
             }
         }
     }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("com.example:sample-lib:1.0")
+            }
+        }
+        allJvm {
+            dependsOn(commonMain)
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib")
+            }
+        }
+        jvm6Main {
+            dependsOn(allJvm)
+        }
+        jvm8Main {
+            dependsOn(allJvm)
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+            }
+        }
+    }
 }
 
-task resolveRuntimeDependencies(type: DefaultTask) {
-    doFirst { 
+tasks.register("resolveRuntimeDependencies") {
+    doFirst {
         // KT-26301
-        def configName = kotlin.targets.jvm6.compilations.main.runtimeDependencyConfigurationName
+        def configName = kotlin.jvm("jvm6").compilations["main"].runtimeDependencyConfigurationName
         configurations[configName].resolve()
     }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
+        }
+    }
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    /** Add a changing input, to enforce re-running KotlinCompile tasks in specific tests, without needing to re-run _all_ tasks. */
+    def kotlinCompileCacheBuster = 0
+    inputs.property("kotlinCompileCacheBuster", kotlinCompileCacheBuster)
+
+    def kotlinCompileLogLevel = LogLevel.LIFECYCLE
+    inputs.property("kotlinCompileLogLevel", kotlinCompileLogLevel)
+    logging.captureStandardOutput(kotlinCompileLogLevel)
 }

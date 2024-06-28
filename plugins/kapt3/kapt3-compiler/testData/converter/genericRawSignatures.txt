@@ -1,3 +1,18 @@
+/**
+ * public final class GenericRawSignatures : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: genericFun()Ljava/lang/Object;
+ *   public final fun <T#0 (* T *)> genericFun(): T#0?
+ *
+ *   // signature: nonGenericFun()Ljava/lang/String;
+ *   public final fun nonGenericFun(): kotlin/String?
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class GenericRawSignatures {
 

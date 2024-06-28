@@ -1,0 +1,24 @@
+Module: lib
+FILE: foo.kt
+    package p3
+
+    public final fun setContent(content: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Int| {
+        R|<local>/content|.R|SubstitutionOverride<some/MyComposableFunction0.invoke: R|kotlin/Unit|>|()
+        ^setContent Int(3)
+    }
+Module: main
+FILE: main.kt
+    public final fun test(): R|kotlin/Int| {
+        ^test R|p3/setContent|(<L> = setContent@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|/Greeting|(String(test))
+        }
+        )
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() public final fun Greeting(name: R|kotlin/String|): R|kotlin/Unit| {
+        R|/show|(<strcat>(String(hi ), R|<local>/name|, String(!)))
+    }
+    public final fun show(str: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

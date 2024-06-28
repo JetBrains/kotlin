@@ -1,0 +1,9 @@
+Before shortening: foo
+with default settings:
+[qualifier] dependency.foo
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] dependency.foo
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] dependency.foo

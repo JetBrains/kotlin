@@ -11,7 +11,9 @@ dependencies {
     testImplementation(intellijCore())
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -28,4 +30,9 @@ projectTest {
     useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")
+    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+    systemProperty("kotlin.proguard.enabled", kotlinBuildProperties.proguard)
+    doFirst {
+        environment("JAVA_HOME", jdkHome.get())
+    }
 }

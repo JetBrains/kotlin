@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNCHECKED_CAST
 
 <!UNSUPPORTED_FEATURE!>context(Any)<!>
 fun f(g: <!UNSUPPORTED_FEATURE!>context(Any)<!> () -> Unit, value: Any): <!UNSUPPORTED_FEATURE!>context(A)<!> () -> Unit {
@@ -15,6 +16,12 @@ fun sameAsFWithoutNonContextualCounterpart(g: () -> Unit, value: Any) : () -> Un
 }
 
 <!UNSUPPORTED_FEATURE!>context(Any)<!> val p get() = 42
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class D constructor(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class C(){}
 
 <!UNSUPPORTED_FEATURE!>context(String, Int)<!>
 class A {

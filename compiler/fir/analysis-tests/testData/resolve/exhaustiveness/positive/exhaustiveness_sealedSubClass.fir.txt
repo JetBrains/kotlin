@@ -77,7 +77,7 @@ FILE: exhaustiveness_sealedSubClass.kt
         .R|kotlin/Int.plus|(Int(0))
     }
     public final fun test_2(e: R|A|): R|kotlin/Unit| {
-        lval a: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|D|) ->  {
                 Int(1)
             }
@@ -85,8 +85,8 @@ FILE: exhaustiveness_sealedSubClass.kt
                 Int(2)
             }
         }
-        .<Unresolved name: plus>#(Int(0))
-        lval b: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+        .R|kotlin/Int.plus|(Int(0))
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -97,8 +97,8 @@ FILE: exhaustiveness_sealedSubClass.kt
                 Int(3)
             }
         }
-        .<Unresolved name: plus>#(Int(0))
-        lval c: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+        .R|kotlin/Int.plus|(Int(0))
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|B|) ->  {
                 Int(1)
             }
@@ -106,7 +106,7 @@ FILE: exhaustiveness_sealedSubClass.kt
                 Int(2)
             }
         }
-        .<Unresolved name: plus>#(Int(0))
+        .R|kotlin/Int.plus|(Int(0))
         lval d: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|C|) ->  {
                 Int(1)

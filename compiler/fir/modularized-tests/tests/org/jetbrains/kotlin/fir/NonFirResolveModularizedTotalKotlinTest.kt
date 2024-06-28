@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.FlexibleTypeImpl
 import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
@@ -94,7 +91,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
                 configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
             }
         }
-        configuration.put(MESSAGE_COLLECTOR_KEY, object : MessageCollector {
+        configuration.messageCollector = object : MessageCollector {
             override fun clear() {
 
             }
@@ -112,7 +109,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
                 return false
             }
 
-        })
+        }
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val visibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
@@ -124,12 +121,14 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
-        val environment = configureAndSetupEnvironment(moduleData, disposable)
+        val disposable = Disposer.newDisposable("Disposable for ${NonFirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
+        try {
+            val environment = configureAndSetupEnvironment(moduleData, disposable)
+            runAnalysis(environment)
+        } finally {
+            Disposer.dispose(disposable)
+        }
 
-        runAnalysis(environment)
-
-        Disposer.dispose(disposable)
         return ProcessorAction.NEXT
     }
 
@@ -144,7 +143,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
 
     fun testTotalKotlin() {
 
-        isolate()
+        pinCurrentThreadToIsolatedCpu()
 
         writeMessageToLog("use_ni: $USE_NI")
 

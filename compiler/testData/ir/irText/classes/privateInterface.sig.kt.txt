@@ -1,0 +1,165 @@
+// CHECK:
+//   Mangled name: C1
+//   Public signature: /C1|null[0]
+open class C1 : I {
+  // CHECK:
+  //   Mangled name: C1#<init>(){}
+  //   Public signature: /C1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C1#bazString(){}kotlin.String
+  //   Public signature: /C1.bazString|4745561783571976677[0]
+  //   Public signature debug description: bazString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C1#bazString(){}
+  //   Public signature: /C1.bazString|-4075144603640543449[0]
+  //   Public signature debug description: bazString(){}
+  /* fake */ override fun bazString(): String
+
+  // CHECK:
+  //   Mangled name: C1#bazUnit(){}
+  //   Public signature: /C1.bazUnit|4140829435204136945[0]
+  //   Public signature debug description: bazUnit(){}
+  /* fake */ override fun bazUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C1#barString(){}kotlin.String
+  //   Public signature: /C1.barString|1448966844562545716[0]
+  //   Public signature debug description: barString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C1#barString(){}
+  //   Public signature: /C1.barString|-1504802894060354159[0]
+  //   Public signature debug description: barString(){}
+  override fun barString(): String
+
+  // CHECK:
+  //   Mangled name: C1#barUnit(){}
+  //   Public signature: /C1.barUnit|-8290436109529144257[0]
+  //   Public signature debug description: barUnit(){}
+  override fun barUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C1#fooString(){}kotlin.String
+  //   Public signature: /C1.fooString|-3874429348411417233[0]
+  //   Public signature debug description: fooString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C1#fooString(){}
+  //   Public signature: /C1.fooString|-5005598722040110311[0]
+  //   Public signature debug description: fooString(){}
+  override fun fooString(): String
+
+  // CHECK:
+  //   Mangled name: C1#fooUnit(){}
+  //   Public signature: /C1.fooUnit|-7476708133407795952[0]
+  //   Public signature debug description: fooUnit(){}
+  override fun fooUnit(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C2
+//   Public signature: /C2|null[0]
+class C2 : C1 {
+  // CHECK:
+  //   Mangled name: C2#<init>(){}
+  //   Public signature: /C2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C2#barString(){}kotlin.String
+  //   Public signature: /C2.barString|1448966844562545716[0]
+  //   Public signature debug description: barString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C2#barString(){}
+  //   Public signature: /C2.barString|-1504802894060354159[0]
+  //   Public signature debug description: barString(){}
+  /* fake */ override fun barString(): String
+
+  // CHECK:
+  //   Mangled name: C2#barUnit(){}
+  //   Public signature: /C2.barUnit|-8290436109529144257[0]
+  //   Public signature debug description: barUnit(){}
+  /* fake */ override fun barUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C2#bazString(){}kotlin.String
+  //   Public signature: /C2.bazString|4745561783571976677[0]
+  //   Public signature debug description: bazString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C2#bazString(){}
+  //   Public signature: /C2.bazString|-4075144603640543449[0]
+  //   Public signature debug description: bazString(){}
+  /* fake */ override fun bazString(): String
+
+  // CHECK:
+  //   Mangled name: C2#bazUnit(){}
+  //   Public signature: /C2.bazUnit|4140829435204136945[0]
+  //   Public signature debug description: bazUnit(){}
+  /* fake */ override fun bazUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C2#fooString(){}kotlin.String
+  //   Public signature: /C2.fooString|-3874429348411417233[0]
+  //   Public signature debug description: fooString(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: C2#fooString(){}
+  //   Public signature: /C2.fooString|-5005598722040110311[0]
+  //   Public signature debug description: fooString(){}
+  /* fake */ override fun fooString(): String
+
+  // CHECK:
+  //   Mangled name: C2#fooUnit(){}
+  //   Public signature: /C2.fooUnit|-7476708133407795952[0]
+  //   Public signature debug description: fooUnit(){}
+  /* fake */ override fun fooUnit(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: [ File '/privateInterface.kt' <- /I|null[0] ]
+private interface I {
+  // CHECK JVM_IR:
+  //   Mangled name: I#barString(){}kotlin.String
+  //   Public signature: [ File '/privateInterface.kt' <- /I.barString|1448966844562545716[0] ]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#barString(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.barString|-1504802894060354159[0] ]
+  fun barString(): String
+
+  // CHECK:
+  //   Mangled name: I#barUnit(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.barUnit|-8290436109529144257[0] ]
+  fun barUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#bazString(){}kotlin.String
+  //   Public signature: [ File '/privateInterface.kt' <- /I.bazString|4745561783571976677[0] ]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#bazString(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.bazString|-4075144603640543449[0] ]
+  fun bazString(): String
+
+  // CHECK:
+  //   Mangled name: I#bazUnit(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.bazUnit|4140829435204136945[0] ]
+  fun bazUnit(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: I#fooString(){}kotlin.String
+  //   Public signature: [ File '/privateInterface.kt' <- /I.fooString|-3874429348411417233[0] ]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: I#fooString(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.fooString|-5005598722040110311[0] ]
+  abstract fun fooString(): String
+
+  // CHECK:
+  //   Mangled name: I#fooUnit(){}
+  //   Public signature: [ File '/privateInterface.kt' <- /I.fooUnit|-7476708133407795952[0] ]
+  abstract fun fooUnit(): Unit
+
+}
+

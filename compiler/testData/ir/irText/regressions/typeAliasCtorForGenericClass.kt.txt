@@ -1,19 +1,20 @@
 class A<Q : Any?> {
+  val q: Q
+    field = q
+    get
+
   constructor(q: Q) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val q: Q
-    field = q
-    get
-
 }
 
-typealias B<X : Any?> = A<X>
-typealias B2<T : Any?> = A<A<T>>
 fun bar() {
   val b: A<Int> = A<Int>(q = 2)
   val b2: A<A<Int>> = A<A<Int>>(q = b)
 }
+
+typealias B<X : Any?> = A<X>
+typealias B2<T : Any?> = A<A<T>>

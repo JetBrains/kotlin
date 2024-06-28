@@ -1,0 +1,171 @@
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>([I)V
+ *   public constructor(vararg x: kotlin/Int (* kotlin/IntArray *))
+ *
+ *   // getter: x()[I
+ *   public final val x: kotlin/IntArray
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface A {
+
+    public abstract int[] x();
+}
+
+
+////////////////////
+
+/**
+ * package {
+ *
+ *   // signature: bar()V
+ *   public final fun bar(): kotlin/Unit
+ *
+ *   // signature: baz()V
+ *   public final fun baz(): kotlin/Unit
+ *
+ *   // signature: foo()V
+ *   public final fun foo(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AnnotationWithVaragArgumentsKt {
+
+    @A(x = {1})
+    @B(x = "x", y = {1}, z = "z")
+    @C(a = @A(x = {1}), b = @B(x = "x", y = {1}, z = "z"))
+    public static final void bar() {
+    }
+
+    @A(x = {1, 2})
+    @B(x = "x", y = {1, 2}, z = "z")
+    @C(a = @A(x = {1, 2}), b = @B(x = "x", y = {1, 2}, z = "z"))
+    public static final void baz() {
+    }
+
+    @A(x = {})
+    @B(x = "x", z = "z", y = {})
+    @C(a = @A(x = {}), b = @B(x = "x", z = "z", y = {}))
+    @D()
+    @E(d = @D())
+    public static final void foo() {
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class B : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;[ILjava/lang/String;)V
+ *   public constructor(x: kotlin/String, vararg y: kotlin/Int (* kotlin/IntArray *), z: kotlin/String)
+ *
+ *   // getter: x()Ljava/lang/String;
+ *   public final val x: kotlin/String
+ *     public final get
+ *
+ *   // getter: y()[I
+ *   public final val y: kotlin/IntArray
+ *     public final get
+ *
+ *   // getter: z()Ljava/lang/String;
+ *   public final val z: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface B {
+
+    public abstract java.lang.String x();
+
+    public abstract int[] y();
+
+    public abstract java.lang.String z();
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class C : kotlin/Annotation {
+ *
+ *   // signature: <init>(LA;LB;)V
+ *   public constructor(a: A, b: B)
+ *
+ *   // getter: a()LA;
+ *   public final val a: A
+ *     public final get
+ *
+ *   // getter: b()LB;
+ *   public final val b: B
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface C {
+
+    public abstract A a();
+
+    public abstract B b();
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class D : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/Array;)V
+ *   public constructor(vararg x: kotlin/String (* kotlin/Array<out kotlin/String> *) (* = ... *))
+ *
+ *   // getter: x()[Ljava/lang/String;
+ *   public final val x: kotlin/Array<out kotlin/String>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface D {
+
+    public abstract java.lang.String[] x() default {"a", "b"};
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class E : kotlin/Annotation {
+ *
+ *   // signature: <init>(LD;)V
+ *   public constructor(d: D)
+ *
+ *   // getter: d()LD;
+ *   public final val d: D
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface E {
+
+    public abstract D d();
+}

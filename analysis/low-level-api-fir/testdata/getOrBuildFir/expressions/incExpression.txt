@@ -1,6 +1,0 @@
-KT element: KtPostfixExpression
-FIR element: FirVariableAssignmentImpl
-FIR source kind: DesugaredIncrementOrDecrement
-
-FIR element rendered:
-R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()

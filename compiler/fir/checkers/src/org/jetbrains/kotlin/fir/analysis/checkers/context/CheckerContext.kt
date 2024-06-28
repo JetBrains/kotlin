@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.FirAnonymousUnusedParamChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -33,11 +36,15 @@ abstract class CheckerContext : DiagnosticContext {
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
-    abstract val qualifiedAccessOrAssignmentsOrAnnotationCalls: List<FirStatement>
+
+    /** Contains qualified access, annotation call, delegated constructor call, and variable assignment. */
+    abstract val callsOrAssignments: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
     abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
+    abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
+    abstract val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>
@@ -54,6 +61,12 @@ abstract class CheckerContext : DiagnosticContext {
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory
         val name = factory.name
+
+        if (name == FirErrors.ERROR_SUPPRESSION.name) {
+            // Can't suppress warning about suppressed error
+            return false
+        }
+
         val suppressedByAll = when (factory.severity) {
             Severity.INFO -> allInfosSuppressed
             Severity.WARNING -> allWarningsSuppressed

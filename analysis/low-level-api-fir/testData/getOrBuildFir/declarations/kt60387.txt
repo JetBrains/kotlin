@@ -1,0 +1,21 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+private final [ResolvedTo(BODY_RESOLVE)] val branchManager: R|one/four/Manager?| = Null(null)
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): R|one/four/Manager?|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] KotlinFile.kt
+    package one.three
+
+    public final [ResolvedTo(STATUS)] class KotlinFile : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinFile] constructor(): R|one/three/KotlinFile| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] val branchManager: R|one/four/Manager?| = Null(null)
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinFile] get(): R|one/four/Manager?|
+
+    }

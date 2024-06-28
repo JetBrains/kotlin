@@ -1,30 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
-
-import org.jetbrains.kotlin.AbstractKtSourceElement
-import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrFile
-
-fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
-    report(irElement, irFile, message, false)
-}
 
 fun <E> MutableList<E>.push(element: E) = this.add(element)
 
@@ -32,6 +11,20 @@ fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
 
 fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
-fun IrElement.sourceElement(): AbstractKtSourceElement? =
-    if (startOffset != UNDEFINED_OFFSET) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
-    else null
+/**
+ * Pushes [element] to the top of this list, executes [body] and then pops the last element of the list.
+ *
+ * If [body] throws an exception, does not pop the last element.
+ * This behavior is intentional because you may need to examine the contents of this list when catching the exception somewhere
+ * up the stack.
+ *
+ * [body] is made `crossinline` to disallow non-local control flow, which could lead to the list being in an inconsistent state.
+ */
+inline fun <E, R> MutableList<E>.temporarilyPushing(element: E, crossinline body: (E) -> R): R {
+    push(element)
+    // Not wrapped in a try/finally because we may need to examine the contents of the list
+    // if we catch an exception somewhere up the stack.
+    val result = body(element)
+    pop()
+    return result
+}

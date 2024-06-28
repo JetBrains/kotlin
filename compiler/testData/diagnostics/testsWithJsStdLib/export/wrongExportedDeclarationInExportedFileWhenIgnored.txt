@@ -1,0 +1,24 @@
+package
+
+package foo {
+    @kotlin.js.JsExport.Ignore public val kotlin.Array<*>.extensionProperty: kotlin.Int
+    @kotlin.js.JsExport.Ignore public val kotlin.String.extensionProperty: kotlin.Int
+    @kotlin.js.JsExport.Ignore public inline fun </*0*/ reified T> inlineReifiedFun(/*0*/ x: kotlin.Any): kotlin.Boolean
+    @kotlin.js.JsExport.Ignore public suspend fun suspendFun(): kotlin.Unit
+
+    @kotlin.js.JsExport.Ignore public final annotation class AnnotationClass : kotlin.Annotation {
+        public constructor AnnotationClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class AnotherClass {
+        public constructor AnotherClass()
+        @kotlin.js.JsExport.Ignore public final val kotlin.Array<*>.extensionProperty: kotlin.Int
+        @kotlin.js.JsExport.Ignore public final val kotlin.String.extensionProperty: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

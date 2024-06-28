@@ -1,4 +1,4 @@
-//!DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 @Target(AnnotationTarget.TYPE_PARAMETER)
 annotation class A

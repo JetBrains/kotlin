@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class Outer$Inner {
+    // source: 'lambdaInInnerClassConstructor.kt'
+    private final @org.jetbrains.annotations.NotNull field lambda: kotlin.jvm.functions.Function0
+    synthetic final field this$0: Outer
+    public method <init>(p0: Outer): void
+    public final @org.jetbrains.annotations.NotNull method getLambda(): kotlin.jvm.functions.Function0
+    private final static method lambda$lambda$0(): kotlin.Unit
+    public final inner class Outer$Inner
+}
+
+@kotlin.Metadata
+public final class Outer {
+    // source: 'lambdaInInnerClassConstructor.kt'
+    public method <init>(): void
+    public final inner class Outer$Inner
+}

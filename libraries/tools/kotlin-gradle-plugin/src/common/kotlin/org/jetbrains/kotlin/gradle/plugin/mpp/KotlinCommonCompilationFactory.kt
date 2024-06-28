@@ -43,7 +43,7 @@ class KotlinCommonCompilationFactory internal constructor(
             Metadata compilations are created *because* of a pre-existing SourceSet.
             We therefore can create the container inline
             */
-            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
+            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) },
         )
 
     override fun create(name: String): KotlinCommonCompilation = target.project.objects.newInstance(

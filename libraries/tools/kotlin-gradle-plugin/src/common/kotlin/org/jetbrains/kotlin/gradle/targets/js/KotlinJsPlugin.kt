@@ -10,41 +10,29 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.setupGeneralKotlinExtensionParameters
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
-open class KotlinJsPlugin(
-    private val kotlinPluginVersion: String
-) : Plugin<Project> {
+open class KotlinJsPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.setupGeneralKotlinExtensionParameters()
-
         // TODO get rid of this plugin, too? Use the 'base' plugin instead?
         // in fact, the attributes schema of the Java base plugin may be required to consume non-MPP Kotlin/JS libs,
         // so investigation is needed
         project.plugins.apply(JavaBasePlugin::class.java)
 
-        checkGradleCompatibility()
+        project.enableKgpDependencyResolution(isEnabled = false)
 
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
-        customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project)
-            legacyPreset = KotlinJsSingleTargetPreset(project)
-            compilerTypeFromProperties = PropertiesProvider(project).jsCompiler
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            @Suppress("DEPRECATION")
-            if (kotlinExtension._target == null) {
+            if (!kotlinExtension.targetFuture.isCompleted) {
                 project.logger.warn(
                     """
                         Please initialize the Kotlin/JS target. Use:
@@ -58,6 +46,13 @@ open class KotlinJsPlugin(
                     """.trimIndent()
                 )
             }
+
+            project.logger.warn(
+                """
+                        w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future. 
+                        Please use 'kotlin("multiplatform")' plugin with a 'js()' target instead. See the migration guide: https://kotl.in/t6m3vu
+                    """.trimIndent()
+            )
         }
 
         // Explicitly create configurations for main and test
@@ -74,7 +69,7 @@ open class KotlinJsPlugin(
                     API,
                     RUNTIME_ONLY
                 ).forEach { baseConfigurationName ->
-                    configurations.maybeCreate(
+                    configurations.maybeCreateDependencyScope(
                         lowerCamelCaseName(
                             baseCompilationName,
                             baseConfigurationName
@@ -86,5 +81,9 @@ open class KotlinJsPlugin(
         // Also create predefined source sets
         kotlinExtension.sourceSets.maybeCreate(MAIN_COMPILATION_NAME)
         kotlinExtension.sourceSets.maybeCreate(TEST_COMPILATION_NAME)
+
+        kotlinExtension.registerTargetObserver { target ->
+            target?.compilerOptions?.configureCommonCompilerOptions(project)
+        }
     }
 }

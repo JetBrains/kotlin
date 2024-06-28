@@ -1,0 +1,3 @@
+var Derived.something: kotlin.String
+  get()
+  set(value: kotlin.String)

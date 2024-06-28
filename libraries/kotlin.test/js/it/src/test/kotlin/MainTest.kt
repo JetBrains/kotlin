@@ -46,28 +46,33 @@ class AsyncTest {
 
     var afterLog = ""
 
+    var expectedAfterLog = ""
+
     @BeforeTest
     fun before() {
         log = ""
+        afterLog = ""
+        expectedAfterLog = ""
     }
 
-    // Until bootstrap update
     @AfterTest
     fun after() {
-        assertEquals(afterLog, "after")
+        assertEquals(afterLog, expectedAfterLog)
     }
 
-    fun promise(v: Int) = Promise<Int> { resolve, reject ->
+    fun promise(v: Int, after: String = "") = Promise<Int> { resolve, reject ->
         log += "a"
-        js("setTimeout")({ log += "c"; afterLog += "after"; resolve(v) }, 100)
+        js("setTimeout")({ log += "c"; afterLog += after; resolve(v) }, 100)
         log += "b"
+    }.also {
+        expectedAfterLog += after
     }
 
     @Test
     fun checkAsyncOrder(): Promise<Unit> {
         log += 1
 
-        val p1 = promise(10)
+        val p1 = promise(10, "after")
 
         log += 2
 
@@ -81,8 +86,17 @@ class AsyncTest {
     }
 
     @Test
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    fun checkCustomPromise(): CustomPromise {
+        return promise(10, "afterCustom") as CustomPromise
+    }
+
+    @Test
     fun asyncPassing() = promise(10).then { assertEquals(10, it) }
 
     @Test
     fun asyncFailing() = promise(20).then { assertEquals(10, it) }
 }
+
+@JsName("Promise")
+external class CustomPromise {}

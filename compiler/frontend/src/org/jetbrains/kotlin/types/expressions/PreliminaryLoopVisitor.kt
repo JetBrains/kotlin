@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtLoopExpression
@@ -37,7 +37,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
         languageVersionSettings: LanguageVersionSettings
     ): DataFlowInfo {
         var resultFlowInfo = dataFlowInfo
-        val nonTrivialValues = THashSet<DataFlowValue>().apply {
+        val nonTrivialValues = ObjectOpenHashSet<DataFlowValue>().apply {
             addAll(dataFlowInfo.completeNullabilityInfo.iterator().map { it._1 })
             addAll(dataFlowInfo.completeTypeInfo.iterator().map { it._1 })
         }

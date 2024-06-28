@@ -5,6 +5,8 @@
 // ASSERTIONS_MODE: always-enable
 // WITH_STDLIB
 
+@file:Suppress("OPT_IN_USAGE_ERROR") // ExperimentalNativeApi is defined only in Native
+
 fun checkTrue(): Boolean {
     var hit = false
     val l = { hit = true; true }

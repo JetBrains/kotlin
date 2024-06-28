@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 @DslMarker
-@Retention(AnnotationRetention.SOURCE)
 annotation class KotlinTargetsDsl

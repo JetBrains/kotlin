@@ -5,307 +5,161 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.mutate
-import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isBasicFunctionType
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.SpecialNames
 
-object UnusedChecker : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        val ownData = ValueWritesWithoutReading(context.session, data.properties).getData(data.graph)
-        data.graph.traverse(CfaVisitor(ownData, reporter, context))
-    }
+object UnusedChecker : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
+    override fun analyze(data: VariableInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+        @Suppress("UNCHECKED_CAST")
+        val properties = data.properties as Set<FirPropertySymbol>
+        val ownData = Data(properties)
+        data.graph.traverse(AddAllWrites(), ownData)
+        if (ownData.unreadWrites.isNotEmpty()) {
+            ownData.writesByNode = data.graph.traverseToFixedPoint(FindVisibleWrites(properties))
+        }
+        data.graph.traverse(RemoveVisibleWrites(), ownData)
 
-    class CfaVisitor(
-        val data: Map<CFGNode<*>, PathAwareVariableStatusInfo>,
-        val reporter: DiagnosticReporter,
-        val context: CheckerContext
-    ) : ControlFlowGraphVisitorVoid() {
-        override fun visitNode(node: CFGNode<*>) {}
-
-        override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val variableSymbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
-            val dataPerNode = data[node] ?: return
-            for (dataPerLabel in dataPerNode.values) {
-                val data = dataPerLabel[variableSymbol] ?: continue
-                if (data == VariableStatus.ONLY_WRITTEN_NEVER_READ) {
-                    // todo: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
-                    val source = node.fir.lValue.source
-                    reporter.reportOn(source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
-                    // To avoid duplicate reports, stop investigating remaining paths once reported.
-                    break
+        val variablesWithUnobservedWrites = mutableSetOf<FirPropertySymbol>()
+        for (statement in ownData.unreadWrites) {
+            if (statement is FirVariableAssignment) {
+                val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
+                variablesWithUnobservedWrites.add(variableSymbol)
+                // TODO, KT-59831: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
+                reporter.reportOn(statement.lValue.source, FirErrors.ASSIGNED_VALUE_IS_NEVER_READ, context)
+            } else if (statement is FirProperty) {
+                if (statement.symbol !in ownData.variablesWithoutReads && !statement.symbol.ignoreWarnings) {
+                    reporter.reportOn(statement.initializer?.source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
                 }
             }
         }
 
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-            val variableSymbol = node.fir.symbol
-            if (node.fir.source == null) return
-            if (variableSymbol.isLoopIterator) return
-            val dataPerNode = data[node] ?: return
-            // TODO: merge values for labels, otherwise diagnostics are inconsistent
-            for (dataPerLabel in dataPerNode.values) {
-                val data = dataPerLabel[variableSymbol] ?: continue
+        for ((symbol, fir) in ownData.variablesWithoutReads) {
+            if (symbol.ignoreWarnings) continue
+            if ((fir.initializer as? FirFunctionCall)?.isIterator == true || fir.isCatchParameter == true) continue
+            val error = if (symbol in variablesWithUnobservedWrites) FirErrors.VARIABLE_NEVER_READ else FirErrors.UNUSED_VARIABLE
+            reporter.reportOn(fir.source, error, context)
+        }
+    }
 
-                variableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-                @OptIn(SymbolInternals::class)
-                val variable = variableSymbol.fir
-                val variableSource = variable.source
+    private val FirPropertySymbol.ignoreWarnings: Boolean
+        get() = name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR ||
+                source == null ||
+                // if <receiver> variable is reported as unused,
+                // then the assignment itself is a dead code because of its RHS expression,
+                // which will be eventually reported
+                source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign ||
+                source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION ||
+                initializerSource?.kind == KtFakeSourceElementKind.DesugaredForLoop
 
-                if (variableSource?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
-                    continue
-                }
+    private class Data(val localProperties: Set<FirPropertySymbol>) {
+        var writesByNode: Map<CFGNode<*>, PathAwareVariableWriteInfo> = emptyMap()
+        val unreadWrites: MutableSet<FirStatement /* FirProperty | FirVariableAssignment */> = mutableSetOf()
+        val variablesWithoutReads: MutableMap<FirPropertySymbol, FirProperty> = mutableMapOf()
+    }
 
-                when {
-                    data == VariableStatus.UNUSED -> {
-                        when {
-                            (node.fir.initializer as? FirFunctionCall)?.isIterator == true -> {}
-                            node.fir.isCatchParameter == true -> {}
-                            else -> {
-                                reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
-                                break
-                            }
-                        }
-                    }
-                    data.isRedundantInit -> {
-                        val source = variable.initializer?.source
-                        reporter.reportOn(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
-                        break
-                    }
-                    data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
-                        reporter.reportOn(variableSource, FirErrors.VARIABLE_NEVER_READ, context)
-                        break
-                    }
-                    else -> {
-                    }
-                }
+    private class AddAllWrites : ControlFlowGraphVisitor<Unit, Data>() {
+        override fun visitNode(node: CFGNode<*>, data: Data) {}
+
+        override fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: Data) {
+            if (node.fir.initializer != null) {
+                data.unreadWrites.add(node.fir)
+            }
+            data.variablesWithoutReads[node.fir.symbol] = node.fir
+        }
+
+        override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Data) {
+            if (node.fir.calleeReference?.toResolvedPropertySymbol() in data.localProperties) {
+                data.unreadWrites.add(node.fir)
             }
         }
     }
 
-    enum class VariableStatus(private val priority: Int) {
-        READ(3),
-        WRITTEN_AFTER_READ(2),
-        ONLY_WRITTEN_NEVER_READ(1),
-        UNUSED(0);
+    private class FindVisibleWrites(private val properties: Set<FirPropertySymbol>) :
+        PathAwareControlFlowGraphVisitor<FirPropertySymbol, VariableWrites>() {
 
-        var isRead = false
-        var isRedundantInit = false
+        override fun mergeInfo(a: VariableWriteInfo, b: VariableWriteInfo, node: CFGNode<*>): VariableWriteInfo =
+            a.merge(b, VariableWrites::addAll)
 
-        fun merge(variableUseState: VariableStatus?): VariableStatus {
-            val base = if (variableUseState == null || priority > variableUseState.priority) this
-            else variableUseState
-
-            return base.also {
-                // TODO: is this modifying constant enum values???
-                it.isRead = this.isRead || variableUseState?.isRead == true
-                it.isRedundantInit = this.isRedundantInit && variableUseState?.isRedundantInit == true
-            }
-        }
-    }
-
-    class VariableStatusInfo(
-        map: PersistentMap<FirPropertySymbol, VariableStatus> = persistentMapOf()
-    ) : ControlFlowInfo<VariableStatusInfo, FirPropertySymbol, VariableStatus>(map) {
-        companion object {
-            val EMPTY = VariableStatusInfo()
-        }
-
-        override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
-            ::VariableStatusInfo
-
-        override fun merge(other: VariableStatusInfo): VariableStatusInfo {
-            var result = this
-            for (symbol in keys.union(other.keys)) {
-                val kind1 = this[symbol] ?: VariableStatus.UNUSED
-                val kind2 = other[symbol] ?: VariableStatus.UNUSED
-                val new = kind1.merge(kind2)
-                result = result.put(symbol, new)
-            }
-            return result
-        }
-
-        override fun plus(other: VariableStatusInfo): VariableStatusInfo =
-            merge(other) // TODO: not sure
-    }
-
-    private class ValueWritesWithoutReading(
-        private val session: FirSession,
-        private val localProperties: Set<FirPropertySymbol>
-    ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
-        companion object {
-            private val EMPTY_INFO: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
-        }
-
-        override val emptyInfo: PathAwareVariableStatusInfo
-            get() = EMPTY_INFO
-
-        fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
-            return graph.collectDataForNode(TraverseDirection.Backward, this)
-        }
-
-        private fun PathAwareVariableStatusInfo.withAnnotationsFrom(node: CFGNode<*>): PathAwareVariableStatusInfo =
-            (node.fir as? FirAnnotationContainer)?.annotations?.fold(this, ::visitAnnotation) ?: this
-
-        override fun visitNode(
-            node: CFGNode<*>,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo =
-            super.visitNode(node, data).withAnnotationsFrom(node)
+        private fun PathAwareVariableWriteInfo.overwrite(symbol: FirPropertySymbol, data: VariableWrites): PathAwareVariableWriteInfo =
+            transformValues { it.put(symbol, data) }
 
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
-            if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
-            val symbol = node.fir.symbol
-            return update(dataForNode, symbol) { prev ->
-                when (prev) {
-                    null -> {
-                        VariableStatus.UNUSED
-                    }
-                    VariableStatus.ONLY_WRITTEN_NEVER_READ, VariableStatus.WRITTEN_AFTER_READ -> {
-                        if (node.fir.initializer != null && prev.isRead) {
-                            prev.isRedundantInit = true
-                            prev
-                        } else if (node.fir.initializer != null) {
-                            VariableStatus.ONLY_WRITTEN_NEVER_READ
-                        } else {
-                            null
-                        }
-                    }
-                    VariableStatus.READ -> {
-                        VariableStatus.READ
-                    }
-                    else -> {
-                        null
-                    }
-                }
-            }
-        }
+            data: PathAwareVariableWriteInfo,
+        ): PathAwareVariableWriteInfo =
+            data.overwrite(node.fir.symbol, if (node.fir.initializer != null) persistentSetOf(node) else persistentSetOf())
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
-            val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
-            return update(dataForNode, symbol) update@{ prev ->
-                val toPut = when {
-                    symbol !in localProperties -> {
-                        null
-                    }
-                    prev == VariableStatus.READ -> {
-                        VariableStatus.WRITTEN_AFTER_READ
-                    }
-                    prev == VariableStatus.WRITTEN_AFTER_READ -> {
-                        VariableStatus.ONLY_WRITTEN_NEVER_READ
-                    }
-                    else -> {
-                        VariableStatus.ONLY_WRITTEN_NEVER_READ.merge(prev ?: VariableStatus.UNUSED)
-                    }
-                }
-
-                toPut ?: return@update null
-
-                toPut.isRead = prev?.isRead ?: false
-                toPut
-            }
-        }
-
-        override fun visitQualifiedAccessNode(
-            node: QualifiedAccessNode,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
-            return visitQualifiedAccesses(dataForNode, node.fir)
-        }
-
-        private fun visitAnnotation(
-            dataForNode: PathAwareVariableStatusInfo,
-            annotation: FirAnnotation,
-        ): PathAwareVariableStatusInfo {
-            return if (annotation is FirAnnotationCall) {
-                val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccessExpression }.toTypedArray()
-                visitQualifiedAccesses(dataForNode, *qualifiedAccesses)
-            } else {
-                dataForNode
-            }
-        }
-
-        private fun visitQualifiedAccesses(
-            dataForNode: PathAwareVariableStatusInfo,
-            vararg qualifiedAccesses: FirQualifiedAccessExpression,
-        ): PathAwareVariableStatusInfo {
-            fun retrieveSymbol(qualifiedAccess: FirQualifiedAccessExpression): FirPropertySymbol? {
-                return qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.takeIf { it in localProperties }
-            }
-
-            val symbols = qualifiedAccesses.mapNotNull { retrieveSymbol(it) }.toTypedArray()
-
-            val status = VariableStatus.READ
-            status.isRead = true
-
-            return update(dataForNode, *symbols) { status }
-        }
-
-        override fun visitFunctionCallNode(
-            node: FunctionCallNode,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
-            val reference = node.fir.calleeReference.resolved ?: return dataForNode
-            val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
-            val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
-                localProperties.find { it.name == reference.name && it.resolvedReturnTypeRef.coneType.isBasicFunctionType(session) }
-            } else null
-            symbol ?: return dataForNode
-
-            val status = VariableStatus.READ
-            status.isRead = true
-            return update(dataForNode, symbol) { status }
-        }
-
-        private fun update(
-            pathAwareInfo: PathAwareVariableStatusInfo,
-            vararg symbols: FirPropertySymbol,
-            updater: (VariableStatus?) -> VariableStatus?,
-        ): PathAwareVariableStatusInfo = pathAwareInfo.mutate {
-            for ((label, dataPerLabel) in pathAwareInfo) {
-                for (symbol in symbols) {
-                    val v = updater.invoke(dataPerLabel[symbol]) ?: continue
-                    it[label] = dataPerLabel.put(symbol, v)
-                }
-            }
+            data: PathAwareVariableWriteInfo,
+        ): PathAwareVariableWriteInfo {
+            val symbol = node.fir.calleeReference?.toResolvedPropertySymbol()?.takeIf { it in properties } ?: return data
+            return data.overwrite(symbol, persistentSetOf(node))
         }
     }
 
-    private val FirPropertySymbol.isLoopIterator: Boolean
-        get() {
-            @OptIn(SymbolInternals::class)
-            return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
+    private class RemoveVisibleWrites : ControlFlowGraphVisitor<Unit, Data>() {
+        override fun visitNode(node: CFGNode<*>, data: Data) {
+            visitAnnotations(node, data)
         }
+
+        override fun visitQualifiedAccessNode(node: QualifiedAccessNode, data: Data) {
+            visitAnnotations(node, data)
+            visitQualifiedAccess(node, node.fir, data)
+        }
+
+        override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Data) {
+            visitAnnotations(node, data)
+            // TODO, KT-64094: receiver of implicit invoke calls does not generate a QualifiedAccessNode.
+            ((node.fir as? FirImplicitInvokeCall)?.explicitReceiver as? FirQualifiedAccessExpression)
+                ?.let { visitQualifiedAccess(node, it, data) }
+        }
+
+        private fun visitAnnotations(node: CFGNode<*>, data: Data) {
+            // Annotations don't create CFG nodes. Note that annotations can only refer to `const val`s, so any read
+            // of a local inside an annotation is inherently incorrect. Still, use them to suppress the warnings.
+            (node.fir as? FirAnnotationContainer)?.annotations?.forEach { call ->
+                call.accept(object : FirVisitorVoid() {
+                    override fun visitElement(element: FirElement) {
+                        if (element is FirQualifiedAccessExpression) {
+                            visitQualifiedAccess(node, element, data)
+                        }
+                        element.acceptChildren(this)
+                    }
+                })
+            }
+        }
+
+        private fun visitQualifiedAccess(node: CFGNode<*>, fir: FirQualifiedAccessExpression, data: Data) {
+            val symbol = fir.calleeReference.toResolvedPropertySymbol() ?: return
+            data.variablesWithoutReads.remove(symbol)
+            data.writesByNode[node]?.values?.forEach { dataForLabel ->
+                dataForLabel[symbol]?.forEach { data.unreadWrites.remove(it.fir) }
+            }
+        }
+    }
 }
 
-private typealias PathAwareVariableStatusInfo = PathAwareControlFlowInfo<UnusedChecker.VariableStatusInfo>
+private typealias VariableWrites = PersistentSet<CFGNode<*>>
+private typealias VariableWriteInfo = ControlFlowInfo<FirPropertySymbol, VariableWrites>
+private typealias PathAwareVariableWriteInfo = PathAwareControlFlowInfo<FirPropertySymbol, VariableWrites>

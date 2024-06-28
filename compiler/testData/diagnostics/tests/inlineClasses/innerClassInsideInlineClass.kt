@@ -1,5 +1,5 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 inline class Foo(val x: Int) {
     <!INNER_CLASS_INSIDE_VALUE_CLASS!>inner<!> class InnerC

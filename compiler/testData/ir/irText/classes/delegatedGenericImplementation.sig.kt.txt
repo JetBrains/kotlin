@@ -1,0 +1,172 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+class Test1<E : Any?> : IBase<E> {
+  // CHECK:
+  //   Mangled name: Test1#<init>(IBase<1:0>){}
+  //   Public signature: /Test1.<init>|-3017997426280513504[0]
+  //   Public signature debug description: <init>(IBase<1:0>){}
+  constructor(i: IBase<E>) /* primary */
+
+  // CHECK:
+  //   Mangled name: Test1#foo(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test1.foo|406069289574534187[0]
+  //   Public signature debug description: foo(1:0;0:0){0§<kotlin.Any?>}
+  override fun <B : Any?> foo(a: E, b: B): Unit
+
+  // CHECK:
+  //   Mangled name: Test1@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /Test1.id|6409895071901545951[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}id
+  override val <C : Any?> C.id: Map<E, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    //   Public signature: /Test1.id.<get-id>|-1161899104741266586[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Test1.id.<get-id>|-1537502770664138716[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
+    override get(): Map<E, C>?
+
+  // CHECK:
+  //   Mangled name: Test1@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /Test1.x|-197950632589282220[0]
+  //   Public signature debug description: @kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  override var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /Test1.x.<get-x>|1915131689713400313[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /Test1.x.<get-x>|-7897041295469127828[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    override get(): D?
+    // CHECK:
+    //   Mangled name: Test1#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /Test1.x.<set-x>|7048513426934671771[0]
+    //   Public signature debug description: <set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    override set(<set-?>: D?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
+class Test2 : IBase<String> {
+  // CHECK:
+  //   Mangled name: Test2{}j
+  //   Public signature: /Test2.j|-6836075379230315579[0]
+  //   Public signature debug description: {}j
+  var j: IBase<String>
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-j>(){}IBase<kotlin.String>
+    //   Public signature: /Test2.j.<get-j>|-6883763672420899739[0]
+    //   Public signature debug description: <get-j>(){}IBase<kotlin.String>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-j>(){}
+    //   Public signature: /Test2.j.<get-j>|5087577794943671660[0]
+    //   Public signature debug description: <get-j>(){}
+    get
+    // CHECK:
+    //   Mangled name: Test2#<set-j>(IBase<kotlin.String>){}
+    //   Public signature: /Test2.j.<set-j>|4329154110216130240[0]
+    //   Public signature debug description: <set-j>(IBase<kotlin.String>){}
+    set
+
+  // CHECK:
+  //   Mangled name: Test2#<init>(IBase<kotlin.String>){}
+  //   Public signature: /Test2.<init>|4395202944622832808[0]
+  //   Public signature debug description: <init>(IBase<kotlin.String>){}
+  constructor(j: IBase<String>) /* primary */
+
+  // CHECK:
+  //   Mangled name: Test2#foo(kotlin.String;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test2.foo|3497909443104319155[0]
+  //   Public signature debug description: foo(kotlin.String;0:0){0§<kotlin.Any?>}
+  override fun <B : Any?> foo(a: String, b: B): Unit
+
+  // CHECK:
+  //   Mangled name: Test2@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /Test2.id|6409895071901545951[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}id
+  override val <C : Any?> C.id: Map<String, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<kotlin.String,0:0>?
+    //   Public signature: /Test2.id.<get-id>|5038832815964071118[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<kotlin.String,0:0>?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Test2.id.<get-id>|-1537502770664138716[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
+    override get(): Map<String, C>?
+
+  // CHECK:
+  //   Mangled name: Test2@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /Test2.x|-197950632589282220[0]
+  //   Public signature debug description: @kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  override var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /Test2.x.<get-x>|1915131689713400313[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /Test2.x.<get-x>|-7897041295469127828[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    override get(): D?
+    // CHECK:
+    //   Mangled name: Test2#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /Test2.x.<set-x>|7048513426934671771[0]
+    //   Public signature debug description: <set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    override set(<set-?>: D?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: IBase
+//   Public signature: /IBase|null[0]
+interface IBase<A : Any?> {
+  // CHECK:
+  //   Mangled name: IBase#foo(1:0;0:0){0§<kotlin.Any?>}
+  //   Public signature: /IBase.foo|406069289574534187[0]
+  //   Public signature debug description: foo(1:0;0:0){0§<kotlin.Any?>}
+  abstract fun <B : Any?> foo(a: A, b: B): Unit
+
+  // CHECK:
+  //   Mangled name: IBase@0:0{0§<kotlin.Any?>}id
+  //   Public signature: /IBase.id|6409895071901545951[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}id
+  abstract val <C : Any?> C.id: Map<A, C>?
+    // CHECK JVM_IR:
+    //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    //   Public signature: /IBase.id.<get-id>|-1161899104741266586[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}kotlin.collections.Map<1:0,0:0>?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IBase#<get-id>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /IBase.id.<get-id>|-1537502770664138716[0]
+    //   Public signature debug description: <get-id>@0:0(){0§<kotlin.Any?>}
+    abstract get
+
+  // CHECK:
+  //   Mangled name: IBase@kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  //   Public signature: /IBase.x|-197950632589282220[0]
+  //   Public signature debug description: @kotlin.collections.List<0:0>{0§<kotlin.Any?>}x
+  abstract var <D : Any?> List<D>.x: D?
+    // CHECK JVM_IR:
+    //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    //   Public signature: /IBase.x.<get-x>|1915131689713400313[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}0:0?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IBase#<get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    //   Public signature: /IBase.x.<get-x>|-7897041295469127828[0]
+    //   Public signature debug description: <get-x>@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}
+    abstract get
+    // CHECK:
+    //   Mangled name: IBase#<set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    //   Public signature: /IBase.x.<set-x>|7048513426934671771[0]
+    //   Public signature debug description: <set-x>@kotlin.collections.List<0:0>(0:0?){0§<kotlin.Any?>}
+    abstract set
+
+}

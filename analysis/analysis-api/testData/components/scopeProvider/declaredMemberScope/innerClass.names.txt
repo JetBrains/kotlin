@@ -1,0 +1,5 @@
+Classifier names:
+  ClassInB
+  InnerClassInB
+
+Callable names:

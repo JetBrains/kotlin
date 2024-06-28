@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,21 +8,24 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
+import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsPolyfills
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.translateJsCodeIntoStatementList
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -31,14 +34,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -49,10 +50,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.WeakHashMap
+import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
+import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrBackendContext(
@@ -62,20 +63,22 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val es6mode: Boolean = false,
+    val mainCallArguments: List<String>?,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    val incrementalCacheEnabled: Boolean = false
+    val incrementalCacheEnabled: Boolean = false,
 ) : JsCommonBackendContext {
     override val scriptMode: Boolean get() = false
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
+    val globalIrInterner = IrInterningService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
+    val classToItsId = WeakHashMap<IrClass, String>()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
@@ -96,40 +99,47 @@ class JsIrBackendContext(
     override fun isSideEffectFree(call: IrCall): Boolean =
         call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
                 call.symbol == intrinsics.arrayLiteral ||
-                call.symbol == intrinsics.arrayConcat
+                call.symbol == intrinsics.arrayConcat ||
+                call.symbol == intrinsics.jsBoxIntrinsic ||
+                call.symbol == intrinsics.jsUnboxIntrinsic
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
+    override val es6mode = configuration[JSConfigurationKeys.USE_ES6_CLASSES] ?: false
+    val platformArgumentsProviderJsExpression = configuration[JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS]
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
-    val additionalExportedDeclarations = mutableSetOf<IrDeclaration>()
+    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
     val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
 
-    val packageLevelJsModules = mutableSetOf<IrFile>()
+    val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    val testFunsPerFile = mutableMapOf<IrFile, IrSimpleFunction>()
+    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
-    override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
-        return testFunsPerFile.getOrPut(irFile) {
-            irFactory.addFunction(irFile) {
-                name = Name.identifier("test fun")
-                returnType = irBuiltIns.unitType
-                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-            }.apply {
-                body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+    override fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
+        return irFactory.stageController.restrictTo(container) {
+            testFunsPerFile.getOrPut(irFile) {
+                irFactory.addFunction(irFile) {
+                    name = Name.identifier("test fun")
+                    returnType = irBuiltIns.unitType
+                    origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                }.apply {
+                    body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+                }
             }
         }
     }
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
-    val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
@@ -141,6 +151,7 @@ class JsIrBackendContext(
         private val ENUMS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("enums"))
         private val JS_POLYFILLS_PACKAGE = JS_PACKAGE_FQNAME.child(Name.identifier("polyfill"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
+        private val COLLECTION_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("collections"))
 
         // TODO: due to name clash those weird suffix is required, remove it once `MemberNameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
@@ -148,15 +159,16 @@ class JsIrBackendContext(
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
+    private val internalCollectionPackage = module.getPackage(COLLECTION_PACKAGE_FQNAME)
 
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
 
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
         enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
-        eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
+        eagerInitialization = symbolTable.descriptorExtension.referenceClass(getJsInternalClass("EagerInitialization"))
     )
 
     override val catchAllThrowableType: IrType
@@ -187,36 +199,42 @@ class JsIrBackendContext(
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module, this)
 
+    override val jsPromiseSymbol: IrClassSymbol?
+        get() = intrinsics.promiseClassSymbol
+
     override val enumEntries = getIrClass(ENUMS_PACKAGE_FQNAME.child(Name.identifier("EnumEntries")))
     override val createEnumEntries = getFunctions(ENUMS_PACKAGE_FQNAME.child(Name.identifier("enumEntries")))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
-        .let { symbolTable.referenceSimpleFunction(it!!) }
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
+        .let { symbolTable.descriptorExtension.referenceSimpleFunction(it!!) }
 
     override val ir = object : Ir<JsIrBackendContext>(this) {
         override val symbols = object : Symbols(irBuiltIns, symbolTable) {
             private val context = this@JsIrBackendContext
 
             override val throwNullPointerException =
-                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).single())
 
             init {
-                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))).single())
             }
 
             override val throwTypeCastException =
-                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).single())
 
             override val throwUninitializedPropertyAccessException =
-                symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
 
             override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
-                symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwKotlinNothingValueException")).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(FqName("kotlin.throwKotlinNothingValueException")).single())
 
             override val defaultConstructorMarker =
-                symbolTable.referenceClass(context.getJsInternalClass("DefaultConstructorMarker"))
+                symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DefaultConstructorMarker"))
 
             override val throwISE: IrSimpleFunctionSymbol =
-                symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
+
+            override val throwIAE: IrSimpleFunctionSymbol =
+                symbolTable.descriptorExtension.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
 
             override val stringBuilder
                 get() = TODO("not implemented")
@@ -227,7 +245,7 @@ class JsIrBackendContext(
 
             private val _arraysContentEquals = getFunctions(FqName("kotlin.collections.contentEquals")).mapNotNull {
                 if (it.extensionReceiverParameter != null && it.extensionReceiverParameter!!.type.isNullable())
-                    symbolTable.referenceSimpleFunction(it)
+                    symbolTable.descriptorExtension.referenceSimpleFunction(it)
                 else null
             }
 
@@ -235,22 +253,24 @@ class JsIrBackendContext(
             override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
                 get() = _arraysContentEquals.associateBy { it.owner.extensionReceiverParameter!!.type.makeNotNull() }
 
-            override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
+            override val getContinuation = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
 
             override val continuationClass = context.coroutineSymbols.continuationClass
 
             override val coroutineContextGetter =
-                symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
+                symbolTable.descriptorExtension.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
 
             override val suspendCoroutineUninterceptedOrReturn =
-                symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
+                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
 
-            override val coroutineGetContext = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
+            override val coroutineGetContext =
+                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
 
-            override val returnIfSuspended = symbolTable.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
+            override val returnIfSuspended =
+                symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
 
-            override val functionAdapter: IrClassSymbol
-                get() = TODO("Not implemented")
+            override val functionAdapter =
+                symbolTable.descriptorExtension.referenceClass(getJsInternalClass("FunctionAdapter"))
 
             override fun functionN(n: Int): IrClassSymbol {
                 return irFactory.stageController.withInitialIr { super.functionN(n) }
@@ -264,13 +284,13 @@ class JsIrBackendContext(
             private val getProgressionLastElementSymbols =
                 irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
 
-            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
             }
 
             private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
 
-            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toUIntSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
                         ?: error("Expected extension receiver for ${it.owner.render()}")
@@ -279,16 +299,12 @@ class JsIrBackendContext(
 
             private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
 
-            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toULongSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
                         ?: error("Expected extension receiver for ${it.owner.render()}")
                 }
             }
-        }
-
-        override fun unfoldInlineClassType(irType: IrType): IrType? {
-            return inlineClassesUtils.getInlinedClass(irType)?.typeWith()
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
@@ -297,7 +313,7 @@ class JsIrBackendContext(
     // classes forced to be loaded
 
     val errorCodeSymbol: IrSimpleFunctionSymbol? =
-        if (errorPolicy.allowErrors) symbolTable.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
+        if (errorPolicy.allowErrors) symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("errorCode")) else null
 
     val throwableClass = getIrClass(JsIrBackendContext.KOTLIN_PACKAGE_FQN.child(Name.identifier("Throwable")))
 
@@ -308,7 +324,7 @@ class JsIrBackendContext(
     // Top-level functions forced to be loaded
 
 
-    val coroutineEmptyContinuation = symbolTable.referenceProperty(
+    val coroutineEmptyContinuation = symbolTable.descriptorExtension.referenceProperty(
         getProperty(
             FqName.fromSegments(
                 listOf(
@@ -323,23 +339,28 @@ class JsIrBackendContext(
     )
 
 
-    val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
-    val extendThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
+    val newThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
+    val extendThrowableSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
     val setPropertiesToThrowableInstanceSymbol =
-        symbolTable.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
+        symbolTable.descriptorExtension.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
 
-    val throwISEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
-    val throwIAEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
-
-    override val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
-    override val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let { symbolTable.referenceSimpleFunction(it) }
+    override val suiteFun = getFunctions(FqName("kotlin.test.suite")).singleOrNull()?.let {
+        symbolTable.descriptorExtension.referenceSimpleFunction(it)
+    }
+    override val testFun = getFunctions(FqName("kotlin.test.test")).singleOrNull()?.let {
+        symbolTable.descriptorExtension.referenceSimpleFunction(it)
+    }
 
     val throwableConstructors by lazy2 { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
     val defaultThrowableCtor by lazy2 { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
 
-    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let { symbolTable.referenceSimpleFunction(it) }
+    val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let {
+        symbolTable.descriptorExtension.referenceSimpleFunction(it)
+    }
     val klocalDelegateBuilder =
-        getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let { symbolTable.referenceSimpleFunction(it) }
+        getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let {
+            symbolTable.descriptorExtension.referenceSimpleFunction(it)
+        }
 
     private fun referenceOperators(): Map<Name, Map<IrClassSymbol, Collection<IrSimpleFunctionSymbol>>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }
@@ -365,10 +386,13 @@ class JsIrBackendContext(
     internal fun getProperty(fqName: FqName): PropertyDescriptor =
         findProperty(module.getPackage(fqName.parent()).memberScope, fqName.shortName()).single()
 
-    internal fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.referenceClass(getClass(fqName))
+    internal fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.descriptorExtension.referenceClass(getClass(fqName))
 
     internal fun getJsInternalFunction(name: String): SimpleFunctionDescriptor =
         findFunctions(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
+
+    internal fun getJsInternalCollectionFunction(name: String): SimpleFunctionDescriptor =
+        findFunctions(internalCollectionPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
 
     internal fun getJsInternalProperty(name: String): PropertyDescriptor =
         findProperty(internalPackage.memberScope, Name.identifier(name)).singleOrNull() ?: error("Internal function '$name' not found")
@@ -376,16 +400,6 @@ class JsIrBackendContext(
 
     fun getFunctions(fqName: FqName): List<SimpleFunctionDescriptor> =
         findFunctions(module.getPackage(fqName.parent()).memberScope, fqName.shortName())
-
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) print(message())
-    }
-
-    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        /*TODO*/
-        print(message)
-    }
 
     private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
 
@@ -409,4 +423,10 @@ class JsIrBackendContext(
         outlinedJsCodeFunctions[symbol] = parsedJsFunction
         return parsedJsFunction
     }
+
+    override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
+        configuration.partialLinkageConfig,
+        irBuiltIns,
+        configuration.messageCollector
+    )
 }

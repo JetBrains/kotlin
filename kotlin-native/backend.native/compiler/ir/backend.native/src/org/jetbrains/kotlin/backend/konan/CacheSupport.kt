@@ -80,10 +80,11 @@ class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializati
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        resolvedLibraries: KotlinLibraryResolveResult,
+        private val resolvedLibraries: KotlinLibraryResolveResult,
         ignoreCacheReason: String?,
         systemCacheDirectory: File,
         autoCacheDirectory: File,
+        incrementalCacheDirectory: File?,
         target: KonanTarget,
         val produce: CompilerOutputKind
 ) {
@@ -103,7 +104,9 @@ class CacheSupport(
             add(File(it).takeIf { it.isDirectory }
                     ?: configuration.reportCompilationError("cache directory $it is not found or is not a directory"))
         }
-        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
+        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
+        autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
+        incrementalCacheDirectory?.let { add(it) }
     }
 
     internal fun tryGetImplicitOutput(cacheDeserializationStrategy: CacheDeserializationStrategy?): String? {
@@ -178,10 +181,11 @@ class CacheSupport(
             configuration.get(KonanConfigKeys.PRE_LINK_CACHES, false)
 
     companion object {
-        fun cacheFileId(fqName: String, filePath: String) = "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
+        fun cacheFileId(fqName: String, filePath: String) =
+                "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
     }
 
-    init {
+    fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
         resolvedLibraries.getFullList { libraries ->
             libraries.map { library ->

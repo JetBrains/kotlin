@@ -1,0 +1,31 @@
+[KotlinDefaultHierarchyFallbackNativeTargetShortcutUsageDetected | WARNING] The Default Kotlin Hierarchy Template was not applied to 'root project 'test'':
+Deprecated 'tvos()' shortcut was used:
+
+  kotlin {
+      tvos()
+  }
+
+Please declare the required targets explicitly:
+
+  kotlin {
+      tvosX64()
+      tvosArm64()
+      tvosSimulatorArm64() /* <- Note: Was not previously applied */
+      /* ... */
+  }
+
+After that, replace `by getting` with static accessors:
+
+  sourceSets {
+      commonMain { ... }
+
+      tvosMain {
+          dependencies { ... }
+      }
+  }
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+
+Learn more about hierarchy templates: https://kotl.in/hierarchy-template

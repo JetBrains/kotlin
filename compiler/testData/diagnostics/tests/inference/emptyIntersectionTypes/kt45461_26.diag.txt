@@ -1,6 +1,7 @@
 /kt45461_26.kt:13:25: error: type mismatch: inferred type is {K & Out<String>} but Out<Float> was expected
     val x: Out<Float> = Bar<Out<String>>().takeFoo(foo)
-                        ^
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /kt45461_26.kt:13:44: error: type mismatch: inferred type is {K & Out<String>} but Out<Float> was expected
     val x: Out<Float> = Bar<Out<String>>().takeFoo(foo)
-                                           ^
+                                           ^^^^^^^
+

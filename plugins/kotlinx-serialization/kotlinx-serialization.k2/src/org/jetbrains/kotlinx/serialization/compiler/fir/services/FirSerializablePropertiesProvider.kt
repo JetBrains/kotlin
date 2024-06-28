@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.getSuperClassNotAny
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.superClassNotAny
 import org.jetbrains.kotlinx.serialization.compiler.fir.isInternalSerializable
 import org.jetbrains.kotlinx.serialization.compiler.resolve.ISerializableProperty
 
@@ -42,7 +42,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
     private fun createSerializableProperties(classSymbol: FirClassSymbol<*>): FirSerializableProperties {
         val allPropertySymbols = buildList {
             classSymbol
-                .declaredMemberScope(session)
+                .declaredMemberScope(session, memberRequiredPhase = null)
                 .processAllProperties {
                     addIfNotNull(it as? FirPropertySymbol)
                 }
@@ -53,11 +53,11 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             it to parameterSymbol.hasDefaultValue
         }.toMap().withDefault { false }
 
-        val isInternalSerializable = with(session) { classSymbol.isInternalSerializable }
+        val shouldHaveGeneratedMethods = classSymbol.shouldHaveGeneratedMethods(session)
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
-                isInternalSerializable -> !propertySymbol.hasSerialTransient(session)
+                shouldHaveGeneratedMethods -> !propertySymbol.hasSerialTransient(session)
                 propertySymbol.visibility == Visibilities.Private -> false
                 else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient(session)) || propertySymbol in primaryConstructorProperties
             }
@@ -77,9 +77,9 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .filterNot { it.transient }
             .partition { it.propertySymbol in primaryConstructorProperties }
             .let { (fromConstructor, standalone) ->
-                val superClassSymbol = classSymbol.getSuperClassNotAny(session)
+                val superClassSymbol = classSymbol.superClassNotAny(session)
                 buildList {
-                    if (superClassSymbol != null && with(session) { superClassSymbol.isInternalSerializable }) {
+                    if (superClassSymbol != null && superClassSymbol.shouldHaveInternalSerializer(session)) {
                         addAll(getSerializablePropertiesForClass(superClassSymbol).serializableProperties)
                     }
                     addAll(fromConstructor)
@@ -89,7 +89,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { restoreCorrectOrderFromClassProtoExtension(classSymbol, it) }
 
         val isExternallySerializable = classSymbol.isEnumClass ||
-                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol()?.valueParameterSymbols?.size ?: 0)
+                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol(session)?.valueParameterSymbols?.size ?: 0)
 
         val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
         return FirSerializableProperties(

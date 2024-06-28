@@ -9,5 +9,6 @@ import org.jetbrains.kotlin.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrWriteSignatureTest : AbstractWriteSignatureTest() {
-    override val backend = TargetBackend.JVM_IR
+    override val backend
+        get() = TargetBackend.JVM_IR
 }

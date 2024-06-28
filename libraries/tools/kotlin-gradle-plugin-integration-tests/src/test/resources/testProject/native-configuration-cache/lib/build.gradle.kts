@@ -14,10 +14,18 @@ kotlin {
     }
     iosX64 {
         binaries {
-            //framework(namePrefix = "framework")
+            framework {
+                baseName = "libFramework"
+            }
         }
     }
-    iosArm64()
+    iosArm64 {
+        binaries {
+            framework {
+                baseName = "libFramework"
+            }
+        }
+    }
     iosSimulatorArm64()
 
     targets.filterIsInstance<KotlinNativeTarget>().forEach {

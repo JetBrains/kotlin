@@ -12,23 +12,20 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
 abstract class DefaultKotlinSourceSet @Inject constructor(
     final override val project: Project,
-    val displayName: String
+    val displayName: String,
 ) : AbstractKotlinSourceSet() {
 
     override val extras: MutableExtras = mutableExtrasOf()
@@ -69,9 +66,11 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
 
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
-    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
+    internal var actualResources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
+
+    override val resources: SourceDirectorySet get() = actualResources
 
     override fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet = kotlin.apply {
         configure(this)
@@ -90,13 +89,13 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override fun getName(): String = displayName
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }
 
     override fun afterDependsOnAdded(other: KotlinSourceSet) {
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
             defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other)
         }
     }
@@ -121,16 +120,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-
-    private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
-
-    override val requiresVisibilityOf: MutableSet<KotlinSourceSet>
-        get() = Collections.unmodifiableSet(_requiresVisibilityOf)
-
-    override fun requiresVisibilityOf(other: KotlinSourceSet) {
-        _requiresVisibilityOf += other
-    }
-
     //region IDE import for Granular source sets metadata
 
     data class MetadataDependencyTransformation(
@@ -141,7 +130,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         val allVisibleSourceSets: Set<String>,
         /** If empty, then this source set does not see any 'new' source sets of the dependency, compared to its dependsOn parents, but it
          * still does see all what the dependsOn parents see. */
-        val useFilesForSourceSets: Map<String, Iterable<File>>
+        val useFilesForSourceSets: Map<String, Iterable<File>>,
     )
 
     @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
@@ -158,7 +147,9 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.dependency.currentBuildProjectIdOrNull?.projectPath
+            val dependencyIdentifier = resolution.dependency.id
+            val projectPath = dependencyIdentifier.projectPathOrNull?.takeIf { dependencyIdentifier in project.currentBuild }
+
             when (resolution) {
                 // No metadata transformation leads to original dependency being used during import
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
@@ -184,7 +175,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
-    FragmentConsistencyChecker<KotlinSourceSet>(
+    FragmentConsistencyChecker(
         unitsName = "source sets",
         name = { name },
         checks = FragmentConsistencyChecks<KotlinSourceSet>(
@@ -201,14 +192,6 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 
 internal fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
     project.objects.sourceDirectorySet(name!!, name)
-
-@Suppress("Unused") // Still part of public API
-@Deprecated("Use InternalKotlinSourceSet.dependsOnClosure instead. Will be removed in Kotlin 1.9")
-val KotlinSourceSet.dependsOnClosure: Set<KotlinSourceSet> get() = this.internal.dependsOnClosure
-
-@Suppress("Unused") // Still part of public API
-@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
-val KotlinSourceSet.withDependsOnClosure: Set<KotlinSourceSet> get() = this.internal.withDependsOnClosure
 
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()

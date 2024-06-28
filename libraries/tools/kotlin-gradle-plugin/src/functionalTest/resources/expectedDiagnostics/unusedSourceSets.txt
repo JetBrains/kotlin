@@ -1,0 +1,6 @@
+[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+ * unused1
+ * unused2
+ * unusedWithDependsOnUsed
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets

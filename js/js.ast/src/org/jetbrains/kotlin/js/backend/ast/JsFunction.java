@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public final class JsFunction extends JsLiteral implements HasName {
-    public enum Modifier { STATIC, GET, SET }
+    public enum Modifier { STATIC, GET, SET, GENERATOR }
 
     @NotNull
     private JsBlock body;
@@ -79,6 +79,10 @@ public final class JsFunction extends JsLiteral implements HasName {
 
     public boolean isSetter() {
         return modifiers != null && modifiers.contains(Modifier.SET);
+    }
+
+    public boolean isGenerator() {
+        return modifiers != null && modifiers.contains(Modifier.GENERATOR);
     }
 
     @NotNull

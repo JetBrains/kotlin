@@ -1,2 +1,2 @@
-interface Module2Interface {
+interface Module1Interface {
 }

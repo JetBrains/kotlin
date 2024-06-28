@@ -1,0 +1,67 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Example(
+    wontChange: Int = 123,
+    mightChange: Int = LocalColor.current
+) {
+    A(wontChange)
+    A(mightChange)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(wontChange: Int, mightChange: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)P(1)<curren...>,<A(wont...>,<A(migh...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(wontChange)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(mightChange)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        wontChange = 123
+      }
+      if (%default and 0b0010 != 0) {
+        mightChange = LocalColor.<get-current>(%composer, 0b0110)
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    A(wontChange, %composer, 0b1110 and %dirty)
+    A(mightChange, %composer, 0b1110 and %dirty shr 0b0011)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(wontChange, mightChange, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

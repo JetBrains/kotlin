@@ -31,8 +31,6 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
 
-    override val backend = TargetBackend.JVM_OLD
-
     override fun setUp() {
         super.setUp()
 
@@ -138,7 +136,8 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
 }
 
 abstract class AbstractIrCustomScriptCodegenTest : AbstractCustomScriptCodegenTest() {
-    override val backend: TargetBackend = TargetBackend.JVM_IR
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }
 
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(

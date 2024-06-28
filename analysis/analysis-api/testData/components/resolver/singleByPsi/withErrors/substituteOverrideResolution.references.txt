@@ -1,0 +1,3 @@
+KtNameReferenceExpression(162,163): 'b'
+  KtSimpleNameReference:
+    b: main.B?

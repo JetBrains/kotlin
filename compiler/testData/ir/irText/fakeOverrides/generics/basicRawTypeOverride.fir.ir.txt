@@ -1,0 +1,136 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, a:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.collections.MutableList<kotlin.Any>
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.B'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.collections.MutableList<kotlin.Any> origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B, a:kotlin.collections.MutableList<kotlin.Any?>) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      VALUE_PARAMETER name:a index:0 type:kotlin.collections.MutableList<kotlin.Any?>
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.C, a:kotlin.collections.List<*>?) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:a index:0 type:kotlin.collections.List<*>?
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.Java1
+  FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    VALUE_PARAMETER name:b index:1 type:<root>.B
+    VALUE_PARAMETER name:c index:2 type:<root>.C
+    BLOCK_BODY
+      VAR name:k type:kotlin.collections.List<kotlin.Any?> [val]
+        TYPE_OP type=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>
+          CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        a: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        a: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Nothing?> origin=null
+          <T>: kotlin.Nothing?
+          elements: VARARG type=kotlin.Array<out kotlin.Nothing?> varargElementType=kotlin.Nothing?
+            CONST Null type=kotlin.Nothing? value=null
+      VAR name:k2 type:kotlin.collections.List<kotlin.Any> [val]
+        CALL 'public open fun bar (): kotlin.collections.MutableList<kotlin.Any> declared in <root>.B' type=kotlin.collections.MutableList<kotlin.Any> origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      CALL 'public open fun foo (a: kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        a: CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+          <T>: kotlin.Any?
+          elements: VARARG type=kotlin.Array<out kotlin.Any?> varargElementType=kotlin.Any?
+            CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: kotlin.collections.List<*>?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        a: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: kotlin.collections.List<*>?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        a: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Nothing?> origin=null
+          <T>: kotlin.Nothing?
+          element: CONST Null type=kotlin.Nothing? value=null

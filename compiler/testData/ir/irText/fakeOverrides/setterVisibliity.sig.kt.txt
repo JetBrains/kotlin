@@ -1,0 +1,219 @@
+// CHECK:
+//   Mangled name: DirectChild
+//   Public signature: /DirectChild|null[0]
+class DirectChild : KotlinBase {
+  // CHECK:
+  //   Mangled name: DirectChild#<init>(){}
+  //   Public signature: /DirectChild.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: DirectChild{}a
+  //   Public signature: /DirectChild.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  /* fake */ override var a: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DirectChild#<get-a>(){}
+    //   Public signature: /DirectChild.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: DirectChild#<get-a>(){}kotlin.Int
+    //   Public signature: /DirectChild.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    /* fake */ override get(): Int
+    // CHECK:
+    //   Mangled name: DirectChild#<set-a>(kotlin.Int){}
+    //   Public signature: /DirectChild.a.<set-a>|-6358787123203981221[0]
+    //   Public signature debug description: <set-a>(kotlin.Int){}
+    /* fake */ override set(<set-?>: Int): Unit
+
+  // CHECK:
+  //   Mangled name: DirectChild{}b
+  //   Public signature: /DirectChild.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  /* fake */ override var b: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DirectChild#<get-b>(){}
+    //   Public signature: /DirectChild.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: DirectChild#<get-b>(){}kotlin.Int
+    //   Public signature: /DirectChild.b.<get-b>|-2902143276921469679[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Int
+    /* fake */ override get(): Int
+    // CHECK:
+    //   Mangled name: DirectChild#<set-b>(kotlin.Int){}
+    //   Public signature: /DirectChild.b.<set-b>|393614520529327556[0]
+    //   Public signature debug description: <set-b>(kotlin.Int){}
+    protected /* fake */ override set(<set-?>: Int): Unit
+
+  // CHECK:
+  //   Mangled name: DirectChild{}c
+  //   Public signature: /DirectChild.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  /* fake */ override var c: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DirectChild#<get-c>(){}
+    //   Public signature: /DirectChild.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: DirectChild#<get-c>(){}kotlin.Int
+    //   Public signature: /DirectChild.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: DirectChild{}d
+  //   Public signature: /DirectChild.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
+  /* fake */ override var d: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DirectChild#<get-d>(){}
+    //   Public signature: /DirectChild.d.<get-d>|-6701718004621354461[0]
+    //   Public signature debug description: <get-d>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: DirectChild#<get-d>(){}kotlin.Int
+    //   Public signature: /DirectChild.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
+    /* fake */ override get(): Int
+    // CHECK:
+    //   Mangled name: DirectChild#<set-d>(kotlin.Int){}
+    //   Public signature: /DirectChild.d.<set-d>|4161969082808539024[0]
+    //   Public signature debug description: <set-d>(kotlin.Int){}
+    internal /* fake */ override set(<set-?>: Int): Unit
+
+  // CHECK:
+  //   Mangled name: DirectChild{}e
+  //   Public signature: /DirectChild.e|-5812214850253973038[0]
+  //   Public signature debug description: {}e
+  /* fake */ override var e: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: DirectChild#<get-e>(){}
+    //   Public signature: /DirectChild.e.<get-e>|-6737887868742748227[0]
+    //   Public signature debug description: <get-e>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: DirectChild#<get-e>(){}kotlin.Int
+    //   Public signature: /DirectChild.e.<get-e>|7542680625372527774[0]
+    //   Public signature debug description: <get-e>(){}kotlin.Int
+    /* fake */ override get(): Int
+    // CHECK:
+    //   Mangled name: DirectChild#<set-e>(kotlin.Int){}
+    //   Public signature: /DirectChild.e.<set-e>|352344213206183027[0]
+    //   Public signature debug description: <set-e>(kotlin.Int){}
+    /* fake */ override set(<set-?>: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinBase
+//   Public signature: /KotlinBase|null[0]
+open class KotlinBase {
+  // CHECK:
+  //   Mangled name: KotlinBase{}a
+  //   Public signature: /KotlinBase.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  var a: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: KotlinBase#<get-a>(){}
+    //   Public signature: /KotlinBase.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBase#<get-a>(){}kotlin.Int
+    //   Public signature: /KotlinBase.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+    // CHECK:
+    //   Mangled name: KotlinBase#<set-a>(kotlin.Int){}
+    //   Public signature: /KotlinBase.a.<set-a>|-6358787123203981221[0]
+    //   Public signature debug description: <set-a>(kotlin.Int){}
+    set
+
+  // CHECK:
+  //   Mangled name: KotlinBase{}b
+  //   Public signature: /KotlinBase.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  var b: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: KotlinBase#<get-b>(){}
+    //   Public signature: /KotlinBase.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBase#<get-b>(){}kotlin.Int
+    //   Public signature: /KotlinBase.b.<get-b>|-2902143276921469679[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Int
+    get
+    // CHECK:
+    //   Mangled name: KotlinBase#<set-b>(kotlin.Int){}
+    //   Public signature: /KotlinBase.b.<set-b>|393614520529327556[0]
+    //   Public signature debug description: <set-b>(kotlin.Int){}
+    protected set
+
+  // CHECK:
+  //   Mangled name: KotlinBase{}c
+  //   Public signature: /KotlinBase.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  var c: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: KotlinBase#<get-c>(){}
+    //   Public signature: /KotlinBase.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBase#<get-c>(){}kotlin.Int
+    //   Public signature: /KotlinBase.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    get
+    // CHECK:
+    //   Mangled name: KotlinBase#<set-c>(kotlin.Int){}
+    //   Public signature: /KotlinBase.c.<set-c>|-1986847627813258685[0]
+    //   Public signature debug description: <set-c>(kotlin.Int){}
+    private set
+
+  // CHECK:
+  //   Mangled name: KotlinBase{}d
+  //   Public signature: /KotlinBase.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
+  var d: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: KotlinBase#<get-d>(){}
+    //   Public signature: /KotlinBase.d.<get-d>|-6701718004621354461[0]
+    //   Public signature debug description: <get-d>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBase#<get-d>(){}kotlin.Int
+    //   Public signature: /KotlinBase.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
+    get
+    // CHECK:
+    //   Mangled name: KotlinBase#<set-d>(kotlin.Int){}
+    //   Public signature: /KotlinBase.d.<set-d>|4161969082808539024[0]
+    //   Public signature debug description: <set-d>(kotlin.Int){}
+    internal set
+
+  // CHECK:
+  //   Mangled name: KotlinBase{}e
+  //   Public signature: /KotlinBase.e|-5812214850253973038[0]
+  //   Public signature debug description: {}e
+  open var e: Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: KotlinBase#<get-e>(){}
+    //   Public signature: /KotlinBase.e.<get-e>|-6737887868742748227[0]
+    //   Public signature debug description: <get-e>(){}
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinBase#<get-e>(){}kotlin.Int
+    //   Public signature: /KotlinBase.e.<get-e>|7542680625372527774[0]
+    //   Public signature debug description: <get-e>(){}kotlin.Int
+    open get
+    // CHECK:
+    //   Mangled name: KotlinBase#<set-e>(kotlin.Int){}
+    //   Public signature: /KotlinBase.e.<set-e>|352344213206183027[0]
+    //   Public signature debug description: <set-e>(kotlin.Int){}
+    open set
+
+  // CHECK:
+  //   Mangled name: KotlinBase#<init>(){}
+  //   Public signature: /KotlinBase.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

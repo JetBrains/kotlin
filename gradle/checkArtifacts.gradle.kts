@@ -5,10 +5,10 @@ import java.util.zip.ZipFile
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
 val distDir: String by rootProject.extra
-val repoDir: String = "${rootProject.buildDir}/repo"
 val kotlinVersion: String by rootProject.extra
 
 val checkMavenArtifacts = tasks.register("checkMavenArtifacts") {
+    val repoDir = rootProject.layout.buildDirectory.dir("repo")
     doLast {
         fileTree(repoDir).checkArtifacts { zip ->
             if (!zip.name.endsWith("-sources.jar"))

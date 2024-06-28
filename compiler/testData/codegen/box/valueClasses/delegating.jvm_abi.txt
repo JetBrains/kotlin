@@ -1,0 +1,11 @@
+MODULE main
+	CLASS C.class
+		CLASS METADATA
+			K1
+				getX()I
+			K2
+				---
+			K1
+				---
+			K2
+				x

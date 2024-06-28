@@ -20,7 +20,7 @@ object ErrorModuleDescriptor : ModuleDescriptor {
     override val expectedByModules: List<ModuleDescriptor> = emptyList()
     override val allExpectedByModules: Set<ModuleDescriptor> = emptySet()
     override val annotations: Annotations get() = Annotations.EMPTY
-    override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance
+    override val builtIns: KotlinBuiltIns by lazy { DefaultBuiltIns.Instance }
     override val isValid: Boolean = false
 
     override fun <T> getCapability(capability: ModuleCapability<T>): T? = null

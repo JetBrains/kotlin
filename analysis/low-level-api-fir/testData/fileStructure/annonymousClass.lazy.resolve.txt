@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annonymousClass.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|<anonymous>| = object : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

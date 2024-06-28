@@ -1,4 +1,4 @@
-// !LANGUAGE: +JvmFieldInInterface
+// LANGUAGE: +JvmFieldInInterface
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

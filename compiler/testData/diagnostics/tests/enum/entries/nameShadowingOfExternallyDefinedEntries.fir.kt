@@ -1,4 +1,4 @@
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // WITH_STDLIB
 
 package pckg
@@ -9,7 +9,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!OPT_IN_USAGE_ERROR!>entries<!>
+        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>
         pckg.entries
     }
 }
@@ -20,7 +20,7 @@ class A {
 
         class B {
             fun foo() {
-                <!OPT_IN_USAGE_ERROR!>entries<!>
+                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>
                 pckg.entries
             }
         }

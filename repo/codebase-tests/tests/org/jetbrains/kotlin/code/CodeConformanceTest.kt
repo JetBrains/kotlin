@@ -9,15 +9,14 @@ import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashSet
 
 class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
-        private const val MAX_STEPS_COUNT = 100
+
+        @Suppress("SpellCheckingInspection")
         private val nonSourcesMatcher = FileMatcher(
             File("."),
             listOf(
@@ -25,7 +24,6 @@ class CodeConformanceTest : TestCase() {
                 ".idea",
                 "build/js",
                 "build/tmp",
-                "buildSrc",
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
                 "compiler/testData/psi/kdoc",
@@ -74,12 +72,11 @@ class CodeConformanceTest : TestCase() {
             )
         )
 
+        @Suppress("SpellCheckingInspection")
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER = FileMatcher(
             File("."),
             listOf(
                 "build",
-                "buildSrc/build/generated-sources",
-                "buildSrc/prepare-deps/build",
                 "compiler/ir/serialization.js/build/fullRuntime",
                 "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
                 "dependencies",
@@ -95,7 +92,12 @@ class CodeConformanceTest : TestCase() {
                 "libraries/examples/browser-example-with-library/target",
                 "libraries/examples/js-example/target",
                 "libraries/kotlin.test/js/it/.gradle",
+                "libraries/kotlin.test/js/it/build",
                 "libraries/kotlin.test/js/it/node_modules",
+                "libraries/kotlin.test/js-ir/it/.gradle",
+                "libraries/kotlin.test/js-ir/it/build",
+                "libraries/kotlin.test/js-ir/it/node_modules",
+                "libraries/stdlib/build",
                 "libraries/stdlib/common/build",
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
@@ -106,11 +108,14 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/jvm/build",
                 "libraries/stdlib/jvm-minimal-for-test/build",
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/atomicfu/build",
                 "libraries/tools/gradle/android-test-fixes/build",
                 "libraries/tools/gradle/gradle-warnings-detector/build",
+                "libraries/tools/gradle/kotlin-compiler-args-properties/build",
+                "libraries/tools/gradle/fus-statistics-gradle-plugin/build",
                 "libraries/tools/kotlin-allopen/build",
                 "libraries/tools/kotlin-assignment/build",
                 "libraries/tools/kotlin-gradle-build-metrics/build",
@@ -138,7 +143,11 @@ class CodeConformanceTest : TestCase() {
                 "repo/gradle-settings-conventions/build-cache/build/generated-sources",
                 "repo/gradle-settings-conventions/jvm-toolchain-provisioning/build/generated-sources",
                 "repo/gradle-settings-conventions/gradle-enterprise/build/generated-sources",
-                "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources"
+                "repo/gradle-settings-conventions/kotlin-daemon-config/build/generated-sources",
+                "repo/gradle-build-conventions/buildsrc-compat/build/generated-sources",
+                "repo/gradle-build-conventions/generators/build/generated-sources",
+                "repo/gradle-build-conventions/compiler-tests-convention/build/generated-sources",
+                ".gradle/expanded",
             )
         )
     }
@@ -154,58 +163,16 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
-    private fun isCorrectExtension(filename: String, extensions: Set<String>): Boolean {
-        val additionalExtensions = listOf(
-            "after", "new", "before", "expected",
-            "todo", "delete", "touch", "prefix", "postfix", "map",
-            "fragment", "after2", "result", "log", "messages", "conflicts", "match", "imports", "txt", "xml"
-        )
-        val possibleAdditionalExtensions = extensions.plus(additionalExtensions)
-        val fileExtensions = filename.split("\\.").drop(1)
-        if (fileExtensions.size < 2) {
-            return true
-        }
-        val extension = fileExtensions.last()
-
-        return !((extension !in possibleAdditionalExtensions && (extension.toIntOrNull() ?: MAX_STEPS_COUNT) >= MAX_STEPS_COUNT))
-    }
-
-    fun testForgottenBunchDirectivesAndFiles() {
-        val sourceBunchFilePattern = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
-        val root = nonSourcesMatcher.root
-        val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
-        val failBuilder = mutableListOf<String>()
-        nonSourcesMatcher.excludeWalkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
-            val matches = Regex("BUNCH (\\w+)")
-                .findAll(sourceFile.readText())
-                .map { it.groupValues[1] }
-                .toSet()
-                .filterNot { it in extensions }
-            for (bunch in matches) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unregistered $bunch bunch directive")
-            }
-
-            if (!isCorrectExtension(sourceFile.name, extensions)) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                failBuilder.add("$filename has unknown bunch extension")
-            }
-        }
-
-        if (failBuilder.isNotEmpty()) {
-            fail("\n" + failBuilder.joinToString("\n"))
-        }
-    }
-
     fun testNoBadSubstringsInProjectCode() {
-        class TestData(val message: String, val filter: (File, String) -> Boolean) {
-            val result: MutableList<File> = ArrayList()
+        class FileTestCase(val message: String, allowedFiles: List<String> = emptyList(), val filter: (File, String) -> Boolean) {
+            val allowedMatcher = FileMatcher(File("."), allowedFiles)
         }
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
+        val gradleEagerAttributeMethodRegex = "\\.attribute\\(.+,.+\\)".toRegex()
 
-        val tests = listOf(
-            TestData(
+        @Suppress("SpellCheckingInspection") val tests = listOf(
+            FileTestCase(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
             ) { _, source ->
                 // substring check is an optimization
@@ -213,7 +180,7 @@ class CodeConformanceTest : TestCase() {
                         "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
                         "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
             },
-            TestData(
+            FileTestCase(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
                         "This code won't work when there's no TestNG in the classpath of our IDEA plugin, " +
                         "because there's only an optional dependency on testng.jar.\n" +
@@ -222,48 +189,106 @@ class CodeConformanceTest : TestCase() {
             ) { _, source ->
                 "com.beust.jcommander.internal" in source
             },
-            TestData(
+            FileTestCase(
                 "%d source files contain references to package org.jetbrains.jet.\n" +
                         "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
                         "Please consider changing the package in these files:\n%s"
             ) { _, source ->
                 "org.jetbrains.jet" in source
             },
-            TestData(
-                "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
+            FileTestCase(
+                message = "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
                         "This package contains internal reflection implementation and is a result of a " +
                         "post-processing of kotlin-reflect.jar by jarjar.\n" +
                         "Most probably you meant to use classes from org.jetbrains.kotlin.**.\n" +
-                        "Please change references in these files or exclude them in this test:\n%s"
+                        "Please change references in these files or exclude them in this test:\n%s",
+                allowedFiles = listOf(
+                    "libraries/tools/jdk-api-validator/src/test/JdkApiUsageTest.kt"
+                )
             ) { _, source ->
                 "kotlin.reflect.jvm.internal.impl" in source
             },
-            TestData(
+            FileTestCase(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
                         "Please consider changing the package in these files:\n%s"
             ) { _, source ->
                 " org.objectweb.asm" in source
+            },
+            FileTestCase(
+                message = "%d source files contain references to package gnu.trove.\n" +
+                        "Please avoid using trove library in new use cases. " +
+                        "These files are affected:\n%s",
+            ) { _, source ->
+                "gnu.trove" in source
+            },
+            FileTestCase(
+                message = """
+                |KT-60644: Using Gradle 'AttributeContainer.attribute(key, value)' method leads to eager tasks creation in Kotlin
+                |Gradle plugin. Please use instead for KGP code 'HasAttributes.setAttributeProvider' or 'HasAttributes.setAttribute' 
+                |(for simple values) extension methods and for other code 'AttributeContainer.attributeProvider(key, provider { value })'.
+                |
+                |%d files are affected. Please update these files or exclude them in this test:
+                |%s
+                """.trimMargin(),
+                allowedFiles = listOf(
+                    "libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/utils/gradleAttributesContainerUtils.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/main/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG6.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/gradle71/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG71.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/gradle70/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG70.kt",
+                    "libraries/tools/kotlin-gradle-plugin/src/gradle74/kotlin/org/jetbrains/kotlin/gradle/plugin/internal/AttributesConfigurationHelperG74.kt",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/native/GeneralNativeIT.kt",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/KotlinGradlePluginIT.kt",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/mpp/AndroidAndJavaConsumeMppLibIT.kt",
+                    "repo/gradle-build-conventions/buildsrc-compat/src/main/kotlin/plugins/CustomVariantPublishingDsl.kt",
+                )
+            ) { _, source ->
+                gradleEagerAttributeMethodRegex.containsMatchIn(source)
             }
         )
+
+        val testCaseToMatchedFiles: Map<FileTestCase, MutableList<File>> = mutableMapOf<FileTestCase, MutableList<File>>()
+            .apply {
+                tests.forEach { testCase -> this[testCase] = mutableListOf() }
+            }
 
         nonSourcesMatcher.excludeWalkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
             val source = sourceFile.readText()
             for (test in tests) {
-                if (test.filter(sourceFile, source)) test.result.add(sourceFile)
+                if (test.filter(sourceFile, source)) {
+                    (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).add(sourceFile)
+                }
             }
         }
 
-        if (tests.flatMap { it.result }.isNotEmpty()) {
-            fail(buildString {
-                for (test in tests) {
-                    if (test.result.isNotEmpty()) {
-                        append(test.message.format(test.result.size, test.result.joinToString("\n")))
-                        appendLine()
-                        appendLine()
-                    }
+        val failureStr = buildString {
+            for (test in tests) {
+                val (allowed, notAllowed) = (testCaseToMatchedFiles[test] ?: error("Should be added during initialization")).partition {
+                    test.allowedMatcher.matchExact(it)
                 }
-            })
+
+                if (notAllowed.isNotEmpty()) {
+                    append(test.message.format(notAllowed.size, notAllowed.joinToString("\n")))
+                    appendLine()
+                    appendLine()
+                }
+
+                val unmatched = test.allowedMatcher.unmatchedExact(allowed)
+                if (unmatched.isNotEmpty()) {
+                    val testMessage = test.message.format(unmatched.size, "NONE")
+                    append(
+                        "Unused \"allowed files\" for test:\n" +
+                                "`$testMessage`\n" +
+                                "Remove exceptions for the test list:${unmatched.joinToString("\n", prefix = "\n")}"
+                    )
+                    appendLine()
+                    appendLine()
+                }
+            }
+        }
+
+        if (failureStr.isNotEmpty()) {
+            fail(failureStr)
         }
     }
 
@@ -302,14 +327,20 @@ class CodeConformanceTest : TestCase() {
         private val paths = files.mapTo(HashSet()) { it.invariantSeparatorsPath }
         private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.invariantSeparatorsPath + "/" }
 
+        private fun File.invariantRelativePath() = relativeTo(root).invariantSeparatorsPath
+
         fun matchExact(file: File): Boolean {
-            return file.relativeTo(root).invariantSeparatorsPath in paths
+            return file.invariantRelativePath() in paths
         }
 
         fun matchWithContains(file: File): Boolean {
             if (matchExact(file)) return true
-            val relativePath = file.relativeTo(root).invariantSeparatorsPath
+            val relativePath = file.invariantRelativePath()
             return relativePaths.any { relativePath.startsWith(it) }
+        }
+
+        fun unmatchedExact(files: List<File>): Set<String> {
+            return paths - files.map { it.invariantRelativePath() }.toSet()
         }
     }
 
@@ -360,7 +391,7 @@ class CodeConformanceTest : TestCase() {
             )
         )
 
-        data class RepoOccurance(val repo: String, val file: File)
+        data class RepoOccurrence(val repo: String, val file: File)
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
 
         val extensionsPattern = Pattern.compile(".+\\.(java|kt|gradle|kts|xml)(\\.\\w+)?")
@@ -371,12 +402,12 @@ class CodeConformanceTest : TestCase() {
                 }
 
                 if (checkers.isNotEmpty()) {
-                    val occurrences = ArrayList<RepoOccurance>()
+                    val occurrences = ArrayList<RepoOccurrence>()
                     file.useLines { lines ->
                         for (line in lines) {
                             for (checker in checkers) {
                                 if (line.contains(checker.repo) && (checker.exclude == null || !line.contains(checker.exclude))) {
-                                    occurrences.add(RepoOccurance(checker.repo, file))
+                                    occurrences.add(RepoOccurrence(checker.repo, file))
                                 }
                             }
                         }

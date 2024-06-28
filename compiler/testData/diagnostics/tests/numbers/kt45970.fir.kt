@@ -9,10 +9,10 @@ var c_2: Int = 1
 val d_1: Long = 1
 var d_2: Long = 1
 
-val e_1: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-var e_2: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-val f_1: Short = <!TYPE_MISMATCH!>1 + 2<!>
-var f_2: Short = <!TYPE_MISMATCH!>1 + 2<!>
+val e_1: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+var e_2: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+val f_1: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+var f_2: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
 val g_1: Int = 1 + 2
 var g_2: Int = 1 + 2
 val h_1: Long = 1 + 2
@@ -28,10 +28,10 @@ fun local() {
     val d_1: Long = 1
     var d_2: Long = 1
 
-    val e_1: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-    var e_2: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-    val f_1: Short = <!TYPE_MISMATCH!>1 + 2<!>
-    var f_2: Short = <!TYPE_MISMATCH!>1 + 2<!>
+    val e_1: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    var e_2: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    val f_1: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    var f_2: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
     val g_1: Int = 1 + 2
     var g_2: Int = 1 + 2
     val h_1: Long = 1 + 2
@@ -48,10 +48,10 @@ class Member {
     val d_1: Long = 1
     var d_2: Long = 1
 
-    val e_1: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-    var e_2: Byte = <!TYPE_MISMATCH!>1 + 2<!>
-    val f_1: Short = <!TYPE_MISMATCH!>1 + 2<!>
-    var f_2: Short = <!TYPE_MISMATCH!>1 + 2<!>
+    val e_1: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    var e_2: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    val f_1: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
+    var f_2: Short = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>1 + 2<!>
     val g_1: Int = 1 + 2
     var g_2: Int = 1 + 2
     val h_1: Long = 1 + 2

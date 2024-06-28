@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
@@ -83,7 +83,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         val configuration = createConfiguration(
-            configurationKind, jdkKind, backend,
+            configurationKind, jdkKind,
             listOf<File>(getAnnotationsJar()),
             listOfNotNull(writeJavaFiles(files)),
             files
@@ -120,7 +120,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     }
 
     companion object {
-        private val IGNORE_ERRORS_PATTERN = Regex("""// !IGNORE_ERRORS""")
+        private val IGNORE_ERRORS_PATTERN = Regex("""// IGNORE_ERRORS""")
 
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
             IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())

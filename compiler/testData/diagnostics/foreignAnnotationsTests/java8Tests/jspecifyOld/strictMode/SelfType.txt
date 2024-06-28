@@ -13,7 +13,7 @@ public open class AK : SelfType<AK> {
 public open class AKN : SelfType<@org.jspecify.nullness.Nullable AK?> {
     public constructor AKN()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ t: @org.jspecify.nullness.Nullable AK): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ t: @org.jspecify.nullness.Nullable AK?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -53,7 +53,7 @@ public open class CK : C<CK> {
 public open class CKN : C<@org.jspecify.nullness.Nullable CK?> {
     public constructor CKN()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ t: @org.jspecify.nullness.Nullable CK): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ t: @org.jspecify.nullness.Nullable CK?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

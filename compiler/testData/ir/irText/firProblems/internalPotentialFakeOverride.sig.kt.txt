@@ -1,0 +1,47 @@
+// MODULE: m1
+// FILE: A.kt
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A{}bar
+  //   Public signature: /A.bar|-7864284097863469857[0]
+  //   Public signature debug description: {}bar
+  internal open val bar: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-bar>(){}kotlin.Int
+    //   Public signature: /A.bar.<get-bar>|-7403724005139201014[0]
+    //   Public signature debug description: <get-bar>(){}kotlin.Int
+    internal open get
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#foo(){}kotlin.Int
+  //   Public signature: /A.foo|-1256155405684507276[0]
+  //   Public signature debug description: foo(){}kotlin.Int
+  internal open fun foo(): Int
+
+}
+
+// MODULE: m2
+// FILE: B.kt
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : A {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

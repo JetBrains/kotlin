@@ -1,6 +1,0 @@
-KT element: KtParameter
-FIR element: FirFunctionTypeParameterImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/Int|

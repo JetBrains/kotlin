@@ -217,7 +217,12 @@ val possibleTargetMap = mapOf(
     ),
     NOINLINE_KEYWORD to EnumSet.of(KotlinTarget.VALUE_PARAMETER),
     TAILREC_KEYWORD to EnumSet.of(KotlinTarget.FUNCTION),
-    SUSPEND_KEYWORD to EnumSet.of(KotlinTarget.MEMBER_FUNCTION, KotlinTarget.TOP_LEVEL_FUNCTION, KotlinTarget.LOCAL_FUNCTION),
+    SUSPEND_KEYWORD to EnumSet.of(
+        KotlinTarget.MEMBER_FUNCTION,
+        KotlinTarget.TOP_LEVEL_FUNCTION,
+        KotlinTarget.LOCAL_FUNCTION,
+        KotlinTarget.ANONYMOUS_FUNCTION
+    ),
     EXTERNAL_KEYWORD to EnumSet.of(
         KotlinTarget.FUNCTION,
         KotlinTarget.PROPERTY,
@@ -283,7 +288,7 @@ val deprecatedTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
 val deprecatedParentTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>()
 
-val deprecatedModifierMap = mapOf(
+val deprecatedKmpModifierMap = mapOf(
     HEADER_KEYWORD to EXPECT_KEYWORD,
     IMPL_KEYWORD to ACTUAL_KEYWORD
 )

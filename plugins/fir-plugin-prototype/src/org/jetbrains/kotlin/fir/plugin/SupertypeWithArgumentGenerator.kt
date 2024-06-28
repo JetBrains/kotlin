@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-/*
- * Adds MyInterface supertype for all classes annotated with @MyInterfaceSupertype
- */
 class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerationExtension(session) {
     companion object {
         private val supertypeClassId = ClassId(FqName("foo"), Name.identifier("InterfaceWithArgument"))
@@ -34,11 +31,10 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
 
     }
 
-    context(TypeResolveServiceContainer)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
-        resolvedSupertypes: List<FirResolvedTypeRef>
+        resolvedSupertypes: List<FirResolvedTypeRef>,
+        typeResolver: TypeResolveService
     ): List<FirResolvedTypeRef> {
         if (resolvedSupertypes.any { it.type.classId == supertypeClassId }) return emptyList()
 

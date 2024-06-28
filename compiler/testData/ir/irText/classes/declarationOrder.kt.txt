@@ -1,0 +1,53 @@
+package test
+
+class A {
+  val b: Int
+    field = 1
+    get
+
+  val a: Int
+    field = 2
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  constructor(x: Double) {
+    this/*A*/()
+  }
+
+  constructor(x: Int) {
+    this/*A*/()
+  }
+
+  constructor(x: String) {
+    this/*A*/()
+  }
+
+  fun a() {
+  }
+
+  fun String.a() {
+  }
+
+  fun b() {
+  }
+
+  fun String.b() {
+  }
+
+  val Int.a: String
+    get(): String {
+      return "a"
+    }
+
+  val Int.b: String
+    get(): String {
+      return "b"
+    }
+
+}
+

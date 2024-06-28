@@ -1,0 +1,10 @@
+/renderingOfTypesWithSameName.kt:6:15: error: type mismatch: inferred type is T#2 (type parameter of MutableVector) but T#1 (type parameter of MutableVector.foo) was expected
+        block(content[0])
+              ^^^^^^^^^^
+/renderingOfTypesWithSameName.kt:15:14: error: type mismatch: inferred type is Any? but String was expected
+    c.accept(c.accept(null))
+             ^^^^^^^^^^^^^^
+/renderingOfTypesWithSameName.kt:15:23: error: null can not be a value of a non-null type String
+    c.accept(c.accept(null))
+                      ^^^^
+

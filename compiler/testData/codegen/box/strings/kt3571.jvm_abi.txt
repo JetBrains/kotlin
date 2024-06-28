@@ -1,0 +1,11 @@
+MODULE main
+	CLASS Thing.class
+		CLASS METADATA
+			K1
+				getLength()I
+			K2
+				---
+			K1
+				---
+			K2
+				length

@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
 
 @file:Suppress("DuplicatedCode")
 
@@ -15,26 +18,26 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
     override var constructedTypeRef: FirTypeRef,
     override var calleeReference: FirReference,
     override val isThis: Boolean,
 ) : FirDelegatedConstructorCall() {
-    override val source: KtSourceElement? get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val annotations: List<FirAnnotation> get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val argumentList: FirArgumentList get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val contextReceiverArguments: List<FirExpression> get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val dispatchReceiver: FirExpression get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
-    override val isSuper: Boolean get() = !isThis
+    override val annotations: List<FirAnnotation>
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val argumentList: FirArgumentList
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val contextReceiverArguments: List<FirExpression>
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val dispatchReceiver: FirExpression?
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val source: KtSourceElement?
+        get() = error("FirLazyDelegatedConstructorCall should be calculated before accessing")
+    override val isSuper: Boolean
+        get() = !isThis
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         constructedTypeRef.accept(visitor, data)
@@ -70,9 +73,12 @@ class FirLazyDelegatedConstructorCall @FirImplementationDetail constructor(
         constructedTypeRef = newConstructedTypeRef
     }
 
-    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {}
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression?) {}
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {}
 }

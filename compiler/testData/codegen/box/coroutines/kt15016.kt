@@ -1,7 +1,5 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// https://youtrack.jetbrains.com/issue/KT-56747/K2-N-Wrong-return-type-for-lambda-Any-Any-which-returns-Unit 
-// IGNORE_BACKEND_K2: NATIVE
 import helpers.*
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED

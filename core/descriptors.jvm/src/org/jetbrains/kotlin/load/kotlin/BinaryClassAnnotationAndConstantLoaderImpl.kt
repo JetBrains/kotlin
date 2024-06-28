@@ -36,7 +36,7 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
 
     override var jvmMetadataVersion: JvmMetadataVersion = JvmMetadataVersion.INSTANCE
 
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
+    override fun loadAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor =
         annotationDeserializer.deserializeAnnotation(proto, nameResolver)
 
     override fun loadConstant(desc: String, initializer: Any): ConstantValue<*>? {

@@ -1,6 +1,16 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
+// COMPARE_WITH_LIGHT_TREE
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-218
+ * MAIN LINK: expressions, try-expression -> paragraph 1 -> sentence 3
+ * PRIMARY LINKS: expressions, try-expression -> paragraph 1 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: try-expression has to start with a try body and continue with zero ore more catch blocks
+ */
 fun throwException(): Nothing = throw Exception()
 
 class ExcA() : Exception()
@@ -62,4 +72,4 @@ fun case6() {
     } catch (e: ExcA)<!SYNTAX!><!>
     catch (e: ExcB) {
     }
-}
+}<!SYNTAX{LT}!><!>

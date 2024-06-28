@@ -1,0 +1,12 @@
+// CHECK JVM_IR:
+//   Mangled name: #testGetField(kotlin.Any){}kotlin.String
+//   Public signature: /testGetField|1503752848353622726[0]
+//   Public signature debug description: testGetField(kotlin.Any){}kotlin.String
+fun testGetField(a: Any): String
+
+// CHECK:
+//   Mangled name: #testSetField(kotlin.Any;kotlin.Any){}
+//   Public signature: /testSetField|-8372089981302935899[0]
+//   Public signature debug description: testSetField(kotlin.Any;kotlin.Any){}
+fun testSetField(a: Any, b: Any): Unit
+

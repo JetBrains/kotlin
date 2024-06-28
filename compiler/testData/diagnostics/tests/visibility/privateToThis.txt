@@ -19,3 +19,14 @@ public final class A</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+
+public final class C</*0*/ in T> {
+    public constructor C</*0*/ in T>(/*0*/ t: T)
+    private/*private to this*/ final val t: T
+    private/*private to this*/ final val tt: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ a: C<kotlin.String>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

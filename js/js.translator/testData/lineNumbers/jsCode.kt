@@ -5,7 +5,4 @@ fun foo() {
     println("after: $x")
 }
 
-// DONT_TARGET_EXACT_BACKEND: JS_IR
-// ^There is a better stepping test
-
-// LINES(JS):      1 6 2 2 3 3 4 4 5 5
+// LINES(JS_IR): 1 1 2 3 3 4 4 5 5

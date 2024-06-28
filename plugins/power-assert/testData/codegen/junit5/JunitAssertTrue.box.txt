@@ -1,0 +1,5 @@
+---
+assertTrue(1 != 1)
+             |
+             false
+ ==> expected: <true> but was: <false>---

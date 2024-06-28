@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // UNEXPECTED BEHAVIOUR
 // ISSUES: KT-37066
 
@@ -32,7 +32,7 @@ fun case1(javaClass: JavaClass?) {
 }
 
 class Case1(val javaClass: JavaClass?) {
-    val x = if (javaClass != null) { it -> <!EQUALITY_NOT_APPLICABLE_WARNING!>it == javaClass<!> } else BooCase2.FILTER
+    val x = if (javaClass != null) { it -> it == javaClass } else BooCase2.FILTER
 }
 
 class BooCase1() {

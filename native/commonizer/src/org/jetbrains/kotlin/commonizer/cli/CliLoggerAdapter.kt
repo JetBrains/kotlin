@@ -20,10 +20,11 @@ internal class CliLoggerAdapter(
 
     override fun warning(message: String) = printlnIndented("Warning: $message", *CommonizerLogLevel.values())
 
-    override fun error(message: String) = fatal(message)
+    override fun error(message: String) = printlnIndented("Error: $message\n", *CommonizerLogLevel.values())
 
+    @Deprecated(Logger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(Logger.FATAL_REPLACEMENT))
     override fun fatal(message: String): Nothing {
-        printlnIndented("Error: $message\n", *CommonizerLogLevel.values())
+        error(message)
         exitProcess(1)
     }
 
@@ -35,4 +36,9 @@ internal class CliLoggerAdapter(
             }
         }
     }
+}
+
+internal fun Logger.errorAndExitJvmProcess(message: String): Nothing {
+    error(message)
+    exitProcess(1)
 }

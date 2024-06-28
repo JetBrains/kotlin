@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,16 +26,13 @@ import org.jetbrains.kotlin.fir.expressions.FirOperationNameConventions
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -62,7 +59,12 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
     override fun getClassifierNames(): Set<Name> = emptySet()
 
     private val anyTypeScope by lazy {
-        session.builtinTypes.anyType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
+        session.builtinTypes.anyType.type.scope(
+            session,
+            scopeSession,
+            CallableCopyTypeCalculator.DoNothing,
+            requiredMembersPhase = null,
+        )
     }
 
     override fun processFunctionsByName(
@@ -113,7 +115,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     private val dynamicScopeCacheByScope: FirCache<ScopeSession, FirDynamicScope, Nothing?> =
         cachesFactory.createCache { it -> FirDynamicScope(session, it) }
 
-    fun getDynamicScopeFor(scopeSession: ScopeSession) = dynamicScopeCacheByScope.getValue(scopeSession, null)
+    fun getDynamicScopeFor(scopeSession: ScopeSession): FirDynamicScope = dynamicScopeCacheByScope.getValue(scopeSession, null)
 
     val functionsCacheByName: FirCache<Name, FirSimpleFunction, Nothing?> =
         cachesFactory.createCache { name -> buildPseudoFunctionByName(name) }
@@ -121,19 +123,19 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     val propertiesCacheByName: FirCache<Name, FirProperty, Nothing?> =
         cachesFactory.createCache { name -> buildPseudoPropertyByName(name) }
 
-    private val dynamicTypeRef = buildResolvedTypeRef {
+    private val dynamicTypeRef: FirResolvedTypeRef = buildResolvedTypeRef {
         type = ConeDynamicType.create(session)
     }
 
-    private val anyArrayTypeRef = buildResolvedTypeRef {
+    private val anyArrayTypeRef: FirResolvedTypeRef = buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             StandardClassIds.Array.toLookupTag(),
-            arrayOf(session.builtinTypes.nullableAnyType.coneType),
+            arrayOf(dynamicTypeRef.coneType),
             isNullable = false
         )
     }
 
-    private fun buildPseudoFunctionByName(name: Name) = buildSimpleFunction {
+    private fun buildPseudoFunctionByName(name: Name): FirSimpleFunction = buildSimpleFunction {
         status = FirResolvedDeclarationStatusImpl(
             Visibilities.Public,
             Modality.FINAL,
@@ -160,6 +162,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
             moduleData = session.moduleData
             containingFunctionSymbol = this@buildSimpleFunction.symbol
             origin = FirDeclarationOrigin.DynamicScope
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
             returnTypeRef = anyArrayTypeRef
             this.name = Name.identifier("args")
             this.symbol = FirValueParameterSymbol(this.name)
@@ -171,7 +174,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
         valueParameters.add(parameter)
     }
 
-    private fun buildPseudoPropertyByName(name: Name) = buildProperty {
+    private fun buildPseudoPropertyByName(name: Name): FirProperty = buildProperty {
         this.name = name
         this.symbol = FirPropertySymbol(CallableId(DYNAMIC_FQ_NAME, this.name))
 

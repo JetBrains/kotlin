@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
 
 fun Module.getSourceFiles(
@@ -106,7 +105,7 @@ fun writeOutput(
 ) {
     val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
     val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
-    val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    val messageCollector = configuration.messageCollector
     if (jarPath != null) {
         val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
         val noReflect = configuration.get(JVMConfigurationKeys.NO_REFLECT, false)
@@ -135,13 +134,13 @@ fun writeOutput(
 }
 
 fun writeOutputsIfNeeded(
-    project: Project?,
-    projectConfiguration: CompilerConfiguration,
-    chunk: List<Module>,
-    outputs: List<GenerationState>,
+    project: Project,
+    configuration: CompilerConfiguration,
+    messageCollector: MessageCollector,
+    outputs: Collection<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
-    if (projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).hasErrors()) {
+    if (messageCollector.hasErrors()) {
         return false
     }
 
@@ -154,16 +153,16 @@ fun writeOutputsIfNeeded(
         outputs.forEach(GenerationState::destroy)
     }
 
-    if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-        val singleModule = chunk.singleOrNull()
-        if (singleModule != null) {
-            return JavacWrapper.getInstance(project!!).use {
-                it.compile(File(singleModule.getOutputDirectory()))
+    if (configuration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
+        val singleState = outputs.singleOrNull()
+        if (singleState != null) {
+            return JavacWrapper.getInstance(project).use {
+                it.compile(singleState.outDirectory)
             }
         } else {
-            projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+            messageCollector.report(
                 CompilerMessageSeverity.WARNING,
-                "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                "A chunk contains multiple modules (${outputs.joinToString { it.moduleName }}). " +
                         "-Xuse-javac option couldn't be used to compile java files"
             )
         }
@@ -227,7 +226,6 @@ fun createLibraryListForJvm(
     val binaryModuleData = BinaryModuleData.initialize(
         Name.identifier(moduleName),
         JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices
     )
     val libraryList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(configuration.jvmClasspathRoots.map { it.toPath() })

@@ -1,0 +1,15 @@
+KT element: KtClass
+KT element text:
+public final class FooBar public constructor() {
+    public final fun doSmth(): kotlin.Unit { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class FooBar : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] fun doSmth(): R|kotlin/Unit|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FooBar] constructor(): R|FooBar|
+
+}

@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 fun box() {
     var x = false
@@ -10,31 +11,31 @@ fun f(block: () -> Unit) {
 
 fun g() {}
 
-// The synthetic invoke bridge method generated for in the callable reference has line numbers
-// in the JVM_IR backend (as all bridges). In the JVM backend, only some bridges have line numbers.
-// For some reason, when the bridge does not have line numbers, there is no method entry event
-// for the invoke method bridged to. Therefore, the entry line number for invoke only shows
-// up for JVM_IR.
-
-// EXPECTATIONS JVM JVM_IR
-// test.kt:3 box
-// test.kt:4 box
-// test.kt:8 f
 // EXPECTATIONS JVM_IR
-// test.kt:4 invoke
-// EXPECTATIONS JVM JVM_IR
-// test.kt:11 g
-// test.kt:4 invoke
-// test.kt:8 f
-// test.kt:9 f
+// test.kt:4 box
 // test.kt:5 box
+// test.kt:9 f
+// test.kt:5 invoke
+// test.kt:12 g
+// test.kt:5 invoke
+// test.kt:9 f
+// test.kt:10 f
+// test.kt:6 box
 
 // EXPECTATIONS JS_IR
-// test.kt:3 box
 // test.kt:4 box
-// test.kt:4 g$ref
-// test.kt:4 box
-// test.kt:8 f
-// test.kt:11 g
-// test.kt:9 f
 // test.kt:5 box
+// test.kt:5 g$ref
+// test.kt:5 box
+// test.kt:9 f
+// test.kt:12 g
+// test.kt:10 f
+// test.kt:6 box
+
+// EXPECTATIONS WASM
+// test.kt:4 $box (12, 4)
+// test.kt:5 $box
+// test.kt:9 $f
+// test.kt:12 $g
+// test.kt:10 $f
+// test.kt:6 $box

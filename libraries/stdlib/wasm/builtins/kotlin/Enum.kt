@@ -6,14 +6,21 @@
 package kotlin
 
 public abstract class Enum<E : Enum<E>>(
+    @kotlin.internal.IntrinsicConstEvaluation
     public val name: String,
     public val ordinal: Int
 ) : Comparable<E> {
 
-    override fun compareTo(other: E): Int =
+    public final override fun compareTo(other: E): Int =
         ordinal.compareTo(other.ordinal)
 
-    override fun toString(): String =
+    public final override fun equals(other: Any?): Boolean =
+        this === other
+
+    public final override fun hashCode(): Int =
+        super.hashCode()
+
+    public override fun toString(): String =
         name
 
     public companion object

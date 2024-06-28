@@ -1,13 +1,29 @@
 open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
+  val map: Map<K, V>
+    field = map
+    get
+
   constructor(map: Map<K, V>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val map: Map<K, V>
-    field = map
-    get
+  override fun containsKey(key: K): Boolean {
+    return <this>.#map.containsKey(key = key)
+  }
+
+  override fun containsValue(value: V): Boolean {
+    return <this>.#map.containsValue(value = value)
+  }
+
+  override operator fun get(key: K): V? {
+    return <this>.#map.get(key = key)
+  }
+
+  override fun isEmpty(): Boolean {
+    return <this>.#map.isEmpty()
+  }
 
   override val entries: Set<Entry<K, V>>
     override get(): Set<Entry<K, V>> {
@@ -29,22 +45,6 @@ open class ControlFlowInfo<K : Any?, V : Any?> : Map<K, V> {
       return <this>.#map.<get-values>()
     }
 
-  override fun containsKey(key: K): Boolean {
-    return <this>.#map.containsKey(key = key)
-  }
-
-  override fun containsValue(value: V): Boolean {
-    return <this>.#map.containsValue(value = value)
-  }
-
-  override operator fun get(key: K): V? {
-    return <this>.#map.get(key = key)
-  }
-
-  override fun isEmpty(): Boolean {
-    return <this>.#map.isEmpty()
-  }
-
 }
 
 class StringFlowInfo : ControlFlowInfo<String, String> {
@@ -60,3 +60,4 @@ class StringFlowInfo : ControlFlowInfo<String, String> {
   }
 
 }
+

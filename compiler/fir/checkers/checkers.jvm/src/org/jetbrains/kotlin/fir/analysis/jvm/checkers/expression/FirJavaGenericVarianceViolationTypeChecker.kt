@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.StandardTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
@@ -45,7 +46,7 @@ import kotlin.math.min
  * `UnsupportedOperationException`, which is expected and the price we pay in order to make immutable collection easier to use. This checker
  * doesn't do anything to prevent this from happening.
  */
-object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
+object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return
@@ -70,7 +71,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
             // Anything is acceptable for raw types
             if (expectedType is ConeRawType) continue
 
-            val argType = arg.typeRef.coneType
+            val argType = arg.resolvedType
 
             val lowerBound = expectedType.lowerBound
             val upperBound = expectedType.upperBound
@@ -137,24 +138,20 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
 
     private fun ConeSimpleKotlinType.removeOutProjection(isCovariant: Boolean): ConeSimpleKotlinType {
         return when (this) {
-            is ConeCapturedType -> ConeCapturedType(
-                captureStatus,
-                lowerType?.removeOutProjection(isCovariant),
-                nullability,
-                constructor.apply {
+            is ConeCapturedType -> copy(
+                lowerType = lowerType?.removeOutProjection(isCovariant),
+                constructor = constructor.apply {
                     ConeCapturedTypeConstructor(
                         projection.removeOutProjection(isCovariant),
                         supertypes?.map { it.removeOutProjection(isCovariant) },
                         typeParameterMarker
                     )
                 },
-                attributes,
-                isProjectionNotNull
             )
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.removeOutProjection(isCovariant))
             is ConeIntersectionType -> ConeIntersectionType(
                 intersectedTypes.map { it.removeOutProjection(isCovariant) },
-                alternativeType?.removeOutProjection(isCovariant)
+                upperBoundForApproximation?.removeOutProjection(isCovariant)
             )
             is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                 lookupTag,

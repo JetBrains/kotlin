@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // SKIP_TXT
 // FIR_DUMP
 

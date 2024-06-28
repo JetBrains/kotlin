@@ -26,7 +26,7 @@ fun Task.assertDependsOn(other: Task) {
 fun Task.assertNoCircularTaskDependencies() {
     data class TaskAndDependants(
         val task: Task,
-        val dependants: List<Task>
+        val dependants: List<Task>,
     )
 
     val visited = mutableSetOf<Task>()
@@ -110,4 +110,43 @@ fun Project.assertNotContainsDependencies(configurationName: String, vararg depe
 inline fun <reified T> assertIsInstance(value: Any?): T {
     if (value is T) return value
     fail("Expected $value to implement ${T::class.java}")
+}
+
+/**
+ * Assert that given consumable configuration [configurationName] depends on [expectedTaskNames] tasks
+ */
+fun Project.assertConfigurationsHaveTaskDependencies(
+    configurationName: String,
+    vararg expectedTaskNames: String,
+) {
+    val actualNames = configurations
+        .getByName(configurationName)
+        .outgoing
+        .artifacts
+        .buildDependencies.getDependencies(null)
+        .map { it.path }
+
+    assertEquals(expectedTaskNames.toSet(), actualNames.toSet(), "Unexpected task dependencies for $configurationName")
+}
+
+/** Assert that [actual] contains substring [expected] */
+fun assertContains(
+    expected: String,
+    actual: String,
+    ignoreCase: Boolean = false,
+) {
+    if (!actual.contains(expected, ignoreCase = ignoreCase)) {
+        fail("expected:<string contains '$expected' (ignoreCase:$ignoreCase)> but was:<$actual>")
+    }
+}
+
+/** Assert that [actual] does _not_ contain substring [expected] */
+fun assertNotContains(
+    expected: String,
+    actual: String,
+    ignoreCase: Boolean = false,
+) {
+    if (actual.contains(expected, ignoreCase = ignoreCase)) {
+        fail("expected:<string does not contain '$expected' (ignoreCase:$ignoreCase)> but was:<$actual>")
+    }
 }

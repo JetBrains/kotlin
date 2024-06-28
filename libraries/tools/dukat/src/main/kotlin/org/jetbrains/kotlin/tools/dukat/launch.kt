@@ -28,7 +28,7 @@ private fun readCopyrightNoticeFromProfile(copyrightProfile: File): String {
         }
 }
 
-private fun getHeader(): String {
+internal fun getHeader(): String {
     val copyrightNotice = readCopyrightNoticeFromProfile(
         File("../../../.idea/copyright/apache.xml")
     )

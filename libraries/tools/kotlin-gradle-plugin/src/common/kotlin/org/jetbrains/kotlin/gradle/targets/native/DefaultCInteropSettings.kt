@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -18,18 +19,15 @@ import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeVariantCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 import javax.inject.Inject
 
 abstract class DefaultCInteropSettings @Inject internal constructor(
-    private val params: Params
+    private val params: Params,
 ) : CInteropSettings {
 
     internal data class Params(
@@ -37,7 +35,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
         val identifier: CInteropIdentifier,
         val dependencyConfigurationName: String,
         val interopProcessingTaskName: String,
-        val services: Services
+        val services: Services,
     ) {
         open class Services @Inject constructor(
             val providerFactory: ProviderFactory,
@@ -69,24 +67,28 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
 
     internal val identifier = params.identifier
 
-    @Deprecated(
-        "This configuration is no longer used by the plugin, the property shouldn't be accessed",
-        level = DeprecationLevel.ERROR
-    )
-    override val dependencyConfigurationName: String
-        get() = params.dependencyConfigurationName
-
     override var dependencyFiles: FileCollection = files()
 
     val interopProcessingTaskName get() = params.interopProcessingTaskName
 
-    val defFileProperty: Property<File> = params.services.objectFactory.property<File>().value(
-        params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
+
+    @Deprecated("Deprecated. Please, use definitionFile.", ReplaceWith("definitionFile"))
+    val defFileProperty: Property<File> = params.services.objectFactory.property<File>().convention(
+        getDefaultCinteropDefinitionFile().takeIf { it.exists() }
     )
 
+    private fun getDefaultCinteropDefinitionFile(): File = params.services.projectLayout.projectDirectory.file("src/nativeInterop/cinterop/$name.def").asFile
+
+    val definitionFile: RegularFileProperty = params.services.objectFactory.fileProperty().convention(
+        @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
+        params.services.projectLayout.file(defFileProperty)
+    )
+
+    @Deprecated("Deprecated because it is a non-lazy property.", ReplaceWith("definitionFile"))
     var defFile: File
-        get() = defFileProperty.get()
+        get() = definitionFile.getFile()
         set(value) {
+            @Suppress("DEPRECATION") // deprecated property is used intentionally during deprecation period
             defFileProperty.set(value)
         }
 
@@ -115,6 +117,7 @@ abstract class DefaultCInteropSettings @Inject internal constructor(
     // DSL methods.
 
     override fun defFile(file: Any) {
+        @Suppress("DEPRECATION")
         defFileProperty.set(params.services.fileOperations.file(file))
     }
 
@@ -160,26 +163,6 @@ internal class DefaultCInteropSettingsFactory(private val compilation: KotlinCom
                 compilation.name.takeIf { it != "main" }.orEmpty(),
                 name,
                 compilation.target.disambiguationClassifier
-            ),
-            services = compilation.project.objects.newInstance()
-        )
-
-        return compilation.project.objects.newInstance(params)
-    }
-}
-
-internal class GradleKpmDefaultCInteropSettingsFactory(private val compilation: GradleKpmNativeVariantCompilationData) :
-    NamedDomainObjectFactory<DefaultCInteropSettings> {
-    override fun create(name: String): DefaultCInteropSettings {
-        val params = DefaultCInteropSettings.Params(
-            name = name,
-            identifier = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name),
-            dependencyConfigurationName = compilation.owner.disambiguateName("${name.capitalizeAsciiOnly()}CInterop"),
-            interopProcessingTaskName = lowerCamelCaseName(
-                "cinterop",
-                compilation.compilationPurpose.takeIf { it != "main" }.orEmpty(),
-                name,
-                compilation.compilationClassifier
             ),
             services = compilation.project.objects.newInstance()
         )

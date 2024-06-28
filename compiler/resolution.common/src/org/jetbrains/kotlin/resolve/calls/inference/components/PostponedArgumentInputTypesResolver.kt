@@ -9,8 +9,13 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
+import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
@@ -531,24 +536,40 @@ class PostponedArgumentInputTypesResolver(
         postponedArguments: List<PostponedResolvedAtomMarker>,
         topLevelType: KotlinTypeMarker,
         dependencyProvider: TypeVariableDependencyInformationProvider,
-        resolvedAtomProvider: ResolvedAtomProvider
-    ): Boolean = with(c) {
-        val expectedType = argument.run { (this as? PostponedAtomWithRevisableExpectedType)?.revisedExpectedType ?: expectedType }
+        resolvedAtomProvider: ResolvedAtomProvider,
+    ): Boolean {
+        val expectedType = argument.expectedFunctionType(c) ?: return false
 
-        if (expectedType != null && expectedType.isFunctionOrKFunctionWithAnySuspendability()) {
-            val wasFixedSomeVariable = c.fixNextReadyVariableForParameterType(
-                expectedType,
-                postponedArguments,
-                topLevelType,
-                dependencyProvider,
-                resolvedAtomProvider
-            )
+        return c.fixNextReadyVariableForParameterType(
+            expectedType,
+            postponedArguments,
+            topLevelType,
+            dependencyProvider,
+            resolvedAtomProvider,
+        )
+    }
 
-            if (wasFixedSomeVariable)
-                return true
-        }
+    @K2Only
+    fun findNextVariableForReportingNotInferredInputType(
+        c: Context,
+        argument: PostponedResolvedAtomMarker,
+        postponedArguments: List<PostponedResolvedAtomMarker>,
+        topLevelType: KotlinTypeMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+    ): VariableFixationFinder.VariableForFixation? {
+        val expectedType = argument.expectedFunctionType(c) ?: return null
 
-        return false
+        return c.findNextVariableForParameterType(
+            expectedType,
+            dependencyProvider,
+            postponedArguments,
+            topLevelType,
+        )
+    }
+
+    private fun PostponedResolvedAtomMarker.expectedFunctionType(c: Context): KotlinTypeMarker? = with(c) {
+        val expectedType = (this@expectedFunctionType as? PostponedAtomWithRevisableExpectedType)?.revisedExpectedType ?: expectedType
+        expectedType?.takeIf { it.isFunctionOrKFunctionWithAnySuspendability() }
     }
 
     private fun Context.fixNextReadyVariableForParameterType(
@@ -558,17 +579,9 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
     ): Boolean = with(resolutionTypeSystemContext) {
-        val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
-            .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
-        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this@fixNextReadyVariableForParameterType,
-            relatedVariables,
-            postponedArguments,
-            ConstraintSystemCompletionMode.FULL,
-            topLevelType
-        )
+        val variableForFixation = findNextVariableForParameterType(type, dependencyProvider, postponedArguments, topLevelType)
 
-        if (variableForFixation == null || !variableForFixation.hasProperConstraint)
+        if (variableForFixation == null || !variableForFixation.isReady)
             return false
 
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
@@ -587,6 +600,26 @@ class PostponedArgumentInputTypesResolver(
         )
 
         return true
+    }
+
+    private fun Context.findNextVariableForParameterType(
+        type: KotlinTypeMarker,
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+        postponedArguments: List<PostponedResolvedAtomMarker>,
+        topLevelType: KotlinTypeMarker,
+    ): VariableFixationFinder.VariableForFixation? {
+        val outerTypeVariables = outerTypeVariables.orEmpty()
+        val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
+            .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
+            .filter { it !in outerTypeVariables }
+
+        return variableFixationFinder.findFirstVariableForFixation(
+            this,
+            relatedVariables,
+            postponedArguments,
+            ConstraintSystemCompletionMode.FULL,
+            topLevelType,
+        )
     }
 
     private fun KotlinTypeMarker?.wrapToTypeWithKind() = this?.let { TypeWithKind(it) }

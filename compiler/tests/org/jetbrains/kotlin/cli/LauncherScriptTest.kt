@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.cli
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -55,12 +55,12 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         val stdout =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.inputStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             )
         val stderr =
             AbstractCliTest.getNormalizedCompilerOutput(
                 StringUtil.convertLineSeparators(process.errorStream.bufferedReader().use { it.readText() }),
-                null, testDataDirectory
+                null, testDataDirectory, tmpdir.absolutePath
             ).replace("Picked up [_A-Z]+:.*\n".toRegex(), "")
                 .replace("The system cannot find the file specified", "No such file or directory") // win -> unix
         process.waitFor(10, TimeUnit.SECONDS)
@@ -144,12 +144,14 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "kotlinc-js",
             "$testDataDirectory/emptyMain.kt",
             "-nowarn",
-            "-Xlegacy-deprecated-no-warn",
-            "-Xuse-deprecated-legacy-compiler",
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            "-D${CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.property}=true",
-            "-output",
-            File(tmpdir, "out.js").path,
+            "-libraries",
+            PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
+            "-Xir-produce-klib-dir",
+            "-Xir-only",
+            "-ir-output-dir",
+            tmpdir.path,
+            "-ir-output-name",
+            "out",
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk8Home().absolutePath)
         )
     }
@@ -191,6 +193,17 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "a",
             "b",
             expectedStdout = "a, b, 4, 2\n"
+        )
+    }
+
+    fun testRunnerExpressionLanguageVersion20() {
+        runProcess(
+            "kotlin",
+            "-language-version", "2.0", "-e",
+            "println(args.joinToString())",
+            "-a",
+            "b",
+            expectedStdout = "-a, b\n",
         )
     }
 
@@ -254,10 +267,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlin", "-no-stdlib", "-e", "println(42)",
             expectedExitCode = 1,
-            expectedStderr = """script.kts:1:1: error: unresolved reference: println
-println(42)
-^
-script.kts:1:1: error: no script runtime was found in the classpath: class 'kotlin.script.templates.standard.ScriptTemplateWithArgs' not found. Please add kotlin-script-runtime.jar to the module dependencies.
+            expectedStderr = """script.kts:1:1: error: unresolved reference 'println'.
 println(42)
 ^
 """
@@ -307,7 +317,7 @@ println(42)
         )
         runProcess(
             "kotlin", "-Xallow-any-scripts-in-source-roots", "-howtorun", ".kts", "$testDataDirectory/noInline.myscript",
-            expectedExitCode = 1, expectedStderr = """compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference: CompilerOptions
+            expectedExitCode = 1, expectedStderr = """compiler/testData/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
 @file:CompilerOptions("-Xno-inline")
       ^
 """
@@ -508,6 +518,22 @@ println(42)
             expectedExitCode = 0,
             expectedStdout = "",
             expectedStderr = ""
+        )
+    }
+
+    fun testK2ClassPathWithRelativeDir() {
+        val file1kt = tmpdir.resolve("file1.kt").apply {
+            writeText("class C")
+        }
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", tmpdir.absolutePath, "-language-version", "2.0", file1kt.absolutePath))
+        val file2kt = tmpdir.resolve("file1.kt").apply {
+            writeText("val c = C()")
+        }
+        runProcess(
+            "kotlinc",
+            "-cp", ".", "-d", ".", "-language-version", "2.0", file2kt.absolutePath,
+            workDirectory = tmpdir,
+            expectedStdout = "",
         )
     }
 }

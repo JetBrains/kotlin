@@ -14,14 +14,38 @@ open class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
     }
 }
 
-open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+        builder.useIrInliner()
+    }
+}
+
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+    }
+}
+
+open class AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineHandlers()
+        builder.useIrInliner()
+    }
+}
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
@@ -29,9 +53,11 @@ open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeB
 }
 
 @FirPsiCodegenTest
-open class AbstractFirPsiBlackBoxInlineCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
+open class AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
+        builder.useIrInliner()
     }
 }
+

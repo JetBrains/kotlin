@@ -1,0 +1,12 @@
+// CHECK:
+//   Mangled name: #testMemberIncrementDecrement(<dynamic>){}
+//   Public signature: /testMemberIncrementDecrement|1604694277771575268[0]
+//   Public signature debug description: testMemberIncrementDecrement(<dynamic>){}
+fun testMemberIncrementDecrement(d: dynamic): Unit
+
+// CHECK:
+//   Mangled name: #testSafeMemberIncrementDecrement(<dynamic>){}
+//   Public signature: /testSafeMemberIncrementDecrement|-4306216465980095979[0]
+//   Public signature debug description: testSafeMemberIncrementDecrement(<dynamic>){}
+fun testSafeMemberIncrementDecrement(d: dynamic): Unit
+

@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+class A {
+  @Composable fun B(x: Int) { }
+}
+
+@Composable
+fun C() { A().B(1337) }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class A {
+  @Composable
+  fun B(x: Int, %composer: Composer?, %changed: Int) {
+    %composer = %composer.startRestartGroup(<>)
+    sourceInformation(%composer, "C(B):Test.kt")
+    if (%changed and 0b0001 != 0 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+    val tmp0_rcvr = <this>
+    %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+      tmp0_rcvr.B(x, %composer, updateChangedFlags(%changed or 0b0001))
+    }
+  }
+  static val %stable: Int = 0
+}
+@Composable
+fun C(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    A().B(1337, %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    C(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

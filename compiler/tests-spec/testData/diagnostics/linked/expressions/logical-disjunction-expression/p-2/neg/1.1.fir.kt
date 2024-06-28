@@ -1,5 +1,16 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.
+ * HELPERS: checkType
+ */
 
 // MODULE: libModule
 // FILE: libModule/JavaClass.java
@@ -25,7 +36,7 @@ fun case1() {
     val a: Boolean? = false
     checkSubtype<Boolean?>(a)
     val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
-    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x4 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 2
@@ -33,7 +44,7 @@ fun case2() {
     val a: Any = false
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
     val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
-    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x4 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 3
@@ -45,7 +56,7 @@ fun case3() {
     val x3 = a1 || <!CONDITION_TYPE_MISMATCH!>a2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>
 
-    x3 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x3 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 4

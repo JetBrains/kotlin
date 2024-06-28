@@ -1,0 +1,50 @@
+FILE: delegatedFieldNestedName.kt
+    @Target(LAZY_EXPRESSION) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? constructor(i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? val i: Int = R|<local>/i|
+            public? get(): Int
+
+    }
+    public final? interface Base<A> : R|kotlin/Any| {
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? interface Second<T> : R|kotlin/Any| {
+    }
+    public? final? const val outer: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? const val inner: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public final? class MyClass : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Int>>, @Anno(LAZY_EXPRESSION) Second<@Anno(LAZY_EXPRESSION) String> {
+        public? constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final field $$delegate_0: @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Int>> = LAZY_EXPRESSION
+
+        private final field $$delegate_1: @Anno(LAZY_EXPRESSION) Second<@Anno(LAZY_EXPRESSION) String> = LAZY_EXPRESSION
+
+        public final? companion object Companion : @Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Base<@Anno(LAZY_EXPRESSION) Int>> {
+            private constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const val outer: <implicit> = LAZY_EXPRESSION
+                public? get(): <implicit>
+
+            public? final? const val inner: <implicit> = LAZY_EXPRESSION
+                public? get(): <implicit>
+
+        }
+
+        public final? object NestedObject : @Anno(LAZY_EXPRESSION) Second<@Anno(LAZY_EXPRESSION) String> {
+            private constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }

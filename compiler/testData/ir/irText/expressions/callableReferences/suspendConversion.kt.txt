@@ -1,34 +1,3 @@
-fun useSuspend(fn: SuspendFunction0<Unit>) {
-}
-
-fun useSuspendNullable(fn: SuspendFunction0<Unit>?) {
-}
-
-fun useSuspendNestedNullable(fn: SuspendFunction0<Unit>?) {
-}
-
-fun useSuspendInt(fn: SuspendFunction1<Int, Unit>) {
-}
-
-suspend fun foo0() {
-}
-
-fun foo1() {
-}
-
-fun fooInt(x: Int) {
-}
-
-fun foo2(vararg xs: Int) {
-}
-
-fun foo3(): Int {
-  return 42
-}
-
-fun foo4(i: Int = 42) {
-}
-
 class C {
   constructor() /* primary */ {
     super/*Any*/()
@@ -41,6 +10,25 @@ class C {
 
 }
 
+suspend fun foo0() {
+}
+
+fun foo1() {
+}
+
+fun foo2(vararg xs: Int) {
+}
+
+fun foo3(): Int {
+  return 42
+}
+
+fun foo4(i: Int = 42) {
+}
+
+fun fooInt(x: Int) {
+}
+
 fun testLambda() {
   useSuspend(fn = local suspend fun <anonymous>() {
     foo1()
@@ -48,8 +36,28 @@ fun testLambda() {
 )
 }
 
+fun testNestedNullableParam() {
+  useSuspendNestedNullable(fn = { // BLOCK
+    local suspend fun foo1() {
+      foo1()
+    }
+
+    ::foo1
+  })
+}
+
 fun testNoCoversion() {
   useSuspend(fn = ::foo0)
+}
+
+fun testNullableParam() {
+  useSuspendNullable(fn = { // BLOCK
+    local suspend fun foo1() {
+      foo1()
+    }
+
+    ::foo1
+  })
 }
 
 fun testSuspendPlain() {
@@ -72,23 +80,13 @@ fun testSuspendWithArgs() {
   })
 }
 
-fun testWithVararg() {
+fun testWithBoundReceiver() {
   useSuspend(fn = { // BLOCK
-    local suspend fun foo2() {
-      foo2()
+    local suspend fun C.bar() {
+      receiver.bar()
     }
 
-    ::foo2
-  })
-}
-
-fun testWithVarargMapped() {
-  useSuspendInt(fn = { // BLOCK
-    local suspend fun foo2(p0: Int) {
-      foo2(xs = [p0])
-    }
-
-    ::foo2
+    C()::bar
   })
 }
 
@@ -112,32 +110,35 @@ fun testWithDefaults() {
   })
 }
 
-fun testWithBoundReceiver() {
+fun testWithVararg() {
   useSuspend(fn = { // BLOCK
-    local suspend fun C.bar() {
-      receiver.bar()
+    local suspend fun foo2() {
+      foo2()
     }
 
-    C()::bar
+    ::foo2
   })
 }
 
-fun testNullableParam() {
-  useSuspendNullable(fn = { // BLOCK
-    local suspend fun foo1() {
-      foo1()
+fun testWithVarargMapped() {
+  useSuspendInt(fn = { // BLOCK
+    local suspend fun foo2(p0: Int) {
+      foo2(xs = [p0])
     }
 
-    ::foo1
+    ::foo2
   })
 }
 
-fun testNestedNullableParam() {
-  useSuspendNestedNullable(fn = { // BLOCK
-    local suspend fun foo1() {
-      foo1()
-    }
-
-    ::foo1
-  })
+fun useSuspend(fn: SuspendFunction0<Unit>) {
 }
+
+fun useSuspendInt(fn: SuspendFunction1<Int, Unit>) {
+}
+
+fun useSuspendNestedNullable(fn: SuspendFunction0<Unit>?) {
+}
+
+fun useSuspendNullable(fn: SuspendFunction0<Unit>?) {
+}
+

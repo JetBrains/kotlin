@@ -1,0 +1,7 @@
+headerFilter = **/userSetupHint.h
+---
+void foo(void);
+
+void test() {
+    foo();
+}

@@ -31,11 +31,11 @@ class MonitorInstruction private constructor(private val opcode: Int) : Intrinsi
         val MONITOR_EXIT: MonitorInstruction = MonitorInstruction(Opcodes.MONITOREXIT)
     }
 
-    /*TODO void return type*/
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, OBJECT_TYPE) {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+    ): IntrinsicFunction {
+        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(OBJECT_TYPE)) {
             it.visitInsn(opcode)
         }
     }
-
 }

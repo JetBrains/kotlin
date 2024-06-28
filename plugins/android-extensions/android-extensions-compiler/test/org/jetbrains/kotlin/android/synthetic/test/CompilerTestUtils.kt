@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
@@ -42,7 +41,7 @@ fun KtUsefulTestCase.createTestEnvironment(configuration: CompilerConfiguration,
     ExpressionCodegenExtension.registerExtension(project, CliAndroidExtensionsExpressionCodegenExtension(true, CacheImplementation.DEFAULT))
     IrGenerationExtension.registerExtension(project, CliAndroidIrExtension(true, CacheImplementation.DEFAULT))
     StorageComponentContainerContributor.registerExtension(project, AndroidExtensionPropertiesComponentContainerContributor())
-    ClassBuilderInterceptorExtension.registerExtension(
+    @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtension(
         project, CliAndroidOnDestroyClassBuilderInterceptorExtension(CacheImplementation.DEFAULT)
     )
     PackageFragmentProviderExtension.registerExtension(project, CliAndroidPackageFragmentProviderExtension(true))

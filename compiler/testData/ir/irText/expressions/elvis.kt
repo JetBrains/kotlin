@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val p: Any? = null
 
 fun foo(): Any? = null

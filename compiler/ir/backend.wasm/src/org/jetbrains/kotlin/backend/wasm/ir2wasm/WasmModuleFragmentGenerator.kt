@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -39,7 +38,6 @@ class WasmModuleFragmentGenerator(
         override fun visitElement(element: IrElement) { }
 
         override fun visitClass(declaration: IrClass) {
-            if (declaration.isAnnotationClass) return
             if (declaration.isExternal) return
             if (declaration.getWasmArrayAnnotation() != null) return
             if (declaration.isInterface) return

@@ -1,4 +1,5 @@
 
+
 // FILE: test.kt
 
 fun box() {
@@ -12,17 +13,23 @@ inline fun lookAtMe(f: () -> Int) {
     a + f()
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:5 box
-// test.kt:11 box
-// test.kt:12 box
+// EXPECTATIONS JVM_IR
 // test.kt:6 box
 // test.kt:12 box
 // test.kt:13 box
-// test.kt:8 box
+// test.kt:7 box
+// test.kt:13 box
+// test.kt:14 box
+// test.kt:9 box
 
 // EXPECTATIONS JS_IR
-// test.kt:11 box
-// test.kt:6 box
 // test.kt:12 box
-// test.kt:8 box
+// test.kt:13 box
+// test.kt:9 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box
+// test.kt:12 $box
+// test.kt:13 $box (4, 8, 4)
+// test.kt:7 $box (8, 10)
+// test.kt:9 $box

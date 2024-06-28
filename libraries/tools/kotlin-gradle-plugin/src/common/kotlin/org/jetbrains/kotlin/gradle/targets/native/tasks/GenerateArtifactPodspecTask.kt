@@ -14,10 +14,12 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.targets.native.tasks.GenerateArtifactPodspecTask.ArtifactType.*
 import org.jetbrains.kotlin.gradle.utils.appendLine
 
+@DisableCachingByDefault
 abstract class GenerateArtifactPodspecTask : DefaultTask() {
 
     enum class ArtifactType {
@@ -38,7 +40,7 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
     abstract val specName: Property<String>
 
     @get:Input
-    abstract val specVersion: Property<String?>
+    abstract val specVersion: Property<String>
 
     @get:OutputDirectory
     abstract val destinationDir: DirectoryProperty
@@ -132,8 +134,8 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
                 put(specNameKey, specName.get())
             }
 
-            if (!attributes.get().containsKey(specVersionKey)) {
-                specVersion.get()?.let { put(specVersionKey, it) }
+            if (!attributes.get().containsKey(specVersionKey) && specVersion.isPresent) {
+                put(specVersionKey, specVersion.get())
             }
 
             if (vendoredKeys.none { attributes.get().containsKey(it) }) {

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
 
 // MODULE: common

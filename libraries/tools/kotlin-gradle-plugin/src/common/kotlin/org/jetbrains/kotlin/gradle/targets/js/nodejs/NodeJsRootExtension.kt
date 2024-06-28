@@ -7,57 +7,36 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.RESTORE_YARN_LOCK_NAME
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockStoreTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
-import java.io.Serializable
 
-open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>(), Serializable {
+open class NodeJsRootExtension(
+    val project: Project,
+) : AbstractSettings<NodeJsEnv>() {
+
     init {
-        check(rootProject.rootProject == rootProject)
-    }
+        check(project.rootProject == project)
 
-    private val logger = rootProject.logger
+        val projectProperties = PropertiesProvider(project)
 
-    private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
-        logger.kotlinInfo("Storing cached files in $it")
-    }
-
-    var installationDir by Property(gradleHome.resolve("nodejs"))
-
-    var download by Property(true)
-
-    var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-
-    // Release schedule: https://github.com/nodejs/Release
-    // Actual LTS and Current versions: https://nodejs.org/en/download/
-    // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
-    var nodeVersion by Property("18.12.1")
-
-    var nodeCommand by Property("node")
-
-    var packageManager: NpmApi by Property(Yarn())
-
-    @Transient
-    private val projectProperties = PropertiesProvider(rootProject)
-
-    private val errorGenerateExternals = run {
         if (projectProperties.errorJsGenerateExternals != null) {
-            logger.warn(
+            project.logger.warn(
                 """
                 |
                 |==========
@@ -70,68 +49,95 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
         }
     }
 
-    val taskRequirements: TasksRequirements = TasksRequirements()
+    val rootProjectDir
+        get() = project.rootDir
 
-    val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
-        get() = rootProject.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)
-
-    @Suppress(
-        "UNNECESSARY_SAFE_CALL",
-        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
-    ) // TODO: investigate this warning; fixing it breaks integration tests.
-    val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>?
-        get() = rootProject?.tasks?.withType(KotlinNpmInstallTask::class.java)?.named(KotlinNpmInstallTask.NAME)
-
-    val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
-        get() = rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
-
-    @Suppress(
-        "UNNECESSARY_SAFE_CALL",
-        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
-    ) // TODO: investigate this warning; fixing it breaks integration tests.
-    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>?
-        get() = rootProject?.tasks?.withType(RootPackageJsonTask::class.java)?.named(RootPackageJsonTask.NAME)
-
-    @Suppress(
-        "UNNECESSARY_SAFE_CALL",
-        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
-    ) // TODO: investigate this warning; fixing it breaks integration tests.
-    val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>?
-        get() = rootProject?.tasks?.withType(KotlinNpmCachesSetup::class.java)?.named(KotlinNpmCachesSetup.NAME)
-
-    @Suppress(
-        "UNNECESSARY_SAFE_CALL",
-        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
-    ) // TODO: investigate this warning; fixing it breaks integration tests.
-    val storeYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
-        get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(STORE_YARN_LOCK_NAME)
-
-    @Suppress(
-        "UNNECESSARY_SAFE_CALL",
-        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
-    ) // TODO: investigate this warning; fixing it breaks integration tests.
-    val restoreYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
-        get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(RESTORE_YARN_LOCK_NAME)
-
-    val rootPackageDir: File by lazy {
-        rootProject.buildDir.resolve("js")
+    private val gradleHome = project.gradle.gradleUserHomeDir.also {
+        project.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    val projectPackagesDir: File
-        get() = rootPackageDir.resolve("packages")
+    override var installationDir by Property(gradleHome.resolve("nodejs"))
 
+    override var download by Property(true)
+
+    @Deprecated("Use downloadBaseUrl instead", ReplaceWith("downloadBaseUrl"))
+    var nodeDownloadBaseUrl
+        get() = downloadBaseUrl
+        set(value) {
+            downloadBaseUrl = value
+        }
+
+    override var downloadBaseUrl: String? by Property("https://nodejs.org/dist")
+
+    @Deprecated("Use version instead", ReplaceWith("version"))
+    var nodeVersion
+        get() = version
+        set(value) {
+            version = value
+        }
+
+    // Release schedule: https://github.com/nodejs/Release
+    // Actual LTS and Current versions: https://nodejs.org/en/download/
+    // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
+    override var version by Property("22.0.0")
+
+    override var command by Property("node")
+
+    @Deprecated("Use command instead", ReplaceWith("command"))
+    var nodeCommand
+        get() = command
+        set(value) {
+            command = value
+        }
+
+    val packageManagerExtension: org.gradle.api.provider.Property<NpmApiExt> = project.objects.property()
+
+    val taskRequirements: TasksRequirements
+        get() = resolver.tasksRequirements
+
+    lateinit var resolver: KotlinRootNpmResolver
+
+    val rootPackageDirectory: Provider<Directory> = project.layout.buildDirectory.dir("js")
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use rootPackageDirectory instead",
+        replaceWith = ReplaceWith("rootPackageDirectory")
+    )
+    val rootPackageDir: File
+        get() = rootPackageDirectory.getFile()
+
+    val projectPackagesDirectory: Provider<Directory>
+        get() = rootPackageDirectory.map { it.dir("packages") }
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use projectPackagesDirectory instead",
+        replaceWith = ReplaceWith("projectPackagesDirectory")
+    )
+    val projectPackagesDir: File
+        get() = projectPackagesDirectory.getFile()
+
+    val nodeModulesGradleCacheDirectory: Provider<Directory>
+        get() = rootPackageDirectory.map { it.dir("packages_imported") }
+
+    @Deprecated(
+        "This property is deprecated and will be removed in future. Use nodeModulesGradleCacheDirectory instead",
+        replaceWith = ReplaceWith("nodeModulesGradleCacheDirectory")
+    )
     val nodeModulesGradleCacheDir: File
-        get() = rootPackageDir.resolve("packages_imported")
+        get() = nodeModulesGradleCacheDirectory.getFile()
+
+    internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property<Platform>()
+
+    val versions = NpmVersions()
 
     override fun finalizeConfiguration(): NodeJsEnv {
-        val platformHelper = PlatformHelper
-        val platform = platformHelper.osName
-        val architecture = platformHelper.osArch
+        val name = platform.get().name
+        val architecture = platform.get().arch
 
-        val nodeDirName = "node-v$nodeVersion-$platform-$architecture"
+        val nodeDirName = "node-v$version-$name-$architecture"
         val cleanableStore = CleanableStore[installationDir.absolutePath]
         val nodeDir = cleanableStore[nodeDirName].use()
-        val isWindows = platformHelper.isWindows
+        val isWindows = platform.get().isWindows()
         val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
         fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {
@@ -141,33 +147,44 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
 
         fun getIvyDependency(): String {
             val type = if (isWindows) "zip" else "tar.gz"
-            return "org.nodejs:node:$nodeVersion:$platform-$architecture@$type"
+            return "org.nodejs:node:$version:$name-$architecture@$type"
         }
 
+        packageManagerExtension.disallowChanges()
+
         return NodeJsEnv(
+            download = download,
             cleanableStore = cleanableStore,
-            nodeDir = nodeDir,
+            rootPackageDir = rootPackageDirectory.getFile(),
+            dir = nodeDir,
             nodeBinDir = nodeBinDir,
-            nodeExecutable = getExecutable("node", nodeCommand, "exe"),
-            platformName = platform,
+            executable = getExecutable("node", command, "exe"),
+            platformName = name,
             architectureName = architecture,
             ivyDependency = getIvyDependency(),
-            downloadBaseUrl = nodeDownloadBaseUrl
+            downloadBaseUrl = downloadBaseUrl,
+            packageManager = packageManagerExtension.get().packageManager
         )
     }
 
-    internal fun executeSetup() {
-        if (download) {
-            val nodeJsSetupTask = nodeJsSetupTaskProvider.get()
-            nodeJsSetupTask.actions.forEach {
-                it.execute(nodeJsSetupTask)
-            }
-        }
-    }
+    val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
+        get() = project.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)
 
-    val versions = NpmVersions()
+    val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>
+        get() = project.tasks.withType(KotlinNpmInstallTask::class.java).named(KotlinNpmInstallTask.NAME)
 
-    val npmResolutionManager = KotlinNpmResolutionManager(this)
+    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
+        get() = project.tasks.withType(RootPackageJsonTask::class.java).named(RootPackageJsonTask.NAME)
+
+    val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
+        get() = project.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
+
+    val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>
+        get() = project.tasks.withType(KotlinNpmCachesSetup::class.java).named(KotlinNpmCachesSetup.NAME)
+
+    @Deprecated("This is deprecated and will be removed. Use corresponding property from YarnRootExtension")
+    val storeYarnLockTaskProvider: TaskProvider<YarnLockStoreTask>
+        get() = project.yarn.storeYarnLockTaskProvider
 
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"

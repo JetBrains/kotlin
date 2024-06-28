@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,14 +38,16 @@ class PsiClassRenderer private constructor(
     }
 
     companion object {
-        var extendedTypeRenderer = false
-
         fun renderClass(
             psiClass: PsiClass,
             renderInner: Boolean = false,
             membersFilter: MembersFilter = MembersFilter.DEFAULT
         ): String =
             PsiClassRenderer(renderInner, membersFilter).renderClass(psiClass)
+
+        fun renderType(psiType: PsiType): String = with(PsiClassRenderer(renderInner = false, membersFilter = MembersFilter.DEFAULT)) {
+            psiType.renderType()
+        }
     }
 
     private fun PrettyPrinter.renderClass(psiClass: PsiClass) {
@@ -84,10 +86,39 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiType.renderType() = StringBuffer().also { renderType(it) }.toString()
+
     private fun PsiType.renderType(sb: StringBuffer) {
-        if (extendedTypeRenderer && annotations.isNotEmpty()) {
-            sb.append(annotations.joinToString(" ", postfix = " ") { it.renderAnnotation() })
+        fun renderAnnotations(leadingAnnotations: Boolean) {
+            annotations.ifNotEmpty {
+                joinTo(
+                    buffer = sb,
+                    separator = " ",
+                    postfix = " ",
+                    prefix = if (leadingAnnotations) "" else " ",
+                ) { it.renderAnnotation() }
+            }
         }
+
+        when (this) {
+            is PsiEllipsisType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("...")
+
+                return
+            }
+
+            is PsiArrayType -> {
+                componentType.renderType(sb)
+                renderAnnotations(leadingAnnotations = false)
+                sb.append("[]")
+
+                return
+            }
+        }
+
+        renderAnnotations(leadingAnnotations = true)
+
         when (this) {
             is PsiClassType -> {
                 sb.append(PsiNameHelper.getQualifiedClassName(canonicalText, false))
@@ -100,16 +131,24 @@ class PsiClassRenderer private constructor(
                     sb.append(">")
                 }
             }
-            is PsiEllipsisType -> {
-                componentType.renderType(sb)
-                sb.append("...")
+            is PsiWildcardType -> {
+                if (!isBounded) {
+                    sb.append("?")
+                } else {
+                    if (isSuper) {
+                        sb.append(PsiWildcardType.SUPER_PREFIX)
+                    } else {
+                        sb.append(PsiWildcardType.EXTENDS_PREFIX)
+                    }
+
+                    bound?.renderType(sb)
+                }
             }
-            is PsiArrayType -> {
-                componentType.renderType(sb)
-                sb.append("[]")
+            is PsiPrimitiveType -> {
+                sb.append(name)
             }
             else -> {
-                sb.append(canonicalText)
+                sb.append(getCanonicalText(/* annotated = */ true))
             }
         }
     }
@@ -146,11 +185,14 @@ class PsiClassRenderer private constructor(
     private fun Array<PsiTypeParameter>.renderTypeParams() =
         if (isEmpty()) ""
         else "<" + joinToString {
-            val bounds =
-                if (it.extendsListTypes.isNotEmpty())
-                    " extends " + it.extendsListTypes.joinToString(" & ", transform = { it.renderType() })
-                else ""
-            it.name!! + bounds
+            val extendsListTypes = it.extendsListTypes
+            val bounds = if (extendsListTypes.isNotEmpty()) {
+                " extends " + extendsListTypes.joinToString(" & ", transform = { it.renderType() })
+            } else {
+                ""
+            }
+
+            it.renderModifiers() + it.name!! + bounds
         } + "> "
 
     private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
@@ -294,7 +336,7 @@ class PsiClassRenderer private constructor(
             val renderedAnnotation = annotation.renderAnnotation()
             if (renderedAnnotation.isNotEmpty()) {
                 annotationsBuffer.add(
-                    renderedAnnotation + (if (this is PsiParameter) " " else "\n")
+                    renderedAnnotation + (if (this is PsiParameter || this is PsiTypeParameter) " " else "\n")
                 )
             }
         }

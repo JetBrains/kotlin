@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS_SHORT
 
 enum class JvmFieldApplicabilityProblem(val errorMessage: String) {
     NOT_FINAL("JvmField can only be applied to final property"),

@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
-
+// LAMBDAS: CLASS
 // WITH_REFLECT
+
 package test
 
 class C {

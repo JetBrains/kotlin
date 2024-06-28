@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  inner class Inner {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#inner(){}
+    //   Public signature: /Outer.Inner.inner|-6486799226458493362[0]
+    //   Public signature debug description: inner(){}
+    fun inner(): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Outer#outer(){}
+  //   Public signature: /Outer.outer|1607449560170809066[0]
+  //   Public signature debug description: outer(){}
+  fun outer(): Unit
+
+}
+

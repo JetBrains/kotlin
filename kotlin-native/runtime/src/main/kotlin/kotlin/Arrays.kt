@@ -8,7 +8,6 @@
 
 package kotlin
 
-import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.GCUnsafeCall
@@ -17,10 +16,14 @@ import kotlin.native.internal.PointsTo
 
 /**
  * An array of bytes.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theByteArrayTypeInfo")
 public final class ByteArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -30,13 +33,17 @@ public final class ByteArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Byte): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Byte): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
     }
 
+    /** Returns the number of elements in the array. */
     public val size: Int
         get() = getArrayLength()
 
@@ -46,7 +53,7 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ByteArray_get")
-    external public operator fun get(index: Int): Byte
+    public external operator fun get(index: Int): Byte
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -54,10 +61,10 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ByteArray_set")
-    external public operator fun set(index: Int, value: Byte): Unit
+    public external operator fun set(index: Int, value: Byte): Unit
 
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ByteIterator {
@@ -80,10 +87,14 @@ private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
 
 /**
  * An array of chars.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theCharArrayTypeInfo")
 public final class CharArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to null char (`\u0000').
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -93,8 +104,11 @@ public final class CharArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Char): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Char): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -110,7 +124,7 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_CharArray_get")
-    external public operator fun get(index: Int): Char
+    public external operator fun get(index: Int): Char
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -118,10 +132,10 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_CharArray_set")
-    external public operator fun set(index: Int, value: Char): Unit
+    public external operator fun set(index: Int, value: Char): Unit
 
     @GCUnsafeCall("Kotlin_CharArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.CharIterator {
@@ -144,10 +158,14 @@ private class CharIteratorImpl(val collection: CharArray) : CharIterator() {
 
 /**
  * An array of shorts.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theShortArrayTypeInfo")
 public final class ShortArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -157,8 +175,11 @@ public final class ShortArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Short): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Short): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -174,7 +195,7 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ShortArray_get")
-    external public operator fun get(index: Int): Short
+    public external operator fun get(index: Int): Short
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -182,10 +203,10 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ShortArray_set")
-    external public operator fun set(index: Int, value: Short): Unit
+    public external operator fun set(index: Int, value: Short): Unit
 
     @GCUnsafeCall("Kotlin_ShortArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.ShortIterator {
@@ -207,11 +228,15 @@ private class ShortIteratorImpl(val collection: ShortArray) : ShortIterator() {
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
+ * An array of ints.
  */
 @ExportTypeInfo("theIntArrayTypeInfo")
 public final class IntArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -221,8 +246,11 @@ public final class IntArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Int): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Int): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -238,7 +266,7 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_IntArray_get")
-    external public operator fun get(index: Int): Int
+    public external operator fun get(index: Int): Int
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -246,10 +274,10 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_IntArray_set")
-    external public operator fun set(index: Int, value: Int): Unit
+    public external operator fun set(index: Int, value: Int): Unit
 
     @GCUnsafeCall("Kotlin_IntArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.IntIterator {
@@ -272,10 +300,14 @@ private class IntIteratorImpl(val collection: IntArray) : IntIterator() {
 
 /**
  * An array of longs.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theLongArrayTypeInfo")
 public final class LongArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -285,8 +317,11 @@ public final class LongArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Long): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Long): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -302,7 +337,7 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_LongArray_get")
-    external public operator fun get(index: Int): Long
+    public external operator fun get(index: Int): Long
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -310,10 +345,10 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_LongArray_set")
-    external public operator fun set(index: Int, value: Long): Unit
+    public external operator fun set(index: Int, value: Long): Unit
 
     @GCUnsafeCall("Kotlin_LongArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.LongIterator {
@@ -336,10 +371,14 @@ private class LongIteratorImpl(val collection: LongArray) : LongIterator() {
 
 /**
  * An array of floats.
- * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theFloatArrayTypeInfo")
 public final class FloatArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -349,8 +388,11 @@ public final class FloatArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Float): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Float): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -366,7 +408,7 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_FloatArray_get")
-    external public operator fun get(index: Int): Float
+    public external operator fun get(index: Int): Float
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -374,10 +416,10 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_FloatArray_set")
-    external public operator fun set(index: Int, value: Float): Unit
+    public external operator fun set(index: Int, value: Float): Unit
 
     @GCUnsafeCall("Kotlin_FloatArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.FloatIterator {
@@ -398,8 +440,16 @@ private class FloatIteratorImpl(val collection: FloatArray) : FloatIterator() {
     }
 }
 
+/**
+ * An array of doubles.
+ */
 @ExportTypeInfo("theDoubleArrayTypeInfo")
 public final class DoubleArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to zero.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -409,8 +459,11 @@ public final class DoubleArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Double): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Double): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -426,7 +479,7 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_DoubleArray_get")
-    external public operator fun get(index: Int): Double
+    public external operator fun get(index: Int): Double
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -434,10 +487,10 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_DoubleArray_set")
-    external public operator fun set(index: Int, value: Double): Unit
+    public external operator fun set(index: Int, value: Double): Unit
 
     @GCUnsafeCall("Kotlin_DoubleArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.DoubleIterator {
@@ -458,8 +511,16 @@ private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator()
     }
 }
 
+/**
+ * An array of booleans.
+ */
 @ExportTypeInfo("theBooleanArrayTypeInfo")
 public final class BooleanArray {
+    /**
+     * Creates a new array of the specified [size], with all elements initialized to `false`.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
+     */
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -469,8 +530,11 @@ public final class BooleanArray {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
-    public constructor(size: Int, init: (Int) -> Boolean): this(size) {
+    @Suppress("WRONG_MODIFIER_TARGET")
+    public inline constructor(size: Int, init: (Int) -> Boolean): this(size) {
         for (i in 0..size - 1) {
             this[i] = init(i)
         }
@@ -486,7 +550,7 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_BooleanArray_get")
-    external public operator fun get(index: Int): Boolean
+    public external operator fun get(index: Int): Boolean
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -494,10 +558,10 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_BooleanArray_set")
-    external public operator fun set(index: Int, value: Boolean): Unit
+    public external operator fun set(index: Int, value: Boolean): Unit
 
     @GCUnsafeCall("Kotlin_BooleanArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.BooleanIterator {
@@ -520,8 +584,10 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
+ *
+ * @throws RuntimeException if the specified [size] is negative.
  */
-public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> =
+public inline fun <T> arrayOfNulls(size: Int): Array<T?> =
         @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
         arrayOfUninitializedElements<T?>(size)
 
@@ -530,55 +596,55 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
  */
 @TypedIntrinsic(IntrinsicType.IDENTITY)
 @PointsTo(0x00, 0x01) // ret -> elements
-public external inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
+public external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
 @GCUnsafeCall("Kotlin_emptyArray")
-external public fun <T> emptyArray(): Array<T>
+public external fun <T> emptyArray(): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun doubleArrayOf(vararg elements: Double) = elements
+public inline fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun floatArrayOf(vararg elements: Float) = elements
+public inline fun floatArrayOf(vararg elements: Float): FloatArray = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun longArrayOf(vararg elements: Long) = elements
+public inline fun longArrayOf(vararg elements: Long): LongArray = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun intArrayOf(vararg elements: Int) = elements
+public inline fun intArrayOf(vararg elements: Int): IntArray = elements
 
 /**
  * Returns an array containing the specified characters.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun charArrayOf(vararg elements: Char) = elements
+public inline fun charArrayOf(vararg elements: Char): CharArray = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun shortArrayOf(vararg elements: Short) = elements
+public inline fun shortArrayOf(vararg elements: Short): ShortArray = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun byteArrayOf(vararg elements: Byte) = elements
+public inline fun byteArrayOf(vararg elements: Byte): ByteArray = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun booleanArrayOf(vararg elements: Boolean) = elements
+public inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements

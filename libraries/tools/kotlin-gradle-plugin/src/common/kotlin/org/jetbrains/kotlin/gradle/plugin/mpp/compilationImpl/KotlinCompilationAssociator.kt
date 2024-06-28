@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.listProperty
+
 
 internal fun interface KotlinCompilationAssociator {
     fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>)
@@ -23,28 +27,35 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
         val project = target.project
 
         /*
-          we add dependencies to compileDependencyConfiguration ('compileClasspath' usually) and runtimeDependency
-          ('runtimeClasspath') instead of modifying respective api/implementation/compileOnly/runtimeOnly configs
+        This associator has two jobs
+        1) It will add the output of the 'main' compilation as compile & runtime dependency to the 'auxiliary' compilation
+        2) It will add all 'declared dependencies' present on 'main' to 'auxiliary'
 
-          This is needed because api/implementation/compileOnly/runtimeOnly are used in IDE Import and will leak
-          to dependencies of IDE modules. But they are not needed here, because IDE resolution works inherently
-          transitively and symbols from associated compilation will be resolved from source sets of associated
-          compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
-          resolution order - e.g. in case of FQNs clash, so it's even harmful)
+        For 1)
+        This is necessary so that all symbols that are declared/produced in 'main' are available in 'auxiliary'.
+        We use the 'compileOnlyConfiguration' and 'runtimeOnlyConfigurationName' to add the respective classes.
+            Note (a): This 'associate' function will be called for 'all' associated compilations (full transitive closure)
+            Note (b): It is important that the compiled output of 'main' is prioritised in the compile path order:
+                      We therefore ensure that the files are added to the front of the compile path.
+
+                      This is necessary as other binaries might leak into the compile path which contain the same symbols but
+                      are not marked as 'friend'. We ensure that associate dependencies are resolved first
+
+        For 2)
+        This is an agreed upon convention: 'test' is able to see all dependencies declared for 'main'
+        As described in 1b: It needs to be taken care of, that the dependencies are ordered after the output of 'main'
         */
-        project.dependencies.add(auxiliary.compileOnlyConfigurationName, project.files({ main.output.classesDirs }))
-        project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, project.files({ main.output.allOutputs }))
+        project.dependencies.add(auxiliary.compileOnlyConfigurationName, main.output.classesDirs)
+        project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, main.output.allOutputs)
+
         // Adding classes that could be produced into non-default destination for JVM target
         // Check KotlinSourceSetProcessor for details
         project.dependencies.add(
             auxiliary.implementationConfigurationName,
-            project.objects.fileCollection().from(
-                {
-                    main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile
-                }
-            )
+            project.filesProvider { main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile }
         )
 
+        // Adding declared dependencies
         auxiliary.compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
             project,
             main.apiConfigurationName,
@@ -63,7 +74,6 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
 
 internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
-
         auxiliary.compileDependencyFiles +=
             main.output.classesDirs + target.project.filesProvider { main.compileDependencyFiles }
 
@@ -75,10 +85,22 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
 
 internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
-        /* Main to Test association handled already by java plugin */
-        if (target is KotlinJvmTarget && target.withJavaEnabled && auxiliary.isTest() && main.isMain()) {
+        val shouldSkip = when {
+            /*
+             * Main to Test association handled already by the `java` plugin
+             * Association of the test fixtures source set handled already by the `java-test-fixtures` and `java` integration
+             */
+            target is KotlinWithJavaTarget<*, *> && target.platformType == jvm ->
+                auxiliary.isTest() && main.isMain() || auxiliary.isTest() && main.isTestFixtures() || auxiliary.isTestFixtures() && main.isMain()
+            /* Main to Test association handled already by integration with the `java-base` plugin */
+            target is KotlinJvmTarget && target.withJavaEnabled ->
+                auxiliary.isTest() && main.isMain()
+            else -> false
+        }
+        if (shouldSkip) {
             return
-        } else DefaultKotlinCompilationAssociator.associate(target, auxiliary, main)
+        }
+        DefaultKotlinCompilationAssociator.associate(target, auxiliary, main)
     }
 }
 
@@ -108,14 +130,10 @@ internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator
 private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
     project.configurations.named(this).configure { receiverConfiguration ->
         receiverConfiguration.dependencies.addAllLater(
-            project.objects.listProperty(Dependency::class.java).apply {
-                set(
-                    project.provider {
-                        configurationNames
-                            .map { project.configurations.getByName(it) }
-                            .flatMap { it.allDependencies }
-                    }
-                )
+            project.listProperty<Dependency> {
+                configurationNames
+                    .map { project.configurations.getByName(it) }
+                    .flatMap { it.allDependencies }
             }
         )
     }

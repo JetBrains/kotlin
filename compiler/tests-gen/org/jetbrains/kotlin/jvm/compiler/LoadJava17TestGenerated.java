@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,49 +19,49 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LoadJava17TestGenerated extends AbstractLoadJava17Test {
-    @TestMetadata("compiler/testData/loadJava17")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class CompiledJava extends AbstractLoadJava17Test {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInCompiledJava() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("GenericRecord.java")
-        public void testGenericRecord() throws Exception {
-            runTest("compiler/testData/loadJava17/GenericRecord.java");
-        }
-
-        @TestMetadata("SimpleRecord.java")
-        public void testSimpleRecord() throws Exception {
-            runTest("compiler/testData/loadJava17/SimpleRecord.java");
-        }
+  @TestMetadata("compiler/testData/loadJava17")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class CompiledJava extends AbstractLoadJava17Test {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("compiler/testData/loadJava17")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class SourceJava extends AbstractLoadJava17Test {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestSourceJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInSourceJava() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("GenericRecord.java")
-        public void testGenericRecord() throws Exception {
-            runTest("compiler/testData/loadJava17/GenericRecord.java");
-        }
-
-        @TestMetadata("SimpleRecord.java")
-        public void testSimpleRecord() throws Exception {
-            runTest("compiler/testData/loadJava17/SimpleRecord.java");
-        }
+    public void testAllFilesPresentInCompiledJava() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
+
+    @TestMetadata("GenericRecord.java")
+    public void testGenericRecord() {
+      runTest("compiler/testData/loadJava17/GenericRecord.java");
+    }
+
+    @TestMetadata("SimpleRecord.java")
+    public void testSimpleRecord() {
+      runTest("compiler/testData/loadJava17/SimpleRecord.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava17")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class SourceJava extends AbstractLoadJava17Test {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestSourceJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInSourceJava() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava17"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("GenericRecord.java")
+    public void testGenericRecord() {
+      runTest("compiler/testData/loadJava17/GenericRecord.java");
+    }
+
+    @TestMetadata("SimpleRecord.java")
+    public void testSimpleRecord() {
+      runTest("compiler/testData/loadJava17/SimpleRecord.java");
+    }
+  }
 }

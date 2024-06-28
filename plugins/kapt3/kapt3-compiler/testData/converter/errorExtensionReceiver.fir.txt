@@ -1,0 +1,90 @@
+/**
+ * public final class TypeHook : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: receiverFunction(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   public final fun error/NonExistentClass.receiverFunction(): error/NonExistentClass
+ *
+ *   // getter: getCustomProperty()Lerror/NonExistentClass;
+ *   // setter: setCustomProperty(Lerror/NonExistentClass;)V
+ *   public final var customProperty: error/NonExistentClass
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: error/NonExistentClass)
+ *
+ *   // getter: getReceiverProperty(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   // setter: setReceiverProperty(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   public final var error/NonExistentClass.receiverProperty: error/NonExistentClass
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: error/NonExistentClass)
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class TypeHook {
+    @org.jetbrains.annotations.NotNull()
+    public static final TypeHook.Companion Companion = null;
+
+    public TypeHook() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType getCustomProperty() {
+        return null;
+    }
+
+    public final void setCustomProperty(@org.jetbrains.annotations.NotNull() UnknownType value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType getReceiverProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverProperty) {
+        return null;
+    }
+
+    public final void setReceiverProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverProperty, @org.jetbrains.annotations.NotNull() UnknownType value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType receiverFunction(@org.jetbrains.annotations.NotNull() UnknownType $this$receiverFunction) {
+        return null;
+    }
+
+    /**
+     * public final companion object TypeHook.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // getter: getExtensionProperty(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+     *   // setter: setExtensionProperty(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+     *   public final var error/NonExistentClass.extensionProperty: error/NonExistentClass
+     *     public final (* non-default *) get
+     *     public final (* non-default *) set(value: error/NonExistentClass)
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final UnknownType getExtensionProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$extensionProperty) {
+            return null;
+        }
+
+        public final void setExtensionProperty(@org.jetbrains.annotations.NotNull() UnknownType $this$extensionProperty, @org.jetbrains.annotations.NotNull() UnknownType value) {
+        }
+    }
+}

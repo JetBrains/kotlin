@@ -1,3 +1,24 @@
+/**
+ * // requires compiler version 1.4.0 (level=ERROR)
+ * public abstract interface Foo : kotlin/Any {
+ *
+ *   // signature: bar()V
+ *   public abstract fun bar(): kotlin/Unit
+ *
+ *   // signature: foo()V
+ *   public open fun foo(): kotlin/Unit
+ *
+ *   // signature: foo2(I)V
+ *   public open fun foo2(a: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: privateMethodWithDefault()V
+ *   private final fun privateMethodWithDefault(): kotlin/Unit
+ *
+ *   // module name: main
+ *
+ *   // has method bodies in interface
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Foo {
 

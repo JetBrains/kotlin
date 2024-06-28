@@ -1,6 +1,0 @@
-KT element: KtPrefixExpression
-FIR element: FirConstExpressionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-Int(1)

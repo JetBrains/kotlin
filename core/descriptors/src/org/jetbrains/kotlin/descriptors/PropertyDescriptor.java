@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.mpp.PropertySymbolMarker;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface PropertyDescriptor extends VariableDescriptorWithAccessors, CallableMemberDescriptor {
+public interface PropertyDescriptor extends VariableDescriptorWithAccessors, CallableMemberDescriptor, PropertySymbolMarker {
     @Override
     @Nullable
     PropertyGetterDescriptor getGetter();

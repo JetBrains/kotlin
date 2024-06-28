@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: dependency.Bar
+By names: [Bar]
+
+Declaration: dependency.extCallable
+By names: [extCallable]
+
+Declaration: dependency.extFun
+By names: [extFun]
+
+Declaration: dependency.extVal
+By names: [extVal]
+
+UNRESOLVED NAMES:

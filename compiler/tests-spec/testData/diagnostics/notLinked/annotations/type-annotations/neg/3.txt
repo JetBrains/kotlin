@@ -1,26 +1,28 @@
 package
 
-public fun foo(/*0*/ i: Inv<@Ann kotlin.String>): kotlin.Unit
-public fun test(/*0*/ vararg a: @Ann kotlin.Any /*kotlin.Array<out @Ann kotlin.Any>*/): kotlin.Unit
+package sometest {
+    public fun foo(/*0*/ i: sometest.Inv<@sometest.Ann kotlin.String>): kotlin.Unit
+    public fun test(/*0*/ vararg a: @sometest.Ann kotlin.Any /*kotlin.Array<out @sometest.Ann kotlin.Any>*/): kotlin.Unit
 
-public final class A</*0*/ T> {
-    public constructor A</*0*/ T>(/*0*/ a: @Ann T)
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
+    public final class A</*0*/ T> {
+        public constructor A</*0*/ T>(/*0*/ a: @sometest.Ann T)
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
-    public constructor Ann(/*0*/ x: kotlin.Int)
-    public final val x: kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
-public final class Inv</*0*/ T> {
-    public constructor Inv</*0*/ T>()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final class Inv</*0*/ T> {
+        public constructor Inv</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

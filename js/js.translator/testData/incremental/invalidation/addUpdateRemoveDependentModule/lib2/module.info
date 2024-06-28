@@ -14,5 +14,6 @@ STEP 3:
     rebuild klib: false
     modifications:
         D : l2.kt
+    removed file: l2.kt
 STEP 4:
     rebuild klib: false

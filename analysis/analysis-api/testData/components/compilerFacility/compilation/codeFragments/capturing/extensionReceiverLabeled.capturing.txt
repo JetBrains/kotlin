@@ -1,0 +1,3 @@
+ExtensionReceiver[name: str; isMutated: false; displayText: this@str]
+    str@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+    R|kotlin/String|

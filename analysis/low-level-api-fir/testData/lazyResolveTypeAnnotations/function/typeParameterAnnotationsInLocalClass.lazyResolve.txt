@@ -1,0 +1,271 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class OriginalClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+            @Anno[Unresolved](<strcat>(String(function ), prop#)) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested bound ), prop#)) String>>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) String>>.explicitType([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter annotation ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) ListIterator<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>>): @Anno[Unresolved](<strcat>(String(explicitType return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested nested return type ), prop#)) Int>> {
+                ^explicitType IntegerLiteral(0)
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class OriginalClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+            @Anno[Unresolved](<strcat>(String(function ), prop#)) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested bound ), prop#)) String>>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) String>>.explicitType([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter annotation ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) ListIterator<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>>): @Anno[Unresolved](<strcat>(String(explicitType return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested nested return type ), prop#)) Int>> {
+                ^explicitType IntegerLiteral(0)
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class OriginalClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+            @Anno[Unresolved](<strcat>(String(function ), prop#)) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested bound ), prop#)) String>>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) String>>.explicitType([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter annotation ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) ListIterator<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>>): @Anno[Unresolved](<strcat>(String(explicitType return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested nested return type ), prop#)) Int>> {
+                ^explicitType IntegerLiteral(0)
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class OriginalClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = IntegerLiteral(0)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OriginalClass] get(): <implicit>
+
+            @Anno[Unresolved](<strcat>(String(function ), prop#)) public? final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type param ), prop#)) [ResolvedTo(RAW_FIR)] F : @Anno[Unresolved](<strcat>(String(bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested bound ), prop#)) String>>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver annotation: ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) String>>.explicitType([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter annotation ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) ListIterator<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>>): @Anno[Unresolved](<strcat>(String(explicitType return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(explicitType nested nested return type ), prop#)) Int>> {
+                ^explicitType IntegerLiteral(0)
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClass.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class OriginalClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
+
+            @R|Anno|[Types](position = <strcat>(String(function ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|.explicitType([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|<local>/OriginalClass|.R|<local>/prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>>| {
+                ^explicitType Int(0)
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotationsInLocalClass.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class OriginalClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] get(): R|kotlin/Int|
+
+            @R|Anno|[Types](position = <strcat>(String(function ), this@R|<local>/OriginalClass|.R|<local>/prop|)) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|<local>/OriginalClass|.R|<local>/prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|<local>/OriginalClass|.R|<local>/prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|.explicitType([ResolvedTo(BODY_RESOLVE)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|<local>/OriginalClass|.R|<local>/prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|<local>/OriginalClass|.R|<local>/prop|))  kotlin/Int>>| {
+                ^explicitType Int(0)
+            }
+
+        }
+
+    }

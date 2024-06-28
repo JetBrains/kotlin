@@ -1,0 +1,81 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun A(text: String) {
+    B(text)
+}
+
+@Composable
+fun B(text: String, color: Color = Color.Unset) {
+    used(text)
+    used(color)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun A(text: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<B(text...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    B(text, <unsafe-coerce>(0), %composer, 0b1110 and %dirty, 0b0010)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(text, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun B(text: String, color: Color, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B)P(1,0:Color):Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(color))) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
+    if (%default and 0b0010 != 0) {
+      color = Companion.Unset
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(text)
+    used(color)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(text, color, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

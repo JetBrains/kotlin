@@ -1,0 +1,44 @@
+KtCallExpression(53,68): 'function(1, "")'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: A, b: B): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = a: A
+              callableId = null,
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.String
+              symbol = b: B
+              callableId = null
+          ]
+          callableId = /function
+      typeArgumentsMapping = {
+        A -> (kotlin.Int),
+        B -> (kotlin.String)
+      }
+      argumentMapping = {
+        1 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: A
+          callableId = null),
+        "" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: B
+          callableId = null)
+      }

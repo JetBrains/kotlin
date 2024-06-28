@@ -2,6 +2,10 @@ val x = "Hello"
 
 val y = "$<!REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE!>x<!>"
 
+typealias S = String
+val x2: S = "Hello"
+val y2 = "$<!REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE!>x2<!>"
+
 val z = "${y.hashCode()}"
 
 fun toString(x: String) = "IC$x"

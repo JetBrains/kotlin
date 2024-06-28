@@ -1,0 +1,43 @@
+FILE: samConversionToGeneric.kt
+    public final fun test1(): R|J<kotlin/String>| {
+        ^test1 R|/J|<R|ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(coneType=kotlin/String) kotlin/String!|>(<L> = J@fun <anonymous>(x: R|kotlin/String!|): R|kotlin/String!| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun test2(): R|J<kotlin/String!>| {
+        ^test2 R|/J|<R|kotlin/String!|>(<L> = J@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String!| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        )
+    }
+    public final fun test3(): R|kotlin/Unit| {
+        ^test3 Q|H|.R|/H.bar*s|<R|kotlin/String!|>(<L> = SAM(bar@fun <anonymous>(x: R|kotlin/String|): R|kotlin/String!| <inline=NoInline>  {
+            ^ R|<local>/x|
+        }
+        ))
+    }
+    public final fun test4(a: R|kotlin/Any|): R|kotlin/Unit| {
+        (R|<local>/a| as R|J<kotlin/String>|)
+        Q|H|.R|/H.bar*s|<R|kotlin/String!|>(R|<local>/a|)
+    }
+    public final fun test5(a: R|kotlin/Any|): R|kotlin/Unit| {
+        (R|<local>/a| as R|(kotlin/String) -> kotlin/String|)
+        Q|H|.R|/H.bar*s|<R|kotlin/String!|>(SAM(R|<local>/a|))
+    }
+    public final fun <T> test6(a: R|(T) -> T|): R|kotlin/Unit| {
+        Q|H|.R|/H.bar*s|<R|T!|>(SAM(R|<local>/a|))
+    }
+    public final fun <T> test7(a: R|kotlin/Any|): R|kotlin/Unit| {
+        (R|<local>/a| as R|(T) -> T|)
+        Q|H|.R|/H.bar*s|<R|T!|>(SAM(R|<local>/a|))
+    }
+    public final fun test8(efn: R|kotlin/String.() -> kotlin/String|): R|J<kotlin/String!>| {
+        ^test8 R|/J|<R|kotlin/String!|>(R|<local>/efn|)
+    }
+    public final fun test9(efn: R|kotlin/String.() -> kotlin/String|): R|kotlin/Unit| {
+        Q|H|.R|/H.bar*s|<R|kotlin/String!|>(SAM(R|<local>/efn|))
+    }
+    public final fun test10(fn: R|(kotlin/Int) -> kotlin/String|): R|kotlin/Unit| {
+        Q|H|.R|/H.bar2x*s|<R|kotlin/Int!|>(SAM(R|<local>/fn|))
+    }

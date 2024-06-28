@@ -68,6 +68,7 @@ object RangeOps : TemplateGroupBase() {
     } builder {
         infix(true)
         doc { "Returns a progression that goes over the same range with the given step." }
+        sample("samples.ranges.Ranges.step$primitive")
         signature("step(step: ${primitive!!.stepType})", notForSorting = true)
         returns("TProgression")
         body {
@@ -186,8 +187,8 @@ object RangeOps : TemplateGroupBase() {
     } builderWith { (rangeType, itemType) ->
         operator()
         specialFor(OpenRanges) {
-            since("1.7")
-            annotation("@ExperimentalStdlibApi")
+            since("1.9")
+            annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         }
         signature("contains(value: $itemType)")
 

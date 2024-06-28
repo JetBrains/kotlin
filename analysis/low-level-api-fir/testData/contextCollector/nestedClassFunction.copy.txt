@@ -1,0 +1,51 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol public final class Bar<B> : R|kotlin/Any|
+                Type: test.Foo.Bar<B>
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] nestedClassFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] F> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] F>(): R|test/Foo<F>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Bar<[ResolvedTo(RAW_FIR)] B> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor<[ResolvedTo(RAW_FIR)] B>(): R|test/Foo.Bar<B>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] b: R|B|): R|kotlin/Unit| {
+                R|test/consume<Inapplicable(INAPPLICABLE): test/consume>#|(R|<local>/b|)
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] obj: Any): R|kotlin/Unit| { LAZY_BLOCK }

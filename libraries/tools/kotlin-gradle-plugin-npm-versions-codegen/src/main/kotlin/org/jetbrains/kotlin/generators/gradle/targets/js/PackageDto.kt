@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 data class Package(
     val name: String,
     val version: String,
-    val displayName: String
+    val displayName: String,
 ) {
     // Used in velocity template
     @Suppress("unused")
     fun camelize(): String =
         displayName
             .split("-")
-            .mapIndexed { index, item -> if (index == 0) item else item.capitalize() }
+            .mapIndexed { index, item ->
+                if (index == 0) item else item.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+            }
             .joinToString("")
 }
 
@@ -28,13 +30,13 @@ sealed class PackageInformation {
 data class RealPackageInformation(
     override val name: String,
     override val versions: Set<String>,
-    override val displayName: String = name
+    override val displayName: String = name,
 ) : PackageInformation()
 
 data class HardcodedPackageInformation(
     override val name: String,
     val version: String,
-    override val displayName: String = name
+    override val displayName: String = name,
 ) : PackageInformation() {
     override val versions: Set<String> = setOf(version)
 }

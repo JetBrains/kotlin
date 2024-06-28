@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
@@ -20,7 +21,6 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.loadDependencies
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
@@ -225,12 +225,15 @@ class CachingTest : TestCase() {
     }
 
     private fun makeDependenciesJar(depDir: File, standardJars: List<File>): File {
+        val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
         val outJar = File(depDir, "dependency.jar")
         val inKt = File(depDir, "Dependency.kt").apply { writeText("class Dependency(val v: Int)") }
         val outStream = ByteArrayOutputStream()
         val compileExitCode = K2JVMCompiler().exec(
             PrintStream(outStream),
-            "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator), inKt.path
+            "-d", outJar.path, "-no-stdlib", "-cp", standardJars.joinToString(File.pathSeparator),
+            "-language-version", if (isK2) "2.0" else "1.9",
+            inKt.path
         )
         assertTrue(
             "Compilation Failed:\n$outStream",

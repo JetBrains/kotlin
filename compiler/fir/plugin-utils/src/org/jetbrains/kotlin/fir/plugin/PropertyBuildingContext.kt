@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -15,13 +17,15 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.extensions.ExperimentalTopLevelDeclarationsGenerationApi
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -68,6 +72,8 @@ public class PropertyBuildingContext(
             moduleData = session.moduleData
             origin = key.origin
 
+            source = owner?.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated)
+
             symbol = FirPropertySymbol(callableId)
             name = callableId.callableName
 
@@ -93,21 +99,34 @@ public class PropertyBuildingContext(
             isVar = !isVal
             getter = FirDefaultPropertyGetter(
                 source = null, session.moduleData, key.origin, returnTypeRef, status.visibility, symbol,
-                Modality.FINAL, resolvedStatus.effectiveVisibility
+                Modality.FINAL, resolvedStatus.effectiveVisibility,
+                resolvePhase = FirResolvePhase.BODY_RESOLVE,
             )
             if (isVar) {
                 setter = FirDefaultPropertySetter(
                     source = null, session.moduleData, key.origin, returnTypeRef, setterVisibility ?: status.visibility,
-                    symbol, Modality.FINAL, resolvedStatus.effectiveVisibility
+                    symbol, Modality.FINAL, resolvedStatus.effectiveVisibility,
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             } else {
                 require(setterVisibility == null) { "isVar = false but setterVisibility is specified. Did you forget to set isVar = true?" }
             }
+
             if (hasBackingField) {
-                backingField = FirDefaultPropertyBackingField(session.moduleData, mutableListOf(), returnTypeRef, isVar, symbol, status)
+                backingField = FirDefaultPropertyBackingField(
+                    session.moduleData,
+                    key.origin,
+                    source = null,
+                    mutableListOf(),
+                    returnTypeRef,
+                    isVar,
+                    symbol,
+                    status,
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE,
+                )
             }
             isLocal = false
-            bodyResolveState = FirPropertyBodyResolveState.EVERYTHING_RESOLVED
+            bodyResolveState = FirPropertyBodyResolveState.ALL_BODIES_RESOLVED
         }
     }
 }
@@ -143,7 +162,11 @@ public fun FirExtension.createMemberProperty(
     config: PropertyBuildingContext.() -> Unit = {}
 ): FirProperty {
     val callableId = CallableId(owner.classId, name)
-    return PropertyBuildingContext(session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).build()
+    return PropertyBuildingContext(session, key, owner, callableId, returnTypeProvider, isVal, hasBackingField).apply(config).apply {
+        status {
+            isExpect = owner.isExpect
+        }
+    }.build()
 }
 
 /**
@@ -152,6 +175,7 @@ public fun FirExtension.createMemberProperty(
  * If you create top-level extension property don't forget to set [hasBackingField] to false,
  *   since such properties never have backing fields
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
@@ -171,6 +195,7 @@ public fun FirExtension.createTopLevelProperty(
  *
  * Use this overload when those types use type parameters of constructed property
  */
+@ExperimentalTopLevelDeclarationsGenerationApi
 public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,

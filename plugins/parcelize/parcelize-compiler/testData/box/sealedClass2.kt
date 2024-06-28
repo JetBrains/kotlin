@@ -11,6 +11,7 @@ import android.os.Parcelable
 sealed class Foo : Parcelable {
     data class A(val x: Int) : Foo()
     object B : Foo()
+    sealed class Inner : Foo()
 }
 
 data class C(val x: String) : Foo()

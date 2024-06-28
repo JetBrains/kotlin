@@ -32,24 +32,8 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
-sealed class SerializedDeclaration {
-    abstract val id: Int
-    abstract val size: Int
-    abstract val bytes: ByteArray
-
-    abstract val declarationName: String
-}
-
-class TopLevelDeclaration(override val id: Int, override val declarationName: String, override val bytes: ByteArray) :
-    SerializedDeclaration() {
-    override val size = bytes.size
-}
-
-object SkippedDeclaration : SerializedDeclaration() {
-    override val id = -1
-    override val size = 0
-    override val bytes = ByteArray(0)
-    override val declarationName: String = "<SKIPPED>"
+class SerializedDeclaration(val id: Int, val declarationName: String, val bytes: ByteArray) {
+    val size = bytes.size
 }
 
 class SerializedIrFile(
@@ -61,7 +45,8 @@ class SerializedIrFile(
     val strings: ByteArray,
     val bodies: ByteArray,
     val declarations: ByteArray,
-    val debugInfo: ByteArray?
+    val debugInfo: ByteArray?,
+    val backendSpecificMetadata: ByteArray?,
 )
 
 class SerializedIrModule(val files: Collection<SerializedIrFile>)

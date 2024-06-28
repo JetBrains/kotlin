@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Pair<out A, out B>(val first: A, val second: B)
 
 class Example {

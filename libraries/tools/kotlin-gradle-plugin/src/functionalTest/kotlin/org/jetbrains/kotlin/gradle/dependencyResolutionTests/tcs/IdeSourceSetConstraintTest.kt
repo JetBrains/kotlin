@@ -121,15 +121,15 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProjectWithAndroidPlugin()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
-        kotlin.android()
+        kotlin.androidTarget()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
         val jvmTest = kotlin.sourceSets.getByName("jvmTest")
         val androidMain = kotlin.sourceSets.getByName("androidMain")
-        val androidUnitTest = kotlin.sourceSets.getByName("androidTest")
-        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidAndroidTest")
+        val androidUnitTest = kotlin.sourceSets.getByName("androidUnitTest")
+        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidInstrumentedTest")
 
         project.evaluate()
 
@@ -349,7 +349,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProject()
         val kotlin = project.multiplatformExtension
 
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.jvm()
         kotlin.js(KotlinJsCompilerType.IR)

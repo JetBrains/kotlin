@@ -62,6 +62,7 @@ class RingLauncher : Launcher() {
                     "Singleton.access" to BenchmarkEntryWithInit.create(::SingletonBenchmark, { access() }),
                     "Splay" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmark, { runSplay() }, { splayTearDown() }),
                     "SplayWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkUsingWorkers, { runSplayWorkers() }, { splayTearDownWorkers() }),
+                    "SplayWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkWithMarkHelpers, { runSplayWithMarkHelpers() }, { splayTearDownMarkHelpers() }),
                     "String.stringConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringConcat() }),
                     "String.stringBuilderConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcat() }),
                     "String.stringBuilderConcatNullable" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcatNullable() }),
@@ -141,6 +142,7 @@ class RingLauncher : Launcher() {
                     "ForLoops.floatArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { floatArrayLoop() }),
                     "ForLoops.charArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { charArrayLoop() }),
                     "ForLoops.stringLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { stringLoop() }),
+                    "ForLoops.stringArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { stringArrayLoop() }),
                     "ForLoops.uIntArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uIntArrayLoop() }),
                     "ForLoops.uShortArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uShortArrayLoop() }),
                     "ForLoops.uLongArrayLoop" to BenchmarkEntryWithInit.create(::ForLoopsBenchmark, { uLongArrayLoop() }),
@@ -201,11 +203,16 @@ class RingLauncher : Launcher() {
                     "IntStream.countFiltered" to BenchmarkEntryWithInit.create(::IntStreamBenchmark, { countFiltered() }),
                     "IntStream.countFilteredLocal" to BenchmarkEntryWithInit.create(::IntStreamBenchmark, { countFilteredLocal() }),
                     "IntStream.reduce" to BenchmarkEntryWithInit.create(::IntStreamBenchmark, { reduce() }),
+                    "Iterator.baseline" to BenchmarkEntryWithInit.create(::IteratorBenchmark, { baseline() }),
+                    "Iterator.concreteIterable" to BenchmarkEntryWithInit.create(::IteratorBenchmark, { concreteIterable() }),
+                    "Iterator.abstractIterable" to BenchmarkEntryWithInit.create(::IteratorBenchmark, { abstractIterable() }),
                     "Lambda.noncapturingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { noncapturingLambdaNoInline() }),
                     "Lambda.capturingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { capturingLambdaNoInline() }),
                     "Lambda.mutatingLambda" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambda() }),
                     "Lambda.mutatingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambdaNoInline() }),
                     "Lambda.methodReferenceNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { methodReferenceNoInline() }),
+                    "Life" to BenchmarkEntryWithInit.create(::LifeBenchmark, { bench() }),
+                    "LifeWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::LifeWithMarkHelpersBenchmark, { bench() }, { terminate() }),
                     "Loop.arrayIndexLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayIndexLoop() }),
                     "Loop.arrayListLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayListLoop() }),
                     "ParameterNotNull.invokeOneArgWithNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeOneArgWithNullCheck() }),
@@ -215,6 +222,15 @@ class RingLauncher : Launcher() {
                     "ParameterNotNull.invokeEightArgsWithNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeEightArgsWithNullCheck() }),
                     "ParameterNotNull.invokeEightArgsWithoutNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeEightArgsWithoutNullCheck() }),
                     "String.stringConcatNullable" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringConcatNullable() }),
+                    "SubList.concatenate" to BenchmarkEntryWithInit.create(::SubListBenchmark, { concatenate() }),
+                    "SubList.concatenateManual" to BenchmarkEntryWithInit.create(::SubListBenchmark, { concatenateManual() }),
+                    "SubList.filterAndCount" to BenchmarkEntryWithInit.create(::SubListBenchmark, { filterAndCount() }),
+                    "SubList.filterAndCountWithLambda" to BenchmarkEntryWithInit.create(::SubListBenchmark, { filterAndCountWithLambda() }),
+                    "SubList.countWithLambda" to BenchmarkEntryWithInit.create(::SubListBenchmark, { countWithLambda() }),
+                    "SubList.filterManual" to BenchmarkEntryWithInit.create(::SubListBenchmark, { filterManual() }),
+                    "SubList.countFilteredManual" to BenchmarkEntryWithInit.create(::SubListBenchmark, { countFilteredManual() }),
+                    "SubList.countFiltered" to BenchmarkEntryWithInit.create(::SubListBenchmark, { countFiltered() }),
+                    "SubList.reduce" to BenchmarkEntryWithInit.create(::SubListBenchmark, { reduce() }),
                     "Switch.testSparseIntSwitch" to BenchmarkEntryWithInit.create(::SwitchBenchmark, { testSparseIntSwitch() }),
                     "Switch.testDenseIntSwitch" to BenchmarkEntryWithInit.create(::SwitchBenchmark, { testDenseIntSwitch() }),
                     "Switch.testConstSwitch" to BenchmarkEntryWithInit.create(::SwitchBenchmark, { testConstSwitch() }),
@@ -233,15 +249,17 @@ class RingLauncher : Launcher() {
                     "GenericArrayView.inlined" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { inlined() }),
                     "GenericArrayView.specialized" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { specialized() }),
                     "GenericArrayView.manual" to BenchmarkEntryWithInit.create(::GenericArrayViewBenchmark, { manual() }),
-                    "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { aliveReference() }),
-                    "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { deadReference() }),
-                    "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { dyingReference() }),
+                    "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { aliveReference() }, { clean() }),
+                    "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { deadReference() }, { clean() }),
+                    "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { dyingReference() }, { clean() }),
             )
 
     init {
         @OptIn(kotlin.ExperimentalStdlibApi::class)
         if (!isExperimentalMM()) {
             baseBenchmarksSet -= listOf("SplayWithWorkers")
+            baseBenchmarksSet -= listOf("SplayWithMarkHelpers")
+            extendedBenchmarksSet -= listOf("LifeWithMarkHelpers")
         }
     }
 }

@@ -53,7 +53,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override val benchmarkExtensionName: String = "swiftBenchmark"
 
     override val Project.nativeExecutable: String
-        get() = Paths.get(buildDir.absolutePath, benchmark.applicationName).toString()
+        get() = Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName).toString()
 
     override val Project.nativeLinkTask: Task
         get() = tasks.getByName("buildSwift")
@@ -92,7 +92,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath
                 val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
                 compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,
-                        Paths.get(buildDir.absolutePath, benchmark.applicationName), false)
+                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName), false)
             }
         }
     }
@@ -100,16 +100,20 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     fun Array<String>.runCommand(
             workingDir: File = File("."),
             timeoutAmount: Long = 60,
-            timeoutUnit: TimeUnit = TimeUnit.SECONDS
+            timeoutUnit: TimeUnit = TimeUnit.SECONDS,
+            env: Map<String, String>,
     ): String {
         return try {
-            ProcessBuilder(*this)
+            val processBuilder = ProcessBuilder(*this)
                     .directory(workingDir)
                     .redirectOutput(ProcessBuilder.Redirect.PIPE)
                     .redirectError(ProcessBuilder.Redirect.PIPE)
-                    .start().apply {
-                        waitFor(timeoutAmount, timeoutUnit)
-                    }.inputStream.bufferedReader().readText()
+            env.forEach { key, value ->
+                processBuilder.environment().set(key, value)
+            }
+            processBuilder.start().apply {
+                waitFor(timeoutAmount, timeoutUnit)
+            }.inputStream.bufferedReader().readText()
         } catch (e: Exception) {
             println("Couldn't run command ${this.joinToString(" ")}")
             println(e.stackTrace.joinToString("\n"))
@@ -123,7 +127,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val platform = project.platformManager.platform(target)
         assert(platform.configurables is AppleConfigurables)
         val configs = platform.configurables as AppleConfigurables
-        val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
+        val compiler = configs.absoluteTargetToolchain + "/bin/swiftc"
 
         val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
@@ -134,7 +138,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val out = mutableListOf<String>().apply {
             add(compiler)
             addAll(args)
-        }.toTypedArray().runCommand(timeoutAmount = 240)
+        }.toTypedArray().runCommand(
+            timeoutAmount = 240,
+            env = mapOf("DYLD_FALLBACK_FRAMEWORK_PATH" to File(configs.absoluteTargetToolchain).parent + "/ExtraFrameworks"),
+        )
 
         println(
                 """

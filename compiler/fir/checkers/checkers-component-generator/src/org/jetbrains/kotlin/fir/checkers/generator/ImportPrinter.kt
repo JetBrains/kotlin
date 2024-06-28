@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.utils.SmartPrinter
 
 private object ImportPrinter {
     fun SmartPrinter.printImports(imports: Collection<String>) {

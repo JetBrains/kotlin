@@ -1,23 +1,34 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.IrImplementationDetail
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
-interface IrFactory {
-    val stageController: StageController
+@OptIn(IrImplementationDetail::class)
+open class IrFactory(
+    val stageController: StageController,
+) {
+    protected open fun <T : IrDeclaration> T.declarationCreated(): T {
+        return this
+    }
 
     fun createAnonymousInitializer(
         startOffset: Int,
@@ -25,88 +36,189 @@ interface IrFactory {
         origin: IrDeclarationOrigin,
         symbol: IrAnonymousInitializerSymbol,
         isStatic: Boolean = false,
-    ): IrAnonymousInitializer
+    ): IrAnonymousInitializer =
+        IrAnonymousInitializerImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            isStatic = isStatic,
+            factory = this
+        ).declarationCreated()
 
     fun createClass(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol,
         name: Name,
-        kind: ClassKind,
         visibility: DescriptorVisibility,
+        symbol: IrClassSymbol,
+        kind: ClassKind,
         modality: Modality,
+        isExternal: Boolean = false,
         isCompanion: Boolean = false,
         isInner: Boolean = false,
         isData: Boolean = false,
-        isExternal: Boolean = false,
         isValue: Boolean = false,
         isExpect: Boolean = false,
         isFun: Boolean = false,
+        hasEnumEntries: Boolean = false,
         source: SourceElement = SourceElement.NO_SOURCE,
-    ): IrClass
+    ): IrClass =
+        IrClassImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            kind = kind,
+            visibility = visibility,
+            modality = modality,
+            source = source,
+            factory = this
+        ).declarationCreated().apply {
+            this.isCompanion = isCompanion
+            this.isInner = isInner
+            this.isData = isData
+            this.isExternal = isExternal
+            this.isValue = isValue
+            this.isExpect = isExpect
+            this.isFun = isFun
+            this.hasEnumEntries = hasEnumEntries
+        }
 
     fun createConstructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol,
         name: Name,
         visibility: DescriptorVisibility,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
-        isPrimary: Boolean,
         isExpect: Boolean,
-        containerSource: DeserializedContainerSource? = null
-    ): IrConstructor
+        returnType: IrType?,
+        symbol: IrConstructorSymbol,
+        isPrimary: Boolean,
+        isExternal: Boolean = false,
+        containerSource: DeserializedContainerSource? = null,
+    ): IrConstructor =
+        IrConstructorImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            visibility = visibility,
+            isInline = isInline,
+            isExternal = isExternal,
+            isPrimary = isPrimary,
+            isExpect = isExpect,
+            containerSource = containerSource,
+            factory = this
+        ).declarationCreated().apply {
+            if (returnType != null) {
+                this.returnType = returnType
+            }
+        }
 
     fun createEnumEntry(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrEnumEntrySymbol,
         name: Name,
-    ): IrEnumEntry
+        symbol: IrEnumEntrySymbol,
+    ): IrEnumEntry =
+        IrEnumEntryImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            factory = this
+        ).declarationCreated()
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
         descriptor: DeclarationDescriptor? = null,
-    ): IrErrorDeclaration
+    ): IrErrorDeclaration =
+        IrErrorDeclarationImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            factory = this,
+            origin = IrDeclarationOrigin.DEFINED,
+        ).declarationCreated().apply {
+            this.descriptor = descriptor ?: this.toIrBasedDescriptor()
+        }
 
     fun createField(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrFieldSymbol,
         name: Name,
-        type: IrType,
         visibility: DescriptorVisibility,
+        symbol: IrFieldSymbol,
+        type: IrType,
         isFinal: Boolean,
-        isExternal: Boolean,
         isStatic: Boolean,
-    ): IrField
+        isExternal: Boolean = false,
+    ): IrField =
+        IrFieldImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            type = type,
+            visibility = visibility,
+            isFinal = isFinal,
+            isExternal = isExternal,
+            isStatic = isStatic,
+            factory = this
+        ).declarationCreated()
 
-    fun createFunction(
+    fun createSimpleFunction(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrSimpleFunctionSymbol,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType?,
+        modality: Modality,
+        symbol: IrSimpleFunctionSymbol,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        isExternal: Boolean = false,
         containerSource: DeserializedContainerSource? = null,
-    ): IrSimpleFunction
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    ): IrSimpleFunction =
+        IrFunctionImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            visibility = visibility,
+            modality = modality,
+            isInline = isInline,
+            isExternal = isExternal,
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isOperator = isOperator,
+            isInfix = isInfix,
+            isExpect = isExpect,
+            isFakeOverride = isFakeOverride,
+            containerSource = containerSource,
+            factory = this
+        ).declarationCreated().apply {
+            if (returnType != null) {
+                this.returnType = returnType
+            }
+        }
 
     fun createFunctionWithLateBinding(
         startOffset: Int,
@@ -114,44 +226,94 @@ interface IrFactory {
         origin: IrDeclarationOrigin,
         name: Name,
         visibility: DescriptorVisibility,
-        modality: Modality,
-        returnType: IrType,
         isInline: Boolean,
-        isExternal: Boolean,
+        isExpect: Boolean,
+        returnType: IrType?,
+        modality: Modality,
         isTailrec: Boolean,
         isSuspend: Boolean,
         isOperator: Boolean,
         isInfix: Boolean,
-        isExpect: Boolean,
-    ): IrSimpleFunction
+        isExternal: Boolean = false,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    ): IrFunctionWithLateBinding =
+        IrFunctionWithLateBindingImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            modality = modality,
+            isInline = isInline,
+            isExternal = isExternal,
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isOperator = isOperator,
+            isInfix = isInfix,
+            isExpect = isExpect,
+            isFakeOverride = isFakeOverride,
+            factory = this
+        ).declarationCreated().apply {
+            if (returnType != null) {
+                this.returnType = returnType
+            }
+        }
 
     fun createLocalDelegatedProperty(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrLocalDelegatedPropertySymbol,
         name: Name,
+        symbol: IrLocalDelegatedPropertySymbol,
         type: IrType,
         isVar: Boolean,
-    ): IrLocalDelegatedProperty
+    ): IrLocalDelegatedProperty =
+        IrLocalDelegatedPropertyImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            type = type,
+            isVar = isVar,
+            factory = this
+        ).declarationCreated()
 
     fun createProperty(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrPropertySymbol,
         name: Name,
         visibility: DescriptorVisibility,
         modality: Modality,
+        symbol: IrPropertySymbol,
         isVar: Boolean,
         isConst: Boolean,
         isLateinit: Boolean,
         isDelegated: Boolean,
-        isExternal: Boolean,
+        isExternal: Boolean = false,
+        containerSource: DeserializedContainerSource? = null,
         isExpect: Boolean = false,
         isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        containerSource: DeserializedContainerSource? = null
-    ): IrProperty
+    ): IrProperty =
+        IrPropertyImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            visibility = visibility,
+            modality = modality,
+            isVar = isVar,
+            isConst = isConst,
+            isLateinit = isLateinit,
+            isDelegated = isDelegated,
+            isExternal = isExternal,
+            isExpect = isExpect,
+            isFakeOverride = isFakeOverride,
+            containerSource = containerSource,
+            factory = this
+        ).declarationCreated()
 
     fun createPropertyWithLateBinding(
         startOffset: Int,
@@ -164,79 +326,120 @@ interface IrFactory {
         isConst: Boolean,
         isLateinit: Boolean,
         isDelegated: Boolean,
-        isExternal: Boolean,
-        isExpect: Boolean,
-    ): IrProperty
+        isExternal: Boolean = false,
+        isExpect: Boolean = false,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    ): IrPropertyWithLateBinding =
+        IrPropertyWithLateBindingImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            modality = modality,
+            isVar = isVar,
+            isConst = isConst,
+            isLateinit = isLateinit,
+            isDelegated = isDelegated,
+            isExternal = isExternal,
+            isExpect = isExpect,
+            isFakeOverride = isFakeOverride,
+            factory = this
+        ).declarationCreated()
 
     fun createTypeAlias(
         startOffset: Int,
         endOffset: Int,
-        symbol: IrTypeAliasSymbol,
+        origin: IrDeclarationOrigin,
         name: Name,
         visibility: DescriptorVisibility,
-        expandedType: IrType,
+        symbol: IrTypeAliasSymbol,
         isActual: Boolean,
-        origin: IrDeclarationOrigin,
-    ): IrTypeAlias
+        expandedType: IrType,
+    ): IrTypeAlias =
+        IrTypeAliasImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            symbol = symbol,
+            name = name,
+            visibility = visibility,
+            expandedType = expandedType,
+            isActual = isActual,
+            origin = origin,
+            factory = this
+        ).declarationCreated()
 
     fun createTypeParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrTypeParameterSymbol,
         name: Name,
+        symbol: IrTypeParameterSymbol,
+        variance: Variance,
         index: Int,
         isReified: Boolean,
-        variance: Variance,
-    ): IrTypeParameter
+    ): IrTypeParameter =
+        IrTypeParameterImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            index = index,
+            isReified = isReified,
+            variance = variance,
+            factory = this
+        ).declarationCreated()
 
     fun createValueParameter(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrValueParameterSymbol,
         name: Name,
-        index: Int,
         type: IrType,
+        isAssignable: Boolean,
+        symbol: IrValueParameterSymbol,
+        index: Int,
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
         isHidden: Boolean,
-        isAssignable: Boolean
-    ): IrValueParameter
-
-    // Bodies
-
-    fun createExpressionBody(
-        startOffset: Int,
-        endOffset: Int,
-        initializer: IrExpressionBody.() -> Unit,
-    ): IrExpressionBody
+    ): IrValueParameter =
+        IrValueParameterImpl(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            symbol = symbol,
+            name = name,
+            index = index,
+            type = type,
+            varargElementType = varargElementType,
+            isCrossinline = isCrossinline,
+            isNoinline = isNoinline,
+            isHidden = isHidden,
+            isAssignable = isAssignable,
+            factory = this
+        ).declarationCreated()
 
     fun createExpressionBody(
         startOffset: Int,
         endOffset: Int,
         expression: IrExpression,
-    ): IrExpressionBody
-
-    fun createExpressionBody(
-        expression: IrExpression,
-    ): IrExpressionBody
-
-    fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-    ): IrBlockBody
+    ): IrExpressionBody =
+        IrExpressionBodyImpl(
+            constructorIndicator = null,
+            startOffset = startOffset,
+            endOffset = endOffset,
+            expression = expression
+        )
 
     fun createBlockBody(
         startOffset: Int,
         endOffset: Int,
-        statements: List<IrStatement>,
-    ): IrBlockBody
-
-    fun createBlockBody(
-        startOffset: Int,
-        endOffset: Int,
-        initializer: IrBlockBody.() -> Unit,
-    ): IrBlockBody
+    ): IrBlockBody =
+        IrBlockBodyImpl(
+            constructorIndicator = null,
+            startOffset = startOffset,
+            endOffset = endOffset
+        )
 }

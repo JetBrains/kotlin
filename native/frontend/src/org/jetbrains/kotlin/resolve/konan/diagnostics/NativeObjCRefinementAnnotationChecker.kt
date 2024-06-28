@@ -12,51 +12,58 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.AnnotationChecker
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementChecker.hidesFromObjCFqName
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementChecker.refinesInSwiftFqName
 
+internal data class ObjCExportMetaAnnotations(
+    val hidesFromObjCAnnotation: AnnotationDescriptor?,
+    val refinesInSwiftAnnotation: AnnotationDescriptor?,
+)
+
+internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMetaAnnotations? {
+    if (this !is ClassDescriptor || this.kind != ClassKind.ANNOTATION_CLASS) {
+        return null
+    }
+    var objCAnnotation: AnnotationDescriptor? = null
+    var swiftAnnotation: AnnotationDescriptor? = null
+    for (annotation in annotations) {
+        when (annotation.fqName) {
+            hidesFromObjCFqName -> objCAnnotation = annotation
+            refinesInSwiftFqName -> swiftAnnotation = annotation
+        }
+        if (objCAnnotation != null && swiftAnnotation != null) break
+    }
+    return ObjCExportMetaAnnotations(objCAnnotation, swiftAnnotation)
+}
+
 object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
-    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
+    private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
+    private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return
-        val (objCAnnotation, swiftAnnotation) = descriptor.findRefinesAnnotations()
+        val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations() ?: return
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(swiftAnnotation) ?: declaration
             context.trace.report(ErrorsNative.REDUNDANT_SWIFT_REFINEMENT.on(reportLocation))
         }
         val targets = AnnotationChecker.applicableTargetSet(descriptor)
-        val unsupportedTargets = targets - supportedTargets
-        if (unsupportedTargets.isNotEmpty()) {
-            objCAnnotation?.let { context.trace.reportInvalidAnnotationTargets(declaration, it) }
-            swiftAnnotation?.let { context.trace.reportInvalidAnnotationTargets(declaration, it) }
-        }
-    }
-
-    private fun DeclarationDescriptor.findRefinesAnnotations(): Pair<AnnotationDescriptor?, AnnotationDescriptor?> {
-        var objCAnnotation: AnnotationDescriptor? = null
-        var swiftAnnotation: AnnotationDescriptor? = null
-        for (annotation in annotations) {
-            when (annotation.fqName) {
-                hidesFromObjCFqName -> objCAnnotation = annotation
-                refinesInSwiftFqName -> swiftAnnotation = annotation
+        objCAnnotation?.let {
+            if ((targets - hidesFromObjCSupportedTargets).isNotEmpty()) {
+                val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration
+                context.trace.report(ErrorsNative.INVALID_OBJC_HIDES_TARGETS.on(reportLocation))
             }
-            if (objCAnnotation != null && swiftAnnotation != null) break
         }
-        return objCAnnotation to swiftAnnotation
-    }
-
-    private fun BindingTrace.reportInvalidAnnotationTargets(
-        declaration: KtDeclaration,
-        annotation: AnnotationDescriptor
-    ) {
-        val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(annotation) ?: declaration
-        report(ErrorsNative.INVALID_OBJC_REFINEMENT_TARGETS.on(reportLocation))
+        swiftAnnotation?.let {
+            if ((targets - refinesInSwiftSupportedTargets).isNotEmpty()) {
+                val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(it) ?: declaration
+                context.trace.report(ErrorsNative.INVALID_REFINES_IN_SWIFT_TARGETS.on(reportLocation))
+            }
+        }
     }
 }

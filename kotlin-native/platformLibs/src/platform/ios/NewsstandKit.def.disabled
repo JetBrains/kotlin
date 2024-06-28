@@ -1,0 +1,8 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.NewsstandKit
+modules = NewsstandKit
+
+compilerOpts = -framework NewsstandKit
+linkerOpts = -framework NewsstandKit
+# Removed from ipad

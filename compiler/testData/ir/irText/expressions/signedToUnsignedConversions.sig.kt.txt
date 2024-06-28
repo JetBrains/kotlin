@@ -1,0 +1,155 @@
+// FILE: signedToUnsignedConversions_annotation.kt
+package kotlin.internal
+
+// CHECK:
+//   Mangled name: kotlin.internal.ImplicitIntegerCoercion
+//   Public signature: kotlin.internal/ImplicitIntegerCoercion|null[0]
+open annotation class ImplicitIntegerCoercion : Annotation {
+  // CHECK:
+  //   Mangled name: kotlin.internal.ImplicitIntegerCoercion#<init>(){}
+  //   Public signature: kotlin.internal/ImplicitIntegerCoercion.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// FILE: signedToUnsignedConversions_test.kt
+
+// CHECK:
+//   Mangled name: {}NON_CONST
+//   Public signature: /NON_CONST|-4803566926491846345[0]
+//   Public signature debug description: {}NON_CONST
+@ImplicitIntegerCoercion
+val NON_CONST: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-NON_CONST>(){}kotlin.Int
+  //   Public signature: /NON_CONST.<get-NON_CONST>|991601838629936197[0]
+  //   Public signature debug description: <get-NON_CONST>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-NON_CONST>(){}
+  //   Public signature: /NON_CONST.<get-NON_CONST>|-5428611507548024969[0]
+  //   Public signature debug description: <get-NON_CONST>(){}
+  get
+
+// CHECK:
+//   Mangled name: #takeLong(kotlin.Long){}
+//   Public signature: /takeLong|-7509231208527812056[0]
+//   Public signature debug description: takeLong(kotlin.Long){}
+fun takeLong(@ImplicitIntegerCoercion l: Long): Unit
+
+// CHECK:
+//   Mangled name: #takeUByte(kotlin.UByte){}
+//   Public signature: /takeUByte|3111769148502345255[0]
+//   Public signature debug description: takeUByte(kotlin.UByte){}
+fun takeUByte(@ImplicitIntegerCoercion u: UByte): Unit
+
+// CHECK:
+//   Mangled name: #takeUBytes(kotlin.UByteArray...){}
+//   Public signature: /takeUBytes|-7628407206907330338[0]
+//   Public signature debug description: takeUBytes(kotlin.UByteArray...){}
+fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte): Unit
+
+// CHECK:
+//   Mangled name: #takeUInt(kotlin.UInt){}
+//   Public signature: /takeUInt|-8114543311657604451[0]
+//   Public signature debug description: takeUInt(kotlin.UInt){}
+fun takeUInt(@ImplicitIntegerCoercion u: UInt): Unit
+
+// CHECK:
+//   Mangled name: #takeULong(kotlin.ULong){}
+//   Public signature: /takeULong|1215277262956617682[0]
+//   Public signature debug description: takeULong(kotlin.ULong){}
+fun takeULong(@ImplicitIntegerCoercion u: ULong): Unit
+
+// CHECK:
+//   Mangled name: #takeUShort(kotlin.UShort){}
+//   Public signature: /takeUShort|-5644206260671679522[0]
+//   Public signature debug description: takeUShort(kotlin.UShort){}
+fun takeUShort(@ImplicitIntegerCoercion u: UShort): Unit
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+
+// CHECK:
+//   Mangled name: {}BIGGER_THAN_UBYTE
+//   Public signature: /BIGGER_THAN_UBYTE|4216646662695832822[0]
+//   Public signature debug description: {}BIGGER_THAN_UBYTE
+@ImplicitIntegerCoercion
+const val BIGGER_THAN_UBYTE: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-BIGGER_THAN_UBYTE>(){}kotlin.Int
+  //   Public signature: /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|-3586420332237318918[0]
+  //   Public signature debug description: <get-BIGGER_THAN_UBYTE>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-BIGGER_THAN_UBYTE>(){}
+  //   Public signature: /BIGGER_THAN_UBYTE.<get-BIGGER_THAN_UBYTE>|3874178522908266564[0]
+  //   Public signature debug description: <get-BIGGER_THAN_UBYTE>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}EXPLICIT_INT
+//   Public signature: /EXPLICIT_INT|5543930282148953941[0]
+//   Public signature debug description: {}EXPLICIT_INT
+@ImplicitIntegerCoercion
+const val EXPLICIT_INT: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-EXPLICIT_INT>(){}kotlin.Int
+  //   Public signature: /EXPLICIT_INT.<get-EXPLICIT_INT>|-1305181552966507212[0]
+  //   Public signature debug description: <get-EXPLICIT_INT>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-EXPLICIT_INT>(){}
+  //   Public signature: /EXPLICIT_INT.<get-EXPLICIT_INT>|-2807246340269758912[0]
+  //   Public signature debug description: <get-EXPLICIT_INT>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}IMPLICIT_INT
+//   Public signature: /IMPLICIT_INT|8774414386062212374[0]
+//   Public signature debug description: {}IMPLICIT_INT
+@ImplicitIntegerCoercion
+const val IMPLICIT_INT: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-IMPLICIT_INT>(){}kotlin.Int
+  //   Public signature: /IMPLICIT_INT.<get-IMPLICIT_INT>|-1175271202914280523[0]
+  //   Public signature debug description: <get-IMPLICIT_INT>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-IMPLICIT_INT>(){}
+  //   Public signature: /IMPLICIT_INT.<get-IMPLICIT_INT>|-5720776855566649215[0]
+  //   Public signature debug description: <get-IMPLICIT_INT>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}LONG_CONST
+//   Public signature: /LONG_CONST|-5731655167745376835[0]
+//   Public signature debug description: {}LONG_CONST
+@ImplicitIntegerCoercion
+const val LONG_CONST: Long
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-LONG_CONST>(){}kotlin.Long
+  //   Public signature: /LONG_CONST.<get-LONG_CONST>|-7734005070309874987[0]
+  //   Public signature debug description: <get-LONG_CONST>(){}kotlin.Long
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-LONG_CONST>(){}
+  //   Public signature: /LONG_CONST.<get-LONG_CONST>|6497266276251766459[0]
+  //   Public signature debug description: <get-LONG_CONST>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}UINT_CONST
+//   Public signature: /UINT_CONST|6421919319877907708[0]
+//   Public signature debug description: {}UINT_CONST
+@ImplicitIntegerCoercion
+const val UINT_CONST: UInt
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-UINT_CONST>(){}kotlin.UInt
+  //   Public signature: /UINT_CONST.<get-UINT_CONST>|-8736947558233336085[0]
+  //   Public signature debug description: <get-UINT_CONST>(){}kotlin.UInt
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-UINT_CONST>(){}
+  //   Public signature: /UINT_CONST.<get-UINT_CONST>|7117473646004511278[0]
+  //   Public signature debug description: <get-UINT_CONST>(){}
+  get
+

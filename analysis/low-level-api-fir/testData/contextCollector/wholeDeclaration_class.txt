@@ -1,0 +1,43 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol context(R|test/ContextReceiver|)
+            public final class MyClass<T> : R|kotlin/Any|
+                Type: test.MyClass<T>
+    Element 8
+        Context receivers:
+            FirRegularClassSymbol context(R|test/ContextReceiver|)
+            public final class MyClass<T> : R|kotlin/Any|
+                Type: test.ContextReceiver
+                Label: ContextReceiver
+
+FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_class.kt
+    public final [ResolvedTo(STATUS)] class ContextReceiver : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/ContextReceiver| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context(R|test/ContextReceiver|)
+    public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] param: R|kotlin/String|): R|test/MyClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

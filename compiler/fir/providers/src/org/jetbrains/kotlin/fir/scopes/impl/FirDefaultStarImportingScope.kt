@@ -1,67 +1,82 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
-import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Works as composite scope that only looks to the second scope if the first one is empty.
+ * It's necessary, e.g. to make sure we don't look for java.lang.String classifier/constructors once we've found kotlin.String one.
+ * @see org.jetbrains.kotlin.resolve.lazy.LazyImportScope that produces similar semantics
+ */
 class FirDefaultStarImportingScope(
-    session: FirSession,
-    scopeSession: ScopeSession,
-    priority: DefaultImportPriority,
-    excludedImportNames: Set<FqName>
-) : FirAbstractStarImportingScope(
-    session, scopeSession,
-    lookupInFir = session.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage),
-    excludedImportNames
-) {
-    // TODO: put languageVersionSettings into FirSession?
-    override val starImports = run {
-        val analyzerServices = session.moduleData.analyzerServices
-        val allDefaultImports = priority.getAllDefaultImports(analyzerServices, LanguageVersionSettingsImpl.DEFAULT)
-        allDefaultImports
-            ?.filter { it.isAllUnder }
-            ?.map {
-                buildResolvedImport {
-                    delegate = buildImport {
-                        importedFqName = it.fqName
-                        isAllUnder = true
-                    }
-                    packageFqName = it.fqName
-                }
-            } ?: emptyList()
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        if (name.isSpecial || name.identifier.isNotEmpty()) {
-            for (import in starImports) {
-                for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
-                    processor(symbol)
-                }
-            }
+    val first: FirSingleLevelDefaultStarImportingScope,
+    val second: FirSingleLevelDefaultStarImportingScope,
+) : FirScope(), DefaultStarImportingScopeMarker {
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(name) { symbol, substitutor ->
+            processor(symbol, substitutor)
+            true
         }
     }
 
+    /**
+     * Starts by querying [first] and calling [processor] with the results.
+     * If [processor] doesn't return `true` for any of them (or no symbols were found), also queries [second] and calls [processor].
+     */
+    fun processClassifiersByNameWithSubstitutionFromBothLevelsConditionally(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Boolean,
+    ) {
+        var wasFoundAny = false
+        first.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
+            wasFoundAny = processor(symbol, substitutor)
+        }
+
+        if (!wasFoundAny) {
+            second.processClassifiersByNameWithSubstitution(name, processor::invoke)
+        }
+    }
+
+    private fun <S : FirCallableSymbol<*>> processSymbolsByName(
+        name: Name,
+        processingFactory: FirScope.(Name, (S) -> Unit) -> Unit,
+        processor: (S) -> Unit,
+    ) {
+        var wasFoundAny = false
+        first.processingFactory(name) {
+            wasFoundAny = true
+            processor(it)
+        }
+
+        if (!wasFoundAny) {
+            second.processingFactory(name, processor)
+        }
+    }
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        processSymbolsByName(name, FirScope::processFunctionsByName, processor)
+    }
+
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        if (name.isSpecial || name.identifier.isNotEmpty()) {
-            for (import in starImports) {
-                for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, name)) {
-                    processor(symbol)
-                }
-            }
+        processSymbolsByName(name, FirScope::processPropertiesByName, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        var wasFoundAny = false
+        first.processDeclaredConstructors { symbol ->
+            wasFoundAny = true
+            processor(symbol)
+        }
+
+        if (!wasFoundAny) {
+            second.processDeclaredConstructors(processor)
         }
     }
 }

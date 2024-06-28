@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 data class TailSuspendCalls(val callSites: Set<IrCall>, val hasNotTailSuspendCalls: Boolean)
 
@@ -34,6 +35,14 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
     val visitor = object : IrElementVisitor<Unit, VisitorState> {
         override fun visitElement(element: IrElement, data: VisitorState) {
             element.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression = false))
+        }
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: VisitorState) {
+            if (expression.operator == IrTypeOperator.IMPLICIT_CAST) {
+                expression.acceptChildren(this, data)
+            } else {
+                super.visitTypeOperator(expression, data)
+            }
         }
 
         override fun visitTry(aTry: IrTry, data: VisitorState) {
@@ -98,8 +107,12 @@ fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleF
             expression.acceptChildren(this, VisitorState(data.insideTryBlock, isTailExpression))
         }
 
-        private fun IrExpression.isUnitRead(): Boolean =
-            this is IrGetObjectValue && symbol == context.irBuiltIns.unitClass
+        private fun IrExpression.isUnitRead(): Boolean {
+            if (this is IrTypeOperatorCall) {
+                return this.argument.isUnitRead()
+            }
+            return this is IrGetObjectValue && symbol == context.irBuiltIns.unitClass
+        }
 
         private fun IrCall.isReturnIfSuspendedCall() =
             symbol == context.ir.symbols.returnIfSuspended

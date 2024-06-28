@@ -1,7 +1,7 @@
 compiler/testData/cli/jvm/classAndPartClash.kt:1:1: error: duplicate JVM class name 'test/ClassAndPartClashKt' generated from: ClassAndPartClashKt, ClassAndPartClashKt
 package test
-^
+^^^^^^^^^^^^
 compiler/testData/cli/jvm/classAndPartClash.kt:5:1: error: duplicate JVM class name 'test/ClassAndPartClashKt' generated from: ClassAndPartClashKt, ClassAndPartClashKt
 class ClassAndPartClashKt
-^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

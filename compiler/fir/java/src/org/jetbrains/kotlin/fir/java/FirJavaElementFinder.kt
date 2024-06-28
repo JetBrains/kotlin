@@ -9,52 +9,80 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
+import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.impl.java.stubs.*
 import com.intellij.psi.impl.java.stubs.impl.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getTargetAnnotation
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirExpressionEvaluator
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.KOTLIN_TO_JAVA_ANNOTATION_TARGETS
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+
+val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
+
+private typealias PropertyEvaluator = (FirProperty) -> String?
 
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project
-) : PsiElementFinder(), KotlinFinderMarker {
+) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
     private val psiManager = PsiManager.getInstance(project)
+    var propertyEvaluator: PropertyEvaluator? = null
 
     private val firProviders: List<FirProvider> = buildList {
         add(session.firProvider)
         session.collectAllDependentSourceSessions().mapTo(this) { it.firProvider }
     }
 
+    private val fileCache: FirCache<FqName, Map<String, List<FirFile>>, Nothing?> = session.firCachesFactory
+        .createCache { packageFqName, _ ->
+            firProviders.flatMap { it.getFirFilesByPackage(packageFqName) }.groupBy { it.jvmName() }
+        }
+
     override fun findPackage(qualifiedName: String): PsiPackage? {
         if (firProviders.none { it.symbolProvider.getPackage(FqName(qualifiedName)) != null }) return null
-        return PsiPackageImpl(psiManager, qualifiedName)
+        return FirPsiPackage(psiManager, qualifiedName)
+    }
+
+    private class FirPsiPackage(psiManager: PsiManager, qualifiedName: String) : PsiPackageImpl(psiManager, qualifiedName) {
+        // Note: for standard PsiPackageImpl, PsiPackageImplementationHelper.getInstance().packagePrefixExists returns false here
+        // See KT-65111
+        override fun isValid(): Boolean = true
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
@@ -77,6 +105,7 @@ class FirJavaElementFinder(
             if (topLevelClass.isRoot) break
             val classId = ClassId.topLevel(topLevelClass)
 
+            // 1. Find regular class
             val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
 
             val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
@@ -88,7 +117,43 @@ class FirJavaElementFinder(
             }
         }
 
+        // 2. We could be asked to find class of kind "...MainKt" that was created from file "main.kt"
+        val classId = ClassId.topLevel(fqName)
+        val firFile = fileCache.getValue(classId.packageFqName)[classId.relativeClassName.asString()]?.singleOrNull()
+
+        if (firFile != null) {
+            val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+            return buildFileAsClassStub(firFile, classId, fileStub).psi
+        }
+
         return null
+    }
+
+    private fun FirFile.jvmName(): String {
+        val jvmNameAnnotation = this.findJvmNameAnnotation()
+        val jvmName = jvmNameAnnotation?.findArgumentByName(StandardNames.NAME)
+        val jvmNameValue = (jvmName as? FirLiteralExpression)?.value as? String
+        return jvmNameValue ?: (this.name.removeSuffix(".kt").capitalizeAsciiOnly() + "Kt")
+    }
+
+    private fun buildFileAsClassStub(firFile: FirFile, classId: ClassId, parent: StubElement<*>): PsiClassStub<*> {
+        val stub = PsiClassStubImpl<ClsClassImpl>(
+            JavaStubElementTypes.CLASS, parent, classId.asSingleFqName().asString(), classId.relativeClassName.asString(), null,
+            PsiClassStubImpl.packFlags(
+                false, false, false, false, false, false, false,
+                false, false, false, false
+            )
+        )
+
+        firFile.declarations.filterIsInstance<FirProperty>().forEach {
+            buildFieldStubForConst(it, stub)
+        }
+
+        PsiModifierListStubImpl(stub, ModifierFlags.PUBLIC_MASK or ModifierFlags.FINAL_MASK)
+        PsiTypeParameterListStubImpl(stub)
+        newReferenceList(JavaStubElementTypes.EXTENDS_LIST, stub, ArrayUtil.EMPTY_STRING_ARRAY)
+        newReferenceList(JavaStubElementTypes.IMPLEMENTS_LIST, stub, ArrayUtil.EMPTY_STRING_ARRAY)
+        return stub
     }
 
     private fun buildStub(firClass: FirRegularClass, parent: StubElement<*>): PsiClassStub<*> {
@@ -104,7 +169,27 @@ class FirJavaElementFinder(
             )
         )
 
-        PsiModifierListStubImpl(stub, firClass.packFlags())
+        val classProperties = firClass.declarations.filterIsInstance<FirProperty>()
+        // Note: we must store companion properties in outer clas because java resolver will not find it other way.
+        val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
+        (classProperties + companionProperties).forEach {
+            buildFieldStubForConst(it, stub)
+        }
+
+        val modifierListStub = PsiModifierListStubImpl(stub, firClass.packFlags())
+
+        if (firClass.classKind == ClassKind.ANNOTATION_CLASS) {
+            val targets = firClass.getTargetAnnotation(session)?.findTargets()
+            if (targets != null) {
+                val annotationString = buildString {
+                    append("@${JvmAnnotationNames.TARGET_ANNOTATION}({")
+                    targets.mapNotNull { KOTLIN_TO_JAVA_ANNOTATION_TARGETS[it] }
+                        .joinTo(this) { "${JvmAnnotationNames.ELEMENT_TYPE_ENUM}.$it" }
+                    append("})")
+                }
+                PsiAnnotationStubImpl(modifierListStub, annotationString)
+            }
+        }
 
         newTypeParameterList(
             stub,
@@ -113,7 +198,7 @@ class FirJavaElementFinder(
 
         val superTypeRefs = when {
             firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
-            else -> firClass.resolveSupertypesInTheAir(session)
+            else -> firClass.resolveSupertypesOnAir(session)
         }
 
         stub.addSupertypesReferencesLists(firClass, superTypeRefs, session)
@@ -125,6 +210,67 @@ class FirJavaElementFinder(
         return stub
     }
 
+    private fun FirAnnotation.findTargets(): List<String> = buildList {
+        forEachAnnotationTarget(session) { add(it.identifier) }
+    }
+
+    private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {
+        if (!firProperty.isConst) return
+
+        val psiField = object : StubBase<PsiField>(classStub, JavaStubElementTypes.FIELD), PsiFieldStub, NotEvaluatedConstAware {
+            private val lazyInitializerText by lazy {
+                if (propertyEvaluator == null) {
+                    transformJavaFieldAndGetResultAsString(firProperty)
+                } else {
+                    propertyEvaluator?.invoke(firProperty)
+                }
+            }
+
+            // Null result means that the evaluator encountered an error during evaluation.
+            // Later on, the compiler should report proper diagnostic.
+            fun transformJavaFieldAndGetResultAsString(firProperty: FirProperty): String? {
+                fun FirLiteralExpression.asString(): String {
+                    return when (val constVal = value) {
+                        is Char -> constVal.code.toString()
+                        is String -> "\"$constVal\""
+                        else -> constVal.toString()
+                    }
+                }
+
+                return FirExpressionEvaluator.evaluatePropertyInitializer(firProperty, session)?.unwrapOr<FirLiteralExpression> {}?.asString()
+            }
+
+            override fun getName(): String = firProperty.name.identifier
+
+            override fun getInitializerText(): String? = lazyInitializerText
+
+            override fun getType(): TypeInfo {
+                val coneClassLikeType = firProperty.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>()
+                if (coneClassLikeType.isString) return TypeInfo.fromString(CommonClassNames.JAVA_LANG_STRING)
+
+                val classId = coneClassLikeType.lookupTag.classId
+                val typeInfo = classId.relativeClassName.asString().toLowerCaseAsciiOnly()
+                return TypeInfo.fromString(typeInfo)
+            }
+
+            override fun isDeprecated(): Boolean = false
+
+            override fun isEnumConstant(): Boolean = false
+
+            override fun isNotYetComputed(): Boolean {
+                return propertyEvaluator == null
+            }
+        }
+
+        PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK + ModifierFlags.FINAL_MASK + ModifierFlags.STATIC_MASK)
+    }
+}
+
+private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
+    val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
+    return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
+        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
+    }
 }
 
 private fun FirSession.collectAllDependentSourceSessions(): List<FirSession> {
@@ -258,7 +404,9 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
         is ConeClassLikeType -> mapToCanonicalString(session)
         is ConeTypeVariableType, is ConeFlexibleType, is ConeCapturedType,
         is ConeDefinitelyNotNullType, is ConeIntersectionType, is ConeStubType, is ConeIntegerLiteralType ->
-            error("Unexpected type: $this [${this::class}]")
+            errorWithAttachment("Unexpected type: ${this::class.java}") {
+                withConeTypeEntry("type", this@mapToCanonicalString)
+            }
         is ConeLookupTagBasedType -> lookupTag.name.asString()
     }
 }

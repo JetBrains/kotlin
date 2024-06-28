@@ -1,3 +1,7 @@
+// FIR_IGNORE
+// KNM_K2_IGNORE
+// should be fixed for FIR, see KT-60764
+
 package test
 
 class SuspendLambda {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val flag = true
 
 val a = b@ {

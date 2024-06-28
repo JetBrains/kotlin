@@ -1,0 +1,70 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'delegatingConstructors.kt'
+    private final field w: float
+    public method <init>(p0: float): void
+    public final method component1(): float
+    public synthetic static method copy$default(p0: A, p1: float, p2: int, p3: java.lang.Object): A
+    public final @org.jetbrains.annotations.NotNull method copy(p0: float): A
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getW(): float
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class B {
+    // source: 'delegatingConstructors.kt'
+    private final @org.jetbrains.annotations.NotNull field a: A
+    private final @org.jetbrains.annotations.NotNull field b: A
+    private synthetic method <init>(p0: A, p1: A): void
+    public synthetic final static method box-impl(p0: A, p1: A): B
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(): B
+    public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: A): void
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(p0: float, p1: float, p2: float, p3: float, p4: float, p5: float, p6: float, p7: float): B
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: A, p1: A, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: A, p1: A, p2: A, p3: A): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): A
+    public final @org.jetbrains.annotations.NotNull method getB(): A
+    public method hashCode(): int
+    public static method hashCode-impl(p0: A, p1: A): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: A, p1: A): java.lang.String
+    public synthetic final method unbox-impl-a(): A
+    public synthetic final method unbox-impl-b(): A
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'delegatingConstructors.kt'
+    private final @org.jetbrains.annotations.NotNull field a-a: A
+    private final @org.jetbrains.annotations.NotNull field a-b: A
+    private final @org.jetbrains.annotations.NotNull field b-a: A
+    private final @org.jetbrains.annotations.NotNull field b-b: A
+    public method <init>(): void
+    private method <init>(p0: A, p1: A, p2: A, p3: A): void
+    private method <init>(p0: A, p1: A, p2: A, p3: A, p4: A, p5: A, p6: A, p7: A, p8: A, p9: A, p10: A, p11: A, p12: A, p13: A, p14: A, p15: A): void
+    public synthetic method <init>(p0: A, p1: A, p2: A, p3: A, p4: A, p5: A, p6: A, p7: A, p8: A, p9: A, p10: A, p11: A, p12: A, p13: A, p14: A, p15: A, p16: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: A, p1: A, p2: A, p3: A, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method component1(): B
+    public final @org.jetbrains.annotations.NotNull method component2(): B
+    public synthetic static method copy-qXRmaf0$default(p0: C, p1: A, p2: A, p3: A, p4: A, p5: int, p6: java.lang.Object): C
+    public final @org.jetbrains.annotations.NotNull method copy-qXRmaf0(@org.jetbrains.annotations.NotNull p0: A, @org.jetbrains.annotations.NotNull p1: A, @org.jetbrains.annotations.NotNull p2: A, @org.jetbrains.annotations.NotNull p3: A): C
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): B
+    public synthetic final method getA-a(): A
+    public synthetic final method getA-b(): A
+    public final @org.jetbrains.annotations.NotNull method getB(): B
+    public synthetic final method getB-a(): A
+    public synthetic final method getB-b(): A
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class DelegatingConstructorsKt {
+    // source: 'delegatingConstructors.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

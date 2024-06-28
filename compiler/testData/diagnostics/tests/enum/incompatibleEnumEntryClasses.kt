@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
+// FIR_IDENTICAL
+// LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 
 interface I {
     fun foo()

@@ -1,5 +1,6 @@
 package
 
+public fun bar(/*0*/ p: P): kotlin.Any
 public fun foo(/*0*/ p: P): kotlin.Any
 
 public final class P {

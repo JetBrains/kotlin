@@ -1,0 +1,4 @@
+compiler/testData/cli/metadata/getOrDefault.kt:2:38: error: unresolved reference 'getOrDefault'.
+fun foo(map: Map<String, Int>) = map.getOrDefault("", 0)
+                                     ^^^^^^^^^^^^
+COMPILATION_ERROR

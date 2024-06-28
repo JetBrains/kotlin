@@ -19,8 +19,6 @@ import org.apache.log4j.Logger
 import org.apache.log4j.PatternLayout
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
@@ -28,7 +26,6 @@ import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.model.JpsDummyElement
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
@@ -38,6 +35,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
+import org.jetbrains.kotlin.jps.build.KotlinBuilder.Companion.useDependencyGraph
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -279,7 +278,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun clearCachesRebuildAndCheckOutput(makeOverallResult: MakeResult) {
-        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot!!)
+        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).dataStorageRoot)
 
         rebuildAndCheckOutput(makeOverallResult)
     }
@@ -335,11 +334,13 @@ abstract class AbstractIncrementalJpsTest(
 
         buildLogFile?.let {
             val logs = createBuildLog(otherMakeResults)
-            val expected = excludeCompilerErrorMessagesFromLog(File(buildLogFile.absolutePath).readText())
+            val buildLog = File(buildLogFile.absolutePath).readText()
+            val expected = excludeCompilerErrorMessagesFromLog(buildLog)
             val actual = excludeCompilerErrorMessagesFromLog(logs)
 
-            UsefulTestCase.assertEquals(expected.trimEnd(), actual.trimEnd())
-
+            if(expected.trimEnd() != actual.trimEnd()) {
+                UsefulTestCase.assertEquals(buildLog, logs)
+            }
             val lastMakeResult = otherMakeResults.last()
             clearCachesRebuildAndCheckOutput(lastMakeResult)
         }
@@ -456,6 +457,9 @@ abstract class AbstractIncrementalJpsTest(
             val kotlinFacetSettings = module.kotlinFacetSettings
             if (kotlinFacetSettings != null) {
                 val compilerArguments = kotlinFacetSettings.compilerArguments
+                if(compilerArguments != null) {
+                    updateCommandLineArguments(compilerArguments)
+                }
                 if (compilerArguments is K2MetadataCompilerArguments) {
                     val out = getAbsolutePath("${module.name}/out")
                     File(out).mkdirs()
@@ -612,10 +616,11 @@ abstract class AbstractIncrementalJpsTest(
 private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
-) = createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
-        createCommonMappingsDump(project) + "\n\n\n" +
-        createJavaMappingsDump(project)
+    lookupsDuringTest: Set<LookupSymbol>,
+) = if (useDependencyGraph) "" else
+    createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
 internal fun createKotlinCachesDump(
     project: ProjectDescriptor,

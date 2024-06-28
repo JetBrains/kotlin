@@ -1,0 +1,1 @@
+tailrec fun foo(i: kotlin.Int): kotlin.Int

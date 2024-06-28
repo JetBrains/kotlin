@@ -1,0 +1,45 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+              InternalComposeApi::class,
+            )
+            package test
+
+            import androidx.compose.runtime.InternalComposeApi
+            import androidx.compose.runtime.ComposeCompilerApi
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.NonRestartableComposable
+
+            fun abc0(l: @Composable () -> Unit) {
+    val hc = l.hashCode()
+}
+fun abc1(l: @Composable (String) -> Unit) {
+    val hc = l.hashCode()
+}
+fun abc2(l: @Composable (String, Int) -> Unit) {
+    val hc = l.hashCode()
+}
+fun abc3(
+    l: @Composable (Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
+) {
+    val hc = l.hashCode()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun abc0(l: Function2<Composer, Int, Unit>) {
+  val hc = l.hashCode()
+}
+fun abc1(l: Function3<String, Composer, Int, Unit>) {
+  val hc = l.hashCode()
+}
+fun abc2(l: Function4<String, Int, Composer, Int, Unit>) {
+  val hc = l.hashCode()
+}
+fun abc3(l: Function15<Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Any, Composer, Int, Int, Any>) {
+  val hc = l.hashCode()
+}

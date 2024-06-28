@@ -1,4 +1,4 @@
-// !API_VERSION: LATEST
+// API_VERSION: LATEST
 // FILE: j/J.java
 
 package j;
@@ -20,4 +20,4 @@ fun test() {
 }
 
 // @KKt.class:
-// 1 checkNotNullExpressionValue
+// 1 checkNotNull

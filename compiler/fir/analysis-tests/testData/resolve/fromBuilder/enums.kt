@@ -1,4 +1,5 @@
-import my.println
+//  Ignore reason: KT-57619
+import <!UNRESOLVED_IMPORT!>my<!>.println
 
 enum class Order {
     FIRST,
@@ -23,7 +24,7 @@ enum class Planet(val m: Double, internal val r: Double) {
         }
     };
 
-    val g: Double = <!UNINITIALIZED_VARIABLE!>G<!> * m / (r * r)
+    val g: Double = <!UNINITIALIZED_ENUM_COMPANION!>G<!> * m / (r * r)
 
     abstract fun sayHello()
 

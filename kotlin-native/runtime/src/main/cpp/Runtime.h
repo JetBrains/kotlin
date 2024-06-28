@@ -7,6 +7,7 @@
 #define RUNTIME_RUNTIME_H
 
 #include "Porting.h"
+#include "Memory.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +21,7 @@ struct InitNode {
 
 // For experimental MM, if runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
-void Kotlin_deinitRuntimeIfNeeded();
+void deinitRuntimeIfNeeded();
 
 // Can only be called once.
 // No new runtimes can be initialized on any thread after this.
@@ -43,4 +44,12 @@ bool Kotlin_forceCheckedShutdown();
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+namespace kotlin {
+
+// Returns `true` if initialized.
+bool initializeGlobalRuntimeIfNeeded() noexcept;
+
+}
+
 #endif // RUNTIME_RUNTIME_H

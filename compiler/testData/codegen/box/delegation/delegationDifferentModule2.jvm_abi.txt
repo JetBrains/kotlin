@@ -1,0 +1,22 @@
+MODULE lib
+	CLASS D1.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				bar
+			K1
+				getBar()I
+			K2
+				---
+MODULE main
+	CLASS D2.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				bar
+			K1
+				getBar()I
+			K2
+				---

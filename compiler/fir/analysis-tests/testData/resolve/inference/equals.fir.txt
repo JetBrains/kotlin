@@ -10,7 +10,7 @@ FILE: equals.kt
         }
 
         when () {
-            ==(R|/materialize|<R|kotlin/Any?|>(), String()) ->  {
+            ==(R|/materialize<CS errors: /materialize>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(), String()) ->  {
                 ^main Unit
             }
         }

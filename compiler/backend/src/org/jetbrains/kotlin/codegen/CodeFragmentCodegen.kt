@@ -53,7 +53,7 @@ class CodeFragmentCodegen private constructor(
     override fun generateDeclaration() {
         v.defineClass(
             codeFragment,
-            state.classFileVersion,
+            state.config.classFileVersion,
             ACC_PUBLIC or ACC_SUPER,
             info.classType.internalName,
             null,
@@ -79,7 +79,7 @@ class CodeFragmentCodegen private constructor(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        writeSyntheticClassMetadata(v, state, false)
+        writeSyntheticClassMetadata(v, state.config, false)
     }
 
     private fun genConstructor() {

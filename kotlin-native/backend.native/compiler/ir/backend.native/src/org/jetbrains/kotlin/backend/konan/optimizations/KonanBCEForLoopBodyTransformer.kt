@@ -346,3 +346,7 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         }
     }
 }
+
+class NativeForLoopsLowering(context: CommonBackendContext) : ForLoopsLowering(context) {
+    override val loopBodyTransformer: ForLoopBodyTransformer = KonanBCEForLoopBodyTransformer()
+}

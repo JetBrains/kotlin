@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -22,6 +19,7 @@ object JsAnnotations {
     val jsModuleFqn = FqName("kotlin.js.JsModule")
     val jsNonModuleFqn = FqName("kotlin.js.JsNonModule")
     val jsNameFqn = FqName("kotlin.js.JsName")
+    val jsFileNameFqn = FqName("kotlin.js.JsFileName")
     val jsQualifierFqn = FqName("kotlin.js.JsQualifier")
     val jsExportFqn = FqName("kotlin.js.JsExport")
     val jsImplicitExportFqn = FqName("kotlin.js.JsImplicitExport")
@@ -31,11 +29,16 @@ object JsAnnotations {
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
     val jsFunFqn = FqName("kotlin.js.JsFun")
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
+    val jsGeneratorFqn = FqName("kotlin.js.JsGenerator")
 }
 
 @Suppress("UNCHECKED_CAST")
 fun IrConstructorCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
+
+@Suppress("UNCHECKED_CAST")
+fun IrConstructorCall.getSingleConstBooleanArgument() =
+    (getValueArgument(0) as IrConst<Boolean>).value
 
 fun IrAnnotationContainer.getJsModule(): String? =
     getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()
@@ -45,6 +48,9 @@ fun IrAnnotationContainer.isJsNonModule(): Boolean =
 
 fun IrAnnotationContainer.getJsQualifier(): String? =
     getAnnotation(JsAnnotations.jsQualifierFqn)?.getSingleConstStringArgument()
+
+fun IrFile.getJsFileName(): String? =
+    getAnnotation(JsAnnotations.jsFileNameFqn)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
@@ -61,8 +67,15 @@ fun IrAnnotationContainer.isJsExport(): Boolean =
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
 
+fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
+    getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()
+
 fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
-    hasAnnotation(JsAnnotations.jsExportIgnoreFqn)
+    annotations.any {
+        // Using `IrSymbol.hasEqualFqName(FqName)` instead of a usual `hasAnnotation` call, because `JsExport.Ignore` is a nested class,
+        // whose FQ name cannot be computed by traversing IR tree parents because it lacks `JsExport` for some reason.
+        it.symbol.owner.parentAsClass.symbol.hasEqualFqName(JsAnnotations.jsExportIgnoreFqn)
+    }
 
 fun IrAnnotationContainer.isJsNativeGetter(): Boolean = hasAnnotation(JsAnnotations.jsNativeGetter)
 

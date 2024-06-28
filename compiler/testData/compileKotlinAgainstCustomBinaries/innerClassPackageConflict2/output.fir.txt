@@ -1,0 +1,4 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/innerClassPackageConflict2/source.kt:10:9: error: unresolved reference 'Nested'.
+val v3: Nested? = null
+        ^^^^^^
+COMPILATION_ERROR

@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyAccessors.kt
+    public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(10)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ F|/x|
+        }
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            F|/x| = R|<local>/value|
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] var y: R|kotlin/Int| = Int(10)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ this@R|/X|.F|/X.y|
+            }
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/X|.F|/X.y| = R|<local>/value|
+            }
+
+    }

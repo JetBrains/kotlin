@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.mergedtree
 
 import com.intellij.util.containers.FactoryMap
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.ModulesProvider
 import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
@@ -28,7 +27,7 @@ internal class CirProvidedClassifiersByModules internal constructor(
 ) : CirProvidedClassifiers {
 
     private val typeAliasesByUnderlyingTypes = run {
-        THashMap<CirEntityId, MutableList<CirEntityId>>().also { map ->
+        CommonizerMap<CirEntityId, MutableList<CirEntityId>>().also { map ->
             classifiers.forEach { (id, classifier) ->
                 if (classifier is CirProvided.TypeAlias) {
                     val set = map.computeIfAbsent(classifier.underlyingType.classifierId) { ArrayList() }
@@ -55,14 +54,14 @@ internal class CirProvidedClassifiersByModules internal constructor(
 
     companion object {
         fun load(modulesProvider: ModulesProvider): CirProvidedClassifiers {
-            val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
+            val classifiers = CommonizerMap<CirEntityId, CirProvided.Classifier>()
 
             modulesProvider.moduleInfos.forEach { moduleInfo ->
                 val metadata = modulesProvider.loadModuleMetadata(moduleInfo.name)
                 readModule(metadata, classifiers::set)
             }
 
-            if (classifiers.isEmpty)
+            if (classifiers.isEmpty())
                 return CirProvidedClassifiers.EMPTY
 
             return CirProvidedClassifiersByModules(false, classifiers)
@@ -73,13 +72,13 @@ internal class CirProvidedClassifiersByModules internal constructor(
          * Note: This builds a union *not an intersection* of forward declarations.
          */
         fun loadExportedForwardDeclarations(modulesProviders: List<ModulesProvider>): CirProvidedClassifiers {
-            val classifiers = THashMap<CirEntityId, CirProvided.Classifier>()
+            val classifiers = CommonizerMap<CirEntityId, CirProvided.Classifier>()
 
             modulesProviders.flatMap { moduleProvider -> moduleProvider.moduleInfos }
                 .mapNotNull { moduleInfo -> moduleInfo.cInteropAttributes }
                 .forEach { attrs -> readExportedForwardDeclarations(attrs, classifiers::set) }
 
-            if (classifiers.isEmpty) return CirProvidedClassifiers.EMPTY
+            if (classifiers.isEmpty()) return CirProvidedClassifiers.EMPTY
             return CirProvidedClassifiersByModules(true, classifiers)
         }
 

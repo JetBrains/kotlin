@@ -13,7 +13,6 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.findSourceSetsDependingOn
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -25,7 +24,6 @@ class ResolveKotlinSourceSetsTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build()
-        addBuildEventsListenerRegistryMock(project)
         project.plugins.apply("kotlin-multiplatform")
         kotlin = project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
 

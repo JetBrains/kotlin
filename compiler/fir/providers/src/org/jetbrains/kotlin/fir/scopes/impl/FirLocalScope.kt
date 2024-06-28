@@ -79,11 +79,13 @@ class FirLocalScope private constructor(
         val klass = classes[name]
         if (klass != null) {
             val substitution = klass.typeParameterSymbols.associateWith { it.toConeType() }
-            processor(klass, ConeSubstitutorByMap(substitution, useSiteSession))
+            processor(klass, ConeSubstitutorByMap.create(substitution, useSiteSession))
         }
     }
 
-    override fun mayContainName(name: Name) = properties.containsKey(name) || functions[name].isNotEmpty() || classes.containsKey(name)
+    override fun mayContainName(name: Name): Boolean {
+        return properties.containsKey(name) || functions[name].isNotEmpty() || classes.containsKey(name)
+    }
 
     override fun getCallableNames(): Set<Name> = properties.keys + functions.keys
     override fun getClassifierNames(): Set<Name> = classes.keys

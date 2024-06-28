@@ -1,0 +1,12 @@
+Before shortening: Outer.Marker by Outer.MarkerImpl()
+with default settings:
+[qualifier] Outer.MarkerImpl()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Outer.MarkerImpl()
+with SHORTEN_AND_IMPORT:
+[type] Outer.Marker
+[qualifier] Outer.MarkerImpl()
+with SHORTEN_AND_STAR_IMPORT:
+[type] Outer.Marker
+[qualifier] Outer.MarkerImpl()

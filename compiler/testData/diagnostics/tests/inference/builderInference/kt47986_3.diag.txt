@@ -1,4 +1,4 @@
-/kt47986_3.kt:10:13: error: not enough information to infer type variable K
+/kt47986_3.kt:9:13: warning: type parameter for a type argument K can't be inferred into declared upper bounds. Please provide any use-site type information. It will become an error in future releases.
     val x = buildFoo {
-            ^
+            ^^^^^^^^
 

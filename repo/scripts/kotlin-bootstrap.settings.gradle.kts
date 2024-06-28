@@ -64,12 +64,12 @@ fun getRootSettings(
     val gradleInternal = (gradle as GradleInternal)
     return when {
         gradleInternal.isRootBuild() ||
-                settings.rootProject.name == "gradle-settings-conventions" -> {
+                setOf("gradle-settings-conventions", "gradle-build-conventions").contains(settings.rootProject.name) -> {
             settings
         }
         else -> {
             val gradleParent = gradle.parent ?: error("Could not get includedBuild parent build for ${settings.rootDir}!")
-            getRootSettings(gradle.parent!!.settings, gradle.parent!!)
+            getRootSettings(gradleParent.settings, gradleParent)
         }
     }
 }
@@ -91,6 +91,7 @@ val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     }
     "benchmarksAnalyzer", "performance-server" -> rootSettings.rootDir.parentFile.parentFile.parentFile
     "gradle-settings-conventions" -> rootSettings.rootDir.parentFile.parentFile
+    "gradle-build-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "performance" -> rootSettings.rootDir.parentFile.parentFile
     "ui" -> rootSettings.rootDir.parentFile.parentFile.parentFile.parentFile
     else -> rootSettings.rootDir
@@ -138,7 +139,7 @@ fun String?.propValueToBoolean(default: Boolean = false): Boolean {
     }
 }
 
-fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it?.propValueToBoolean() }
+fun Provider<String>.mapToBoolean(): Provider<Boolean> = map { it.propValueToBoolean() }
 
 fun RepositoryHandler.addBootstrapRepo(
     bootstrapRepo: String,
@@ -273,10 +274,10 @@ when {
 
         val query = "branch:default:any"
         val baseRepoUrl = teamCityBootstrapUrl.orNull ?: "https://buildserver.labs.intellij.net"
-        val teamCityProjectId = teamCityBootstrapProject.orNull ?: "Kotlin_KotlinDev_Compiler"
+        val teamCityProjectId = teamCityBootstrapProject.orNull ?: "Kotlin_KotlinDev_Artifacts"
         val teamCityBuildNumber = teamCityBootstrapBuildNumber.orNull ?: bootstrapVersion
 
-        val bootstrapRepo = "$baseRepoUrl/guestAuth/app/rest/builds/buildType:(id:$teamCityProjectId),number:$teamCityBuildNumber,$query/artifacts/content/maven/"
+        val bootstrapRepo = "$baseRepoUrl/guestAuth/app/rest/builds/buildType:(id:$teamCityProjectId),number:$teamCityBuildNumber,$query/artifacts/content/maven.zip!/"
 
         applyBootstrapConfiguration(
             bootstrapVersion,

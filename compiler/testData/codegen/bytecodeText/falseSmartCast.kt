@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 open class SuperFoo {
     public fun bar() {
         if (this is Foo) {

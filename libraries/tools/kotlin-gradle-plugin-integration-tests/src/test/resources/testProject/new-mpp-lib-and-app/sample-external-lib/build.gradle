@@ -1,37 +1,25 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
+
 group = "com.external.dependency"
 version = "1.2.3"
 
-buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
-}
-
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
-	// Check the new preset functions:
-	jvm('jvm6') { }
+    // Check the new preset functions:
+    jvm('jvm6') {}
     js('nodeJs')
-    wasm()
+    wasmJs()
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
-    
+
     targets {
-    	// Also check that the old DSL (fromPreset) works:
+        // Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
-        	println "Configuring $targetName"
+            println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
                     println "jvmTarget = " + jvmTarget
@@ -64,22 +52,29 @@ kotlin {
             }
         }
         nodeJsMain {
-        	dependencies {
+            dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-        	}
+            }
         }
     }
 }
 
 kotlin.sourceSets.each { println it.kotlin.srcDirs }
 
-apply plugin: 'maven-publish'
-
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
         jvm('jvm6').compilations.create('benchmark') {
             assemble.dependsOn compileKotlinTask
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }

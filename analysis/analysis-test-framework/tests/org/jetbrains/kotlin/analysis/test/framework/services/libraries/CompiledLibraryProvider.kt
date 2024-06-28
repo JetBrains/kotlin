@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,19 +13,23 @@ import java.nio.file.Path
 class CompiledLibraryProvider(private val testServices: TestServices) : TestService {
     private val libraries = mutableMapOf<String, CompiledLibrary>()
 
-    fun compileToLibrary(module: TestModule): CompiledLibrary {
+    fun compileToLibrary(module: TestModule, dependencyBinaryRoots: Collection<Path>): CompiledLibrary {
         if (module.name in libraries) {
             error("Library for module ${module.name} is already compiled")
         }
-        val libraryJar = TestModuleCompiler.compileTestModuleToLibrary(module, testServices)
-        val librarySourcesJar = TestModuleCompiler.compileTestModuleToLibrarySources(module, testServices)
+        val libraryJar = testServices.testModuleCompiler.compileTestModuleToLibrary(module, dependencyBinaryRoots, testServices)
+        val librarySourcesJar = testServices.testModuleCompiler.compileTestModuleToLibrarySources(module, testServices)
+
         return CompiledLibrary(libraryJar, librarySourcesJar).also { libraries[module.name] = it }
     }
+
+    fun getCompiledLibrary(moduleName: String): CompiledLibrary? = libraries[moduleName]
 }
 
 val TestServices.compiledLibraryProvider: CompiledLibraryProvider by TestServices.testServiceAccessor()
+val TestServices.testModuleCompiler: TestModuleCompiler by TestServices.testServiceAccessor()
 
 data class CompiledLibrary(
-    val jar: Path,
-    val sourcesJar: Path,
+    val artifact: Path,
+    val sources: Path?,
 )

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // SKIP_TXT
-// !LANGUAGE: +InlineLateinit
+// LANGUAGE: +InlineLateinit
 // FIR_IDENTICAL
 
 @JvmInline

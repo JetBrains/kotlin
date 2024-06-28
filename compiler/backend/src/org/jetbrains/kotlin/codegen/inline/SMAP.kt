@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import gnu.trove.TIntIntHashMap
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 import kotlin.math.max
+import kotlin.math.min
 
 const val KOTLIN_STRATA_NAME = "Kotlin"
 const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
@@ -57,7 +63,7 @@ object SMAPBuilder {
 }
 
 class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val callSite: SourcePosition? = null) {
-    private val visitedLines = TIntIntHashMap()
+    private val visitedLines = Int2IntOpenHashMap()
     private var lastVisitedRange: RangeMapping? = null
 
     fun mapLineNumber(lineNumber: Int): Int {
@@ -75,9 +81,24 @@ class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val call
     }
 }
 
+class SourceMapCopyingMethodVisitor(private val smapCopier: SourceMapCopier, mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
+    constructor(target: SourceMapper, source: SMAP, mv: MethodVisitor) : this(SourceMapCopier(target, source), mv)
+
+    override fun visitLineNumber(line: Int, start: Label) =
+        super.visitLineNumber(smapCopier.mapLineNumber(line), start)
+
+    override fun visitLocalVariable(name: String, descriptor: String, signature: String?, start: Label, end: Label, index: Int) =
+        if (isFakeLocalVariableForInline(name))
+            super.visitLocalVariable(updateCallSiteLineNumber(name, smapCopier::mapLineNumber), descriptor, signature, start, end, index)
+        else
+            super.visitLocalVariable(name, descriptor, signature, start, end, index)
+}
+
 data class SourcePosition(val line: Int, val file: String, val path: String)
 
 class SourceMapper(val sourceInfo: SourceInfo?) {
+    constructor(name: String?, original: SMAP) : this(original.fileMappings.firstOrNull { it.name == name }?.toSourceInfo())
+
     private var maxUsedValue: Int = sourceInfo?.linesInFile ?: 0
     private var fileMappings: LinkedHashMap<Pair<String, String>, FileMapping> = linkedMapOf()
 
@@ -134,6 +155,24 @@ class SMAP(val fileMappings: List<FileMapping>) {
         const val LINE_SECTION = "*L"
         const val STRATA_SECTION = "*S"
         const val END = "*E"
+
+        // Create a mapping that simply maps a range of a file to itself, which is equivalent to having no mapping at all.
+        // The contract is: if `smap` is the return value of this method, then `SourceMapCopier(SourceMapper(name, smap), smap)`
+        // will not change any line numbers in any of the methods passed as an argument.
+        fun identityMapping(name: String?, path: String, methods: Collection<MethodNode>): SMAP {
+            if (name.isNullOrEmpty()) return SMAP(emptyList())
+            var start = 0
+            var end = 0
+            for (node in methods) {
+                for (insn in node.instructions.asSequence()) {
+                    if (insn !is LineNumberNode) continue
+                    start = min(start, insn.line)
+                    end = max(end, insn.line + 1)
+                }
+            }
+            if (start >= end) return SMAP(emptyList())
+            return SMAP(listOf(FileMapping(name, path).apply { mapNewInterval(start, start, end - start) }))
+        }
     }
 }
 

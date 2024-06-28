@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
@@ -19,23 +21,8 @@ import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import java.util.*
 
 class FirOverrideService(val session: FirSession) : FirSessionComponent {
-    fun <D : FirCallableSymbol<*>> createOverridableGroups(
-        members: Collection<MemberWithBaseScope<D>>,
-        overrideChecker: FirOverrideChecker
-    ): List<List<MemberWithBaseScope<D>>> {
-        if (members.size <= 1) return listOf(members.toList())
-        val queue = LinkedList(members)
-        val result = mutableListOf<List<MemberWithBaseScope<D>>>()
-        while (queue.isNotEmpty()) {
-            val nextHandle = queue.first()
-            val overridableGroup = extractBothWaysOverridable(nextHandle, queue, overrideChecker)
-            result += overridableGroup
-        }
-        return result
-    }
 
     fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,
@@ -156,8 +143,8 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
                 byVisibilityAndType
             }
 
-            is FirProperty -> {
-                require(bFir is FirProperty) { "b is " + bFir.javaClass }
+            is FirVariable -> {
+                require(bFir is FirVariable) { "b is " + bFir.javaClass }
                 // At least one of `subtypes` is true here, so `!xSubtypesY` implies `ySubtypesX`, meaning y's type
                 // is a *strict* subtype of x's. Vars are more specific than vals, so if one is a var and another
                 // has a strict subtype, then they are unorderable - one is a val with a more specific type than

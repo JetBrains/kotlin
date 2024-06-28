@@ -66,7 +66,7 @@ class EnumTranslator(
         val message = JsBinaryOperation(JsBinaryOperator.ADD,
                                         JsStringLiteral("No enum constant ${descriptor.fqNameSafe}."),
                                         nameParam.makeRef())
-        val throwFunction = context().getReferenceToIntrinsic(Namer.THROW_ILLEGAL_STATE_EXCEPTION_FUN_NAME)
+        val throwFunction = context().getReferenceToIntrinsic(Namer.THROW_ILLEGAL_ARGUMENT_EXCEPTION_FUN_NAME)
         val throwStatement = JsExpressionStatement(JsInvocation(throwFunction, message).source(psi))
 
         if (clauses.isNotEmpty()) {

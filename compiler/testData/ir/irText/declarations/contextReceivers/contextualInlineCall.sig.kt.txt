@@ -1,0 +1,109 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Any?
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}kotlin.Any?
+    //   Public signature: /A.a.<get-a>|-5253003527138676623[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Any?
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-a>(){}
+    //   Public signature: /A.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Any?){}
+  //   Public signature: /A.<init>|-8205545948568413246[0]
+  //   Public signature debug description: <init>(kotlin.Any?){}
+  constructor(a: Any?) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Context
+//   Public signature: /Context|null[0]
+class Context {
+  // CHECK:
+  //   Mangled name: Context#<init>(){}
+  //   Public signature: /Context.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Context#c(){}kotlin.Int
+  //   Public signature: /Context.c|-7090409735962961857[0]
+  //   Public signature debug description: c(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Context#c(){}
+  //   Public signature: /Context.c|-2724918380551733646[0]
+  //   Public signature debug description: c(){}
+  fun c(): Int
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testInline!Context(){}kotlin.Int
+//   Public signature: /testInline|2700554304824268037[0]
+//   Public signature debug description: testInline!Context(){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testInline!Context(){}
+//   Public signature: /testInline|-4531301230787846989[0]
+//   Public signature debug description: testInline!Context(){}
+inline fun testInline($context_receiver_0: Context): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testInlineWithArg!Context(kotlin.Int){}kotlin.Int
+//   Public signature: /testInlineWithArg|9204994988875814257[0]
+//   Public signature debug description: testInlineWithArg!Context(kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testInlineWithArg!Context(kotlin.Int){}
+//   Public signature: /testInlineWithArg|-6441098303310197415[0]
+//   Public signature debug description: testInlineWithArg!Context(kotlin.Int){}
+inline fun testInlineWithArg($context_receiver_0: Context, i: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}kotlin.Int
+//   Public signature: /testInlineWithExtensionAndArg|-7753885706218316674[0]
+//   Public signature debug description: testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}
+//   Public signature: /testInlineWithExtensionAndArg|642168423595809182[0]
+//   Public signature debug description: testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}
+inline fun Int.testInlineWithExtensionAndArg($context_receiver_0: Context, i: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /testInlineWithExtensionAndMultipleArgs|6839067967550411636[0]
+//   Public signature debug description: testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}
+//   Public signature: /testInlineWithExtensionAndMultipleArgs|2396628518140949199[0]
+//   Public signature debug description: testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}
+inline fun Int.testInlineWithExtensionAndMultipleArgs($context_receiver_0: Context, i1: Int, i2: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /testInlineWithExtensionAndMultipleContextsAndArgs|4315160499148454711[0]
+//   Public signature debug description: testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}
+//   Public signature: /testInlineWithExtensionAndMultipleContextsAndArgs|-8262798201429708713[0]
+//   Public signature debug description: testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}
+inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs($context_receiver_0: Context, $context_receiver_1: A, i1: Int, i2: Int): Int
+

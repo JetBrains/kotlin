@@ -31,7 +31,7 @@ class IdeTransformedMetadataDependencyResolverTest {
         }
 
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         kotlin.jvm()
         kotlin.linuxX64()
@@ -49,24 +49,24 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain")
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(commonTest)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain")
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(linuxMain)
             .assertMatches(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:jsNativeMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain")
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
             )
     }
 
@@ -85,7 +85,7 @@ class IdeTransformedMetadataDependencyResolverTest {
         val kotlin = project.multiplatformExtension
 
         kotlin.jvm()
-        kotlin.android()
+        kotlin.androidTarget()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -102,16 +102,14 @@ class IdeTransformedMetadataDependencyResolverTest {
         val kgpVersion = project.getKotlinPluginVersion()
         commonMain.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
         commonTest.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )

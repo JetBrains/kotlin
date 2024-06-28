@@ -11,8 +11,8 @@ public open class RawSuperTypeWithRecursiveBound : R|kotlin/Any| {
         public test/RawSuperTypeWithRecursiveBound.constructor(): R|test/RawSuperTypeWithRecursiveBound.Derived|
 
     }
-    public abstract interface Super<T : R|ft<test/RawSuperTypeWithRecursiveBound.Super<ft<T & Any, T?>>, test/RawSuperTypeWithRecursiveBound.Super<ft<T & Any, T?>>?>|> : R|kotlin/Any| {
-        public abstract fun foo(t: R|ft<T & Any, T?>|): R|kotlin/Unit|
+    public abstract interface Super<T : R|ft<test/RawSuperTypeWithRecursiveBound.Super<T!>, test/RawSuperTypeWithRecursiveBound.Super<T!>?>|> : R|kotlin/Any| {
+        public abstract fun foo(t: R|T!|): R|kotlin/Unit|
 
         public abstract fun dummy(): R|kotlin/Unit|
 

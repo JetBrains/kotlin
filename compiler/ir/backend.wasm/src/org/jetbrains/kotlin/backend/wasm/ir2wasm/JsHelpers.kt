@@ -15,11 +15,20 @@ data class JsModuleAndQualifierReference(
     val module: String?,
     val qualifier: String?,
 ) {
-    val jsVariableName = run {
+    private val moduleBase64 = module?.let { encode(it) }.orEmpty()
+
+    private val qualifierBase64 = qualifier?.let { encode(it) }.orEmpty()
+
+    val jsVariableName = "_ref_${moduleBase64}_$qualifierBase64"
+
+    val importVariableName = "_import_${moduleBase64}_$qualifierBase64"
+
+    companion object {
         // Encode variable name as base64 to have a valid unique JS identifier
-        val encoder = Base64.getEncoder().withoutPadding()
-        val moduleBase64 = module?.let { encoder.encodeToString(module.encodeToByteArray()) }.orEmpty()
-        val qualifierBase64 = qualifier?.let { encoder.encodeToString(qualifier.encodeToByteArray()) }.orEmpty()
-        "_ref_${moduleBase64}_$qualifierBase64"
+        private val encoder = Base64.getEncoder().withoutPadding()
+
+        fun encode(value: String): String {
+            return encoder.encodeToString(value.encodeToByteArray())
+        }
     }
 }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 
 internal class KotlinCompileCommonConfig(
@@ -15,13 +14,14 @@ internal class KotlinCompileCommonConfig(
 ) : AbstractKotlinCompileConfig<KotlinCompileCommon>(compilationInfo) {
     init {
         configureTask { task ->
-            task.expectActualLinker.value(
+            task.produceMetadataKlib.value(
                 providers.provider {
-                    (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true ||
-                            compilationInfo.origin is GradleKpmMetadataCompilationData<*>
+                    (compilationInfo.origin as? KotlinCommonCompilation)?.isKlibCompilation == true
                 }
             ).disallowChanges()
             task.refinesMetadataPaths.from(compilationInfo.refinesPaths).disallowChanges()
+            task.moduleName.set(providers.provider { compilationInfo.moduleName })
+            task.incrementalModuleInfoProvider.disallowChanges()
         }
     }
 }

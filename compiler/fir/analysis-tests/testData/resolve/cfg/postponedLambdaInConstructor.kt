@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 
 abstract class A(func: () -> String)
 

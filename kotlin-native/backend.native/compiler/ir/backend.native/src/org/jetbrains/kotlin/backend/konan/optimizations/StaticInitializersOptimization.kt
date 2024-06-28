@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.copy
+import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
-import org.jetbrains.kotlin.backend.konan.ir.isUnconditional
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
+import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -176,12 +179,12 @@ internal object StaticInitializersOptimization {
             val functionsRequiringGlobalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallGlobal,
                     callSitesRequiringGlobalInitializerCall.map { it.actualCallee }
-                            .toMutableSet().intersect(callSitesNotRequiringGlobalInitializerCall.map { it.actualCallee })
+                            .intersect(callSitesNotRequiringGlobalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee })
             )
             val functionsRequiringThreadLocalInitializerCall = collectFunctionsRequiringInitializerCall(
                     initializedFiles.beforeCallThreadLocal,
                     callSitesRequiringThreadLocalInitializerCall.map { it.actualCallee }
-                            .toMutableSet().intersect(callSitesNotRequiringThreadLocalInitializerCall.map { it.actualCallee })
+                            .intersect(callSitesNotRequiringThreadLocalInitializerCall.mapTo(mutableSetOf()) { it.actualCallee })
             )
 
             return AnalysisResult(functionsRequiringGlobalInitializerCall, functionsRequiringThreadLocalInitializerCall,
@@ -541,6 +544,23 @@ internal object StaticInitializersOptimization {
                 expression.transformChildren(this, data)
 
                 val callee = expression.actualCallee
+                /*
+                 * There can be construction like `initInstance(constructorCall())` in IR
+                 * Which can be transformed to `initInstance({ callClassStaticInits(); conctructorCall() })` 
+                 * which is not valid for code-gen, as it expects the intrinsic argument to be a constructor call. 
+                 * 
+                 * So we here fix it by postporcessing to `{ callClassStaticInitis(); initInstance(constructorCall()) }`
+                 */
+                if (tryGetIntrinsicType(expression) == IntrinsicType.INIT_INSTANCE) {
+                    val constructorArg = expression.getValueArgument(1)
+                    if (constructorArg is IrBlock) {
+                        val realConstructorArg = constructorArg.statements.last() as IrConstructorCall
+                        constructorArg.statements[constructorArg.statements.lastIndex] = expression.apply {
+                            putValueArgument(1, realConstructorArg)
+                        }
+                        return constructorArg
+                    }
+                }
                 val body = callee.body ?: return expression
                 val initializerCalls = (body as IrBlockBody).statements
                         .take(2) // The very first statements by construction.

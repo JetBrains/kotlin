@@ -1,2 +1,0 @@
-Resolved to:
-0: (in JavaClass) constructor(s: kotlin.String)

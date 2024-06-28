@@ -4,11 +4,13 @@
  */
 
 #include "KString.h"
-#include "Natives.h"
+
+#include <cstdlib>
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "std_support/CStdlib.hpp"
+
+#include "Natives.h"
 
 using namespace kotlin;
 

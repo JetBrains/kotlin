@@ -1,18 +1,26 @@
-KtEnumEntrySymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
-  containingEnumClassIdIfNonLocal: kotlin/LazyThreadSafetyMode
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
+  compilerVisibility: Public
   contextReceivers: []
+  enumEntryInitializer: KaEnumEntrySymbol(kotlin/LazyThreadSafetyMode.SYNCHRONIZED)
+  isActual: false
+  isExpect: false
   isExtension: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
   name: SYNCHRONIZED
   origin: LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/LazyThreadSafetyMode
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescEnumEntrySymbol
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
+
+  getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KaFe10DescEnumEntrySymbol
 
   deprecationStatus: null

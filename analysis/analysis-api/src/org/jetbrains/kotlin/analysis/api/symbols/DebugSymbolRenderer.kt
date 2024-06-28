@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,19 +8,22 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProviderMixIn
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProviderMixIn
+import org.jetbrains.kotlin.analysis.api.base.KaContextReceiver
 import org.jetbrains.kotlin.analysis.api.contracts.description.Context
-import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtContractEffectDeclaration
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.contracts.description.renderKaContractEffectDeclaration
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaNotUnderContentRootModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptDependencyModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
+import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.types.Variance
@@ -39,315 +43,338 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.isAccessible
 
+@KaNonPublicApi
+@OptIn(KaExperimentalApi::class, KaImplementationDetail::class)
 public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,
     public val renderExpandedTypes: Boolean = false,
 ) {
 
-    context(KtAnalysisSession)
-    public fun render(symbol: KtSymbol): String = prettyPrint { renderSymbol(symbol) }
+    public fun render(analysisSession: KaSession, symbol: KaSymbol): String {
+        return prettyPrint { analysisSession.renderSymbol(symbol, this@prettyPrint) }
+    }
 
-    context(KtAnalysisSession)
-    public fun renderAnnotationApplication(application: KtAnnotationApplication): String =
-        prettyPrint { renderAnnotationApplication(application) }
+    public fun renderAnnotationApplication(analysisSession: KaSession, application: KaAnnotation): String {
+        return prettyPrint { analysisSession.renderAnnotationApplication(application, this@prettyPrint) }
+    }
 
-    context(KtAnalysisSession)
-    public fun renderType(type: KtType): String = prettyPrint { renderType(type) }
+    public fun renderType(analysisSession: KaSession, type: KaType): String {
+        return prettyPrint { analysisSession.renderType(type, this@prettyPrint) }
+    }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbol(symbol: KtSymbol) {
-        renderSymbolInternals(symbol)
+    private fun KaSession.renderSymbol(symbol: KaSymbol, printer: PrettyPrinter) {
+        renderSymbolInternals(symbol, printer)
 
         if (!renderExtra) return
-        withIndent {
+        printer.withIndent {
             @Suppress("DEPRECATION")
-            (symbol as? KtCallableSymbol)?.getDispatchReceiverType()?.let { dispatchType ->
+            (symbol as? KaCallableSymbol)?.dispatchReceiverType?.let { dispatchType ->
                 appendLine().append("getDispatchReceiver()").append(": ")
-                renderType(dispatchType)
+                renderType(dispatchType, printer)
             }
 
-            KtSymbolContainingDeclarationProviderMixIn::class
-                .declaredMemberExtensionFunctions
-                .filter { it.name == "getContainingModule" }
-                .forEach {
-                    appendLine()
-                    renderFunction(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
-                }
+            renderComputedValue("getContainingFileSymbol", printer) { symbol.containingFile }
 
-            KtSymbolInfoProviderMixIn::class.declaredMemberExtensionProperties
-                .asSequence()
-                .filter { (it.extensionReceiverParameter?.type?.classifier as? KClass<*>)?.isInstance(symbol) == true }
-                .forEach {
-                    appendLine()
-                    renderProperty(it, renderSymbolsFully = false, this@KtAnalysisSession, symbol)
-                }
+            if (symbol is KaCallableSymbol) {
+                renderComputedValue("getContainingJvmClassName", printer) { symbol.containingJvmClassName }
+            }
+
+            renderComputedValue("getContainingModule", printer) { symbol.containingModule }
+
+            if (symbol is KaClassSymbol) {
+                renderComputedValue("annotationApplicableTargets", printer) { symbol.annotationApplicableTargets }
+            }
+
+            renderComputedValue("deprecationStatus", printer) { symbol.deprecationStatus }
+
+            if (symbol is KaPropertySymbol) {
+                renderComputedValue("getterDeprecationStatus", printer) { symbol.getterDeprecationStatus }
+                renderComputedValue("javaGetterName", printer) { symbol.javaGetterName }
+                renderComputedValue("javaSetterName", printer) { symbol.javaSetterName }
+                renderComputedValue("setterDeprecationStatus", printer) { symbol.setterDeprecationStatus }
+            }
         }
     }
 
-    public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = prettyPrint {
-        if (symbol !is KtCallableSymbol) return@prettyPrint
+    public fun KaSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KaSymbol): String = prettyPrint {
+        if (symbol !is KaCallableSymbol) return@prettyPrint
 
-        renderFrontendIndependentKClassNameOf(symbol)
+        renderFrontendIndependentKClassNameOf(symbol, printer)
 
         withIndent {
             appendLine()
-            renderProperty(KtCallableSymbol::callableIdIfNonLocal, renderSymbolsFully = false, symbol)
-            if (symbol is KtNamedSymbol) {
+            renderProperty(KaCallableSymbol::callableId, printer, renderSymbolsFully = false, symbol)
+            if (symbol is KaNamedSymbol) {
                 appendLine()
-                renderProperty(KtNamedSymbol::name, renderSymbolsFully = false, symbol)
+                renderProperty(KaNamedSymbol::name, printer, renderSymbolsFully = false, symbol)
             }
             appendLine()
-            renderProperty(KtCallableSymbol::origin, renderSymbolsFully = false, symbol)
+            renderProperty(KaCallableSymbol::origin, printer, renderSymbolsFully = false, symbol)
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderFunction(function: KFunction<*>, renderSymbolsFully: Boolean, vararg args: Any) {
-        append(function.name).append(": ")
-        renderFunctionCall(function, renderSymbolsFully, args)
+    private fun KaSession.renderComputedValue(name: String, printer: PrettyPrinter, block: () -> Any?) {
+        printer.appendLine()
+        printer.append(name).append(": ")
+
+        val value = try {
+            block()
+        } catch (e: Throwable) {
+            printer.append("Could not render due to ").appendLine(e.toString())
+            return
+        }
+
+        renderValue(value, printer, renderSymbolsFully = false)
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderProperty(property: KProperty<*>, renderSymbolsFully: Boolean, vararg args: Any) {
-        append(property.name).append(": ")
-        renderFunctionCall(property.getter, renderSymbolsFully, args)
+    private fun KaSession.renderProperty(
+        property: KProperty<*>,
+        printer: PrettyPrinter,
+        renderSymbolsFully: Boolean,
+        vararg args: Any,
+    ) {
+        printer.append(property.name).append(": ")
+        renderFunctionCall(property.getter, printer, renderSymbolsFully, args)
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderFunctionCall(function: KFunction<*>, renderSymbolsFully: Boolean, args: Array<out Any>) {
+    private fun KaSession.renderFunctionCall(
+        function: KFunction<*>,
+        printer: PrettyPrinter,
+        renderSymbolsFully: Boolean,
+        args: Array<out Any>,
+    ) {
         try {
             function.isAccessible = true
-            renderValue(function.call(*args), renderSymbolsFully)
+            renderValue(function.call(*args), printer, renderSymbolsFully)
         } catch (e: InvocationTargetException) {
-            append("Could not render due to ").appendLine(e.cause.toString())
+            printer.append("Could not render due to ").appendLine(e.cause.toString())
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol) {
-        renderFrontendIndependentKClassNameOf(symbol)
-        val apiClass = getFrontendIndependentKClassOf(symbol)
-        withIndent {
+    private fun KaSession.renderSymbolInternals(symbol: KaSymbol, printer: PrettyPrinter) {
+        renderFrontendIndependentKClassNameOf(symbol, printer)
+        val apiClass = getApiKClassOf(symbol)
+        printer.withIndent {
             val members = apiClass.members
                 .filterIsInstance<KProperty<*>>()
-                .filter { it.name !in ignoredPropertyNames }
+                .filter { !it.hasAnnotation<Deprecated>() && it.name !in ignoredPropertyNames }
                 .sortedBy { it.name }
             appendLine()
             printCollectionIfNotEmpty(members, separator = "\n") { member ->
-                renderProperty(
-                    member,
-                    renderSymbolsFully = member.name == KtValueParameterSymbol::generatedPrimaryConstructorProperty.name,
-                    symbol
-                )
+                val renderSymbolsFully = member.name == KaValueParameterSymbol::generatedPrimaryConstructorProperty.name
+                renderProperty(member, printer, renderSymbolsFully, symbol)
             }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any) {
-        val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
-        append(apiClass.simpleName).append(':')
+    private fun renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any, printer: PrettyPrinter) {
+        val apiClass = getApiKClassOf(instanceOfClassToRender)
+        printer.append(apiClass.simpleName).append(':')
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderList(values: List<*>, renderSymbolsFully: Boolean) {
+    private fun KaSession.renderList(values: List<*>, printer: PrettyPrinter, renderSymbolsFully: Boolean) {
         if (values.isEmpty()) {
-            append("[]")
+            printer.append("[]")
             return
         }
 
-        withIndentInSquareBrackets {
-            printCollection(values, separator = "\n") { renderValue(it, renderSymbolsFully) }
+        printer.withIndentInSquareBrackets {
+            printCollection(values, separator = "\n") { renderValue(it, printer, renderSymbolsFully) }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolTag(symbol: KtSymbol, renderSymbolsFully: Boolean) {
-        fun renderId(id: Any?, symbol: KtSymbol) {
+    private fun KaSession.renderSymbolTag(symbol: KaSymbol, printer: PrettyPrinter, renderSymbolsFully: Boolean) {
+        fun renderId(id: Any?, symbol: KaSymbol) {
             if (id != null) {
-                renderValue(id, renderSymbolsFully)
+                renderValue(id, printer, renderSymbolsFully)
             } else {
-                val outerName = (symbol as? KtPossiblyNamedSymbol)?.name ?: SpecialNames.NO_NAME_PROVIDED
-                append("<local>/" + outerName.asString())
+                val outerName = symbol.name ?: SpecialNames.NO_NAME_PROVIDED
+                printer.append("<local>/" + outerName.asString())
             }
         }
 
-        if (renderSymbolsFully || symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol) {
-            renderSymbol(symbol)
+        if (renderSymbolsFully || symbol is KaBackingFieldSymbol ||
+            symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol ||
+            symbol is KaValueParameterSymbol || symbol is KaReceiverParameterSymbol
+        ) {
+            renderSymbol(symbol, printer)
             return
         }
 
-        append(getFrontendIndependentKClassOf(symbol).simpleName)
-        append("(")
-        when (symbol) {
-            is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
-            is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
-            is KtNamedSymbol -> renderValue(symbol.name, renderSymbolsFully = false)
-            else -> error("Unsupported symbol ${symbol::class.java.name}")
+        with(printer) {
+            append(getApiKClassOf(symbol).simpleName)
+            append("(")
+            when (symbol) {
+                is KaClassLikeSymbol -> renderId(symbol.classId, symbol)
+                is KaCallableSymbol -> renderId(symbol.callableId, symbol)
+                is KaNamedSymbol -> renderValue(symbol.name, printer, renderSymbolsFully = false)
+                is KaFileSymbol -> renderValue((symbol.psi as KtFile).name, printer, renderSymbolsFully = false)
+                else -> error("Unsupported symbol ${symbol::class}")
+            }
+            append(")")
         }
-        append(")")
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderAnnotationValue(value: KtAnnotationValue) {
-        append(KtAnnotationValueRenderer.render(value))
+    private fun renderAnnotationValue(value: KaAnnotationValue, printer: PrettyPrinter) {
+        printer.append(KaAnnotationValueRenderer.render(value))
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderNamedConstantValue(value: KtNamedAnnotationValue) {
-        append(value.name.render()).append(" = ")
-        renderValue(value.expression, renderSymbolsFully = false)
+    private fun KaSession.renderNamedConstantValue(value: KaNamedAnnotationValue, printer: PrettyPrinter) {
+        printer.append(value.name.render()).append(" = ")
+        renderValue(value.expression, printer, renderSymbolsFully = false)
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderType(type: KtType) {
+    private fun KaSession.renderType(type: KaType, printer: PrettyPrinter) {
         val typeToRender = if (renderExpandedTypes) type.fullyExpandedType else type
-        if (renderTypeByProperties) {
-            renderByPropertyNames(typeToRender)
-            return
-        }
 
-        renderFrontendIndependentKClassNameOf(typeToRender)
-        withIndent {
+        renderFrontendIndependentKClassNameOf(typeToRender, printer)
+        printer.withIndent {
             appendLine()
-            append("annotationsList: ")
-            renderAnnotationsList(typeToRender.annotationsList)
+            if (renderTypeByProperties) {
+                renderByPropertyNames(typeToRender, printer)
+            } else {
+                append("annotations: ")
+                renderAnnotationsList(typeToRender.annotations, printer)
 
-            if (typeToRender is KtNonErrorClassType) {
+                if (typeToRender is KaClassType) {
+                    appendLine()
+                    append("typeArguments: ")
+                    renderList(typeToRender.typeArguments, printer, renderSymbolsFully = false)
+                }
+
                 appendLine()
-                append("ownTypeArguments: ")
-                renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
-            }
-
-            appendLine()
-            append("type: ")
-            when (typeToRender) {
-                is KtClassErrorType -> append("ERROR_TYPE")
-                else -> append(typeToRender.asStringForDebugging())
+                append("type: ")
+                when (typeToRender) {
+                    is KaErrorType -> append("ERROR_TYPE")
+                    else -> append(typeToRender.toString())
+                }
             }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderByPropertyNames(value: Any) {
+    private fun KaSession.renderByPropertyNames(value: Any, printer: PrettyPrinter) {
         val members = value::class.members
             .filter { it.name !in ignoredPropertyNames }
             .filter { it.visibility != KVisibility.PRIVATE && it.visibility != KVisibility.INTERNAL }
+            .filter { !it.hasAnnotation<Deprecated>() }
             .sortedBy { it.name }
             .filterIsInstance<KProperty<*>>()
-        printCollectionIfNotEmpty(members, separator = "\n") { member ->
-            renderProperty(
-                member,
-                renderSymbolsFully = false,
-                value
-            )
+
+        printer.printCollectionIfNotEmpty(members, separator = "\n") { member ->
+            renderProperty(member, printer, renderSymbolsFully = false, value)
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderAnnotationApplication(call: KtAnnotationApplication) {
-        renderValue(call.classId, renderSymbolsFully = false)
-        append('(')
-        if (call is KtAnnotationApplicationWithArgumentsInfo) {
+    private fun KaSession.renderAnnotationApplication(call: KaAnnotation, printer: PrettyPrinter) {
+        with(printer) {
+            renderValue(call.classId, printer, renderSymbolsFully = false)
+            append('(')
             call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
                 if (index > 0) {
                     append(", ")
                 }
-                renderValue(value, renderSymbolsFully = false)
+                renderValue(value, printer, renderSymbolsFully = false)
             }
-        } else {
-            append("isCallWithArguments=${call.isCallWithArguments}")
-        }
-        append(')')
+            append(')')
 
-        withIndent {
-            appendLine().append("psi: ")
-            renderValue(call.psi?.javaClass?.simpleName, renderSymbolsFully = false)
+            withIndent {
+                appendLine().append("psi: ")
+                val psi =
+                    if (call.psi?.containingKtFile?.isCompiled == true) {
+                        null
+                    } else call.psi
+                renderValue(psi?.javaClass?.simpleName, printer, renderSymbolsFully = false)
+            }
         }
     }
 
-    private fun PrettyPrinter.renderDeprecationInfo(info: DeprecationInfo) {
-        append("DeprecationInfo(")
-        append("deprecationLevel=${info.deprecationLevel}, ")
-        append("propagatesToOverrides=${info.propagatesToOverrides}, ")
-        append("message=${info.message}")
-        append(")")
+    private fun renderDeprecationInfo(info: DeprecationInfo, printer: PrettyPrinter) {
+        with(printer) {
+            append("DeprecationInfo(")
+            append("deprecationLevel=${info.deprecationLevel}, ")
+            append("propagatesToOverrides=${info.propagatesToOverrides}, ")
+            append("message=${info.message}")
+            append(")")
+        }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderValue(value: Any?, renderSymbolsFully: Boolean) {
+    private fun KaSession.renderValue(value: Any?, printer: PrettyPrinter, renderSymbolsFully: Boolean) {
         when (value) {
             // Symbol-related values
-            is KtSymbol -> renderSymbolTag(value, renderSymbolsFully)
-            is KtType -> renderType(value)
-            is KtTypeProjection -> renderTypeProjection(value)
-            is KtClassTypeQualifier -> renderTypeQualifier(value)
-            is KtAnnotationValue -> renderAnnotationValue(value)
-            is KtContractEffectDeclaration -> Context(this@KtAnalysisSession, this@renderValue, this@DebugSymbolRenderer)
-                .renderKtContractEffectDeclaration(value, endWithNewLine = false)
-            is KtNamedAnnotationValue -> renderNamedConstantValue(value)
-            is KtInitializerValue -> renderKtInitializerValue(value)
-            is KtContextReceiver -> renderContextReceiver(value)
-            is KtAnnotationApplication -> renderAnnotationApplication(value)
-            is KtAnnotationsList -> renderAnnotationsList(value)
-            is KtModule -> renderKtModule(value)
+            is KaSymbol -> renderSymbolTag(value, printer, renderSymbolsFully)
+            is KaType -> renderType(value, printer)
+            is KaTypeProjection -> renderTypeProjection(value, printer)
+            is KaClassTypeQualifier -> renderTypeQualifier(value, printer)
+            is KaAnnotationValue -> renderAnnotationValue(value, printer)
+            is KaContractEffectDeclaration -> Context(this@KaSession, printer, this@DebugSymbolRenderer)
+                .renderKaContractEffectDeclaration(value, endWithNewLine = false)
+            is KaNamedAnnotationValue -> renderNamedConstantValue(value, printer)
+            is KaInitializerValue -> renderKtInitializerValue(value, printer)
+            is KaContextReceiver -> renderContextReceiver(value, printer)
+            is KaAnnotation -> renderAnnotationApplication(value, printer)
+            is KaAnnotationList -> renderAnnotationsList(value, printer)
+            is KaModule -> renderModule(value, printer)
             // Other custom values
-            is Name -> append(value.asString())
-            is FqName -> append(value.asString())
-            is ClassId -> append(value.asString())
-            is DeprecationInfo -> renderDeprecationInfo(value)
-            is Visibility -> append(value::class.java.simpleName)
+            is Name -> printer.append(value.asString())
+            is FqName -> printer.append(value.asString())
+            is ClassId -> printer.append(value.asString())
+            is DeprecationInfo -> renderDeprecationInfo(value, printer)
+            is Visibility -> printer.append(value::class.java.simpleName)
             // Unsigned integers
-            is UByte -> append(value.toString())
-            is UShort -> append(value.toString())
-            is UInt -> append(value.toString())
-            is ULong -> append(value.toString())
+            is UByte -> printer.append(value.toString())
+            is UShort -> printer.append(value.toString())
+            is UInt -> printer.append(value.toString())
+            is ULong -> printer.append(value.toString())
             // Java values
-            is Enum<*> -> append(value.name)
-            is List<*> -> renderList(value, renderSymbolsFully = false)
-            else -> append(value.toString())
+            is Enum<*> -> printer.append(value.name)
+            is List<*> -> renderList(value, printer, renderSymbolsFully = false)
+            else -> printer.append(value.toString())
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderTypeProjection(value: KtTypeProjection) {
+    private fun KaSession.renderTypeProjection(value: KaTypeProjection, printer: PrettyPrinter) {
         when (value) {
-            is KtStarTypeProjection -> append("*")
-            is KtTypeArgumentWithVariance -> {
+            is KaStarTypeProjection -> printer.append("*")
+            is KaTypeArgumentWithVariance -> {
                 if (value.variance != Variance.INVARIANT) {
-                    append("${value.variance.label} ")
+                    printer.append("${value.variance.label} ")
                 }
-                renderType(value.type)
+                renderType(value.type, printer)
             }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderTypeQualifier(value: KtClassTypeQualifier) {
-        appendLine("qualifier:")
-        withIndent {
-            renderByPropertyNames(value)
+    private fun KaSession.renderTypeQualifier(value: KaClassTypeQualifier, printer: PrettyPrinter) {
+        with(printer) {
+            appendLine("qualifier:")
+            withIndent {
+                renderByPropertyNames(value, printer)
+            }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderContextReceiver(receiver: KtContextReceiver) {
-        append("KtContextReceiver:")
-        withIndent {
-            appendLine()
-            append("label: ")
-            renderValue(receiver.label, renderSymbolsFully = false)
-            appendLine()
-            append("type: ")
-            renderType(receiver.type)
+    private fun KaSession.renderContextReceiver(receiver: KaContextReceiver, printer: PrettyPrinter) {
+        with(printer) {
+            append("KtContextReceiver:")
+            withIndent {
+                appendLine()
+                append("label: ")
+                renderValue(receiver.label, printer, renderSymbolsFully = false)
+                appendLine()
+                append("type: ")
+                renderType(receiver.type, printer)
+            }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
-        val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
-        append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
+    @OptIn(KaExperimentalApi::class)
+    private fun renderModule(module: KaModule, printer: PrettyPrinter) {
+        val apiClass = when (val moduleClass = module::class) {
+            in kaModuleApiSubclasses -> moduleClass
+            else -> moduleClass.allSuperclasses.first { it in kaModuleApiSubclasses }
+        }
+        printer.append(apiClass.simpleName + " \"" + module.moduleDescription + "\"")
     }
 
     private fun KClass<*>.allSealedSubClasses(): List<KClass<*>> = buildList {
@@ -355,56 +382,58 @@ public class DebugSymbolRenderer(
         sealedSubclasses.flatMapTo(this) { it.allSealedSubClasses() }
     }
 
-    private val ktModuleSubclasses = KtModule::class.allSealedSubClasses().distinct().sortedWith { a, b ->
-        when {
-            a == b -> 0
-            a.isSubclassOf(b) -> -1
-            b.isSubclassOf(a) -> 1
-            else -> 0
+    /**
+     * All [KaModule] classes which are part of the API (defined in `KaModule.kt`) and should be printed in test data.
+     */
+    @OptIn(KaPlatformInterface::class, KaExperimentalApi::class)
+    private val kaModuleApiSubclasses =
+        listOf(
+            KaModule::class,
+            KaSourceModule::class,
+            KaLibraryModule::class,
+            KaLibrarySourceModule::class,
+            KaBuiltinsModule::class,
+            KaScriptModule::class,
+            KaScriptDependencyModule::class,
+            KaDanglingFileModule::class,
+            KaNotUnderContentRootModule::class,
+        ).sortedWith { a, b ->
+            when {
+                a == b -> 0
+                a.isSubclassOf(b) -> -1
+                b.isSubclassOf(a) -> 1
+                else -> 0
+            }
+        }
+
+    private fun renderKtInitializerValue(value: KaInitializerValue, printer: PrettyPrinter) {
+        with(printer) {
+            when (value) {
+                is KaConstantInitializerValue -> {
+                    append("KtConstantInitializerValue(")
+                    append(value.constant.render())
+                    append(")")
+                }
+
+                is KaNonConstantInitializerValue -> {
+                    append("KtNonConstantInitializerValue(")
+                    append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
+                    append(")")
+                }
+
+                is KaConstantValueForAnnotation -> {
+                    append("KtConstantValueForAnnotation(")
+                    append(value.annotationValue.renderAsSourceCode())
+                    append(")")
+                }
+            }
         }
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderKtInitializerValue(value: KtInitializerValue) {
-        when (value) {
-            is KtConstantInitializerValue -> {
-                append("KtConstantInitializerValue(")
-                append(value.constant.renderAsKotlinConstant())
-                append(")")
-            }
-
-            is KtNonConstantInitializerValue -> {
-                append("KtNonConstantInitializerValue(")
-                append(value.initializerPsi?.firstLineOfPsi() ?: "NO_PSI")
-                append(")")
-            }
-
-            is KtConstantValueForAnnotation -> {
-                append("KtConstantValueForAnnotation(")
-                append(value.annotationValue.renderAsSourceCode())
-                append(")")
-            }
-        }
+    private fun KaSession.renderAnnotationsList(value: KaAnnotationList, printer: PrettyPrinter) {
+        renderList(value, printer, renderSymbolsFully = false)
     }
 
-    context(KtAnalysisSession)
-    private fun PrettyPrinter.renderAnnotationsList(value: KtAnnotationsList) {
-        renderList(value.annotations, renderSymbolsFully = false)
-    }
-
-    private fun getFrontendIndependentKClassOf(instanceOfClass: Any): KClass<*> {
-        var current: Class<*> = instanceOfClass.javaClass
-
-        while (true) {
-            val className = current.name
-            if (symbolImplementationPackageNames.none { className.startsWith("$it.") }) {
-                return current.kotlin
-            }
-            current = current.superclass
-        }
-    }
-
-    context(KtAnalysisSession)
     private fun PsiElement.firstLineOfPsi(): String {
         val text = text
         val lines = text.lines()
@@ -412,17 +441,23 @@ public class DebugSymbolRenderer(
         else lines.first() + " ..."
     }
 
-    private val ignoredPropertyNames = setOf(
-        "psi",
-        "token",
-        "builder",
-        "coneType",
-        "analysisContext",
-        "fe10Type"
-    )
+    public companion object {
+        private val ignoredPropertyNames = setOf(
+            "psi",
+            "token",
+            "builder",
+            "coneType",
+            "analysisContext",
+            "fe10Type",
 
-    private val symbolImplementationPackageNames = listOf(
-        "org.jetbrains.kotlin.analysis.api.fir",
-        "org.jetbrains.kotlin.analysis.api.descriptors",
-    )
+            // These properties are made obsolete by their counterparts without `*IfNonLocal` (e.g. `classId`), which contain the same
+            // values.
+            "classIdIfNonLocal",
+            "containingClassIdIfNonLocal",
+            "callableIdIfNonLocal",
+        )
+    }
 }
+
+private val PrettyPrinter.printer: PrettyPrinter
+    get() = this

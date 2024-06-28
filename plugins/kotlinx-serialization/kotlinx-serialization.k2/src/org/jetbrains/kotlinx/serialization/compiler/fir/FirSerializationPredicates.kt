@@ -19,4 +19,7 @@ object FirSerializationPredicates {
         annotated(setOf(SerializationAnnotations.serializableAnnotationFqName)) or
                 metaAnnotated(SerializationAnnotations.metaSerializableAnnotationFqName, includeItself = false)
     }
+    internal val annotatedWithKeepSerializer = DeclarationPredicate.create {
+        annotated(setOf(SerializationAnnotations.keepGeneratedSerializerAnnotationFqName))
+    }
 }

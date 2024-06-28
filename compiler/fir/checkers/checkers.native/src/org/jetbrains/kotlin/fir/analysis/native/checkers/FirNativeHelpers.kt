@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 
 fun DiagnosticReporter.reportIfHasAnnotation(
     declaration: FirDeclaration,
@@ -24,3 +26,6 @@ fun DiagnosticReporter.reportIfHasAnnotation(
         reportOn(annotation.source, error, context)
     }
 }
+
+fun FirRegularClassSymbol.forwardDeclarationKindOrNull(): NativeForwardDeclarationKind? =
+    NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]

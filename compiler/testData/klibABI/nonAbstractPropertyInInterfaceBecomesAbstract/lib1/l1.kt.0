@@ -1,6 +1,0 @@
-package lib1
-
-interface A {
-    val foo: Int get() = 42
-    val bar: Int get() = 42
-}

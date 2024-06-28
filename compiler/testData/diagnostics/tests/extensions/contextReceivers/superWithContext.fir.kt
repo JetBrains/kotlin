@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Context {
     fun h() {}

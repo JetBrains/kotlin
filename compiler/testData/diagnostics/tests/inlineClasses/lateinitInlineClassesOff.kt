@@ -1,5 +1,5 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // FIR_IDENTICAL
 
 inline class Foo(val x: Int)

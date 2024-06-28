@@ -1,5 +1,5 @@
-// !LANGUAGE: -TrailingCommas
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -TrailingCommas
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import java.util.ArrayList
 

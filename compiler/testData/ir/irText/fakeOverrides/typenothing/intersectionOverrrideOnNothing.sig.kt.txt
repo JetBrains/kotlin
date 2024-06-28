@@ -1,0 +1,147 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+interface A : Java1<Nothing?>, KotlinInterface<Nothing?> {
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.Nothing?
+  //   Public signature: /A.bar|3558363943026565141[0]
+  //   Public signature debug description: bar(){}kotlin.Nothing?
+  abstract /* fake */ override fun bar(): Nothing?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Nothing?){}
+  //   Public signature: /A.foo|-6013379405170320929[0]
+  //   Public signature debug description: foo(kotlin.Nothing?){}
+  abstract /* fake */ override fun foo(o: Nothing?): Unit
+
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract /* fake */ override var a: Nothing?
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}kotlin.Nothing?
+    //   Public signature: /A.a.<get-a>|5061168338035373945[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Nothing?
+    abstract /* fake */ override get(): Nothing?
+    // CHECK:
+    //   Mangled name: A#<set-a>(kotlin.Nothing?){}
+    //   Public signature: /A.a.<set-a>|-5391875051776279009[0]
+    //   Public signature debug description: <set-a>(kotlin.Nothing?){}
+    abstract /* fake */ override set(<set-?>: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+interface B : Java2, KotlinInterface2 {
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.Nothing?
+  //   Public signature: /B.bar|3558363943026565141[0]
+  //   Public signature debug description: bar(){}kotlin.Nothing?
+  abstract /* fake */ override fun bar(): Nothing?
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Any?){}
+  //   Public signature: /B.foo|-6211124056249407422[0]
+  //   Public signature debug description: foo(kotlin.Any?){}
+  abstract /* fake */ override fun foo(t: Any?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Nothing?){}
+  //   Public signature: /B.foo|-6013379405170320929[0]
+  //   Public signature debug description: foo(kotlin.Nothing?){}
+  abstract /* fake */ override fun foo(o: Nothing?): Unit
+
+  // CHECK:
+  //   Mangled name: B{}a
+  //   Public signature: /B.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract /* fake */ override var a: Nothing?
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-a>(){}kotlin.Nothing?
+    //   Public signature: /B.a.<get-a>|5061168338035373945[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Nothing?
+    abstract /* fake */ override get(): Nothing?
+    // CHECK:
+    //   Mangled name: B#<set-a>(kotlin.Nothing?){}
+    //   Public signature: /B.a.<set-a>|-5391875051776279009[0]
+    //   Public signature debug description: <set-a>(kotlin.Nothing?){}
+    abstract /* fake */ override set(<set-?>: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface<T : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){}1:0
+  //   Public signature: /KotlinInterface.bar|-6476965473155069157[0]
+  //   Public signature debug description: bar(){}1:0
+  abstract fun bar(): T
+
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(1:0){}
+  //   Public signature: /KotlinInterface.foo|-701456291278879981[0]
+  //   Public signature debug description: foo(1:0){}
+  abstract fun foo(o: T): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}a
+  //   Public signature: /KotlinInterface.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract var a: T
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-a>(){}1:0
+    //   Public signature: /KotlinInterface.a.<get-a>|5765441560292063424[0]
+    //   Public signature debug description: <get-a>(){}1:0
+    abstract get
+    // CHECK:
+    //   Mangled name: KotlinInterface#<set-a>(1:0){}
+    //   Public signature: /KotlinInterface.a.<set-a>|3804696573885127852[0]
+    //   Public signature debug description: <set-a>(1:0){}
+    abstract set
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface2
+//   Public signature: /KotlinInterface2|null[0]
+interface KotlinInterface2 {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface2#bar(){}kotlin.Nothing?
+  //   Public signature: /KotlinInterface2.bar|3558363943026565141[0]
+  //   Public signature debug description: bar(){}kotlin.Nothing?
+  abstract fun bar(): Nothing?
+
+  // CHECK:
+  //   Mangled name: KotlinInterface2#foo(kotlin.Nothing?){}
+  //   Public signature: /KotlinInterface2.foo|-6013379405170320929[0]
+  //   Public signature debug description: foo(kotlin.Nothing?){}
+  abstract fun foo(o: Nothing?): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInterface2{}a
+  //   Public signature: /KotlinInterface2.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract var a: Nothing?
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface2#<get-a>(){}kotlin.Nothing?
+    //   Public signature: /KotlinInterface2.a.<get-a>|5061168338035373945[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Nothing?
+    abstract get
+    // CHECK:
+    //   Mangled name: KotlinInterface2#<set-a>(kotlin.Nothing?){}
+    //   Public signature: /KotlinInterface2.a.<set-a>|-5391875051776279009[0]
+    //   Public signature debug description: <set-a>(kotlin.Nothing?){}
+    abstract set
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

@@ -32,7 +32,7 @@ internal class AnonymousInitializerGenerator(
         ktAnonymousInitializer: KtAnonymousInitializer,
         irClass: IrClass
     ): IrAnonymousInitializer =
-        context.symbolTable.declareAnonymousInitializer(
+        context.symbolTable.descriptorExtension.declareAnonymousInitializer(
             ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
             IrDeclarationOrigin.DEFINED, irClass.descriptor
         ).buildWithScope { irAnonymousInitializer ->

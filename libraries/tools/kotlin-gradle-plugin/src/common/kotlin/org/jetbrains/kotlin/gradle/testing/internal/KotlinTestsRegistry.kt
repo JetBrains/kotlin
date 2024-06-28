@@ -81,7 +81,6 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
         val existed = project.locateTask<KotlinTestReport>(name)
         if (existed != null) return existed
 
-        val reportName = name
         val testReportService = TestReportService.registerIfAbsent(project)
         val aggregate: TaskProvider<KotlinTestReport> = project.registerTask(name) { aggregate ->
             aggregate.description = description
@@ -91,7 +90,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
                 .variantImplementationFactory<KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory>()
                 .getInstance(project.objects)
 
-            compatibilityHelper.setDestinationDirectory(aggregate, project.testReportsDir.resolve(reportName))
+            compatibilityHelper.setDestinationDirectory(aggregate, project.testReportsDir.map { it.dir(name) })
 
             val isIdeaActive = project.readSystemPropertyAtConfigurationTime("idea.active").isPresent
 

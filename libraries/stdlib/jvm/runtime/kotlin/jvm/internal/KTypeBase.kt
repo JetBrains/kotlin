@@ -10,5 +10,5 @@ import kotlin.reflect.KType
 
 @SinceKotlin("1.4")
 public interface KTypeBase : KType {
-    val javaType: Type?
+    public val javaType: Type?
 }

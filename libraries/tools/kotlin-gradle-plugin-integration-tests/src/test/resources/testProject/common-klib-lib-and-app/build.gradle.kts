@@ -1,15 +1,10 @@
 plugins {
-	kotlin("multiplatform").version("<pluginMarkerVersion>")
+	kotlin("multiplatform")
 	id("maven-publish")
 }
 
 group = "com.example"
 version = "1.0"
-
-repositories {
-	mavenLocal()
-	mavenCentral()
-}
 
 kotlin {
 	jvm()
@@ -18,31 +13,31 @@ kotlin {
 	linuxX64()
 	linuxArm64()
 
-	// Linux-specific targets – embedded:
-	linuxMips32()
-	linuxMipsel32()
-
 	// macOS-specific targets - created by the ios() shortcut:
 	ios()
 
-	// Windows-specific targets:
 	mingwX64()
-	mingwX86()
 
 	sourceSets {
-		val commonMain by getting {
-			dependencies {
-				implementation(kotlin("stdlib-common"))
-			}
+		val commonMain by getting
+
+		val windowsAndLinuxMain by creating {
+			dependsOn(commonMain)
 		}
 
 		val linuxMain by creating {
 			dependsOn(commonMain)
 		}
 
-
-		configure(listOf(linuxX64(), linuxArm64())) {
-			compilations["main"].defaultSourceSet.dependsOn(linuxMain)
+		val mingwX64Main by getting {
+			dependsOn(windowsAndLinuxMain)
+		}
+		val linuxX64Main by getting {
+			dependsOn(linuxMain)
+			dependsOn(windowsAndLinuxMain)
+		}
+		val linuxArm64Main by getting {
+			dependsOn(linuxMain)
 		}
 
 		val jvmAndJsMain by creating {
@@ -50,40 +45,22 @@ kotlin {
 		}
 
 		val jvmMain by getting {
-			dependsOn(jvmAndJsMain) 
-			dependencies {
-				implementation(kotlin("stdlib-jdk8"))
-			}
+			dependsOn(jvmAndJsMain)
 		}
 
 		val jsMain by getting {
-			dependsOn(jvmAndJsMain) 
-			dependencies {
-				implementation(kotlin("stdlib-js"))
-			}
+			dependsOn(jvmAndJsMain)
 		}
 
-		val embeddedMain by creating {
-			dependsOn(commonMain)
-		}
-
-		configure(listOf(linuxMips32(), linuxMipsel32())) {
-			compilations["main"].defaultSourceSet.dependsOn(embeddedMain)
-		}
-
-		val windowsMain by creating {
-			dependsOn(commonMain)
-		}
-
-		configure(listOf(mingwX64(), mingwX86())) {
-			compilations["main"].defaultSourceSet.dependsOn(windowsMain)
+		all {
+			languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
 		}
 	}
 }
 
 publishing {
 	repositories {
-		maven("$rootDir/repo")
+		maven("<localRepo>")
 	}
 }
 

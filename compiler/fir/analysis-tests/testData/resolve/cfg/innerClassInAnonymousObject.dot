@@ -5,69 +5,78 @@ digraph innerClassInAnonymousObject_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter property" style="filled" fillcolor=red];
-        1 [label="Enter anonymous object"];
+        0 [label="Enter file innerClassInAnonymousObject.kt" style="filled" fillcolor=red];
         subgraph cluster_1 {
             color=blue
-            2 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+            1 [label="Enter property" style="filled" fillcolor=red];
+            2 [label="Enter anonymous object"];
             subgraph cluster_2 {
                 color=blue
-                3 [label="Enter function <init>" style="filled" fillcolor=red];
-                4 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-                5 [label="Exit function <init>" style="filled" fillcolor=red];
+                3 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                subgraph cluster_3 {
+                    color=blue
+                    4 [label="Enter function <init>" style="filled" fillcolor=red];
+                    5 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                    6 [label="Exit function <init>" style="filled" fillcolor=red];
+                }
+                7 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
             }
-            6 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            8 [label="Exit anonymous object expression"];
+            9 [label="Exit property" style="filled" fillcolor=red];
         }
-        7 [label="Exit anonymous object expression"];
-        8 [label="Exit property" style="filled" fillcolor=red];
+        10 [label="Exit file innerClassInAnonymousObject.kt" style="filled" fillcolor=red];
     }
-    subgraph cluster_3 {
+    subgraph cluster_4 {
         color=blue
-        9 [label="Enter class Nested" style="filled" fillcolor=red];
-        subgraph cluster_4 {
+        11 [label="Enter class Nested" style="filled" fillcolor=red];
+        subgraph cluster_5 {
             color=blue
-            10 [label="Enter function <init>" style="filled" fillcolor=red];
-            11 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            12 [label="Exit function <init>" style="filled" fillcolor=red];
+            12 [label="Enter function <init>" style="filled" fillcolor=red];
+            13 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            14 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        13 [label="Exit class Nested" style="filled" fillcolor=red];
+        15 [label="Exit class Nested" style="filled" fillcolor=red];
     }
-    subgraph cluster_5 {
+    subgraph cluster_6 {
         color=blue
-        14 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_6 {
+        16 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_7 {
             color=blue
-            15 [label="Enter block"];
-            16 [label="Exit block"];
+            17 [label="Enter block"];
+            18 [label="Exit block"];
         }
-        17 [label="Exit function foo" style="filled" fillcolor=red];
+        19 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    0 -> {1};
+    0 -> {1} [color=green];
+    0 -> {10} [style=dotted];
+    0 -> {1} [style=dashed];
     1 -> {2};
-    1 -> {7} [style=dotted];
-    1 -> {2} [style=dashed];
     2 -> {3};
-    2 -> {9} [color=red];
-    2 -> {6} [style=dotted];
+    2 -> {8} [style=dotted];
     2 -> {3} [style=dashed];
     3 -> {4};
+    3 -> {11} [color=red];
+    3 -> {7} [style=dotted];
+    3 -> {4} [style=dashed];
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    6 -> {9} [color=green];
-    6 -> {9} [style=dashed];
     7 -> {8};
-    9 -> {10};
-    9 -> {14} [color=red];
-    9 -> {13} [style=dotted];
-    9 -> {10} [style=dashed];
-    10 -> {11};
+    7 -> {11} [color=green];
+    7 -> {11} [style=dashed];
+    8 -> {9};
+    9 -> {10} [color=green];
     11 -> {12};
-    12 -> {13} [color=green];
-    13 -> {14} [color=green];
-    13 -> {14} [style=dashed];
-    14 -> {15};
-    15 -> {16};
+    11 -> {16} [color=red];
+    11 -> {15} [style=dotted];
+    11 -> {12} [style=dashed];
+    12 -> {13};
+    13 -> {14};
+    14 -> {15} [color=green];
+    15 -> {16} [color=green];
+    15 -> {16} [style=dashed];
     16 -> {17};
+    17 -> {18};
+    18 -> {19};
 
 }

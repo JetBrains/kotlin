@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassFromArgument
+import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
 import org.jetbrains.kotlin.fir.declarations.utils.isFun
@@ -27,10 +28,13 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_ANNOTATION_CLASS
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_CLASS_ID
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID
 
-object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
+object FirOptInAnnotationCallChecker : FirAnnotationCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         val classId = lookupTag.classId
@@ -46,7 +50,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                 } else {
                     val annotationClasses = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
                     for (classSymbol in annotationClasses?.extractClassesFromArgument(context.session).orEmpty()) {
-                        checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
+                        checkOptInArgumentIsMarker(classSymbol, classId, expression.source, reporter, context)
                     }
                 }
             }
@@ -54,13 +58,19 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
             val declaration = context.containingDeclarations.lastOrNull() as? FirClass
             if (declaration != null) {
                 val kind = declaration.classKind
+                val classKindRepresentation = kind.representation
                 if (kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT || kind == ClassKind.ANNOTATION_CLASS) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, kind.toString(), context)
+                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, classKindRepresentation, context)
                     return
                 }
                 val modality = declaration.modality()
                 if (modality == Modality.FINAL || modality == Modality.SEALED) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "$modality $kind", context)
+                    reporter.reportOn(
+                        expression.source,
+                        FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE,
+                        "${modality.name.lowercase()} $classKindRepresentation",
+                        context,
+                    )
                     return
                 }
                 if (declaration.isFun) {
@@ -68,19 +78,25 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     return
                 }
                 if (declaration.isLocal) {
-                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "local $kind", context)
+                    reporter.reportOn(expression.source, FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE, "local $classKindRepresentation", context)
                     return
                 }
             }
             val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument(context.session) ?: return
-            checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
+            checkOptInArgumentIsMarker(classSymbol, classId, expression.source, reporter, context)
         }
     }
+
+    private val ClassKind.representation: String
+        get() = when (this) {
+            ClassKind.ENUM_ENTRY -> "enum entry"
+            else -> codeRepresentation!!
+        }
 
     private fun checkOptInIsEnabled(
         element: KtSourceElement?,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
         val languageVersionSettings = context.session.languageVersionSettings
         val optInFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
@@ -93,16 +109,22 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
 
     private fun checkOptInArgumentIsMarker(
         classSymbol: FirRegularClassSymbol,
+        annotationClassId: ClassId,
         source: KtSourceElement?,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
         with(FirOptInUsageBaseChecker) {
             if (classSymbol.loadExperimentalityForMarkerAnnotation(context.session) == null) {
+                val diagnostic = when (annotationClassId) {
+                    OPT_IN_CLASS_ID -> FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER
+                    SUBCLASS_OPT_IN_REQUIRED_CLASS_ID -> FirErrors.SUBCLASS_OPT_ARGUMENT_IS_NOT_MARKER
+                    else -> return
+                }
                 reporter.reportOn(
                     source,
-                    FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER,
-                    classSymbol.classId.asSingleFqName(),
+                    diagnostic,
+                    classSymbol.classId,
                     context
                 )
             }

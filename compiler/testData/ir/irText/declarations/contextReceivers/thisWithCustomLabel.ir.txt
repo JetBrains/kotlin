@@ -2,11 +2,6 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (a:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
-      VALUE_PARAMETER name:a index:0 type:T of <root>.A
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:a visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.A visibility:private [final]
         EXPRESSION_BODY
@@ -18,9 +13,14 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): T of <root>.A declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:T of <root>.A visibility:private [final]' type=T of <root>.A origin=null
               receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-a>' type=<root>.A<T of <root>.A> origin=null
+    CONSTRUCTOR visibility:public <> (a:T of <root>.A) returnType:<root>.A<T of <root>.A> [primary]
+      VALUE_PARAMETER name:a index:0 type:T of <root>.A
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -33,11 +33,6 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
-    CONSTRUCTOR visibility:public <> (b:kotlin.Any) returnType:<root>.B [primary]
-      VALUE_PARAMETER name:b index:0 type:kotlin.Any
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
@@ -49,9 +44,14 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
           RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Any declared in <root>.B'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-b>' type=<root>.B origin=null
+    CONSTRUCTOR visibility:public <> (b:kotlin.Any) returnType:<root>.B [primary]
+      VALUE_PARAMETER name:b index:0 type:kotlin.Any
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -64,11 +64,6 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
-    CONSTRUCTOR visibility:public <> (c:kotlin.Any) returnType:<root>.C [primary]
-      VALUE_PARAMETER name:c index:0 type:kotlin.Any
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:c visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
@@ -80,9 +75,14 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
           RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.Any declared in <root>.C'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-c>' type=<root>.C origin=null
+    CONSTRUCTOR visibility:public <> (c:kotlin.Any) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:c index:0 type:kotlin.Any
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -93,43 +93,43 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:f visibility:public modality:FINAL <> (_context_receiver_0:<root>.A<kotlin.Int>, _context_receiver_1:<root>.A<kotlin.String>, _context_receiver_2:<root>.B) returnType:kotlin.Unit
+  FUN name:f visibility:public modality:FINAL <> ($context_receiver_0:<root>.A<kotlin.Int>, $context_receiver_1:<root>.A<kotlin.String>, $context_receiver_2:<root>.B) returnType:kotlin.Unit
     contextReceiverParametersCount: 3
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.A<kotlin.Int>
-    VALUE_PARAMETER name:_context_receiver_1 index:1 type:<root>.A<kotlin.String>
-    VALUE_PARAMETER name:_context_receiver_2 index:2 type:<root>.B
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A<kotlin.Int>
+    VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.A<kotlin.String>
+    VALUE_PARAMETER name:$context_receiver_2 index:2 type:<root>.B
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
           $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_0: <root>.A<kotlin.Int> declared in <root>.f' type=<root>.A<kotlin.Int> origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.A<kotlin.Int> declared in <root>.f' type=<root>.A<kotlin.Int> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
           $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_1: <root>.A<kotlin.String> declared in <root>.f' type=<root>.A<kotlin.String> origin=null
+            $this: GET_VAR '$context_receiver_1: <root>.A<kotlin.String> declared in <root>.f' type=<root>.A<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-b> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-          $this: GET_VAR '_context_receiver_2: <root>.B declared in <root>.f' type=<root>.B origin=null
+          $this: GET_VAR '$context_receiver_2: <root>.B declared in <root>.f' type=<root>.B origin=null
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, _context_receiver_0:<root>.A<kotlin.Int>, _context_receiver_1:<root>.A<kotlin.String>, _context_receiver_2:<root>.B) returnType:kotlin.Int
+    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, $context_receiver_0:<root>.A<kotlin.Int>, $context_receiver_1:<root>.A<kotlin.String>, $context_receiver_2:<root>.B) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 3
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.A<kotlin.Int>
-      VALUE_PARAMETER name:_context_receiver_1 index:1 type:<root>.A<kotlin.String>
-      VALUE_PARAMETER name:_context_receiver_2 index:2 type:<root>.B
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A<kotlin.Int>
+      VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER name:$context_receiver_2 index:2 type:<root>.B
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
             $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_0: <root>.A<kotlin.Int> declared in <root>.<get-p>' type=<root>.A<kotlin.Int> origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.A<kotlin.Int> declared in <root>.<get-p>' type=<root>.A<kotlin.Int> origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
             $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_1: <root>.A<kotlin.String> declared in <root>.<get-p>' type=<root>.A<kotlin.String> origin=null
+              $this: GET_VAR '$context_receiver_1: <root>.A<kotlin.String> declared in <root>.<get-p>' type=<root>.A<kotlin.String> origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-b> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_2: <root>.B declared in <root>.<get-p>' type=<root>.B origin=null
+            $this: GET_VAR '$context_receiver_2: <root>.B declared in <root>.<get-p>' type=<root>.B origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-c> (): kotlin.Any declared in <root>.C' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.C declared in <root>.<get-p>' type=<root>.C origin=null
@@ -139,5 +139,5 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-c> (): kotlin.Any declared in <root>.C' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.C declared in <root>.<get-p>' type=<root>.C origin=null
-        RETURN type=kotlin.Nothing from='public final fun <get-p> (_context_receiver_0: <root>.A<kotlin.Int>, _context_receiver_1: <root>.A<kotlin.String>, _context_receiver_2: <root>.B): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-p> ($context_receiver_0: <root>.A<kotlin.Int>, $context_receiver_1: <root>.A<kotlin.String>, $context_receiver_2: <root>.B): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=1

@@ -17,8 +17,8 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
 import org.jetbrains.kotlin.gradle.utils.getValue
 
@@ -30,14 +30,12 @@ internal data class ModuleCoordinates(
 
 internal class PomDependenciesRewriter(
     project: Project,
-
-    @field:Transient
-    private val component: KotlinTargetComponent
+    component: KotlinTargetComponent
 ) {
 
     // Get the dependencies mapping according to the component's UsageContexts:
     private val dependenciesMappingForEachUsageContext by project.provider {
-        (component as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usage ->
+        component.internal.usages.toList().mapNotNull { usage ->
             // When maven scope is not set, we can shortcut immediately here, since no dependencies from that usage context
             // will be present in maven pom, e.g. from sourcesElements
             val mavenScope = usage.mavenScope ?: return@mapNotNull null
@@ -51,9 +49,6 @@ internal class PomDependenciesRewriter(
         pomXml: XmlProvider,
         includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>? = null
     ) {
-        if (component !is SoftwareComponentInternal)
-            return
-
         val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
 
         val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
@@ -129,7 +124,7 @@ private fun associateDependenciesWithActualModuleDependencies(
             }
             else -> when (mavenScope) {
                 MavenScope.COMPILE -> compilation.compileDependencyConfigurationName
-                MavenScope.RUNTIME -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
+                MavenScope.RUNTIME -> compilation.runtimeDependencyConfigurationName ?: return emptyMap()
             }
         }
     )
@@ -152,13 +147,17 @@ private fun associateDependenciesWithActualModuleDependencies(
                     val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                         ?: return@associate noMapping
 
+                    // Non-default publication layouts are not supported for pom rewriting
+                    if (!dependencyProject.kotlinPropertiesProvider.createDefaultMultiplatformPublications)
+                        return@associate noMapping
+
                     val resolved = resolvedDependencies[Triple(dependency.group!!, dependency.name, dependency.version!!)]
                         ?: return@associate noMapping
 
                     val resolvedToConfiguration = resolved.configuration
                     val dependencyTargetComponent: KotlinTargetComponent = run {
-                        dependencyProjectKotlinExtension.targets.withType(AbstractKotlinTarget::class.java).forEach { target ->
-                            target.kotlinComponents.forEach { component ->
+                        dependencyProjectKotlinExtension.targets.forEach { target ->
+                            target.internal.kotlinComponents.forEach { component ->
                                 if (component.findUsageContext(resolvedToConfiguration) != null)
                                     return@run component
                             }
@@ -214,9 +213,17 @@ private fun KotlinTargetComponent.findUsageContext(configurationName: String): U
     return usageContexts.find { usageContext ->
         if (usageContext !is KotlinUsageContext) return@find false
         val compilation = usageContext.compilation
-        configurationName in compilation.relatedConfigurationNames ||
-                configurationName == compilation.target.apiElementsConfigurationName ||
-                configurationName == compilation.target.runtimeElementsConfigurationName ||
-                configurationName == compilation.target.defaultConfigurationName
+        val outgoingConfigurations = mutableListOf(
+            compilation.target.apiElementsConfigurationName,
+            compilation.target.runtimeElementsConfigurationName
+        )
+        if (compilation is KotlinJvmAndroidCompilation) {
+            val androidVariant = compilation.androidVariant
+            outgoingConfigurations += listOf(
+                "${androidVariant.name}ApiElements",
+                "${androidVariant.name}RuntimeElements",
+            )
+        }
+        configurationName in outgoingConfigurations
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -24,11 +25,15 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class PsiInlineIntrinsicsSupport(
-    override val state: GenerationState,
+    private val state: GenerationState,
     private val reportErrorsOn: KtElement,
 ) : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
+    override val config: JvmBackendConfig
+        get() = state.config
+
     override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
         DescriptorAsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
     }
@@ -45,7 +50,7 @@ class PsiInlineIntrinsicsSupport(
     }
 
     private fun generateFunctionReference(v: InstructionAdapter, descriptor: FunctionDescriptor) {
-        check(state.generateOptimizedCallableReferenceSuperClasses) {
+        check(state.config.generateOptimizedCallableReferenceSuperClasses) {
             "typeOf() of a non-reified type parameter is only allowed if optimized callable references are enabled.\n" +
                     "Please make sure API version is set to 1.4, and -Xno-optimized-callable-references is NOT used.\n" +
                     "Container: $descriptor"
@@ -71,6 +76,10 @@ class PsiInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: KotlinType): KotlinType = type
+
+    override fun generateExternalEntriesForEnumTypeIfNeeded(type: KotlinType): FieldInsnNode? {
+        error("Not supported in the old JVM backend")
+    }
 
     override fun reportSuspendTypeUnsupported() {
         state.diagnostics.report(TYPEOF_SUSPEND_TYPE.on(reportErrorsOn))

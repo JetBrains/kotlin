@@ -1,0 +1,3 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] funWithoutTypes.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+    }

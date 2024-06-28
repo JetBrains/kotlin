@@ -9,10 +9,12 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.future
 import java.io.File
 
 internal fun Project.setupCInteropCommonizerDependencies() {
@@ -28,11 +30,12 @@ internal fun Project.setupCInteropCommonizerDependencies() {
     }
 }
 
-private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilation: KotlinSharedNativeCompilation) {
-    val cinteropCommonizerTask = project.commonizeCInteropTask ?: return
+private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilation: KotlinSharedNativeCompilation) = launch {
+    val cinteropCommonizerTask = project.commonizeCInteropTask() ?: return@launch
 
     compilation.compileDependencyFiles += filesProvider {
-        val cinteropCommonizerDependent = CInteropCommonizerDependent.from(compilation) ?: return@filesProvider emptySet<File>()
+        val cinteropCommonizerDependent = future { CInteropCommonizerDependent.from(compilation) }.getOrThrow()
+            ?: return@filesProvider emptySet<File>()
         cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
     }
 }
@@ -42,28 +45,29 @@ private fun Project.setupCInteropCommonizerDependenciesForCompilation(compilatio
  * This will use the [Project.copyCommonizeCInteropForIdeTask] over the regular cinterop commonization task.
  * The copying task prevent red code within the IDE after cleaning the build output.
  */
-private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
+private fun Project.setupCInteropCommonizerDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
     addIntransitiveMetadataDependencyIfPossible(sourceSet, cinteropCommonizerDependencies(sourceSet))
 }
 
 internal fun Project.cinteropCommonizerDependencies(sourceSet: DefaultKotlinSourceSet): FileCollection {
-    val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask ?: return project.files()
-
     return filesProvider {
-        val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
-        val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
+        future {
+            val cinteropCommonizerTask = project.copyCommonizeCInteropForIdeTask() ?: return@future project.files()
 
-        listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
-            cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
-        }
+            val directlyDependent = CInteropCommonizerDependent.from(sourceSet)
+            val associateDependent = CInteropCommonizerDependent.fromAssociateCompilations(sourceSet)
+
+            listOfNotNull(directlyDependent, associateDependent).map { cinteropCommonizerDependent ->
+                cinteropCommonizerTask.get().commonizedOutputLibraries(cinteropCommonizerDependent)
+            }
+        }.getOrThrow()
     }
 }
 
-private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) {
-    whenEvaluated {
-        if (getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return@whenEvaluated
-        addIntransitiveMetadataDependencyIfPossible(
-            sourceSet, createCInteropMetadataDependencyClasspathForIde(sourceSet)
-        )
-    }
+private fun Project.setupCInteropTransformCompositeMetadataDependenciesForIde(sourceSet: DefaultKotlinSourceSet) = launch {
+    if (sourceSet.internal.commonizerTarget.await() !is SharedCommonizerTarget) return@launch
+    addIntransitiveMetadataDependencyIfPossible(
+        sourceSet, createCInteropMetadataDependencyClasspathForIde(sourceSet)
+    )
 }
+

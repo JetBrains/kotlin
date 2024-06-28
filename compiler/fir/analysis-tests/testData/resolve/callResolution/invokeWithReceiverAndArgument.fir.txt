@@ -19,7 +19,7 @@ FILE: invokeWithReceiverAndArgument.kt
 
         }
 
-        public final inner class LeafBuilderConfigurationContext<T : R|AbstractFirTreeBuilder|> : R|AbstractBuilderConfigurator.BuilderConfigurationContext| {
+        public final inner class LeafBuilderConfigurationContext<Outer(T) : R|AbstractFirTreeBuilder|> : R|AbstractBuilderConfigurator.BuilderConfigurationContext| {
             public AbstractBuilderConfigurator<T>.constructor(): R|AbstractBuilderConfigurator.LeafBuilderConfigurationContext<T>| {
                 super<R|AbstractBuilderConfigurator.BuilderConfigurationContext|>()
             }
@@ -43,7 +43,7 @@ FILE: invokeWithReceiverAndArgument.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class Inner<E> : R|kotlin/Any| {
+        public final inner class Inner<Outer(E)> : R|kotlin/Any| {
             public Outer<E>.constructor(): R|Outer.Inner<E>| {
                 super<R|kotlin/Any|>()
             }

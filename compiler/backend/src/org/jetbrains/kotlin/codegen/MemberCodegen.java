@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +48,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.error.ErrorUtils;
+import org.jetbrains.kotlin.utils.exceptions.PlatformExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -92,7 +92,6 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     private NameGenerator inlineNameGenerator;
     private boolean jvmAssertFieldGenerated;
 
-    private boolean alwaysWriteSourceMap;
     private SourceMapper sourceMapper;
 
     public MemberCodegen(
@@ -187,11 +186,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         writeInnerClasses();
 
-        if (alwaysWriteSourceMap || (sourceMapper != null && !sourceMapper.isTrivial())) {
-            v.visitSMAP(getOrCreateSourceMapper(), !state.getLanguageVersionSettings().supportsFeature(LanguageFeature.CorrectSourceMappingSyntax));
-        }
-
-        v.done(state.getGenerateSmapCopyToAnnotation());
+        v.visitSMAP(getOrCreateSourceMapper(), !state.getLanguageVersionSettings().supportsFeature(LanguageFeature.CorrectSourceMappingSyntax));
+        v.done(state.getConfig().getGenerateSmapCopyToAnnotation());
     }
 
     public void genSimpleMember(@NotNull KtDeclaration declaration) {
@@ -199,10 +195,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 functionCodegen.gen((KtNamedFunction) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate function " + declaration.getName(), e, declaration);
             }
         }
@@ -210,10 +207,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 propertyCodegen.gen((KtProperty) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate property " + declaration.getName(), e, declaration);
             }
         }
@@ -224,10 +222,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             try {
                 propertyCodegen.genDestructuringDeclaration((KtDestructuringDeclarationEntry) declaration);
             }
-            catch (ProcessCanceledException | CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
             }
-            catch (Exception e) {
+            catch (Throwable e) {
+                PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
                 throw new CompilationException("Failed to generate destructuring declaration entry " + declaration.getName(), e, declaration);
             }
         }
@@ -597,7 +596,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         KtExpression initializer = property.getInitializer();
 
         ConstantValue<?> initializerValue =
-                initializer != null ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext, state.getShouldInlineConstVals()) : null;
+                initializer != null
+                ? ExpressionCodegen.getCompileTimeConstant(initializer, bindingContext, state.getConfig().getShouldInlineConstVals())
+                : null;
         // we must write constant values for fields in light classes,
         // because Java's completion for annotation arguments uses this information
         if (initializerValue == null) return state.getClassBuilderMode().generateBodies;
@@ -692,7 +693,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         iv.dup();
 
         List<Type> superCtorArgTypes = new ArrayList<>();
-        if (state.getGenerateOptimizedCallableReferenceSuperClasses()) {
+        if (state.getConfig().getGenerateOptimizedCallableReferenceSuperClasses()) {
             CallableReferenceUtilKt.generateCallableReferenceDeclarationContainerClass(iv, property, state);
             superCtorArgTypes.add(JAVA_CLASS_TYPE);
         } else {
@@ -706,7 +707,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         superCtorArgTypes.add(JAVA_STRING_TYPE);
         superCtorArgTypes.add(JAVA_STRING_TYPE);
 
-        if (state.getGenerateOptimizedCallableReferenceSuperClasses()) {
+        if (state.getConfig().getGenerateOptimizedCallableReferenceSuperClasses()) {
             iv.aconst(CallableReferenceUtilKt.getCallableReferenceTopLevelFlag(property));
             superCtorArgTypes.add(Type.INT_TYPE);
         }
@@ -747,23 +748,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     @NotNull
     public SourceMapper getOrCreateSourceMapper() {
         if (sourceMapper == null) {
-            // note: this is used in InlineCodegen and the element is always physical (KtElement) there
-            sourceMapper = new SourceMapper(SourceInfo.Companion.createFromPsi((KtElement)element, getClassName()));
+            sourceMapper = new SourceMapper(element instanceof KtElement ? SourceInfo.Companion.createFromPsi((KtElement)element, getClassName()) : null);
         }
         return sourceMapper;
-    }
-
-    protected void initDefaultSourceMappingIfNeeded() {
-        if (state.isInlineDisabled()) return;
-
-        CodegenContext parentContext = context.getParentContext();
-        while (parentContext != null) {
-            if (parentContext.isInlineMethodContext()) {
-                alwaysWriteSourceMap = true;
-                return;
-            }
-            parentContext = parentContext.getParentContext();
-        }
     }
 
     protected void generateConstInstance(@NotNull Type thisAsmType, @NotNull Type fieldAsmType) {

@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.base.incremental
 
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

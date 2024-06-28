@@ -16,48 +16,38 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
+import java.io.DataInput
+import java.io.DataOutput
 import java.io.File
 
 internal open class ClassOneToManyMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : AppendableBasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, icContext) {
-    override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
+) : AppendableSetBasicMap<FqName, FqName>(
+    storageFile,
+    LegacyFqNameExternalizer.toDescriptor(),
+    LegacyFqNameExternalizer,
+    icContext
+) {
 
     @Synchronized
-    fun add(key: FqName, value: FqName) {
-        storage.append(key.asString(), listOf(value.asString()))
-    }
-
-    @Synchronized
-    operator fun get(key: FqName): Collection<FqName> =
-        storage[key.asString()]?.map(::FqName) ?: setOf()
-
-    @Synchronized
-    operator fun set(key: FqName, values: Collection<FqName>) {
-        if (values.isEmpty()) {
+    override operator fun set(key: FqName, value: Set<FqName>) {
+        if (value.isNotEmpty()) {
+            super.set(key, value)
+        } else {
             remove(key)
-            return
         }
-
-        storage[key.asString()] = values.map(FqName::asString)
     }
 
-    @Synchronized
-    fun remove(key: FqName) {
-        storage.remove(key.asString())
-    }
-
-    // Access to caches could be done from multiple threads (e.g. JPS worker and RMI). The underlying collection is already synchronized,
-    // thus we need synchronization of this method and all modification methods.
     @Synchronized
     fun removeValues(key: FqName, removed: Set<FqName>) {
-        val notRemoved = this[key].filter { it !in removed }
-        this[key] = notRemoved
+        this[key] = this[key].orEmpty() - removed
     }
+
 }
 
 internal class SubtypesMap(
@@ -69,3 +59,22 @@ internal class SupertypesMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
 ) : ClassOneToManyMap(storageFile, icContext)
+
+/**
+ * Use [LegacyFqNameExternalizer] instead of [FqNameExternalizer] for [SubtypesMap] for now because they internally use different types of
+ * `DataExternalizer<String>`, and the `compiler-reference-index` module in the Kotlin IDEA plugin currently can only read the old data
+ * format (see KTIJ-27258).
+ *
+ * Once we fix that bug, we can remove this class and use [FqNameExternalizer].
+ */
+private object LegacyFqNameExternalizer : DataExternalizer<FqName> {
+
+    override fun save(output: DataOutput, fqName: FqName) {
+        EnumeratorStringDescriptor.INSTANCE.save(output, fqName.asString())
+    }
+
+    override fun read(input: DataInput): FqName {
+        return FqName(EnumeratorStringDescriptor.INSTANCE.read(input))
+    }
+
+}

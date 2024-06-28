@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -89,7 +88,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
         }
 
         var baseParametersOk = true
-        val baseParameterTypes = (descriptor as? ClassDescriptor)?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
+        val baseParameterTypes = descriptor.defaultType.substitutedUnderlyingTypes()
 
         for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
             if (!isParameterAcceptableForInlineClass(baseParameter)) {

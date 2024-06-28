@@ -1,22 +1,22 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
-// !RENDER_DIAGNOSTICS_MESSAGES
+// OPT_IN: kotlin.js.ExperimentalJsExport
+// RENDER_DIAGNOSTICS_MESSAGES
 @file:JsExport
 
 package foo
 
-fun delete() {}
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("delete")!>fun delete() {}<!>
 
-val instanceof = 4
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("instanceof")!>val instanceof = 4<!>
 
-class eval
+<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("eval")!>class eval<!>
 
-@JsName("await")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("await")!>"await"<!>)
 fun foo() {}
 
-@JsName("this")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("this")!>"this"<!>)
 val bar = 4
 
-@JsName("super")
+@JsName(<!NON_CONSUMABLE_EXPORTED_IDENTIFIER("super")!>"super"<!>)
 class Baz
 
 class Test {

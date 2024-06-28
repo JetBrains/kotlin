@@ -7,35 +7,34 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
+// This class is written manually because is has custom traversal logic that allows to avoid visiting the same nodes twice or more.
+// Particularly, it prevents reporting duplicated diagnostics.
+// It doesn't touch `delegatedTypeRef` in `acceptChildren` and `transformChildren` functions.
+// It doesn't call `transformPartiallyResolvedTypeRef` in `transformChildren` function.
 internal class FirErrorTypeRefImpl(
     override val source: KtSourceElement?,
-    override val type: ConeKotlinType,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
+    typeOrNull: ConeKotlinType?,
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
-    override val isFromStubType: Boolean = false
+    override var partiallyResolvedTypeRef: FirTypeRef? = null,
 ) : FirErrorTypeRef() {
-    constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic,
-        isFromStubType: Boolean = false
-    ) : this(
-        source,
-        ConeErrorType(diagnostic),
-        delegatedTypeRef,
-        diagnostic,
-        isFromStubType
-    )
-
-    override val annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
+    override val type: ConeKotlinType = typeOrNull ?: ConeErrorType(diagnostic)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
+        partiallyResolvedTypeRef?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
@@ -44,11 +43,17 @@ internal class FirErrorTypeRefImpl(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Replacing annotations in FirErrorTypeRefImpl is not supported")
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformPartiallyResolvedTypeRef(transformer: FirTransformer<D>, data: D): FirErrorTypeRef {
+        partiallyResolvedTypeRef = partiallyResolvedTypeRef?.transform(transformer, data)
+        transformChildren(transformer, data)
         return this
     }
 }

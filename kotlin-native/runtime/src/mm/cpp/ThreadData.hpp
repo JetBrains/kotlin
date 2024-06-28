@@ -7,19 +7,16 @@
 #define RUNTIME_MM_THREAD_DATA_H
 
 #include <atomic>
+#include <vector>
 
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
-#include "GCScheduler.hpp"
-#include "ObjectFactory.hpp"
-#include "ExtraObjectDataFactory.hpp"
 #include "ShadowStack.hpp"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
 #include "ThreadSuspension.hpp"
-#include "std_support/Vector.hpp"
 
 struct ObjHeader;
 
@@ -33,8 +30,9 @@ public:
     explicit ThreadData(int threadId) noexcept :
         threadId_(threadId),
         globalsThreadQueue_(GlobalsRegistry::Instance()),
-        stableRefThreadQueue_(StableRefRegistry::Instance()),
-        extraObjectDataThreadQueue_(ExtraObjectDataFactory::Instance()),
+        specialRefRegistry_(SpecialRefRegistry::instance()),
+        gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
+        allocator_(GlobalData::Instance().allocator()),
         gc_(GlobalData::Instance().gc(), *this),
         suspensionData_(ThreadState::kNative, *this) {}
 
@@ -46,9 +44,7 @@ public:
 
     ThreadLocalStorage& tls() noexcept { return tls_; }
 
-    StableRefRegistry::ThreadQueue& stableRefThreadQueue() noexcept { return stableRefThreadQueue_; }
-
-    ExtraObjectDataFactory::ThreadQueue& extraObjectDataThreadQueue() noexcept { return extraObjectDataThreadQueue_; }
+    SpecialRefRegistry::ThreadQueue& specialRefRegistry() noexcept { return specialRefRegistry_; }
 
     ThreadState state() noexcept { return suspensionData_.state(); }
 
@@ -56,7 +52,11 @@ public:
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
-    std_support::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+    std::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+
+    gcScheduler::GCScheduler::ThreadData& gcScheduler() noexcept { return gcScheduler_; }
+
+    alloc::Allocator::ThreadData& allocator() noexcept { return allocator_; }
 
     gc::GC::ThreadData& gc() noexcept { return gc_; }
 
@@ -65,27 +65,25 @@ public:
     void Publish() noexcept {
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
-        stableRefThreadQueue_.Publish();
-        extraObjectDataThreadQueue_.Publish();
-        gc_.Publish();
+        specialRefRegistry_.publish();
     }
 
     void ClearForTests() noexcept {
         globalsThreadQueue_.ClearForTests();
-        stableRefThreadQueue_.ClearForTests();
-        extraObjectDataThreadQueue_.ClearForTests();
-        gc_.ClearForTests();
+        specialRefRegistry_.clearForTests();
+        allocator_.clearForTests();
     }
 
 private:
     const int threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
     ThreadLocalStorage tls_;
-    StableRefRegistry::ThreadQueue stableRefThreadQueue_;
-    ExtraObjectDataFactory::ThreadQueue extraObjectDataThreadQueue_;
+    SpecialRefRegistry::ThreadQueue specialRefRegistry_;
     ShadowStack shadowStack_;
+    gcScheduler::GCScheduler::ThreadData gcScheduler_;
+    alloc::Allocator::ThreadData allocator_;
     gc::GC::ThreadData gc_;
-    std_support::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
+    std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
 };
 

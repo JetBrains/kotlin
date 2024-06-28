@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
+// COMMENTED[LANGUAGE: +ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty] uncomment when KT-52338 is fixed
 
 // FILE: Base.java
 public class Base {

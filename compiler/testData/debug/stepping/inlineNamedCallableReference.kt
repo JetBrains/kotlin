@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 fun box() {
     var x = false
@@ -10,18 +11,25 @@ inline fun f(block: () -> Unit) {
 
 fun g() {}
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:3 box
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
-// test.kt:8 box
-// test.kt:4 box
-// test.kt:11 g
-// test.kt:8 box
+// test.kt:5 box
 // test.kt:9 box
 // test.kt:5 box
+// test.kt:12 g
+// test.kt:9 box
+// test.kt:10 box
+// test.kt:6 box
 
 // EXPECTATIONS JS_IR
-// test.kt:3 box
-// test.kt:8 box
-// test.kt:11 g
+// test.kt:4 box
 // test.kt:5 box
+// test.kt:12 g
+// test.kt:6 box
+
+// EXPECTATIONS WASM
+// test.kt:4 $box (12, 4)
+// test.kt:5 $box (4, 6)
+// test.kt:9 $box
+// test.kt:12 $g
+// test.kt:6 $box

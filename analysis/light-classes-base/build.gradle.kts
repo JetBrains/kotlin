@@ -11,7 +11,7 @@ dependencies {
     api(project(":compiler:resolution.common.jvm"))
     api(project(":core:compiler.common.jvm"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

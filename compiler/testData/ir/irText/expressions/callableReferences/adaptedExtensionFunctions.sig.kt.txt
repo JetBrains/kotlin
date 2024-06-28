@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #extensionBoth@C(kotlin.Int;kotlin.String;kotlin.Array<out|kotlin.String>...){}
+//   Public signature: /extensionBoth|-2642733408340966988[0]
+//   Public signature debug description: extensionBoth@C(kotlin.Int;kotlin.String;kotlin.Array<out|kotlin.String>...){}
+fun C.extensionBoth(i: Int, s: String, vararg t: String): Unit
+
+// CHECK:
+//   Mangled name: #extensionDefault@C(kotlin.Int;kotlin.String){}
+//   Public signature: /extensionDefault|-2068501962137011033[0]
+//   Public signature debug description: extensionDefault@C(kotlin.Int;kotlin.String){}
+fun C.extensionDefault(i: Int, s: String): Unit
+
+// CHECK:
+//   Mangled name: #extensionVararg@C(kotlin.Int;kotlin.Array<out|kotlin.String>...){}
+//   Public signature: /extensionVararg|6428350929057458618[0]
+//   Public signature debug description: extensionVararg@C(kotlin.Int;kotlin.Array<out|kotlin.String>...){}
+fun C.extensionVararg(i: Int, vararg s: String): Unit
+
+// CHECK:
+//   Mangled name: #testExtensionBoth(){}
+//   Public signature: /testExtensionBoth|-9046612088279185180[0]
+//   Public signature debug description: testExtensionBoth(){}
+fun testExtensionBoth(): Unit
+
+// CHECK:
+//   Mangled name: #testExtensionDefault(){}
+//   Public signature: /testExtensionDefault|412398110121818525[0]
+//   Public signature debug description: testExtensionDefault(){}
+fun testExtensionDefault(): Unit
+
+// CHECK:
+//   Mangled name: #testExtensionVararg(){}
+//   Public signature: /testExtensionVararg|3578031816468213112[0]
+//   Public signature debug description: testExtensionVararg(){}
+fun testExtensionVararg(): Unit
+
+// CHECK:
+//   Mangled name: #use(kotlin.Function2<C,kotlin.Int,kotlin.Unit>){}
+//   Public signature: /use|-4652353913536286192[0]
+//   Public signature debug description: use(kotlin.Function2<C,kotlin.Int,kotlin.Unit>){}
+fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>): Unit
+

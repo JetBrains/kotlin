@@ -1,0 +1,8 @@
+MODULE main
+	CLASS NullableAnyBound.class
+		CLASS METADATA
+			Property: class.metadata.typeParameters
+				K1
+					<T#0 /* T */>
+				K2
+					<T#0 /* T */ : kotlin/Any?>

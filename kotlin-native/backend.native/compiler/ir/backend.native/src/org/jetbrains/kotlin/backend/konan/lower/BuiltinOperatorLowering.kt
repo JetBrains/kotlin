@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
@@ -43,7 +43,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         expression.transformChildrenVoid(this)
 
         return when (expression.symbol) {
-            irBuiltins.eqeqSymbol, in ieee754EqualsSymbols() -> lowerEqeq(expression)
+            irBuiltins.eqeqSymbol, in ieee754EqualsSymbols -> lowerEqeq(expression)
 
             irBuiltins.eqeqeqSymbol -> lowerEqeqeq(expression)
 
@@ -56,14 +56,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.typeParameters.size,
                     context.ir.symbols.throwNoWhenBranchMatchedException.owner.valueParameters.size)
 
-            irBuiltins.linkageErrorSymbol -> {
-                val newExpression = IrCallImpl.fromSymbolOwner(
-                        expression.startOffset, expression.endOffset,
-                        context.ir.symbols.throwIrLinkageError
-                )
-                newExpression.putValueArgument(0, expression.getValueArgument(0)) // error message
-                newExpression
-            }
+            irBuiltins.linkageErrorSymbol -> with(symbols.throwIrLinkageError) { irCall(expression, this, newReturnType = owner.returnType) }
 
             else -> expression
         }
@@ -77,8 +70,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         return expression
     }
 
-    private fun ieee754EqualsSymbols(): List<IrSimpleFunctionSymbol> =
-            irBuiltins.ieee754equalsFunByOperandType.values.toList()
+    private val ieee754EqualsSymbols: Set<IrSimpleFunctionSymbol> =
+            irBuiltins.ieee754equalsFunByOperandType.values.toSet()
 
     private fun lowerEqeqeq(expression: IrCall): IrExpression {
         val lhs = expression.getValueArgument(0)!!
@@ -97,7 +90,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             reinterpret(expression, expression.type, toType)
 
     private fun IrBuilderWithScope.reinterpret(expression: IrExpression, fromType: IrType, toType: IrType) =
-            irCall(symbols.reinterpret.owner, listOf(fromType, toType)).apply {
+            irCallWithSubstitutedType(symbols.reinterpret.owner, listOf(fromType, toType)).apply {
                 extensionReceiver = expression
             }
 
@@ -159,9 +152,9 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
             is BinaryType.Reference -> {
                 // TODO: don't use binaryType.nullable.
-                val lhsRawType = irBuiltins.anyClass.owner.defaultOrNullableType(lhsBinaryType.nullable)
+                val lhsRawType = if (lhsBinaryType.nullable) irBuiltins.anyNType else irBuiltins.anyType
                 val rhsBinaryType = rhs.type.computeBinaryType() as BinaryType.Reference<*>
-                val rhsRawType = irBuiltins.anyClass.owner.defaultOrNullableType(rhsBinaryType.nullable)
+                val rhsRawType = if (rhsBinaryType.nullable) irBuiltins.anyNType else irBuiltins.anyType
 
                 genFloatingOrReferenceEquals(
                         symbol,
@@ -197,23 +190,28 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
     private fun IrBuilderWithScope.genFloatingOrReferenceEquals(symbol: IrFunctionSymbol, lhs: IrExpression, rhs: IrExpression): IrExpression {
         // TODO: areEqualByValue and ieee754Equals intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
-        fun callEquals(lhs: IrExpression, rhs: IrExpression) =
-                if (symbol in ieee754EqualsSymbols())
+        fun callEquals(lhs: IrExpression, rhs: IrExpression): IrExpression {
+            if (symbol in ieee754EqualsSymbols) {
                 // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
-                    irCall(selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)!!).apply {
+                val intrinsic = selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)
+                // Type of operands may be lost due to erasure on inlining phase
+                if (intrinsic != null) {
+                    return irCall(intrinsic).apply {
                         putValueArgument(0, lhs)
                         putValueArgument(1, rhs)
                     }
-                else
-                    irCall(symbols.equals).apply {
-                        dispatchReceiver = lhs
-                        putValueArgument(0, rhs)
-                    }
+                }
+            }
+            return irCall(symbols.equals).apply {
+                dispatchReceiver = lhs
+                putValueArgument(0, rhs)
+            }
+        }
 
         val lhsIsNotNullable = !lhs.type.isNullable()
         val rhsIsNotNullable = !rhs.type.isNullable()
 
-        return if (symbol in ieee754EqualsSymbols()) {
+        return if (symbol in ieee754EqualsSymbols) {
             if (lhsIsNotNullable && rhsIsNotNullable)
                 callEquals(lhs, rhs)
             else irBlock {

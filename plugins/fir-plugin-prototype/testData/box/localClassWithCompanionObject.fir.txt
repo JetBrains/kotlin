@@ -1,14 +1,14 @@
 FILE: localClassWithCompanionObject.kt
     public final fun box(): R|kotlin/String| {
         @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
-            public constructor(): R|SomeClass| {
+            public constructor(): R|<local>/SomeClass| {
                 super<R|kotlin/Any|>()
             }
 
             public final companion object Companion : R|kotlin/Any| {
                 public final fun foo(): R|kotlin/Int|
 
-                private constructor(): R|SomeClass.Companion| {
+                private constructor(): R|<local>/SomeClass.Companion| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -26,8 +26,8 @@ FILE: localClassWithCompanionObject.kt
         }
 
         local final fun test(): R|kotlin/Unit| {
-            R|<local>/takeInt|(Q|SomeClass|.R|/SomeClass.Companion.foo|())
-            R|<local>/takeInt|(Q|SomeClass.Companion|.R|/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Companion|.R|<local>/SomeClass.Companion.foo|())
         }
 
         R|<local>/test|()

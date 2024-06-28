@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import java.nio.file.Paths
 import java.nio.file.attribute.PosixFilePermission
 import kotlin.io.path.*
+import kotlin.test.fail
 
 /**
  * Makes a snapshot of the current state of [TestProject] into [destinationPath].
@@ -18,6 +22,8 @@ import kotlin.io.path.*
  * To run task with the same build option as test - use `run.sh` (or `run.bat`) script.
  */
 fun TestProject.makeSnapshotTo(destinationPath: String) {
+    if (isTeamCityRun) fail("Please remove `makeSnapshotTo()` call from test. It is utility for local debugging only!")
+
     val dest = Paths
         .get(destinationPath)
         .resolve(projectName)
@@ -38,9 +44,10 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     dest.resolve("run.sh").run {
         writeText(
             """
-                #!/usr/bin/env sh
-                ./gradlew ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} ${'$'}@ 
-                """.trimIndent()
+            |#!/usr/bin/env sh
+            |${formatEnvironmentForScript(envCommand = "export")}
+            |./gradlew ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} ${'$'}@ 
+            |""".trimMargin()
         )
 
         setPosixFilePermissions(
@@ -55,9 +62,10 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     dest.resolve("run.bat").run {
         writeText(
             """
-                @rem Executing Gradle build
-                gradlew.bat ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} %* 
-                """.trimIndent()
+            |@rem Executing Gradle build
+            |${formatEnvironmentForScript(envCommand = "set")}
+            |gradlew.bat ${buildOptions.toArguments(gradleVersion).joinToString(separator = " ")} %* 
+            |""".trimMargin()
         )
     }
 
@@ -78,4 +86,144 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
     projectRoot.resolve("gradlew.bat").run {
         copyTo(dest.resolve(fileName))
     }
+}
+
+private fun TestProject.formatEnvironmentForScript(envCommand: String): String {
+    return environmentVariables.environmentalVariables.asSequence().joinToString(separator = "\n|") { (key, value) ->
+        "$envCommand $key=\"$value\""
+    }
+}
+
+/**
+ * Adds the given options to a Gradle property specified by name, in the project's Gradle properties file.
+ * If the property does not exist, it is created.
+ * @param propertyName The name of the Gradle property to modify or create.
+ * @param propertyValues Map with key = "option prefix", and value = "option value".
+ *                       For example, for options: -Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError
+ *                       Map would be look like: Map.of("-Xmx", "-Xmx2g",
+ *                                                      "-XX:MaxMetaspaceSize","-XX:MaxMetaspaceSize=512m",
+ *                                                      "-XX:+HeapDumpOnOutOfMemoryError", "-XX:+HeapDumpOnOutOfMemoryError" )
+ */
+fun GradleProject.addPropertyToGradleProperties(
+    propertyName: String,
+    propertyValues: Map<String, String>
+) {
+    if (!gradleProperties.exists()) gradleProperties.createFile()
+
+    val propertiesContent = gradleProperties.readText()
+    val (existingPropertyLine, otherLines) = propertiesContent
+        .lines()
+        .partition {
+            it.trim().startsWith(propertyName)
+        }
+
+    if (existingPropertyLine.isEmpty()) {
+        gradleProperties.writeText(
+            """
+            |${propertyName}=${propertyValues.values.joinToString(" ")}
+            | 
+            |$propertiesContent
+            """.trimMargin()
+        )
+    } else {
+        val argsLine = existingPropertyLine.single()
+        val optionsToRewrite = mutableListOf<String>()
+        val appendedOptions = buildString {
+            propertyValues.forEach {
+                if (argsLine.contains(it.key) &&
+                    !argsLine.contains(it.value)
+                ) optionsToRewrite.add(it.value)
+                else
+                    if (!argsLine.contains(it.key)) append(" ${it.value}")
+            }
+        }
+
+        assert(optionsToRewrite.isEmpty()) {
+            """
+            |You are trying to write options: $optionsToRewrite 
+            |for property: $propertyName 
+            |in $gradleProperties
+            |But these options are already exists with another values.
+            |Current property value is: $argsLine
+            """.trimMargin()
+        }
+
+        gradleProperties.writeText(
+            """
+            |$argsLine$appendedOptions
+            |
+            |${otherLines.joinToString(separator = "\n")}
+            """.trimMargin()
+        )
+
+    }
+}
+
+/**
+ * Configures 'archivesBaseName' in Gradle older and newer versions compatible way avoiding
+ * deprecation warnings.
+ */
+internal fun TestProject.addArchivesBaseNameCompat(
+    archivesBaseName: String
+) {
+    if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+        buildGradle.appendText(
+            """
+            |
+            |base {
+            |    archivesName = '$archivesBaseName'
+            |}
+            """.trimMargin()
+        )
+    } else if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_7_1)) {
+        buildGradle.appendText(
+            """
+            |
+            |archivesBaseName = '$archivesBaseName'
+            """.trimMargin()
+        )
+    } else {
+        buildGradle.appendText(
+            """
+            |
+            |base {
+            |    archivesBaseName = '$archivesBaseName'
+            |}
+            """.trimMargin()
+        )
+    }
+}
+
+/**
+ * Chooses compiler version used for JVM compilation in the build tools API mode.
+ *
+ * If the chosen version requires additional repositories, please consider using [DependencyManagement.DefaultDependencyManagement].
+ *
+ * Ensure [BuildOptions.runViaBuildToolsApi] is set to true for the builds!
+ */
+internal fun TestProject.chooseCompilerVersion(
+    version: String,
+) {
+    buildGradle.append(
+        //language=Gradle
+        """
+        kotlin {
+            compilerVersion.set("$version")
+        }
+        """.trimIndent()
+    )
+}
+
+internal fun TestProject.enablePassedTestLogging(level: LogLevel = DEFAULT_LOG_LEVEL) {
+    buildGradle.append(
+        //language=Gradle
+        """
+
+        tasks.withType(AbstractTestTask).configureEach {
+            testLogging {
+                get(LogLevel.$level).events("passed")
+            }
+        }
+        """.trimIndent()
+    )
 }

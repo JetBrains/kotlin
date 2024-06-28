@@ -1,0 +1,1 @@
+inline fun inlineFun() = foo()

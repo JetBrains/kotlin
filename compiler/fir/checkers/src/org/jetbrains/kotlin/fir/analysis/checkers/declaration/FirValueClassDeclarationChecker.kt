@@ -8,37 +8,51 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.isRecursiveValueClassType
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.isEquals
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirValueClassDeclarationChecker : FirRegularClassChecker() {
+sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
+    object Regular : FirValueClassDeclarationChecker(MppCheckerKind.Platform) {
+        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
 
-    private val boxAndUnboxNames = setOf("box", "unbox")
-    private val equalsAndHashCodeNames = setOf("equals", "hashCode")
-    private val javaLangFqName = FqName("java.lang")
-    private val cloneableFqName = FqName("Cloneable")
+    object ForExpectClass : FirValueClassDeclarationChecker(MppCheckerKind.Common) {
+        override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+            if (!declaration.isExpect) return
+            super.check(declaration, context, reporter)
+        }
+    }
+
+    companion object {
+        private val boxAndUnboxNames = setOf("box", "unbox")
+        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+        private val javaLangFqName = FqName("java.lang")
+        private val cloneableFqName = FqName("Cloneable")
+    }
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.symbol.isInlineOrValueClass()) {
@@ -53,7 +67,10 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_FINAL, context)
         }
 
-        // TODO check absence of context receivers when FIR infrastructure is ready
+        if (declaration.contextReceivers.isNotEmpty()) {
+            reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, context)
+        }
+
 
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry !is FirImplicitAnyTypeRef && supertypeEntry.toRegularClassSymbol(context.session)?.isInterface != true) {
@@ -69,6 +86,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameter>()
         val primaryConstructorPropertiesByName = mutableMapOf<Name, FirProperty>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
+        val isCustomEqualsSupported = context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
         for (innerDeclaration in declaration.declarations) {
             when (innerDeclaration) {
@@ -96,22 +114,9 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                     }
                 }
 
-                is FirSimpleFunction -> {
-                    val functionName = innerDeclaration.name.asString()
-
-                    if (functionName in boxAndUnboxNames
-                        || (functionName in equalsAndHashCodeNames
-                                && !context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses))
-                    ) {
-                        reporter.reportOn(
-                            innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS, functionName, context
-                        )
-                    }
-                }
-
                 is FirField -> {
                     if (innerDeclaration.isSynthetic) {
-                        val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
+                        val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
                         if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
                             symbol != null && symbol in primaryConstructorParametersSymbolsSet
                         ) {
@@ -153,6 +158,34 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
+        val reservedNames = boxAndUnboxNames + if (isCustomEqualsSupported) emptySet() else equalsAndHashCodeNames
+        val classScope = declaration.unsubstitutedScope(context)
+        for (reservedName in reservedNames) {
+            classScope.processFunctionsByName(Name.identifier(reservedName)) {
+                val functionSymbol = it.unwrapFakeOverrides()
+                if (functionSymbol.isAbstract) return@processFunctionsByName
+                val containingClassSymbol = functionSymbol.getContainingClassSymbol(context.session) ?: return@processFunctionsByName
+                if (containingClassSymbol == declaration.symbol) {
+                    if (functionSymbol.source?.kind is KtRealSourceElementKind) {
+                        reporter.reportOn(
+                            functionSymbol.source,
+                            FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS,
+                            reservedName,
+                            context
+                        )
+                    }
+                } else if (containingClassSymbol.classKind == ClassKind.INTERFACE) {
+                    reporter.reportOn(
+                        declaration.source,
+                        FirErrors.RESERVED_MEMBER_FROM_INTERFACE_INSIDE_VALUE_CLASS,
+                        containingClassSymbol.name.asString(),
+                        reservedName,
+                        context
+                    )
+                }
+            }
+        }
+
         if (primaryConstructor?.source?.kind !is KtRealSourceElementKind) {
             reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, context)
             return
@@ -189,7 +222,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
+                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         primaryConstructorParameter.returnTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
@@ -206,7 +239,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                 }
 
                 declaration.multiFieldValueClassRepresentation != null && primaryConstructorParameter.defaultValue != null -> {
-                    // todo fix when inline arguments are supported
+                    // TODO, KT-50113: Fix when inline arguments are supported.
                     reporter.reportOn(
                         primaryConstructorParameter.defaultValue!!.source,
                         FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
@@ -216,7 +249,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
             }
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)) {
+        if (isCustomEqualsSupported) {
             val (equalsFromAnyOverriding, typedEquals) = run {
                 var equalsFromAnyOverriding: FirSimpleFunction? = null
                 var typedEquals: FirSimpleFunction? = null
@@ -224,7 +257,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                     if (it !is FirSimpleFunction) {
                         return@forEach
                     }
-                    if (it.isEquals()) equalsFromAnyOverriding = it
+                    if (it.isEquals(context.session)) equalsFromAnyOverriding = it
                     if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
                 }
                 equalsFromAnyOverriding to typedEquals
@@ -265,8 +298,8 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
         return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
 
-    private fun FirTypeRef.isInapplicableParameterType() =
-        isUnit || isNothing
+    private fun FirTypeRef.isInapplicableParameterType(session: FirSession): Boolean =
+        coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())
@@ -282,7 +315,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
 
         return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session, substituteTypes = false).any { superType ->
             // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isCloneableId() == true
+            superType.fullyExpandedType(session).lookupTag.classId.isCloneableId()
         }
     }
 

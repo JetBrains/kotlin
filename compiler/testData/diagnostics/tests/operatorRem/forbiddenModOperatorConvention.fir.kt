@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object ModAndRem {
     <!FORBIDDEN_BINARY_MOD!>operator<!> fun mod(x: Int) {}

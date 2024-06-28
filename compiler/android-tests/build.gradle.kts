@@ -17,21 +17,18 @@ dependencies {
 
     testApi(kotlinStdlib())
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
 
-    testApi(commonDependency("junit:junit"))
-
     testApi(jpsModel())
-    testApi(jpsBuildTest())
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 
-    testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
+    testImplementation(libs.junit.platform.launcher)
 }
 
 sourceSets {
@@ -41,8 +38,10 @@ sourceSets {
 
 projectTest {
     dependsOn(":dist")
+    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
+        environment("JAVA_HOME", jdkHome.get())
     }
 
     if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
@@ -57,7 +56,7 @@ projectTest {
     useAndroidEmulator(this)
 }
 
-val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")
-
-generateAndroidTests.workingDir = rootDir
-generateAndroidTests.dependsOn(rootProject.tasks.named("dist"))
+val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {
+    workingDir = rootDir
+    dependsOn(rootProject.tasks.named("dist"))
+}

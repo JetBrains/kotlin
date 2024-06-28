@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 import javax.inject.Inject
 
 plugins {
@@ -46,11 +47,13 @@ kotlin {
         binaries.executable()
 
         compilations.named("main") {
+            val nameOfModule = this@named.name
             packageJson {
                 customField("customField1", mapOf("one" to 1, "two" to 2))
                 customField("customField2", null)
                 customField("customField3" to null)
                 customField("customField4", mapOf("foo" to null))
+                customField("customField5", "@as/${nameOfModule}")
             }
         }
     }
@@ -60,11 +63,18 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
     val kotlinNodeJs = rootProject.extensions.getByType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
 
     tasks.register<Exec>("runWebpackResult") {
-        dependsOn(tasks.named("browserProductionWebpack"))
+        val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserProductionWebpack")
+        dependsOn(webpackTask)
 
         executable(kotlinNodeJs.requireConfigured().nodeExecutable)
 
-        workingDir = File("${buildDir}").resolve("distributions")
+        workingDir(webpackTask.flatMap { it.outputDirectory.asFile })
         args("./${project.name}.js")
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>().configureEach {
+    kotlinOptions {
+        moduleKind = "es"
     }
 }

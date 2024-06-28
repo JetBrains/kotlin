@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
+import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.setAttribute
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
@@ -53,7 +56,11 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
 
     @Suppress("DEPRECATION")
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
-    override fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+
+    @Deprecated("Please migrate to toolOptions DSL. More details are here: https://kotl.in/u1r8ln")
+    override fun kotlinOptions(
+        @Suppress("DEPRECATION") fn: Action<KotlinCommonToolOptions>
+    ) {
         kotlinOptionsFn = fn::execute
     }
 
@@ -72,14 +79,12 @@ abstract class KotlinNativeArtifactConfigImpl(artifactName: String) : KotlinArti
 
 internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val librariesConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkLibrary")
-    configurations.maybeCreate(librariesConfigurationName).apply {
+    configurations.maybeCreateResolvable(librariesConfigurationName).apply {
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
         isTransitive = true
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     }
     deps.forEach { dependencies.add(librariesConfigurationName, it) }
     return librariesConfigurationName
@@ -87,14 +92,12 @@ internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName:
 
 internal fun Project.registerExportDependencies(target: KonanTarget, artifactName: String, deps: Set<Any>): String {
     val exportConfigurationName = lowerCamelCaseName(target.presetName, artifactName, "linkExport")
-    configurations.maybeCreate(exportConfigurationName).apply {
+    configurations.maybeCreateResolvable(exportConfigurationName).apply {
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = true
         isTransitive = false
-        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.name)
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
+        attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
     }
     deps.forEach { dependencies.add(exportConfigurationName, it) }
     return exportConfigurationName

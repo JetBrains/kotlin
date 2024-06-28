@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// CHECK_BYTECODE_TEXT
+
 // FILE: 1.kt
 package test
 
@@ -24,3 +26,6 @@ fun box(): String {
 
     return y.result
 }
+
+// 0 INVOKEVIRTUAL test/B.setY
+// 0 INVOKEVIRTUAL test/B.getY

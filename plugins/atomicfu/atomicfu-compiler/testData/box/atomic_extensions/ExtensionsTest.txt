@@ -1,0 +1,42 @@
+@kotlin.Metadata
+public final class ExtensionsTest {
+    // source: 'ExtensionsTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field b$volatile: int
+    private synthetic final static field l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field l$volatile: long
+    private synthetic final static field s$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field s$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final method booleanExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): void
+    private synthetic final method booleanExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getB$volatile(): int
+    private synthetic final static method getL$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getL$volatile(): long
+    private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getS$volatile(): java.lang.Object
+    private synthetic final method intExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): void
+    private synthetic final method intExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): void
+    private synthetic final method longExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int): void
+    private synthetic final method longExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater): void
+    private synthetic final method refExtension$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): void
+    private synthetic final method refExtension$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater): void
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setB$volatile(p0: int): void
+    private synthetic final method setL$volatile(p0: long): void
+    private synthetic final method setS$volatile(p0: java.lang.Object): void
+    public final method testExtension(): void
+    public final method testScopedFieldGetters(): void
+}
+
+@kotlin.Metadata
+public final class ExtensionsTestKt {
+    // source: 'ExtensionsTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -5,97 +5,117 @@ digraph initializationInTry_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function getNullableString" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter block"];
-            2 [label="Const: Null(null)"];
-            3 [label="Jump: ^getNullableString Null(null)"];
-            4 [label="Stub" style="filled" fillcolor=gray];
-            5 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        6 [label="Exit function getNullableString" style="filled" fillcolor=red];
+        0 [label="Enter file initializationInTry.kt" style="filled" fillcolor=red];
+        1 [label="Exit file initializationInTry.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function getNullableString" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter block"];
+            4 [label="Const: Null(null)"];
+            5 [label="Jump: ^getNullableString Null(null)"];
+            6 [label="Stub" style="filled" fillcolor=gray];
+            7 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        8 [label="Exit function getNullableString" style="filled" fillcolor=red];
+    }
     2 -> {3};
-    3 -> {6};
-    3 -> {4} [style=dotted];
-    4 -> {5} [style=dotted];
+    3 -> {4};
+    4 -> {5};
+    5 -> {8};
     5 -> {6} [style=dotted];
+    6 -> {7} [style=dotted];
+    7 -> {8} [style=dotted];
 
-    subgraph cluster_2 {
+    subgraph cluster_3 {
         color=red
-        7 [label="Enter function takeNullableString" style="filled" fillcolor=red];
-        subgraph cluster_3 {
+        9 [label="Enter function takeNullableString" style="filled" fillcolor=red];
+        subgraph cluster_4 {
             color=blue
-            8 [label="Enter block"];
-            9 [label="Exit block"];
+            10 [label="Enter block"];
+            11 [label="Exit block"];
         }
-        10 [label="Exit function takeNullableString" style="filled" fillcolor=red];
+        12 [label="Exit function takeNullableString" style="filled" fillcolor=red];
     }
-    7 -> {8};
-    8 -> {9};
     9 -> {10};
-
-    subgraph cluster_4 {
-        color=red
-        11 [label="Enter function test_1" style="filled" fillcolor=red];
-        subgraph cluster_5 {
-            color=blue
-            12 [label="Enter block"];
-            13 [label="Variable declaration: lval x: R|kotlin/String?|"];
-            subgraph cluster_6 {
-                color=blue
-                14 [label="Try expression enter"];
-                subgraph cluster_7 {
-                    color=blue
-                    15 [label="Try main block enter"];
-                    subgraph cluster_8 {
-                        color=blue
-                        16 [label="Enter block"];
-                        17 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
-                        18 [label="Check not null: R|/getNullableString|()!!" style="filled" fillcolor=yellow];
-                        19 [label="Variable declaration: lval y: R|kotlin/String|"];
-                        20 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
-                        21 [label="Assignment: R|<local>/x|"];
-                        22 [label="Exit block"];
-                    }
-                    23 [label="Try main block exit"];
-                }
-                subgraph cluster_9 {
-                    color=blue
-                    24 [label="Enter finally"];
-                    subgraph cluster_10 {
-                        color=blue
-                        25 [label="Enter block"];
-                        26 [label="Access qualifier kotlin/Unit"];
-                        27 [label="Exit block"];
-                    }
-                    28 [label="Exit finally"];
-                }
-                29 [label="Try expression exit"];
-            }
-            30 [label="Access variable R|<local>/x|"];
-            31 [label="Function call: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
-            32 [label="Exit block"];
-        }
-        33 [label="Exit function test_1" style="filled" fillcolor=red];
-    }
+    10 -> {11};
     11 -> {12};
-    12 -> {13};
+
+    subgraph cluster_5 {
+        color=red
+        13 [label="Enter function test_1" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            14 [label="Enter block"];
+            15 [label="Variable declaration: lval x: R|kotlin/String?|"];
+            subgraph cluster_7 {
+                color=blue
+                16 [label="Try expression enter"];
+                subgraph cluster_8 {
+                    color=blue
+                    17 [label="Try main block enter"];
+                    subgraph cluster_9 {
+                        color=blue
+                        18 [label="Enter block"];
+                        subgraph cluster_10 {
+                            color=blue
+                            19 [label="Function call arguments enter"];
+                            20 [label="Function call arguments exit"];
+                        }
+                        21 [label="Function call enter: R|/getNullableString|()"];
+                        22 [label="Function call exit: R|/getNullableString|()" style="filled" fillcolor=yellow];
+                        23 [label="Check not null: R|/getNullableString|()!!" style="filled" fillcolor=yellow];
+                        24 [label="Variable declaration: lval y: R|kotlin/String|"];
+                        subgraph cluster_11 {
+                            color=blue
+                            25 [label="Function call arguments enter"];
+                            26 [label="Function call arguments exit"];
+                        }
+                        27 [label="Function call enter: R|/getNullableString|()"];
+                        28 [label="Function call exit: R|/getNullableString|()" style="filled" fillcolor=yellow];
+                        29 [label="Assignment: R|<local>/x|"];
+                        30 [label="Exit block"];
+                    }
+                    31 [label="Try main block exit"];
+                }
+                subgraph cluster_12 {
+                    color=blue
+                    32 [label="Enter finally"];
+                    subgraph cluster_13 {
+                        color=blue
+                        33 [label="Enter block"];
+                        34 [label="Access qualifier kotlin/Unit"];
+                        35 [label="Exit block"];
+                    }
+                    36 [label="Exit finally"];
+                }
+                37 [label="Try expression exit"];
+            }
+            subgraph cluster_14 {
+                color=blue
+                38 [label="Function call arguments enter"];
+                39 [label="Access variable R|<local>/x|"];
+                40 [label="Function call arguments exit"];
+            }
+            41 [label="Function call enter: R|/takeNullableString|(...)"];
+            42 [label="Function call exit: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
+            43 [label="Exit block"];
+        }
+        44 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
     13 -> {14};
     14 -> {15};
-    14 -> {24} [label="onUncaughtException"];
     15 -> {16};
     16 -> {17};
+    16 -> {32} [label="onUncaughtException"];
     17 -> {18};
-    17 -> {24} [label="onUncaughtException"];
     18 -> {19};
-    18 -> {24} [label="onUncaughtException"];
     19 -> {20};
     20 -> {21};
-    20 -> {24} [label="onUncaughtException"];
     21 -> {22};
     22 -> {23};
     23 -> {24};
@@ -105,76 +125,114 @@ digraph initializationInTry_kt {
     27 -> {28};
     28 -> {29};
     29 -> {30};
+    29 -> {32} [label="onUncaughtException"];
     30 -> {31};
     31 -> {32};
     32 -> {33};
-
-    subgraph cluster_11 {
-        color=red
-        34 [label="Enter function test_2" style="filled" fillcolor=red];
-        subgraph cluster_12 {
-            color=blue
-            35 [label="Enter block"];
-            36 [label="Variable declaration: lval x: R|kotlin/String?|"];
-            subgraph cluster_13 {
-                color=blue
-                37 [label="Try expression enter"];
-                subgraph cluster_14 {
-                    color=blue
-                    38 [label="Try main block enter"];
-                    subgraph cluster_15 {
-                        color=blue
-                        39 [label="Enter block"];
-                        40 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
-                        41 [label="Variable declaration: lval y: R|kotlin/String?|"];
-                        42 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
-                        43 [label="Assignment: R|<local>/x|"];
-                        44 [label="Exit block"];
-                    }
-                    45 [label="Try main block exit"];
-                }
-                subgraph cluster_16 {
-                    color=blue
-                    46 [label="Enter finally"];
-                    subgraph cluster_17 {
-                        color=blue
-                        47 [label="Enter block"];
-                        48 [label="Access qualifier kotlin/Unit"];
-                        49 [label="Exit block"];
-                    }
-                    50 [label="Exit finally"];
-                }
-                51 [label="Try expression exit"];
-            }
-            52 [label="Access variable R|<local>/x|"];
-            53 [label="Function call: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
-            54 [label="Exit block"];
-        }
-        55 [label="Exit function test_2" style="filled" fillcolor=red];
-    }
+    33 -> {34};
     34 -> {35};
     35 -> {36};
     36 -> {37};
     37 -> {38};
-    37 -> {46} [label="onUncaughtException"];
     38 -> {39};
     39 -> {40};
     40 -> {41};
-    40 -> {46} [label="onUncaughtException"];
     41 -> {42};
     42 -> {43};
-    42 -> {46} [label="onUncaughtException"];
     43 -> {44};
-    44 -> {45};
+
+    subgraph cluster_15 {
+        color=red
+        45 [label="Enter function test_2" style="filled" fillcolor=red];
+        subgraph cluster_16 {
+            color=blue
+            46 [label="Enter block"];
+            47 [label="Variable declaration: lval x: R|kotlin/String?|"];
+            subgraph cluster_17 {
+                color=blue
+                48 [label="Try expression enter"];
+                subgraph cluster_18 {
+                    color=blue
+                    49 [label="Try main block enter"];
+                    subgraph cluster_19 {
+                        color=blue
+                        50 [label="Enter block"];
+                        subgraph cluster_20 {
+                            color=blue
+                            51 [label="Function call arguments enter"];
+                            52 [label="Function call arguments exit"];
+                        }
+                        53 [label="Function call enter: R|/getNullableString|()"];
+                        54 [label="Function call exit: R|/getNullableString|()" style="filled" fillcolor=yellow];
+                        55 [label="Variable declaration: lval y: R|kotlin/String?|"];
+                        subgraph cluster_21 {
+                            color=blue
+                            56 [label="Function call arguments enter"];
+                            57 [label="Function call arguments exit"];
+                        }
+                        58 [label="Function call enter: R|/getNullableString|()"];
+                        59 [label="Function call exit: R|/getNullableString|()" style="filled" fillcolor=yellow];
+                        60 [label="Assignment: R|<local>/x|"];
+                        61 [label="Exit block"];
+                    }
+                    62 [label="Try main block exit"];
+                }
+                subgraph cluster_22 {
+                    color=blue
+                    63 [label="Enter finally"];
+                    subgraph cluster_23 {
+                        color=blue
+                        64 [label="Enter block"];
+                        65 [label="Access qualifier kotlin/Unit"];
+                        66 [label="Exit block"];
+                    }
+                    67 [label="Exit finally"];
+                }
+                68 [label="Try expression exit"];
+            }
+            subgraph cluster_24 {
+                color=blue
+                69 [label="Function call arguments enter"];
+                70 [label="Access variable R|<local>/x|"];
+                71 [label="Function call arguments exit"];
+            }
+            72 [label="Function call enter: R|/takeNullableString|(...)"];
+            73 [label="Function call exit: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
+            74 [label="Exit block"];
+        }
+        75 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
     45 -> {46};
     46 -> {47};
     47 -> {48};
     48 -> {49};
+    48 -> {63} [label="onUncaughtException"];
     49 -> {50};
     50 -> {51};
     51 -> {52};
     52 -> {53};
     53 -> {54};
     54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61};
+    60 -> {63} [label="onUncaughtException"];
+    61 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66};
+    66 -> {67};
+    67 -> {68};
+    68 -> {69};
+    69 -> {70};
+    70 -> {71};
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    74 -> {75};
 
 }

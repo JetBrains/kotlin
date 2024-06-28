@@ -5,51 +5,38 @@
 
 package org.jetbrains.kotlin.fir.types.builder
 
-import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 @FirBuilderDsl
 class FirErrorTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
+    override var annotations: MutableList<FirAnnotation> = mutableListOf()
     var type: ConeKotlinType? = null
     var delegatedTypeRef: FirTypeRef? = null
+    var partiallyResolvedTypeRef: FirTypeRef? = null
     lateinit var diagnostic: ConeDiagnostic
 
     override fun build(): FirErrorTypeRef {
-        val type = this.type
-        return if (type != null) {
-            FirErrorTypeRefImpl(
-                source,
-                type,
-                delegatedTypeRef,
-                diagnostic
-            )
-        } else {
-            FirErrorTypeRefImpl(
-                source,
-                delegatedTypeRef,
-                diagnostic,
-            )
-        }
+        return FirErrorTypeRefImpl(
+            source,
+            annotations.toMutableOrEmpty(),
+            this.type,
+            delegatedTypeRef,
+            diagnostic,
+            partiallyResolvedTypeRef = partiallyResolvedTypeRef,
+        )
     }
-
-    @Deprecated("Modification of 'annotations' has no impact for FirErrorTypeRefBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -68,6 +55,7 @@ inline fun buildErrorTypeRefCopy(original: FirErrorTypeRef, init: FirErrorTypeRe
     val copyBuilder = FirErrorTypeRefBuilder()
     copyBuilder.source = original.source
     copyBuilder.type = original.type
+    copyBuilder.annotations = original.annotations.toMutableList()
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
     copyBuilder.diagnostic = original.diagnostic
     return copyBuilder.apply(init).build()

@@ -1,0 +1,110 @@
+Module: lib
+FILE fqName:a fileName:/AnnotationInstantiationWithArrayLib.kt
+  CLASS ANNOTATION_CLASS name:Outer modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.Outer
+    PROPERTY name:array visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:array type:kotlin.Array<a.Outer.Inner> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'array: kotlin.Array<a.Outer.Inner> declared in a.Outer.<init>' type=kotlin.Array<a.Outer.Inner> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-array> visibility:public modality:FINAL <> ($this:a.Outer) returnType:kotlin.Array<a.Outer.Inner>
+        correspondingProperty: PROPERTY name:array visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:a.Outer
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-array> (): kotlin.Array<a.Outer.Inner> declared in a.Outer'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:array type:kotlin.Array<a.Outer.Inner> visibility:private [final]' type=kotlin.Array<a.Outer.Inner> origin=null
+              receiver: GET_VAR '<this>: a.Outer declared in a.Outer.<get-array>' type=a.Outer origin=null
+    CLASS ANNOTATION_CLASS name:Inner modality:OPEN visibility:public superTypes:[kotlin.Annotation]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:a.Outer.Inner
+      PROPERTY name:v visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.IntArray visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'v: kotlin.IntArray declared in a.Outer.Inner.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-v> visibility:public modality:FINAL <> ($this:a.Outer.Inner) returnType:kotlin.IntArray
+          correspondingProperty: PROPERTY name:v visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:a.Outer.Inner
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-v> (): kotlin.IntArray declared in a.Outer.Inner'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:v type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
+                receiver: GET_VAR '<this>: a.Outer.Inner declared in a.Outer.Inner.<get-v>' type=a.Outer.Inner origin=null
+      CONSTRUCTOR visibility:public <> (v:kotlin.IntArray) returnType:a.Outer.Inner [primary]
+        VALUE_PARAMETER name:v index:0 type:kotlin.IntArray
+          EXPRESSION_BODY
+            VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Inner modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Annotation
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (array:kotlin.Array<a.Outer.Inner>) returnType:a.Outer [primary]
+      VALUE_PARAMETER name:array index:0 type:kotlin.Array<a.Outer.Inner>
+        EXPRESSION_BODY
+          VARARG type=kotlin.Array<a.Outer.Inner> varargElementType=a.Outer.Inner
+            CONSTRUCTOR_CALL 'public constructor <init> (v: kotlin.IntArray) declared in a.Outer.Inner' type=a.Outer.Inner origin=null
+              v: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                CONST Int type=kotlin.Int value=1
+            CONSTRUCTOR_CALL 'public constructor <init> (v: kotlin.IntArray) declared in a.Outer.Inner' type=a.Outer.Inner origin=null
+              v: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                CONST Int type=kotlin.Int value=2
+            CONSTRUCTOR_CALL 'public constructor <init> (v: kotlin.IntArray) declared in a.Outer.Inner' type=a.Outer.Inner origin=null
+              v: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Outer modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Annotation
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+Module: app
+FILE fqName:test fileName:/AnnotationInstantiationWithArrayApp.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.C
+    CONSTRUCTOR visibility:public <> () returnType:test.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:six visibility:public modality:FINAL <> ($this:test.C) returnType:a.Outer
+      $this: VALUE_PARAMETER name:<this> type:test.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun six (): a.Outer declared in test.C'
+          CONSTRUCTOR_CALL 'public constructor <init> (array: kotlin.Array<a.Outer.Inner>) declared in a.Outer' type=a.Outer origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun toString (): kotlin.String declared in a.Outer' type=kotlin.String origin=null
+          $this: CALL 'public final fun six (): a.Outer declared in test.C' type=a.Outer origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () declared in test.C' type=test.C origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in test'
+        CONST String type=kotlin.String value="OK"

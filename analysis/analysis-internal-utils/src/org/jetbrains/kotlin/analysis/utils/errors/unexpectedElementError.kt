@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.utils.errors
 
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+
 public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
-    buildErrorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
+    errorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
         withEntry(elementName, element) { element.toString() }
     }
 }

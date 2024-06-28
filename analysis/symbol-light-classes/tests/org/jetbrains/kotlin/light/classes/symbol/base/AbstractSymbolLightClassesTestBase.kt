@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
-import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
+import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -23,9 +24,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ModuleStructureDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
@@ -41,14 +42,14 @@ import kotlin.test.fail
 private const val TEST_MODULE_NAME = "light_idea_test_case"
 
 abstract class AbstractSymbolLightClassesTestBase(
-    override val configurator: AnalysisApiTestConfigurator
-) : AbstractAnalysisApiBasedSingleModuleTest() {
+    override val configurator: AnalysisApiTestConfigurator,
+) : AbstractAnalysisApiBasedTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
             useAdditionalServices(service(::CompiledLibraryProvider))
-            useDirectives(Directives, CompilerExecutor.Directives)
+            useDirectives(Directives, TestModuleCompiler.Directives)
             useAdditionalSourceProviders(::NullabilityAnnotationSourceProvider)
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
@@ -57,25 +58,30 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        if (stopIfCompilationErrorDirectivePresent && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val ktFiles = mainModule.ktFiles
+        doLightClassTest(ktFiles, mainModule, testServices)
+    }
+
+    open fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
+        if (isTestAgainstCompiledCode && TestModuleCompiler.Directives.COMPILATION_ERRORS in module.testModule.directives) {
             return
         }
 
         val ktFile = ktFiles.first()
         val project = ktFile.project
 
-        ignoreExceptionIfIgnoreFirPresent(module) {
+        ignoreExceptionIfIgnoreDirectivePresent(module) {
             compareResults(module, testServices) {
                 getRenderResult(ktFile, ktFiles, testDataPath, module, project)
             }
         }
     }
 
-    protected fun compareResults(module: TestModule, testServices: TestServices, computeActual: () -> String) {
+    protected fun compareResults(module: KtTestModule, testServices: TestServices, computeActual: () -> String) {
         val actual = computeActual().cleanup()
         compareResults(testServices, actual)
-        removeIgnoreFir(module)
+        removeIgnoreDirectives(module)
         removeDuplicatedFirJava(testServices)
     }
 
@@ -91,17 +97,19 @@ abstract class AbstractSymbolLightClassesTestBase(
         ktFile: KtFile,
         ktFiles: List<KtFile>,
         testDataFile: Path,
-        module: TestModule,
-        project: Project
+        module: KtTestModule,
+        project: Project,
     ): String
 
-    private inline fun ignoreExceptionIfIgnoreFirPresent(module: TestModule, action: () -> Unit) {
+    protected fun ignoreExceptionIfIgnoreDirectivePresent(module: KtTestModule, action: () -> Unit) {
         try {
             action()
         } catch (e: Throwable) {
-            if (Directives.IGNORE_FIR in module.directives) {
+            val directives = module.testModule.directives
+            if (Directives.IGNORE_FIR in directives || isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
                 return
             }
+
             throw e
         }
     }
@@ -114,19 +122,36 @@ abstract class AbstractSymbolLightClassesTestBase(
         testServices.assertions.assertEqualsToFile(path, actual)
     }
 
-    private fun removeIgnoreFir(module: TestModule) {
-        if (Directives.IGNORE_FIR in module.directives) {
-            error("Test is passing. Please, remove `// ${Directives.IGNORE_FIR.name}` directive")
+    private fun removeIgnoreDirectives(module: KtTestModule) {
+        val directives = module.testModule.directives
+        if (Directives.IGNORE_FIR in directives) {
+            throwTestIsPassingException(Directives.IGNORE_FIR)
+        }
+
+        if (isTestAgainstCompiledCode && Directives.IGNORE_LIBRARY_EXCEPTIONS in directives) {
+            throwTestIsPassingException(Directives.IGNORE_LIBRARY_EXCEPTIONS)
         }
     }
 
+    private fun throwTestIsPassingException(directive: Directive): Nothing {
+        error("Test is passing. Please, remove `// ${directive.name}` directive")
+    }
+
+    protected fun findLightClass(fqname: String, ktFile: KtFile): PsiClass? {
+        val project = ktFile.project
+        return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project) ?: findLightClass(fqname, project)
+    }
+
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
-        val searchScope = GlobalSearchScope.allScope(project)
-        JavaElementFinder.getInstance(project).findClass(fqname, searchScope)?.let { return it }
+        return findLightClass(fqname, GlobalSearchScope.allScope(project), project)
+    }
+
+    private fun findLightClass(fqname: String, scope: GlobalSearchScope, project: Project): PsiClass? {
+        JavaElementFinder.getInstance(project).findClass(fqname, scope)?.let { return it }
 
         val fqName = FqName(fqname)
         val parentFqName = fqName.parent().takeUnless(FqName::isRoot) ?: return null
-        val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), searchScope) ?: return null
+        val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), scope) ?: return null
         val kotlinEnumClass = enumClass.unwrapped?.safeAs<KtClass>()?.takeIf(KtClass::isEnum) ?: return null
 
         val enumEntryName = fqName.shortName().asString()
@@ -170,7 +195,7 @@ abstract class AbstractSymbolLightClassesTestBase(
     private fun currentResultPath() = testDataPath.resolveSibling(testDataPath.nameWithoutExtension + currentExtension)
 
     protected abstract val currentExtension: String
-    protected abstract val stopIfCompilationErrorDirectivePresent: Boolean
+    protected abstract val isTestAgainstCompiledCode: Boolean
 
     object EXTENSIONS {
         const val JAVA = ".java"
@@ -182,6 +207,10 @@ abstract class AbstractSymbolLightClassesTestBase(
         val IGNORE_FIR by directive(
             description = "Ignore the test for Symbol FIR-based implementation of LC",
             applicability = DirectiveApplicability.Global
+        )
+
+        val IGNORE_LIBRARY_EXCEPTIONS by stringDirective(
+            description = "Ignore the test for decompiled-based implementation of LC"
         )
     }
 }

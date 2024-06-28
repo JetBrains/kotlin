@@ -1,8 +1,0 @@
-KT element: KtLambdaArgument
-FIR element: FirAnonymousFunctionExpressionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
-    ^ Int(1)
-}

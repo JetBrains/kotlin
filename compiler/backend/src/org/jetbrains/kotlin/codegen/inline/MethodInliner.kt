@@ -44,10 +44,10 @@ class MethodInliner(
     private val inliningContext: InliningContext,
     private val nodeRemapper: FieldRemapper,
     private val isSameModule: Boolean,
-    private val errorPrefix: String,
+    private val errorPrefixSupplier: () -> String,
     private val sourceMapper: SourceMapCopier,
     private val inlineCallSiteInfo: InlineCallSiteInfo,
-    private val overrideLineNumber: Boolean = false,
+    private val isInlineOnlyMethod: Boolean = false,
     private val shouldPreprocessApiVersionCalls: Boolean = false,
     private val defaultMaskStart: Int = -1,
     private val defaultMaskEnd: Int = -1
@@ -155,12 +155,18 @@ class MethodInliner(
 
         val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
-        var currentLineNumber = if (overrideLineNumber) sourceMapper.callSite!!.line else -1
+        var currentLineNumber = if (isInlineOnlyMethod) sourceMapper.callSite!!.line else -1
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
+            private var currentLabel: Label? = null
+
+            override fun visitLabel(label: Label?) {
+                currentLabel = label
+                super.visitLabel(label)
+            }
 
             override fun visitLineNumber(line: Int, start: Label) {
-                if (!overrideLineNumber) {
+                if (!isInlineOnlyMethod) {
                     currentLineNumber = line
                 }
                 super.visitLineNumber(line, start)
@@ -188,6 +194,18 @@ class MethodInliner(
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
+                    transformResult.getChangedTypes().forEach { (oldType, newType) ->
+                        // KT-65503 For all changed types, if oldType is a lambda or an anonymous object,
+                        // and the newType is a name for an inline call,
+                        // it should be added to the remapper to ensure correct inline conversion of nested anonymous objects or lambdas.
+                        if (newType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
+                            !oldType.contains(INLINE_CALL_TRANSFORMATION_SUFFIX) &&
+                            isAnonymousClass(oldType) &&
+                            !remapper.hasNoAdditionalMapping(oldType)
+                        ) {
+                            remapper.addMapping(oldType, newType)
+                        }
+                    }
                     result.merge(transformResult)
                     result.addChangedType(oldClassName, newClassName)
 
@@ -206,7 +224,7 @@ class MethodInliner(
                     }
 
                     for (classBuilder in childInliningContext.continuationBuilders.values) {
-                        classBuilder.done(inliningContext.state.generateSmapCopyToAnnotation)
+                        classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
                     }
                 } else {
                     result.addNotChangedClass(oldClassName)
@@ -263,7 +281,7 @@ class MethodInliner(
                     }
 
                     val firstLine = info.node.node.instructions.asSequence().mapNotNull { it as? LineNumberNode }.firstOrNull()?.line ?: -1
-                    if ((info is DefaultLambda != overrideLineNumber) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
+                    if ((info is DefaultLambda != isInlineOnlyMethod) && currentLineNumber >= 0 && firstLine == currentLineNumber) {
                         // This can happen in two cases:
                         //   1. `someInlineOnlyFunction { singleLineLambda }`: in this case line numbers are removed
                         //      from the inline function, so the entirety of its bytecode has the line number of
@@ -297,14 +315,44 @@ class MethodInliner(
                         info.node.node, lambdaParameters, inliningContext.subInlineLambda(info),
                         newCapturedRemapper,
                         if (info is DefaultLambda) isSameModule else true /*cause all nested objects in same module as lambda*/,
-                        "Lambda inlining " + info.lambdaClassType.internalName,
-                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo
+                        { "Lambda inlining " + info.lambdaClassType.internalName },
+                        SourceMapCopier(sourceMapper.parent, info.node.classSMAP, callSite), inlineCallSiteInfo,
+                        isInlineOnlyMethod = false
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
+
+                    val inlineScopesGenerator = inliningContext.inlineScopesGenerator
+
+                    val label = currentLabel
+
+                    // When regenerating anonymous objects we may inline a crossinline lambda before some
+                    // already inlined functions. For these functions their scope numbers should be incremented.
+                    // We also need to temporarily increment the already inlined scopes number by the number of
+                    // inline marker variables that we have found before the crossinline lambda call to assign
+                    // the scope number for this lambda correctly.
+                    val inlineScopeNumberIncrement =
+                        if (inlineScopesGenerator != null && label != null && isRegeneratingAnonymousObject()) {
+                            incrementScopeNumbersOfVariables(node, label)
+                        } else {
+                            0
+                        }
+
+                    inlineScopesGenerator?.apply {
+                        inlinedScopes += inlineScopeNumberIncrement
+                        currentCallSiteLineNumber =
+                            if (isInlineOnlyMethod) {
+                                currentLineNumber
+                            } else {
+                                sourceMapper.mapLineNumber(currentLineNumber)
+                            }
+                    }
+
                     //TODO add skipped this and receiver
                     val lambdaResult =
                         inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
+
+                    inlineScopesGenerator?.apply { inlinedScopes -= inlineScopeNumberIncrement }
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
@@ -316,7 +364,7 @@ class MethodInliner(
                     if (currentLineNumber != -1) {
                         val endLabel = Label()
                         mv.visitLabel(endLabel)
-                        if (overrideLineNumber) {
+                        if (isInlineOnlyMethod) {
                             // This is from the function we're inlining into, so no need to remap.
                             mv.visitLineNumber(currentLineNumber, endLabel)
                         } else {
@@ -385,7 +433,44 @@ class MethodInliner(
         node.accept(lambdaInliner)
 
         surroundInvokesWithSuspendMarkersIfNeeded(resultNode)
+
+        if (inliningContext.inlineScopesGenerator != null && GENERATE_SMAP) {
+            updateCallSiteLineNumbers(resultNode, node)
+        }
+
         return resultNode
+    }
+
+    private fun updateCallSiteLineNumbers(resultNode: MethodNode, inlinedNode: MethodNode) {
+        val inlinedNodeLocalVariables = inlinedNode.localVariables ?: return
+        val resultNodeLocalVariables = resultNode.localVariables ?: return
+        if (inlinedNodeLocalVariables.isEmpty() || resultNodeLocalVariables.isEmpty()) {
+            return
+        }
+
+        val markerVariablesFromInlinedNode = inlinedNodeLocalVariables.filter { isFakeLocalVariableForInline(it.name) }
+        if (markerVariablesFromInlinedNode.isEmpty()) {
+            return
+        }
+
+        val markerVariableNamesFromInlinedNode = markerVariablesFromInlinedNode.map { it.name }.toMutableSet()
+
+        // When updating the call site line numbers, we need to skip the marker variable of the inlined node - it has
+        // already been assigned a correct call site line number during inlining. However, when regenerating anonymous objects,
+        // the inliner copies the bodies of the regenerated methods and no marker variables are introduced during this process.
+        // So in case with anonymous object regeneration we don't have to skip anything.
+        if (!isRegeneratingAnonymousObject()) {
+            val labelToIndex = inlinedNode.getLabelToIndexMap()
+            val markerVariableOfInlinedNode = markerVariablesFromInlinedNode.sortedBy { labelToIndex[it.start.label] }.first()
+            markerVariableNamesFromInlinedNode.remove(markerVariableOfInlinedNode.name)
+        }
+
+        for (variable in resultNodeLocalVariables) {
+            val name = variable.name
+            if (isFakeLocalVariableForInline(name) && name in markerVariableNamesFromInlinedNode) {
+                variable.name = updateCallSiteLineNumber(name) { sourceMapper.mapLineNumber(it) }
+            }
+        }
     }
 
     private fun prepareNode(node: MethodNode, finallyDeepShift: Int): MethodNode {
@@ -413,13 +498,16 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
+        inliningContext.inlineScopesGenerator?.addInlineScopesInfo(node, isRegeneratingAnonymousObject())
+
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
-            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !overrideLineNumber
+            private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !isInlineOnlyMethod
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
+                @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
                 if (reorderIrLambdaParameters && lambdaInfo is IrExpressionLambda) {
                     val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
                     return when {
@@ -477,19 +565,34 @@ class MethodInliner(
                 }
             }
 
-            override fun visitLocalVariable(
-                name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
-            ) {
-                if (isInliningLambda || GENERATE_DEBUG_INFO) {
-                    val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
-                    val varSuffix = when {
-                        inliningContext.isRoot && !isInlineFunctionMarker -> INLINE_FUN_VAR_SUFFIX
-                        else -> ""
-                    }
+            override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
+                if (!isInliningLambda && !GENERATE_DEBUG_INFO) return
 
-                    val varName = if (varSuffix.isNotEmpty() && name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
-                    super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index))
+                val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
+                val newName = when {
+                    inliningContext.isRoot && !isInlineFunctionMarker -> {
+                        if (inliningContext.inlineScopesGenerator != null) {
+                            calculateNewNameUsingScopeNumbers(name)
+                        } else {
+                            calculateNewNameUsingTheOldScheme(name)
+                        }
+                    }
+                    else -> name
                 }
+                super.visitLocalVariable(newName, desc, signature, start, end, getNewIndex(index))
+            }
+
+            private fun calculateNewNameUsingScopeNumbers(name: String): String {
+                if (name.startsWith(AsmUtil.THIS)) {
+                    val scopeNumber = name.getInlineScopeInfo()?.scopeNumber ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
+                    return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
+                }
+                return name
+            }
+
+            private fun calculateNewNameUsingTheOldScheme(name: String): String {
+                val namePrefix = if (name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
+                return namePrefix + INLINE_FUN_VAR_SUFFIX
             }
         }
 
@@ -647,7 +750,7 @@ class MethodInliner(
             } else {
                 //given frame is <tt>null</tt> if and only if the corresponding instruction cannot be reached (dead code).
                 //clean dead code otherwise there is problems in unreachable finally block, don't touch label it cause try/catch/finally problems
-                if (cur.type == AbstractInsnNode.LABEL) {
+                if (cur.nodeType == AbstractInsnNode.LABEL) {
                     //NB: Cause we generate exception table for default handler using gaps (see ExpressionCodegen.visitTryExpression)
                     //it may occurs that interval for default handler starts before catch start label, so this label seems as dead,
                     //but as result all this labels will be merged into one (see KT-5863)
@@ -810,7 +913,8 @@ class MethodInliner(
 
         removeFakeVariablesInitializationIfPresent(node)
 
-        val frames = FastStackAnalyzer("<fake>", node, FixStackInterpreter()).analyze()
+        val analyzer = FastStackAnalyzer("<fake>", node, FixStackInterpreter()) { nLocals, nStack -> Frame(nLocals, nStack) }
+        val frames = analyzer.analyze()
 
         val localReturnsNormalizer = LocalReturnsNormalizer()
 
@@ -855,9 +959,9 @@ class MethodInliner(
         //  - there's a local variable table entry for this variable
         val usedIntegerVar = BooleanArray(node.maxLocals)
         for (insn in insnArray) {
-            if (insn.type == AbstractInsnNode.VAR_INSN && insn.opcode == Opcodes.ILOAD) {
+            if (insn.nodeType == AbstractInsnNode.VAR_INSN && insn.opcode == Opcodes.ILOAD) {
                 usedIntegerVar[(insn as VarInsnNode).`var`] = true
-            } else if (insn.type == AbstractInsnNode.IINC_INSN) {
+            } else if (insn.nodeType == AbstractInsnNode.IINC_INSN) {
                 usedIntegerVar[(insn as IincInsnNode).`var`] = true
             }
         }
@@ -882,7 +986,7 @@ class MethodInliner(
             if (p1.opcode != Opcodes.ISTORE) continue
 
             val p2 = p1.next ?: break
-            if (p2.type != AbstractInsnNode.LABEL) continue
+            if (p2.nodeType != AbstractInsnNode.LABEL) continue
 
             val varIndex = (p1 as VarInsnNode).`var`
             if (!usedIntegerVar[varIndex]) {
@@ -1014,9 +1118,9 @@ class MethodInliner(
     @Suppress("SameParameterValue")
     private fun wrapException(originalException: Throwable, node: MethodNode, errorSuffix: String): RuntimeException {
         return if (originalException is InlineException) {
-            InlineException("$errorPrefix: $errorSuffix", originalException)
+            InlineException("${errorPrefixSupplier()}: $errorSuffix", originalException)
         } else {
-            InlineException("$errorPrefix: $errorSuffix\nCause: ${node.nodeText}", originalException)
+            InlineException("${errorPrefixSupplier()}: $errorSuffix\nCause: ${node.nodeText}", originalException)
         }
     }
 
@@ -1203,6 +1307,57 @@ class MethodInliner(
                 insnNode = insnNode.next
             }
             return result
+        }
+    }
+
+    private fun isRegeneratingAnonymousObject(): Boolean =
+        inliningContext.parent is RegeneratedClassContext
+}
+
+private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): Int {
+    val localVariables = node.localVariables ?: return 0
+    if (localVariables.isEmpty()) {
+        return 0
+    }
+
+    val labelToIndex = node.getLabelToIndexMap()
+    val currentIndex = labelToIndex[label] ?: return 0
+    var inlineScopeNumberIncrement = 0
+    for (variable in localVariables) {
+        val variableStartIndex = labelToIndex[variable.start.label] ?: continue
+        if (variableStartIndex < currentIndex && isFakeLocalVariableForInline(variable.name)) {
+            inlineScopeNumberIncrement += 1
+        }
+
+        if (variableStartIndex > currentIndex) {
+            variable.name = incrementScopeNumbers(variable.name)
+        }
+    }
+
+    return inlineScopeNumberIncrement
+}
+
+private fun incrementScopeNumbers(name: String): String {
+    val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
+    return buildString {
+        append(name.dropInlineScopeInfo())
+        append(INLINE_SCOPE_NUMBER_SEPARATOR)
+        append(scopeNumber + 1)
+
+        if (callSiteLineNumber != null) {
+            append(INLINE_SCOPE_NUMBER_SEPARATOR)
+            append(callSiteLineNumber)
+        }
+
+        if (surroundingScopeNumber != null) {
+            val resultingSurroundingScopeNumber =
+                if (surroundingScopeNumber != 0) {
+                    surroundingScopeNumber + 1
+                } else {
+                    0
+                }
+            append(INLINE_SCOPE_NUMBER_SEPARATOR)
+            append(resultingSurroundingScopeNumber)
         }
     }
 }

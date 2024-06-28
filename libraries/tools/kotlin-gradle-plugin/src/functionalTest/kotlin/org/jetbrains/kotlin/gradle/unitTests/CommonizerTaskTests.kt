@@ -10,10 +10,10 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.native.internal.cInteropCommonizationEnabled
+import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.util.*
-import kotlin.test.Test
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
+import kotlin.test.*
 
 class CommonizerTaskTests {
 
@@ -63,6 +63,24 @@ class CommonizerTaskTests {
         val rootProjectCommonizeNativeDistributionTask = rootProject.assertContainsTaskWithName(commonizeNativeDistributionTaskName)
         rootProject.tasks.getByName("commonize").assertDependsOn(rootProjectCommonizeNativeDistributionTask)
         subproject.tasks.getByName("commonize").assertDependsOn(rootProjectCommonizeNativeDistributionTask)
+    }
+
+    @Test
+    fun `test commonizeNativeDistributionTask is not created eagerly`() {
+        val project = buildProjectWithMPP {
+            tasks.configureEach {
+                if (it.name == "commonizeNativeDistribution") {
+                    fail("Task $it was not expected to be created eagerly")
+                }
+            }
+
+            kotlin {
+                linuxArm64()
+                linuxX64()
+            }
+        }
+
+        project.evaluate()
     }
 
     /**
@@ -128,12 +146,53 @@ class CommonizerTaskTests {
         assertNotNull(rootProject.plugins.findPlugin(JVM_ECOSYSTEM_PLUGIN_ID))
     }
 
-
     @Test
     fun `test commonizeCInteropTask`() {
         val commonizeCInteropTaskName = "commonizeCInterop"
         val commonizeCInteropTask = subproject.assertContainsTaskWithName(commonizeCInteropTaskName)
         subproject.tasks.getByName("commonize").assertDependsOn(commonizeCInteropTask)
         rootProject.assertContainsNoTaskWithName(commonizeCInteropTaskName)
+    }
+
+    @Test
+    fun `test applying CocoaPods plugin - enables commonization`() {
+        val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+        rootProject.applyMultiplatformPlugin()
+
+        rootProject.runLifecycleAwareTest {
+            assertFalse(rootProject.cInteropCommonizationEnabled())
+
+            rootProject.applyCocoapodsPlugin()
+
+            assertTrue(rootProject.cInteropCommonizationEnabled())
+        }
+    }
+
+    @Test
+    fun `test applying CocoaPods plugin - in a root project - enables commonization only in the root project`() {
+        val rootProject = ProjectBuilder.builder().build() as ProjectInternal
+        val subproject = ProjectBuilder.builder().withParent(rootProject).build() as ProjectInternal
+        rootProject.applyMultiplatformPlugin()
+        subproject.applyMultiplatformPlugin()
+
+        rootProject.runLifecycleAwareTest {
+            assertFalse(rootProject.cInteropCommonizationEnabled())
+            assertFalse(subproject.cInteropCommonizationEnabled())
+
+            rootProject.applyCocoapodsPlugin()
+
+            assertTrue(rootProject.cInteropCommonizationEnabled())
+            assertFalse(subproject.cInteropCommonizationEnabled())
+        }
+    }
+
+    @Test
+    fun `test copyCommonizeCInteropForIdeTask creation - doesn't fail`() {
+        val project = ProjectBuilder.builder().build()
+        project.applyMultiplatformPlugin()
+        project.enableCInteropCommonization(true)
+        project.runLifecycleAwareTest {
+            project.copyCommonizeCInteropForIdeTask()?.get()?.cInteropCommonizerTaskOutputDirectories
+        }
     }
 }

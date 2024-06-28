@@ -161,14 +161,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitFinallyProxyEnterNode(node: FinallyProxyEnterNode) {
-        visitNode(node)
-    }
-
-    open fun visitFinallyProxyExitNode(node: FinallyProxyExitNode) {
-        visitNode(node)
-    }
-
     open fun visitTryExpressionExitNode(node: TryExpressionExitNode) {
         visitNode(node)
     }
@@ -227,7 +219,7 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitConstExpressionNode(node: ConstExpressionNode) {
+    open fun visitLiteralExpressionNode(node: LiteralExpressionNode) {
         visitNode(node)
     }
 
@@ -247,7 +239,19 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitFunctionCallNode(node: FunctionCallNode) {
+    open fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode) {
+        visitNode(node)
+    }
+
+    open fun visitFunctionCallEnterNode(node: FunctionCallEnterNode) {
+        visitNode(node)
+    }
+
+    open fun visitFunctionCallExitNode(node: FunctionCallExitNode) {
         visitNode(node)
     }
 
@@ -442,14 +446,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitFinallyBlockExitNode(node)
     }
 
-    final override fun visitFinallyProxyEnterNode(node: FinallyProxyEnterNode, data: Nothing?) {
-        visitFinallyProxyEnterNode(node)
-    }
-
-    final override fun visitFinallyProxyExitNode(node: FinallyProxyExitNode, data: Nothing?) {
-        visitFinallyProxyExitNode(node)
-    }
-
     final override fun visitTryExpressionExitNode(node: TryExpressionExitNode, data: Nothing?) {
         visitTryExpressionExitNode(node)
     }
@@ -508,8 +504,8 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitJumpNode(node)
     }
 
-    final override fun visitConstExpressionNode(node: ConstExpressionNode, data: Nothing?) {
-        visitConstExpressionNode(node)
+    final override fun visitLiteralExpressionNode(node: LiteralExpressionNode, data: Nothing?) {
+        visitLiteralExpressionNode(node)
     }
 
     // ----------------------------------- Check not null call -----------------------------------
@@ -528,8 +524,20 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitResolvedQualifierNode(node)
     }
 
-    final override fun visitFunctionCallNode(node: FunctionCallNode, data: Nothing?) {
-        visitFunctionCallNode(node)
+    final override fun visitFunctionCallArgumentsEnterNode(node: FunctionCallArgumentsEnterNode, data: Nothing?) {
+        visitFunctionCallArgumentsEnterNode(node)
+    }
+
+    final override fun visitFunctionCallArgumentsExitNode(node: FunctionCallArgumentsExitNode, data: Nothing?) {
+        visitFunctionCallArgumentsExitNode(node)
+    }
+
+    final override fun visitFunctionCallEnterNode(node: FunctionCallEnterNode, data: Nothing?) {
+        visitFunctionCallEnterNode(node)
+    }
+
+    final override fun visitFunctionCallExitNode(node: FunctionCallExitNode, data: Nothing?) {
+        visitFunctionCallExitNode(node)
     }
 
     final override fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: Nothing?) {

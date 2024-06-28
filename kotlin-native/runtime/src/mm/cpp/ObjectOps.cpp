@@ -9,83 +9,38 @@
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 
+#if __has_feature(thread_sanitizer)
+#include <sanitizer/tsan_interface.h>
+#endif
+
 using namespace kotlin;
 
-// TODO: Memory barriers.
-
-ALWAYS_INLINE void mm::SetStackRef(ObjHeader** location, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    *location = value;
-}
-
-ALWAYS_INLINE void mm::SetHeapRef(ObjHeader** location, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    *location = value;
-}
-
-#pragma clang diagnostic push
-// On 32-bit android arm clang warns of significant performance penalty because of large
-// atomic operations. TODO: Consider using alternative ways of ordering memory operations if they
-// turn out to be more efficient on these platforms.
-#pragma clang diagnostic ignored "-Watomic-alignment"
-
-ALWAYS_INLINE void mm::SetHeapRefAtomic(ObjHeader** location, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    __atomic_store_n(location, value, __ATOMIC_RELEASE);
-}
-
-ALWAYS_INLINE void mm::SetHeapRefAtomicSeqCst(ObjHeader** location, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    __atomic_store_n(location, value, __ATOMIC_SEQ_CST);
-}
-
-
-ALWAYS_INLINE OBJ_GETTER(mm::ReadHeapRefAtomic, ObjHeader** location) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    // TODO: Make this work with GCs that can stop thread at any point.
-    auto result = __atomic_load_n(location, __ATOMIC_ACQUIRE);
-    RETURN_OBJ(result);
-}
-
-ALWAYS_INLINE OBJ_GETTER(mm::CompareAndSwapHeapRef, ObjHeader** location, ObjHeader* expected, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    // TODO: Make this work with GCs that can stop thread at any point.
-    ObjHeader* actual = expected;
-    __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-    RETURN_OBJ(actual);
-}
-
-ALWAYS_INLINE bool mm::CompareAndSetHeapRef(ObjHeader** location, ObjHeader* expected, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);
-    // TODO: Make this work with GCs that can stop thread at any point.
-    ObjHeader* actual = expected;
-    return __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-}
-
-ALWAYS_INLINE OBJ_GETTER(mm::GetAndSetHeapRef, ObjHeader** location, ObjHeader* value) noexcept {
-    AssertThreadState(ThreadState::kRunnable);;
-    auto *actual = __atomic_exchange_n(location, value,  __ATOMIC_SEQ_CST);
-    RETURN_OBJ(actual);
-}
-
-
-#pragma clang diagnostic pop
-
-OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
+ALWAYS_INLINE OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
-    auto* object = threadData->gc().CreateObject(typeInfo);
+    auto* object = threadData->allocator().allocateObject(typeInfo);
+    threadData->gc().onAllocation(object);
+    // Prevents unsafe class publication (see KT-58995).
+    // Also important in case of the concurrent GC mark phase.
+    std::atomic_thread_fence(std::memory_order_release);
+#if __has_feature(thread_sanitizer)
+    // TSAN doesn't support fences.
+    __tsan_release(object);
+#endif
     RETURN_OBJ(object);
 }
 
-OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
+ALWAYS_INLINE OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
-    auto* array = threadData->gc().CreateArray(typeInfo, static_cast<uint32_t>(elements));
-    // `ArrayHeader` and `ObjHeader` are expected to be compatible.
-    RETURN_OBJ(reinterpret_cast<ObjHeader*>(array));
-}
-
-size_t mm::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-    return gc::GC::GetAllocatedHeapSize(object);
+    auto* array = threadData->allocator().allocateArray(typeInfo, static_cast<uint32_t>(elements));
+    threadData->gc().onAllocation(array->obj());
+    // Prevents unsafe class publication (see KT-58995).
+    // Also important in case of the concurrent GC mark phase.
+    std::atomic_thread_fence(std::memory_order_release);
+#if __has_feature(thread_sanitizer)
+    // TSAN doesn't support fences.
+    __tsan_release(array);
+#endif
+    RETURN_OBJ(array->obj());
 }

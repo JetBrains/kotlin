@@ -39,7 +39,7 @@ class KtUltraLightClassForFacade(
     }
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
-        get() = if (isMultiFileClass) emptyList() else _givenAnnotations
+        get() = if (multiFileClass) emptyList() else _givenAnnotations
 
     override fun createModifierListForSimpleFacade(): PsiModifierList = _modifierListForSimpleFacade
 
@@ -94,7 +94,7 @@ class KtUltraLightClassForFacade(
     override fun createOwnFields(): List<KtLightField> = hashSetOf<String>().let { nameCache ->
         filesWithSupportsWithCreators.flatMap { (file, _, creator) ->
             val allProperties = file.declarations.filterIsInstance<KtProperty>()
-            val properties = if (isMultiFileClass) allProperties.filter { it.hasModifier(KtTokens.CONST_KEYWORD) } else allProperties
+            val properties = if (multiFileClass) allProperties.filter { it.hasModifier(KtTokens.CONST_KEYWORD) } else allProperties
             properties.mapNotNull {
                 creator.createPropertyField(it, nameCache, forceStatic = true)
             }
@@ -106,7 +106,7 @@ class KtUltraLightClassForFacade(
             loadMethodsFromFile(file, support, creator, result)
         }
 
-        if (!isMultiFileClass) result else result.filterNot { it.hasModifierProperty(PsiModifier.PRIVATE) }
+        if (!multiFileClass) result else result.filterNot { it.hasModifierProperty(PsiModifier.PRIVATE) }
     }
 
     override fun copy(): KtLightClassForFacade = KtUltraLightClassForFacade(facadeClassFqName, files, filesWithSupports)

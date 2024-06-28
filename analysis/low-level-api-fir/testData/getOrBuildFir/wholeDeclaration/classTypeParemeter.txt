@@ -1,0 +1,15 @@
+KT element: KtTypeParameter
+FIR element: FirTypeParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] T
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] classTypeParemeter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

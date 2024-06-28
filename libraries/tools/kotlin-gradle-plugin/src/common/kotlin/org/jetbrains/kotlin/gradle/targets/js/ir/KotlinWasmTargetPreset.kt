@@ -6,44 +6,27 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+@DeprecatedTargetPresetApi
 class KotlinWasmTargetPreset(
     project: Project,
+    private val targetType: KotlinWasmTargetType
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        if (!PropertiesProvider(project).wasmStabilityNoWarn) {
-            project.logger.warn("New 'wasm' target is Work-in-Progress and is subject to change without notice.")
-        }
-
-        val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm, false)
+        val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm)
         irTarget.isMpp = true
-
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
-            if (!irTarget.isBrowserConfigured && !irTarget.isNodejsConfigured && !irTarget.isD8Configured) {
-                project.logger.warn(
-                    """
-                    Please choose a JavaScript environment to run tests.
-                    kotlin {
-                        wasm {
-                            // To build distributions for and run tests on browser, Node.js or d8 use one:
-                            browser()
-                            nodejs()
-                            d8()
-                        }
-                    }
-                """.trimIndent()
-                )
-            }
-        }
+        irTarget.wasmTargetType = targetType
 
         return irTarget
     }
@@ -51,7 +34,7 @@ class KotlinWasmTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
 
-    override fun getName(): String = WASM_PRESET_NAME
+    override fun getName(): String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
 
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
@@ -59,6 +42,6 @@ class KotlinWasmTargetPreset(
         KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
-        private const val WASM_PRESET_NAME = "wasm"
+        internal const val WASM_PRESET_NAME = "wasm"
     }
 }

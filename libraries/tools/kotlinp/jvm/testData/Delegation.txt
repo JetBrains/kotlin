@@ -1,0 +1,25 @@
+// A.class
+// ------------------------------------------
+public final class A : I {
+
+  // signature: <init>(LI;)V
+  public constructor(i: I)
+
+  // signature: foo()V
+  public open /* delegation */ fun foo(): kotlin/Unit
+
+  // module name: test-module
+}
+// I.class
+// ------------------------------------------
+public abstract interface I : kotlin/Any {
+
+  // signature: foo()V
+  public abstract fun foo(): kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

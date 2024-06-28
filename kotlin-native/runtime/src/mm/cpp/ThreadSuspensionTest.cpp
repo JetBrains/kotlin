@@ -3,22 +3,23 @@
  * that can be found in the LICENSE file.
  */
 
+#include "ThreadSuspension.hpp"
+
+#include <future>
+#include <iostream>
+#include <vector>
+
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
 #include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
-#include "ScopedThread.hpp"
-#include "ThreadSuspension.hpp"
+#include "SafePoint.hpp"
+#include "concurrent/ScopedThread.hpp"
+#include "TestSupport.hpp"
+#include "TestSupportCompilerGenerated.hpp"
 #include "ThreadState.hpp"
-#include "std_support/Vector.hpp"
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
-#include <future>
-#include <TestSupport.hpp>
-#include <TestSupportCompilerGenerated.hpp>
-
-#include <iostream>
 
 using namespace kotlin;
 
@@ -32,8 +33,8 @@ constexpr size_t kDefaultIterations = 200;
 constexpr size_t kDefaultReportingStep = 20;
 #endif // #ifdef KONAN_WINDOWS
 
-std_support::vector<mm::ThreadData*> collectThreadData() {
-    std_support::vector<mm::ThreadData*> result;
+std::vector<mm::ThreadData*> collectThreadData() {
+    std::vector<mm::ThreadData*> result;
     auto iter = mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : iter) {
         result.push_back(&thread);
@@ -42,16 +43,16 @@ std_support::vector<mm::ThreadData*> collectThreadData() {
 }
 
 template <typename T, typename F>
-std_support::vector<T> collectFromThreadData(F extractFunction) {
-    std_support::vector<T> result;
+std::vector<T> collectFromThreadData(F extractFunction) {
+    std::vector<T> result;
     auto threadData = collectThreadData();
     std::transform(threadData.begin(), threadData.end(), std::back_inserter(result), extractFunction);
     return result;
 }
 
-std_support::vector<bool> collectSuspended() {
+std::vector<bool> collectSuspended() {
     return collectFromThreadData<bool>(
-            [](mm::ThreadData* threadData) { return threadData->suspensionData().suspended(); });
+            [](mm::ThreadData* threadData) { return threadData->suspensionData().suspendedOrNative(); });
 }
 
 void reportProgress(size_t currentIteration, size_t totalIterations) {
@@ -83,7 +84,7 @@ public:
     static constexpr size_t kThreadCount = kDefaultThreadCount;
     static constexpr size_t kIterations = kDefaultIterations;
 
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     std::array<std::atomic<bool>, kThreadCount> ready{false};
     std::atomic<bool> canStart{false};
     std::atomic<bool> shouldStop{false};
@@ -115,9 +116,9 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
             while(!shouldStop) {
                 waitUntilCanStart(i);
 
-                EXPECT_FALSE(suspensionData.suspended());
+                EXPECT_FALSE(suspensionData.suspendedOrNative());
                 suspensionData.suspendIfRequested();
-                EXPECT_FALSE(suspensionData.suspended());
+                EXPECT_FALSE(suspensionData.suspendedOrNative());
            }
         });
     }
@@ -127,7 +128,8 @@ TEST_F(ThreadSuspensionTest, SimpleStartStop) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads();
+        mm::RequestThreadsSuspension("test");
+        mm::WaitForThreadsSuspension();
         auto suspended = collectSuspended();
         EXPECT_THAT(suspended, testing::Each(true));
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
@@ -170,7 +172,8 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
         reportProgress(i, kIterations);
         canStart = true;
 
-        mm::SuspendThreads();
+        mm::RequestThreadsSuspension("test");
+        mm::WaitForThreadsSuspension();
         EXPECT_EQ(mm::IsThreadSuspensionRequested(), true);
 
         mm::ResumeThreads();
@@ -181,7 +184,7 @@ TEST_F(ThreadSuspensionTest, SwitchStateToNative) {
     }
 }
 
-TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
+TEST_F(ThreadSuspensionTest, ConcurrentSuspendExclusive) {
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     std::atomic<size_t> successCount = 0;
 
@@ -195,15 +198,16 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
             ready[i] = true;
             waitUntilThreadsAreReady();
 
-            bool success = mm::SuspendThreads();
+            bool success = mm::TryRequestThreadsSuspension("test");
             if (success) {
+                mm::WaitForThreadsSuspension();
                 successCount++;
                 auto allThreadData = collectThreadData();
                 auto isCurrentOrSuspended = [currentThreadData](mm::ThreadData* data) {
-                    return data == currentThreadData || data->suspensionData().suspended();
+                    return data == currentThreadData || data->suspensionData().suspendedOrNative();
                 };
                 EXPECT_THAT(allThreadData, testing::Each(testing::Truly(isCurrentOrSuspended)));
-                EXPECT_FALSE(currentThreadData->suspensionData().suspended());
+                EXPECT_FALSE(currentThreadData->suspensionData().suspendedOrNative());
                 mm::ResumeThreads();
             } else {
                 EXPECT_TRUE(mm::IsThreadSuspensionRequested());
@@ -217,6 +221,49 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
     EXPECT_EQ(successCount, 1u);
 }
 
+TEST_F(ThreadSuspensionTest, ConcurrentSuspendSeries) {
+    ASSERT_THAT(collectThreadData(), testing::IsEmpty());
+    std::atomic<size_t> successCount = 0;
+
+    for (size_t i = 0; i < kThreadCount; i++) {
+        threads.emplace_back([this, i, &successCount]() {
+            const bool registeredThread = i < kThreadCount / 2;
+
+            auto memoryInit = registeredThread ? std::optional<ScopedMemoryInit>{std::in_place} : std::nullopt;
+
+            auto* currentThreadData = registeredThread ? memoryInit->memoryState()->GetThreadData() : nullptr;
+            EXPECT_EQ(mm::IsThreadSuspensionRequested(), false);
+
+            // Sync with other threads.
+            ready[i] = true;
+            waitUntilThreadsAreReady();
+
+            if (registeredThread) {
+                currentThreadData->suspensionData().requestThreadsSuspension("test");
+            } else {
+                mm::RequestThreadsSuspension("test");
+            }
+            mm::WaitForThreadsSuspension();
+
+            successCount++;
+            auto threadRegistryLock = mm::ThreadRegistry::Instance().LockForIter(); // don't let threads deregister too early
+            auto allThreadData = collectThreadData();
+            auto isCurrentOrSuspended = [=](mm::ThreadData* data) {
+                return data == currentThreadData || data->suspensionData().suspendedOrNative();
+            };
+            EXPECT_THAT(allThreadData, testing::Each(testing::Truly(isCurrentOrSuspended)));
+            if (registeredThread) {
+                EXPECT_FALSE(currentThreadData->suspensionData().suspendedOrNative());
+            }
+            mm::ResumeThreads();
+        });
+    }
+    for (auto& thread : threads) {
+        thread.join();
+    }
+    EXPECT_EQ(successCount, kThreadCount);
+}
+
 TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
     ASSERT_THAT(collectThreadData(), testing::IsEmpty());
     ASSERT_FALSE(mm::IsThreadSuspensionRequested());
@@ -228,7 +275,7 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
         EXPECT_EQ(GetThreadState(), ThreadState::kRunnable);
         // Give other threads a chance to call CallInitGlobalPossiblyLock.
         std::this_thread::yield();
-        mm::SuspendIfRequested();
+        mm::safePoint();
     });
 
     for (size_t i = 0; i < kThreadCount; i++) {
@@ -241,13 +288,13 @@ TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
 
             CallInitGlobalPossiblyLock(&lock, initializationFunction);
             // Try to suspend to handle a case when this thread doesn't call the initialization function.
-            mm::SuspendIfRequested();
+            mm::safePoint();
         });
     }
     waitUntilThreadsAreReady();
 
     auto gcThread = std::async(std::launch::async, [] {
-        mm::RequestThreadsSuspension();
+        mm::RequestThreadsSuspension("test");
         mm::WaitForThreadsSuspension();
         mm::ResumeThreads();
     });

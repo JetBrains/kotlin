@@ -1,0 +1,14 @@
+KT element: KtDestructuringDeclarationEntry
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] destructuringEntry.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        [ResolvedTo(BODY_RESOLVE)] lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+    }

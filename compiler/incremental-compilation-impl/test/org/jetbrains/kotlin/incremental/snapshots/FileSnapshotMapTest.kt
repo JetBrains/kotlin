@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
-import org.jetbrains.kotlin.incremental.storage.IncrementalFileToPathConverter
+import org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
@@ -24,17 +23,16 @@ class FileSnapshotMapTest : TestWithWorkingDir() {
         super.setUp()
         val caches = File(workingDir, "caches").apply { mkdirs() }
         val snapshotMapFile = File(caches, "snapshots.tab")
-        val pathConverter = IncrementalFileToPathConverter((workingDir.canonicalFile))
+        val pathConverter = RelocatableFileToPathConverter((workingDir.canonicalFile))
         val icContext = IncrementalCompilationContext(
-            pathConverter = pathConverter
+            pathConverterForSourceFiles = pathConverter
         )
         snapshotMap = FileSnapshotMap(snapshotMapFile, icContext)
     }
 
     @After
     override fun tearDown() {
-        snapshotMap.flush(false)
-        snapshotMap.closeForTest()
+        snapshotMap.close()
         super.tearDown()
     }
 

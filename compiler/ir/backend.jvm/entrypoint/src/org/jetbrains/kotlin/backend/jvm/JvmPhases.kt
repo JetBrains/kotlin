@@ -6,34 +6,29 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.phaser.performByIrFile
-import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.common.ModuleLoweringPass
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.render
 
-private fun codegenPhase(generateMultifileFacade: Boolean): SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
-    val suffix = if (generateMultifileFacade) "MultifileFacades" else "Regular"
-    val descriptionSuffix = if (generateMultifileFacade) ", multifile facades" else ", regular files"
-    return performByIrFile(
-        name = "CodegenByIrFile$suffix",
-        description = "Code generation by IrFile$descriptionSuffix",
-        copyBeforeLowering = false,
-        lower = listOf(
-            makeIrFilePhase(
-                { context -> FileCodegen(context, generateMultifileFacade) },
-                name = "Codegen$suffix",
-                description = "Code generation"
-            )
-        )
-    )
-}
+@PhaseDescription(
+    name = "CodegenRegular",
+    description = "Code generation of regular classes"
+)
+private class CodegenRegular(context: JvmBackendContext) : FileCodegen(context, generateMultifileFacade = false)
 
-private class FileCodegen(private val context: JvmBackendContext, private val generateMultifileFacade: Boolean) : FileLoweringPass {
+@PhaseDescription(
+    name = "CodegenMultifileFacades",
+    description = "Code generation of multifile facades"
+)
+private class CodegenMultifileFacades(context: JvmBackendContext) : FileCodegen(context, generateMultifileFacade = true)
+
+private abstract class FileCodegen(
+    private val context: JvmBackendContext, private val generateMultifileFacade: Boolean,
+) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
         if (isMultifileFacade == generateMultifileFacade) {
@@ -47,6 +42,16 @@ private class FileCodegen(private val context: JvmBackendContext, private val ge
     }
 }
 
+@PhaseDescription(
+    name = "GenerateAdditionalClasses",
+    description = "Generate additional classes that were requested during codegen",
+)
+private class GenerateAdditionalClassesPhase(private val context: JvmBackendContext) : ModuleLoweringPass {
+    override fun lower(irModule: IrModuleFragment) {
+        context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
+    }
+}
+
 // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
 // when serializing metadata in the multifile parts.
 // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
@@ -54,8 +59,17 @@ internal val jvmCodegenPhases = SameTypeNamedCompilerPhase(
     name = "Codegen",
     description = "Code generation",
     nlevels = 1,
-    lower = codegenPhase(generateMultifileFacade = true) then
-            codegenPhase(generateMultifileFacade = false)
+    lower = performByIrFile(
+        name = "CodegenByIrFileMultifileFacades",
+        description = "Code generation by IrFile, multifile facades",
+        copyBeforeLowering = false,
+        lower = createFilePhases(::CodegenMultifileFacades)
+    ) then performByIrFile(
+        name = "CodegenByIrFileRegular",
+        description = "Code generation by IrFile, regular files",
+        copyBeforeLowering = false,
+        lower = createFilePhases(::CodegenRegular)
+    ) then createModulePhases(::GenerateAdditionalClassesPhase).single()
 )
 
 // This property is needed to avoid dependencies from "leaf" modules (cli, tests-common-new) on backend.jvm:lower.

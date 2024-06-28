@@ -1,0 +1,101 @@
+@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?
+  context -> FirPropertySymbol <local>/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>
+  context -> FirPropertySymbol <local>/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String
+  context -> FirPropertySymbol <local>/a
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?
+  context -> FirPropertySymbol <local>/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>
+  context -> FirPropertySymbol <local>/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int
+  context -> FirPropertySymbol <local>/b
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?
+  context -> FirPropertySymbol <local>/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>
+  context -> FirPropertySymbol <local>/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String
+  context -> FirPropertySymbol <local>/c
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?
+  context -> FirPropertySymbol <local>/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>
+  context -> FirPropertySymbol <local>/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int
+  context -> FirPropertySymbol <local>/d
+  anchor -> [FirConstructorSymbol util/Pair.Pair]
+
+FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-scriptStatementLevelAsLastStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final data [ResolvedTo(CONTRACTS)] class Pair : R|kotlin/Any| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?|): R|util/Pair| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?| = R|<local>/a|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] get(): R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?|
+
+            public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?| = R|<local>/b|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] get(): R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?|
+
+            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?|
+
+            public final operator [ResolvedTo(CONTRACTS)] fun component2(): R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?| = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(STATUS)] b: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?| = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/Pair.Pair]] val $$result: R|kotlin/Unit| = when () {
+            Boolean(true) ->  {
+                @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
+                @R|util/Anno|[Types](str = <strcat>(String(a ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval a: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+                @R|util/Anno|[Types](str = <strcat>(String(b ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval b: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+                @R|util/Anno|[Types](str = <strcat>(String(destr 1 ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval <destruct>: R|util/Pair| = R|util/Pair.Pair|(Null(null), Null(null))
+                @R|util/Anno|[Types](str = <strcat>(String(c ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval c: R|@R|util/Anno|(<strcat>(String(a type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(a nested type ), constant#))  kotlin/collections/Collection<@R|util/Anno|(<strcat>(String(a nested nested type ), constant#))  kotlin/String>>?| = R|<local>/<destruct>|.R|util/Pair.component1|()
+                @R|util/Anno|[Types](str = <strcat>(String(d ), R|util/prop|)) [ResolvedTo(RAW_FIR)] lval d: R|@R|util/Anno|(<strcat>(String(b type ), constant#))  kotlin/Array<@R|util/Anno|(<strcat>(String(b nested type ), constant#))  kotlin/collections/List<@R|util/Anno|(<strcat>(String(b nested nested type ), constant#))  kotlin/Int>>?| = R|<local>/<destruct>|.R|util/Pair.component2|()
+            }
+        }
+
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Unit|
+

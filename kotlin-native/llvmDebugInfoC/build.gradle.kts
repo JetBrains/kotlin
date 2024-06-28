@@ -15,27 +15,25 @@
  */
 
 import org.jetbrains.kotlin.tools.lib
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("native")
 }
 
-val llvmDir = project.findProperty("llvmDir")
-
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
+    val cxxStandard = 17
+    val llvmIncludeDir = "${llvmDir}/include"
+
     val cxxflags = mutableListOf(
-        "--std=c++17",
-        "-I${llvmDir}/include",
+        "--std=c++${cxxStandard}",
+        "-I${llvmIncludeDir}",
         "-I${projectDir}/src/main/include"
     )
     suffixes {
         (".cpp" to ".$obj") {
-            tool(*platformManager.hostPlatform.clangForJni.clangCXX("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
             flags(*cxxflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
 
@@ -48,7 +46,29 @@ native {
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
 
     target(lib("debugInfo"), objSet) {
-        tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
+        tool(*hostPlatform.clangForJni.llvmAr("").toTypedArray())
         flags("-qcv", ruleOut(), *ruleInAll())
+    }
+
+    // FIXME: Migrate to the compilation database approach when the clang calls are removed
+    tasks.register("generateCMakeLists") {
+        doLast {
+            projectDir.resolve("CMakeLists.txt").writeText(
+                """
+                cmake_minimum_required(VERSION 3.26)
+                project(llvmDebugInfoC)
+                
+                set(CMAKE_CXX_STANDARD ${cxxStandard})
+
+                include_directories(${llvmIncludeDir})
+                include_directories(src/main/include)
+                
+                add_library(
+                        llvmDebugInfoC
+                        src/main/cpp/DebugInfoC.cpp
+                )
+                """.trimIndent()
+            )
+        }
     }
 }

@@ -1,0 +1,87 @@
+library {
+  // module name: <enum.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/EnumArray
+    // class name: test/JustEnum
+    // class name: test/Weapon
+    // class name: test/Weapon.PAPER
+    // class name: test/Weapon.ROCK
+    // class name: test/Weapon.SCISSORS
+
+    // signature: test/C1|null[0]
+    @test/JustEnum(weapon = test/Weapon.SCISSORS)
+    @test/EnumArray(enumArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/C2|null[0]
+    @test/EnumArray(enumArray = [test/Weapon.PAPER, test/Weapon.ROCK])
+    public final class test/C2 : kotlin/Any {
+
+      // signature: test/C2.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/EnumArray|null[0]
+    public final annotation class test/EnumArray : kotlin/Annotation {
+
+      // signature: test/EnumArray.<init>|<init>(kotlin.Array<test.Weapon>){}[0]
+      public constructor(enumArray: kotlin/Array<test/Weapon>)
+
+      // signature: test/EnumArray.enumArray|{}enumArray[0]
+      public final val enumArray: kotlin/Array<test/Weapon>
+        // signature: test/EnumArray.enumArray.<get-enumArray>|<get-enumArray>(){}[0]
+        public final get
+    }
+
+    // signature: test/JustEnum|null[0]
+    public final annotation class test/JustEnum : kotlin/Annotation {
+
+      // signature: test/JustEnum.<init>|<init>(test.Weapon){}[0]
+      public constructor(weapon: test/Weapon)
+
+      // signature: test/JustEnum.weapon|{}weapon[0]
+      public final val weapon: test/Weapon
+        // signature: test/JustEnum.weapon.<get-weapon>|<get-weapon>(){}[0]
+        public final get
+    }
+
+    // signature: test/Weapon|null[0]
+    public final enum class test/Weapon : kotlin/Enum<test/Weapon> {
+
+      // signature: test/Weapon.<init>|<init>(){}[0]
+      private constructor()
+
+      // signature: test/Weapon.ROCK|null[0]
+      ROCK,
+
+      // signature: test/Weapon.PAPER|null[0]
+      PAPER,
+
+      // signature: test/Weapon.SCISSORS|null[0]
+      SCISSORS,
+
+      // has Enum.entries
+    }
+
+    // signature: test/Weapon.PAPER|null[0]
+    public final enum entry test/Weapon.PAPER : test/Weapon {
+    }
+
+    // signature: test/Weapon.ROCK|null[0]
+    public final enum entry test/Weapon.ROCK : test/Weapon {
+    }
+
+    // signature: test/Weapon.SCISSORS|null[0]
+    public final enum entry test/Weapon.SCISSORS : test/Weapon {
+    }
+  }
+}

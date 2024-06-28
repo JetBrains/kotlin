@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 abstract class DiagnosticList(internal val objectName: String) {
+
+    val diagnosticListDefinitionFQN = this::class.qualifiedName
+
     @Suppress("PropertyName")
     @PrivateForInline
     val _groups = mutableListOf<AbstractDiagnosticGroup>()
@@ -79,6 +82,8 @@ sealed class DiagnosticBuilder(
         psiType: KType,
         positioningStrategy: PositioningStrategy,
     ) : DiagnosticBuilder(containingObjectName, name, psiType, positioningStrategy) {
+        var isSuppressible: Boolean = false
+
         @OptIn(PrivateForInline::class)
         override fun build(): RegularDiagnosticData {
             return RegularDiagnosticData(
@@ -88,6 +93,7 @@ sealed class DiagnosticBuilder(
                 psiType,
                 parameters,
                 positioningStrategy,
+                isSuppressible,
             )
         }
     }
@@ -131,4 +137,12 @@ sealed class DiagnosticBuilder(
     companion object {
         const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 4
     }
+}
+
+fun DiagnosticList.extendedKDoc(defaultKDoc: String? = null): String = buildString {
+    if (defaultKDoc != null) {
+        appendLine(defaultKDoc)
+        appendLine()
+    }
+    append("Generated from: [$diagnosticListDefinitionFQN]")
 }

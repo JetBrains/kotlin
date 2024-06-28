@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
+import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -68,6 +70,8 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                         }
 
                         override fun visitClass(declaration: IrClass) {
+                            declaration.transformChildren(transformer, declaration)
+
                             localClasses.add(declaration)
                         }
 

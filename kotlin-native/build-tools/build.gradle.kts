@@ -36,7 +36,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     // To build Konan Gradle plugin
-    implementation("org.jetbrains.kotlin:kotlin-build-common:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 
     val versionProperties = Properties()
@@ -58,7 +57,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
-    api(project(":kotlin-native-shared"))
 }
 
 java {
@@ -71,12 +69,14 @@ val compileKotlin: KotlinCompile by tasks
 val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
+    compilerOptions {
+        optIn.add("kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs.addAll(
+            listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
-                "-opt-in=kotlin.ExperimentalStdlibApi",
-                "-opt-in=kotlin.RequiresOptIn"
+                "-Xallow-unstable-dependencies"
+            )
         )
     }
 }
@@ -91,7 +91,6 @@ kotlin {
     sourceSets {
         main {
             kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
         }
     }
 }
@@ -110,10 +109,6 @@ gradlePlugin {
             id = "compilation-database"
             implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
         }
-        create("konanPlugin") {
-            id = "konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
         create("native-interop-plugin") {
             id = "native-interop-plugin"
             implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
@@ -121,6 +116,18 @@ gradlePlugin {
         create("native") {
             id = "native"
             implementationClass = "org.jetbrains.kotlin.tools.NativePlugin"
+        }
+        create("nativeDependenciesDownloader") {
+            id = "native-dependencies-downloader"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesDownloaderPlugin"
+        }
+        create("nativeDependencies") {
+            id = "native-dependencies"
+            implementationClass = "org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin"
+        }
+        create("platformManager") {
+            id = "platform-manager"
+            implementationClass = "org.jetbrains.kotlin.PlatformManagerPlugin"
         }
     }
 }

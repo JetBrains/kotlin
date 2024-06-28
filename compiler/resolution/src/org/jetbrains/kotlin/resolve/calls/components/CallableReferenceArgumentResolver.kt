@@ -39,6 +39,7 @@ class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictRes
         if (chosenCandidate != null) {
             val toFreshSubstitutor = CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints(
                 chosenCandidate.candidate,
+                resolvedAtom.atom.call,
                 csBuilder
             )
             chosenCandidate.addConstraints(csBuilder, toFreshSubstitutor, callableReference = argument)

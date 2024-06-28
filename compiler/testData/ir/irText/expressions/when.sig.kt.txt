@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+object A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test(kotlin.Any?){}kotlin.String
+//   Public signature: /test|3065596719711130696[0]
+//   Public signature debug description: test(kotlin.Any?){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(kotlin.Any?){}
+//   Public signature: /test|4942271194395271693[0]
+//   Public signature debug description: test(kotlin.Any?){}
+fun test(x: Any?): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testComma(kotlin.Int){}kotlin.String
+//   Public signature: /testComma|5053559742575177933[0]
+//   Public signature debug description: testComma(kotlin.Int){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testComma(kotlin.Int){}
+//   Public signature: /testComma|4186632876755351218[0]
+//   Public signature debug description: testComma(kotlin.Int){}
+fun testComma(x: Int): String
+
+// CHECK JVM_IR:
+//   Mangled name: #testWithSubject(kotlin.Any?){}kotlin.String
+//   Public signature: /testWithSubject|-4105857294025109172[0]
+//   Public signature debug description: testWithSubject(kotlin.Any?){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testWithSubject(kotlin.Any?){}
+//   Public signature: /testWithSubject|-5529846970111950585[0]
+//   Public signature debug description: testWithSubject(kotlin.Any?){}
+fun testWithSubject(x: Any?): String
+

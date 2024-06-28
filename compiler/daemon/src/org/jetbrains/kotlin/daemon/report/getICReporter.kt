@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.daemon.report
@@ -21,14 +10,16 @@ import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.daemon.common.*
 
 fun getBuildReporter(
     servicesFacade: CompilerServicesFacadeBase,
     compilationResults: CompilationResults,
     compilationOptions: IncrementalCompilationOptions
-): RemoteBuildReporter {
-    val root = compilationOptions.modulesInfo.projectRoot
+): RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric> {
+    val root = compilationOptions.rootProjectDir
     val reporters = ArrayList<RemoteICReporter>()
 
     if (ReportCategory.IC_MESSAGE.code in compilationOptions.reportCategories) {
@@ -45,7 +36,7 @@ fun getBuildReporter(
     val requestedResults = compilationOptions
         .requestedCompilationResults
         .mapNotNullTo(HashSet()) { resultCode ->
-            CompilationResultCategory.values().getOrNull(resultCode)
+            CompilationResultCategory.entries.getOrNull(resultCode)
         }
     for (requestedResult in requestedResults) {
         when (requestedResult) {

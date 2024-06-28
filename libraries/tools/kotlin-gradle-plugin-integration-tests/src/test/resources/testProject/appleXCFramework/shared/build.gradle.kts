@@ -15,10 +15,9 @@ kotlin {
 
     val iosX64 = iosX64()
     val iosArm64 = iosArm64()
-    val iosArm32 = iosArm32()
     val iosSimulatorArm64 = iosSimulatorArm64()
 
-    listOf(iosX64, iosArm64, iosArm32, iosSimulatorArm64).forEach { target ->
+    listOf(iosX64, iosArm64, iosSimulatorArm64).forEach { target ->
         target.binaries.framework {
             baseName = "shared"
             xcf.add(this)
@@ -32,7 +31,6 @@ kotlin {
         watchosArm64(),
         watchosDeviceArm64(),
         watchosSimulatorArm64(),
-        watchosX86(),
         watchosX64()
     ).forEach { target ->
         target.binaries.framework {

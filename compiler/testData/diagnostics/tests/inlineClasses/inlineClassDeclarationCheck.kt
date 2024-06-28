@@ -1,5 +1,5 @@
-// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline class A0(val x: Int)
 
@@ -37,4 +37,4 @@ final inline class D0(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>abstract<!> inline class D2(val x: Int)
 <!VALUE_CLASS_NOT_FINAL!>sealed<!> inline class D3(val x: Int)
 
-<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class <!CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS, CONFLICTING_JVM_DECLARATIONS!>D4(val x: String)<!>
+<!INCOMPATIBLE_MODIFIERS!>inline<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)

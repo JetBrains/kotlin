@@ -1,4 +1,5 @@
-// !LANGUAGE: -InstantiationOfAnnotationClasses
+// FIR_IDENTICAL
+// LANGUAGE: -InstantiationOfAnnotationClasses
 annotation class Ann
 annotation class Ann1(val a: Int)
 annotation class Ann2(val a: Ann1)

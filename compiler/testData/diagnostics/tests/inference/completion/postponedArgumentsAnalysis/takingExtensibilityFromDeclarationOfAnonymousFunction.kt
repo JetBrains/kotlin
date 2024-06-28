@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 
 fun <T> id(x: T) = x
 fun <T> select(vararg x: T) = x[0]

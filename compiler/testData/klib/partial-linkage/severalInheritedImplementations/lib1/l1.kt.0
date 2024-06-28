@@ -1,0 +1,25 @@
+package lib1
+
+interface I {
+}
+
+interface J {
+}
+
+interface Default {
+    fun foo(): String = "Default v1"
+    val bar: String get() = "Default v1"
+}
+
+interface RemovedDefault {
+    fun foo(): String = "RemovedDefault v1"
+    val bar: String get() = "RemovedDefault v1"
+}
+
+open class Unrelated
+
+abstract class AbstractUnrelated
+
+open class WithFakeOverride : I
+
+open class WithRealOverride : I

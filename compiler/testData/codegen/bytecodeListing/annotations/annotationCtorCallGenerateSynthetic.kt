@@ -1,6 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 annotation class Foo(val int: Int)
 

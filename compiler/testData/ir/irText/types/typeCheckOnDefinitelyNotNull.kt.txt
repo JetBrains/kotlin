@@ -2,13 +2,14 @@ fun <T : Any?> asFoo(t: T): (T & Any) {
   return t as (T & Any)
 }
 
-fun <T : Any?> safeAsFoo(t: T): T? {
-  return t as? (T & Any)
-}
-
 inline fun <reified T : CharSequence?> implicitAsFoo(x: Any): Int {
   return when {
     x !is T -> 0
     else -> x /*as (T & Any) */.<get-length>()
   }
 }
+
+fun <T : Any?> safeAsFoo(t: T): T? {
+  return t as? (T & Any)
+}
+

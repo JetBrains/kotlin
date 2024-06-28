@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: dependency.JavaClass
+By names: [JavaClass]
+
+Declaration: other.ForConstructor
+By names: [ForConstructor]
+
+Declaration: other.ForRegularMethod
+By names: [ForRegularMethod]
+
+Declaration: other.ForStaticMethod
+By names: [ForStaticMethod]
+
+UNRESOLVED NAMES:

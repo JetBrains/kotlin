@@ -5,12 +5,6 @@ plugins {
 group = "me.user"
 version = "1.0"
 
-repositories {
-    maven("$rootDir/../repo")
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     val targets = listOf(
         jvm(),

@@ -7,6 +7,6 @@ FILE: K1.kt
     }
 FILE: K2.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.baz|(R|/KotlinClass.KotlinClass|())
-        Q|JavaClass|.R|/JavaClass.baz<Inapplicable(INAPPLICABLE): /JavaClass.baz>#|(String())
+        Q|JavaClass|.R|/JavaClass.baz*s|(R|/KotlinClass.KotlinClass|())
+        Q|JavaClass|.R|/JavaClass.baz*s<Inapplicable(INAPPLICABLE): /JavaClass.baz>#|(String())
     }

@@ -8934,6 +8934,10 @@ public final class JsAstProtoBuf {
        * <code>SET = 3;</code>
        */
       SET(2, 3),
+      /**
+       * <code>GENERATOR = 4;</code>
+       */
+      GENERATOR(3, 4),
       ;
 
       /**
@@ -8948,6 +8952,10 @@ public final class JsAstProtoBuf {
        * <code>SET = 3;</code>
        */
       public static final int SET_VALUE = 3;
+      /**
+       * <code>GENERATOR = 4;</code>
+       */
+      public static final int GENERATOR_VALUE = 4;
 
 
       public final int getNumber() { return value; }
@@ -8957,6 +8965,7 @@ public final class JsAstProtoBuf {
           case 1: return STATIC;
           case 2: return GET;
           case 3: return SET;
+          case 4: return GENERATOR;
           default: return null;
         }
       }

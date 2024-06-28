@@ -1,0 +1,41 @@
+public final fun returnsAndCalls(b: R|kotlin/Boolean|, block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(FALSE) -> !b
+        CallsInPlace(block, UNKNOWN)
+        Returns(TRUE) -> b
+    >
+
+
+public final fun returnsAndFinished(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> b
+        Returns(WILDCARD) -> b != null
+        Returns(FALSE) -> !b
+    >
+
+
+public final fun severalCalls(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        CallsInPlace(x, AT_MOST_ONCE)
+        CallsInPlace(y, AT_LEAST_ONCE)
+    >
+
+
+public final fun threeReturnsValue(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(NOT_NULL) -> b != null
+        Returns(TRUE) -> b
+        Returns(FALSE) -> !b
+    >
+
+
+public final fun twoReturnsValue(b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> b
+        Returns(FALSE) -> !b
+    >

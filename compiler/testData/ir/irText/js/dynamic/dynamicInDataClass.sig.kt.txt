@@ -1,0 +1,75 @@
+// CHECK:
+//   Mangled name: Some
+//   Public signature: /Some|null[0]
+data class Some {
+  // CHECK:
+  //   Mangled name: Some{}a
+  //   Public signature: /Some.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Some#<get-a>(){}
+    //   Public signature: /Some.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Some{}b
+  //   Public signature: /Some.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  val b: dynamic
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Some#<get-b>(){}
+    //   Public signature: /Some.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Some#<init>(kotlin.String;<dynamic>){}
+  //   Public signature: /Some.<init>|-5225459408480290556[0]
+  //   Public signature debug description: <init>(kotlin.String;<dynamic>){}
+  constructor(a: String, b: dynamic) /* primary */
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#component1(){}
+  //   Public signature: /Some.component1|162597135895221648[0]
+  //   Public signature debug description: component1(){}
+  operator fun component1(): String
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#component2(){}
+  //   Public signature: /Some.component2|3796717572321500973[0]
+  //   Public signature debug description: component2(){}
+  operator fun component2(): dynamic
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#copy(kotlin.String;<dynamic>){}
+  //   Public signature: /Some.copy|-666200579701757332[0]
+  //   Public signature debug description: copy(kotlin.String;<dynamic>){}
+  fun copy(a: String, b: dynamic): Some
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#equals(kotlin.Any?){}
+  //   Public signature: /Some.equals|4638265728071529943[0]
+  //   Public signature debug description: equals(kotlin.Any?){}
+  override operator fun equals(other: Any?): Boolean
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#hashCode(){}
+  //   Public signature: /Some.hashCode|3409210261493131192[0]
+  //   Public signature debug description: hashCode(){}
+  override fun hashCode(): Int
+
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Some#toString(){}
+  //   Public signature: /Some.toString|-1522858123163872138[0]
+  //   Public signature debug description: toString(){}
+  override fun toString(): String
+
+}
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String

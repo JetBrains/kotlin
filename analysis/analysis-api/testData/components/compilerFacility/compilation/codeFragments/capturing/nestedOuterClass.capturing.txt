@@ -1,0 +1,6 @@
+ContainingClass[name: <this>; isMutated: false; displayText: this@Foo]
+    class Foo : R|kotlin/Any|
+    R|Foo|
+ContainingClass[name: <this>; isMutated: false; displayText: this@Bar]
+    class Bar : R|kotlin/Any|
+    R|Foo.Bar|

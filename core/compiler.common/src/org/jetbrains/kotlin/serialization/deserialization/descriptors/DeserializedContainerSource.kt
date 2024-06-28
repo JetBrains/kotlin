@@ -27,12 +27,10 @@ enum class DeserializedContainerAbiStability {
     // Either the container is stable, or this compiler is configured to ignore ABI stability of dependencies.
     STABLE,
 
-    // The container is unstable because it is compiled with FIR, and this compiler is _not_ configured to ignore that.
-    FIR_UNSTABLE,
-
     // The container is unstable because either:
     // 1) it is compiled with JVM IR prior to 1.4.30, or
     // 2) it is compiled with JVM IR >= 1.4.30 with the `-Xabi-stability=unstable` compiler option,
+    // 3) it is compiled with FIR prior to 2.0.0,
     // and this compiler is _not_ configured to ignore that.
-    IR_UNSTABLE,
+    UNSTABLE,
 }

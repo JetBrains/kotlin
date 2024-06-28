@@ -1,0 +1,10 @@
+headerFilter = **/userSetupHint.h
+userSetupHint = 🤌\t\u2115ever put ketchup on-a 🍝\
+\nℕ = `\u2115` = "\u2115" = \\u2115\
+\n🇮🇹
+---
+void foo();
+
+void test() {
+    foo();
+}

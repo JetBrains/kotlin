@@ -9,13 +9,16 @@ package org.jetbrains.kotlin.gradle.unitTests.sources
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.getHostSpecificMainSharedSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.assertAllImplementationsAlsoImplement
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.utils.future
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -47,7 +50,7 @@ class InternalKotlinSourceSetTest {
         nativeMain.dependsOn(commonMain)
 
         assertEquals<Set<KotlinCompilation<*>>>(
-            setOf(metadataCompilation, jvmCompilation, linuxCompilation, macosCompilation),
+            setOf(metadataCompilation),
             commonMain.internal.compilations
         )
 
@@ -67,6 +70,20 @@ class InternalKotlinSourceSetTest {
             setOf(linuxCompilation, macosCompilation),
             nativeMain.internal.compilations
         )
+
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
+            assertEquals<Set<KotlinCompilation<*>>>(
+                setOf(
+                    metadataCompilation,
+                    kotlin.metadata().compilations.getByName("commonMain"),
+                    kotlin.metadata().compilations.getByName("nativeMain"),
+                    jvmCompilation, linuxCompilation, macosCompilation
+                ),
+                commonMain.internal.compilations
+            )
+        }
+
+        project.evaluate()
     }
 
     @Test
@@ -80,6 +97,7 @@ class InternalKotlinSourceSetTest {
         val nativeMain = kotlin.sourceSets.create("nativeMain")
         val linuxMain = kotlin.sourceSets.create("linuxMain")
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
+        linuxX64Main.dependsOn(commonMain)
 
         assertEquals(
             setOf(commonMain, linuxX64Main),
@@ -109,10 +127,12 @@ class InternalKotlinSourceSetTest {
     fun `test getHostSpecificMainSharedSourceSets`() {
         val project = buildProjectWithMPP {
             kotlin {
+                applyDefaultHierarchyTemplate()
                 jvm()
                 linuxX64()
                 linuxArm64()
-                ios() // host specific from preset
+                iosX64()
+                iosArm64()
             }
         }
 
@@ -129,11 +149,6 @@ class InternalKotlinSourceSetTest {
             val iosX64Test = getByName("iosX64Test")
             val iosArm64Test = getByName("iosArm64Test")
 
-            val linuxX64Main = getByName("linuxX64Main")
-            val linuxArm64Main = getByName("linuxArm64Main")
-            val linuxX64Test = getByName("linuxX64Test")
-            val linuxArm64Test = getByName("linuxArm64Test")
-
             // common -> ios2 -> ios
             create("ios2Main") { it.dependsOn(commonMain); iosMain.dependsOn(it) }
             create("ios2Test") { it.dependsOn(commonTest); iosTest.dependsOn(it) }
@@ -143,24 +158,12 @@ class InternalKotlinSourceSetTest {
             create("ios2X64Test") { it.dependsOn(iosTest); iosX64Test.dependsOn(it) }
             create("ios2Arm64Main") { it.dependsOn(iosMain); iosArm64Main.dependsOn(it) }
             create("ios2Arm64Test") { it.dependsOn(iosTest); iosArm64Test.dependsOn(it) }
-
-            // common -> linux
-            create("linuxMain") {
-                it.dependsOn(commonMain)
-                linuxX64Main.dependsOn(it)
-                linuxArm64Main.dependsOn(it)
-            }
-            create("linuxTest") {
-                it.dependsOn(commonTest)
-                linuxX64Test.dependsOn(it)
-                linuxArm64Test.dependsOn(it)
-            }
         }
 
         project.evaluate()
 
-        val expected = listOf("iosMain", "ios2Main").sorted()
-        val actual = getHostSpecificMainSharedSourceSets(project).map { it.name }.sorted()
+        val expected = listOf("appleMain", "iosMain", "ios2Main").sorted()
+        val actual = project.future { getHostSpecificMainSharedSourceSets(project).map { it.name }.sorted() }.getOrThrow()
 
         assertEquals(expected, actual)
     }

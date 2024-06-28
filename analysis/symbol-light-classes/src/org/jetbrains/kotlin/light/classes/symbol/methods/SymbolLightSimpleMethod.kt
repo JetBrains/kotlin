@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,36 +8,39 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.mutate
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
-import org.jetbrains.kotlin.name.JvmNames.STRICTFP_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.*
 
 internal class SymbolLightSimpleMethod(
-    ktAnalysisSession: KtAnalysisSession,
-    functionSymbol: KtFunctionSymbol,
+    ktAnalysisSession: KaSession,
+    functionSymbol: KaNamedFunctionSymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     private val isTopLevel: Boolean,
     argumentsSkipMask: BitSet? = null,
     private val suppressStatic: Boolean = false,
-) : SymbolLightMethod<KtFunctionSymbol>(
+) : SymbolLightMethod<KaNamedFunctionSymbol>(
     ktAnalysisSession = ktAnalysisSession,
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
@@ -67,7 +70,9 @@ internal class SymbolLightSimpleMethod(
         }
     }
 
-    override fun hasTypeParameters(): Boolean = hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
+    override fun hasTypeParameters(): Boolean =
+        hasTypeParameters(ktModule, functionDeclaration, functionSymbolPointer)
+                || containingClass.isDefaultImplsForInterfaceWithTypeParameters
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
@@ -75,10 +80,10 @@ internal class SymbolLightSimpleMethod(
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
-            val modality = if (isTopLevel) {
-                PsiModifier.FINAL
-            } else {
-                withFunctionSymbol { functionSymbol ->
+            val modality = when {
+                isTopLevel -> PsiModifier.FINAL
+                containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
+                else -> withFunctionSymbol { functionSymbol ->
                     functionSymbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier(containingClass, functionSymbol) }
                 }
             }
@@ -96,7 +101,9 @@ internal class SymbolLightSimpleMethod(
             val isStatic = if (suppressStatic) {
                 false
             } else {
-                isTopLevel || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
+                isTopLevel
+                        || containingClass is SymbolLightClassForInterfaceDefaultImpls
+                        || withFunctionSymbol { it.isStatic || it.hasJvmStaticAnnotation() }
             }
 
             mapOf(modifier to isStatic)
@@ -110,13 +117,13 @@ internal class SymbolLightSimpleMethod(
 
         PsiModifier.STRICTFP -> {
             ifInlineOnly { return null }
-            val hasAnnotation = withFunctionSymbol { it.hasAnnotation(STRICTFP_ANNOTATION_CLASS_ID) }
+            val hasAnnotation = withFunctionSymbol { STRICTFP_ANNOTATION_CLASS_ID in it.annotations }
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.SYNCHRONIZED -> {
             ifInlineOnly { return null }
-            val hasAnnotation = withFunctionSymbol { it.hasAnnotation(SYNCHRONIZED_ANNOTATION_CLASS_ID) }
+            val hasAnnotation = withFunctionSymbol { SYNCHRONIZED_ANNOTATION_CLASS_ID in it.annotations }
             mapOf(modifier to hasAnnotation)
         }
 
@@ -149,14 +156,20 @@ internal class SymbolLightSimpleMethod(
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
                     NullabilityAnnotationsProvider {
                         if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
-                            NullabilityType.Unknown
+                            KaTypeNullability.UNKNOWN
                         } else {
                             withFunctionSymbol { functionSymbol ->
-                                if (functionSymbol.isSuspend) { // Any?
-                                    NullabilityType.Nullable
-                                } else {
-                                    val returnType = functionSymbol.returnType
-                                    if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                when {
+                                    functionSymbol.isSuspend -> { // Any?
+                                        KaTypeNullability.NULLABLE
+                                    }
+                                    forceBoxedReturnType(functionSymbol) -> {
+                                        KaTypeNullability.NON_NULLABLE
+                                    }
+                                    else -> {
+                                        val returnType = functionSymbol.returnType
+                                        if (isVoidType(returnType)) KaTypeNullability.UNKNOWN else getTypeNullability(returnType)
+                                    }
                                 }
                             }
                         }
@@ -177,24 +190,50 @@ internal class SymbolLightSimpleMethod(
         if (isTopLevel) false else withFunctionSymbol { it.isOverride }
     }
 
-    private val KtType.isVoidType: Boolean get() = isUnit && nullabilityType != NullabilityType.Nullable
+    // Inspired by KotlinTypeMapper#forceBoxedReturnType
+    private fun KaSession.forceBoxedReturnType(functionSymbol: KaNamedFunctionSymbol): Boolean {
+        val returnType = functionSymbol.returnType
+        // 'invoke' methods for lambdas, function literals, and callable references
+        // implicitly override generic 'invoke' from a corresponding base class.
+        if (functionSymbol.isBuiltinFunctionInvoke && isInlineClassType(returnType))
+            return true
+
+        return returnType.isPrimitiveBacked &&
+                functionSymbol.allOverriddenSymbols.any { overriddenSymbol ->
+                    !overriddenSymbol.returnType.isPrimitiveBacked
+                }
+    }
+
+    @Suppress("UnusedReceiverParameter")
+    private fun KaSession.isInlineClassType(type: KaType): Boolean {
+        return ((type as? KaClassType)?.symbol as? KaNamedClassSymbol)?.isInline == true
+    }
+
+    private fun KaSession.isVoidType(type: KaType): Boolean {
+        val expandedType = type.fullyExpandedType
+        return expandedType.isUnitType && expandedType.nullability != KaTypeNullability.NULLABLE
+    }
 
     private val _returnedType: PsiType by lazyPub {
         withFunctionSymbol { functionSymbol ->
             val ktType = if (functionSymbol.isSuspend) {
-                analysisSession.builtinTypes.NULLABLE_ANY // Any?
+                useSiteSession.builtinTypes.nullableAny // Any?
             } else {
-                functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
+                functionSymbol.returnType.takeUnless { isVoidType(it) } ?: return@withFunctionSymbol PsiTypes.voidType()
             }
 
-            ktType.asPsiTypeElement(
+            val typeMappingMode = if (forceBoxedReturnType(functionSymbol))
+                KaTypeMappingMode.RETURN_TYPE_BOXED
+            else
+                KaTypeMappingMode.RETURN_TYPE
+
+            ktType.asPsiType(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
-                KtTypeMappingMode.RETURN_TYPE,
+                typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
-            )?.let {
-                annotateByKtType(it.type, ktType, it, modifierList)
-            }
+                suppressWildcards = suppressWildcards(),
+            )
         } ?: nonExistentType()
     }
 

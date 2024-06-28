@@ -1,4 +1,4 @@
-// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_STDLIB
 
 package test

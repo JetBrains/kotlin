@@ -1,13 +1,13 @@
 class Box<out T : Foo> {
+  val foo: T
+    field = foo
+    get
+
   constructor(foo: T) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val foo: T
-    field = foo
-    get
 
   val str: String
     get(): String {

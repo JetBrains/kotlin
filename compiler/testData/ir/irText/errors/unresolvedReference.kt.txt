@@ -9,7 +9,3 @@ val test2: ErrorType
 val test3: ErrorType
   field = error("") /* ErrorCallExpression */42; 56;
   get
-
-val test4: ErrorType
-  field = error("") /* ErrorExpression */
-  get

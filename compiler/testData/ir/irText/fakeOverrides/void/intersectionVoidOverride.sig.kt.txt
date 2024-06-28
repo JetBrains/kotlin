@@ -1,0 +1,41 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#foo(){}java.lang.Void?
+  //   Public signature: /C.foo|-8183408073515448638[0]
+  //   Public signature debug description: foo(){}java.lang.Void?
+  /* fake */ override fun foo(): Void?
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1, Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#foo(){}java.lang.Void
+  //   Public signature: /D.foo|8945654167990897125[0]
+  //   Public signature debug description: foo(){}java.lang.Void
+  override fun foo(): Void
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit

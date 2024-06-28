@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,7 +61,7 @@ class TestExceptionsComparator(wholeFile: File) {
     }
 
     private fun validateExistingExceptionFiles(e: TestsError?) {
-        val postfixesOfFilesToCheck = TestsExceptionType.values().toMutableSet().filter { it != e?.type }
+        val postfixesOfFilesToCheck = TestsExceptionType.entries.toMutableSet().filter { it != e?.type }
 
         postfixesOfFilesToCheck.forEach {
             if (File("$filePathPrefix.${it.postfix}.txt").exists())
@@ -69,13 +69,21 @@ class TestExceptionsComparator(wholeFile: File) {
         }
     }
 
-    fun run(expectedException: TestsExceptionType?, runnable: () -> Unit) =
-        run(expectedException, mapOf(), null, runnable)
+    fun run(expectedException: TestsExceptionType?, printExceptionsToConsole: Boolean = false, runnable: () -> Unit) {
+        run(
+            expectedException,
+            mapOf(),
+            computeExceptionPoint = null,
+            printExceptionsToConsole,
+            runnable
+        )
+    }
 
     fun run(
         expectedException: TestsExceptionType?,
         exceptionByCases: Map<Int, TestsExceptionType?>,
         computeExceptionPoint: ((Matcher?) -> Set<Int>?)?,
+        printExceptionsToConsole: Boolean = false,
         runnable: () -> Unit
     ) {
         try {
@@ -97,8 +105,9 @@ class TestExceptionsComparator(wholeFile: File) {
                 e.original.printStackTrace()
                 throw t
             }
-
-            e.original.printStackTrace()
+            if (printExceptionsToConsole) {
+                e.original.printStackTrace()
+            }
             validateExistingExceptionFiles(e)
             return
         }

@@ -14,7 +14,7 @@ FILE: invokePriority.kt
 
             String(1).R|<local>/foo|()
             R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(String(2), <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|<local>/foo|()
+                R|<local>/foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|)
             }
             )
         }

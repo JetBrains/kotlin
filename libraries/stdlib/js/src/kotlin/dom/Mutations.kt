@@ -18,7 +18,8 @@ import kotlinx.dom.clear as newClear
     replaceWith = ReplaceWith("this.clear()", "kotlinx.dom.clear")
 )
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
-public inline fun Node.clear() = this.newClear()
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Node.clear(): Unit = this.newClear()
 
 /**
  * Creates text node and append it to the element.
@@ -31,4 +32,5 @@ public inline fun Node.clear() = this.newClear()
     replaceWith = ReplaceWith("this.appendText(text)", "kotlinx.dom.appendText")
 )
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
-inline fun Element.appendText(text: String): Element = this.newAppendText(text)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Element.appendText(text: String): Element = this.newAppendText(text)

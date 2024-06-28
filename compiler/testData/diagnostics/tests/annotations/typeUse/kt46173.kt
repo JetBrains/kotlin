@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
-// !DIAGNOSTICS: -USELESS_CAST
+// LANGUAGE: +ProperCheckAnnotationsTargetInTypeUsePositions
+// DIAGNOSTICS: -USELESS_CAST
 // ISSUE: KT-46173
 
 @Target(AnnotationTarget.TYPE)

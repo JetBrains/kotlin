@@ -15,7 +15,7 @@ fun foo(a: A) {
     a.foo()
     a.foo(1)
 
-    a.<!NO_VALUE_FOR_PARAMETER!>bar()<!>
+    a.bar<!NO_VALUE_FOR_PARAMETER!>()<!>
     a.bar(<!NO_VALUE_FOR_PARAMETER!>"")<!>
     a.bar(y = 1)
     a.bar("", 2)

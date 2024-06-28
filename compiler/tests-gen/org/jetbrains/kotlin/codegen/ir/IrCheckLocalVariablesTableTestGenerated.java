@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,114 +22,114 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLocalVariablesTableTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
+
+  public void testAllFilesPresentInCheckLocalVariablesTable() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
+
+  @TestMetadata("destructuringInLambdas.kt")
+  public void testDestructuringInLambdas() {
+    runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
+  }
+
+  @TestMetadata("inlineLambdaWithItParam.kt")
+  public void testInlineLambdaWithItParam() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
+  }
+
+  @TestMetadata("inlineLambdaWithParam.kt")
+  public void testInlineLambdaWithParam() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
+  }
+
+  @TestMetadata("inlineSimple.kt")
+  public void testInlineSimple() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
+  }
+
+  @TestMetadata("inlineSimpleChain.kt")
+  public void testInlineSimpleChain() {
+    runTest("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
+  }
+
+  @TestMetadata("itInLambda.kt")
+  public void testItInLambda() {
+    runTest("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
+  }
+
+  @TestMetadata("itInReturnedLambda.kt")
+  public void testItInReturnedLambda() {
+    runTest("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
+  }
+
+  @TestMetadata("kt11117.kt")
+  public void testKt11117() {
+    runTest("compiler/testData/checkLocalVariablesTable/kt11117.kt");
+  }
+
+  @TestMetadata("lambdaAsVar.kt")
+  public void testLambdaAsVar() {
+    runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
+  }
+
+  @TestMetadata("objectInLocalPropertyDelegate.kt")
+  public void testObjectInLocalPropertyDelegate() {
+    runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");
+  }
+
+  @TestMetadata("suspendFunctionDeadVariables.kt")
+  public void testSuspendFunctionDeadVariables() {
+    runTest("compiler/testData/checkLocalVariablesTable/suspendFunctionDeadVariables.kt");
+  }
+
+  @TestMetadata("underscoreNames.kt")
+  public void testUnderscoreNames() {
+    runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
+  }
+
+  @TestMetadata("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class ParametersInSuspendLambda extends AbstractIrCheckLocalVariablesTableTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    public void testAllFilesPresentInCheckLocalVariablesTable() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    public void testAllFilesPresentInParametersInSuspendLambda() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("destructuringInLambdas.kt")
-    public void testDestructuringInLambdas() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/dataClass.kt");
     }
 
-    @TestMetadata("inlineLambdaWithItParam.kt")
-    public void testInlineLambdaWithItParam() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
+    @TestMetadata("extensionComponents.kt")
+    public void testExtensionComponents() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/extensionComponents.kt");
     }
 
-    @TestMetadata("inlineLambdaWithParam.kt")
-    public void testInlineLambdaWithParam() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
+    @TestMetadata("generic.kt")
+    public void testGeneric() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/generic.kt");
     }
 
-    @TestMetadata("inlineSimple.kt")
-    public void testInlineSimple() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
+    @TestMetadata("inline.kt")
+    public void testInline() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/inline.kt");
     }
 
-    @TestMetadata("inlineSimpleChain.kt")
-    public void testInlineSimpleChain() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
+    @TestMetadata("otherParameters.kt")
+    public void testOtherParameters() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/otherParameters.kt");
     }
 
-    @TestMetadata("itInLambda.kt")
-    public void testItInLambda() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
+    @TestMetadata("parameters.kt")
+    public void testParameters() {
+      runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/parameters.kt");
     }
-
-    @TestMetadata("itInReturnedLambda.kt")
-    public void testItInReturnedLambda() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
-    }
-
-    @TestMetadata("kt11117.kt")
-    public void testKt11117() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/kt11117.kt");
-    }
-
-    @TestMetadata("lambdaAsVar.kt")
-    public void testLambdaAsVar() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
-    }
-
-    @TestMetadata("objectInLocalPropertyDelegate.kt")
-    public void testObjectInLocalPropertyDelegate() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");
-    }
-
-    @TestMetadata("suspendFunctionDeadVariables.kt")
-    public void testSuspendFunctionDeadVariables() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/suspendFunctionDeadVariables.kt");
-    }
-
-    @TestMetadata("underscoreNames.kt")
-    public void testUnderscoreNames() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
-    }
-
-    @TestMetadata("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ParametersInSuspendLambda extends AbstractIrCheckLocalVariablesTableTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInParametersInSuspendLambda() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @TestMetadata("dataClass.kt")
-        public void testDataClass() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/dataClass.kt");
-        }
-
-        @TestMetadata("extensionComponents.kt")
-        public void testExtensionComponents() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/extensionComponents.kt");
-        }
-
-        @TestMetadata("generic.kt")
-        public void testGeneric() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/generic.kt");
-        }
-
-        @TestMetadata("inline.kt")
-        public void testInline() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/inline.kt");
-        }
-
-        @TestMetadata("otherParameters.kt")
-        public void testOtherParameters() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/otherParameters.kt");
-        }
-
-        @TestMetadata("parameters.kt")
-        public void testParameters() throws Exception {
-            runTest("compiler/testData/checkLocalVariablesTable/parametersInSuspendLambda/parameters.kt");
-        }
-    }
+  }
 }

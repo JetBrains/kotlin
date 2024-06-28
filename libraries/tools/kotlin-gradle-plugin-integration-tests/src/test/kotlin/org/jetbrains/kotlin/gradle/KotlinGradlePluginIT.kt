@@ -245,12 +245,13 @@ class KotlinGradleIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             build("assemble")
+            val buildOptions = buildOptions.copy(
+                kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
+            )
             build(
                 "clean",
                 "assemble",
-                buildOptions = buildOptions.copy(
-                    kotlinVersion = TestVersions.Kotlin.STABLE_RELEASE
-                )
+                buildOptions = buildOptions
             )
         }
     }
@@ -335,7 +336,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testArchiveBaseNameForModuleName(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             val archivesBaseName = "myArchivesBaseName"
-            buildGradle.appendText("\narchivesBaseName = '$archivesBaseName'")
+            addArchivesBaseNameCompat(archivesBaseName)
 
             // Add top-level members to force generation of the *.kotlin_module files for the two source sets
             val mainHelloWorldKt = kotlinSourcesDir().resolve("helloWorld.kt")
@@ -416,9 +417,9 @@ class KotlinGradleIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 
-                task sourcesJar(type: Jar) {
+                tasks.register("sourcesJar", Jar) {
                     from sourceSets.main.allSource
-                    classifier 'source'
+                    archiveClassifier = 'source'
                     duplicatesStrategy = 'fail' // fail in case of Java source duplication, see KT-17564
                 }
 
@@ -438,15 +439,15 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun testModuleNameFiltering(gradleVersion: GradleVersion) {
         project("typeAlias", gradleVersion) { // Use a Project with a top-level typealias
+            addArchivesBaseNameCompat("""a/really\\trick\n\rmodule\tname""")
+
             buildGradle.appendText(
                 """
-                                    
-                archivesBaseName = 'a/really\\trick\n\rmodule\tname'
-                
-                tasks.withType(Jar.class).configureEach {
-                    archiveBaseName.set('typeAlias')
-                }
-                """.trimIndent()
+                |
+                |tasks.withType(Jar.class).configureEach {
+                |    archiveBaseName.set('typeAlias')
+                |}
+                """.trimMargin()
             )
 
             build("classes") {
@@ -508,7 +509,7 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun symlinkedBuildDir(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path
+        @TempDir tempDir: Path,
     ) {
         project("internalTest", gradleVersion) {
             val externalBuildDir = tempDir.resolve("externalBuild")
@@ -647,7 +648,7 @@ class KotlinGradleIT : KGPBaseTest() {
             subProject("projB").buildGradle.appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
                         assertOutputContains(
                             "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
                                     "compatible with Java 8, preferably in the form of class files, " +
@@ -658,14 +659,19 @@ class KotlinGradleIT : KGPBaseTest() {
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, " +
-                                    "preferably optimized for standard JVMs, and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'foo', " +
-                                    "attribute 'com.example.target' with value 'bar' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.trimStart().startsWith(
+                                "> No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }
@@ -680,7 +686,7 @@ class KotlinGradleIT : KGPBaseTest() {
             )
             buildAndFail(":projB:compileKotlin") {
                 when {
-                    gradleVersion < GradleVersion.version("6.8.4") -> {
+                    gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_6_8) -> {
                         assertOutputContains(
                             "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
                                     "compatible with Java 8, preferably in the form of class files, and its dependencies declared externally, " +
@@ -690,14 +696,19 @@ class KotlinGradleIT : KGPBaseTest() {
                         )
                     }
                     else -> {
-                        assertOutputContains(
-                            "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
-                                    "compatible with Java 8, preferably in the form of class files, preferably optimized for standard JVMs, " +
-                                    "and its dependencies declared externally, " +
-                                    "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
-                                    "attribute 'com.example.compilation' with value 'bar', " +
-                                    "attribute 'com.example.target' with value 'foo' but:"
-                        )
+                        // Attributes may come in random order
+                        val attributeMatchingString = output.lineSequence().find {
+                            it.contains(
+                                "No matching variant of project :projA was found. " +
+                                        "The consumer was configured to find a library for use during compile-time, " +
+                                        "compatible with Java 8, preferably in the form of class files, " +
+                                        "preferably optimized for standard JVMs, and its dependencies declared externally, "
+                            )
+                        }
+                        assertNotNull(attributeMatchingString, "Expected variant mismatch string is not found")
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.compilation' with value 'bar'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'com.example.target' with value 'foo'"))
+                        assertTrue(attributeMatchingString.contains("attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm'"))
                     }
                 }
             }
@@ -729,10 +740,12 @@ class KotlinGradleIT : KGPBaseTest() {
 
             buildGradle.modify {
                 val reorderedClasspath = run {
-                    val (kotlinCompilerEmbeddable, others) = classpath.partition { "kotlin-compiler-embeddable" in it ||
+                    val (kotlinCompilerEmbeddable, others) = classpath.partition {
+                        "kotlin-compiler-embeddable" in it ||
                                 // build-common should be loaded prior compiler-embedable, otherwise we could depend on old version of
                                 // serializer classes and fail with NSME
-                                "kotlin-build-common" in it}
+                                "kotlin-build-common" in it
+                    }
                     others + kotlinCompilerEmbeddable
                 }
                 val newClasspathString = "classpath files(\n" + reorderedClasspath.joinToString(",\n") { "'$it'" } + "\n)"
@@ -763,6 +776,40 @@ class KotlinGradleIT : KGPBaseTest() {
             gradleVersion
         ) {
             build(":consumer:aggregate")
+        }
+    }
+
+    @DisplayName("KT-61273: task output backup works correctly if the first output is absent")
+    @GradleTest
+    fun taskOutputBackupWorksIfFirstOutputIsAbsent(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            buildGradle.append(
+                //language=Gradle
+                """
+                tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+                    Provider<Directory> dir = project.layout.buildDirectory.dir(".a") // name it that's way so it will be the first output in an ordered set
+                    outputs.dir(dir)
+                    doFirst {
+                        dir.get().getAsFile().delete()
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
+
+            kotlinSourcesDir().resolve("Dummy.kt").append(
+                """
+                fun foo() {}
+                """.trimIndent()
+            )
+
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+            }
         }
     }
 }

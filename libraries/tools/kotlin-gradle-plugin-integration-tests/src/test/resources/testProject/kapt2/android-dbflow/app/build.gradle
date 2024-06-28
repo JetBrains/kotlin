@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "mobi.porquenao.poc.kotlin"
     compileSdkVersion 23
 
     defaultConfig {
@@ -15,9 +16,8 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 }
 

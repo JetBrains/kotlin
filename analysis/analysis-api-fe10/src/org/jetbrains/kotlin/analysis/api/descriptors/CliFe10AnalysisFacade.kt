@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.analysis.api.descriptors
 import com.intellij.openapi.extensions.AreaInstance
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -34,52 +35,59 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
-class CliFe10AnalysisFacade(private val project: Project) : Fe10AnalysisFacade {
-    override fun getResolveSession(element: KtElement): ResolveSession {
-        return getHandler(element).resolveSession ?: error("Resolution is not performed")
+class CliFe10AnalysisFacade : Fe10AnalysisFacade {
+    override fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext {
+        val handler = getHandler(element)
+        return getAnalysisContext(handler, token)
     }
 
-    override fun getDeprecationResolver(element: KtElement): DeprecationResolver {
-        return getHandler(element).deprecationResolver ?: error("Resolution is not performed")
+    override fun getAnalysisContext(ktModule: KaModule, token: KaLifetimeToken): Fe10AnalysisContext {
+        val handler = KaFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
+        return getAnalysisContext(handler, token)
     }
 
-    override fun getCallResolver(element: KtElement): CallResolver {
-        return getHandler(element).callResolver ?: error("Resolution is not performed")
+    private fun getAnalysisContext(handler: KaFe10AnalysisHandlerExtension, token: KaLifetimeToken): Fe10AnalysisContext {
+        return Fe10AnalysisContext(
+            facade = this,
+            handler.resolveSession.orThrowResolutionNotPerformedError(),
+            handler.deprecationResolver.orThrowResolutionNotPerformedError(),
+            handler.callResolver.orThrowResolutionNotPerformedError(),
+            handler.kotlinToResolvedCallTransformer.orThrowResolutionNotPerformedError(),
+            handler.overloadingConflictResolver.orThrowResolutionNotPerformedError(),
+            handler.kotlinTypeRefiner.orThrowResolutionNotPerformedError(),
+            token,
+        )
     }
 
-    override fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer {
-        return getHandler(element).kotlinToResolvedCallTransformer ?: error("Resolution is not performed")
+    override fun analyze(elements: List<KtElement>, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
+        val element = elements.firstOrNull() ?: return BindingContext.EMPTY
+        return getHandler(element).resolveSession.orThrowResolutionNotPerformedError().bindingContext
     }
 
-    override fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>> {
-        return getHandler(element).overloadingConflictResolver ?: error("Resolution is not performed")
+    override fun getOrigin(file: VirtualFile): KaSymbolOrigin {
+        return KaSymbolOrigin.SOURCE
     }
 
-    override fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner {
-        return getHandler(element).kotlinTypeRefiner ?: error("Resolution is not performed")
+    private fun getHandler(useSiteElement: KtElement): KaFe10AnalysisHandlerExtension {
+        val project = useSiteElement.project
+        val ktModule = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
+        return KaFe10AnalysisHandlerExtension.getInstance(project, ktModule)
     }
 
-    override fun analyze(element: KtElement, mode: Fe10AnalysisFacade.AnalysisMode): BindingContext {
-        return getResolveSession(element).bindingContext
-    }
-
-    override fun getOrigin(file: VirtualFile): KtSymbolOrigin {
-        return KtSymbolOrigin.SOURCE
-    }
-
-    private fun getHandler(useSiteElement: KtElement): KtFe10AnalysisHandlerExtension {
-        val ktModule = useSiteElement.getKtModule(project)
-        return KtFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
-    }
+    private fun <T : Any> T?.orThrowResolutionNotPerformedError(): T =
+        this ?: error("Resolution is not performed")
 }
 
-class KtFe10AnalysisHandlerExtension(private val useSiteModule: KtSourceModule) : AnalysisHandlerExtension {
+class KaFe10AnalysisHandlerExtension(
+    private val useSiteModule: KaSourceModule? = null
+) : AnalysisHandlerExtension {
     internal companion object {
-        fun getInstance(area: AreaInstance, module: KtModule): KtFe10AnalysisHandlerExtension {
-            return AnalysisHandlerExtension.extensionPointName.getExtensions(area)
-                .filterIsInstance<KtFe10AnalysisHandlerExtension>()
-                .firstOrNull { it.useSiteModule == module }
-                ?: error(KtFe10AnalysisHandlerExtension::class.java.name + " should be registered")
+        fun getInstance(area: AreaInstance, module: KaModule): KaFe10AnalysisHandlerExtension {
+            val extensions = AnalysisHandlerExtension.extensionPointName.getExtensions(area)
+                .filterIsInstance<KaFe10AnalysisHandlerExtension>()
+            return extensions.firstOrNull { it.useSiteModule == module }
+                ?: extensions.singleOrNull { it.useSiteModule == null }
+                ?: error(KaFe10AnalysisHandlerExtension::class.java.name + " should be registered")
         }
     }
 
@@ -109,9 +117,14 @@ class KtFe10AnalysisHandlerExtension(private val useSiteModule: KtSourceModule) 
         bindingTrace: BindingTrace,
         componentProvider: ComponentProvider
     ): AnalysisResult? {
-        if (module.name.asString().removeSurrounding("<", ">") != useSiteModule.moduleName) {
-            // there is no way to properly map KtModule to ModuleDescriptor,
-            // KtFe10AnalysisHandlerExtension is used only for tests, so just by name comparasion should work as all module names are different
+        // Single-module [KtFe10AnalysisHandlerExtension] can be registered without specific use-site module.
+        // Simple null-check below will skip the bail-out.
+        if (useSiteModule != null &&
+            module.name.asString().removeSurrounding("<", ">") != useSiteModule.name
+        ) {
+            // there is no way to properly map KaModule to ModuleDescriptor,
+            // Multi-module [KtFe10AnalysisHandlerExtension]s are used only for tests,
+            // so just by name comparison should work as all module names are different
             return null
         }
 

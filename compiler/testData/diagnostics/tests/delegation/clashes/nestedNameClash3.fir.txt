@@ -1,0 +1,32 @@
+FILE: nestedNameClash3.kt
+    package second
+
+    public final fun main(): R|kotlin/Unit| {
+        lval data: R|second/MyClass| = R|second/MyClass.MyClass|(object : R|second/Base<second/Base<kotlin/Int>>| {
+            private constructor(): R|second/<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+        R|<local>/data|.R|second/MyClass.foo|()
+    }
+    public abstract interface Base<A> : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class MyClass : R|second/Base<second/Base<kotlin/Int>>| {
+        public constructor(prop: R|second/Base<second/Base<kotlin/Int>>|): R|second/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final field $$delegate_0: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
+
+        public final val prop: R|second/Base<second/Base<kotlin/Int>>| = R|<local>/prop|
+            public get(): R|second/Base<second/Base<kotlin/Int>>|
+
+        public abstract interface Base : R|kotlin/Any| {
+        }
+
+    }

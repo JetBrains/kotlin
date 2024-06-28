@@ -10,5 +10,5 @@ compiler or generated code. Use it at your own risk!
 warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/jvmRecord.kt:1:1: error: using @JvmRecord is only allowed with -jvm-target 16 or later (or -jvm-target 15 with the -Xjvm-enable-preview flag enabled)
 @JvmRecord
-^
+^^^^^^^^^^
 COMPILATION_ERROR

@@ -9,9 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -41,12 +39,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
+    fun compileInline(): SMAPAndMethodNode {
+        return sourceCompiler.compileInlineFunction(jvmSignature).apply {
+            node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+        }
+    }
+
     fun performInline(registerLineNumberAfterwards: Boolean, isInlineOnly: Boolean) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
-                node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-            }
+            nodeAndSmap = compileInline()
             val result = inlineCall(nodeAndSmap, isInlineOnly)
             leaveTemps()
             codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
@@ -96,17 +98,24 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val info = RootInliningContext(
             state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
-            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
+            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
+            codegen.inlineScopesGenerator
         )
 
         val sourceMapper = sourceCompiler.sourceMapper
         val sourceInfo = sourceMapper.sourceInfo!!
-        val callSite = SourcePosition(codegen.lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
+        val lastLineNumber = codegen.lastLineNumber
+        val callSite = SourcePosition(lastLineNumber, sourceInfo.sourceFileName!!, sourceInfo.pathOrCleanFQN)
+        info.inlineScopesGenerator?.apply { currentCallSiteLineNumber = lastLineNumber }
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), sourceCompiler.isCallInsideSameModuleAsCallee,
-            "Method inlining " + sourceCompiler.callElementText,
+            { "Method inlining " + sourceCompiler.callElementText },
             SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
-            info.callSiteInfo, isInlineOnly, !isInlinedToInlineFunInKotlinRuntime(), maskStartIndex, maskStartIndex + maskValues.size,
+            info.callSiteInfo,
+            isInlineOnlyMethod = isInlineOnly,
+            !isInlinedToInlineFunInKotlinRuntime(),
+            maskStartIndex,
+            maskStartIndex + maskValues.size,
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)
@@ -197,16 +206,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     protected abstract fun generateAssertField()
 
-    private fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
-        val codegen = this.codegen as? ExpressionCodegen ?: return false
-        val caller = codegen.context.functionDescriptor
-        if (!caller.isInline) return false
-        val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
-        return callerPackage.fqName.asString().let {
-            // package either equals to 'kotlin' or starts with 'kotlin.'
-            it.startsWith("kotlin") && (it.length <= 6 || it[6] == '.')
-        }
-    }
+    protected abstract fun isInlinedToInlineFunInKotlinRuntime(): Boolean
 
     protected fun rememberClosure(parameterType: Type, index: Int, lambdaInfo: LambdaInfo) {
         invocationParamBuilder.addNextValueParameter(parameterType, true, null, index).functionalArgument = lambdaInfo
@@ -300,7 +300,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         // Instead of checking for loops precisely, we just check if there are any backward jumps -
         // that is, a jump from instruction #i to instruction #j where j < i.
         private fun MethodNode.requiresEmptyStackOnEntry(): Boolean = tryCatchBlocks.isNotEmpty() ||
-                instructions.toArray().any { isBeforeSuspendMarker(it) || isBeforeInlineSuspendMarker(it) || isBackwardsJump(it) }
+                instructions.any { isBeforeSuspendMarker(it) || isBeforeInlineSuspendMarker(it) || isBackwardsJump(it) }
 
         private fun MethodNode.isBackwardsJump(insn: AbstractInsnNode): Boolean = when (insn) {
             is JumpInsnNode -> isBackwardsJump(insn, insn.label)

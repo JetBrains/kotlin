@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(a: Iterator<Int>, b: Iterator<Int>) {
+    a@while (a.hasNext()) {
+        val x = a.next()
+        b@while (b.hasNext()) {
+            val y = b.next()
+            if (y == x) {
+                break@a
+            }
+            A()
+        }
+        A()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(a: Iterator<Int>, b: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<A()>")
+  a@while (a.hasNext()) {
+    val x = a.next()
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<A()>")
+    b@while (b.hasNext()) {
+      val y = b.next()
+      if (y == x) {
+        %composer.endReplaceGroup()
+        break@a
+      }
+      A(%composer, 0)
+    }
+    %composer.endReplaceGroup()
+    A(%composer, 0)
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

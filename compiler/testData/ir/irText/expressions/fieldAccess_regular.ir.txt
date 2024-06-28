@@ -1,0 +1,153 @@
+FILE fqName:<root> fileName:/main.kt
+  CLASS CLASS name:Impl modality:OPEN visibility:public superTypes:[<root>.Derived]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Impl
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Impl [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Derived'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:OPEN visibility:public superTypes:[<root>.Derived]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Derived
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Derived
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Derived
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:testClass visibility:public modality:FINAL <> ($this:<root>.Impl) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+            receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Impl origin=EQ
+          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+          value: CONST Int type=kotlin.Int value=1
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+          receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.testClass' type=<root>.Impl origin=null
+          value: CONST Int type=kotlin.Int value=1
+    FUN name:testClassStatic visibility:public modality:FINAL <> ($this:<root>.Impl) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+          value: CONST Int type=kotlin.Int value=1
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f: kotlin.Int declared in <root>.Derived
+  CLASS CLASS name:OtherImpl modality:FINAL visibility:public superTypes:[<root>.Impl]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.OtherImpl
+    CONSTRUCTOR visibility:public <> () returnType:<root>.OtherImpl [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Impl'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:OtherImpl modality:FINAL visibility:public superTypes:[<root>.Impl]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Impl
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Impl
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:testClass visibility:public modality:FINAL <> ($this:<root>.Impl) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun testClass (): kotlin.Unit declared in <root>.Impl
+      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+    FUN FAKE_OVERRIDE name:testClassStatic visibility:public modality:FINAL <> ($this:<root>.Impl) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public final fun testClassStatic (): kotlin.Unit declared in <root>.Impl
+      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Impl
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:testOtherClass visibility:public modality:FINAL <> ($this:<root>.OtherImpl) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.OtherImpl
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.OtherImpl origin=null
+            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Impl origin=null
+            receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.OtherImpl origin=EQ
+          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+          value: CONST Int type=kotlin.Int value=1
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Impl origin=EQ
+          receiver: GET_VAR '<this>: <root>.OtherImpl declared in <root>.OtherImpl.testOtherClass' type=<root>.OtherImpl origin=null
+          value: CONST Int type=kotlin.Int value=1
+    FUN name:testOtherClassStatic visibility:public modality:FINAL <> ($this:<root>.OtherImpl) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.OtherImpl
+      BLOCK_BODY
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+        SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+          value: CONST Int type=kotlin.Int value=1
+    PROPERTY FAKE_OVERRIDE name:f visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final f declared in <root>.Impl
+  FUN name:testNonStatic visibility:public modality:FINAL <> (b:<root>.Base, d:<root>.Derived, i:<root>.Impl, o:<root>.OtherImpl) returnType:kotlin.Unit
+    VALUE_PARAMETER name:b index:0 type:<root>.Base
+    VALUE_PARAMETER name:d index:1 type:<root>.Derived
+    VALUE_PARAMETER name:i index:2 type:<root>.Impl
+    VALUE_PARAMETER name:o index:3 type:<root>.OtherImpl
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Base origin=null
+          receiver: GET_VAR 'b: <root>.Base declared in <root>.testNonStatic' type=<root>.Base origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+          receiver: GET_VAR 'd: <root>.Derived declared in <root>.testNonStatic' type=<root>.Derived origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Impl origin=null
+          receiver: GET_VAR 'i: <root>.Impl declared in <root>.testNonStatic' type=<root>.Impl origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.OtherImpl origin=null
+          receiver: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Base origin=EQ
+        receiver: GET_VAR 'b: <root>.Base declared in <root>.testNonStatic' type=<root>.Base origin=null
+        value: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+        receiver: GET_VAR 'd: <root>.Derived declared in <root>.testNonStatic' type=<root>.Derived origin=null
+        value: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Impl origin=EQ
+        receiver: GET_VAR 'i: <root>.Impl declared in <root>.testNonStatic' type=<root>.Impl origin=null
+        value: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.OtherImpl origin=EQ
+        receiver: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
+        value: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final f: kotlin.Int declared in <root>.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+          $this: GET_VAR 'b: <root>.Base declared in <root>.testNonStatic' type=<root>.Base origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final f: kotlin.Int declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+          $this: GET_VAR 'd: <root>.Derived declared in <root>.testNonStatic' type=<root>.Derived origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final f declared in <root>.Impl' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.Impl' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+          $this: GET_VAR 'i: <root>.Impl declared in <root>.testNonStatic' type=<root>.Impl origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final f declared in <root>.OtherImpl' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public declared in <root>.OtherImpl' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+          $this: GET_VAR 'o: <root>.OtherImpl declared in <root>.testNonStatic' type=<root>.OtherImpl origin=null
+  FUN name:testStatic visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Base origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Int superQualifierSymbol=<root>.Derived origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Base origin=EQ
+        value: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' type=kotlin.Unit superQualifierSymbol=<root>.Derived origin=EQ
+        value: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final s: kotlin.Int declared in <root>.Base' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Base' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        PROPERTY_REFERENCE 'public final s: kotlin.Int declared in <root>.Derived' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:s type:kotlin.Int visibility:public [static] declared in <root>.Derived' getter=null setter=null type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null

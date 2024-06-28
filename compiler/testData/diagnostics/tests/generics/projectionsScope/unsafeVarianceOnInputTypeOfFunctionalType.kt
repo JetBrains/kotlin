@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
+// DIAGNOSTICS: -UNUSED_PARAMETER -REDUNDANT_PROJECTION
 
 class FunctionHolder<out T : Any>(val f: (@UnsafeVariance T) -> Unit) {
     fun f2(v: @UnsafeVariance T) {}

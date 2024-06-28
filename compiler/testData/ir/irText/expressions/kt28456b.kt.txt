@@ -14,24 +14,25 @@ operator fun A.get(i: Int, a: Int = 1, b: Int = 2, c: Int = 3, d: Int = 4): Int 
 operator fun A.set(i: Int, j: Int = 42, v: Int) {
 }
 
-fun testSimpleAssignment(a: A) {
-  a.set(i = 1, v = 0)
+fun testCompoundAssignment(a: A) {
+  { // BLOCK
+    val tmp_0: A = a
+    val tmp_1: Int = 1
+    tmp_0.set(i = tmp_1, v = tmp_0.get(i = tmp_1).plus(other = 10))
+  }
 }
 
 fun testPostfixIncrement(a: A): Int {
   return { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    val tmp2: Int = tmp0_array.get(i = tmp1_index0)
-    tmp0_array.set(i = tmp1_index0, v = tmp2.inc())
-    tmp2
+    val tmp_2: A = a
+    val tmp_3: Int = 1
+    val tmp_4: Int = tmp_2.get(i = tmp_3)
+    tmp_2.set(i = tmp_3, v = tmp_4.inc())
+    tmp_4
   }
 }
 
-fun testCompoundAssignment(a: A) {
-  { // BLOCK
-    val tmp0_array: A = a
-    val tmp1_index0: Int = 1
-    tmp0_array.set(i = tmp1_index0, v = tmp0_array.get(i = tmp1_index0).plus(other = 10))
-  }
+fun testSimpleAssignment(a: A) {
+  a.set(i = 1, v = 0)
 }
+

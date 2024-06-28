@@ -1,4 +1,8 @@
 open class A {
+  val aVal: Int
+    field = 42
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -8,10 +12,6 @@ open class A {
   fun f(): Int {
     return 1
   }
-
-  val aVal: Int
-    field = 42
-    get
 
   fun testA1(x: Any): Int? {
     return when {
@@ -53,6 +53,10 @@ class B : A {
 }
 
 open class GA<T : Any?> {
+  val aVal: Int
+    field = 42
+    get
+
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -62,10 +66,6 @@ open class GA<T : Any?> {
   fun f(): Int {
     return 1
   }
-
-  val aVal: Int
-    field = 42
-    get
 
 }
 
@@ -83,3 +83,4 @@ class GB<T : Any?, S : Any?> : GA<T> {
   }
 
 }
+

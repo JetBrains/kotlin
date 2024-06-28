@@ -1,0 +1,22 @@
+KT element: KtPostfixExpression
+FIR element: FirVariableAssignmentImpl
+FIR source kind: DesugaredPostfixInc
+
+FIR element rendered:
+R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] incExpressionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-incExpressionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lvar nextUnnamedLibraryIndex: R|kotlin/Int| = Int(1)
+            [ResolvedTo(BODY_RESOLVE)] lval originalName: R|kotlin/String| = <strcat>( {
+                [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/nextUnnamedLibraryIndex|
+                R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+            )
+        }

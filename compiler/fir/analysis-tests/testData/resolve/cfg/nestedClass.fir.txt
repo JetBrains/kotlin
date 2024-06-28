@@ -1,0 +1,32 @@
+FILE: nestedClass.kt
+    public final class OuterClass : R|kotlin/Any| {
+        public constructor(): R|OuterClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun outerFunction(): R|kotlin/Unit| {
+        }
+
+        public final val outerProperty: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final val outerProperty2: R|kotlin/Int| = this@R|/OuterClass|.R|/OuterClass.outerProperty|
+            public get(): R|kotlin/Int|
+
+        public final class NestedClass : R|kotlin/Any| {
+            public constructor(): R|OuterClass.NestedClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun nestedFUnction(): R|kotlin/Unit| {
+            }
+
+            public final val nestedProperty: R|kotlin/Int| = Int(1)
+                public get(): R|kotlin/Int|
+
+            public final val nestedProperty2: R|kotlin/Int| = this@R|/OuterClass.NestedClass|.R|/OuterClass.NestedClass.nestedProperty|
+                public get(): R|kotlin/Int|
+
+        }
+
+    }

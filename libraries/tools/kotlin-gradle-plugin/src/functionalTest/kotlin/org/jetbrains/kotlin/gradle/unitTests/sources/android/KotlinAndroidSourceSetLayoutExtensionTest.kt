@@ -25,6 +25,7 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
     fun `single platform plugin`() {
         val project = ProjectBuilder.builder().build()
         project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
+
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
@@ -35,19 +36,33 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
     }
 
     @Test
-    fun `test multiplatform plugin`() {
-        val project = buildProjectWithMPP { }
-
+    fun `default V2 in multiplatform plugin`() {
+        val project = buildProjectWithMPP()
         assertEquals(
-            multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout,
-            "Expected v1 being set as default"
+            multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout,
+            "Expected v2 being set as default"
         )
+    }
+
+    @Test
+    fun testConfiguredV2() {
+        val project = buildProjectWithMPP()
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout)
+    }
+
+    @Test
+    fun configuredV1() {
+        val project = buildProjectWithMPP()
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
         assertEquals(multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout)
+    }
+
+    @Test
+    fun failsOnUnsupportedVersion() {
+        val project = buildProjectWithMPP()
 
         /* Test unhappy path: Layout version 0 is unknown/unsupported */
         project.setMultiplatformAndroidSourceSetLayoutVersion(0)

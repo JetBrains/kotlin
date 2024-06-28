@@ -1,0 +1,47 @@
+KtNameReferenceExpression(55,59): 'TODO'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with TODO>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(): kotlin.Nothing
+          valueParameters = []
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Nothing
+          symbol = kotlin/TODO(reason: kotlin.String): kotlin.Nothing
+          valueParameters = [
+            KaVariableSignature:
+              name = reason
+              receiverType = null
+              returnType = kotlin.String
+              symbol = reason: kotlin.String
+              callableId = null
+          ]
+          callableId = kotlin/TODO
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "Not implemented yet" -> (KaVariableSignature:
+          name = reason
+          receiverType = null
+          returnType = kotlin.String
+          symbol = reason: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

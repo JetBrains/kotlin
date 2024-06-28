@@ -7,13 +7,11 @@
 
 #include "NSNotificationSubscription.hpp"
 
-#import <Foundation/NSNotification.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
+#include <memory>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-
-#include "std_support/Memory.hpp"
 
 using namespace kotlin;
 
@@ -216,7 +214,7 @@ TEST_F(NSNotificationSubscriptionTest, DestroysHandler) {
 
     EXPECT_CALL(destructorHook, Call(_)).Times(0);
     auto subscription =
-            subscribe(name, [withDestructorHook = std_support::make_shared<WithDestructorHook>(destructorHook.AsStdFunction())] {});
+            subscribe(name, [withDestructorHook = std::make_shared<WithDestructorHook>(destructorHook.AsStdFunction())] {});
     post(name);
     testing::Mock::VerifyAndClearExpectations(&destructorHook);
 

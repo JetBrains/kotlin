@@ -1,0 +1,9 @@
+MODULE main
+	CLASS Test$FOO.class
+		CLASS METADATA
+			PROPERTY getZ()LTest$FOO$Inner;
+				Property: class.metadata.property.returnType
+					K1
+						Test.FOO.Inner
+					K2
+						.Test.FOO.Inner

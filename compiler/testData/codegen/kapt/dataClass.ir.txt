@@ -1,0 +1,15 @@
+@kotlin.Metadata
+public final class User {
+    // source: 'dataClass.kt'
+    private final field age: int
+    private final @org.jetbrains.annotations.NotNull field name: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
+    public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
+    public final method component2(): int
+    public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): User
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getAge(): int
+    public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}

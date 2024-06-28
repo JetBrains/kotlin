@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,63 +27,63 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/annotations/annotationsOnTypes")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeDependentAnalysisSourceModuleAnalysisApiAnnotationsOnTypesTestGenerated extends AbstractAnalysisApiAnnotationsOnTypesTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Dependent,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Dependent,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInAnnotationsOnTypes() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInAnnotationsOnTypes() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/annotations/annotationsOnTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("annotaionOnType.kt")
-    public void testAnnotaionOnType() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnType.kt");
-    }
+  @Test
+  @TestMetadata("annotaionOnType.kt")
+  public void testAnnotaionOnType() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnType.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionOnTypeArgument.kt")
-    public void testAnnotaionOnTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("annotaionOnTypeArgument.kt")
+  public void testAnnotaionOnTypeArgument() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionOnTypeArgumentOfTypeArgument.kt")
-    public void testAnnotaionOnTypeArgumentOfTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgumentOfTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("annotaionOnTypeArgumentOfTypeArgument.kt")
+  public void testAnnotaionOnTypeArgumentOfTypeArgument() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionOnTypeArgumentOfTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionWithComplexArgumentOnType.kt")
-    public void testAnnotaionWithComplexArgumentOnType() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnType.kt");
-    }
+  @Test
+  @TestMetadata("annotaionWithComplexArgumentOnType.kt")
+  public void testAnnotaionWithComplexArgumentOnType() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnType.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionWithComplexArgumentOnTypeArgument.kt")
-    public void testAnnotaionWithComplexArgumentOnTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("annotaionWithComplexArgumentOnTypeArgument.kt")
+  public void testAnnotaionWithComplexArgumentOnTypeArgument() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithComplexArgumentOnTypeArgument.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionWithLiteralArgumentOnType.kt")
-    public void testAnnotaionWithLiteralArgumentOnType() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnType.kt");
-    }
+  @Test
+  @TestMetadata("annotaionWithLiteralArgumentOnType.kt")
+  public void testAnnotaionWithLiteralArgumentOnType() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnType.kt");
+  }
 
-    @Test
-    @TestMetadata("annotaionWithLiteralArgumentOnTypeArgument.kt")
-    public void testAnnotaionWithLiteralArgumentOnTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("annotaionWithLiteralArgumentOnTypeArgument.kt")
+  public void testAnnotaionWithLiteralArgumentOnTypeArgument() {
+    runTest("analysis/analysis-api/testData/annotations/annotationsOnTypes/annotaionWithLiteralArgumentOnTypeArgument.kt");
+  }
 }

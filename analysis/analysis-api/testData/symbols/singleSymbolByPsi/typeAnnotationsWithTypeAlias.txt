@@ -1,10 +1,13 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -13,12 +16,14 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: [
+  returnType: KaUsualClassType:
+    annotations: [
       Anno1()
         psi: KtAnnotationEntry
       Anno2()
@@ -26,11 +31,12 @@ KtFunctionSymbol:
       Anno3()
         psi: KtAnnotationEntry
     ]
-    ownTypeArguments: []
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
-  symbolKind: TOP_LEVEL
+    typeArguments: []
+    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  {@R|Anno3|()  SecondTypeAlias=} BaseInterface
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(typeAnnotationsWithTypeAlias.kt)
+  getContainingJvmClassName: TypeAnnotationsWithTypeAliasKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 description = "Kotlin Daemon Client"
 
 plugins {
@@ -22,6 +19,7 @@ val nativePlatformVariants = listOf(
 )
 
 dependencies {
+    api(kotlinStdlib())
     compileOnly(project(":daemon-common"))
     compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
 
@@ -30,23 +28,16 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-tasks.withType<KotlinCompilationTask<*>> {
-    compilerOptions {
-        // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        @Suppress("DEPRECATION")
-        apiVersion.set(KotlinVersion.KOTLIN_1_4)
-        @Suppress("DEPRECATION")
-        languageVersion.set(KotlinVersion.KOTLIN_1_4)
-        freeCompilerArgs.add("-Xsuppress-version-warnings")
-    }
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 

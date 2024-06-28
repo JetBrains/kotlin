@@ -1,0 +1,287 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+@ComposableTarget("UI")
+fun Leaf() { }
+
+@Composable
+fun Wrapper(content: @Composable () -> Unit) { content() }
+
+// [0,[0],[0],[0],[0],[0],[0],[0]]
+@Composable
+fun Optional(
+    one: @Composable () -> Unit = { },
+    two: (@Composable () -> Unit)? = null,
+    three: (@Composable () -> Unit)? = null,
+    four: (@Composable () -> Unit)? = null,
+    five: (@Composable () -> Unit)? = null,
+    six: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
+    one()
+
+    // Invoke through a ?.
+    two?.invoke()
+
+    // Invoke through a let
+    three?.let { it() }
+
+    // Invoke through a let test
+    four?.let { four() }
+
+    // Invoke through in an then block
+    if (five != null)
+        five()
+
+    six?.let { it -> Wrapper(it) }
+
+    content()
+}
+
+@Composable
+fun UseOptional() {
+    Optional {
+        Leaf()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableTarget(applier = "UI")
+fun Leaf(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Leaf):Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Leaf(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Wrapper)<conten...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    content(%composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Wrapper(content, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0][0][0][0][0][0][0]]")
+fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int, Unit>?, three: Function2<Composer, Int, Unit>?, four: Function2<Composer, Int, Unit>?, five: Function2<Composer, Int, Unit>?, six: Function2<Composer, Int, Unit>?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Optional)P(3,6,5,2,1,4)<one()>,<conten...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(one)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(two)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(three)) 0b000100000000 else 0b10000000
+  }
+  if (%default and 0b1000 != 0) {
+    %dirty = %dirty or 0b110000000000
+  } else if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(four)) 0b100000000000 else 0b010000000000
+  }
+  if (%default and 0b00010000 != 0) {
+    %dirty = %dirty or 0b0110000000000000
+  } else if (%changed and 0b0110000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(five)) 0b0100000000000000 else 0b0010000000000000
+  }
+  if (%default and 0b00100000 != 0) {
+    %dirty = %dirty or 0b00110000000000000000
+  } else if (%changed and 0b00110000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(six)) 0b00100000000000000000 else 0b00010000000000000000
+  }
+  if (%default and 0b01000000 != 0) {
+    %dirty = %dirty or 0b000110000000000000000000
+  } else if (%changed and 0b000110000000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b000100000000000000000000 else 0b10000000000000000000
+  }
+  if (%dirty and 0b10010010010010010011 != 0b10010010010010010010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      one = ComposableSingletons%TestKt.lambda-1
+    }
+    if (%default and 0b0010 != 0) {
+      two = null
+    }
+    if (%default and 0b0100 != 0) {
+      three = null
+    }
+    if (%default and 0b1000 != 0) {
+      four = null
+    }
+    if (%default and 0b00010000 != 0) {
+      five = null
+    }
+    if (%default and 0b00100000 != 0) {
+      six = null
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    one(%composer, 0b1110 and %dirty)
+    val tmp0_safe_receiver = two
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<invoke...>")
+    val tmp0_group = when {
+      tmp0_safe_receiver == null -> {
+        null
+      }
+      else -> {
+        tmp0_safe_receiver(%composer, 0b1110 and %dirty shr 0b0011)
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp0_group
+    val tmp1_safe_receiver = three
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<it()>")
+    val tmp1_group = when {
+      tmp1_safe_receiver == null -> {
+        null
+      }
+      else -> {
+        tmp1_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+          it(%composer, 0)
+        }
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp1_group
+    val tmp2_safe_receiver = four
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<four()>")
+    val tmp2_group = when {
+      tmp2_safe_receiver == null -> {
+        null
+      }
+      else -> {
+        tmp2_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+          four(%composer, 0b1110 and %dirty shr 0b1001)
+        }
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp2_group
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<five()>")
+    if (five != null) {
+      five(%composer, 0b1110 and %dirty shr 0b1100)
+    }
+    %composer.endReplaceGroup()
+    val tmp3_safe_receiver = six
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<Wrappe...>")
+    val tmp3_group = when {
+      tmp3_safe_receiver == null -> {
+        null
+      }
+      else -> {
+        tmp3_safe_receiver.let { it: Function2<Composer, Int, Unit> ->
+          Wrapper(it, %composer, 0)
+        }
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp3_group
+    content(%composer, 0b1110 and %dirty shr 0b00010010)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Optional(one, two, three, four, five, six, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+@ComposableTarget(applier = "UI")
+fun UseOptional(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(UseOptional)<Option...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Optional(null, null, null, null, null, null, ComposableSingletons%TestKt.lambda-2, %composer, 0b000110000000000000000000, 0b00111111)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    UseOptional(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+internal object ComposableSingletons%TestKt {
+  val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Unit
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+  val lambda-2: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
+    sourceInformation(%composer, "C<Leaf()>:Test.kt")
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      Leaf(%composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+    }
+  }
+}

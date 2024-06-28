@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
+import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import kotlin.test.*
 
@@ -30,7 +30,6 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
-        addBuildEventsListenerRegistryMock(project)
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
 
         project.plugins.apply("kotlin-multiplatform")
@@ -44,10 +43,16 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
         kotlin = project.multiplatformExtension
     }
 
+    @Test
+    fun `version 1 layout usage - emits a deprecation error`() {
+        kotlin.androidTarget()
+        project.evaluate()
+        project.checkDiagnostics("AndroidSourceSetV1Deprecation")
+    }
 
     @Test
     fun `main source set with default settings`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         val kotlinAndroidMainSourceSet = kotlin.sourceSets.getByName("androidMain")
         val androidMainSourceSet = android.sourceSets.getByName("main")
@@ -62,7 +67,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     @Test
     fun `test source set with default settings`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         val kotlinAndroidTestSourceSet = kotlin.sourceSets.getByName("androidTest")
         val testSourceSet = android.sourceSets.getByName("test")
@@ -77,7 +82,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     @Test
     fun `androidTest source set with default settings`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         val kotlinAndroidAndroidTestSourceSet = kotlin.sourceSets.getByName("androidAndroidTest")
         val androidTestSourceSet = android.sourceSets.getByName("androidTest")
@@ -104,7 +109,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
             create("free").dimension = "pricing"
             create("paid").dimension = "pricing"
         }
-        kotlin.android()
+        kotlin.androidTarget()
         project.evaluate()
 
         fun assertSourceSetsExist(androidName: String, kotlinName: String) {
@@ -138,7 +143,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
                 it.create("paid").dimension = "pricing"
             }
         )
-        kotlin.android()
+        kotlin.androidTarget()
         project.evaluate()
 
         kotlin.sourceSets.toSet().generatePairs()
@@ -164,7 +169,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     @Test
     fun `sync includes user configuration`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         val kotlinAndroidMain = kotlin.sourceSets.getByName("androidMain")
         val androidMain = android.sourceSets.getByName("main")
@@ -182,7 +187,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     @Test
     fun `AndroidSourceSet#kotlinSourceSet convention`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         fun AndroidSourceSet.kotlinSourceSetByConvention(): KotlinSourceSet =
             (this as HasConvention).convention.plugins["kotlin"] as KotlinSourceSet
@@ -199,7 +204,7 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
 
     @Test
     fun `AndroidSourceSet kotlin AndroidSourceDirectorySet`() {
-        kotlin.android()
+        kotlin.androidTarget()
         project.evaluate()
         android.libraryVariants.all { variant ->
             val main = variant.sourceSets.first { it.name == "main" }

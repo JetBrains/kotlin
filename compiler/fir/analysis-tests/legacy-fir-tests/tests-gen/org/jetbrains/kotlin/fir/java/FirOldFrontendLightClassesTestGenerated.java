@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,31 +21,36 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirOldFrontendLightClassesTestGenerated extends AbstractFirOldFrontendLightClassesTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInLightClasses() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/lightClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  public void testAllFilesPresentInLightClasses() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/lightClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @TestMetadata("genericClasses.kt")
-    public void testGenericClasses() throws Exception {
-        runTest("compiler/fir/analysis-tests/testData/lightClasses/genericClasses.kt");
-    }
+  @TestMetadata("annotationTargets.kt")
+  public void testAnnotationTargets() {
+    runTest("compiler/fir/analysis-tests/testData/lightClasses/annotationTargets.kt");
+  }
 
-    @TestMetadata("nestedClasses.kt")
-    public void testNestedClasses() throws Exception {
-        runTest("compiler/fir/analysis-tests/testData/lightClasses/nestedClasses.kt");
-    }
+  @TestMetadata("genericClasses.kt")
+  public void testGenericClasses() {
+    runTest("compiler/fir/analysis-tests/testData/lightClasses/genericClasses.kt");
+  }
 
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("compiler/fir/analysis-tests/testData/lightClasses/simple.kt");
-    }
+  @TestMetadata("nestedClasses.kt")
+  public void testNestedClasses() {
+    runTest("compiler/fir/analysis-tests/testData/lightClasses/nestedClasses.kt");
+  }
 
-    @TestMetadata("typeMapping.kt")
-    public void testTypeMapping() throws Exception {
-        runTest("compiler/fir/analysis-tests/testData/lightClasses/typeMapping.kt");
-    }
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("compiler/fir/analysis-tests/testData/lightClasses/simple.kt");
+  }
+
+  @TestMetadata("typeMapping.kt")
+  public void testTypeMapping() {
+    runTest("compiler/fir/analysis-tests/testData/lightClasses/typeMapping.kt");
+  }
 }

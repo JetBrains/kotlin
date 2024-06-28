@@ -154,14 +154,14 @@ class SwitchOptimizer(
                 lastStatement
             } else {
                 val jsBody = case.body.accept(stmtTransformer, context).asBlock()
-                var lastStatement = jsBody.statements.lastOrNull()
-
-                if (lastStatement != null) {
-                    lastStatement = lastStatementTransformer { lastStatement!! }
-                    jsBody.statements[jsBody.statements.lastIndex] = lastStatement
-                }
+                val lastStatement = jsBody.statements.lastOrNull()?.let { lastStatementTransformer { it } }
 
                 jsCase.statements += jsBody.statements
+
+                if (lastStatement != null) {
+                    jsCase.statements[jsCase.statements.lastIndex] = lastStatement
+                }
+
                 lastStatement
             }
 

@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(TYPES)] get(): <implicit>
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(STATUS)] get(): <implicit>
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = args#.get#(IntegerLiteral(1)).plus#(stringParameter#).plus#(fileParameter#.path#)
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String|
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String|
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] resultWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-resultWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(BODY_RESOLVE)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+

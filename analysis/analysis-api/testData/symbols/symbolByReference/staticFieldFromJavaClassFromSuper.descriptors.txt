@@ -1,0 +1,24 @@
+KaJavaFieldSymbol:
+  annotations: []
+  callableId: /BaseClass.bar
+  compilerVisibility: Public
+  contextReceivers: []
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isStatic: true
+  isVal: false
+  location: CLASS
+  modality: FINAL
+  name: bar
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: BaseClass
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

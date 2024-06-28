@@ -1,0 +1,68 @@
+FILE: ambiguousAnonymousExposed.fir.kt
+    public final class My<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|): R|My<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+    }
+    public abstract interface I1 : R|kotlin/Any| {
+    }
+    public abstract interface I2 : R|kotlin/Any| {
+    }
+    public final fun foo(): R|My<out I1>| {
+        ^foo R|/My.My|<R|<anonymous>|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    public final fun fooFoo(): R|My<I1>| {
+        ^fooFoo R|/My.My|<R|I1|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    internal final fun bar(): R|My<out I1>| {
+        ^bar R|/My.My|<R|<anonymous>|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    private final fun baz(): R|My<<anonymous>>| {
+        ^baz R|/My.My|<R|<anonymous>|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    private final inline fun bazBaz(): R|My<out I1>| {
+        ^bazBaz R|/My.My|<R|<anonymous>|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    private final inline fun bazBazBaz(): R|My<out I1>| {
+        ^bazBazBaz R|/My.My|<R|<anonymous>|>(object : R|I1| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }

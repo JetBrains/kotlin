@@ -1,0 +1,41 @@
+MODULE main
+	CLASS P1.class
+		CLASS METADATA
+			K1
+				getY()I
+			K2
+				---
+			K1
+				---
+			K2
+				y
+	CLASS P2.class
+		CLASS METADATA
+			K1
+				getY()I
+			K2
+				---
+			K1
+				---
+			K2
+				y
+	CLASS P3.class
+		CLASS METADATA
+			K1
+				getY()I
+			K2
+				---
+			K1
+				---
+			K2
+				y
+	CLASS P4.class
+		CLASS METADATA
+			K1
+				getY()I
+			K2
+				---
+			K1
+				---
+			K2
+				y

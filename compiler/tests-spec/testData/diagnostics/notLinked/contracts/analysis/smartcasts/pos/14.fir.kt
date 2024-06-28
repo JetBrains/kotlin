@@ -1,4 +1,14 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 14
+ * DESCRIPTION: Check smartcast with non-null assertion for a contract function.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26856
+ */
 
 // FILE: contracts.kt
 
@@ -17,27 +27,27 @@ fun case_1(value_1: Int?): Boolean? {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?): Boolean {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(false) implies (value_1 != null)
-    }<!>
+    }
 
     return value_1 != null
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returnsNotNull() implies (value_1 != null)
-    }<!>
+    }
 
     return value_1 != null
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?): Boolean {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returnsNotNull() implies (value_1 is Number)
-    }<!>
+    }
 
     return value_1 is Number
 }

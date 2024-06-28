@@ -1,0 +1,81 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final data class TwoValues : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                FirPropertySymbol public final val two: <implicit>
+                    public get(): <implicit>
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-topLevelDestructuring_after.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                lval args: R|kotlin/Array<kotlin/String>|
+            
+                public final data class TwoValues : R|kotlin/Any|
+                lval <destruct>: R|TwoValues|
+                public final val one: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+            
+                public final val two: <implicit>
+                    public get(): <implicit>
+            
+                public final val $$result: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+
+FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_after.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-topLevelDestructuring_after.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final data [ResolvedTo(CONTRACTS)] class TwoValues : R|kotlin/Any| {
+            public [ResolvedTo(CONTRACTS)] constructor([ResolvedTo(CONTRACTS)] first: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] second: R|kotlin/Int|): R|TwoValues| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] val first: R|kotlin/Int| = R|<local>/first|
+                public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] val second: R|kotlin/Int| = R|<local>/second|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(CONTRACTS)] fun component1(): R|kotlin/Int|
+
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] first: R|kotlin/Int| = this@R|/TwoValues|.R|/TwoValues.first|, [ResolvedTo(STATUS)] second: R|kotlin/Int| = this@R|/TwoValues|.R|/TwoValues.second|): R|TwoValues|
+
+        }
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval <destruct>: R|TwoValues| = R|/TwoValues.TwoValues|(Int(1), Int(2))
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val one: R|kotlin/Int| = R|<local>/<destruct>|.R|/TwoValues.component1|()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(RAW_FIR)] val two: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = R|/one|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

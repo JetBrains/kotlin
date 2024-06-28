@@ -5,13 +5,21 @@
 
 #pragma once
 
+#include <atomic>
+#include <cstdint>
+#include <memory>
+
+#include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
-#include "Memory.h"
-#include "Types.h"
+#include "ReferenceOps.hpp"
+#include "RunLoopFinalizerProcessor.hpp"
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin {
+
+namespace alloc {
+class Allocator;
+}
 
 namespace mm {
 class ThreadData;
@@ -32,39 +40,30 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void SafePointFunctionPrologue() noexcept;
-        void SafePointLoopBody() noexcept;
-
-        void Schedule() noexcept;
-        void ScheduleAndWaitFullGC() noexcept;
-        void ScheduleAndWaitFullGCWithFinalizers() noexcept;
-
-        void Publish() noexcept;
-        void ClearForTests() noexcept;
-
-        ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
-
-        void OnStoppedForGC() noexcept;
         void OnSuspendForGC() noexcept;
 
+        void safePoint() noexcept;
+
+        void onThreadRegistration() noexcept;
+
+        void onAllocation(ObjHeader* object) noexcept;
+
     private:
-        std_support::unique_ptr<Impl> impl_;
+        std::unique_ptr<Impl> impl_;
     };
 
-    GC() noexcept;
+    // Header to be placed before each heap object. GC will use this to keep its data if needed.
+    // This is used via `type_layout::descriptor_t`, which is specialized below.
+    // If GC doesn't need any data, it can make `size()` return 0 and `alignment()`
+    // return 1.
+    // Note: GC does not deinitialize `ObjectData`, so the implementations must ensure that
+    //       the destructor is a trivial one.
+    class ObjectData;
+
+    GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept;
     ~GC();
 
     Impl& impl() noexcept { return *impl_; }
-
-    static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
-
-    size_t GetHeapObjectsCountUnsafe() const noexcept;
-    size_t GetTotalHeapObjectsSizeUnsafe() const noexcept;
-    size_t GetExtraObjectsCountUnsafe() const noexcept;
-    size_t GetTotalExtraObjectsSizeUnsafe() const noexcept;
-
-    gc::GCSchedulerConfig& gcSchedulerConfig() noexcept;
 
     void ClearForTests() noexcept;
 
@@ -74,13 +73,42 @@ public:
 
     static void processObjectInMark(void* state, ObjHeader* object) noexcept;
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
-    static void processFieldInMark(void* state, ObjHeader* field) noexcept;
+
+    // TODO: These should exist only in the scheduler.
+    int64_t Schedule() noexcept;
+    void WaitFinished(int64_t epoch) noexcept;
+    void WaitFinalizers(int64_t epoch) noexcept;
+
+    void configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept;
+    bool mainThreadFinalizerProcessorAvailable() noexcept;
 
 private:
-    std_support::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
 };
+
+void beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept;
+OBJ_GETTER(weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept;
+
+bool isMarked(ObjHeader* object) noexcept;
+
+// This will drop the mark bit if it was set and return `true`.
+// If the mark bit was unset, this will return `false`.
+bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
 inline constexpr bool kSupportsMultipleMutators = true;
 
 } // namespace gc
+
+template <>
+struct type_layout::descriptor<gc::GC::ObjectData> {
+    struct type {
+        using value_type = gc::GC::ObjectData;
+
+        static uint64_t size() noexcept;
+        static size_t alignment() noexcept;
+
+        static value_type* construct(uint8_t* ptr) noexcept;
+    };
+};
+
 } // namespace kotlin

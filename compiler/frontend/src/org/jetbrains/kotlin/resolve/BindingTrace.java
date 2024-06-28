@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
@@ -30,6 +31,9 @@ public interface BindingTrace extends DiagnosticSink {
 
     @NotNull
     BindingContext getBindingContext();
+
+    @Nullable
+    Project getProject();
     
     <K, V> void record(WritableSlice<K, V> slice, K key, V value);
 

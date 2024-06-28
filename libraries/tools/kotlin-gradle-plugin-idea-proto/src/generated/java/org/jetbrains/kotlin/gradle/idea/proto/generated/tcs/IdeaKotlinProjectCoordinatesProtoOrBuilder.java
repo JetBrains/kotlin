@@ -8,21 +8,62 @@ public interface IdeaKotlinProjectCoordinatesProtoOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return Whether the buildId field is set.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return Whether the buildName field is set.
    */
-  boolean hasBuildId();
+  boolean hasBuildName();
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return The buildId.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return The buildName.
    */
-  java.lang.String getBuildId();
+  java.lang.String getBuildName();
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return The bytes for buildId.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return The bytes for buildName.
    */
   com.google.protobuf.ByteString
-      getBuildIdBytes();
+      getBuildNameBytes();
+
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return Whether the buildPath field is set.
+   */
+  boolean hasBuildPath();
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return The buildPath.
+   */
+  java.lang.String getBuildPath();
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return The bytes for buildPath.
+   */
+  com.google.protobuf.ByteString
+      getBuildPathBytes();
 
   /**
    * <code>optional string project_path = 2;</code>

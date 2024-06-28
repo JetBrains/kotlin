@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.model.Directive
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
@@ -46,22 +49,56 @@ class LocalVariableRecord(
             append(variableType)
         }
         append("=")
-        append(value)
+        append(value.toString().normalizeIndyLambdas())
     }
 }
 
+private fun String.normalizeIndyLambdas(): String =
+    // Invokedynamic lambdas have an unstable hash in the name.
+    replace("\\\$Lambda\\\$.*".toRegex(), "<lambda>")
+
 private const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
 private const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
+private const val DIRECTIVE_MARKER = "+"
+
+data class BackendWithDirectives(val backend: TargetBackend) {
+    companion object {
+        private val directivesToConsider = mutableSetOf(LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS)
+    }
+
+    private val directives = mutableSetOf<Directive>()
+
+    fun addDirectiveIfConsidered(directive: Directive) {
+        if (directive in directivesToConsider) {
+            directives += directive
+        }
+    }
+
+    fun contains(registeredDirectives: RegisteredDirectives, directivesInTestFile: Set<Directive>): Boolean {
+        if (directivesInTestFile.isEmpty()) return true
+        return registeredDirectives.filter { it in directivesToConsider && it in directivesInTestFile }.toSet() == directives
+    }
+}
 
 fun checkSteppingTestResult(
     frontendKind: FrontendKind<*>,
     targetBackend: TargetBackend,
     wholeFile: File,
-    loggedItems: List<SteppingTestLoggedData>
+    loggedItems: List<SteppingTestLoggedData>,
+    directives: RegisteredDirectives
 ) {
     val actual = mutableListOf<String>()
     val lines = wholeFile.readLines()
-    val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
+    val directivesInTestFile = mutableSetOf<Directive>()
+    var forceStepInto = false
+    for (line in lines) {
+        if (line.contains(DIRECTIVE_MARKER)) {
+            directivesInTestFile.addAll(line.getDeclaredDirectives())
+        }
+        if (line.startsWith(FORCE_STEP_INTO_MARKER)) {
+            forceStepInto = true
+        }
+    }
 
     val actualLineNumbers = compressSequencesWithoutLineNumber(loggedItems)
         .filter {
@@ -82,8 +119,8 @@ fun checkSteppingTestResult(
         if (line.startsWith(FORCE_STEP_INTO_MARKER)) break
     }
 
-    var currentBackends = setOf(TargetBackend.ANY)
-    var currentFrontends = setOf(frontendKind)
+    var currentBackends = listOf(BackendWithDirectives(TargetBackend.ANY))
+    var currentFrontends = listOf(frontendKind)
     for (line in lineIterator) {
         if (line.isEmpty()) {
             actual.add(line)
@@ -91,20 +128,41 @@ fun checkSteppingTestResult(
         }
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             actual.add(line)
-            val backendsAndFrontends = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
-            currentBackends = backendsAndFrontends
-                .mapNotNullTo(mutableSetOf()) { valueOfOrNull<TargetBackend>(it) }
-                .takeIf { it.isNotEmpty() }
-                ?: setOf(TargetBackend.ANY)
-            currentFrontends = backendsAndFrontends
-                .mapNotNullTo(mutableSetOf(), FrontendKinds::fromString)
-                .takeIf { it.isNotEmpty() }
-                ?: setOf(frontendKind)
+            val options = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
+            val backends = mutableListOf<BackendWithDirectives>()
+            val frontends = mutableListOf<FrontendKind<*>>()
+            var currentBackendWithDirectives: BackendWithDirectives? = null
+            for (option in options) {
+                val backend = valueOfOrNull<TargetBackend>(option)
+                if (backend != null) {
+                    val backendWithDirectives = BackendWithDirectives(backend)
+                    currentBackendWithDirectives = backendWithDirectives
+                    backends += backendWithDirectives
+                    continue
+                }
+
+                val frontend = FrontendKinds.fromString(option)
+                if (frontend != null) {
+                    frontends += frontend
+                    continue
+                }
+
+                val directive = LanguageSettingsDirectives[option.substringAfter(DIRECTIVE_MARKER)]
+                if (directive != null && currentBackendWithDirectives != null) {
+                    currentBackendWithDirectives.addDirectiveIfConsidered(directive)
+                }
+            }
+
+            currentBackends = backends.takeIf { it.isNotEmpty() } ?: listOf(BackendWithDirectives(TargetBackend.ANY))
+            currentFrontends = frontends.takeIf { it.isNotEmpty() } ?: listOf(frontendKind)
             continue
         }
-        if ((currentBackends.contains(TargetBackend.ANY) || currentBackends.contains(targetBackend)) &&
-            currentFrontends.contains(frontendKind)
-        ) {
+
+        val containsBackend =
+            currentBackends.any {
+                it.backend == TargetBackend.ANY || (it.backend == targetBackend && it.contains(directives, directivesInTestFile))
+            }
+        if (containsBackend && currentFrontends.contains(frontendKind)) {
             if (actualLineNumbersIterator.hasNext()) {
                 actual.add(actualLineNumbersIterator.next())
             }
@@ -119,6 +177,10 @@ fun checkSteppingTestResult(
     }
 
     assertEqualsToFile(wholeFile, actual.joinToString("\n"))
+}
+
+private fun String.getDeclaredDirectives(): List<Directive> {
+    return split(Regex("\\s+")).mapNotNull { LanguageSettingsDirectives[it.substringAfter(DIRECTIVE_MARKER)] }
 }
 
 /**
@@ -146,14 +208,18 @@ private fun compressSequencesWithoutLineNumber(loggedItems: List<SteppingTestLog
 
 fun formatAsSteppingTestExpectation(
     sourceName: String,
-    lineNumber: Int,
+    lineNumber: Int?,
     functionName: String,
     isSynthetic: Boolean,
     visibleVars: List<LocalVariableRecord>? = null
-) = buildString {
+): String = buildString {
     append(sourceName)
     append(':')
-    append(lineNumber)
+    if (lineNumber != null) {
+        append(lineNumber)
+    } else {
+        append("...")
+    }
     append(' ')
     append(functionName)
     if (isSynthetic)

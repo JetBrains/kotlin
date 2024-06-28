@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface OutBase<out E>
 interface OutDerived<out F> : OutBase<F>

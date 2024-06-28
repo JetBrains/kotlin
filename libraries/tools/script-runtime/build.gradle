@@ -4,10 +4,10 @@ apply plugin: 'kotlin'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
-configurePublishing(project)
+RepoArtifacts.publish(project)
 
 dependencies {
-    compileOnly kotlinStdlib()
+    compileOnly RepoDependencies.kotlinStdlib(project)
 }
 
 sourceSets {
@@ -19,17 +19,15 @@ sourceSets {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main')
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main')
 }
 
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
+    compilerOptions.freeCompilerArgs = [
         "-Xallow-kotlin-package",
     ]
-    kotlinOptions.moduleName = project.name
+    compilerOptions.moduleName = project.name
 }
-
-configureFrontendIr(project)

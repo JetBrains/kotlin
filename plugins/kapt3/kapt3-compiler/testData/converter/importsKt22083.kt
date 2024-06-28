@@ -1,7 +1,6 @@
 // CORRECT_ERROR_TYPES
 
-// EXPECTED_ERROR: (kotlin:16:5) cannot find symbol
-
+// EXPECTED_ERROR: (kotlin:15:5) cannot find symbol
 // FILE: a.kt
 package test
 

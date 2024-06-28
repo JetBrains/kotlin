@@ -41,17 +41,26 @@ public open class Any @WasmPrimitiveConstructor constructor() {
      */
     internal var _hashCode: Int = 0
     public open fun hashCode(): Int {
-        if (_hashCode == 0)
-            _hashCode = Random.nextInt(1, Int.MAX_VALUE)
-        return _hashCode
+        return identityHashCode()
     }
 
     /**
      * Returns a string representation of the object.
      */
     public open fun toString(): String {
-        val typeData = getTypeInfoTypeDataByPtr(typeInfo)
-        val qualifiedName = if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"
-        return "$qualifiedName@${hashCode()}"
+        val typeInfoPtr = this.typeInfo
+        val packageName = getPackageName(typeInfoPtr)
+        val simpleName = getSimpleName(typeInfoPtr)
+        val qualifiedName = if (packageName.isEmpty()) simpleName else "$packageName.$simpleName"
+        return "$qualifiedName@${identityHashCode()}"
     }
+}
+
+// Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.
+// Don't inline it into usages, specifically to `hashCode`. 
+// It was extracted to remove `toString`'s dependency on `hashCode`, which improves output size when DCE is involved.
+private fun Any.identityHashCode(): Int {
+    if (_hashCode == 0)
+        _hashCode = Random.nextInt(1, Int.MAX_VALUE)
+    return _hashCode
 }

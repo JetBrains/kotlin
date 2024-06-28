@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -18,10 +20,10 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
 
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(libs.kotlinx.coroutines.core)
 }
 
 sourceSets {
@@ -29,10 +31,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package"
-    )
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 publish()

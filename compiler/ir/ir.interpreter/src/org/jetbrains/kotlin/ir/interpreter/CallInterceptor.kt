@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.isJs
 import java.lang.invoke.MethodHandle
 
 internal interface CallInterceptor {
@@ -91,7 +92,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
+                val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
+                val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
+                    .single { it.name == propertyName && it.getter?.extensionReceiverParameter == null }
+                    .symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
@@ -145,34 +149,35 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         return true
     }
 
+    private data class Signature(var name: String, var args: List<Arg>)
+    private data class Arg(var type: String, var value: Any?)
+
     private fun calculateBuiltIns(irFunction: IrFunction, args: List<State>) {
-        val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
+        val methodName = when (val property = irFunction.property) {
             null -> irFunction.name.asString()
-            else -> property.owner.name.asString()
+            else -> property.name.asString()
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
+        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map { it.fqNameWithNullability() }
         val argsValues = args.wrap(this, irFunction)
 
-        // TODO replace unary, binary, ternary functions with vararg
         withExceptionHandler(environment) {
-            val result = when (argsType.size) {
-                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
-                2 -> when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType, args)
-                    else -> interpretBinaryFunction(
-                        methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsValues[0], argsValues[1]
-                    )
-                }
-                3 -> interpretTernaryFunction(
-                    methodName, argsType[0].getOnlyName(), argsType[1].getOnlyName(), argsType[2].getOnlyName(),
-                    argsValues[0], argsValues[1], argsValues[2]
-                )
-                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $methodName")
-            }
+            if (methodName == "rangeTo") return calculateRangeTo(irFunction.returnType, args)
+            val result = interpretBuiltinFunction(Signature(methodName, argsType.zip(argsValues).map { Arg(it.first, it.second) }))
             // TODO check "result is Unit"
             callStack.pushState(environment.convertToState(result, result.getType(irFunction.returnType)))
+        }
+    }
+
+    private fun interpretBuiltinFunction(signature: Signature): Any? {
+        val name = signature.name
+        val args = signature.args
+        return when (args.size) {
+            1 -> interpretUnaryFunction(name, args[0].type, args[0].value)
+            2 -> interpretBinaryFunction(name, args[0].type, args[1].type, args[0].value, args[1].value)
+            3 -> interpretTernaryFunction(name, args[0].type, args[1].type, args[2].type, args[0].value, args[1].value, args[2].value)
+            else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin function: $name")
         }
     }
 

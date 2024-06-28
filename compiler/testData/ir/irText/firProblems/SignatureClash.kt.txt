@@ -1,4 +1,61 @@
-typealias Some = Function1<Any, String?>
+data class DataClass : Delegate, Derived {
+  val delegate: Delegate
+    field = delegate
+    get
+
+  constructor(delegate: Delegate) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun bar() {
+    <this>.#delegate.bar()
+  }
+
+  operator fun component1(): Delegate {
+    return <this>.#delegate
+  }
+
+  fun copy(delegate: Delegate = <this>.#delegate): DataClass {
+    return DataClass(delegate = delegate)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataClass -> return false
+    }
+    val tmp_0: DataClass = other as DataClass
+    when {
+      EQEQ(arg0 = <this>.#delegate, arg1 = tmp_0.#delegate).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#delegate.hashCode()
+  }
+
+  override fun toString(): String {
+    return "DataClass(" + "delegate=" + <this>.#delegate + ")"
+  }
+
+}
+
+interface Base {
+}
+
+interface Delegate : Base {
+  abstract fun bar()
+
+}
+
+interface Derived : Delegate {
+}
+
 object Factory {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -16,62 +73,4 @@ object Factory {
 
 }
 
-interface Base {
-
-}
-
-interface Delegate : Base {
-  abstract fun bar()
-
-}
-
-interface Derived : Delegate {
-
-}
-
-data class DataClass : Derived, Delegate {
-  constructor(delegate: Delegate) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val delegate: Delegate
-    field = delegate
-    get
-
-  override fun bar() {
-    <this>.#delegate.bar()
-  }
-
-  operator fun component1(): Delegate {
-    return <this>.#delegate
-  }
-
-  fun copy(delegate: Delegate = <this>.#delegate): DataClass {
-    return DataClass(delegate = delegate)
-  }
-
-  override fun toString(): String {
-    return "DataClass(" + "delegate=" + <this>.#delegate + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#delegate.hashCode()
-  }
-
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is DataClass -> return false
-    }
-    val tmp0_other_with_cast: DataClass = other as DataClass
-    when {
-      EQEQ(arg0 = <this>.#delegate, arg1 = tmp0_other_with_cast.#delegate).not() -> return false
-    }
-    return true
-  }
-
-}
+typealias Some = Function1<Any, String?>

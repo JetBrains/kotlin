@@ -1,13 +1,4 @@
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun outer() {
-  }
-
   inner class Inner {
     constructor() /* primary */ {
       super/*Any*/()
@@ -21,4 +12,14 @@ class Outer {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun outer() {
+  }
+
 }
+

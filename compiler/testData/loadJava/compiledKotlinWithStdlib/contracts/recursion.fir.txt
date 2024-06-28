@@ -1,0 +1,5 @@
+public final fun foo(n: R|kotlin/Int|, x: R|kotlin/Any?|): R|kotlin/Boolean|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> x is kotlin/String
+    >

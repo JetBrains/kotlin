@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
+import org.jetbrains.kotlin.cli.common.GroupedKtSources
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.TargetPlatform
 
@@ -43,5 +46,7 @@ data class ModuleCompilerIrBackendInput(
     val extensions: JvmFir2IrExtensions,
     val irModuleFragment: IrModuleFragment,
     val components: Fir2IrComponents,
-    val pluginContext: Fir2IrPluginContext
+    val pluginContext: Fir2IrPluginContext,
+    val irActualizedResult: IrActualizedResult?,
+    val symbolTable: SymbolTable,
 )

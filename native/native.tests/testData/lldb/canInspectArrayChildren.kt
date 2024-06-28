@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: canInspectArrayChildren.txt
+// FIR_IDENTICAL
 fun main(args: Array<String>) {
     val xs = intArrayOf(3, 5, 8)
     return

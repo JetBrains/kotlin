@@ -1,8 +1,6 @@
 FILE fqName:<root> fileName:/fileWithAnnotations.kt
   annotations:
-    JvmName(name = 'FileWithAnnotations')
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
-    BLOCK_BODY
+    JvmName(name = "FileWithAnnotations")
   PROPERTY name:bar visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
@@ -12,3 +10,5 @@ FILE fqName:<root> fileName:/fileWithAnnotations.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY

@@ -1,8 +1,5 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
+// TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
 // WITH_REFLECT
@@ -25,7 +22,7 @@ inline fun <reified T, reified R> check(f: (T) -> R, g: (T) -> R, tType: String,
 fun box(): String {
     check("", 1, ::foo, "String", "Int")
     check("", 1, ::fooReturnInt, "String", "Int")
-    check("", "", ::fooReturnInt, "String", "Any")
+    check("", "", ::fooReturnInt, "String", "Any")  // KT-59348 Non-JVM backends have not "Any", but "Comparable" as common parent for Int and String
 
     check(Int::toString, ::foo, "Int", "String")
 

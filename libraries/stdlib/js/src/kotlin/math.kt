@@ -450,6 +450,18 @@ public actual inline val Double.sign: Double get() = nativeSign(this)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * If [sign] is `NaN` the sign of the result is undefined.
+ */
+@SinceKotlin("1.2")
+public actual fun Double.withSign(sign: Double): Double {
+    val thisSignBit = doubleSignBit(this)
+    val newSignBit = doubleSignBit(sign)
+    return if (thisSignBit == newSignBit) this else -this
+}
+
+/**
+ * Returns this value with the sign bit same as of the [sign] value.
  */
 @SinceKotlin("1.2")
 @InlineOnly
@@ -1082,13 +1094,7 @@ public actual inline val Int.absoluteValue: Int get() = abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
-
-
+public actual val Int.sign: Int get() = (this shr (Int.SIZE_BITS - 1)) or (-this ushr (Int.SIZE_BITS - 1))
 
 /**
  * Returns the absolute value of the given value [n].
@@ -1134,11 +1140,7 @@ public actual inline val Long.absoluteValue: Long get() = abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public actual val Long.sign: Int get() = ((this shr (Long.SIZE_BITS - 1)) or (-this ushr (Long.SIZE_BITS - 1))).toInt()
 
 
 // endregion

@@ -1,0 +1,33 @@
+KtBinaryExpression(56,71): '4 infixOp "str"'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = 4
+          isSafeNavigation = false
+          type = kotlin.Int
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = /infixOp(<extension receiver>: kotlin.Int, rhs: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = rhs
+              receiverType = null
+              returnType = kotlin.String
+              symbol = rhs: kotlin.String
+              callableId = null
+          ]
+          callableId = /infixOp
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "str" -> (KaVariableSignature:
+          name = rhs
+          receiverType = null
+          returnType = kotlin.String
+          symbol = rhs: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

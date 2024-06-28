@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 
 open class TestProtectedCompanionInClass {
     protected companion object

@@ -21,19 +21,24 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.*
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         SuperCallWithDefaultArgumentsChecker(),
-        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
+        NativeReifiedForwardDeclarationChecker(),
     ),
     additionalDeclarationCheckers = listOf(
         NativeThrowsChecker, NativeSharedImmutableChecker,
-        NativeTopLevelSingletonChecker, NativeThreadLocalChecker,
+        NativeThreadLocalChecker,
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
-        NativeObjCRefinementOverridesChecker
-    )
+        NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
+        NativeObjcOverrideApplicabilityChecker,
+    ),
+    platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NativeInliningRule)
         container.useImpl<NativeIdentifierChecker>()
+        container.useImpl<NativeForwardDeclarationRttiChecker>()
+        container.useInstance(NativeConflictingOverloadsDispatcher)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

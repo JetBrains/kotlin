@@ -53,6 +53,23 @@ class SourceMap(val sourceContentResolver: (String) -> Reader?) {
         }
     }
 
+    fun segmentForGeneratedLocation(lineNumber: Int, columnNumber: Int?): SourceMapSegment? {
+        val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
+        return if (columnNumber == null || columnNumber <= group.segments[0].generatedColumnNumber) {
+            group.segments[0]
+        } else {
+            val candidateIndex = group.segments.indexOfFirst {
+                columnNumber <= it.generatedColumnNumber
+            }
+            if (candidateIndex < 0)
+                null
+            else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
+                group.segments[candidateIndex]
+            else
+                group.segments[candidateIndex - 1]
+        }
+    }
+
     companion object {
         @Throws(IOException::class, SourceMapSourceReplacementException::class)
         fun replaceSources(sourceMapFile: File, mapping: (String) -> String): Boolean {

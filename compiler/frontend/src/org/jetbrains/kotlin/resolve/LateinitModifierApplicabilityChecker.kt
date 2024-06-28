@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAccessorImplementation
+import org.jetbrains.kotlin.resolve.DeclarationsChecker.Companion.hasAnyAccessorImplementation
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -108,7 +107,7 @@ object LateinitModifierApplicabilityChecker {
         if (descriptor is PropertyDescriptor) {
             val isAbstract = descriptor.modality == Modality.ABSTRACT
             val hasDelegateExpressionOrInitializer = ktDeclaration is KtProperty && ktDeclaration.hasDelegateExpressionOrInitializer()
-            val hasAccessorImplementation = descriptor.hasAccessorImplementation()
+            val hasAccessorImplementation = descriptor.hasAnyAccessorImplementation()
             val hasBackingField = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false
 
             if (ktDeclaration is KtParameter) {

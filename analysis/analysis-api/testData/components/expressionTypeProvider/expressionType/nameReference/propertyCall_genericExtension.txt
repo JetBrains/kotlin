@@ -1,0 +1,2 @@
+expression: fooExt
+type: WithGeneric<kotlin.String>

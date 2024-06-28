@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.createFilesWithGeneratedDeclarations
+import org.jetbrains.kotlin.fir.backend.utils.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.renderer.FirClassMemberRenderer
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.FirSymbolRendererWithStaticFlag
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -27,6 +30,7 @@ class FirDumpHandler(
     testServices: TestServices
 ) : FirAnalysisHandler(testServices) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
+    private var byteCodeListingEnabled = false
 
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
@@ -34,6 +38,7 @@ class FirDumpHandler(
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
             val currentModule = part.module
+            byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
             if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
             val builderForModule = dumper.builderForModule(currentModule)
             val firFiles = info.mainFirFiles
@@ -47,7 +52,8 @@ class FirDumpHandler(
             val renderer = FirRenderer(
                 builder = builderForModule,
                 packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session)
+                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session),
+                referencedSymbolRenderer = FirSymbolRendererWithStaticFlag()
             )
             allFiles.forEach {
                 renderer.renderElementAsString(it)
@@ -57,12 +63,17 @@ class FirDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
         // TODO: change according to multiple testdata files
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.fir.txt")
-        val actualText = dumper.generateResultingDump()
-        assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
+        val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
+        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension")
+
+        if (dumper.isEmpty()) {
+            assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
+        } else {
+            val actualText = dumper.generateResultingDump()
+            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
+        }
     }
 
     private class FirClassMemberRendererWithGeneratedDeclarations(val session: FirSession) : FirClassMemberRenderer() {

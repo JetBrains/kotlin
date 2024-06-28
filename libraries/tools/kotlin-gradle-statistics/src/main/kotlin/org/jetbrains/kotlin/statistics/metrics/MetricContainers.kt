@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
+import java.io.Serializable
 import java.util.*
 
-interface IMetricContainer<T> {
+interface IMetricContainer<T> : Serializable {
     fun addValue(t: T, weight: Long? = null)
 
     fun toStringRepresentation(): String

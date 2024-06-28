@@ -1,6 +1,4 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
-
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common0
 // TARGET_PLATFORM: Common
 // FILE: common0.kt
@@ -25,9 +23,8 @@ expect fun f2(): String
 
 fun g2() = f2()
 
-// MODULE: jvm()()(common1, common2)
-// TARGET_PLATFORM: JVM
-// FILE: jvm.kt
+// MODULE: platform()()(common1, common2)
+// FILE: platform.kt
 
 actual fun f0(): Boolean = true
 actual fun f1(): String = "O"

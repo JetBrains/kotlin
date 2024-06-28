@@ -11,7 +11,26 @@ package kotlin.collections
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 public expect abstract class AbstractMutableList<E> : MutableList<E> {
+    /**
+     * The number of times this list is structurally modified.
+     *
+     * A modification is considered to be structural if it changes the list size,
+     * or otherwise changes it in a way that iterations in progress may return incorrect results.
+     *
+     * This value can be used by iterators returned by [iterator] and [listIterator]
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
+     * [ConcurrentModificationException] will be thrown in this case.
+     */
+    @SinceKotlin("2.0")
+    protected var modCount: Int
+
     protected constructor()
+
+    /**
+     * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
+     */
+    @SinceKotlin("2.0")
+    protected open fun removeRange(fromIndex: Int, toIndex: Int): Unit
 
     // From List
 

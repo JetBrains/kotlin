@@ -1,0 +1,126 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+    import androidx.compose.runtime.key
+
+    @Composable
+    fun Wrapper(block: @Composable () -> Unit) {
+        block()
+    }
+
+    @Composable
+    fun Leaf(text: String) {
+        used(text)
+    }
+
+    @Composable
+    fun Test(value: Int) {
+        key(value) {
+            Wrapper {
+                Leaf("Value $value")
+            }
+        }
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Wrapper)<block(...>:Test.kt#2487m")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(block)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    block(%composer, 0b1110 and %dirty)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Wrapper(block, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Leaf(text: String, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Leaf):Test.kt#2487m")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(text)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Leaf(text, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test(value: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test):Test.kt#2487m")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    %composer.startMovableGroup(<>, value)
+    sourceInformation(%composer, "<{>,<Wrappe...>")
+    Wrapper(rememberComposableLambda(<>, true, { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<Leaf("...>:Test.kt#2487m")
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        Leaf("Value %value", %composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }, %composer, 0b00110110), %composer, 0b0110)
+    %composer.endMovableGroup()
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(value, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

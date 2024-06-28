@@ -1,16 +1,3 @@
-interface K {
-
-}
-
-interface I : K {
-  abstract fun ff()
-
-}
-
-interface J : K {
-
-}
-
 class A : I, J {
   constructor() /* primary */ {
     super/*Any*/()
@@ -35,12 +22,15 @@ class B : I, J {
 
 }
 
-fun testIntersection(a: A, b: B) {
-  val v: K = when {
-    true -> a
-    else -> b
-  }
-  v /*as I */.ff()
+interface I : K {
+  abstract fun ff()
+
+}
+
+interface J : K {
+}
+
+interface K {
 }
 
 fun testFlexible1() {
@@ -58,3 +48,12 @@ fun testFlexible2(a: A, b: B) {
   }
   v /*!! K */ /*as I */.ff()
 }
+
+fun testIntersection(a: A, b: B) {
+  val v: K = when {
+    true -> a
+    else -> b
+  }
+  v /*as I */.ff()
+}
+

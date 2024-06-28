@@ -1,0 +1,21 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val klass: R|kotlin/reflect/KClass<*>|
+        public get(): R|kotlin/reflect/KClass<*>|
+
+    public final val klasses: R|kotlin/Array<kotlin/reflect/KClass<*>>|
+        public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
+    public final val sarKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/String>>|
+        public get(): R|kotlin/reflect/KClass<kotlin/Array<kotlin/String>>|
+
+    public final val d2arKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/DoubleArray>>|
+        public get(): R|kotlin/reflect/KClass<kotlin/Array<kotlin/DoubleArray>>|
+
+    public constructor(klass: R|kotlin/reflect/KClass<*>|, klasses: R|kotlin/Array<kotlin/reflect/KClass<*>>|, sarKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/String>>|, d2arKlass: R|kotlin/reflect/KClass<kotlin/Array<kotlin/DoubleArray>>|): R|test/Anno|
+
+}
+
+@R|test/Anno|(klass = <getClass>(<getClass>(R|kotlin/String|)), klasses = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/Int|)), <getClass>(<getClass>(R|kotlin/String|)), <getClass>(<getClass>(R|kotlin/Float|))), sarKlass = <getClass>(<getClass>(R|kotlin/String|)), d2arKlass = <getClass>(<getClass>(R|kotlin/DoubleArray|))) public final class Klass : R|kotlin/Any| {
+    public constructor(): R|test/Klass|
+
+}

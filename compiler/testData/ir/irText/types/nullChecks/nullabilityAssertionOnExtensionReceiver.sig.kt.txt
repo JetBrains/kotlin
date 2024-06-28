@@ -1,0 +1,36 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#memberExtension@kotlin.String(){}
+  //   Public signature: /C.memberExtension|8931694524537611772[0]
+  //   Public signature debug description: memberExtension@kotlin.String(){}
+  fun String.memberExtension(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #extension@kotlin.String(){}
+//   Public signature: /extension|1223747003631847513[0]
+//   Public signature debug description: extension@kotlin.String(){}
+fun String.extension(): Unit
+
+// CHECK:
+//   Mangled name: #testExt(){}
+//   Public signature: /testExt|4821959581718730803[0]
+//   Public signature debug description: testExt(){}
+fun testExt(): Unit
+
+// CHECK:
+//   Mangled name: #testMemberExt@C(){}
+//   Public signature: /testMemberExt|-3552184253632349646[0]
+//   Public signature debug description: testMemberExt@C(){}
+fun C.testMemberExt(): Unit
+

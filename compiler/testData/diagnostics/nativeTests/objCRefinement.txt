@@ -5,6 +5,7 @@ package
 @kotlin.native.HiddenFromObjC @plugin.PluginHiddenFromObjC public fun multipleObjCRefinementsFunction(): kotlin.Unit
 @kotlin.native.ShouldRefineInSwift @plugin.PluginShouldRefineInSwift public fun multipleSwiftRefinementsFunction(): kotlin.Unit
 @plugin.PluginHiddenFromObjC @plugin.PluginShouldRefineInSwift public fun pluginRefinedFunction(): kotlin.Unit
+public fun produceInstanceOfHidden(): OuterHidden.Nested.Nested
 
 public open class Base {
     public constructor Base()
@@ -54,11 +55,45 @@ public open class Derived2 : Derived {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+@kotlin.native.HiddenFromObjC public interface HiddenInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface I {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ImplementsHiddenInterface : NotHiddenInterface, HiddenInterface {
+    public constructor ImplementsHiddenInterface()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InheritsFromNested : OuterHidden.Nested.Nested {
+    public constructor InheritsFromNested()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InheritsFromOpenHiddenClass : OpenHiddenClass {
+    public constructor InheritsFromOpenHiddenClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InheritsFromOpenHiddenClass2 : NotHiddenInterface, OpenHiddenClass {
+    public constructor InheritsFromOpenHiddenClass2()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface InterfaceA {
@@ -81,6 +116,63 @@ public interface InterfaceB {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+internal final class InternalInheritsFromNested : OuterHidden.Nested.Nested {
+    public constructor InternalInheritsFromNested()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.native.HiddenFromObjC public final enum class MyHiddenEnum : kotlin.Enum<MyHiddenEnum> {
+    enum entry A
+
+    enum entry B
+
+    enum entry C
+
+    private constructor MyHiddenEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyHiddenEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyHiddenEnum>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyHiddenEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<MyHiddenEnum>
+}
+
+@kotlin.native.HiddenFromObjC public final enum class MyHiddenNonTrivialEnum : kotlin.Enum<MyHiddenNonTrivialEnum> {
+    enum entry A
+
+    enum entry B
+
+    enum entry C
+
+    private constructor MyHiddenNonTrivialEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyHiddenNonTrivialEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun sayCheese(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyHiddenNonTrivialEnum>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyHiddenNonTrivialEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<MyHiddenNonTrivialEnum>
+}
+
+@kotlin.native.HiddenFromObjC public object MyHiddenObject {
+    private constructor MyHiddenObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.native.HidesFromObjC @kotlin.native.RefinesInSwift @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyRefinedAnnotationA : kotlin.Annotation {
     public constructor MyRefinedAnnotationA()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -88,7 +180,7 @@ public interface InterfaceB {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyRefinedAnnotationB : kotlin.Annotation {
+@kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyRefinedAnnotationB : kotlin.Annotation {
     public constructor MyRefinedAnnotationB()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -108,13 +200,75 @@ public interface InterfaceB {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public sealed class MySealedClass {
+    protected constructor MySealedClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @kotlin.native.HiddenFromObjC public final class MyHiddenSealedVariant : MySealedClass {
+        public constructor MyHiddenSealedVariant()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyPublicVariant : MySealedClass {
+        public constructor MyPublicVariant()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public interface NotHiddenInterface {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.native.HiddenFromObjC public open class OpenHiddenClass {
+    public constructor OpenHiddenClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.native.HiddenFromObjC public final class OuterHidden {
+    public constructor OuterHidden()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open class Nested {
+            public constructor Nested()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+private final class PrivateInheritsFromNested : OuterHidden.Nested.Nested {
+    public constructor PrivateInheritsFromNested()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 public typealias HFOC = kotlin.native.HiddenFromObjC
 
 package kotlin {
 
     package kotlin.native {
 
-        @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class HiddenFromObjC : kotlin.Annotation {
+        @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class HiddenFromObjC : kotlin.Annotation {
             public constructor HiddenFromObjC()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -141,12 +295,19 @@ package kotlin {
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
+
+        @kotlin.native.RefinesInSwift @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class WrongShouldRefineInSwift : kotlin.Annotation {
+            public constructor WrongShouldRefineInSwift()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 }
 
 package plugin {
 
-    @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class PluginHiddenFromObjC : kotlin.Annotation {
+    @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class PluginHiddenFromObjC : kotlin.Annotation {
         public constructor PluginHiddenFromObjC()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -160,3 +321,4 @@ package plugin {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

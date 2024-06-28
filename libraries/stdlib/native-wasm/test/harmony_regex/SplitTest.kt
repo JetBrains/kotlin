@@ -135,22 +135,4 @@ class SplitTest {
         assertEquals("d", s[4])
         assertEquals("", s[5])
     }
-
-    @Test fun testSplitSupplementaryWithEmptyString() {
-
-        /*
-         * See http://www.unicode.org/reports/tr18/#Supplementary_Characters We
-         * have to treat text as code points not code units.
-         */
-        val p = Regex("")
-        val s: List<String>
-        s = p.split("a\ud869\uded6b", 0)
-        assertEquals(5, s.size)
-        assertEquals("", s[0])
-        assertEquals("a", s[1])
-        assertEquals("\ud869\uded6", s[2])
-        assertEquals("b", s[3])
-        assertEquals("", s[4])
-    }
-
 }

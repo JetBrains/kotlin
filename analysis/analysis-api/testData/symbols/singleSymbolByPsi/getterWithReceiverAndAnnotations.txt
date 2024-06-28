@@ -1,43 +1,49 @@
-KtPropertyGetterSymbol:
-  annotationsList: [
-    ExplicitGetAnnotation()
-      psi: KtAnnotationEntry
+KaPropertyGetterSymbol:
+  annotations: [
     GetAnnotation()
       psi: KtAnnotationEntry
+    ExplicitGetAnnotation()
+      psi: KtAnnotationEntry
   ]
-  callableIdIfNonLocal: null
+  callableId: null
+  compilerVisibility: Public
   contextReceivers: []
   hasBody: true
   hasStableParameterNames: true
+  isActual: false
   isDefault: false
+  isExpect: false
   isExtension: false
   isInline: false
   isOverride: false
+  location: PROPERTY
   modality: FINAL
   origin: SOURCE
-  receiverParameter: KtReceiverParameterSymbol:
-    annotationsList: [
+  receiverParameter: KaReceiverParameterSymbol:
+    annotations: [
       ReceiverAnnotation()
         psi: KtAnnotationEntry
     ]
+    location: LOCAL
     origin: SOURCE
-    owningCallableSymbol: KtKotlinPropertySymbol(/x)
-    type: KtUsualClassType:
-      annotationsList: [
+    owningCallableSymbol: KaKotlinPropertySymbol(/x)
+    type: KaUsualClassType:
+      annotations: [
         ReceiverTypeAnnotation()
           psi: KtAnnotationEntry
       ]
-      ownTypeArguments: []
+      typeArguments: []
       type: @R|ReceiverTypeAnnotation|()  kotlin/Long
-    getContainingModule: KtSourceModule "Sources of main"
+    getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
+    getContainingModule: KaSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
     type: kotlin/Int
-  symbolKind: ACCESSOR
-  typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(getterWithReceiverAndAnnotations.kt)
+  getContainingJvmClassName: GetterWithReceiverAndAnnotationsKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

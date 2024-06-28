@@ -1,0 +1,579 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Top : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Middle : Top {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Bottom : Middle {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Top : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Middle : Top {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Bottom : Middle {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Top : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Middle : Top {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Bottom : Middle {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] top.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Top : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(RAW_FIR)] middle.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(RAW_FIR)] class Middle : Top {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Bottom : Middle {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(SUPER_TYPES)] class Top : R|org/example/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(SUPER_TYPES)] class Middle : R|org/example/Top| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] class Bottom : R|org/example/Middle| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(SUPER_TYPES)] class Top : R|org/example/Base| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(SUPER_TYPES)] class Middle : R|org/example/Top| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<Top>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(TYPES)] class Bottom : R|org/example/Middle| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<Middle>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun bottom(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] top.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Top : R|org/example/Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Top] constructor(): R|org/example/Top| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun top(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] middle.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] class Middle : R|org/example/Top| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Middle] constructor(): R|org/example/Middle| {
+            LAZY_super<R|org/example/Top|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun middle(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE: [ResolvedTo(IMPORTS)] bottom.kt
+    public abstract [ResolvedTo(STATUS)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            LAZY_super<R|org/example/Middle|>
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] bottom.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun bottom(): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Bottom : R|org/example/Middle| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Bottom] constructor(): R|org/example/Bottom| {
+            super<R|org/example/Middle|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun bottom(): R|kotlin/Unit| {
+        }
+
+    }

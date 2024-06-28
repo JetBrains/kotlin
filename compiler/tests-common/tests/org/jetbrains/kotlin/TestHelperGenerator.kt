@@ -23,20 +23,6 @@ fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptim
             |}
         """.trimMargin()
 
-    val continuationAdapterBody =
-        """
-            |override fun resumeWith(result: Result<T>) {
-            |   if (result.isSuccess) {
-            |       resume(result.getOrThrow())
-            |   } else {
-            |       resumeWithException(result.exceptionOrNull()!!)
-            |   }
-            |}
-            |
-            |abstract fun resumeWithException(exception: Throwable)
-            |abstract fun resume(value: T)
-        """.trimMargin()
-
     val checkStateMachineString = """
     class StateMachineCheckerClass {
         private var counter = 0
@@ -68,18 +54,15 @@ fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptim
         }
     }
     val StateMachineChecker = StateMachineCheckerClass()
-    object CheckStateMachineContinuation: ContinuationAdapter<Unit>() {
+    object CheckStateMachineContinuation: Continuation<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resume(value: Unit) {
+        override fun resumeWith(value: Result<Unit>) {
+            value.getOrThrow()
             StateMachineChecker.proceed = {
                 StateMachineChecker.finished = true
             }
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
         }
     }
     """.trimIndent()
@@ -144,11 +127,6 @@ fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptim
             |    ${continuationBody("Any?") { "this.result = $it" }}
             |
             |    var result: Any? = null
-            |}
-            |
-            |abstract class ContinuationAdapter<in T> : Continuation<T> {
-            |    override val context: CoroutineContext = EmptyCoroutineContext
-            |    $continuationAdapterBody
             |}
             |
             |${if (checkStateMachine) checkStateMachineString else ""}

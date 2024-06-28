@@ -76,58 +76,24 @@ fun addBenchmarkTask(
 
 val acceptAndroidSdkLicenses = tasks.register("acceptAndroidSdkLicenses") {
     useAndroidSdk()
-    doLast {
-        val androidSdk = configurations["androidSdk"].singleFile
-        val sdkLicensesDir = androidSdk.resolve("licenses").also {
-            if (!it.exists()) it.mkdirs()
-        }
-
-        val sdkLicenses = listOf(
-            "8933bad161af4178b1185d1a37fbf41ea5269c55",
-            "d56f5187479451eabf01fb78af6dfcb131a6481e",
-            "24333f8a63b6825ea9c5514f83c2829b004d1fee",
-        )
-        val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
-
-        val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")
-        if (!sdkLicenseFile.exists()) {
-            sdkLicenseFile.createNewFile()
-            sdkLicenseFile.writeText(
-                sdkLicenses.joinToString(separator = "\n")
-            )
-        } else {
-            sdkLicenses
-                .subtract(
-                    sdkLicenseFile.readText().lines()
-                )
-                .forEach {
-                    sdkLicenseFile.appendText("$it\n")
-                }
-        }
-
-        val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
-        if (!sdkPreviewLicenseFile.exists()) {
-            sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
-        } else {
-            if (sdkPreviewLicense != sdkPreviewLicenseFile.readText().trim()) {
-                sdkPreviewLicenseFile.writeText(sdkPreviewLicense)
-            }
-        }
-    }
+    acceptAndroidSdkLicenses()
 }
 
 fun JavaExec.usesAndroidSdk() {
     dependsOn(acceptAndroidSdkLicenses)
 
+    val androidSdk: FileCollection by lazy {
+        configurations["androidSdk"]
+    }
     doFirst {
-        environment("ANDROID_HOME", configurations["androidSdk"].singleFile.canonicalPath)
+        environment("ANDROID_HOME", androidSdk.singleFile.canonicalPath)
     }
 }
 
 addBenchmarkTask(
     taskName = "benchmarkRegressionDuckduckgo",
     script = "duckduckgo.benchmark.kts",
-    JavaLanguageVersion.of(11)
+    JavaLanguageVersion.of(17)
 ) {
     usesAndroidSdk()
 }

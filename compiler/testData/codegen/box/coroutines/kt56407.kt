@@ -1,5 +1,6 @@
 // WITH_STDLIB
-// CHECK_BYTECODE_LISTING
+// CHECK_BYTECODE_LISTING___ // Temporary turn off the directive, revert after the next bootstrapt advance
+// IGNORE_INLINER___: IR // Temporary turn off the directive, revert after the next bootstrapt advance
 
 import kotlin.coroutines.*
 

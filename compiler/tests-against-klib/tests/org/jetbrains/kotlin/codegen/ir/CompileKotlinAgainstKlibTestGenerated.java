@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,21 +22,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompileKotlinAgainstKlibTestGenerated extends AbstractCompileKotlinAgainstKlibTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInBoxKlib() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxKlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  public void testAllFilesPresentInBoxKlib() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxKlib"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @TestMetadata("properties.kt")
-    public void testProperties() throws Exception {
-        runTest("compiler/testData/codegen/boxKlib/properties.kt");
-    }
+  @TestMetadata("properties.kt")
+  public void testProperties() {
+    runTest("compiler/testData/codegen/boxKlib/properties.kt");
+  }
 
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("compiler/testData/codegen/boxKlib/simple.kt");
-    }
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("compiler/testData/codegen/boxKlib/simple.kt");
+  }
 }

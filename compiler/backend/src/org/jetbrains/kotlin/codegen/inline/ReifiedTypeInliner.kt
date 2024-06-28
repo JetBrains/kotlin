@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -56,7 +56,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
 
     interface IntrinsicsSupport<KT : KotlinTypeMarker> {
-        val state: GenerationState
+        val config: JvmBackendConfig
 
         fun putClassInstance(v: InstructionAdapter, type: KT)
 
@@ -65,6 +65,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun isMutableCollectionType(type: KT): Boolean
 
         fun toKotlinType(type: KT): KotlinType
+
+        fun generateExternalEntriesForEnumTypeIfNeeded(type: KT): FieldInsnNode?
 
         fun reportSuspendTypeUnsupported()
         fun reportNonReifiedTypeParameterWithRecursiveBoundUnsupported(typeParameterName: Name)
@@ -187,7 +189,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
                 OperationKind.SAFE_AS -> processAs(insn, instructions, type, asmType, safe = true)
                 OperationKind.IS -> processIs(insn, instructions, type, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
-                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, asmType)
+                OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, type, asmType)
                 OperationKind.TYPE_OF -> processTypeOf(insn, instructions, type)
             }
 
@@ -342,7 +344,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return true
     }
 
-    private fun processSpecialEnumFunction(insn: MethodInsnNode, instructions: InsnList, parameter: Type): Boolean {
+    private fun processSpecialEnumFunction(insn: MethodInsnNode, instructions: InsnList, type: KT, parameter: Type): Boolean {
         val next1 = insn.next ?: return false
         val next2 = next1.next ?: return false
         if (next1.opcode == Opcodes.ACONST_NULL && next2.opcode == Opcodes.ALOAD) {
@@ -358,6 +360,21 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
             instructions.remove(next2)
             val desc = getSpecialEnumFunDescriptor(parameter, false)
             instructions.insert(insn, MethodInsnNode(Opcodes.INVOKESTATIC, parameter.internalName, "values", desc, false))
+            return true
+        } else if (next1.opcode == Opcodes.ACONST_NULL && next2.opcode == Opcodes.CHECKCAST) {
+            instructions.remove(next1)
+            instructions.remove(next2)
+
+            val getField = intrinsicsSupport.generateExternalEntriesForEnumTypeIfNeeded(type)
+            if (getField != null) {
+                instructions.insert(insn, getField)
+            } else {
+                instructions.insert(
+                    insn, MethodInsnNode(
+                        Opcodes.INVOKESTATIC, parameter.internalName, "getEntries", Type.getMethodDescriptor(AsmTypes.ENUM_ENTRIES), false
+                    )
+                )
+            }
             return true
         }
 
@@ -384,7 +401,7 @@ val MethodInsnNode.reificationArgument: ReificationArgument?
 val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind?
     get() =
         previous?.previous?.intConstant?.let {
-            ReifiedTypeInliner.OperationKind.values().getOrNull(it)
+            ReifiedTypeInliner.OperationKind.entries.getOrNull(it)
         }
 
 class TypeParameterMappings<KT : KotlinTypeMarker>(

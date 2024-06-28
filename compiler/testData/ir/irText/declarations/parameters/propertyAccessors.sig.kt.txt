@@ -1,0 +1,222 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+class Host<T : Any?> {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Host{}testMem1
+  //   Public signature: /Host.testMem1|-1447520735631866772[0]
+  //   Public signature debug description: {}testMem1
+  val testMem1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMem1>(){}kotlin.Int
+    //   Public signature: /Host.testMem1.<get-testMem1>|-1232121520056352012[0]
+    //   Public signature debug description: <get-testMem1>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMem1>(){}
+    //   Public signature: /Host.testMem1.<get-testMem1>|169643884510328829[0]
+    //   Public signature debug description: <get-testMem1>(){}
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: Host{}testMem2
+  //   Public signature: /Host.testMem2|-4498711282114194633[0]
+  //   Public signature debug description: {}testMem2
+  var testMem2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMem2>(){}kotlin.Int
+    //   Public signature: /Host.testMem2.<get-testMem2>|5656363606698284790[0]
+    //   Public signature debug description: <get-testMem2>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMem2>(){}
+    //   Public signature: /Host.testMem2.<get-testMem2>|15588222057838178[0]
+    //   Public signature debug description: <get-testMem2>(){}
+    get(): Int
+    // CHECK:
+    //   Mangled name: Host#<set-testMem2>(kotlin.Int){}
+    //   Public signature: /Host.testMem2.<set-testMem2>|7294485341588264545[0]
+    //   Public signature debug description: <set-testMem2>(kotlin.Int){}
+    set(value: Int): Unit
+
+  // CHECK:
+  //   Mangled name: Host@kotlin.String{}testMemExt1
+  //   Public signature: /Host.testMemExt1|-6449535615988838712[0]
+  //   Public signature debug description: @kotlin.String{}testMemExt1
+  val String.testMemExt1: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMemExt1>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Host.testMemExt1.<get-testMemExt1>|970738054146358000[0]
+    //   Public signature debug description: <get-testMemExt1>@kotlin.String(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMemExt1>@kotlin.String(){}
+    //   Public signature: /Host.testMemExt1.<get-testMemExt1>|2784647792030620613[0]
+    //   Public signature debug description: <get-testMemExt1>@kotlin.String(){}
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: Host@kotlin.String{}testMemExt2
+  //   Public signature: /Host.testMemExt2|-5449149765380806845[0]
+  //   Public signature debug description: @kotlin.String{}testMemExt2
+  var String.testMemExt2: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMemExt2>@kotlin.String(){}kotlin.Int
+    //   Public signature: /Host.testMemExt2.<get-testMemExt2>|-6652427309470654819[0]
+    //   Public signature debug description: <get-testMemExt2>@kotlin.String(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMemExt2>@kotlin.String(){}
+    //   Public signature: /Host.testMemExt2.<get-testMemExt2>|999321716720031878[0]
+    //   Public signature debug description: <get-testMemExt2>@kotlin.String(){}
+    get(): Int
+    // CHECK:
+    //   Mangled name: Host#<set-testMemExt2>@kotlin.String(kotlin.Int){}
+    //   Public signature: /Host.testMemExt2.<set-testMemExt2>|-405928299943839949[0]
+    //   Public signature debug description: <set-testMemExt2>@kotlin.String(kotlin.Int){}
+    set(value: Int): Unit
+
+  // CHECK:
+  //   Mangled name: Host@0:0{0§<kotlin.Any?>}testMemExt3
+  //   Public signature: /Host.testMemExt3|-7874830272187415472[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}testMemExt3
+  val <TT : Any?> TT.testMemExt3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMemExt3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    //   Public signature: /Host.testMemExt3.<get-testMemExt3>|-2586208141743908696[0]
+    //   Public signature debug description: <get-testMemExt3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMemExt3>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Host.testMemExt3.<get-testMemExt3>|-5692748676763918765[0]
+    //   Public signature debug description: <get-testMemExt3>@0:0(){0§<kotlin.Any?>}
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: Host@0:0{0§<kotlin.Any?>}testMemExt4
+  //   Public signature: /Host.testMemExt4|-3437206671582974302[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}testMemExt4
+  var <TT : Any?> TT.testMemExt4: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-testMemExt4>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    //   Public signature: /Host.testMemExt4.<get-testMemExt4>|5925612720392200708[0]
+    //   Public signature debug description: <get-testMemExt4>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-testMemExt4>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Host.testMemExt4.<get-testMemExt4>|6623275535091051762[0]
+    //   Public signature debug description: <get-testMemExt4>@0:0(){0§<kotlin.Any?>}
+    get(): Int
+    // CHECK:
+    //   Mangled name: Host#<set-testMemExt4>@0:0(kotlin.Int){0§<kotlin.Any?>}
+    //   Public signature: /Host.testMemExt4.<set-testMemExt4>|-4031268341673357490[0]
+    //   Public signature debug description: <set-testMemExt4>@0:0(kotlin.Int){0§<kotlin.Any?>}
+    set(value: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
+val test1: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.Int
+  //   Public signature: /test1.<get-test1>|3978508226793108919[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
+var test2: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.Int
+  //   Public signature: /test2.<get-test2>|-8779933517717592707[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-test2>(kotlin.Int){}
+  //   Public signature: /test2.<set-test2>|1925150309265265312[0]
+  //   Public signature debug description: <set-test2>(kotlin.Int){}
+  set(value: Int): Unit
+
+// CHECK:
+//   Mangled name: @kotlin.String{}testExt1
+//   Public signature: /testExt1|-249395506920620125[0]
+//   Public signature debug description: @kotlin.String{}testExt1
+val String.testExt1: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testExt1>@kotlin.String(){}kotlin.Int
+  //   Public signature: /testExt1.<get-testExt1>|-5970184508643235487[0]
+  //   Public signature debug description: <get-testExt1>@kotlin.String(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testExt1>@kotlin.String(){}
+  //   Public signature: /testExt1.<get-testExt1>|-5888715629225928441[0]
+  //   Public signature debug description: <get-testExt1>@kotlin.String(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: @kotlin.String{}testExt2
+//   Public signature: /testExt2|3677730422947849397[0]
+//   Public signature debug description: @kotlin.String{}testExt2
+var String.testExt2: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testExt2>@kotlin.String(){}kotlin.Int
+  //   Public signature: /testExt2.<get-testExt2>|3144752879326245332[0]
+  //   Public signature debug description: <get-testExt2>@kotlin.String(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testExt2>@kotlin.String(){}
+  //   Public signature: /testExt2.<get-testExt2>|1324590894596109610[0]
+  //   Public signature debug description: <get-testExt2>@kotlin.String(){}
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-testExt2>@kotlin.String(kotlin.Int){}
+  //   Public signature: /testExt2.<set-testExt2>|-130364836495443009[0]
+  //   Public signature debug description: <set-testExt2>@kotlin.String(kotlin.Int){}
+  set(value: Int): Unit
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.Any?>}testExt3
+//   Public signature: /testExt3|5707451855742850505[0]
+//   Public signature debug description: @0:0{0§<kotlin.Any?>}testExt3
+val <T : Any?> T.testExt3: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testExt3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+  //   Public signature: /testExt3.<get-testExt3>|-5691037839389315263[0]
+  //   Public signature debug description: <get-testExt3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testExt3>@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /testExt3.<get-testExt3>|119269900146022469[0]
+  //   Public signature debug description: <get-testExt3>@0:0(){0§<kotlin.Any?>}
+  get(): Int
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.Any?>}testExt4
+//   Public signature: /testExt4|-8511308814916191109[0]
+//   Public signature debug description: @0:0{0§<kotlin.Any?>}testExt4
+var <T : Any?> T.testExt4: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testExt4>@0:0(){0§<kotlin.Any?>}kotlin.Int
+  //   Public signature: /testExt4.<get-testExt4>|8608740534387272957[0]
+  //   Public signature debug description: <get-testExt4>@0:0(){0§<kotlin.Any?>}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testExt4>@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /testExt4.<get-testExt4>|70932167769866835[0]
+  //   Public signature debug description: <get-testExt4>@0:0(){0§<kotlin.Any?>}
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-testExt4>@0:0(kotlin.Int){0§<kotlin.Any?>}
+  //   Public signature: /testExt4.<set-testExt4>|-1753210956385230599[0]
+  //   Public signature debug description: <set-testExt4>@0:0(kotlin.Int){0§<kotlin.Any?>}
+  set(value: Int): Unit
+

@@ -1,5 +1,5 @@
-// The local `i` is visible in the finally block with old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 fun box(): String {
@@ -18,7 +18,7 @@ fun box(): String {
     return "FAIL2"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box:
 // test.kt:7 box:
 // test.kt:8 box: i:int=0:int

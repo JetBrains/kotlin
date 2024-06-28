@@ -6,7 +6,7 @@ public final class InternalToArray {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method getSize(): int
     public method isEmpty(): boolean
@@ -16,6 +16,7 @@ public final class InternalToArray {
     public method retainAll(p0: java.util.Collection): boolean
     public bridge final method size(): int
     public final @org.jetbrains.annotations.NotNull method toArray$main(): java.lang.Integer[]
+    public final method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
@@ -27,7 +28,7 @@ public final class PrivateToArray {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method getSize(): int
     public method isEmpty(): boolean
@@ -48,7 +49,7 @@ public final class PublicToArray {
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
-    public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method getSize(): int
     public method isEmpty(): boolean

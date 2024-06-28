@@ -5,9 +5,13 @@
 
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.*
+import kotlin.native.runtime.GC
 import kotlinx.cinterop.NativePtr
 
+@Deprecated("Use kotlin.native.ref.Cleaner instead.", ReplaceWith("kotlin.native.ref.Cleaner"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public interface Cleaner
 
 /**
@@ -67,32 +71,21 @@ public interface Cleaner
  */
 // TODO: Consider just annotating the lambda argument rather than hardcoding checking
 // by function name in the compiler.
+@Deprecated("Use kotlin.native.ref.createCleaner instead.", ReplaceWith("kotlin.native.ref.createCleaner(argument, block)"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
+@Suppress("DEPRECATION")
 @ExperimentalStdlibApi
 @ExportForCompiler
-@OptIn(FreezingIsDeprecated::class)
-fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner {
-    if (!argument.isShareable())
-        throw IllegalArgumentException("$argument must be shareable")
-
-    val clean = {
-        // TODO: Maybe if this fails with exception, it should be (optionally) reported.
-        block(argument)
-    }.freeze()
-
-    // Make sure there's an extra reference to clean, so it's definitely alive when CleanerImpl is destroyed.
-    val cleanPtr = createStablePointer(clean)
-
-    // Make sure cleaner worker is initialized.
-    getCleanerWorker()
-
-    return CleanerImpl(cleanPtr).freeze()
-}
+@OptIn(ExperimentalNativeApi::class, ObsoleteWorkersApi::class)
+public fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
+        kotlin.native.ref.createCleanerImpl(argument, block) as Cleaner
 
 /**
  * Perform GC on a worker that executes Cleaner blocks.
  */
 @InternalForKotlinNative
-fun performGCOnCleanerWorker() =
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
+public fun performGCOnCleanerWorker(): Unit =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         GC.collect()
     }.result
@@ -101,30 +94,24 @@ fun performGCOnCleanerWorker() =
  * Wait for a worker that executes Cleaner blocks to complete its scheduled tasks.
  */
 @InternalForKotlinNative
-fun waitCleanerWorker() =
+@OptIn(ObsoleteWorkersApi::class)
+public fun waitCleanerWorker(): Unit =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         Unit
     }.result
 
 @GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
-external private fun getCleanerWorker(): Worker
+@OptIn(ObsoleteWorkersApi::class)
+internal external fun getCleanerWorker(): Worker
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")
+@OptIn(ObsoleteWorkersApi::class)
 private fun shutdownCleanerWorker(worker: Worker, executeScheduledCleaners: Boolean) {
     worker.requestTermination(executeScheduledCleaners).result
 }
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_createCleanerWorker")
+@OptIn(ObsoleteWorkersApi::class)
 private fun createCleanerWorker(): Worker {
     return Worker.start(errorReporting = false, name = "Cleaner worker")
 }
-
-@NoReorderFields
-@ExportTypeInfo("theCleanerImplTypeInfo")
-@HasFinalizer
-private class CleanerImpl(
-    private val cleanPtr: NativePtr,
-): Cleaner {}
-
-@GCUnsafeCall("CreateStablePointer")
-external private fun createStablePointer(obj: Any): NativePtr

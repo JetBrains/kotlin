@@ -1,0 +1,14 @@
+KT element: KtValueArgumentList
+FIR element: FirResolvedArgumentListImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1)String(2)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] functionCallArgumentList.kt
+    public final [ResolvedTo(CONTRACTS)] fun callMe([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] y: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        R|/callMe|(Int(1), String(2))
+    }

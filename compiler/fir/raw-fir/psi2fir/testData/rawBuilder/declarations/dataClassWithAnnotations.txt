@@ -1,0 +1,19 @@
+FILE: dataClassWithAnnotations.kt
+    @Anno(<strcat>(String(Derived ), x#)) public final? data class Derived : @Anno(<strcat>(String(Base super type call ), x#)) Base<@Anno(<strcat>(String(nested super type call ), x#)) Nested<@Anno(<strcat>(String(nested nested super type call ), x#)) NestedNested>> {
+        @Anno(<strcat>(String(Derived constructor ), x#)) public? [ContainingClassKey=Derived] constructor([CorrespondingProperty=/Derived.b] @Anno(<strcat>(String(b ), x#)) @CONSTRUCTOR_PARAMETER:Anno(<strcat>(String(param: b ), x#)) b: @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>>, [CorrespondingProperty=/Derived.c] c: @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>>): R|Derived| {
+            super<@Anno(<strcat>(String(Base super type call ), x#)) Base<@Anno(<strcat>(String(nested super type call ), x#)) Nested<@Anno(<strcat>(String(nested nested super type call ), x#)) NestedNested>>>()
+        }
+
+        @Anno(<strcat>(String(b ), x#)) @PROPERTY:Anno(<strcat>(String(property: b ), x#)) public? final? [ComponentFunctionSymbolKey=/Derived.component1, IsFromPrimaryConstructor=true] val b: @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>> = R|<local>/b|
+            @PROPERTY_GETTER:Anno(<strcat>(String(get: b ), x#)) public? [ContainingClassKey=Derived] get(): @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>>
+
+        public? final? [ComponentFunctionSymbolKey=/Derived.component2, IsFromPrimaryConstructor=true] val c: @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>> = R|<local>/c|
+            public? [ContainingClassKey=Derived] get(): @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>>
+
+        public? final operator fun component1(): @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>>
+
+        public? final operator fun component2(): @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>>
+
+        public? final fun copy(@Anno(<strcat>(String(b ), x#)) @Anno(<strcat>(String(param: b ), x#)) b: @Anno(<strcat>(String(Derived b parameter type ), x#)) B<@Anno(<strcat>(String(nested Derived b parameter type ), x#)) BNested<@Anno(<strcat>(String(nested nested Derived b parameter type ), x#)) BNestedNested>> = this@R|/Derived|.R|/Derived.b|, c: @Anno(<strcat>(String(Derived c parameter type ), x#)) C<@Anno(<strcat>(String(nested Derived c parameter type ), x#)) CNested<@Anno(<strcat>(String(nested nested Derived c parameter type ), x#)) CNestedNested>> = this@R|/Derived|.R|/Derived.c|): R|Derived|
+
+    }

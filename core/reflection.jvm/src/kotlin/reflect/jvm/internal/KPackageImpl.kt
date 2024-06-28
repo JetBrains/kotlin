@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
@@ -51,7 +52,7 @@ internal class KPackageImpl(
             else MemberScope.Empty
         }
 
-        val multifileFacade: Class<*>? by ReflectProperties.lazy {
+        val multifileFacade: Class<*>? by lazy(PUBLICATION) {
             val facadeName = kotlinClass?.classHeader?.multifileClassName
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
@@ -60,7 +61,7 @@ internal class KPackageImpl(
             else null
         }
 
-        val metadata: Triple<JvmNameResolver, ProtoBuf.Package, JvmMetadataVersion>? by ReflectProperties.lazy {
+        val metadata: Triple<JvmNameResolver, ProtoBuf.Package, JvmMetadataVersion>? by lazy(PUBLICATION) {
             kotlinClass?.classHeader?.let { header ->
                 val data = header.data
                 val strings = header.strings
@@ -76,13 +77,13 @@ internal class KPackageImpl(
         }
     }
 
-    private val data = ReflectProperties.lazy { Data() }
+    private val data = lazy(PUBLICATION) { Data() }
 
-    override val methodOwner: Class<*> get() = data().multifileFacade ?: jClass
+    override val methodOwner: Class<*> get() = data.value.multifileFacade ?: jClass
 
-    private val scope: MemberScope get() = data().scope
+    private val scope: MemberScope get() = data.value.scope
 
-    override val members: Collection<KCallable<*>> get() = data().members
+    override val members: Collection<KCallable<*>> get() = data.value.members
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()
@@ -94,7 +95,7 @@ internal class KPackageImpl(
         scope.getContributedFunctions(name, NoLookupLocation.FROM_REFLECTION)
 
     override fun getLocalProperty(index: Int): PropertyDescriptor? {
-        return data().metadata?.let { (nameResolver, packageProto, metadataVersion) ->
+        return data.value.metadata?.let { (nameResolver, packageProto, metadataVersion) ->
             packageProto.getExtensionOrNull(JvmProtoBuf.packageLocalVariable, index)?.let { proto ->
                 deserializeToDescriptor(
                     jClass, proto, nameResolver, TypeTable(packageProto.typeTable), metadataVersion,

@@ -1,6 +1,0 @@
-KT element: KtCallExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-<Unresolved name: peek>#()

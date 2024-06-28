@@ -1,5 +1,5 @@
-public open class JavaDocDeprecated : R|kotlin/Any| {
-    public open fun getFoo(text: R|kotlin/String!|): R|kotlin/String!|
+@R|kotlin/Deprecated|(message = String(Deprecated in Java)) public open class JavaDocDeprecated : R|kotlin/Any| {
+    @R|kotlin/Deprecated|(message = String(Deprecated in Java)) public open fun getFoo(text: R|kotlin/String!|): R|kotlin/String!|
 
     public constructor(): R|test/JavaDocDeprecated|
 

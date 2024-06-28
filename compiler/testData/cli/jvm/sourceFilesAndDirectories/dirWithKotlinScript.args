@@ -1,0 +1,4 @@
+-Xallow-any-scripts-in-source-roots
+$TESTDATA_DIR$/dirWithKotlinScript
+-d
+$TEMP_DIR$

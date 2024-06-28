@@ -5,34 +5,45 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.chooseFactory
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
+object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val calleReference = expression.calleeReference
+        val calleeReference = expression.calleeReference
         val typeArguments = expression.typeArguments
-        val typeParameters = calleReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
+        val typeParameters = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
 
         val count = minOf(typeArguments.size, typeParameters.size)
         for (index in 0 until count) {
             val typeArgumentProjection = typeArguments.elementAt(index)
-            val source = typeArgumentProjection.source ?: calleReference.source
-            val typeArgument = typeArgumentProjection.toConeTypeProjection().type
+            val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
+
+            val typeArgument = typeArgumentProjection.toConeTypeProjection().type?.fullyExpandedType(context.session) ?: continue
             val typeParameter = typeParameters[index]
 
-            if (source != null && typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
-                checkArgumentAndReport(typeArgument, source, false, context, reporter)
+            if (typeParameter.isReifiedTypeParameterOrFromKotlinArray()) {
+                checkArgumentAndReport(
+                    typeArgument,
+                    source,
+                    isExplicit = typeArgumentProjection.source?.kind == KtRealSourceElementKind,
+                    isArray = false,
+                    context,
+                    reporter
+                )
             }
         }
     }
@@ -43,35 +54,46 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
                 containingDeclaration is FirRegularClassSymbol && containingDeclaration.classId == StandardClassIds.Array
     }
 
+    private fun ConeKotlinType.cannotBeReified() = when (this) {
+        is ConeCapturedType -> true
+        is ConeDynamicType -> true
+        else -> isNothing || isNullableNothing
+    }
+
     private fun checkArgumentAndReport(
-        typeArgument: ConeKotlinType?,
+        typeArgument: ConeKotlinType,
         source: KtSourceElement,
+        isExplicit: Boolean,
         isArray: Boolean,
         context: CheckerContext,
-        reporter: DiagnosticReporter
+        reporter: DiagnosticReporter,
     ) {
-        if (typeArgument?.classId == StandardClassIds.Array) {
-            checkArgumentAndReport(typeArgument.typeArguments[0].type, source, true, context, reporter)
+        val fullyExpandedType = typeArgument.fullyExpandedType(context.session)
+        if (fullyExpandedType.classId == StandardClassIds.Array) {
+            // Type aliases can transform type arguments arbitrarily (drop, nest, etc...).
+            // Therefore, we check the arguments of the expanded type, not the ones that went into the type alias.
+            fullyExpandedType.typeArguments.forEach {
+                if (it is ConeKotlinType) checkArgumentAndReport(it, source, isExplicit, isArray = true, context, reporter)
+            }
             return
         }
 
         if (typeArgument is ConeTypeParameterType) {
-            val factory = if (isArray) {
-                FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context)
-            } else {
-                FirErrors.TYPE_PARAMETER_AS_REIFIED
-            }
             val symbol = typeArgument.lookupTag.typeParameterSymbol
             if (!symbol.isReified) {
-                reporter.reportOn(source, factory, symbol, context)
+                reporter.reportOn(
+                    source,
+                    if (isArray) FirErrors.TYPE_PARAMETER_AS_REIFIED_ARRAY.chooseFactory(context) else FirErrors.TYPE_PARAMETER_AS_REIFIED,
+                    symbol,
+                    context
+                )
             }
-        } else if (typeArgument != null && typeArgument.cannotBeReified()) {
+        } else if (typeArgument is ConeDefinitelyNotNullType && isExplicit) {
+            // We sometimes infer type arguments to DNN types, which seems to be ok. Only report explicit DNN types written by user.
+            reporter.reportOn(source, FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED, context)
+        } else if (typeArgument.cannotBeReified()) {
             reporter.reportOn(source, FirErrors.REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, typeArgument, context)
-            return
         }
     }
 
-    private fun ConeKotlinType.cannotBeReified(): Boolean {
-        return this.isNothing || this.isNullableNothing || this is ConeCapturedType
-    }
 }

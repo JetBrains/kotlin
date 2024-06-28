@@ -1,0 +1,12 @@
+KT element: KtValueArgumentList
+FIR element: FirResolvedArgumentListImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1)String(2)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] invokeCallArgumentList.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] f: R|(kotlin/Int, kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(Int(1), String(2))
+    }

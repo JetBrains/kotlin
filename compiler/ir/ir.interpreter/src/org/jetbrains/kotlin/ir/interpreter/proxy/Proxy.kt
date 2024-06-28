@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.interpreter.proxy
 
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.CallInterceptor
 import org.jetbrains.kotlin.ir.interpreter.fqName
@@ -14,6 +16,8 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.reflection.ReflectionProxy.Comp
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isFloat
+import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodType
 
 internal interface Proxy {
@@ -42,12 +46,15 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
     }
 }
 
+private val eqeqName = IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(BuiltInOperatorNames.EQEQ)).asString()
+private val checkNotNullName = IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(BuiltInOperatorNames.CHECK_NOT_NULL)).asString()
+
 /**
  * Prepare state object to be passed in outer world
  */
 internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFunction, methodType: MethodType? = null): List<Any?> {
     val name = irFunction.fqName
-    if (name == "kotlin.internal.ir.EQEQ" && this.any { it is Common }) {
+    if (name == eqeqName && this.any { it is Common }) {
         // in case of custom `equals` it is important not to lose information obout type
         // so all states remain as is, only common will be converted to Proxy
         return mapIndexed { index, state ->
@@ -57,7 +64,7 @@ internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFu
     }
     return this.mapIndexed { index, state ->
         // don't get arrays from Primitive in case of "set" and "Pair.<init>"; information about type will be lost
-        val unwrapArrays = (name == "kotlin.Array.set" && index != 0) || name == "kotlin.Pair.<init>" || name == "kotlin.internal.ir.CHECK_NOT_NULL"
+        val unwrapArrays = (name == "kotlin.Array.set" && index != 0) || name == "kotlin.Pair.<init>" || name == checkNotNullName
         state.wrap(callInterceptor, unwrapArrays, methodType?.parameterType(index))
     }
 }

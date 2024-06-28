@@ -11,7 +11,3 @@ internal actual inline val durationAssertionsEnabled: Boolean get() = true
 
 @GCUnsafeCall("Kotlin_DurationValue_formatToExactDecimals")
 internal actual external fun formatToExactDecimals(value: Double, decimals: Int): String
-
-internal actual fun formatUpToDecimals(value: Double, decimals: Int): String {
-    return formatToExactDecimals(value, decimals).trimEnd('0')
-}

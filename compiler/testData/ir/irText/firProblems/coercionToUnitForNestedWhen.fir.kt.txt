@@ -1,20 +1,3 @@
-private const val BACKSLASH: Char
-  field = '\\'
-  private get
-
-private fun Reader.nextChar(): Char? {
-  return { // BLOCK
-    val tmp0_safe_receiver: Int? = <this>.read().takeUnless<Int>(predicate = local fun <anonymous>(it: Int): Boolean {
-      return EQEQ(arg0 = it, arg1 = -1)
-    }
-)
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.toChar()
-    }
-  }
-}
-
 fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   var ch: Char? = <this>.nextChar()
   while (when {
@@ -23,10 +6,10 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   }) { // BLOCK
     when {
       EQEQ(arg0 = ch, arg1 = '\\') -> { // BLOCK
-        val tmp1_safe_receiver: Char? = <this>.nextChar()
+        val tmp_0: Char? = <this>.nextChar()
         when {
-          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-          else -> tmp1_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
+          EQEQ(arg0 = tmp_0, arg1 = null) -> null
+          else -> tmp_0.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )
@@ -37,3 +20,21 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     ch = <this>.nextChar()
   }
 }
+
+private fun Reader.nextChar(): Char? {
+  return { // BLOCK
+    val tmp_1: Int? = <this>.read().takeUnless<Int>(predicate = local fun <anonymous>(it: Int): Boolean {
+      return EQEQ(arg0 = it, arg1 = -1)
+    }
+)
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.toChar()
+    }
+  }
+}
+
+private const val BACKSLASH: Char
+  field = '\\'
+  private get
+

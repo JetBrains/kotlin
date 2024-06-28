@@ -1,0 +1,67 @@
+@Anno(<strcat>(String(x annotation ), x#))
+owner -> FirPropertySymbol /x
+context -> FirPropertySymbol /x
+
+@Anno(<strcat>(String(ReadWriteProperty first type argument ), x#))
+owner -> FirPropertySymbol /delegate
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(ReadWriteProperty second type argument ), x#))
+owner -> FirPropertySymbol /delegate
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(getValue return type ), x#))
+owner -> FirNamedFunctionSymbol /<anonymous>.getValue
+context -> FirNamedFunctionSymbol /<anonymous>.getValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(getValue ), x#))
+owner -> FirNamedFunctionSymbol /<anonymous>.getValue
+context -> FirNamedFunctionSymbol /<anonymous>.getValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(setValue value parameter type ), x#))
+owner -> FirValueParameterSymbol <local>/value from FirNamedFunctionSymbol /<anonymous>.setValue
+context -> FirValueParameterSymbol <local>/value from FirNamedFunctionSymbol /<anonymous>.setValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(setValue ), x#))
+owner -> FirNamedFunctionSymbol /<anonymous>.setValue
+context -> FirNamedFunctionSymbol /<anonymous>.setValue from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /delegate
+
+@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: delegate annotation ), x#))
+owner -> FirPropertySymbol /delegate
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /delegate
+
+@Anno(<strcat>(String(delegate annotation ), x#))
+owner -> FirPropertySymbol /delegate
+context -> FirPropertySymbol /delegate
+
+@PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#))
+owner -> FirPropertySymbol /value
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /value
+
+@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#))
+owner -> FirPropertySymbol /value
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /value
+
+@Anno(<strcat>(String(value annotation ), x#))
+owner -> FirPropertySymbol /value
+context -> FirPropertySymbol /value
+
+@PROPERTY_GETTER:Anno(<strcat>(String(get: value annotation ), x#))
+owner -> FirPropertySymbol /variable
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+
+@SETTER_PARAMETER:Anno(<strcat>(String(setparam: value annotation ), x#))
+owner -> FirPropertySymbol /variable
+context -> FirValueParameterSymbol <local>/variable from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+
+@PROPERTY_SETTER:Anno(<strcat>(String(set: value annotation ), x#))
+owner -> FirPropertySymbol /variable
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /variable
+
+@PROPERTY_DELEGATE_FIELD:Anno(<strcat>(String(delegate: value annotation ), x#))
+owner -> FirPropertySymbol /variable
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /variable
+
+@Anno(<strcat>(String(variable annotation ), x#))
+owner -> FirPropertySymbol /variable
+context -> FirPropertySymbol /variable

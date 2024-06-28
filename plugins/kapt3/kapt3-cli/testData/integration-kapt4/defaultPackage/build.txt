@@ -1,0 +1,47 @@
+# copy
+../simple/ap
+ap
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-language-version 2.0
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-language-version 2.0
+-Xuse-kapt4
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+RootClass.kt
+Usage.kt
+
+# kotlinc
+-language-version 2.0
+-d output/classes
+-cp output/ap:output/classes:output/sources:%KOTLIN_STDLIB%
+RootClass.kt
+Usage.kt
+
+# after
+Return code: 1
+
+warning: [kapt] test.Usage: Can't reference type 'RootClass' from default package in Java stub.
+error: output/stubs/test/Usage.java:9: error: cannot find symbol
+    public abstract RootClass test();
+                    ^
+  symbol:   class RootClass
+  location: interface Usage

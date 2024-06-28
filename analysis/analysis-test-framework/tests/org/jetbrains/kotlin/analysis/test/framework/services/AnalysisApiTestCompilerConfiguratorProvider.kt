@@ -8,17 +8,19 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
+import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.CompilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.createCompilerConfiguration
 
 class AnalysisApiTestCompilerConfiguratorProvider(
     testServices: TestServices,
@@ -29,7 +31,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 
     private val allProjectBinaryRoots by lazy {
         StandaloneProjectFactory.getAllBinaryRoots(
-            testServices.ktModuleProvider.getModuleStructure().allKtModules(),
+            testServices.ktTestModuleStructure.mainAndBinaryKtModules,
             testServices.environmentManager.getProjectEnvironment()
         )
     }
@@ -49,10 +51,7 @@ class AnalysisApiTestCompilerConfiguratorProvider(
 
         return { scope ->
             JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-                addRoots(allProjectBinaryRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
-                (ModuleAnnotationsResolver
-                    .getInstance(testServices.environmentManager.getProject()) as CliModuleAnnotationsResolver)
-                    .addPackagePartProvider(this)
+                addRoots(allProjectBinaryRoots, configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             }
         }
     }

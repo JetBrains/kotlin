@@ -1,4 +1,4 @@
-@0:0..19:14 FILE fqName:test fileName:/topLevelFuns.kt
+@0:0..20:0 FILE fqName:test fileName:/topLevelFuns.kt
   @3:0..14 FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @3:12..14 BLOCK_BODY
   @9:0..14 FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit

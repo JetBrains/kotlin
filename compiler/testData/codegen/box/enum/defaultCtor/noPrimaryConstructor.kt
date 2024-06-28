@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
-
 enum class Test {
     A(0),
     B;

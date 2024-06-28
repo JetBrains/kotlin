@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 
-class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
+class PendingDiagnosticsCollectorWithSuppress(override val rawReport: (Boolean, String) -> Unit) : BaseDiagnosticsCollector() {
     private val pendingDiagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     private val _diagnosticsByFilePath: MutableMap<String?, MutableList<KtDiagnostic>> = mutableMapOf()
     override val diagnostics: List<KtDiagnostic>
@@ -33,8 +33,11 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
         element: AbstractKtSourceElement,
         context: DiagnosticContext?
     ) {
+        if (pendingDiagnosticsByFilePath.isEmpty()) return
         val commitEverything = context == null
-        for ((path, pendingList) in pendingDiagnosticsByFilePath) {
+        val pendingIterator = pendingDiagnosticsByFilePath.iterator()
+        while (pendingIterator.hasNext()) {
+            val (path, pendingList) = pendingIterator.next()
             val committedList = _diagnosticsByFilePath.getOrPut(path) { mutableListOf() }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
@@ -55,6 +58,9 @@ class PendingDiagnosticsCollectorWithSuppress : BaseDiagnosticsCollector() {
                         }
                     }
                 }
+            }
+            if (pendingList.isEmpty()) {
+                pendingIterator.remove()
             }
         }
     }

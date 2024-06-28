@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Simple] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Simple] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(SUPER_TYPES)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Simple] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/Simple.a] a: Int): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final? [ResolvedTo(TYPES)] annotation class Simple : R|kotlin/Annotation| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Simple] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Simple] get(): Int
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(STATUS)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Simple] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(CONTRACTS)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Simple] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Simple] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=Simple] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Simple] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithoutDefaults.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Simple : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Simple.a] a: R|kotlin/Int|): R|Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Simple] get(): R|kotlin/Int|
+
+    }

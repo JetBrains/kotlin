@@ -1,0 +1,718 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.CharSequence]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.CharSequence]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, index:kotlin.Int) returnType:kotlin.Char [fake_override,operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, startIndex:kotlin.Int, endIndex:kotlin.Int) returnType:kotlin.CharSequence [fake_override]
+      overridden:
+        public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+      VALUE_PARAMETER name:startIndex index:0 type:kotlin.Int
+      VALUE_PARAMETER name:endIndex index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract length: kotlin.Int declared in kotlin.CharSequence
+      FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence
+        $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+  CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:ABSTRACT visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, index:kotlin.Int) returnType:kotlin.Char [fake_override,operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.Java1
+      FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.B]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    PROPERTY name:length visibility:public modality:OPEN [val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.B
+      FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'length: kotlin.Int declared in <root>.C.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:length visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.B
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-length> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-length>' type=<root>.C origin=null
+    CONSTRUCTOR visibility:public <> (length:kotlin.Int) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:length index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.B]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.C, index:kotlin.Int) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.B
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.C'
+          CONST Char type=kotlin.Char value='1'
+  CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+    CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, index:kotlin.Int) returnType:kotlin.Char [fake_override,operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java1
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+        public open fun hashCode (): kotlin.Int declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.Java1
+        public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+        public open fun toString (): kotlin.String declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.Java1
+        public abstract length: kotlin.Int declared in <root>.Java2
+      FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java1
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+  CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+    CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.Java2]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+        public open fun hashCode (): kotlin.Int declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.Java1
+        public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+        public open fun toString (): kotlin.String declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.E, index:kotlin.Int) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java1
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.E
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.E'
+          CONST Char type=kotlin.Char value='1'
+    PROPERTY name:length visibility:public modality:OPEN [val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.Java1
+        public abstract length: kotlin.Int declared in <root>.Java2
+      FUN name:<get-length> visibility:public modality:OPEN <> ($this:<root>.E) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:length visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java1
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java2
+        $this: VALUE_PARAMETER name:<this> type:<root>.E
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-length> (): kotlin.Int declared in <root>.E'
+            CONST Int type=kotlin.Int value=10
+  CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence; <root>.KotlinInterface]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
+    PROPERTY name:length visibility:public modality:OPEN [val]
+      overridden:
+        public abstract length: kotlin.Int declared in kotlin.CharSequence
+      FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'length: kotlin.Int declared in <root>.F.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:length visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence
+        $this: VALUE_PARAMETER name:<this> type:<root>.F
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-length> (): kotlin.Int declared in <root>.F'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.F declared in <root>.F.<get-length>' type=<root>.F origin=null
+    CONSTRUCTOR visibility:public <> (length:kotlin.Int) returnType:<root>.F [primary]
+      VALUE_PARAMETER name:length index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence; <root>.KotlinInterface]'
+    FUN FAKE_OVERRIDE name:charAt visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence, p0:kotlin.Int) returnType:kotlin.Char [fake_override]
+      overridden:
+        public abstract fun charAt (p0: kotlin.Int): kotlin.Char declared in java.lang.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:java.lang.CharSequence
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.lang.CharSequence
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.CharSequence
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, index:kotlin.Any) returnType:kotlin.Char [fake_override]
+      overridden:
+        public abstract fun get (index: kotlin.Any): kotlin.Char declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
+      VALUE_PARAMETER name:index index:0 type:kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in java.lang.CharSequence
+        public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence) returnType:kotlin.Int [fake_override]
+      overridden:
+        public abstract fun length (): kotlin.Int declared in java.lang.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:java.lang.CharSequence
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in java.lang.CharSequence
+        public open fun toString (): kotlin.String declared in kotlin.CharSequence
+        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:chars visibility:public modality:OPEN <> ($this:<root>.F) returnType:java.util.stream.IntStream
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in java.lang.CharSequence
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun chars (): java.util.stream.IntStream declared in <root>.F'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:codePoints visibility:public modality:OPEN <> ($this:<root>.F) returnType:java.util.stream.IntStream
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in java.lang.CharSequence
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun codePoints (): java.util.stream.IntStream declared in <root>.F'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.F, index:kotlin.Int) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.F'
+          CONST Char type=kotlin.Char value='1'
+    FUN name:subSequence visibility:public modality:OPEN <> ($this:<root>.F, startIndex:kotlin.Int, endIndex:kotlin.Int) returnType:kotlin.CharSequence
+      overridden:
+        public abstract fun subSequence (p0: kotlin.Int, p1: kotlin.Int): @[FlexibleNullability] kotlin.CharSequence? declared in java.lang.CharSequence
+        public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      VALUE_PARAMETER name:startIndex index:0 type:kotlin.Int
+      VALUE_PARAMETER name:endIndex index:1 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.F'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.CharSequence origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+  CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
+    CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:ABSTRACT visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, index:kotlin.Any) returnType:kotlin.Char [fake_override]
+      overridden:
+        public abstract fun get (index: kotlin.Any): kotlin.Char declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
+      VALUE_PARAMETER name:index index:0 type:kotlin.Any
+    FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, index:kotlin.Int) returnType:kotlin.Char [fake_override,operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.Java1
+      FUN FAKE_OVERRIDE name:<get-length> visibility:public modality:ABSTRACT <> ($this:<root>.Java1) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT [fake_override,val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+  CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
+    CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java1; <root>.KotlinInterface]'
+    FUN FAKE_OVERRIDE name:chars visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:codePoints visibility:public modality:OPEN <> ($this:kotlin.CharSequence) returnType:@[FlexibleNullability] java.util.stream.IntStream? [fake_override]
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.CharSequence
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+        public open fun hashCode (): kotlin.Int declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:subSequence visibility:public modality:OPEN <> ($this:<root>.Java1, start:kotlin.Int, end:kotlin.Int) returnType:@[EnhancedNullability] kotlin.CharSequence [fake_override]
+      annotations:
+        NotNull(value = <null>)
+        Override
+      overridden:
+        public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:start index:0 type:kotlin.Int
+      VALUE_PARAMETER name:end index:1 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+        public open fun toString (): kotlin.String declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.H, index:kotlin.Any) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Any): kotlin.Char declared in <root>.KotlinInterface
+      $this: VALUE_PARAMETER name:<this> type:<root>.H
+      VALUE_PARAMETER name:index index:0 type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Any): kotlin.Char declared in <root>.H'
+          CONST Char type=kotlin.Char value='2'
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.H, index:kotlin.Int) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.H
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.H'
+          CONST Char type=kotlin.Char value='1'
+    PROPERTY name:length visibility:public modality:OPEN [val]
+      overridden:
+        public abstract length: kotlin.Int declared in <root>.Java1
+      FUN name:<get-length> visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:length visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.H
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-length> (): kotlin.Int declared in <root>.H'
+            CONST Int type=kotlin.Int value=10
+  CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+    PROPERTY name:length visibility:public modality:OPEN [val]
+      overridden:
+        public abstract length: kotlin.Int declared in kotlin.CharSequence
+      FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'length: kotlin.Int declared in <root>.I.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-length> visibility:public modality:OPEN <> ($this:<root>.I) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:length visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence
+        $this: VALUE_PARAMETER name:<this> type:<root>.I
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-length> (): kotlin.Int declared in <root>.I'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:length type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.I declared in <root>.I.<get-length>' type=<root>.I origin=null
+    CONSTRUCTOR visibility:public <> (length:kotlin.Int) returnType:<root>.I [primary]
+      VALUE_PARAMETER name:length index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:ABSTRACT visibility:public superTypes:[java.lang.CharSequence; kotlin.CharSequence]'
+    FUN FAKE_OVERRIDE name:charAt visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence, p0:kotlin.Int) returnType:kotlin.Char [fake_override]
+      overridden:
+        public abstract fun charAt (p0: kotlin.Int): kotlin.Char declared in java.lang.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:java.lang.CharSequence
+      VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in java.lang.CharSequence
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in java.lang.CharSequence
+        public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:length visibility:public modality:ABSTRACT <> ($this:java.lang.CharSequence) returnType:kotlin.Int [fake_override]
+      overridden:
+        public abstract fun length (): kotlin.Int declared in java.lang.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:java.lang.CharSequence
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in java.lang.CharSequence
+        public open fun toString (): kotlin.String declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:chars visibility:public modality:OPEN <> ($this:<root>.I) returnType:java.util.stream.IntStream
+      overridden:
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in java.lang.CharSequence
+        public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.I
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun chars (): java.util.stream.IntStream declared in <root>.I'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:codePoints visibility:public modality:OPEN <> ($this:<root>.I) returnType:java.util.stream.IntStream
+      overridden:
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in java.lang.CharSequence
+        public open fun codePoints (): @[FlexibleNullability] java.util.stream.IntStream? declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.I
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun codePoints (): java.util.stream.IntStream declared in <root>.I'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.util.stream.IntStream origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.I, index:kotlin.Int) returnType:kotlin.Char [operator]
+      overridden:
+        public abstract fun get (index: kotlin.Int): kotlin.Char declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.I
+      VALUE_PARAMETER name:index index:0 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.I'
+          CONST Char type=kotlin.Char value='a'
+    FUN name:subSequence visibility:public modality:OPEN <> ($this:<root>.I, startIndex:kotlin.Int, endIndex:kotlin.Int) returnType:kotlin.CharSequence
+      overridden:
+        public abstract fun subSequence (p0: kotlin.Int, p1: kotlin.Int): @[FlexibleNullability] kotlin.CharSequence? declared in java.lang.CharSequence
+        public abstract fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in kotlin.CharSequence
+      $this: VALUE_PARAMETER name:<this> type:<root>.I
+      VALUE_PARAMETER name:startIndex index:0 type:kotlin.Int
+      VALUE_PARAMETER name:endIndex index:1 type:kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.I'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.CharSequence origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+  CLASS INTERFACE name:KotlinInterface modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinInterface
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.KotlinInterface, index:kotlin.Any) returnType:kotlin.Char
+      $this: VALUE_PARAMETER name:<this> type:<root>.KotlinInterface
+      VALUE_PARAMETER name:index index:0 type:kotlin.Any
+  FUN name:test visibility:public modality:FINAL <> (b:<root>.B, c:<root>.C, d:<root>.D, e:<root>.E, f:<root>.F, g:<root>.G, h:<root>.H, i:<root>.I) returnType:kotlin.Unit
+    VALUE_PARAMETER name:b index:0 type:<root>.B
+    VALUE_PARAMETER name:c index:1 type:<root>.C
+    VALUE_PARAMETER name:d index:2 type:<root>.D
+    VALUE_PARAMETER name:e index:3 type:<root>.E
+    VALUE_PARAMETER name:f index:4 type:<root>.F
+    VALUE_PARAMETER name:g index:5 type:<root>.G
+    VALUE_PARAMETER name:h index:6 type:<root>.H
+    VALUE_PARAMETER name:i index:7 type:<root>.I
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun <get-length> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.B' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.B' type=kotlin.Char origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.B' type=@[EnhancedNullability] kotlin.CharSequence origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          start: CONST Int type=kotlin.Int value=1
+          end: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-length> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.C' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.C' type=@[EnhancedNullability] kotlin.CharSequence origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+          start: CONST Int type=kotlin.Int value=1
+          end: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun <get-length> (): kotlin.Int declared in <root>.D' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.D' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun chars (): @[FlexibleNullability] java.util.stream.IntStream? declared in <root>.D' type=@[FlexibleNullability] java.util.stream.IntStream? origin=null
+          $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-length> (): kotlin.Int declared in <root>.E' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.E' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.E' type=@[EnhancedNullability] kotlin.CharSequence origin=null
+          $this: GET_VAR 'e: <root>.E declared in <root>.test' type=<root>.E origin=null
+          start: CONST Int type=kotlin.Int value=1
+          end: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-length> (): kotlin.Int declared in <root>.F' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun length (): kotlin.Int declared in <root>.F' type=kotlin.Int origin=null
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.F' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun get (index: kotlin.Any): kotlin.Char declared in <root>.F' type=kotlin.Char origin=null
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+          index: CONST Double type=kotlin.Double value=1.2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun <get-length> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.G' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.G' type=@[EnhancedNullability] kotlin.CharSequence origin=null
+          $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
+          start: CONST Int type=kotlin.Int value=1
+          end: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-length> (): kotlin.Int declared in <root>.H' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.H' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+          index: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Any): kotlin.Char declared in <root>.H' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+          index: CONST Double type=kotlin.Double value=1.2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (start: kotlin.Int, end: kotlin.Int): @[EnhancedNullability] kotlin.CharSequence declared in <root>.H' type=@[EnhancedNullability] kotlin.CharSequence origin=null
+          $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+          start: CONST Int type=kotlin.Int value=1
+          end: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-length> (): kotlin.Int declared in <root>.I' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun length (): kotlin.Int declared in <root>.I' type=kotlin.Int origin=null
+          $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun subSequence (startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.CharSequence declared in <root>.I' type=kotlin.CharSequence origin=null
+          $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
+          startIndex: CONST Int type=kotlin.Int value=1
+          endIndex: CONST Int type=kotlin.Int value=2
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun get (index: kotlin.Int): kotlin.Char declared in <root>.I' type=kotlin.Char origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'i: <root>.I declared in <root>.test' type=<root>.I origin=null
+          index: CONST Int type=kotlin.Int value=1

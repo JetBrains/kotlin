@@ -1,0 +1,19 @@
+FILE: main.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        Q|A|.R|/A.foo*s|(<L> = SAM(foo@fun <anonymous>(a: <ERROR TYPE REF: Parameter B has a cycle in its upper bounds>): <ERROR TYPE REF: Parameter A has a cycle in its upper bounds> <inline=NoInline>  {
+            ^ Null(null)!!
+        }
+        ))
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        Q|A|.R|/A.foo*s|(<L> = SAM(foo@fun <anonymous>(it: <ERROR TYPE REF: Parameter B has a cycle in its upper bounds>): <ERROR TYPE REF: Parameter A has a cycle in its upper bounds> <inline=NoInline>  {
+            ^ Null(null)!!
+        }
+        ))
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        Q|A|.R|/A.bar*s|(<L> = SAM(bar@fun <anonymous>(a: <ERROR TYPE REF: Parameter B has a cycle in its upper bounds>, b: <ERROR TYPE REF: Parameter C has a cycle in its upper bounds>): <ERROR TYPE REF: Parameter A has a cycle in its upper bounds> <inline=NoInline>  {
+            ^ Null(null)!!
+        }
+        ))
+    }

@@ -6,7 +6,7 @@ fun test1() {}
 @Foo([], [], [])
 fun test2() {}
 
-@Foo([1f], [' '], [1])
+@Foo([<!ARGUMENT_TYPE_MISMATCH!>1f<!>], <!ARGUMENT_TYPE_MISMATCH!>[' ']<!>, [<!ARGUMENT_TYPE_MISMATCH!>1<!>])
 fun test3() {}
 
 @Foo(c = [1f], b = [""], a = [1])
@@ -26,3 +26,15 @@ fun test7() {}
 
 @Foo(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>two<!>]<!>, [], [])
 fun test8() {}
+
+interface I<T>
+class C<T> : I<T>
+
+annotation class Test1<T>(val x: Int)
+annotation class Test2<T1, T2 : I<T1>>(val x: Test1<I<T2>>)
+@Repeatable annotation class Test3(val x: Array<Test2<Int, C<Int>>>)
+
+@Test3(<!ARGUMENT_TYPE_MISMATCH!>[Test2<String, C<String>>(Test1(40))]<!>)
+@Test3([Test2<Int, C<Int>>(Test1(40))])
+@Test3([Test2(Test1(40))])
+fun test9() {}

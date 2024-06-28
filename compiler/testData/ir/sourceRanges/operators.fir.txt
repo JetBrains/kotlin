@@ -1,0 +1,25 @@
+@0:0..8:0 FILE fqName:<root> fileName:/operators.kt
+  @2:0..27 PROPERTY name:addExpr visibility:public modality:FINAL [val]
+    @2:0..27 FIELD PROPERTY_BACKING_FIELD name:addExpr type:kotlin.Int visibility:private [final,static]
+      @2:14..27 EXPRESSION_BODY
+        @2:14..27 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+          @2:14..19 CONST Int type=kotlin.Int value=12345
+          @2:22..27 CONST Int type=kotlin.Int value=67890
+    @2:0..27 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-addExpr> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      @2:0..27 BLOCK_BODY
+        @2:0..27 RETURN type=kotlin.Nothing from='public final fun <get-addExpr> (): kotlin.Int declared in <root>'
+          @2:0..27 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:addExpr type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  @3:0..28 PROPERTY name:bangBangExpr visibility:public modality:FINAL [val]
+    @3:0..28 FIELD PROPERTY_BACKING_FIELD name:bangBangExpr type:kotlin.Int visibility:private [final,static]
+      @3:19..28 EXPRESSION_BODY
+        @3:19..28 CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Int origin=EXCLEXCL
+          @3:19..26 CALL 'public final fun <get-addExpr> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+    @3:0..28 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bangBangExpr> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      @3:0..28 BLOCK_BODY
+        @3:0..28 RETURN type=kotlin.Nothing from='public final fun <get-bangBangExpr> (): kotlin.Int declared in <root>'
+          @3:0..28 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bangBangExpr type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  @5:0..6:13 PROPERTY name:x visibility:public modality:FINAL [val]
+    @6:4..13 FUN name:<get-x> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      @6:12..13 BLOCK_BODY
+        @6:13..13 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>'
+          @6:12..13 CONST Int type=kotlin.Int value=5

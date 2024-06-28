@@ -5,19 +5,7 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
-interface ReportStatisticsValue<T> {
-    val name: String
-    val value: T
-}
-
-class ReportOnceStatisticsValue<T>(override val name: String, override val value: T) :
-    ReportStatisticsValue<T>
-
-interface AdditiveStatisticsValue<T> : ReportStatisticsValue<T> {
-    fun addValue(t: T)
-}
-
-interface IStatisticsValuesConsumer {
+interface StatisticsValuesConsumer {
     fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String? = null, weight: Long? = null): Boolean
 
     fun report(metric: NumericalMetrics, value: Long, subprojectName: String? = null, weight: Long? = null): Boolean

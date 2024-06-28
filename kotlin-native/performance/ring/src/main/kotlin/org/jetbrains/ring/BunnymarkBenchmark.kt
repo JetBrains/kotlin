@@ -127,7 +127,9 @@ operator fun Float32Buffer.set(index: Int, value: Float): Unit = mbuffer.setFloa
 
 fun MemBufferAlloc(size: Int): MemBuffer = MemBuffer(ByteArray(size))
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 fun MemBuffer.getFloat(index: Int): Float = data.getFloatAt(index)
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 fun MemBuffer.setFloat(index: Int, value: Float): Unit = data.setFloatAt(index, value)
 
 fun MemBuffer.asFloat32Buffer(): Float32Buffer = this.sliceFloat32Buffer()

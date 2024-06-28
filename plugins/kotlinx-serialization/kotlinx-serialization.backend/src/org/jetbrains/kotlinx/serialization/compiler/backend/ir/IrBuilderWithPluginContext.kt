@@ -8,20 +8,28 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addGetter
+import org.jetbrains.kotlin.ir.builders.declarations.addProperty
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -141,6 +149,13 @@ interface IrBuilderWithPluginContext {
         return prop
     }
 
+    fun IrElement.createAnnotationCallWithoutArgs(annotationSymbol: IrClassSymbol): IrConstructorCall {
+        val annotationCtor = annotationSymbol.constructors.single { it.owner.isPrimary }
+        val annotationType = annotationSymbol.defaultType
+
+        return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+    }
+
     fun IrClass.addValPropertyWithJvmField(
         type: IrType,
         name: Name,
@@ -153,11 +168,27 @@ interface IrBuilderWithPluginContext {
                 val resultExpression = addAndGetLastExpression(initializerBuilder)
                 +irSetField(irGet(thisReceiver!!), field, resultExpression)
             }
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
+        }
+    }
 
-            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
-            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
+    fun IrClass.addValPropertyWithJvmFieldInitializer(
+        type: IrType,
+        name: Name,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        initializer: IrBuilderWithScope.() -> IrExpression
+    ): IrProperty {
+        return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
+            val field = backingField!!
 
-            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+            val builder = DeclarationIrBuilder(
+                compilerContext,
+                field.symbol,
+                field.startOffset,
+                field.endOffset
+            )
+            field.initializer = factory.createExpressionBody(builder.initializer())
+            field.annotations += createAnnotationCallWithoutArgs(compilerContext.jvmFieldClassSymbol)
         }
     }
 
@@ -214,15 +245,11 @@ interface IrBuilderWithPluginContext {
         }
     }
 
-    fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
-        elementPrimitiveType: IrType,
-        arrayElements: List<IrExpression>
-    ): IrExpression {
-        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
-        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
-        val typeArguments = listOf(elementPrimitiveType)
-
-        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
+    fun IrBuilderWithScope.createIntArrayOfExpression(arrayElements: List<IrExpression>): IrExpression {
+        val elementType = compilerContext.irBuiltIns.intType
+        val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
+        return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
             putValueArgument(0, arg0)
         }
     }
@@ -263,6 +290,7 @@ interface IrBuilderWithPluginContext {
 
     fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
+            @OptIn(ObsoleteDescriptorBasedAPI::class)
             compilerContext.symbolTable.withReferenceScope(irDeclaration) {
                 builder(irDeclaration)
             }
@@ -383,8 +411,8 @@ interface IrBuilderWithPluginContext {
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
         if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
-        val annotationByFq: MutableMap<FqName, IrConstructorCall> =
-            irClass.annotations.associateBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
+        val annotationByFq: MutableMap<FqName, List<IrConstructorCall>> =
+            irClass.annotations.groupBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
             val annotations = clazz.annotations
                 .mapNotNull {
@@ -393,21 +421,18 @@ interface IrBuilderWithPluginContext {
                 }
             annotations.forEach { (fqname, call) ->
                 if (fqname !in annotationByFq) {
-                    annotationByFq[fqname] = call
+                    annotationByFq[fqname] = listOf(call)
                 } else {
                     // SerializationPluginDeclarationChecker already reported inconsistency
+                    // InheritableSerialInfo annotations can not be repeatable
                 }
             }
         }
-        return annotationByFq.values.toList()
+        return annotationByFq.values.toList().flatten()
     }
 
     fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =
-        annotations.mapNotNull { annotationCall ->
-            val annotationClass = annotationCall.symbol.owner.parentAsClass
-            if (!annotationClass.isSerialInfoAnnotation) return@mapNotNull null
-            annotationCall.deepCopyWithVariables()
-        }
+        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrBuilderWithScope.wrapperClassReference(classType: IrType): IrClassReference {

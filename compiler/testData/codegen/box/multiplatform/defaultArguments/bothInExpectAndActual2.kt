@@ -1,5 +1,6 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: NATIVE
+// LANGUAGE: +MultiPlatformProjects
+// WITH_STDLIB
+// IGNORE_BACKEND_K1: NATIVE
 // IGNORE_BACKEND_K2: ANY
 // FIR status: outdated code (expect and actual in the same module)
 
@@ -13,6 +14,7 @@ expect interface J : I
 
 // FILE: platform.kt
 
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 actual interface I {
     // This test should be updated once KT-22818 is fixed; default values are not allowed in the actual function
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

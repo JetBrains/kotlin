@@ -1,48 +1,61 @@
-KtConstructorSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: null
-  containingClassIdIfNonLocal: java/util/ArrayList
+KaConstructorSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  containingClassId: java/util/ArrayList
   contextReceivers: []
   hasStableParameterNames: false
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: false
-  origin: JAVA
+  location: CLASS
+  modality: FINAL
+  origin: JAVA_LIBRARY
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
         type: E
     ]
     type: java/util/ArrayList<E>
-  symbolKind: CLASS_MEMBER
   typeParameters: [
-    KtTypeParameterSymbol(E)
+    KaTypeParameterSymbol(E)
   ]
   valueParameters: [
-    KtValueParameterSymbol:
-      annotationsList: []
-      callableIdIfNonLocal: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
       contextReceivers: []
       generatedPrimaryConstructorProperty: null
       hasDefaultValue: false
+      isActual: false
       isCrossinline: false
+      isExpect: false
       isExtension: false
       isImplicitLambdaParameter: false
       isNoinline: false
+      isVal: true
       isVararg: false
-      name: c
-      origin: JAVA
+      location: LOCAL
+      modality: FINAL
+      name: p0
+      origin: JAVA_LIBRARY
       receiverParameter: null
-      returnType: KtFlexibleType:
-        annotationsList: []
-        type: ft<kotlin/collections/MutableCollection<out ft<E & Any, E?>>, kotlin/collections/Collection<out ft<E & Any, E?>>?>
-      symbolKind: LOCAL
-      typeParameters: []
-      getContainingModule: KtSdkModule "SDK jdk"
+      returnType: KaFlexibleType:
+        annotations: []
+        type: ft<kotlin/collections/MutableCollection<out E!>, kotlin/collections/Collection<out E!>?>
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: java.util.ArrayList
+      getContainingModule: KaLibraryModule "SDK jdk"
       deprecationStatus: null
   ]
-  visibility: Public
-  getContainingModule: KtSdkModule "SDK jdk"
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingJvmClassName: java.util.ArrayList
+  getContainingModule: KaLibraryModule "SDK jdk"
   deprecationStatus: null

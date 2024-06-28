@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
@@ -21,14 +22,14 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
 
-object IR_DECLARATION_ORIGIN_VOLATILE : IrDeclarationOriginImpl("VOLATILE")
+val IR_DECLARATION_ORIGIN_VOLATILE = IrDeclarationOriginImpl("VOLATILE")
 
 internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private val symbols = context.ir.symbols
@@ -99,8 +100,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
 
 
     private inline fun atomicFunction(irField: IrField, type: NativeMapping.AtomicFunctionType, builder: () -> IrSimpleFunction): IrSimpleFunction {
-        val key = NativeMapping.AtomicFunctionKey(irField, type)
-        return context.mapping.volatileFieldToAtomicFunction.getOrPut(key) {
+        val atomicFunctions = context.mapping.volatileFieldToAtomicFunctions.getOrPut(irField) { mutableMapOf() }
+        return atomicFunctions.getOrPut(type) {
             builder().also {
                 context.mapping.functionToVolatileField[it] = irField
             }
@@ -110,8 +111,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private fun compareAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_SET) {
         this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_SET, this.context.irBuiltIns.booleanType)
     }
-    private fun compareAndSwapFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_SWAP) {
-        this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_SWAP, irField.type)
+    private fun compareAndExchangeFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_EXCHANGE) {
+        this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_EXCHANGE, irField.type)
     }
     private fun getAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.GET_AND_SET) {
         this.buildAtomicRWMFunction(irField, IntrinsicType.GET_AND_SET)
@@ -152,7 +153,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                             } else {
                                 listOfNotNull(it,
                                         compareAndSetFunction(field),
-                                        compareAndSwapFunction(field),
+                                        compareAndExchangeFunction(field),
                                         getAndSetFunction(field),
                                         if (field.isInteger()) getAndAddFunction(field) else null
                                 )
@@ -198,16 +199,32 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
 
             private val intrinsicMap = mapOf(
                     IntrinsicType.COMPARE_AND_SET_FIELD to ::compareAndSetFunction,
-                    IntrinsicType.COMPARE_AND_SWAP_FIELD to ::compareAndSwapFunction,
+                    IntrinsicType.COMPARE_AND_EXCHANGE_FIELD to ::compareAndExchangeFunction,
                     IntrinsicType.GET_AND_SET_FIELD to ::getAndSetFunction,
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
 
+            private val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
+
+            private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrPropertyReference? {
+                return when {
+                    expression == null -> null
+                    expectedReturn == null && expression is IrPropertyReference -> expression
+                    expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
+                    expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
+                    expression is IrBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expectedReturn)
+                    expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.IMPLICIT_CAST -> getConstPropertyReference(expression.argument, expectedReturn)
+                    else -> null
+                }
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-                val intrinsicType = tryGetIntrinsicType(expression).takeIf { it in intrinsicMap } ?: return expression
+                val intrinsicType = tryGetIntrinsicType(expression).takeIf {
+                    it in intrinsicMap || it == IntrinsicType.ATOMIC_GET_FIELD || it == IntrinsicType.ATOMIC_SET_FIELD
+                } ?: return expression
                 builder.at(expression)
-                val reference = expression.extensionReceiver as? IrPropertyReference
+                val reference = getConstPropertyReference(expression.extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
@@ -217,19 +234,25 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 if (backingField?.hasAnnotation(KonanFqNames.volatile) != true) {
                     return unsupported("Only volatile properties are supported for $intrinsicType")
                 }
-                val function = intrinsicMap[intrinsicType]!!(backingField)
+                val function = when(intrinsicType) {
+                    IntrinsicType.ATOMIC_GET_FIELD -> property.getter ?: error("Getter is not defined for the property: ${property.render()}")
+                    IntrinsicType.ATOMIC_SET_FIELD -> property.setter ?: error("Setter is not defined for the property: ${property.render()}")
+                    else -> intrinsicMap[intrinsicType]!!(backingField)
+                }
                 return builder.irCall(function).apply {
                     dispatchReceiver = reference.dispatchReceiver
-                    putValueArgument(0, expression.getValueArgument(0))
-                    if (intrinsicType == IntrinsicType.COMPARE_AND_SET_FIELD || intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD) {
-                        putValueArgument(1, expression.getValueArgument(1))
+                    for (index in 0 until expression.valueArgumentsCount) {
+                        putValueArgument(index, expression.getValueArgument(index))
                     }
                 }.let {
+                    if (intrinsicType == IntrinsicType.ATOMIC_GET_FIELD || intrinsicType == IntrinsicType.ATOMIC_SET_FIELD) {
+                        return it
+                    }
                     if (backingField.requiresBooleanConversion()) {
                         for (arg in 0 until it.valueArgumentsCount) {
                             it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
                         }
-                        if (intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
+                        if (intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
                             builder.irByteToBool(it)
                         } else {
                             it

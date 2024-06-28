@@ -1,0 +1,43 @@
+FILE: delegateFieldWithAnnotationClash.kt
+    package second
+
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(int: R|kotlin/Int|): R|second/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val int: R|kotlin/Int| = R|<local>/int|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract interface Base : R|kotlin/Any| {
+    }
+    public final fun bar(): R|second/Base| {
+        ^bar object : R|second/Base| {
+            private constructor(): R|second/<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final const val constant: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+    public final class MyClass : R|@R|second/Anno|(int = R|second/constant|)  second/Base| {
+        public constructor(): R|second/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final field $$delegate_0: R|@R|second/Anno|(int = R|second/constant|)  second/Base| = R|second/bar|()
+
+        @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class Anno : R|kotlin/Annotation| {
+            public constructor(string: R|kotlin/String|): R|second/MyClass.Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val string: R|kotlin/String| = R|<local>/string|
+                public get(): R|kotlin/String|
+
+        }
+
+    }

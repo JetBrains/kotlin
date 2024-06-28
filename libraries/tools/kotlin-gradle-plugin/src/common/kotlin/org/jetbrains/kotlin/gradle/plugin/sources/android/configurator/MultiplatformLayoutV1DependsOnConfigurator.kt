@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal object MultiplatformLayoutV1DependsOnConfigurator : KotlinAndroidSourceSetConfigurator {
     override fun configure(
         target: KotlinAndroidTarget,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
         val commonSourceSetName = when (androidSourceSet.name) {
             "main" -> COMMON_MAIN_SOURCE_SET_NAME

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ForbidRecursiveDelegateExpressions
+// LANGUAGE: +ForbidRecursiveDelegateExpressions
 // WITH_STDLIB
 
 import kotlin.properties.ReadWriteProperty
@@ -25,9 +25,9 @@ infix fun filter(filter: (R, Any?) -> Boolean): Delegate<R, T>
 }
 
 class GitLabChangesProcessor: DatabaseEntity {
-    var buildProcessors by <!INAPPLICABLE_CANDIDATE!>child_many<!>(
+    var buildProcessors by child_many(
         GitLabBuildProcessor::class.java,
-        GitLabBuildProcessor::<!UNRESOLVED_REFERENCE!>processor<!>
+        GitLabBuildProcessor::<!INAPPLICABLE_CANDIDATE!>processor<!>
     )
 }
 

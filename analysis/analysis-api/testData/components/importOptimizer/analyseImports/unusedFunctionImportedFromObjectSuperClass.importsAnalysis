@@ -1,0 +1,18 @@
+USED DECLARATIONS:
+
+Declaration: kotlin.Int
+By names: [Int]
+
+Declaration: kotlin.String
+By names: [String]
+
+Declaration: kotlin.with
+By names: [with]
+
+Declaration: test.Base
+By names: [Base]
+
+Declaration: test.Foo
+By names: [Foo]
+
+UNRESOLVED NAMES:

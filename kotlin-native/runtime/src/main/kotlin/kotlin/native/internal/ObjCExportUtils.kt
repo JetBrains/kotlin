@@ -271,7 +271,7 @@ internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
         error: Any
 ) = ObjCErrorException(message, error)
 
-class ObjCErrorException(
+public class ObjCErrorException(
         message: String?,
         internal val error: Any
 ) : Exception(message) {
@@ -281,6 +281,7 @@ class ObjCErrorException(
 @PublishedApi
 @GCUnsafeCall("Kotlin_ObjCExport_trapOnUndeclaredException")
 @ExportForCppRuntime
+// No need to mark throwable as @Escapes because this function actually never returns.
 internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime

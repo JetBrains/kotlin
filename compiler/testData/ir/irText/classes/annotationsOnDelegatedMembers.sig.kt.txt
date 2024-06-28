@@ -1,0 +1,119 @@
+// CHECK:
+//   Mangled name: Ann
+//   Public signature: /Ann|null[0]
+open annotation class Ann : Annotation {
+  // CHECK:
+  //   Mangled name: Ann#<init>(){}
+  //   Public signature: /Ann.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Delegated
+//   Public signature: /Delegated|null[0]
+class Delegated : Base {
+  // CHECK:
+  //   Mangled name: Delegated#<init>(Base){}
+  //   Public signature: /Delegated.<init>|8918428909696021993[0]
+  //   Public signature debug description: <init>(Base){}
+  constructor(b: Base) /* primary */
+
+  // CHECK:
+  //   Mangled name: Delegated#func(){}
+  //   Public signature: /Delegated.func|1643338395720868039[0]
+  //   Public signature debug description: func(){}
+  @Ann
+  override fun func(): Unit
+
+  // CHECK:
+  //   Mangled name: Delegated{}prop
+  //   Public signature: /Delegated.prop|3598315380056892812[0]
+  //   Public signature debug description: {}prop
+  override val prop: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Delegated#<get-prop>(){}kotlin.Int
+    //   Public signature: /Delegated.prop.<get-prop>|-2094203252476742575[0]
+    //   Public signature debug description: <get-prop>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Delegated#<get-prop>(){}
+    //   Public signature: /Delegated.prop.<get-prop>|-5734736374948136327[0]
+    //   Public signature debug description: <get-prop>(){}
+    override get(): Int
+
+  // CHECK:
+  //   Mangled name: Delegated{}propWithAccessors
+  //   Public signature: /Delegated.propWithAccessors|6816664192388941498[0]
+  //   Public signature debug description: {}propWithAccessors
+  override var propWithAccessors: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Delegated#<get-propWithAccessors>(){}kotlin.Int
+    //   Public signature: /Delegated.propWithAccessors.<get-propWithAccessors>|1392907778891534138[0]
+    //   Public signature debug description: <get-propWithAccessors>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Delegated#<get-propWithAccessors>(){}
+    //   Public signature: /Delegated.propWithAccessors.<get-propWithAccessors>|5253508570158188209[0]
+    //   Public signature debug description: <get-propWithAccessors>(){}
+    @Ann
+    override get(): Int
+    // CHECK:
+    //   Mangled name: Delegated#<set-propWithAccessors>(kotlin.Int){}
+    //   Public signature: /Delegated.propWithAccessors.<set-propWithAccessors>|-5089950791342520697[0]
+    //   Public signature debug description: <set-propWithAccessors>(kotlin.Int){}
+    @Ann
+    override set(<set-?>: Int): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+interface Base {
+  // CHECK:
+  //   Mangled name: Base#func(){}
+  //   Public signature: /Base.func|1643338395720868039[0]
+  //   Public signature debug description: func(){}
+  @Ann
+  abstract fun func(): Unit
+
+  // CHECK:
+  //   Mangled name: Base{}prop
+  //   Public signature: /Base.prop|3598315380056892812[0]
+  //   Public signature debug description: {}prop
+  @Ann
+  abstract val prop: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-prop>(){}kotlin.Int
+    //   Public signature: /Base.prop.<get-prop>|-2094203252476742575[0]
+    //   Public signature debug description: <get-prop>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Base#<get-prop>(){}
+    //   Public signature: /Base.prop.<get-prop>|-5734736374948136327[0]
+    //   Public signature debug description: <get-prop>(){}
+    abstract get
+
+  // CHECK:
+  //   Mangled name: Base{}propWithAccessors
+  //   Public signature: /Base.propWithAccessors|6816664192388941498[0]
+  //   Public signature debug description: {}propWithAccessors
+  abstract var propWithAccessors: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Base#<get-propWithAccessors>(){}kotlin.Int
+    //   Public signature: /Base.propWithAccessors.<get-propWithAccessors>|1392907778891534138[0]
+    //   Public signature debug description: <get-propWithAccessors>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Base#<get-propWithAccessors>(){}
+    //   Public signature: /Base.propWithAccessors.<get-propWithAccessors>|5253508570158188209[0]
+    //   Public signature debug description: <get-propWithAccessors>(){}
+    @Ann
+    abstract get
+    // CHECK:
+    //   Mangled name: Base#<set-propWithAccessors>(kotlin.Int){}
+    //   Public signature: /Base.propWithAccessors.<set-propWithAccessors>|-5089950791342520697[0]
+    //   Public signature debug description: <set-propWithAccessors>(kotlin.Int){}
+    @Ann
+    abstract set
+
+}
+

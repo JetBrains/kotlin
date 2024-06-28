@@ -1,0 +1,19 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constructorsScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-constructorsScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+                this<R|A|>(Int(1))
+            }
+
+        }
+

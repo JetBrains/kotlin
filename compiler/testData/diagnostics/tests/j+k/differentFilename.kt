@@ -1,5 +1,6 @@
-// FIR_IDENTICAL
+// ISSUE: KT-4455
 // SKIP_JAVAC
+
 // FILE: A.java
 public class A {
     public B b() {}
@@ -21,7 +22,7 @@ class F {
 // FILE: main.kt
 fun main(x: A) {
     x.b().bar()
-    x.f().foobaz()
+    x.<!MISSING_DEPENDENCY_CLASS!>f<!>().<!UNRESOLVED_REFERENCE!>foobaz<!>()
 
-    D().baz()
+    <!UNRESOLVED_REFERENCE!>D<!>().<!DEBUG_INFO_MISSING_UNRESOLVED!>baz<!>()
 }

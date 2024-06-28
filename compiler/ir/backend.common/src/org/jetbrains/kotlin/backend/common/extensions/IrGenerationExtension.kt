@@ -27,7 +27,7 @@ interface IrGenerationExtension : IrDeserializer.IrLinkerExtension {
     // effect on the .java stub, not the resulting .class files. Compilation to the .class files is done in a separate step after stub
     // generation.
     //
-    // K2 KAPT doesn't use stub generation, so this property has no effect on extensions applied when K2 is enabled.
+    // K2 KAPT doesn't use the IR backend for stub generation, so this property has no effect on extensions applied when K2 is enabled.
     @FirIncompatiblePluginAPI
     val shouldAlsoBeAppliedInKaptStubGenerationMode: Boolean get() = false
 }

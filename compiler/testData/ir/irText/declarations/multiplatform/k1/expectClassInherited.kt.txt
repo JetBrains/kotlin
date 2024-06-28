@@ -1,0 +1,42 @@
+expect abstract class A {
+  protected expect constructor() /* primary */
+
+  expect abstract fun foo()
+
+}
+
+abstract class A {
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun foo()
+
+}
+
+expect open class B : A {
+  expect constructor(i: Int) /* primary */
+
+  expect open fun bar(s: String)
+
+  expect override fun foo()
+
+}
+
+open class B : A {
+  constructor(i: Int) /* primary */ {
+    super/*A*/()
+    /* <init>() */
+
+  }
+
+  open fun bar(s: String) {
+  }
+
+  override fun foo() {
+  }
+
+}
+

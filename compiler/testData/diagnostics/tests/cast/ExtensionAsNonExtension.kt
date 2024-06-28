@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 fun f(a: (Int) -> Unit) {
     a as Int.() -> Unit
 

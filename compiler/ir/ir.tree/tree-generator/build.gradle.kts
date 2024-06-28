@@ -9,18 +9,16 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    implementation(project(":generators"))
-    implementation(project(":core:compiler.common"))
-    implementation("com.squareup:kotlinpoet:1.11.0")
+    implementation(project(":generators:tree-generator-common"))
+    implementation(project(":compiler:util"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
-    runtimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    runtimeOnly(intellijJDom())
 }
 
 application {
-    mainClassName = "org.jetbrains.kotlin.ir.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.ir.generator.MainKt")
 }
 
 sourceSets {

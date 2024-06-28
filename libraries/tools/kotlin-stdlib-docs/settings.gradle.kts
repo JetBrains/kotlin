@@ -31,5 +31,4 @@ rootProject.name = "kotlin-stdlib-docs"
 include("kotlin_big")
 include("plugins")
 include("plugins:dokka-samples-transformer-plugin")
-include("plugins:dokka-stdlib-configuration-plugin")
 include("plugins:dokka-version-filter-plugin")

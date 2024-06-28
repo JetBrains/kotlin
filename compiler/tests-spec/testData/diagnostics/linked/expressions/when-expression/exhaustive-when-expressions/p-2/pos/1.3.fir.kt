@@ -1,5 +1,15 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
+ * NUMBER: 3
+ * DESCRIPTION: Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.
+ * HELPERS: enumClasses, sealedClasses
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(value_1: EnumClass): String = when (value_1) {
     EnumClass.EAST -> ""

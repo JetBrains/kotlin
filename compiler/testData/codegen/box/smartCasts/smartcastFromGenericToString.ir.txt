@@ -1,0 +1,84 @@
+FILE fqName:<root> fileName:/smartcastFromGenericToString.kt
+  CLASS CLASS name:Some modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Some<V of <root>.Some>
+    TYPE_PARAMETER name:V index:0 variance: superTypes:[kotlin.Any] reified:false
+    PROPERTY name:map visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, V of <root>.Some> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'map: kotlin.collections.Map<kotlin.String, V of <root>.Some> declared in <root>.Some.<init>' type=kotlin.collections.Map<kotlin.String, V of <root>.Some> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-map> visibility:public modality:FINAL <> ($this:<root>.Some<V of <root>.Some>) returnType:kotlin.collections.Map<kotlin.String, V of <root>.Some>
+        correspondingProperty: PROPERTY name:map visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Some<V of <root>.Some>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-map> (): kotlin.collections.Map<kotlin.String, V of <root>.Some> declared in <root>.Some'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:map type:kotlin.collections.Map<kotlin.String, V of <root>.Some> visibility:private [final]' type=kotlin.collections.Map<kotlin.String, V of <root>.Some> origin=null
+              receiver: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.<get-map>' type=<root>.Some<V of <root>.Some> origin=null
+    CONSTRUCTOR visibility:public <> (map:kotlin.collections.Map<kotlin.String, V of <root>.Some>) returnType:<root>.Some<V of <root>.Some> [primary]
+      VALUE_PARAMETER name:map index:0 type:kotlin.collections.Map<kotlin.String, V of <root>.Some>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Some modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:addK visibility:public modality:FINAL <> ($this:<root>.Some<V of <root>.Some>, s:kotlin.String) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<V of <root>.Some>
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun addK (s: kotlin.String): kotlin.String declared in <root>.Some'
+          CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
+            $this: GET_VAR 's: kotlin.String declared in <root>.Some.addK' type=kotlin.String origin=null
+            other: CONST String type=kotlin.String value="K"
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Some<V of <root>.Some>, key:kotlin.String) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<V of <root>.Some>
+      VALUE_PARAMETER name:key index:0 type:kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun test (key: kotlin.String): kotlin.String declared in <root>.Some'
+          BLOCK type=kotlin.String origin=WHEN
+            VAR name:value type:V of <root>.Some [val]
+              CALL 'public final fun getValue <K, V> (key: K of kotlin.collections.getValue): V of kotlin.collections.getValue declared in kotlin.collections' type=V of <root>.Some origin=null
+                <K>: kotlin.String
+                <V>: V of <root>.Some
+                $receiver: CALL 'public final fun <get-map> (): kotlin.collections.Map<kotlin.String, V of <root>.Some> declared in <root>.Some' type=kotlin.collections.Map<kotlin.String, V of <root>.Some> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=null
+                key: GET_VAR 'key: kotlin.String declared in <root>.Some.test' type=kotlin.String origin=null
+            WHEN type=kotlin.String origin=WHEN
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
+                  GET_VAR 'val value: V of <root>.Some declared in <root>.Some.test' type=V of <root>.Some origin=null
+                then: CALL 'public final fun addK (s: kotlin.String): kotlin.String declared in <root>.Some' type=kotlin.String origin=null
+                  $this: GET_VAR '<this>: <root>.Some<V of <root>.Some> declared in <root>.Some.test' type=<root>.Some<V of <root>.Some> origin=null
+                  s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                    GET_VAR 'val value: V of <root>.Some declared in <root>.Some.test' type=V of <root>.Some origin=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: STRING_CONCATENATION type=kotlin.String
+                  CONST String type=kotlin.String value="Fail: "
+                  GET_VAR 'val value: V of <root>.Some declared in <root>.Some.test' type=V of <root>.Some origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:x type:<root>.Some<kotlin.String> [val]
+        CONSTRUCTOR_CALL 'public constructor <init> (map: kotlin.collections.Map<kotlin.String, V of <root>.Some>) declared in <root>.Some' type=<root>.Some<kotlin.String> origin=null
+          <class: V>: kotlin.String
+          map: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlin.String> origin=null
+            <K>: kotlin.String
+            <V>: kotlin.String
+            pair: CALL 'public final fun to <A, B> (that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.String, kotlin.String> origin=null
+              <A>: kotlin.String
+              <B>: kotlin.String
+              $receiver: CONST String type=kotlin.String value="key"
+              that: CONST String type=kotlin.String value="O"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun test (key: kotlin.String): kotlin.String declared in <root>.Some' type=kotlin.String origin=null
+          $this: GET_VAR 'val x: <root>.Some<kotlin.String> declared in <root>.box' type=<root>.Some<kotlin.String> origin=null
+          key: CONST String type=kotlin.String value="key"

@@ -6,7 +6,7 @@ FILE: ifInBuildMap.kt
                     R|kotlin/io/println|(String(test))
                 }
                 else ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableMap.put: R|Stub (chain inference): TypeVariable(V)?|>|(String(foo), String(bar))
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableMap.put: R|kotlin/String?|>|(String(foo), String(bar))
                 }
             }
 

@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClasses
 abstract class AbstractSymbolLightClassesByFqNameForSourceTest : AbstractSymbolLightClassesByFqNameTest(
     AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
     EXTENSIONS.FIR_JAVA,
-    stopIfCompilationErrorDirectivePresent = false,
+    isTestAgainstCompiledCode = false,
 )

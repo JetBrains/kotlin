@@ -1,4 +1,4 @@
 FILE: constValWithTypealiasType.kt
     public final typealias Foo = R|kotlin/Int|
-    public final const val x: R|Foo| = Int(10)
-        public get(): R|Foo|
+    public final const val x: R|{Foo=} kotlin/Int| = Int(10)
+        public get(): R|{Foo=} kotlin/Int|

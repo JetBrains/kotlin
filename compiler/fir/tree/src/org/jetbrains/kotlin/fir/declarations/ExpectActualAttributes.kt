@@ -5,74 +5,100 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.compatible
-import java.util.*
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 private object ExpectForActualAttributeKey : FirDeclarationDataKey()
-private object ActualForExpectAttributeKey : FirDeclarationDataKey()
 
-typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>
+typealias ExpectForActualMatchingData = Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>>
 
+/**
+ * Actual declaration -> (many) expect declaration mapping. For top-level declarations.
+ *
+ * Populated by [FirResolvePhase.EXPECT_ACTUAL_MATCHING] phase for every top-level actual declaration.
+ *
+ * **Note: Mapping is computed from the declaration-site session of the actual declaration and not refined on the use-sites**
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
 @SymbolInternals
-var FirDeclaration.expectForActual: ExpectForActualData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
-private var FirDeclaration.actualForExpectMap: WeakHashMap<FirSession, FirBasedSymbol<*>>? by FirDeclarationDataRegistry.data(ActualForExpectAttributeKey)
+var FirDeclaration.expectForActual: ExpectForActualMatchingData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
 
-fun FirFunctionSymbol<*>.getSingleCompatibleExpectForActualOrNull() =
-    (this as FirBasedSymbol<*>).getSingleCompatibleExpectForActualOrNull() as? FirFunctionSymbol<*>
+// Used in Compose. It's not clear for how long the compatibility must be preserved.
+// Please consult https://jetbrains.team/p/kti/documents/a/18Yt390c5HIq
+@Deprecated("Use getSingleMatchedExpectForActualOrNull instead", ReplaceWith("getSingleMatchedExpectForActualOrNull()"))
+fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>? =
+    getSingleMatchedExpectForActualOrNull()
 
-fun FirBasedSymbol<*>.getSingleCompatibleExpectForActualOrNull(): FirBasedSymbol<*>? {
-    val expectForActual = expectForActual ?: return null
-    var compatibleActuals: List<FirBasedSymbol<*>>? = null
-    for ((key, item) in expectForActual) {
-        if (key.compatible) {
-            if (compatibleActuals == null) {
-                compatibleActuals = item
-            } else {
-                return null // Exit if there are more than one list with compatible actuals
-            }
-        }
-    }
-    return compatibleActuals?.singleOrNull()
-}
+/**
+ * @see expectForActual
+ */
+fun FirFunctionSymbol<*>.getSingleMatchedExpectForActualOrNull(): FirFunctionSymbol<*>? =
+    (this as FirBasedSymbol<*>).getSingleMatchedExpectForActualOrNull() as? FirFunctionSymbol<*>
 
-val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
+/**
+ * @see expectForActual
+ */
+fun FirBasedSymbol<*>.getSingleMatchedExpectForActualOrNull(): FirBasedSymbol<*>? =
+    expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)?.singleOrNull()
+
+/**
+ * @see expectForActual
+ */
+val FirBasedSymbol<*>.expectForActual: ExpectForActualMatchingData?
     get() {
         lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         return fir.expectForActual
     }
 
-private fun FirDeclaration.getOrCreateActualForExpectMap(): WeakHashMap<FirSession, FirBasedSymbol<*>> {
-    var map = actualForExpectMap
-    if (map != null) return map
-    synchronized(this) {
-        map = actualForExpectMap
-        if (map == null) {
-            map = WeakHashMap()
-            actualForExpectMap = map
-        }
-    }
-    return map!!
-}
 
-@SymbolInternals
-fun FirDeclaration.getActualForExpect(useSiteSession: FirSession): FirBasedSymbol<*>? {
-    return actualForExpectMap?.get(useSiteSession)
-}
+private object MemberExpectForActualAttributeKey : FirDeclarationDataKey()
 
-fun FirBasedSymbol<*>.getActualForExpect(session: FirSession): FirBasedSymbol<*>? {
-    lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
-    return fir.getActualForExpect(session)
-}
+// Expect class in the key is needed, because class may correspond to two expects
+// in case when two `actual typealias` point to the same class.
+typealias MemberExpectForActualData =
+        Map<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
+                Map</* expect member */ FirBasedSymbol<*>, ExpectActualMatchingCompatibility>>
 
-@SymbolInternals
-fun FirDeclaration.setActualForExpect(useSiteSession: FirSession, actualSymbol: FirBasedSymbol<*>) {
-    val map = getOrCreateActualForExpectMap()
-    map[useSiteSession] = actualSymbol
-}
-
+/**
+ * Actual class + expect class + actual member declaration -> (many) expect member declaration mapping.
+ *
+ * This attribute allows finding complex actualizations through type-aliases.
+ *
+ * ```kotlin
+ * // MODULE: common
+ * expect class A {
+ *     fun foo() // expect.1
+ * }
+ * expect class B {
+ *     fun foo() // expect.2
+ * }
+ *
+ * // MODULE: platform()(common)
+ *
+ * actual typealias A = Impl
+ * actual typealias B = Impl
+ *
+ * // attribute: memberExpectForActual
+ * // value: {
+ * //  (symbol: expect class A, symbol: impl.1) => { symbol: expect.1 => Compatible },
+ * //  (symbol: expect class B, symbol: impl.1) => { symbol: expect.2 => Compatible },
+ * // }
+ * class Impl {
+ *     fun foo() {} // impl.1
+ * }
+ * ```
+ *
+ * Populated by [FirResolvePhase.EXPECT_ACTUAL_MATCHING] phase for every top-level class declaration that is either actual class or
+ * expansion of actual type-alias.
+ *
+ * **Note: Mapping is computed from the declaration-site session of the actual declaration and not refined on the use-sites**
+ *
+ * See `/docs/fir/k2_kmp.md`
+ */
+// TODO this cache is questionable. Maybe we want to drop it KT-62913
+var FirRegularClass.memberExpectForActual: MemberExpectForActualData? by FirDeclarationDataRegistry.data(MemberExpectForActualAttributeKey)

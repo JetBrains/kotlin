@@ -1,0 +1,42 @@
+// FILE: inline.kt
+SMAP
+inline.kt
+Kotlin
+*S Kotlin
+*F
++ 1 inline.kt
+InlineKt
+*L
+1#1,17:1
+12#1,2:18
+*S KotlinDebug
+*F
++ 1 inline.kt
+InlineKt
+*L
+15#1:18,2
+*E
+
+// FILE: box.kt
+SMAP
+box.kt
+Kotlin
+*S Kotlin
+*F
++ 1 box.kt
+BoxKt$box$1
++ 2 inline.kt
+InlineKt
+*L
+1#1,40:1
+15#2:41
+12#2,2:42
+*S KotlinDebug
+*F
++ 1 box.kt
+BoxKt$box$1
+*L
+33#1:41
+33#1:42,2
+*E
+

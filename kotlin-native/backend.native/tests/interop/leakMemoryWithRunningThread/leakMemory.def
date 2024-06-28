@@ -1,5 +1,0 @@
-package leakMemory
-
----
-
-void test_RunInNewThread(void (*)());

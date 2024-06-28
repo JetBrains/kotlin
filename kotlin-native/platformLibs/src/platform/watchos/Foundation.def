@@ -5,3 +5,5 @@ modules = Foundation
 
 compilerOpts = -framework Foundation
 linkerOpts = -framework Foundation
+
+objcClassesIncludingCategories = NSURL

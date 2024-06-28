@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,101 +22,101 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ParcelBytecodeListingTestGenerated extends AbstractParcelBytecodeListingTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInCodegen() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-    }
+  public void testAllFilesPresentInCodegen() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+  }
 
-    @TestMetadata("customDescribeContents.kt")
-    public void testCustomDescribeContents() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customDescribeContents.kt");
-    }
+  @TestMetadata("customDescribeContents.kt")
+  public void testCustomDescribeContents() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customDescribeContents.kt");
+  }
 
-    @TestMetadata("customParcelablesDifferentModule.kt")
-    public void testCustomParcelablesDifferentModule() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesDifferentModule.kt");
-    }
+  @TestMetadata("customParcelablesDifferentModule.kt")
+  public void testCustomParcelablesDifferentModule() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesDifferentModule.kt");
+  }
 
-    @TestMetadata("customParcelablesSameModule.kt")
-    public void testCustomParcelablesSameModule() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesSameModule.kt");
-    }
+  @TestMetadata("customParcelablesSameModule.kt")
+  public void testCustomParcelablesSameModule() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customParcelablesSameModule.kt");
+  }
 
-    @TestMetadata("customSimple.kt")
-    public void testCustomSimple() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
-    }
+  @TestMetadata("customSimple.kt")
+  public void testCustomSimple() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimple.kt");
+  }
 
-    @TestMetadata("customSimpleWithNewArray.kt")
-    public void testCustomSimpleWithNewArray() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
-    }
+  @TestMetadata("customSimpleWithNewArray.kt")
+  public void testCustomSimpleWithNewArray() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/customSimpleWithNewArray.kt");
+  }
 
-    @TestMetadata("describeContentsFromSuperType.kt")
-    public void testDescribeContentsFromSuperType() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/describeContentsFromSuperType.kt");
-    }
+  @TestMetadata("describeContentsFromSuperType.kt")
+  public void testDescribeContentsFromSuperType() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/describeContentsFromSuperType.kt");
+  }
 
-    @TestMetadata("duplicatingClinit.kt")
-    public void testDuplicatingClinit() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
-    }
+  @TestMetadata("duplicatingClinit.kt")
+  public void testDuplicatingClinit() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/duplicatingClinit.kt");
+  }
 
-    @TestMetadata("efficientParcelable.kt")
-    public void testEfficientParcelable() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/efficientParcelable.kt");
-    }
+  @TestMetadata("efficientParcelable.kt")
+  public void testEfficientParcelable() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/efficientParcelable.kt");
+  }
 
-    @TestMetadata("IBinderIInterface.kt")
-    public void testIBinderIInterface() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
-    }
+  @TestMetadata("IBinderIInterface.kt")
+  public void testIBinderIInterface() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/IBinderIInterface.kt");
+  }
 
-    @TestMetadata("kt25839.kt")
-    public void testKt25839() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/kt25839.kt");
-    }
+  @TestMetadata("kt25839.kt")
+  public void testKt25839() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/kt25839.kt");
+  }
 
-    @TestMetadata("listInsideList.kt")
-    public void testListInsideList() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");
-    }
+  @TestMetadata("listInsideList.kt")
+  public void testListInsideList() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/listInsideList.kt");
+  }
 
-    @TestMetadata("nullableNotNullSize.kt")
-    public void testNullableNotNullSize() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/nullableNotNullSize.kt");
-    }
+  @TestMetadata("nullableNotNullSize.kt")
+  public void testNullableNotNullSize() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/nullableNotNullSize.kt");
+  }
 
-    @TestMetadata("parcelable.kt")
-    public void testParcelable() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
-    }
+  @TestMetadata("parcelable.kt")
+  public void testParcelable() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/parcelable.kt");
+  }
 
-    @TestMetadata("serializable.kt")
-    public void testSerializable() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
-    }
+  @TestMetadata("serializable.kt")
+  public void testSerializable() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializable.kt");
+  }
 
-    @TestMetadata("serializeValue.kt")
-    public void testSerializeValue() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializeValue.kt");
-    }
+  @TestMetadata("serializeValue.kt")
+  public void testSerializeValue() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/serializeValue.kt");
+  }
 
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simple.kt");
-    }
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simple.kt");
+  }
 
-    @TestMetadata("simpleList.kt")
-    public void testSimpleList() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simpleList.kt");
-    }
+  @TestMetadata("simpleList.kt")
+  public void testSimpleList() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/simpleList.kt");
+  }
 
-    @TestMetadata("size.kt")
-    public void testSize() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/size.kt");
-    }
+  @TestMetadata("size.kt")
+  public void testSize() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/codegen/size.kt");
+  }
 }

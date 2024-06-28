@@ -1,0 +1,95 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#get(kotlin.Int?){}kotlin.Int?
+  //   Public signature: /A.get|7040689195092882450[0]
+  //   Public signature debug description: get(kotlin.Int?){}kotlin.Int?
+  /* fake */ override operator fun get(i: Int?): Int?
+
+  // CHECK:
+  //   Mangled name: A#invoke(){}
+  //   Public signature: /A.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  /* fake */ override operator fun invoke(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#plus(kotlin.Int?){}Java1?
+  //   Public signature: /A.plus|-7032856236956634841[0]
+  //   Public signature debug description: plus(kotlin.Int?){}Java1?
+  /* fake */ override operator fun plus(i: Int?): Java1?
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#get(kotlin.Int?){}kotlin.Int
+  //   Public signature: /B.get|6449384512088502848[0]
+  //   Public signature debug description: get(kotlin.Int?){}kotlin.Int
+  override operator fun get(i: Int?): Int
+
+  // CHECK:
+  //   Mangled name: B#invoke(){}
+  //   Public signature: /B.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  override operator fun invoke(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#plus(kotlin.Int?){}Java1
+  //   Public signature: /B.plus|5151435286051456288[0]
+  //   Public signature debug description: plus(kotlin.Int?){}Java1
+  override operator fun plus(i: Int?): Java1
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#get(kotlin.Int?){}kotlin.Int
+  //   Public signature: /C.get|6449384512088502848[0]
+  //   Public signature debug description: get(kotlin.Int?){}kotlin.Int
+  override operator fun get(i: Int?): Int
+
+  // CHECK:
+  //   Mangled name: C#invoke(){}
+  //   Public signature: /C.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
+  override operator fun invoke(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#plus(kotlin.Int?){}Java1
+  //   Public signature: /C.plus|5151435286051456288[0]
+  //   Public signature debug description: plus(kotlin.Int?){}Java1
+  override operator fun plus(i: Int?): Java1
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit

@@ -13,7 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class CommonizerTargetFileNameTest {
+public class CommonizerTargetFileNameTest {
 
     private val longCommonizerTarget = parseCommonizerTarget(
         buildString {
@@ -32,17 +32,17 @@ class CommonizerTargetFileNameTest {
     )
 
     @get:Rule
-    val temporaryFolder = TemporaryFolder()
+    public val temporaryFolder: TemporaryFolder = TemporaryFolder()
 
     @Test
-    fun `small targets will use identityString`() {
+    public fun `small targets will use identityString`() {
         val target = parseCommonizerTarget("((a, b), c)")
         assertEquals(target.identityString, target.fileName)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     @Test
-    fun `longCommonizerTarget respect maximum fileName length`() {
+    public fun `longCommonizerTarget respect maximum fileName length`() {
         assertTrue(
             longCommonizerTarget.identityString.length > maxFileNameLength,
             "Expected test target's identityString to exceed maxFileNameLength"
@@ -55,7 +55,7 @@ class CommonizerTargetFileNameTest {
     }
 
     @Test
-    fun `longCommonizerTarget fileName can create new file`() {
+    public fun `longCommonizerTarget fileName can create new file`() {
         val longCommonizerTargetFile = temporaryFolder.root.resolve(longCommonizerTarget.fileName)
         assertTrue(longCommonizerTargetFile.createNewFile(), "Expected being able to create file $longCommonizerTargetFile")
         longCommonizerTargetFile.writeText(longCommonizerTarget.identityString)

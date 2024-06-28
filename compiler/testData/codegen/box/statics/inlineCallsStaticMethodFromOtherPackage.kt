@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// LANGUAGE: -ProhibitProtectedCallFromInline
 // TARGET_BACKEND: JVM
 // The non-IR backend attempts to call a non-existent accessor in class Test.
 // IGNORE_BACKEND: JVM

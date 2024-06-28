@@ -12,7 +12,7 @@ FILE: overriddenPropertiesWithExplicitBackingFields.kt
             }
 
         public final fun test(): R|kotlin/Unit| {
-            <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(this@R|/A|.R|/A.it|.<Unresolved name: plus>#(Int(1)))
+            <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(this@R|/A|.R|/A.it|.<Unresolved name: plus (+)>#(Int(1)))
         }
 
     }

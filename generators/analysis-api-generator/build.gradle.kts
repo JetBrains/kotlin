@@ -11,20 +11,29 @@ sourceSets {
 dependencies {
     api(kotlinStdlib("jdk8"))
 
-    testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-spec"))
-    testApi(projectTests(":analysis:low-level-api-fir"))
-    testApi(projectTests(":analysis:analysis-api-fir"))
-    testApi(projectTests(":analysis:analysis-api-fe10"))
-    testApi(projectTests(":analysis:analysis-api-standalone"))
-    testApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testApi(projectTests(":analysis:decompiled:decompiler-to-psi"))
-    testApi(projectTests(":analysis:symbol-light-classes"))
-    testApi(intellijCore())
-    testApiJUnit5()
+    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:tests-spec"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-fe10"))
+    testImplementation(projectTests(":analysis:analysis-api-standalone"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(projectTests(":analysis:symbol-light-classes"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-native"))
+    testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt")
+val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(":generators:analysis-api-generator:generator-kotlin-native:generateAnalysisApiNativeTests")
+    }
+}
 
 testsJar()

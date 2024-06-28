@@ -1,0 +1,15 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:AuthorAndReadTime visibility:public modality:FINAL <> (b:p2.B) returnType:kotlin.Unit
+      VALUE_PARAMETER name:b index:0 type:p2.B
+      BLOCK_BODY
+        CALL 'public final fun Row (a: p2.A, content: @[MyComposable] @[ExtensionFunctionType] kotlin.Function1<p3.RowScope, kotlin.Unit>): kotlin.Unit [inline] declared in p3' type=kotlin.Unit origin=null
+          a: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in p2.A' type=p2.A origin=null
+          content: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<p3.RowScope, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:p3.RowScope) returnType:kotlin.Unit
+              annotations:
+                MyComposable
+              $receiver: VALUE_PARAMETER name:$this$Row type:p3.RowScope
+              BLOCK_BODY
+                CALL 'public final fun callB (): kotlin.Unit declared in p2.B' type=kotlin.Unit origin=null
+                  $this: GET_VAR 'b: p2.B declared in <root>.AuthorAndReadTime' type=p2.B origin=null

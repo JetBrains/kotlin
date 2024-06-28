@@ -6,11 +6,6 @@ val ok2: String
   field = <get-ok>()
   get
 
-val ok3: String
-  get(): String {
-    return "OK"
-  }
-
 fun test1(): String {
   return <get-ok>()
 }
@@ -28,11 +23,17 @@ fun test4(): String {
   return <get-ok3>()
 }
 
+fun String.test5(): String {
+  return <this>.<get-okext>()
+}
+
+val ok3: String
+  get(): String {
+    return "OK"
+  }
+
 val String.okext: String
   get(): String {
     return "OK"
   }
 
-fun String.test5(): String {
-  return <this>.<get-okext>()
-}

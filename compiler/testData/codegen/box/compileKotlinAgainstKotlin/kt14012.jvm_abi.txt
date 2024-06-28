@@ -1,0 +1,9 @@
+MODULE lib
+	CLASS test/AKt.class
+		PACKAGE METADATA
+			PROPERTY getProperty()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

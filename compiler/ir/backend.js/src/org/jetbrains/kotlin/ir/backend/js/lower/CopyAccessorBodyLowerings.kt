@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.createBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
@@ -26,9 +27,11 @@ class CopyAccessorBodyLowerings(private val context: CommonBackendContext) : Dec
 
         if (declaration is IrField) {
             declaration.initializer?.let { originalBody ->
-                declaration.initializer = context.irFactory.createExpressionBody(originalBody.startOffset, originalBody.endOffset) {
-                    this.expression = originalBody.expression.deepCopyWithSymbols(declaration)
-                }
+                declaration.initializer = context.irFactory.createExpressionBody(
+                    startOffset = originalBody.startOffset,
+                    endOffset = originalBody.endOffset,
+                    expression = originalBody.expression.deepCopyWithSymbols(declaration),
+                )
             }
         }
 

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
 
@@ -7,9 +7,9 @@ fun unitEmpty() : Unit {}
 fun unitEmptyReturn() : Unit {return}
 fun unitIntReturn() : Unit {return <!RETURN_TYPE_MISMATCH!>1<!>}
 fun unitUnitReturn() : Unit {return Unit}
-fun test1() : Any = {<!RETURN_NOT_ALLOWED!>return<!>}
+fun test1() : Any = {<!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return<!>}
 fun test2() : Any = a@ {return@a 1}
-fun test3() : Any { return }
+fun test3() : Any { <!RETURN_TYPE_MISMATCH!>return<!> }
 fun test4(): ()-> Unit = { <!RETURN_NOT_ALLOWED, RETURN_TYPE_MISMATCH!>return@test4<!> }
 fun test5(): Any = l@{ return@l }
 fun test6(): Any = {<!RETURN_NOT_ALLOWED!>return<!> 1}
@@ -72,7 +72,7 @@ fun blockReturnValueTypeMatch2() : Int {
     return <!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1
 }
 fun blockReturnValueTypeMatch3() : Int {
-    return <!RETURN_TYPE_MISMATCH!>if (1 > 2) else 1<!>
+    return <!RETURN_TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) else 1<!>
 }
 fun blockReturnValueTypeMatch4() : Int {
     if (1 > 2)
@@ -158,6 +158,8 @@ fun illegalReturnIf(): Char {
 fun returnNothing(): Nothing {
     throw <!TYPE_MISMATCH!>1<!>
 }
+fun returnNothingEmpty(): Nothing {
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
 }

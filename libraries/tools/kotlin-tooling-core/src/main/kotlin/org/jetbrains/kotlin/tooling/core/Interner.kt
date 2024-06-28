@@ -20,6 +20,7 @@ fun Interner(lock: Lock? = null): Interner = InternerImpl(Strong(), lock)
 
 interface Interner {
     fun <T : Any> getOrPut(value: T): T
+    fun clear()
 }
 
 private class InternerImpl(
@@ -29,6 +30,7 @@ private class InternerImpl(
 
     interface Store {
         fun <T : Any> getOrPut(value: T): T
+        fun clear()
 
         class Weak : Store {
             private val references = WeakHashMap<Any, WeakReference<Any>>()
@@ -39,6 +41,10 @@ private class InternerImpl(
                     value
                 }) as T
             }
+
+            override fun clear() {
+                return references.clear()
+            }
         }
 
         @Suppress("UNCHECKED_CAST")
@@ -47,10 +53,22 @@ private class InternerImpl(
             override fun <T : Any> getOrPut(value: T): T {
                 return references.getOrPut(value) { value } as T
             }
+
+            override fun clear() {
+                return references.clear()
+            }
         }
     }
 
     override fun <T : Any> getOrPut(value: T): T {
-        return lock?.withLock { store.getOrPut(value) } ?: store.getOrPut(value)
+        return withLockIfAny { store.getOrPut(value) }
+    }
+
+    override fun clear() {
+        return withLockIfAny { store.clear() }
+    }
+
+    private inline fun <T> withLockIfAny(action: () -> T): T {
+        return if (lock != null) lock.withLock(action) else action()
     }
 }

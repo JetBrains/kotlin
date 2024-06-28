@@ -2,12 +2,8 @@
 public abstract class AMLA {
     // source: 'abstractMutableLists.kt'
     public method <init>(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public bridge final method remove(p0: int): java.lang.Object
-    public abstract method remove(p0: java.lang.Object): boolean
     public abstract method removeAt(p0: int): java.lang.Object
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
@@ -18,12 +14,8 @@ public abstract class AMLA {
 public abstract class AMLAN {
     // source: 'abstractMutableLists.kt'
     public method <init>(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public bridge final method remove(p0: int): java.lang.Object
-    public abstract method remove(p0: java.lang.Object): boolean
     public abstract method removeAt(p0: int): java.lang.Object
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
@@ -118,12 +110,8 @@ public abstract class AMLSN {
 public abstract class AMLT {
     // source: 'abstractMutableLists.kt'
     public method <init>(): void
-    public abstract method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method indexOf(p0: java.lang.Object): int
-    public abstract method lastIndexOf(p0: java.lang.Object): int
     public bridge final method remove(p0: int): java.lang.Object
-    public abstract method remove(p0: java.lang.Object): boolean
     public abstract method removeAt(p0: int): java.lang.Object
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]

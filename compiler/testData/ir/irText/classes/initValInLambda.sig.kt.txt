@@ -1,0 +1,27 @@
+// CHECK:
+//   Mangled name: TestInitValInLambdaCalledOnce
+//   Public signature: /TestInitValInLambdaCalledOnce|null[0]
+class TestInitValInLambdaCalledOnce {
+  // CHECK:
+  //   Mangled name: TestInitValInLambdaCalledOnce{}x
+  //   Public signature: /TestInitValInLambdaCalledOnce.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestInitValInLambdaCalledOnce#<get-x>(){}kotlin.Int
+    //   Public signature: /TestInitValInLambdaCalledOnce.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestInitValInLambdaCalledOnce#<get-x>(){}
+    //   Public signature: /TestInitValInLambdaCalledOnce.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestInitValInLambdaCalledOnce#<init>(){}
+  //   Public signature: /TestInitValInLambdaCalledOnce.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +FunctionReferenceWithDefaultValueAsOtherType
+// LANGUAGE: +FunctionReferenceWithDefaultValueAsOtherType
 
 fun foo(a: String, b: Int = 5): String {
     return a + b

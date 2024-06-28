@@ -1,0 +1,7 @@
+/enum.kt:(506,508): error: Enum entry 'EnumClass.E2' does not implement abstract members:
+fun foo(): Int
+val bar: String
+
+/enum.kt:(524,526): error: Enum entry 'EnumClass.E3' does not implement abstract members:
+fun foo(): Int
+val bar: String

@@ -7,7 +7,6 @@ import Foundation
 import benchmark
 
 private let REPEAT_COUNT = 10000
-private let REFERENCES_COUNT = 3
 
 private class ReferenceWrapper {
     private weak var weakRef: KotlinData?
@@ -49,6 +48,8 @@ private func deadReferenceWrapper() -> ReferenceWrapper {
 }
 
 class WeakRefBenchmark {
+    private let weight = (0..<10_000).map { _ in ReferenceWrapper() }
+
     private let aliveRef = ReferenceWrapper()
     private let deadRef = deadReferenceWrapper()
 
@@ -77,5 +78,9 @@ class WeakRefBenchmark {
 
         let counter = ref.stress()
         Blackhole.companion.consume(value: counter)
+    }
+
+    func clean() {
+        weight.forEach { $0.dispose() }
     }
 }

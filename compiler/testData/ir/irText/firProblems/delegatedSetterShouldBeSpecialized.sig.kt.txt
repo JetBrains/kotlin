@@ -1,0 +1,51 @@
+// CHECK:
+//   Mangled name: {}topLevelInt
+//   Public signature: /topLevelInt|-195133861434444271[0]
+//   Public signature debug description: {}topLevelInt
+var topLevelInt: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-topLevelInt>(){}kotlin.Int
+  //   Public signature: /topLevelInt.<get-topLevelInt>|-3701121633294691078[0]
+  //   Public signature debug description: <get-topLevelInt>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-topLevelInt>(){}
+  //   Public signature: /topLevelInt.<get-topLevelInt>|-8146374746978443891[0]
+  //   Public signature debug description: <get-topLevelInt>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-topLevelInt>(kotlin.Int){}
+  //   Public signature: /topLevelInt.<set-topLevelInt>|-6405619490912020761[0]
+  //   Public signature debug description: <set-topLevelInt>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: MyClass
+//   Public signature: /MyClass|null[0]
+class MyClass {
+  // CHECK:
+  //   Mangled name: MyClass{}delegatedToTopLevel
+  //   Public signature: /MyClass.delegatedToTopLevel|469634053427021861[0]
+  //   Public signature debug description: {}delegatedToTopLevel
+  var delegatedToTopLevel: Int /* by */
+    // CHECK JVM_IR:
+    //   Mangled name: MyClass#<get-delegatedToTopLevel>(){}kotlin.Int
+    //   Public signature: /MyClass.delegatedToTopLevel.<get-delegatedToTopLevel>|348815270705246892[0]
+    //   Public signature debug description: <get-delegatedToTopLevel>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: MyClass#<get-delegatedToTopLevel>(){}
+    //   Public signature: /MyClass.delegatedToTopLevel.<get-delegatedToTopLevel>|-11763650120820505[0]
+    //   Public signature debug description: <get-delegatedToTopLevel>(){}
+    get(): Int
+    // CHECK:
+    //   Mangled name: MyClass#<set-delegatedToTopLevel>(kotlin.Int){}
+    //   Public signature: /MyClass.delegatedToTopLevel.<set-delegatedToTopLevel>|-8149849966678796267[0]
+    //   Public signature debug description: <set-delegatedToTopLevel>(kotlin.Int){}
+    set(<set-?>: Int): Unit
+
+  // CHECK:
+  //   Mangled name: MyClass#<init>(){}
+  //   Public signature: /MyClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}

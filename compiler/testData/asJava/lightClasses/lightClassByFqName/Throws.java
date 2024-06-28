@@ -1,19 +1,19 @@
 public final class Test /* Test*/ extends Base {
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String boo;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String boo = "42" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.String foo;
+  private final @org.jetbrains.annotations.NotNull() java.lang.String foo = "42" /* initializer type: java.lang.String */;
 
   private final int p1;
 
   @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getBoo() throws MyException;//  getBoo()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getBoo() throws MyException;//  getBoo()
 
   @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String getFoo() throws MyException;//  getFoo()
+  public final @org.jetbrains.annotations.NotNull() java.lang.String getFoo() throws MyException;//  getFoo()
 
   @kotlin.jvm.Throws(exceptionClasses = {MyException.class})
   public  Test(int) throws MyException;//  .ctor(int)

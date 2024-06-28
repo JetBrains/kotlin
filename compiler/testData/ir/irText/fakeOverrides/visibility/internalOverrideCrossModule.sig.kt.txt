@@ -1,0 +1,281 @@
+// MODULE: separate
+// FILE: KotlinInternal.kt
+
+// CHECK:
+//   Mangled name: KotlinInternal
+//   Public signature: /KotlinInternal|null[0]
+open class KotlinInternal {
+  // CHECK:
+  //   Mangled name: KotlinInternal#<init>(){}
+  //   Public signature: /KotlinInternal.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinInternal#foo(){}
+  //   Public signature: /KotlinInternal.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  internal open fun foo(): Unit
+
+  // CHECK:
+  //   Mangled name: KotlinInternal{}a
+  //   Public signature: /KotlinInternal.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  internal open val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInternal#<get-a>(){}kotlin.Int
+    //   Public signature: /KotlinInternal.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    internal open get(): Int
+
+}
+
+// MODULE: main
+// FILE: test.kt
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(){}
+  //   Public signature: /B.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java2 {
+  // CHECK:
+  //   Mangled name: C{}a
+  //   Public signature: /C.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: C#<get-a>(){}kotlin.Int
+    //   Public signature: /C.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(){}
+  //   Public signature: /C.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java3 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(){}
+  //   Public signature: /D.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  protected_and_package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java3 {
+  // CHECK:
+  //   Mangled name: E{}a
+  //   Public signature: /E.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-a>(){}kotlin.Int
+    //   Public signature: /E.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E#foo(){}
+  //   Public signature: /E.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java4 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: G
+//   Public signature: /G|null[0]
+class G : Java5 {
+  // CHECK:
+  //   Mangled name: G#<init>(){}
+  //   Public signature: /G.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: G#foo(){}
+  //   Public signature: /G.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  package /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: H
+//   Public signature: /H|null[0]
+class H : Java5 {
+  // CHECK:
+  //   Mangled name: H{}a
+  //   Public signature: /H.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: H#<get-a>(){}kotlin.Int
+    //   Public signature: /H.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: H#<init>(){}
+  //   Public signature: /H.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: H#foo(){}
+  //   Public signature: /H.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+abstract class I : KotlinInternal, JavaPublic {
+  // CHECK:
+  //   Mangled name: I#<init>(){}
+  //   Public signature: /I.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: I#foo(){}
+  //   Public signature: /I.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract /* fake */ override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+class J : KotlinInternal, JavaPublic {
+  // CHECK:
+  //   Mangled name: J{}a
+  //   Public signature: /J.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: J#<get-a>(){}kotlin.Int
+    //   Public signature: /J.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: J#foo(){}
+  //   Public signature: /J.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+class K : KotlinInternal, JavaDefault {
+  // CHECK:
+  //   Mangled name: K{}a
+  //   Public signature: /K.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: K#<get-a>(){}kotlin.Int
+    //   Public signature: /K.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    get
+
+  // CHECK:
+  //   Mangled name: K#<init>(){}
+  //   Public signature: /K.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: K#foo(){}
+  //   Public signature: /K.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  override fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F;G;H;I;J;K){}
+//   Public signature: /test|870784281949045058[0]
+//   Public signature debug description: test(A;B;C;D;E;F;G;H;I;J;K){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J, k: K): Unit

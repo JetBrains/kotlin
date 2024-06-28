@@ -671,7 +671,7 @@ class CoroutineTransformerMethodVisitor(
                 val value = frame.getLocal(slot)
                 if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
 
-                if (value == StrictBasicValue.NULL_VALUE) {
+                if (value === StrictBasicValue.NULL_VALUE) {
                     referencesToSpill += slot to null
                     continue
                 }
@@ -1285,8 +1285,14 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     for (variableIndex in start until method.maxLocals) {
         if (oldLvt.none { it.index == variableIndex }) continue
         var startLabel: LabelNode? = null
+        var nextSuspensionPointIndex = 0
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
+            if (insn is LabelNode && nextSuspensionPointIndex < suspensionPoints.size &&
+                suspensionPoints[nextSuspensionPointIndex] == insn
+            ) {
+                nextSuspensionPointIndex++
+            }
             if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
                 startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
             }
@@ -1305,21 +1311,22 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 // If we can extend the previous range to where the local variable dies, we do not need a
                 // new entry, we know we cannot extend it to the lvt.endOffset, if we could we would have
                 // done so when we added it below.
-                val extended = latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness) ?: false
+                val extended =
+                    latest?.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex) ?: false
                 if (!extended) {
                     val new = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
                     oldLvtNodeToLatestNewLvtNode[lvtRecord] = new
                     method.localVariables.add(new)
                     // See if we can extend it all the way to the old end.
-                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness)
+                    new.extendRecordIfPossible(method, suspensionPoints, lvtRecord.end, liveness, nextSuspensionPointIndex)
                 }
             }
         }
     }
 
     for (variable in oldLvt) {
-        // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
-        // For example, $continuation is used to create async stack trace
+        // $continuation, $completion and $result are dead, but they are used by debugger, as well as fake inliner variables
+        // $continuation is used to create async stack trace
         if (variable.name == CONTINUATION_VARIABLE_NAME ||
             variable.name == SUSPEND_CALL_RESULT_NAME ||
             isFakeLocalVariableForInline(variable.name)
@@ -1327,12 +1334,50 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
             method.localVariables.add(variable)
             continue
         }
+        // $completion is used for stepping
+        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME) {
+            // There can be multiple $completion variables because of inlining, do not duplicate them
+            if (method.localVariables.any { it.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME }) continue
+
+            method.extendCompletionsRange(variable, getLastParameterIndex(method.desc, method.access))
+            continue
+        }
         // this acts like $continuation for lambdas. For example, it is used by debugger to create async stack trace. Keep it.
         if (variable.name == "this" && !isForNamedFunction) {
-            method.localVariables.add(variable)
+            method.extendCompletionsRange(variable, 0)
             continue
         }
     }
+}
+
+// $completion should behave like ordinary parameter - span the whole function,
+// unlike other parameters, it is safe to do so, since it always will have some value
+// either completion (when there was no suspension) or continuation, when there was suspension.
+// It is OK to have this discrepancy, since debugger walks through completion chain and to them
+// there is no difference whether there is an additional link in the chain.
+//
+// The same applies for suspend lambdas and `this`, but there is no additional link in the chain.
+private fun MethodNode.extendCompletionsRange(completion: LocalVariableNode, slot: Int) {
+    completion.start = getOrCreateStartingLabel()
+    completion.end = getOrCreateEndingLabel()
+    completion.index = slot
+    localVariables.add(completion)
+}
+
+fun MethodNode.getOrCreateStartingLabel(): LabelNode {
+    val first = instructions.first
+    if (first is LabelNode) return first
+    val result = LabelNode()
+    instructions.insertBefore(first, result)
+    return result
+}
+
+fun MethodNode.getOrCreateEndingLabel(): LabelNode {
+    val last = instructions.last
+    if (last is LabelNode) return last
+    val result = LabelNode()
+    instructions.insert(last, result)
+    return result
 }
 
 /* We cannot extend a record if there is STORE instruction or a control-flow merge.
@@ -1392,9 +1437,11 @@ private fun LocalVariableNode.extendRecordIfPossible(
     method: MethodNode,
     suspensionPoints: List<LabelNode>,
     endLabel: LabelNode,
-    liveness: List<VariableLivenessFrame>
+    liveness: List<VariableLivenessFrame>,
+    nextSuspensionPointIndex: Int
 ): Boolean {
-    val nextSuspensionPointLabel = suspensionPoints.find { it in InsnSequence(end, endLabel) } ?: endLabel
+    val nextSuspensionPointLabel =
+        suspensionPoints.drop(nextSuspensionPointIndex).find { it in InsnSequence(end, endLabel) } ?: endLabel
 
     var current: AbstractInsnNode? = end
     var index = method.instructions.indexOf(current)

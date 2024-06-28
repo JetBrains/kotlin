@@ -1,0 +1,50 @@
+library {
+  // module name: <type_annotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnoBinary
+    // class name: test/AnnoRuntime
+    // class name: test/AnnoSource
+
+    // signature: test/AnnoBinary|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.BINARY)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoBinary : kotlin/Annotation {
+
+      // signature: test/AnnoBinary.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoRuntime|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.RUNTIME)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoRuntime : kotlin/Annotation {
+
+      // signature: test/AnnoRuntime.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoSource|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.TYPE])
+    public final annotation class test/AnnoSource : kotlin/Annotation {
+
+      // signature: test/AnnoSource.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/withBinaryAnnotation|withBinaryAnnotation(kotlin.Int){}[0]
+      public final fun withBinaryAnnotation(id: @test/AnnoBinary kotlin/Int): kotlin/Unit
+
+      // signature: test/withRuntimeAnnotation|withRuntimeAnnotation(kotlin.Int){}[0]
+      public final fun withRuntimeAnnotation(id: @test/AnnoRuntime kotlin/Int): kotlin/Unit
+
+      // signature: test/withSourceAnnotation|withSourceAnnotation(kotlin.Int){}[0]
+      public final fun withSourceAnnotation(id: kotlin/Int): kotlin/Unit
+    }
+  }
+}

@@ -9,12 +9,11 @@ import kotlin.test.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.nanoseconds
 
-@OptIn(ExperimentalTime::class)
 class TimeMarkJVMTest {
 
     @Test
     fun longDurationElapsed() {
-        TimeMarkTest().testLongDisplacement(TimeSource.Monotonic, { waitDuration -> Thread.sleep((waitDuration * 1.1).inWholeMilliseconds) })
+        TimeMarkTest().testLongAdjustmentElapsedPrecision(TimeSource.Monotonic, { waitDuration -> Thread.sleep((waitDuration * 1.1).inWholeMilliseconds) })
     }
 
     @Test

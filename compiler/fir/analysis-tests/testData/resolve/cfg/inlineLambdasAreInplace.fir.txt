@@ -25,7 +25,7 @@ FILE: inlineLambdasAreInplace.kt
     }
     public final fun testGeneric(): R|kotlin/Unit| {
         lvar x: R|kotlin/String?| = String()
-        lval lambda: R|() -> kotlin/Unit| = R|/any|<R|() -> kotlin/Unit|>(<L> = any@fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
+        lval lambda: R|() -> kotlin/Unit| = R|/any|<R|() -> kotlin/Unit|>(<L> = any@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/x| = Null(null)
         }
         )

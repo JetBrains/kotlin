@@ -17,7 +17,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 
 android {
+
+    namespace "com.example.dagger.kotlin"
+
     compileSdkVersion 23
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId "com.example.dagger.kotlin"
@@ -51,4 +58,8 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.9'
     kapt 'javax.annotation:javax.annotation-api:1.3.2'
     compileOnly 'org.glassfish:javax.annotation:10.0-b28'
+}
+
+kotlin {
+    jvmToolchain(8)
 }

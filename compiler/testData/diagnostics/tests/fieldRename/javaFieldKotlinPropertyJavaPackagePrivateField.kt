@@ -1,4 +1,4 @@
-// FILE: A.java
+// FILE: base/A.java
 
 package base;
 

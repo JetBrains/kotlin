@@ -1,1 +1,0 @@
-typealias A = 10/* NonReanalyzableDeclarationStructureElement */

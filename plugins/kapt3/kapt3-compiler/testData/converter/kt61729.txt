@@ -1,0 +1,63 @@
+package a;
+
+@b.RestrictTo(value = {b.RestrictTo.Scope.LIBRARY_GROUP_PREFIX})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class a/LinkifyMask : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface LinkifyMask {
+}
+
+////////////////////
+
+package a;
+
+/**
+ * public final object a/SphinxLinkify : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: addLinks(I)V
+ *   private final fun addLinks(mask: kotlin/Int): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class SphinxLinkify {
+    @org.jetbrains.annotations.NotNull()
+    public static final a.SphinxLinkify INSTANCE = null;
+
+    private SphinxLinkify() {
+        super();
+    }
+
+    private final void addLinks(@LinkifyMask()
+    int mask) {
+    }
+}
+
+////////////////////
+
+package b;
+
+public @interface RestrictTo {
+
+    Scope[] value();
+
+    public static enum Scope {
+        /*public static final*/ LIBRARY_GROUP_PREFIX /* = new Scope() */;
+
+        private Scope() {
+            super();
+        }
+    }
+}

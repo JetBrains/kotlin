@@ -161,7 +161,8 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     if (get(fileExtension) in arrayOf("gradle.kts", "init.gradle.kts", "settings.gradle.kts")) {
         isStandalone(false)
     }
-    filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
+    @Suppress("DEPRECATION_ERROR")
+    fileNamePattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
     displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }
 

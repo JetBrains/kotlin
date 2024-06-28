@@ -1,5 +1,5 @@
-// !LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
-// !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
+// LANGUAGE: -ProhibitSuperCallsFromPublicInline +QualifiedSupertypeMayBeExtendedByOtherSupertype
+// DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 // FILE: main.kt
 open class AndroidTargetConfigurator :

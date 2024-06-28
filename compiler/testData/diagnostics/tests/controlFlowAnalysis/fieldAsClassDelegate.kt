@@ -1,5 +1,6 @@
-// See KT-15566
+// WITH_STDLIB
 // NI_EXPECTED_FILE
+// ISSUE: KT-15566, KT-56489
 
 import DefaultHttpClient.client
 
@@ -21,11 +22,6 @@ object DefaultHttpClientWithFun : HttpClient by fClient() {
 }
 
 private fun fClient() = HttpClientImpl()
-
-private fun <T> lazy(init: () -> T): kotlin.<!UNRESOLVED_REFERENCE!>Lazy<!><T> {
-    init()
-    null!!
-}
 
 object DefaultHttpClientWithBy : HttpClient by client {
     val client by lazy { HttpClientImpl() }

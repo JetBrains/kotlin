@@ -62,7 +62,7 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
 
     val deprecatedKonanTargetConstants = KonanTarget.predefinedTargets.values.filter { KonanTarget.deprecatedTargets.contains(it) }
         .joinToString("\n") {
-            "\n@Deprecated(DEPRECATED_TARGET_MESSAGE)\n" + it.generateKonanTargetVal()
+            "\n@Deprecated(DEPRECATED_TARGET_MESSAGE, level = DeprecationLevel.ERROR)\n" + it.generateKonanTargetVal()
         }.indented(4)
 
     val code = listOf(
@@ -79,7 +79,7 @@ private fun generateAbstractKotlinArtifactsExtensionImplementation() {
         "}"
     ).joinToString(separator = "\n\n")
 
-    val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
+    val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
 }
 

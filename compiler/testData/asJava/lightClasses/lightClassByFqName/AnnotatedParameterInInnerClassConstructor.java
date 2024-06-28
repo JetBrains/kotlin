@@ -2,10 +2,10 @@ public final class AnnotatedParameterInInnerClassConstructor /* test.AnnotatedPa
   public  AnnotatedParameterInInnerClassConstructor();//  .ctor()
 
   public final class Inner /* test.AnnotatedParameterInInnerClassConstructor.Inner*/ {
-    public  Inner(@org.jetbrains.annotations.NotNull() @test.Anno(x = "a") java.lang.String, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") java.lang.String);//  .ctor(java.lang.String, java.lang.String)
+    public  Inner(@org.jetbrains.annotations.NotNull() @test.Anno(x = "a") @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String)
   }
 
   public final class InnerGeneric /* test.AnnotatedParameterInInnerClassConstructor.InnerGeneric*/<T>  {
-    public  InnerGeneric(@test.Anno(x = "a") T, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") java.lang.String);//  .ctor(T, java.lang.String)
+    public  InnerGeneric(@test.Anno(x = "a") T, @org.jetbrains.annotations.NotNull() @test.Anno(x = "b") @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(T, @org.jetbrains.annotations.NotNull() java.lang.String)
   }
 }

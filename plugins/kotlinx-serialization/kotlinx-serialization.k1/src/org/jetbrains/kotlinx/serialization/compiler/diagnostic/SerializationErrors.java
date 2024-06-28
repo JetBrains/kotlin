@@ -36,8 +36,11 @@ public interface SerializationErrors {
     DiagnosticFactory3<PsiElement, KotlinType, String, String> DUPLICATE_SERIAL_NAME_ENUM = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_NOT_FOUND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> SERIALIZER_NULLABILITY_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> ABSTRACT_SERIALIZER_TYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, KotlinType> SERIALIZER_TYPE_INCOMPATIBLE = DiagnosticFactory3.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> LOCAL_SERIALIZER_USAGE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
@@ -54,10 +57,18 @@ public interface SerializationErrors {
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> META_SERIALIZABLE_NOT_APPLICABLE = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory1<PsiElement, KotlinType> EXTERNAL_SERIALIZER_USELESS = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_NOT_SERIALIZABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_IN_ANOTHER_MODULE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory3<PsiElement, KotlinType, KotlinType, String> EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR = DiagnosticFactory3.create(ERROR);
+
+
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_USELESS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC = DiagnosticFactory0.create(ERROR);
+
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

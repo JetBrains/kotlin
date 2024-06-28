@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
 import org.jetbrains.kotlin.name.Name
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
+
+class ConeSyntaxDiagnostic(override val reason: String) : ConeDiagnostic
 
 class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
     override val reason: String get() = "Strange annotated expression: $text"
@@ -24,6 +27,10 @@ class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSour
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
 }
 
+class ConeMultipleLabelsAreForbidden(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
+    override val reason: String get() = "Multiple labels per statement are forbidden"
+}
+
 class ConeCannotInferTypeParameterType(
     val typeParameter: FirTypeParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"
@@ -32,6 +39,15 @@ class ConeCannotInferTypeParameterType(
 class ConeCannotInferValueParameterType(
     val valueParameter: FirValueParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${valueParameter.name}"
+) : ConeDiagnostic
+
+class ConeCannotInferReceiverParameterType(
+    override val reason: String = "Cannot infer type for receiver parameter"
+) : ConeDiagnostic
+
+class ConeTypeVariableTypeIsNotInferred(
+    val typeVariableType: ConeTypeVariableType,
+    override val reason: String = "Type for ${typeVariableType.typeConstructor.debugName} is not inferred"
 ) : ConeDiagnostic
 
 class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
@@ -63,8 +79,19 @@ class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDi
         get() = "There are multiple function kinds for functional type ref"
 }
 
+object ConeUnsupportedClassLiteralsWithEmptyLhs : ConeDiagnostic {
+    override val reason: String get() = "No receiver in class literal"
+}
+
+object ConeNoConstructorError : ConeDiagnostic {
+    override val reason: String get() = "This type does not have a constructor"
+}
+
+object ConeContractShouldBeFirstStatement : ConeDiagnostic {
+    override val reason: String get() = "Contract should be the first statement."
+}
+
 enum class DiagnosticKind {
-    Syntax,
     ExpressionExpected,
     NotLoopLabel,
     JumpOutsideLoop,
@@ -72,6 +99,8 @@ enum class DiagnosticKind {
 
     ReturnNotAllowed,
     UnresolvedLabel,
+    AmbiguousLabel,
+    LabelNameClash,
     NotAFunctionLabel,
     NoThis,
     IllegalConstExpression,

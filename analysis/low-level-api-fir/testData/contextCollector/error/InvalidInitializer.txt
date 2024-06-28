@@ -1,0 +1,32 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] InvalidInitializer.kt
+    public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val a: <ERROR TYPE REF: Symbol not found for A.B.C>
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Symbol not found for A.B.C>
+    public? final? [ResolvedTo(RAW_FIR)] val b: A.B
+        public? [ResolvedTo(RAW_FIR)] get(): A.B

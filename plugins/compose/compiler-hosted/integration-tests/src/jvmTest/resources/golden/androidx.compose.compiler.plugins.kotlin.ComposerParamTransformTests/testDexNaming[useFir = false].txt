@@ -1,0 +1,38 @@
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+val myProperty: () -> Unit @Composable get() {
+    return {  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val myProperty: Function0<Unit>
+  @Composable @JvmName(name = "getMyProperty")
+  get() {
+    sourceInformationMarkerStart(%composer, <>, "C:Test.kt#2487m")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = {
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0
+  }

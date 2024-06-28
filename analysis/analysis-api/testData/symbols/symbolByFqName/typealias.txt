@@ -1,30 +1,35 @@
-KtTypeAliasSymbol:
-  annotationsList: []
-  classIdIfNonLocal: kotlin/DeepRecursiveFunctionBlock
-  expandedType: KtFunctionalType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
+KaTypeAliasSymbol:
+  annotations: []
+  classId: kotlin/DeepRecursiveFunctionBlock
+  compilerVisibility: Private
+  expandedType: KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
           *
           *
         ]
         type: kotlin/DeepRecursiveScope<*, *>
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: []
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
         type: kotlin/Any?
     ]
     type: @ExtensionFunctionType kotlin/coroutines/SuspendFunction2<kotlin/DeepRecursiveScope<*, *>, kotlin/Any?, kotlin/Any?>
+  isActual: false
+  isExpect: false
+  location: TOP_LEVEL
+  modality: FINAL
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Private
-  getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  visibility: PRIVATE
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "Library kotlin-stdlib"
   deprecationStatus: null

@@ -1,3 +1,4 @@
 /test.kt:26:9: warning: ambiguous access to property 'first.KtNodeTypes.SOME' is deprecated because similar enum entry 'second.SomeEnum.SOME' is available. Please add explicit named import or use fully qualified name
         SOME -> true
-        ^
+        ^^^^
+

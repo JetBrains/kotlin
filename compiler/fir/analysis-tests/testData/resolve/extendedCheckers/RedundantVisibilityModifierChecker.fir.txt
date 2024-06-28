@@ -2,7 +2,7 @@ FILE: RedundantVisibilityModifierChecker.kt
     public final fun f(): R|kotlin/Unit| {
         lvar baz: R|kotlin/Int| = Int(0)
         local final class LocalClass : R|kotlin/Any| {
-            public constructor(): R|LocalClass| {
+            public constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -12,7 +12,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|<local>/foo| = Int(1)
+        R|<local>/LocalClass.LocalClass|().R|<local>/foo| = Int(1)
     }
     internal final inline fun internal(): R|kotlin/Unit| {
         R|/f|()
@@ -44,7 +44,7 @@ FILE: RedundantVisibilityModifierChecker.kt
         public final fun <T1, T2> foo2(): R|kotlin/Unit| {
         }
 
-        internal final inner class B<T, T2, T1, T2 : R|T1|> : R|kotlin/Any| {
+        internal final inner class B<T, T2, Outer(T1), Outer(T2) : R|T1|> : R|kotlin/Any| {
             public Foo2<T1, T2>.constructor<T, T2>(): R|Foo2.B<T, T2, T1, T2>| {
                 super<R|kotlin/Any|>()
             }

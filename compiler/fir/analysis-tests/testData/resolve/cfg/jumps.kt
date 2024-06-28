@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun test_1(x: Int?) {
     val y = if (x == null) {
         throw Exception()

@@ -42,7 +42,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
         return new KotlinParameterStubImpl(
                 (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue()
+                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue(), null
         );
     }
 
@@ -54,6 +54,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         dataStream.writeBoolean(stub.hasDefaultValue());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
+        dataStream.writeName(stub instanceof KotlinParameterStubImpl ? ((KotlinParameterStubImpl) stub).getFunctionTypeParameterName() : null);
     }
 
     @NotNull
@@ -65,7 +66,8 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqName = dataStream.readName();
 
-        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
+        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue,
+                                           dataStream.readNameString());
     }
 
     @Override

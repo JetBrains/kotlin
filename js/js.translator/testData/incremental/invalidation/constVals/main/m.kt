@@ -1,12 +1,22 @@
 fun box(stepId: Int): String {
+    val q: Any = qux()
+    val b: Any = bar()
     when (stepId) {
         0 -> {
-            if (qux() != "FOO") return "Fail qux"
-            if (bar() != "FOO") return "Fail bar"
+            if (q != "FOO") return "Fail qux"
+            if (b != "FOO") return "Fail bar"
         }
         1 -> {
-            if (qux() != "BAR") return "Fail qux"
-            if (bar() != "BAR") return "Fail bar"
+            if (q != "BAR") return "Fail qux"
+            if (b != "BAR") return "Fail bar"
+        }
+        2 -> {
+            if (q != 1) return "Fail qux"
+            if (b != 1) return "Fail bar"
+        }
+        3 -> {
+            if (q != 3) return "Fail qux"
+            if (b != 3) return "Fail bar"
         }
         else -> return "Unknown"
     }

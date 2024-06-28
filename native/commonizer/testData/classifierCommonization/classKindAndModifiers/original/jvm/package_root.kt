@@ -145,3 +145,5 @@ class KK2(wrapped: JJ) : JJ by wrapped
 
 data class LL1(val value: String)
 class LL2(val value: String)
+
+external class ExternalClass

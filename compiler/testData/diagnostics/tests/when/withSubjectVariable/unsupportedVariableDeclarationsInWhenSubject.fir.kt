@@ -1,5 +1,5 @@
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun foo(): Any = 42
 fun String.bar(): Any = 42
@@ -12,7 +12,7 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
-        <!EXPECTED_CONDITION!>is String<!> -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!EXPECTED_CONDITION, USELESS_IS_CHECK!>is String<!> -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 

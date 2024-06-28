@@ -43,7 +43,7 @@ import kotlin.script.experimental.jvm.util.SnippetsHistory
 
 open class ReplCodeAnalyzerBase(
     environment: KotlinCoreEnvironment,
-    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(),
+    val trace: BindingTraceContext = NoScopeRecordCliBindingTrace(environment.project),
     implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null
 ) {
     protected val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory

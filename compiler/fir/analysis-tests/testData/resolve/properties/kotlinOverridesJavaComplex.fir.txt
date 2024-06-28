@@ -32,7 +32,7 @@ FILE: Test.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun getTypeParameters(): R|kotlin/collections/List<kotlin/String>| {
+        public final override fun getTypeParameters(): R|kotlin/collections/List<kotlin/String>| {
             ^getTypeParameters R|/listOf|()
         }
 

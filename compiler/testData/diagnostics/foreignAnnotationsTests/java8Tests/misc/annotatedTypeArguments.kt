@@ -1,11 +1,17 @@
 // FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
+
+// FILE: P.java
+interface P<X, Y> {}
+
+// FILE: L.java
+interface L<T> {}
+
+// FILE: S.java
+interface S<T> {}
+
 // FILE: AnnotatedTypeArguments.java
 import org.checkerframework.checker.nullness.qual.*;
-
-interface P<X, Y> {}
-interface L<T> {}
-interface S<T> {}
 
 class AnnotatedTypeArguments {
 

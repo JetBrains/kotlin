@@ -1,0 +1,138 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: inlineParameter
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: true
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: crossinlineParameter
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: true
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: noinlineParameter
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaFunctionType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Int
+        ]
+        type: kotlin/Function0<kotlin/Int>
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
+      getContainingJvmClassName: ParameterInliningKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(parameterInlining.kt)
+  getContainingJvmClassName: ParameterInliningKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

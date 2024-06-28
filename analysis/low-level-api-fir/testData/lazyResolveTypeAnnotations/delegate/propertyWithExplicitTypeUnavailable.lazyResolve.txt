@@ -1,0 +1,524 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(TYPES)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
+        public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
+        public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] class Delegate : ReadWriteProperty<Any?, List<List<Int>>> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>> { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] var propertyToResolve: <implicit>by LAZY_EXPRESSION
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
+        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^getValue IntegerLiteral(1)
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
+        }
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
+                private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^getValue IntegerLiteral(1)
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
+        }
+        public [ResolvedTo(CONSTANT_EVALUATION)] set([ResolvedTo(CONSTANT_EVALUATION)] <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getValue([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^getValue IntegerLiteral(1)
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
+        }
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(STATUS)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getValue([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^getValue IntegerLiteral(1)
+        }
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] var propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
+        }
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithExplicitTypeUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Delegate : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|Delegate.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val prop: R|kotlin/Int| = Int(0)
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun getValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^getValue Int(1)
+        }
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun setValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(BODY_RESOLVE)] value: R|@R|Anno|(position = <strcat>(String(setValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(setValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(setValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] var propertyToResolve: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue|(Null(null), ::R|/propertyToResolve|)
+        }
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|@R|Anno|(position = <strcat>(String(getValue type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(getValue nested nested type ref ), this@R|/Delegate.Companion|.R|/Delegate.Companion.prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue|(Null(null), ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }

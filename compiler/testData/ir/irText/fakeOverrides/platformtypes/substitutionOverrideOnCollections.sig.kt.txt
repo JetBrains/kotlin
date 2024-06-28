@@ -1,0 +1,297 @@
+// MODULE: separate
+// MODULE: main
+// FILE: 1.kt
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1<Int> {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.collections.MutableList<kotlin.Int?>?
+  //   Public signature: /A.bar|-1114015493624990905[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Int?>?
+  /* fake */ override fun bar(): MutableList<Int?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar2(){}java.util.Queue<kotlin.Int?>?
+  //   Public signature: /A.bar2|7437847745263997963[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.Int?>?
+  /* fake */ override fun bar2(): Queue<Int?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar3(){}kotlin.collections.MutableSet<kotlin.Int?>?
+  //   Public signature: /A.bar3|-4205007675771926308[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.Int?>?
+  /* fake */ override fun bar3(): MutableSet<Int?>?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.collections.MutableList<kotlin.Int?>?){}
+  //   Public signature: /A.foo|-3600187289102144184[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Int?>?){}
+  /* fake */ override fun foo(a: MutableList<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(java.util.Queue<kotlin.Int?>?){}
+  //   Public signature: /A.foo2|-7461544553437679205[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.Int?>?){}
+  /* fake */ override fun foo2(b: Queue<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo3(kotlin.collections.MutableSet<kotlin.Int?>?){}
+  //   Public signature: /A.foo3|-3648065388027807989[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.Int?>?){}
+  /* fake */ override fun foo3(c: MutableSet<Int?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1<String?> {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.collections.MutableList<kotlin.String?>?
+  //   Public signature: /B.bar|-532532610006281669[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.String?>?
+  /* fake */ override fun bar(): MutableList<String?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar2(){}java.util.Queue<kotlin.String?>?
+  //   Public signature: /B.bar2|4604700617113474853[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.String?>?
+  /* fake */ override fun bar2(): Queue<String?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar3(){}kotlin.collections.MutableSet<kotlin.String?>?
+  //   Public signature: /B.bar3|6283002066374424935[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.String?>?
+  /* fake */ override fun bar3(): MutableSet<String?>?
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.collections.MutableList<kotlin.String?>?){}
+  //   Public signature: /B.foo|-8611909410610206747[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.String?>?){}
+  /* fake */ override fun foo(a: MutableList<String?>?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(java.util.Queue<kotlin.String?>?){}
+  //   Public signature: /B.foo2|-5108692108404775133[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.String?>?){}
+  /* fake */ override fun foo2(b: Queue<String?>?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo3(kotlin.collections.MutableSet<kotlin.String?>?){}
+  //   Public signature: /B.foo3|8404233053073861266[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.String?>?){}
+  /* fake */ override fun foo3(c: MutableSet<String?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java2<Any> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  //   Public signature: /C.bar|2549972836650137141[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  /* fake */ override fun bar(): MutableList<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar2(){}java.util.Queue<kotlin.Any?>?
+  //   Public signature: /C.bar2|3490070546405055194[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.Any?>?
+  /* fake */ override fun bar2(): Queue<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar3(){}kotlin.collections.MutableSet<kotlin.Any?>?
+  //   Public signature: /C.bar3|6297049454789660059[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.Any?>?
+  /* fake */ override fun bar3(): MutableSet<Any?>?
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /C.foo|1823979372554704958[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  /* fake */ override fun foo(a: MutableList<Any?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(java.util.Queue<kotlin.Any?>?){}
+  //   Public signature: /C.foo2|-767859885767539493[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.Any?>?){}
+  /* fake */ override fun foo2(b: Queue<Any?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo3(kotlin.collections.MutableSet<kotlin.Any?>?){}
+  //   Public signature: /C.foo3|6303247791483976528[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.Any?>?){}
+  /* fake */ override fun foo3(c: MutableSet<Any?>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1<Int> {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar2(){}java.util.Queue<kotlin.Int?>?
+  //   Public signature: /D.bar2|7437847745263997963[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.Int?>?
+  /* fake */ override fun bar2(): Queue<Int?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar3(){}kotlin.collections.MutableSet<kotlin.Int?>?
+  //   Public signature: /D.bar3|-4205007675771926308[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.Int?>?
+  /* fake */ override fun bar3(): MutableSet<Int?>?
+
+  // CHECK:
+  //   Mangled name: D#foo2(java.util.Queue<kotlin.Int?>?){}
+  //   Public signature: /D.foo2|-7461544553437679205[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.Int?>?){}
+  /* fake */ override fun foo2(b: Queue<Int?>?): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo3(kotlin.collections.MutableSet<kotlin.Int?>?){}
+  //   Public signature: /D.foo3|-3648065388027807989[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.Int?>?){}
+  /* fake */ override fun foo3(c: MutableSet<Int?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}kotlin.collections.MutableList<kotlin.Int>
+  //   Public signature: /D.bar|5423197504340908737[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Int>
+  override fun bar(): MutableList<Int>
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.collections.MutableList<kotlin.Int>){}
+  //   Public signature: /D.foo|-316185058744300957[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Int>){}
+  override fun foo(a: MutableList<Int>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java1<String?> {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#bar(){}kotlin.collections.MutableList<kotlin.String?>?
+  //   Public signature: /E.bar|-532532610006281669[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.String?>?
+  /* fake */ override fun bar(): MutableList<String?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#bar2(){}java.util.Queue<kotlin.String?>?
+  //   Public signature: /E.bar2|4604700617113474853[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.String?>?
+  /* fake */ override fun bar2(): Queue<String?>?
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.collections.MutableList<kotlin.String?>?){}
+  //   Public signature: /E.foo|-8611909410610206747[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.String?>?){}
+  /* fake */ override fun foo(a: MutableList<String?>?): Unit
+
+  // CHECK:
+  //   Mangled name: E#foo2(java.util.Queue<kotlin.String?>?){}
+  //   Public signature: /E.foo2|-5108692108404775133[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.String?>?){}
+  /* fake */ override fun foo2(b: Queue<String?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#bar3(){}kotlin.collections.MutableSet<kotlin.String>
+  //   Public signature: /E.bar3|1204424212601169819[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.String>
+  override fun bar3(): MutableSet<String>
+
+  // CHECK:
+  //   Mangled name: E#foo3(kotlin.collections.MutableSet<kotlin.String?>){}
+  //   Public signature: /E.foo3|3488251337363543115[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.String?>){}
+  override fun foo3(c: MutableSet<String?>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java1<Any> {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  //   Public signature: /F.bar|2549972836650137141[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<kotlin.Any?>?
+  /* fake */ override fun bar(): MutableList<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#bar3(){}kotlin.collections.MutableSet<kotlin.Any?>?
+  //   Public signature: /F.bar3|6297049454789660059[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableSet<kotlin.Any?>?
+  /* fake */ override fun bar3(): MutableSet<Any?>?
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /F.foo|1823979372554704958[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<kotlin.Any?>?){}
+  /* fake */ override fun foo(a: MutableList<Any?>?): Unit
+
+  // CHECK:
+  //   Mangled name: F#foo3(kotlin.collections.MutableSet<kotlin.Any?>?){}
+  //   Public signature: /F.foo3|6303247791483976528[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableSet<kotlin.Any?>?){}
+  /* fake */ override fun foo3(c: MutableSet<Any?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#bar2(){}java.util.Queue<kotlin.Any>
+  //   Public signature: /F.bar2|-8546892777182873351[0]
+  //   Public signature debug description: bar2(){}java.util.Queue<kotlin.Any>
+  override fun bar2(): Queue<Any>
+
+  // CHECK:
+  //   Mangled name: F#foo2(java.util.Queue<kotlin.Any>?){}
+  //   Public signature: /F.foo2|-3122019287109104582[0]
+  //   Public signature debug description: foo2(java.util.Queue<kotlin.Any>?){}
+  override fun foo2(b: Queue<Any>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F){}
+//   Public signature: /test|-4390352378432875580[0]
+//   Public signature debug description: test(A;B;C;D;E;F){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F): Unit

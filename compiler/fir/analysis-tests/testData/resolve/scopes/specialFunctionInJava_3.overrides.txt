@@ -1,8 +1,8 @@
 D:
-  [Synthetic]: public open val x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
-    [Synthetic]: public open val x: R|kotlin/Int| from Java enhancement scope for /B [id: 1]
+  [JavaProperty]: public open val x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+    [JavaProperty]: public open val x: R|kotlin/Int| from Java enhancement scope for /B [id: 1]
       [Source]: public open val x: R|kotlin/Int| from Use site scope of /A [id: 2]
-  [Synthetic]: public open val y: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+  [JavaProperty]: public open val y: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
     [Source]: public open val y: R|kotlin/Int| from Java enhancement scope for /B [id: 1]
       [Source]: public open val y: R|kotlin/Int| from Use site scope of /A [id: 1]
 

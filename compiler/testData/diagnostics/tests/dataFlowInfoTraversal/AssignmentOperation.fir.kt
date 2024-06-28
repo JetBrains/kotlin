@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun bar1(x: Number, y: Int) {
     var yy = y

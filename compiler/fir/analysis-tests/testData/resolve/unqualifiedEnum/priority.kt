@@ -1,3 +1,4 @@
+// LANGUAGE: +ContextSensitiveEnumResolutionInWhen
 // FILE: first.kt
 
 package first
@@ -22,12 +23,12 @@ enum class Second {
 val ONE = Second.THREE
 
 fun foo(f: First) = <!NO_ELSE_IN_WHEN!>when<!> (f) {
-    <!INCOMPATIBLE_TYPES!>ONE<!> -> 1
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>ONE<!> -> 1
     TWO -> 2
 }
 
 fun bar(s: Second) = <!NO_ELSE_IN_WHEN!>when<!> (s) {
-    <!INCOMPATIBLE_TYPES!>THREE<!> -> 3
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>THREE<!> -> 3
     FOUR -> 4
 }
 

@@ -1,9 +1,9 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 fun <T> g(x: T) = 1
 fun h(x: () -> Unit) = 1
 
 fun foo() {
     <!UNRESOLVED_REFERENCE!>f<!>(::<!SYNTAX!><!>)
-    <!INAPPLICABLE_CANDIDATE!>g<!>(::<!SYNTAX!><!>)
-    <!INAPPLICABLE_CANDIDATE!>h<!>(::<!SYNTAX!><!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>g<!>(::<!SYNTAX!><!>)
+    h(::<!SYNTAX!><!>)
 }

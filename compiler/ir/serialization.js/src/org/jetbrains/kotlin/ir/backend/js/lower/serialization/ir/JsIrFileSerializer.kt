@@ -9,39 +9,34 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.declarations.IrFile
+
+fun interface JsIrFileMetadataFactory {
+    fun createJsIrFileMetadata(irFile: IrFile): JsIrFileMetadata
+}
+
+object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
+    override fun createJsIrFileMetadata(irFile: IrFile) = JsIrFileMetadata(emptyList())
+}
 
 class JsIrFileSerializer(
-    messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     compatibilityMode: CompatibilityMode,
-    skipExpects: Boolean,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>
+    sourceBaseDirs: Collection<String>,
+    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
 ) : IrFileSerializer(
-    messageLogger,
     declarationTable,
-    expectDescriptorToSymbol,
-    compatibilityMode,
-    languageVersionSettings,
+    compatibilityMode = compatibilityMode,
+    languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    skipExpects = skipExpects,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs
 ) {
-    companion object {
-        private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
-    }
-
-    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
-        return node.annotations.hasAnnotation(JS_EXPORT_FQN)
-    }
+    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isExportedDeclaration()
+    override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isExportIgnoreDeclaration()
+    override fun backendSpecificMetadata(irFile: IrFile) = jsIrFileMetadataFactory.createJsIrFileMetadata(irFile)
 }

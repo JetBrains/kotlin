@@ -1,6 +1,6 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -45,8 +45,8 @@ fun intersectingInfo2(x: Any?, y: Any?) {
     // of them is absent in each arg of "||"-operator, so they *shouldn't* lead to smartcast
 
     if ((isString(x) && !notIsInt(x) && y is String) ||
-        (!notIsString(x) && isString(y) && y is Int) ||
-        (x is String && !notIsInt(y) && x is Int)) {
+        (!notIsString(x) && isString(y) && <!USELESS_IS_CHECK!>y is Int<!>) ||
+        (x is String && !notIsInt(y) && <!USELESS_IS_CHECK!>x is Int<!>)) {
         x.length
         x.<!UNRESOLVED_REFERENCE!>inc<!>()
         y.<!UNRESOLVED_REFERENCE!>length<!>

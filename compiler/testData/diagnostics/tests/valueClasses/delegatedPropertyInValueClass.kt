@@ -1,5 +1,5 @@
-// !SKIP_JAVAC
-// !LANGUAGE: +InlineClasses
+// SKIP_JAVAC
+// LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
 
 package kotlin.jvm

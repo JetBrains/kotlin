@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 
-interface KotlinLibraryResolver<L: KotlinLibrary> {
+interface KotlinLibraryResolver<L : KotlinLibrary> {
 
     val searchPathResolver: SearchPathResolver<L>
 
@@ -17,7 +17,7 @@ interface KotlinLibraryResolver<L: KotlinLibrary> {
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
-        noEndorsedLibs: Boolean = false
+        noEndorsedLibs: Boolean = false,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             unresolvedLibraries,
@@ -30,7 +30,7 @@ interface KotlinLibraryResolver<L: KotlinLibrary> {
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean = false,
         noDefaultLibs: Boolean = false,
-        noEndorsedLibs: Boolean = false
+        noEndorsedLibs: Boolean = false,
     ): List<KotlinLibrary>
 
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult

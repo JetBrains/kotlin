@@ -13,7 +13,7 @@ FILE: beyoundCalls.kt
     }
     public final fun foo(): R|kotlin/Unit| {
         lval x: R|(kotlin/String) -> kotlin/Int| = ::R|/bar|
-        lval y: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Int>| = ::R|/bar|
+        lval y: <ERROR TYPE REF: Ambiguity: bar, [/bar, /bar]> = ::<Ambiguity: bar, [/bar, /bar]>#
         lval z: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Int>| = ::R|/baz|
         lval w: R|(kotlin/String) -> kotlin/Int| = ::R|/foobaz<kotlin/String, kotlin/Int>|
         ::R|/baz|

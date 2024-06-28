@@ -2,16 +2,16 @@ FILE: test.kt
     public abstract interface StringSet : R|kotlin/collections/MutableSet<kotlin/String>| {
     }
     public final fun foo(arg: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval x: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = Q|Producer|.R|/Producer.foo|()
+        lval x: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, Raw type java/util/ArrayList<*>>| = Q|Producer|.R|/Producer.foo*s|()
         when () {
             (R|<local>/x| is R|kotlin/collections/Set<*>|) ->  {
-                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = R|<local>/x|
+                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, Raw type java/util/ArrayList<*>>| = R|<local>/x|
             }
         }
 
         when () {
             (R|<local>/x| is R|kotlin/collections/MutableSet<*>|) ->  {
-                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, @EnhancedNullability java/util/ArrayList<*>>| = R|<local>/x|
+                lval y: R|ft<Raw type java/util/ArrayList<kotlin/Any!>, Raw type java/util/ArrayList<*>>| = R|<local>/x|
             }
         }
 

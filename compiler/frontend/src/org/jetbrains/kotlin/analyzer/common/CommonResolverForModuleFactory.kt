@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.analyzer.common
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -147,6 +146,7 @@ class CommonResolverForModuleFactory(
             targetEnvironment: TargetEnvironment,
             capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
             dependenciesContainer: CommonDependenciesContainer? = null,
+            explicitProjectContext: ProjectContext? = null,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
         ): AnalysisResult {
             val moduleInfo = SourceModuleInfo(
@@ -174,7 +174,7 @@ class CommonResolverForModuleFactory(
                 dependenciesContainer
             )
 
-            val projectContext = ProjectContext(project, "metadata serializer")
+            val projectContext = explicitProjectContext ?: ProjectContext(project, "metadata serializer")
 
             val resolver = ResolverForSingleModuleProject<ModuleInfo>(
                 "sources for metadata serializer",
@@ -276,8 +276,7 @@ private fun createContainerToResolveCommonCode(
         configureCommonSpecificComponents()
         useInstance(metadataPartProvider)
 
-        val metadataFinderFactory = ServiceManager.getService(
-            moduleContext.project,
+        val metadataFinderFactory = moduleContext.project.getService(
             MetadataFinderFactory::class.java
         )
             ?: error("No MetadataFinderFactory in project")

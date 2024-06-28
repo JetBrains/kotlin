@@ -1,5 +1,5 @@
-// !MARK_DYNAMIC_CALLS
-// !DIAGNOSTICS:-USELESS_CAST
+// MARK_DYNAMIC_CALLS
+// DIAGNOSTICS:-USELESS_CAST
 
 fun test(d: dynamic) {
     d.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!>
@@ -13,7 +13,7 @@ fun test(d: dynamic) {
 
     }
     run {
-        d!!.<!UNRESOLVED_REFERENCE!>onAnyVar<!> = 1
+        d!!.<!DEBUG_INFO_DYNAMIC!>onAnyVar<!> = 1
     }
 
     d.<!DEBUG_INFO_DYNAMIC!>onNullableAnyVar<!> = 1
@@ -22,17 +22,17 @@ fun test(d: dynamic) {
 
     d.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
-    d?.<!UNRESOLVED_REFERENCE!>onDynamicVar<!> = 1
+    d?.<!DEBUG_INFO_DYNAMIC!>onDynamicVar<!> = 1
 
     (d as String).onStringVar
     (d as Any).onAnyVar
     (d as Any?).onNullableAnyVar
-    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!>
+    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVar<!>
 
     (d as String).onStringVar = 1
     (d as Any).onAnyVar = 1
     (d as Any?).onNullableAnyVar = 1
-    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVar<!> = 1
+    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVar<!> = 1
 }
 
 var Any.onAnyVar: Int

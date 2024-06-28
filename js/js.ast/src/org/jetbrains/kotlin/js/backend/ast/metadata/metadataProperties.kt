@@ -77,7 +77,13 @@ var JsFunction.functionDescriptor: FunctionDescriptor? by MetadataProperty(defau
  */
 var JsReturn.returnTarget: FunctionDescriptor? by MetadataProperty(default = null)
 
+var HasMetadata.constant: Boolean by MetadataProperty(default = false)
 var HasMetadata.synthetic: Boolean by MetadataProperty(default = false)
+
+var HasMetadata.isInlineClassBoxing: Boolean by MetadataProperty(default = false)
+var HasMetadata.isInlineClassUnboxing: Boolean by MetadataProperty(default = false)
+
+var HasMetadata.isGeneratorFunction: Boolean by MetadataProperty(default = false)
 
 var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEffectKind.AFFECTS_STATE)
 

@@ -1,0 +1,17 @@
+Before shortening: fun usage(
+            first: test.OuterClass.Nested,
+            second: test.OuterClass.NamedCompanion.Nested,
+        ) {}
+with default settings:
+[type] test.OuterClass
+[type] test.OuterClass.NamedCompanion.Nested
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] test.OuterClass
+[type] test.OuterClass.NamedCompanion.Nested
+with SHORTEN_AND_IMPORT:
+[type] test.OuterClass
+[type] test.OuterClass.NamedCompanion.Nested
+with SHORTEN_AND_STAR_IMPORT:
+[type] test.OuterClass
+[type] test.OuterClass.NamedCompanion.Nested

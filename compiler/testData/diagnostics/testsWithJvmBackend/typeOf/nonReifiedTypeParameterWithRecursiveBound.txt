@@ -1,3 +1,0 @@
-package
-
-public fun </*0*/ T : kotlin.Comparable<T>> foo(): kotlin.Unit

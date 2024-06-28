@@ -16,10 +16,12 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object RangeTo : IntrinsicMethod() {
     override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+    ): IntrinsicFunction {
         val argType = mapRangeTypeToPrimitiveType(signature.returnType)
-        return object : IrIntrinsicFunction(expression, signature, classCodegen, listOf(argType) + signature.valueParameters.map { argType }) {
+        return object : IntrinsicFunction(
+            expression, signature, classCodegen, listOf(argType) + signature.valueParameters.map { argType }
+        ) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokespecial(
                     signature.returnType.internalName,
@@ -33,10 +35,10 @@ object RangeTo : IntrinsicMethod() {
                 v: InstructionAdapter,
                 codegen: ExpressionCodegen,
                 data: BlockInfo,
-                expression: IrFunctionAccessExpression
+                expression: IrFunctionAccessExpression,
             ): StackValue {
-                codegen.markLineNumber(expression)
-                v.anew(returnType)
+                with(codegen) { expression.markLineNumber(startOffset = true) }
+                v.anew(signature.returnType)
                 v.dup()
                 return super.invoke(v, codegen, data, expression)
             }

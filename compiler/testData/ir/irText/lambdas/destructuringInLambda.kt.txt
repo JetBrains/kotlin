@@ -1,10 +1,13 @@
-data class A {
-  constructor(x: Int, y: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
+var fn: Function1<A, Int>
+  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
+    val y: Int = <name for destructuring parameter 0>.component2()
+    return 42.plus(other = y)
   }
 
+  get
+  set
+
+data class A {
   val x: Int
     field = x
     get
@@ -12,6 +15,12 @@ data class A {
   val y: Int
     field = y
     get
+
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): Int {
     return <this>.#x
@@ -25,8 +34,21 @@ data class A {
     return A(x = x, y = y)
   }
 
-  override fun toString(): String {
-    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is A -> return false
+    }
+    val tmp_0: A = other as A
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_0.#x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#y, arg1 = tmp_0.#y).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -35,30 +57,9 @@ data class A {
     return result
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is A -> return false
-    }
-    val tmp0_other_with_cast: A = other as A
-    when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
   }
 
 }
 
-var fn: Function1<A, Int>
-  field = local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
-    val y: Int = <name for destructuring parameter 0>.component2()
-    return 42.plus(other = y)
-  }
-
-  get
-  set

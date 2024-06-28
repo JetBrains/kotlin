@@ -1,0 +1,60 @@
+// CHECK:
+//   Mangled name: TestAnn
+//   Public signature: /TestAnn|null[0]
+open annotation class TestAnn : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnn{}x
+  //   Public signature: /TestAnn.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnn#<get-x>(){}kotlin.String
+    //   Public signature: /TestAnn.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnn#<get-x>(){}
+    //   Public signature: /TestAnn.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnn#<init>(kotlin.String){}
+  //   Public signature: /TestAnn.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(x: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: TestClassConstructor1
+//   Public signature: /TestClassConstructor1|null[0]
+class TestClassConstructor1 {
+  // CHECK:
+  //   Mangled name: TestClassConstructor1{}xx
+  //   Public signature: /TestClassConstructor1.xx|5916295751157136767[0]
+  //   Public signature debug description: {}xx
+  val xx: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestClassConstructor1#<get-xx>(){}kotlin.Int
+    //   Public signature: /TestClassConstructor1.xx.<get-xx>|-7844073399004608724[0]
+    //   Public signature debug description: <get-xx>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestClassConstructor1#<get-xx>(){}
+    //   Public signature: /TestClassConstructor1.xx.<get-xx>|5648847738704808838[0]
+    //   Public signature debug description: <get-xx>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestClassConstructor1#<init>(kotlin.Int){}
+  //   Public signature: /TestClassConstructor1.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(@TestAnn(x = "TestClassConstructor1.x") x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #testFun(kotlin.Int){}
+//   Public signature: /testFun|7846764360131207179[0]
+//   Public signature debug description: testFun(kotlin.Int){}
+fun testFun(@TestAnn(x = "testFun.x") x: Int): Unit
+

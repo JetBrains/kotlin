@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.mapping
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.ir.representativeUpperBound
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeMapper
@@ -39,7 +41,7 @@ import org.jetbrains.kotlin.ir.util.isSuspendFunction as isSuspendFunctionImpl
 
 open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
     override val typeSystem: IrTypeSystemContext = context.typeSystem
-    override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(typeSystem, context)
+    override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(context)
 
     override fun mapClass(classifier: ClassifierDescriptor): Type =
         when (classifier) {
@@ -54,28 +56,42 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
     override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type =
         mapType(type as IrType, mode)
 
-    private fun computeClassInternalName(irClass: IrClass): StringBuilder {
-        context.getLocalClassType(irClass)?.internalName?.let {
+    private fun computeClassInternalNameAsString(irClass: IrClass): String {
+        irClass.localClassType?.internalName?.let {
+            return it
+        }
+
+        return computeClassInternalName(irClass, 0).toString()
+    }
+
+    private fun computeClassInternalName(irClass: IrClass, capacity: Int): StringBuilder {
+        irClass.localClassType?.internalName?.let {
             return StringBuilder(it)
         }
 
         val shortName = SpecialNames.safeIdentifier(irClass.name).identifier
 
         when (val parent = irClass.parent) {
-            is IrPackageFragment ->
-                return StringBuilder().apply {
-                    val fqName = parent.fqName
+            is IrPackageFragment -> {
+                val fqName = parent.packageFqName
+                var ourCapacity = shortName.length
+                if (!fqName.isRoot) {
+                    ourCapacity += fqName.asString().length + 1
+                }
+                return StringBuilder(ourCapacity + capacity).apply {
                     if (!fqName.isRoot) {
                         append(fqName.asString().replace('.', '/')).append("/")
                     }
                     append(shortName)
                 }
+            }
             is IrClass ->
-                return computeClassInternalName(parent).append("$").append(shortName)
+                return computeClassInternalName(parent, 1 + shortName.length).append("$").append(shortName)
             is IrFunction ->
                 if (parent.isSuspend && parent.parentAsClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                    return computeClassInternalName(parent.parentAsClass.parentAsClass)
-                        .append("$").append(parent.name.asString())
+                    val parentName = parent.name.asString()
+                    return computeClassInternalName(parent.parentAsClass.parentAsClass, 1 + parentName.length)
+                        .append("$").append(parentName)
                 }
         }
 
@@ -87,12 +103,12 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
     }
 
     fun classInternalName(irClass: IrClass): String {
-        context.getLocalClassType(irClass)?.internalName?.let { return it }
+        irClass.localClassType?.internalName?.let { return it }
         context.classNameOverride[irClass]?.let { return it.internalName }
 
         return JvmCodegenUtil.sanitizeNameIfNeeded(
-            computeClassInternalName(irClass).toString(),
-            context.state.languageVersionSettings
+            computeClassInternalNameAsString(irClass),
+            context.config.languageVersionSettings
         )
     }
 
@@ -195,9 +211,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         val parameters = classifier.typeParameters.map(IrTypeParameter::symbol)
         val arguments = type.arguments
 
-        if ((classifier.symbol.isFunction() && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-            || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()
-        ) {
+        if (isBigArityFunction(classifier, arguments) || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()) {
             writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
             return
         }
@@ -205,11 +219,15 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         writeGenericArguments(sw, arguments, parameters, mode)
     }
 
+    private fun isBigArityFunction(classifier: IrClass, arguments: List<IrTypeArgument>): Boolean =
+        arguments.size > BuiltInFunctionArity.BIG_ARITY &&
+                (classifier.symbol.isFunction() || classifier.symbol.isSuspendFunction())
+
     private fun writeGenericArguments(
         sw: JvmSignatureWriter,
         arguments: List<IrTypeArgument>,
         parameters: List<IrTypeParameterSymbol>,
-        mode: TypeMappingMode
+        mode: TypeMappingMode,
     ) {
         with(KotlinTypeMapper) {
             typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
@@ -220,9 +238,8 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
 }
 
 private class IrTypeCheckerContextForTypeMapping(
-    private val baseContext: IrTypeSystemContext,
     private val backendContext: JvmBackendContext
-) : IrTypeSystemContext by baseContext, TypeSystemCommonBackendContextForTypeMapping {
+) : IrTypeSystemContext by backendContext.typeSystem, TypeSystemCommonBackendContextForTypeMapping {
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         return this is IrTypeParameterSymbol
     }

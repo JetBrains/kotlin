@@ -1,5 +1,6 @@
 // WITH_REFLECT
 // FIR_DUMP
+
 import kotlin.reflect.*
 
 interface Foo<T : Any> {
@@ -26,18 +27,18 @@ fun main(arg: Any, condition: Boolean) {
     val value = myBuilder {
         b[0] = 123
         a = 45
-        a<!OVERLOAD_RESOLUTION_AMBIGUITY!>++<!>
+        a<!NONE_APPLICABLE!>++<!>
         bar(::a)
         if (<!USELESS_IS_CHECK!>a is Int<!>) {
             a = 67
-            a<!OVERLOAD_RESOLUTION_AMBIGUITY!>--<!>
+            a<!NONE_APPLICABLE!>--<!>
             bar(::a)
         }
         when (condition) {
             true -> a = 87
             false -> a = 65
         }
-        val x by <!DELEGATE_SPECIAL_FUNCTION_AMBIGUITY!>a<!>
+        val x by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>a<!>
 
         change {
             a = 99
@@ -46,16 +47,16 @@ fun main(arg: Any, condition: Boolean) {
 
     val value2 = myBuilder {
         accept("")
-        a = <!ASSIGNMENT_TYPE_MISMATCH!>45<!>
+        a = 45
         when (condition) {
-            true -> a = <!ASSIGNMENT_TYPE_MISMATCH!>87<!>
-            false -> a = <!ASSIGNMENT_TYPE_MISMATCH!>65<!>
+            true -> a = 87
+            false -> a = 65
         }
         change {
-            a = <!ASSIGNMENT_TYPE_MISMATCH!>99<!>
+            a = 99
         }
         if (a is Int) {
-            a = <!ASSIGNMENT_TYPE_MISMATCH!>67<!>
+            a = 67
         }
     }
 
@@ -63,7 +64,7 @@ fun main(arg: Any, condition: Boolean) {
     val value3 = myBuilder {
         accept("")
         a = 45
-        bar(::a)
+        bar(::<!INAPPLICABLE_CANDIDATE!>a<!>)
     }
 
     fun baz(t: Int) {}
@@ -72,6 +73,6 @@ fun main(arg: Any, condition: Boolean) {
         accept("")
         a = 45
         b[0] = 123
-        baz(a)
+        baz(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     }
 }

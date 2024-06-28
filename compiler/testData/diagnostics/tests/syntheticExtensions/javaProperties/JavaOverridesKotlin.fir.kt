@@ -1,3 +1,4 @@
+// ISSUE: KT-63067
 // FILE: KotlinFile.kt
 open class KotlinClass {
     public open fun getSomething1(): Int = 1
@@ -7,7 +8,7 @@ open class KotlinClass {
 
 fun foo(javaClass: JavaClass) {
     useInt(javaClass.getSomething1())
-    useInt(javaClass.something1)
+    useInt(javaClass.<!SYNTHETIC_PROPERTY_WITHOUT_JAVA_ORIGIN!>something1<!>)
 
     javaClass.setSomething2(javaClass.getSomething2() + 1)
     javaClass.something2 = javaClass.something2 + 1

@@ -9,22 +9,27 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.hasValOrVar
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirConstructorChecker
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
 
-object FirParcelizeConstructorChecker : FirConstructorChecker() {
+class FirParcelizeConstructorChecker(private val parcelizeAnnotations: List<ClassId>) : FirConstructorChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isPrimary) return
         val source = declaration.source ?: return
         if (source.kind == KtFakeSourceElementKind.ImplicitConstructor) return
         val containingClass = context.containingDeclarations.last() as? FirRegularClass ?: return
         val containingClassSymbol = containingClass.symbol
-        if (!containingClassSymbol.isParcelize(context.session) || containingClass.hasCustomParceler(context.session)) return
+        if (!containingClassSymbol.isParcelize(context.session, parcelizeAnnotations)
+            || containingClass.hasCustomParceler(context.session)) {
+            return
+        }
 
         if (declaration.valueParameters.isEmpty()) {
             reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY, context)

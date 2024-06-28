@@ -1,0 +1,10 @@
+public abstract interface LoadIterableWithNullability<T> : R|kotlin/Any| {
+    public abstract fun getIterable(): R|kotlin/collections/MutableIterable<T>|
+
+    public abstract fun getReadOnlyIterable(): R|kotlin/collections/Iterable<T>|
+
+    public abstract fun setIterable(p0: R|kotlin/collections/MutableIterable<T>|): R|kotlin/Unit|
+
+    public abstract fun setReadOnlyIterable(p0: R|kotlin/collections/Iterable<T>|): R|kotlin/Unit|
+
+}

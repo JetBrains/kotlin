@@ -1,0 +1,303 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : SortedSet<Any> {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#add(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.add|8629542948597441975[0]
+  //   Public signature debug description: add(kotlin.Any?){}kotlin.Boolean
+  abstract /* fake */ override fun add(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /A.addAll|1853624435708785695[0]
+  //   Public signature debug description: addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun addAll(elements: Collection<Any?>): Boolean
+
+  // CHECK:
+  //   Mangled name: A#clear(){}
+  //   Public signature: /A.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  abstract /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#comparator(){}java.util.Comparator<in|kotlin.Any?>?
+  //   Public signature: /A.comparator|-642446247392769612[0]
+  //   Public signature debug description: comparator(){}java.util.Comparator<in|kotlin.Any?>?
+  abstract /* fake */ override fun comparator(): Comparator<in Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#contains(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.contains|4314304964322748880[0]
+  //   Public signature debug description: contains(kotlin.Any?){}kotlin.Boolean
+  abstract /* fake */ override operator fun contains(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /A.containsAll|7057326425365175105[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun containsAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#first(){}kotlin.Any?
+  //   Public signature: /A.first|-539106208865751844[0]
+  //   Public signature debug description: first(){}kotlin.Any?
+  abstract /* fake */ override fun first(): Any?
+
+  // CHECK:
+  //   Mangled name: A#forEach(java.util.function.Consumer<in|kotlin.Any?>?){}
+  //   Public signature: /A.forEach|2396791366322203147[0]
+  //   Public signature debug description: forEach(java.util.function.Consumer<in|kotlin.Any?>?){}
+  /* fake */ override fun forEach(p0: Consumer<in Any?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#headSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /A.headSet|2954566754043461149[0]
+  //   Public signature debug description: headSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun headSet(p0: Any?): SortedSet<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#isEmpty(){}kotlin.Boolean
+  //   Public signature: /A.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  abstract /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
+  //   Public signature: /A.iterator|5172039261324384933[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
+  abstract /* fake */ override operator fun iterator(): MutableIterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#last(){}kotlin.Any?
+  //   Public signature: /A.last|-8060385802465825552[0]
+  //   Public signature debug description: last(){}kotlin.Any?
+  abstract /* fake */ override fun last(): Any?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#parallelStream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /A.parallelStream|-1413621844920680303[0]
+  //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun parallelStream(): @EnhancedNullability Stream<@EnhancedNullability Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#remove(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /A.remove|-4847290102784382063[0]
+  //   Public signature debug description: remove(kotlin.Any?){}kotlin.Boolean
+  abstract /* fake */ override fun remove(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#removeAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /A.removeAll|2083414713666946876[0]
+  //   Public signature debug description: removeAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun removeAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#removeIf(java.util.function.Predicate<in|kotlin.Any?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.removeIf|-7801901543191325013[0]
+  //   Public signature debug description: removeIf(java.util.function.Predicate<in|kotlin.Any?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun removeIf(p0: @EnhancedNullability Predicate<in @EnhancedNullability Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /A.retainAll|-4369081002402657372[0]
+  //   Public signature debug description: retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun retainAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#spliterator(){}java.util.Spliterator<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /A.spliterator|-839758233608771347[0]
+  //   Public signature debug description: spliterator(){}java.util.Spliterator<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override fun spliterator(): @EnhancedNullability Spliterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#stream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /A.stream|-7611616968057929317[0]
+  //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun stream(): @EnhancedNullability Stream<@EnhancedNullability Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#subSet(kotlin.Any?;kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /A.subSet|4242263016850439898[0]
+  //   Public signature debug description: subSet(kotlin.Any?;kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun subSet(p0: Any?, p1: Any?): SortedSet<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#tailSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /A.tailSet|7020286149431470171[0]
+  //   Public signature debug description: tailSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun tailSet(p0: Any?): SortedSet<Any?>?
+
+  // CHECK:
+  //   Mangled name: A{}size
+  //   Public signature: /A.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  abstract /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-size>(){}kotlin.Int
+    //   Public signature: /A.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : SortedSet<Any> {
+  // CHECK:
+  //   Mangled name: B{}size
+  //   Public signature: /B.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-size>(){}kotlin.Int
+    //   Public signature: /B.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(size: Int) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#add(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /B.add|8629542948597441975[0]
+  //   Public signature debug description: add(kotlin.Any?){}kotlin.Boolean
+  abstract /* fake */ override fun add(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /B.addAll|1853624435708785695[0]
+  //   Public signature debug description: addAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun addAll(elements: Collection<Any?>): Boolean
+
+  // CHECK:
+  //   Mangled name: B#clear(){}
+  //   Public signature: /B.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  abstract /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#comparator(){}java.util.Comparator<in|kotlin.Any?>?
+  //   Public signature: /B.comparator|-642446247392769612[0]
+  //   Public signature debug description: comparator(){}java.util.Comparator<in|kotlin.Any?>?
+  abstract /* fake */ override fun comparator(): Comparator<in Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#contains(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /B.contains|4314304964322748880[0]
+  //   Public signature debug description: contains(kotlin.Any?){}kotlin.Boolean
+  abstract /* fake */ override operator fun contains(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /B.containsAll|7057326425365175105[0]
+  //   Public signature debug description: containsAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun containsAll(elements: Collection<Any?>): Boolean
+
+  // CHECK:
+  //   Mangled name: B#forEach(java.util.function.Consumer<in|kotlin.Any?>?){}
+  //   Public signature: /B.forEach|2396791366322203147[0]
+  //   Public signature debug description: forEach(java.util.function.Consumer<in|kotlin.Any?>?){}
+  /* fake */ override fun forEach(p0: Consumer<in Any?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#headSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /B.headSet|2954566754043461149[0]
+  //   Public signature debug description: headSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun headSet(p0: Any?): SortedSet<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#isEmpty(){}kotlin.Boolean
+  //   Public signature: /B.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  abstract /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
+  //   Public signature: /B.iterator|5172039261324384933[0]
+  //   Public signature debug description: iterator(){}kotlin.collections.MutableIterator<kotlin.Any?>
+  abstract /* fake */ override operator fun iterator(): MutableIterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#parallelStream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /B.parallelStream|-1413621844920680303[0]
+  //   Public signature debug description: parallelStream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun parallelStream(): @EnhancedNullability Stream<@EnhancedNullability Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#removeIf(java.util.function.Predicate<in|kotlin.Any?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.removeIf|-7801901543191325013[0]
+  //   Public signature debug description: removeIf(java.util.function.Predicate<in|kotlin.Any?{EnhancedNullability}>{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun removeIf(p0: @EnhancedNullability Predicate<in @EnhancedNullability Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  //   Public signature: /B.retainAll|-4369081002402657372[0]
+  //   Public signature debug description: retainAll(kotlin.collections.Collection<kotlin.Any?>){}kotlin.Boolean
+  abstract /* fake */ override fun retainAll(elements: Collection<Any?>): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#spliterator(){}java.util.Spliterator<kotlin.Any?>{EnhancedNullability}
+  //   Public signature: /B.spliterator|-839758233608771347[0]
+  //   Public signature debug description: spliterator(){}java.util.Spliterator<kotlin.Any?>{EnhancedNullability}
+  /* fake */ override fun spliterator(): @EnhancedNullability Spliterator<Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#stream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  //   Public signature: /B.stream|-7611616968057929317[0]
+  //   Public signature debug description: stream(){}java.util.stream.Stream<kotlin.Any?{EnhancedNullability}>{EnhancedNullability}
+  /* fake */ override fun stream(): @EnhancedNullability Stream<@EnhancedNullability Any?>
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#subSet(kotlin.Any?;kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /B.subSet|4242263016850439898[0]
+  //   Public signature debug description: subSet(kotlin.Any?;kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun subSet(p0: Any?, p1: Any?): SortedSet<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#tailSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  //   Public signature: /B.tailSet|7020286149431470171[0]
+  //   Public signature debug description: tailSet(kotlin.Any?){}java.util.SortedSet<kotlin.Any?>?
+  abstract /* fake */ override fun tailSet(p0: Any?): SortedSet<Any?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#first(){}kotlin.Any
+  //   Public signature: /B.first|617150990957322103[0]
+  //   Public signature debug description: first(){}kotlin.Any
+  override fun first(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#last(){}kotlin.Any
+  //   Public signature: /B.last|2058312458551041825[0]
+  //   Public signature debug description: last(){}kotlin.Any
+  override fun last(): Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#remove(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /B.remove|-4847290102784382063[0]
+  //   Public signature debug description: remove(kotlin.Any?){}kotlin.Boolean
+  override fun remove(element: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#removeAll(kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+  //   Public signature: /B.removeAll|5221453273440494638[0]
+  //   Public signature debug description: removeAll(kotlin.collections.Collection<kotlin.Any>){}kotlin.Boolean
+  override fun removeAll(elements: Collection<Any>): Boolean
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

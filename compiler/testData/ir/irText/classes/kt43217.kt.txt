@@ -1,10 +1,4 @@
 class A {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   private val b: <no name provided>
     field = { // BLOCK
       local class <no name provided> : DoubleExpression {
@@ -24,6 +18,12 @@ class A {
     }
     private get
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 class C : DoubleExpression {
@@ -38,3 +38,4 @@ class C : DoubleExpression {
   }
 
 }
+

@@ -1,3 +1,5 @@
+// ISSUE: KT-65105
+
 // FILE: kotlin.kt
 package kotlin
 
@@ -40,6 +42,10 @@ fun throwsEmptyParens() {}
 @Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsUnresolved() {}
 
+class Orphan : <!UNRESOLVED_REFERENCE!>MyUnresolvedParent<!>
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
+fun throwsClassWithUnresolvedParent() {}
+
 @Throws(exceptionClasses = <!ANNOTATION_ARGUMENT_MUST_BE_CONST, ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!><!UNRESOLVED_REFERENCE!>UnresolvedException<!>::class<!>)
 fun throwsNamedUnresolved() {}
 
@@ -69,7 +75,7 @@ fun throwsSpreadArrayOfUnresolved() {}
 
 typealias UEAlias = <!UNRESOLVED_REFERENCE!>UE<!>
 
-@Throws(UEAlias::class)
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 fun throwsTypealiasToUnresolved() {}
 
 interface Base0 {
@@ -309,8 +315,11 @@ suspend fun suspendThrowsSpreadLiteralWithUnresolved() {}
 @Throws(*<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>UE<!>::class<!>)<!>)
 suspend fun suspendThrowsSpreadArrayOfUnresolved() {}
 
-<!MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND!>@Throws(UEAlias::class)<!>
+@Throws(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UEAlias::class<!>)
 suspend fun suspendThrowsTypealiasToUnresolved() {}
+
+@Throws(<!ARGUMENT_TYPE_MISMATCH!>Orphan::class<!>)
+suspend fun suspendThrowsClassWithUnresolvedParent() {}
 
 @Throws(Exception1::class, CancellationException::class)
 suspend fun suspendThrowsCancellationException1() {}
@@ -369,3 +378,13 @@ typealias ThrowableAlias = Throwable
 
 @Throws(ThrowableAlias::class)
 suspend fun suspendThrowsThrowableTypealias() {}
+
+interface Foo<T> {
+    @Throws(IllegalArgumentException::class)
+    public fun f(data: T) {}
+}
+
+class Bar<K> : Foo<K> {
+    @Throws(IllegalArgumentException::class)
+    override fun f(data: K) {}
+}

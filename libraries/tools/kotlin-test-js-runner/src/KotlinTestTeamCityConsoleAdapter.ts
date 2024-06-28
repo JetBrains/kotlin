@@ -38,6 +38,7 @@ export function runWithTeamCityConsoleAdapter(
         test: function (name: string, isIgnored: boolean, fn: () => void) {
             runner.test(name, isIgnored, () => {
                 const log = (type: LogType) => function (message?: any, ...optionalParams: any[]) {
+                    message = String(message)
                     let messageType: 'testStdOut' | 'testStdErr'
                     if (type == 'warn' || type == 'error') {
                         messageType = 'testStdErr'

@@ -29,20 +29,17 @@ import org.jetbrains.kotlin.checkers.ThirdPartyAnnotationPathsKt;
 import org.jetbrains.kotlin.cli.common.CLITool;
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.common.Usage;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler;
-import org.jetbrains.kotlin.config.KotlinCompilerVersion;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
@@ -62,7 +59,18 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
     private static final String BUILD_FILE_ARGUMENT_PREFIX = "-Xbuild-file=";
 
-    public static Pair<String, ExitCode> executeCompilerGrabOutput(@NotNull CLITool<?> compiler, @NotNull List<String> args) {
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(
+            @NotNull CLITool<?> compiler,
+            @NotNull List<String> args
+    ) {
+        return executeCompilerGrabOutput(compiler, args, null);
+    }
+
+    public static Pair<String, ExitCode> executeCompilerGrabOutput(
+            @NotNull CLITool<?> compiler,
+            @NotNull List<String> args,
+            @Nullable MessageRenderer messageRenderer
+    ) {
         StringBuilder output = new StringBuilder();
 
         int index = 0;
@@ -70,8 +78,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             int next = args.subList(index, args.size()).indexOf("---");
             if (next == -1) {
                 next = args.size();
+            } else {
+                next = index + next;
             }
-            Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next));
+            Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next), messageRenderer);
             output.append(pair.getFirst());
             if (pair.getSecond() != ExitCode.OK) {
                 return new Pair<>(output.toString(), pair.getSecond());
@@ -84,27 +94,27 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @Nullable ExitCode exitCode, @NotNull String testDataDir) {
+    public static String getNormalizedCompilerOutput(
+            @NotNull String pureOutput,
+            @Nullable ExitCode exitCode,
+            @NotNull String testDataDir,
+            @NotNull String tmpdir
+    ) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
-        String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
+        String output = pureOutput
                 .replace(testDataAbsoluteDir, TESTDATA_DIR)
-                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR)
-                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
-                .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getParentFile().getAbsolutePath(), "$DIST_DIR$")
-                .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
-                .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
-                .replace("compiler version " + JvmMetadataVersion.INSTANCE, "compiler version $ABI_VERSION$")
-                .replace("up to " + JvmMetadataVersion.INSTANCE, "up to $ABI_VERSION$")
-                .replace("up to " + JvmMetadataVersion.INSTANCE_NEXT, "up to $ABI_VERSION_NEXT$")
-                .replace("\\", "/")
-                .replace(KotlinCompilerVersion.VERSION, "$VERSION$")
-                .replace("\n" + Usage.BAT_DELIMITER_CHARACTERS_NOTE + "\n", "")
-                .replaceAll("log4j:WARN.*\n", "");
+                .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), TESTDATA_DIR);
+        String normalizedOutputWithoutExitCode = CompilerTestUtil.normalizeCompilerOutput(output, tmpdir);
+
+        // Debug output for KT-64822 investigation
+        System.out.println("testDataAbsoluteDir: " + testDataAbsoluteDir);
+        System.out.println("pureOutput: " + pureOutput);
+        System.out.println("normalizedOutputWithoutExitCode: " + normalizedOutputWithoutExitCode);
 
         return exitCode == null ? normalizedOutputWithoutExitCode : (normalizedOutputWithoutExitCode + exitCode + "\n");
     }
 
-    private void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
+    protected void doTest(@NotNull String fileName, @NotNull CLITool<?> compiler) {
         System.setProperty("java.awt.headless", "true");
 
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));
@@ -115,7 +125,10 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
-                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent()
+                outputAndExitCode.getFirst(),
+                outputAndExitCode.getSecond(),
+                new File(fileName).getParent(),
+                tmpdir.getAbsolutePath()
         );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
@@ -218,6 +231,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             return null;
         }
 
+        if (arg.equals("$JDK_1_8")) return KtTestUtil.getJdk8Home().getAbsolutePath();
+        if (arg.equals("$JDK_11_0")) return KtTestUtil.getJdk11Home().getAbsolutePath();
+
         String argWithColonsReplaced = arg
                 .replace("\\:", "$COLON$")
                 .replace(":", File.pathSeparator)
@@ -276,11 +292,18 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                         new File(ThirdPartyAnnotationPathsKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
                 )
                 .replace(
+                        "$JSR_305_DECLARATIONS$",
+                        new File(ThirdPartyAnnotationPathsKt.JSR_305_SOURCES_PATH).getPath()
+                )
+                .replace(
                         "$FOREIGN_JAVA8_ANNOTATIONS_DIR$",
                         new File(ThirdPartyAnnotationPathsKt.FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH).getPath()
                 ).replace(
                         "$JDK_17$",
                         KtTestUtil.getJdk17Home().getPath()
+                ).replace(
+                        "$STDLIB_JS$",
+                        PathUtil.getKotlinPathsForCompiler().getJsStdLibKlibPath().getAbsolutePath()
                 );
     }
 
@@ -289,18 +312,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     protected void doJsTest(@NotNull String fileName) {
-        setupOldJsCompiler(fileName);
         doTest(fileName, new K2JSCompiler());
     }
 
     protected void doJsDceTest(@NotNull String fileName) {
-        setupOldJsCompiler(fileName);
         doTest(fileName, new K2JSDce());
-    }
-
-    private void setupOldJsCompiler(String fileName) {
-        if (fileName == null) return;
-        CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.setValue(Boolean.toString(!fileName.contains("_strict")));
     }
 
     protected void doMetadataTest(@NotNull String fileName) {

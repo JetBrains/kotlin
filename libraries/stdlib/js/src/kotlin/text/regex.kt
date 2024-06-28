@@ -10,9 +10,10 @@ import kotlin.js.RegExp
 /**
  * Provides enumeration values to use to set regular expression options.
  */
-public actual enum class RegexOption(val value: String) {
+public actual enum class RegexOption(public val value: String) {
     /** Enables case-insensitive matching. */
     IGNORE_CASE("i"),
+
     /** Enables multiline mode.
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
@@ -28,7 +29,7 @@ private fun Iterable<RegexOption>.toFlags(prepend: String): String = joinToStrin
  *
  * @param value The value of captured group.
  */
-public actual data class MatchGroup(actual val value: String)
+public actual data class MatchGroup(public actual val value: String)
 
 
 /**
@@ -40,7 +41,7 @@ public actual data class MatchGroup(actual val value: String)
  * for example, when it's not supported by the current platform.
  */
 @SinceKotlin("1.7")
-public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
+public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
     val namedGroups = this as? MatchNamedGroupCollection
         ?: throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
 
@@ -61,7 +62,8 @@ public operator fun MatchGroupCollection.get(name: String): MatchGroup? {
  *
  * @constructor Creates a regular expression from the specified [pattern] string and the specified set of [options].
  */
-public actual class Regex actual constructor(pattern: String, options: Set<RegexOption>) {
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual class Regex public actual constructor(pattern: String, options: Set<RegexOption>) {
 
     /** Creates a regular expression from the specified [pattern] string and the specified single [option].  */
     public actual constructor(pattern: String, option: RegexOption) : this(pattern, setOf(option))
@@ -313,7 +315,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      */
     public override fun toString(): String = nativePattern.toString()
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.

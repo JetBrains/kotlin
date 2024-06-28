@@ -1,0 +1,66 @@
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: null
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: true
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: dynamicFunctionCall
+  origin: JS_DYNAMIC
+  receiverParameter: null
+  returnType: KaDynamicType:
+    annotations: []
+    type: dynamic
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: true
+      location: LOCAL
+      modality: FINAL
+      name: args
+      origin: JS_DYNAMIC
+      receiverParameter: null
+      returnType: KaDynamicType:
+        annotations: []
+        type: dynamic
+      visibility: PUBLIC
+      getContainingFileSymbol: null
+      getContainingJvmClassName: null
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getDispatchReceiver(): KaDynamicType:
+    annotations: []
+    type: dynamic
+  getContainingFileSymbol: KaFileSymbol(functionFromJsDynamicScopeWithArguments.kt)
+  getContainingJvmClassName: null
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

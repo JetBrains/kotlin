@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 data class A(val x: Int, val y: String)
 
 fun foo(block: (A) -> Unit) { }

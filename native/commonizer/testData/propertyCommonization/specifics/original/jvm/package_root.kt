@@ -28,3 +28,7 @@ var inlineProperty8
 
 external val externalProperty1: Int
 val externalProperty2: Int = 1
+
+var externalSetGet: Int
+    external get
+    external set

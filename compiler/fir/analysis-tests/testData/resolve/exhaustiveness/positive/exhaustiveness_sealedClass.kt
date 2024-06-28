@@ -15,7 +15,7 @@ fun test_1(e: Base) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         is Base.A -> 1
         is Base.A.B -> 2
-        is String -> 3
+        <!USELESS_IS_CHECK!>is String<!> -> 3
     }
 
     val c = when (e) {

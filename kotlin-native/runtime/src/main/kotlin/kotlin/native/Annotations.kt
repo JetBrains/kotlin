@@ -5,6 +5,7 @@
 
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.reflect.KClass
@@ -40,14 +41,14 @@ public annotation class SymbolName(val name: String)
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class Retain
+internal annotation class Retain
 
 /**
  * Preserve the function entry point during global optimizations, only for the given target.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class RetainForTarget(val target: String)
+internal annotation class RetainForTarget(val target: String)
 
 
 /** @suppress */
@@ -55,9 +56,14 @@ public annotation class RetainForTarget(val target: String)
 public typealias Throws = kotlin.Throws
 
 /** @suppress */
+@Deprecated("Use kotlin.native.concurrent.ThreadLocal instead.", ReplaceWith("ThreadLocal", "kotlin.native.concurrent.ThreadLocal"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
+@Suppress("DEPRECATION")
+@Deprecated("This annotation is redundant and has no effect")
+@DeprecatedSinceKotlin(warningSince = "1.9")
 // Not @FreezingIsDeprecated: Lots of usages. Usages will trigger INFO reports in the frontend.
 public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
 
@@ -81,6 +87,7 @@ public annotation class EagerInitialization
  * [externName] controls the name of top level function, [shortName] controls the short name.
  * If [externName] is empty, no top level declaration is being created.
  */
+@ExperimentalNativeApi
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 public actual annotation class CName(actual val externName: String = "", actual val shortName: String = "")
@@ -99,30 +106,33 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCName
+@SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
 
 /**
- * Meta-annotation that instructs the Kotlin compiler to remove the annotated function or property from the public Objective-C API.
+ * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.
  *
  * Annotation processors that refine the public Objective-C API can annotate their annotations with this meta-annotation
  * to have the original declarations automatically removed from the public API.
  *
- * Note: only annotations with [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
+ * Note: only annotations with [AnnotationTarget.CLASS], [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
  */
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HidesFromObjC
 
 /**
- * Instructs the Kotlin compiler to remove this function or property from the public Objective-C API.
+ * Instructs the Kotlin compiler to remove this class, function or property from the public Objective-C API.
  */
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HiddenFromObjC
 
 /**
@@ -141,6 +151,7 @@ public actual annotation class HiddenFromObjC
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class RefinesInSwift
 
 /**
@@ -154,4 +165,5 @@ public actual annotation class RefinesInSwift
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class ShouldRefineInSwift

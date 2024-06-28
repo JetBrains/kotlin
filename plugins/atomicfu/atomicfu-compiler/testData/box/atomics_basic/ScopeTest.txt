@@ -1,0 +1,71 @@
+@kotlin.Metadata
+public final class AA {
+    // source: 'ScopeTest.kt'
+    private final @org.jetbrains.annotations.NotNull field b: B
+    private final @org.jetbrains.annotations.NotNull field c: C
+    private final field value: int
+    public method <init>(p0: int): void
+    public final @org.jetbrains.annotations.NotNull method getB(): B
+    public final @org.jetbrains.annotations.NotNull method getC(): C
+    public final method getValue(): int
+    public final method manyProperties(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+    public final method updateToB(@org.jetbrains.annotations.NotNull p0: java.lang.Object): boolean
+}
+
+@kotlin.Metadata
+final class AtomicState {
+    // source: 'ScopeTest.kt'
+    private synthetic final static field state$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field state$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public synthetic final static method access$getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final static method getState$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getState$volatile(): java.lang.Object
+    private synthetic final method setState$volatile(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'ScopeTest.kt'
+    private final field value: int
+    public method <init>(p0: int): void
+    public final method getValue(): int
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'ScopeTest.kt'
+    private final @org.jetbrains.annotations.NotNull field d: D
+    public method <init>(@org.jetbrains.annotations.NotNull p0: D): void
+    public final @org.jetbrains.annotations.NotNull method getD(): D
+}
+
+@kotlin.Metadata
+public final class D {
+    // source: 'ScopeTest.kt'
+    private final @org.jetbrains.annotations.NotNull field e: E
+    public method <init>(@org.jetbrains.annotations.NotNull p0: E): void
+    public final @org.jetbrains.annotations.NotNull method getE(): E
+}
+
+@kotlin.Metadata
+public final class E {
+    // source: 'ScopeTest.kt'
+    private final field x: int
+    public method <init>(p0: int): void
+    public final method getX(): int
+}
+
+@kotlin.Metadata
+public final class ScopeTest {
+    // source: 'ScopeTest.kt'
+    public method <init>(): void
+    public final method scopeTest(): void
+}
+
+@kotlin.Metadata
+public final class ScopeTestKt {
+    // source: 'ScopeTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -1,6 +1,10 @@
-// !LANGUAGE: +ContextReceivers
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
+
+annotation class MyAnnotation
 
 context(A, B)
+@MyAnnotation
 private open class ContextReceiversOnClass {
 
 }

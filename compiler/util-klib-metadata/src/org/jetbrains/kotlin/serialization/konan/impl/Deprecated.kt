@@ -29,4 +29,5 @@ typealias ForwardDeclarationsPackageFragmentDescriptor = org.jetbrains.kotlin.li
     "This object has been moved from package org.jetbrains.kotlin.serialization.konan.impl to package org.jetbrains.kotlin.library.metadata.impl",
     ReplaceWith("org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationsFqNames")
 )
+@Suppress("DEPRECATION_ERROR")
 typealias ForwardDeclarationsFqNames = org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationsFqNames

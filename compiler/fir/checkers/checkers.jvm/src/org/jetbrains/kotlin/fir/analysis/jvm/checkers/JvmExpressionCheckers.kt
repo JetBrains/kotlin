@@ -11,18 +11,29 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.*
 object JvmExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirJvmProtectedInSuperClassCompanionCallChecker
+            FirJvmProtectedInSuperClassCompanionCallChecker,
+            FirJvmReflectionApiCallChecker,
         )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
         get() = setOf(
             FirInterfaceDefaultMethodCallChecker,
             FirJavaSamInterfaceConstructorReferenceChecker,
+            FirQualifiedAccessJavaNullabilityWarningChecker,
+            FirJvmModuleAccessibilityQualifiedAccessChecker,
+            FirJvmInlineTargetQualifiedAccessChecker,
+        )
+
+    override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
+        get() = setOf(
+            FirSyntheticPropertyWithoutJavaOriginChecker,
+            FirFieldAccessShadowedByInvisibleKotlinProperty,
         )
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = setOf(
-            FirJavaShadowedFieldReferenceChecker,
+            FirUnsupportedSyntheticCallableReferenceChecker,
+            FirFieldReferenceShadowedByInvisibleKotlinProperty,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
@@ -31,7 +42,8 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
-            FirJvmPolymorphicSignatureCallChecker
+            FirJvmPolymorphicSignatureCallChecker,
+            FirJavaSamConstructorNullabilityChecker,
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>
@@ -39,5 +51,45 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaAnnotationsChecker,
             FirJvmPackageNameAnnotationsChecker,
             FirJvmSerializableLambdaChecker,
+        )
+
+    override val loopExpressionCheckers: Set<FirLoopExpressionChecker>
+        get() = setOf(
+            FirLoopConditionJavaNullabilityWarningChecker,
+        )
+
+    override val whenExpressionCheckers: Set<FirWhenExpressionChecker>
+        get() = setOf(
+            FirWhenConditionJavaNullabilityWarningChecker,
+        )
+
+    override val logicExpressionCheckers: Set<FirLogicExpressionChecker>
+        get() = setOf(
+            FirLogicExpressionTypeJavaNullabilityWarningChecker,
+        )
+
+    override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
+        get() = setOf(
+            FirThrowJavaNullabilityWarningChecker,
+        )
+
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
+        get() = setOf(
+            FirAssignmentJavaNullabilityWarningChecker,
+        )
+
+    override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
+        get() = setOf(
+            FirJavaUnnecessarySafeCallChecker,
+        )
+
+    override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>
+        get() = setOf(
+            FirJavaUnnecessaryNotNullChecker,
+        )
+
+    override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
+        get() = setOf(
+            FirJvmModuleAccessibilityResolvedQualifierChecker,
         )
 }

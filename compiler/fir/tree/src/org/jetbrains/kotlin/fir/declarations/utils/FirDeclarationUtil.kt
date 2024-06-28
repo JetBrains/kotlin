@@ -6,9 +6,15 @@
 package org.jetbrains.kotlin.fir.declarations.utils
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
@@ -25,14 +31,12 @@ val FirClass.delegateFields: List<FirField>
 
 inline val FirDeclaration.isJava: Boolean
     get() = origin is FirDeclarationOrigin.Java
-inline val FirDeclaration.isJavaSource: Boolean
-    get() = origin == FirDeclarationOrigin.Java.Source
 inline val FirDeclaration.isFromLibrary: Boolean
     get() = origin == FirDeclarationOrigin.Library || origin == FirDeclarationOrigin.Java.Library
 inline val FirDeclaration.isPrecompiled: Boolean
     get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
-    get() = origin == FirDeclarationOrigin.Synthetic
+    get() = origin is FirDeclarationOrigin.Synthetic
 
 // NB: This function checks transitive localness. That is,
 // if a declaration `isNonLocal`, then its parent also `isNonLocal`.
@@ -45,3 +49,36 @@ val FirDeclaration.isNonLocal
     }
 
 val FirCallableDeclaration.isExtension get() = receiverParameter != null
+
+val FirBasedSymbol<*>.isMemberDeclaration: Boolean
+    // Accessing `fir` is ok, because we don't really use it
+    get() = fir is FirMemberDeclaration
+
+val FirBasedSymbol<*>.memberDeclarationNameOrNull: Name?
+    // Accessing `fir` is ok, because `nameOrSpecialName` only accesses names
+    get() = (fir as? FirMemberDeclaration)?.nameOrSpecialName
+
+val FirMemberDeclaration.nameOrSpecialName: Name
+    get() = when (this) {
+        is FirCallableDeclaration -> symbol.callableId.callableName
+        is FirClassLikeDeclaration -> classId.shortClassName
+    }
+
+fun FirBasedSymbol<*>.asMemberDeclarationResolvedTo(phase: FirResolvePhase): FirMemberDeclaration? {
+    return (fir as? FirMemberDeclaration)?.also {
+        lazyResolveToPhase(phase)
+    }
+}
+
+val FirNamedFunctionSymbol.isMethodOfAny: Boolean
+    get() {
+        if (receiverParameter != null) return false
+        if (resolvedContextReceivers.isNotEmpty()) return false
+        return when (name) {
+            OperatorNameConventions.EQUALS -> valueParameterSymbols.singleOrNull()?.resolvedReturnType?.isNullableAny == true
+            OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
+            else -> false
+        }
+    }
+
+val FirConstructorSymbol.isErrorPrimaryConstructor get() = fir is FirErrorPrimaryConstructor

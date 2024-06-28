@@ -1,0 +1,12 @@
+KT element: KtTypeProjection
+FIR element: FirTypeProjectionWithVarianceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nestedTypeArgument.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| {
+        ^x IntegerLiteral(1)
+    }

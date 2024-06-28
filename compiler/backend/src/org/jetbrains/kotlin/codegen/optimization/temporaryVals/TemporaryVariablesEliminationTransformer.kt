@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -168,7 +169,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
         }
 
         for (insn in insnList) {
-            when (insn.type) {
+            when (insn.nodeType) {
                 AbstractInsnNode.LINE -> {
                     usedLabels.add((insn as LineNumberNode).start)
                 }
@@ -570,7 +571,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
     }
 
     private fun AbstractInsnNode.isIntervening(context: ControlFlowGraph): Boolean =
-        when (this.type) {
+        when (this.nodeType) {
             AbstractInsnNode.LINE, AbstractInsnNode.FRAME ->
                 false
             AbstractInsnNode.LABEL ->

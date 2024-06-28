@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 inline fun testSameCaptured(lambdaWithResultCaptured: () -> Unit) : String {
     doWork({<!NON_LOCAL_RETURN_NOT_ALLOWED!>lambdaWithResultCaptured<!>()})

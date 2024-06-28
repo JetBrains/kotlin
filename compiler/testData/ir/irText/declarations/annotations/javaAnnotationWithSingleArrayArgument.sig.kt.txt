@@ -1,0 +1,246 @@
+// CHECK:
+//   Mangled name: Anno
+//   Public signature: /Anno|null[0]
+open annotation class Anno : Annotation {
+  // CHECK:
+  //   Mangled name: Anno{}token
+  //   Public signature: /Anno.token|-1474644848610526691[0]
+  //   Public signature debug description: {}token
+  val token: String
+    // CHECK JVM_IR:
+    //   Mangled name: Anno#<get-token>(){}kotlin.String
+    //   Public signature: /Anno.token.<get-token>|-7990759666918264390[0]
+    //   Public signature debug description: <get-token>(){}kotlin.String
+    get
+
+  // CHECK:
+  //   Mangled name: Anno#<init>(kotlin.String){}
+  //   Public signature: /Anno.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(token: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Annos
+//   Public signature: /Annos|null[0]
+open annotation class Annos : Annotation {
+  // CHECK:
+  //   Mangled name: Annos{}value
+  //   Public signature: /Annos.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: Array<Anno>
+    // CHECK JVM_IR:
+    //   Mangled name: Annos#<get-value>(){}kotlin.Array<Anno>
+    //   Public signature: /Annos.value.<get-value>|-4069060984573284016[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Array<Anno>
+    get
+
+  // CHECK:
+  //   Mangled name: Annos#<init>(kotlin.Array<Anno>){}
+  //   Public signature: /Annos.<init>|1175794361085023797[0]
+  //   Public signature debug description: <init>(kotlin.Array<Anno>){}
+  constructor(value: Array<Anno>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Classes
+//   Public signature: /Classes|null[0]
+open annotation class Classes : Annotation {
+  // CHECK:
+  //   Mangled name: Classes{}value
+  //   Public signature: /Classes.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: Array<KClass<*>>
+    // CHECK JVM_IR:
+    //   Mangled name: Classes#<get-value>(){}kotlin.Array<kotlin.reflect.KClass<*>>
+    //   Public signature: /Classes.value.<get-value>|7741303810693223775[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Array<kotlin.reflect.KClass<*>>
+    get
+
+  // CHECK:
+  //   Mangled name: Classes#<init>(kotlin.Array<kotlin.reflect.KClass<*>>){}
+  //   Public signature: /Classes.<init>|-7037593412282832873[0]
+  //   Public signature debug description: <init>(kotlin.Array<kotlin.reflect.KClass<*>>){}
+  constructor(value: Array<KClass<*>>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Enums
+//   Public signature: /Enums|null[0]
+open annotation class Enums : Annotation {
+  // CHECK:
+  //   Mangled name: Enums{}value
+  //   Public signature: /Enums.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: Array<E>
+    // CHECK JVM_IR:
+    //   Mangled name: Enums#<get-value>(){}kotlin.Array<E>
+    //   Public signature: /Enums.value.<get-value>|6387785805560718811[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Array<E>
+    get
+
+  // CHECK:
+  //   Mangled name: Enums#<init>(kotlin.Array<E>){}
+  //   Public signature: /Enums.<init>|-3621344537085490519[0]
+  //   Public signature debug description: <init>(kotlin.Array<E>){}
+  constructor(value: Array<E>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Ints
+//   Public signature: /Ints|null[0]
+open annotation class Ints : Annotation {
+  // CHECK:
+  //   Mangled name: Ints{}value
+  //   Public signature: /Ints.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: IntArray
+    // CHECK JVM_IR:
+    //   Mangled name: Ints#<get-value>(){}kotlin.IntArray
+    //   Public signature: /Ints.value.<get-value>|-5427747971978269276[0]
+    //   Public signature debug description: <get-value>(){}kotlin.IntArray
+    get
+
+  // CHECK:
+  //   Mangled name: Ints#<init>(kotlin.IntArray){}
+  //   Public signature: /Ints.<init>|6811679238332965682[0]
+  //   Public signature debug description: <init>(kotlin.IntArray){}
+  constructor(value: IntArray) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Strings
+//   Public signature: /Strings|null[0]
+open annotation class Strings : Annotation {
+  // CHECK:
+  //   Mangled name: Strings{}value
+  //   Public signature: /Strings.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: Array<String>
+    // CHECK JVM_IR:
+    //   Mangled name: Strings#<get-value>(){}kotlin.Array<kotlin.String>
+    //   Public signature: /Strings.value.<get-value>|-7769950459445256373[0]
+    //   Public signature debug description: <get-value>(){}kotlin.Array<kotlin.String>
+    get
+
+  // CHECK:
+  //   Mangled name: Strings#<init>(kotlin.Array<kotlin.String>){}
+  //   Public signature: /Strings.<init>|5393043463829665764[0]
+  //   Public signature debug description: <init>(kotlin.Array<kotlin.String>){}
+  constructor(value: Array<String>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : A {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#test(){}
+  //   Public signature: /C.test|6620506149988718649[0]
+  //   Public signature debug description: test(){}
+  @Annos(value = [Anno(token = "OK")])
+  @Strings(value = ["OK"])
+  @Ints(value = [42])
+  @Enums(value = [E.EA])
+  @Classes(value = [Double::class])
+  /* fake */ override fun test(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+enum class E : Enum<E> {
+  // CHECK:
+  //   Mangled name: E.EA
+  //   Public signature: /E.EA|null[0]
+  EA
+
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#valueOf#static(kotlin.String){}E
+  //   Public signature: /E.valueOf|-1984843552149141556[0]
+  //   Public signature debug description: valueOf#static(kotlin.String){}E
+  fun valueOf(value: String): E
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#values#static(){}kotlin.Array<E>
+  //   Public signature: /E.values|4921695905454219855[0]
+  //   Public signature debug description: values#static(){}kotlin.Array<E>
+  fun values(): Array<E>
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#compareTo(E){}kotlin.Int
+  //   Public signature: /E.compareTo|7895449182838894647[0]
+  //   Public signature debug description: compareTo(E){}kotlin.Int
+  /* fake */ override operator fun compareTo(other: E): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /E.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#hashCode(){}kotlin.Int
+  //   Public signature: /E.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toString(){}kotlin.String
+  //   Public signature: /E.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  /* fake */ override fun toString(): String
+
+  // CHECK:
+  //   Mangled name: E#static{}entries
+  //   Public signature: /E.entries|-5134227801081826149[0]
+  //   Public signature debug description: #static{}entries
+  val entries: EnumEntries<E>
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-entries>#static(){}kotlin.enums.EnumEntries<E>
+    //   Public signature: /E.entries.<get-entries>|2481970109947815388[0]
+    //   Public signature debug description: <get-entries>#static(){}kotlin.enums.EnumEntries<E>
+    get(): EnumEntries<E>
+
+  // CHECK:
+  //   Mangled name: E{}name
+  //   Public signature: /E.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
+  /* fake */ override val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-name>(){}kotlin.String
+    //   Public signature: /E.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
+    /* fake */ override get(): String
+
+  // CHECK:
+  //   Mangled name: E{}ordinal
+  //   Public signature: /E.ordinal|1912745122988592376[0]
+  //   Public signature debug description: {}ordinal
+  /* fake */ override val ordinal: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-ordinal>(){}kotlin.Int
+    //   Public signature: /E.ordinal.<get-ordinal>|-6902664390061762634[0]
+    //   Public signature debug description: <get-ordinal>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+}

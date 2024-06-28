@@ -1,0 +1,8 @@
+callables/Foo.<init>|<init>(kotlin.collections.List<*>){}[0]
+callables/Foo.list.<get-list>|<get-list>(){}[0]
+callables/Foo.list|{}list[0]
+callables/Foo|null[0]
+callables/funWith1Parameter|funWith1Parameter(kotlin.collections.Map<*,*>){}[0]
+callables/funWith2Parameters|funWith2Parameters(kotlin.Pair<*,*>;callables.Foo){}[0]
+callables/funWithLocalMembers|funWithLocalMembers(){}[0]
+callables/funWithoutParameters|funWithoutParameters(){}[0]

@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -11,9 +10,8 @@ expect enum class Base2 { K }
 
 fun k() = Base2.K.name
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual enum class Base2 { K }
 

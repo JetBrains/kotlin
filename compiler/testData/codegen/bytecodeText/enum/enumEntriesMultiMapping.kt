@@ -3,6 +3,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
+// LANGUAGE: -EnumEntries
 // FILE: MyEnums.kt
 enum class MyEnum {
     N, O
@@ -13,7 +14,7 @@ enum class MyEnum2 {
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // FILE: Box.kt
 
 @OptIn(ExperimentalStdlibApi::class)

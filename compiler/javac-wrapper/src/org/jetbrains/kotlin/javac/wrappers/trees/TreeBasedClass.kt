@@ -125,8 +125,8 @@ class TreeBasedClass(
     override val isSealed: Boolean
         get() = false
 
-    override val permittedTypes: Collection<JavaClassifierType>
-        get() = emptyList()
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() = emptySequence()
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null

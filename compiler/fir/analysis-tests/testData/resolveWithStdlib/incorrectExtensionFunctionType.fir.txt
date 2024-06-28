@@ -1,0 +1,6 @@
+FILE: incorrectExtensionFunctionType.kt
+    public final infix fun R|kotlin/Int|.foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        Int(1).R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(fun <anonymous>(): R|kotlin/Unit| <inline=Unknown> )
+    }

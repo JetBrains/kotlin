@@ -1,7 +1,23 @@
+// -- Module: <common> --
 package
 
-@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public final class ConcurrentVolatile {
+public final class ConcurrentVolatile {
     public constructor ConcurrentVolatile()
+    @field:kotlin.concurrent.Volatile public final var noBacking: kotlin.String
+    @field:kotlin.concurrent.Volatile public final val w: kotlin.Int = 2
+    @field:kotlin.concurrent.Volatile public final val x: kotlin.Int = 0
+    @field:kotlin.concurrent.Volatile public final var y: kotlin.Int
+    @delegate:kotlin.concurrent.Volatile public final var z: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+// -- Module: <jvm> --
+package
+
+public final class ConcurrentVolatileOnJvm {
+    public constructor ConcurrentVolatileOnJvm()
     @field:kotlin.concurrent.Volatile /* = kotlin.jvm.Volatile */ public final var noBacking: kotlin.String
     @field:kotlin.concurrent.Volatile /* = kotlin.jvm.Volatile */ public final val w: kotlin.Int = 2
     @field:kotlin.concurrent.Volatile /* = kotlin.jvm.Volatile */ public final val x: kotlin.Int = 0

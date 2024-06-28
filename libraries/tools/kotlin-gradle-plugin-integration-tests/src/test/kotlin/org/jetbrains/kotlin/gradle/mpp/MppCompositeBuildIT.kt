@@ -6,14 +6,20 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
@@ -26,17 +32,17 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
                     kotlinStdlibDependencies
                 )
 
                 dependencies["nativeMain"].assertMatches(
                     dependsOnDependency(":consumerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/nativeMain"),
-                    regularSourceDependency("producerBuild::producerA/linuxMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/nativeMain"),
+                    regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                    binaryCoordinates(Regex(".*stdlib:commonMain:.*")) /* KT-56278 */
                 )
 
                 dependencies["linuxMain"].assertMatches(
@@ -48,7 +54,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, "producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -109,17 +115,42 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    /**
+     * Test that verifies that after moving to 'buildPath' and 'buildName' in project coordinates (1.9.20),
+     * the shape of the resolved coordinate are the same across different versions of Gradle.
+     */
+    @GradleTest
+    fun `test - sample0 - buildId buildPath buildName`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            resolveIdeDependencies(":consumerA") { dependencies ->
+                /* Pick some known dependency  and run check on it */
+                val dependency = dependencies["commonMain"].getOrFail(regularSourceDependency(":producerBuild::producerA/commonMain"))
+                assertIs<IdeaKotlinSourceDependency>(dependency)
+                val projectCoordinates = dependency.coordinates.project
+                @Suppress("DEPRECATION")
+                assertEquals("producerBuild", projectCoordinates.buildId)
+                assertEquals("producerBuild", projectCoordinates.buildName)
+                assertEquals(":producerBuild", projectCoordinates.buildPath)
+                assertEquals(":producerA", projectCoordinates.projectPath)
+                assertEquals("producerA", projectCoordinates.projectName)
+            }
+        }
+    }
+
     @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultBuildFiles()
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
-                    regularSourceDependency("included-build::included/commonMain")
+                    regularSourceDependency(":included-build::included/commonMain")
                 )
 
                 dependencies["jvmMain"].assertMatches(
@@ -128,7 +159,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
                     dependsOnDependency(":/commonMain"),
                     projectArtifactDependency(
-                        Regular, "included-build::included",
+                        Regular, ":included-build::included",
                         FilePathRegex(".*/included-build/included/build/libs/included-jvm.jar")
                     )
                 )
@@ -138,8 +169,11 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute`(gradleVersion: GradleVersion) {
-        project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultBuildFiles()
+        project(
+            "mpp-composite-build/sample1",
+            gradleVersion,
+        ) {
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
@@ -164,8 +198,14 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
     @GradleTest
     fun `test - sample1 - assemble and execute - included build using older version of Kotlin`(gradleVersion: GradleVersion) {
-        project("mpp-composite-build/sample1", gradleVersion) {
-            projectPath.resolve("included-build").addDefaultBuildFiles()
+        project(
+            "mpp-composite-build/sample1",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsOn(
+                reason = "KGP 1.7.21 produces deprecation warnings with Gradle 8.4"
+            ) { gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4) }
+        ) {
+            projectPath.resolve("included-build").addDefaultSettingsToSettingsGradle(gradleVersion)
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", "1.7.21")
 
@@ -210,6 +250,45 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `test - sample2-withHostSpecificTargets - import cinterop dependencies`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample2-withHostSpecificTargets/producerBuild", gradleVersion) {
+            if (HostManager.hostIsMac) {
+                subProject("producerA").buildGradleKts.append(
+                    """                      
+                        tasks.configureEach {
+                            if (name == "iosArm64MetadataJar" || name == "iosX64MetadataJar") {
+                                enabled = false
+                            }
+                        }
+                    """.trimIndent()
+                )
+            }
+        }
+
+        project("mpp-composite-build/sample2-withHostSpecificTargets/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            gradleProperties.append("kotlin.mpp.enableCInteropCommonization=true")
+
+            build("cleanNativeDistributionCommonization")
+            build(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde") {
+                if (HostManager.hostIsMac) {
+                    assertTasksSkipped(
+                        ":producerBuild:producerA:iosArm64MetadataJar",
+                        ":producerBuild:producerA:iosX64MetadataJar",
+                    )
+                } else {
+                    assertTasksAreNotInTaskGraph(
+                        ":producerBuild:producerA:iosArm64MetadataJar",
+                        ":producerBuild:producerA:iosX64MetadataJar",
+                    )
+                }
+                assertTasksExecuted(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde")
+
+            }
+        }
+    }
+
+    @GradleTest
     fun `test - sample3-KT-56198-singleTargetMpp-includingJvm - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample3-KT-56198-singleTargetMpp-includingJvm/producerBuild", gradleVersion)
 
@@ -221,7 +300,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     kotlinStdlibDependencies,
                     jetbrainsAnnotationDependencies,
                     projectArtifactDependency(
-                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                        Regular, ":producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
                     )
                 )
 
@@ -230,7 +309,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     jetbrainsAnnotationDependencies,
                     dependsOnDependency(":consumerA/commonMain"),
                     projectArtifactDependency(
-                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                        Regular, ":producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
                     )
                 )
             }
@@ -288,17 +367,17 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
                     kotlinStdlibDependencies
                 )
 
                 dependencies["nativeMain"].assertMatches(
                     dependsOnDependency(":consumerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/nativeMain"),
-                    regularSourceDependency("producerBuild::producerA/linuxMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/nativeMain"),
+                    regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                    binaryCoordinates(Regex(".*stdlib:commonMain:.*")) /* KT-56278 */
                 )
 
                 dependencies["linuxMain"].assertMatches(
@@ -310,7 +389,11 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, "producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(
+                        Regular,
+                        ":producerBuild::producerA",
+                        FilePathRegex(".*/linuxX64/main/klib/producerA.klib")
+                    ),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -343,14 +426,14 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
             build(":consumerA:resolveIdeDependencies") {
                 consumerA.readIdeDependencies()["commonMain"].assertMatches(
-                    regularSourceDependency("producer::/commonMain"),
+                    regularSourceDependency(":producer::/commonMain"),
                     kotlinStdlibDependencies
                 )
             }
 
             build(":consumerB:resolveIdeDependencies") {
                 consumerB.readIdeDependencies()["commonMain"].assertMatches(
-                    regularSourceDependency("producer::/commonMain"),
+                    regularSourceDependency(":producer::/commonMain"),
                     kotlinStdlibDependencies
                 )
             }
@@ -358,6 +441,70 @@ class MppCompositeBuildIT : KGPBaseTest() {
             build(":producer:resolveIdeDependencies") {
                 producer.readIdeDependencies()["commonMain"].assertMatches(
                     kotlinStdlibDependencies
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    fun `test sample7`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/producerBuild", gradleVersion)
+        project(
+            "mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/consumerBuild",
+            gradleVersion,
+            defaultBuildOptions
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            build("projects")
+        }
+    }
+
+    @GradleTest
+    fun `KT-65315 composite project with resources in metadata klib`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/kt65315_with_resources_in_metadata_klib/producer", gradleVersion)
+
+        project(
+            "mpp-composite-build/kt65315_with_resources_in_metadata_klib/consumer",
+            gradleVersion,
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+
+            build(":consumerA:assemble") {
+                // Check that producer has resources in its metadata
+                val allMetadataJar = producer.projectPath.resolve("producerA/build/libs/producerA-metadata-1.0.0-SNAPSHOT.jar")
+                allMetadataJar.assertZipFileContains(listOf("commonMain/toot-toot.txt", "nativeMain/toot-toot.txt"))
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                if (OperatingSystem.current().isMacOsX) {
+                    // Check that producer has resources in its metadata
+                    val hostSpecificMetadataJar = producer.projectPath.resolve("producerA/build/libs/producerA-iosx64-1.0.0-SNAPSHOT-metadata.jar")
+                    hostSpecificMetadataJar.assertZipFileContains(listOf("appleMain/toot-toot.txt"))
+                    assertTasksExecuted(":consumerA:compileAppleMainKotlinMetadata")
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    fun `KT-66568 duplicate cinterop libraries in composite build`(gradleVersion: GradleVersion) {
+        val localRepoDir = defaultLocalRepo(gradleVersion)
+        val lib = project(
+            "mpp-composite-build/kt66568_duplicate_cinterop_libraries/lib",
+            gradleVersion,
+            localRepoDir = localRepoDir
+        )
+
+        project("mpp-composite-build/kt66568_duplicate_cinterop_libraries/app", gradleVersion, localRepoDir = localRepoDir) {
+            settingsGradleKts.toFile().replaceText("<lib_path>", lib.projectPath.toUri().path)
+            build(":lib:publish")
+            build(":app:compileLinuxMainKotlinMetadata") {
+                assertOutputDoesNotContain("""KLIB resolver.*The same 'unique_name=.*' found in more than one library""".toRegex())
+                val arguments = extractNativeCompilerTaskArguments(":app:compileLinuxMainKotlinMetadata")
+                assertEquals(
+                    1,
+                    arguments.countOccurrencesOf("test_lib-cinterop-foo"),
+                    "Unexpected number of test_lib-cinterop-foo"
                 )
             }
         }

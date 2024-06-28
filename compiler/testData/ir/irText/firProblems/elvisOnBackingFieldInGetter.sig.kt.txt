@@ -1,0 +1,45 @@
+// CHECK:
+//   Mangled name: ResourceTable
+//   Public signature: /ResourceTable|null[0]
+class ResourceTable {
+  // CHECK:
+  //   Mangled name: ResourceTable#<init>(){}
+  //   Public signature: /ResourceTable.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test {
+  // CHECK:
+  //   Mangled name: Test{}resourceTable
+  //   Public signature: /Test.resourceTable|5106462391401126974[0]
+  //   Public signature debug description: {}resourceTable
+  var resourceTable: ResourceTable?
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-resourceTable>(){}ResourceTable?
+    //   Public signature: /Test.resourceTable.<get-resourceTable>|-8031293433039158174[0]
+    //   Public signature debug description: <get-resourceTable>(){}ResourceTable?
+    get(): ResourceTable?
+    // CHECK:
+    //   Mangled name: Test#<set-resourceTable>(ResourceTable?){}
+    //   Public signature: /Test.resourceTable.<set-resourceTable>|-5872518901213324823[0]
+    //   Public signature debug description: <set-resourceTable>(ResourceTable?){}
+    set
+
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#getFileData(){}kotlin.String?
+  //   Public signature: /Test.getFileData|5079278953481470574[0]
+  //   Public signature debug description: getFileData(){}kotlin.String?
+  fun getFileData(): String?
+
+}

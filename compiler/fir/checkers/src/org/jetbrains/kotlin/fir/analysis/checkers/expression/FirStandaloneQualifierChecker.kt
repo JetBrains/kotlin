@@ -7,27 +7,33 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
+import org.jetbrains.kotlin.fir.analysis.checkers.isStandalone
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
+object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKind.Common) {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
-        val lastQualifiedAccess = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull() as? FirQualifiedAccessExpression
-        // Note: qualifier isn't standalone when it's in receiver (SomeClass.foo) or getClass (SomeClass::class) position
-        if (lastQualifiedAccess?.explicitReceiver === expression || lastQualifiedAccess?.dispatchReceiver === expression) return
-        val lastGetClass = context.getClassCalls.lastOrNull()
-        if (lastGetClass?.argument === expression) return
-        // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below
-        if (!expression.typeRef.isUnit) return
+        if (!expression.isStandalone(context)) return
+
+        // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
+        if (!expression.resolvedType.isUnit) {
+            if (expression.typeArguments.any { it.isExplicit }) {
+                reporter.reportOn(expression.source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object", context)
+            }
+            return
+        }
+
         expression.symbol.reportErrorOn(expression.source, context, reporter)
     }
 

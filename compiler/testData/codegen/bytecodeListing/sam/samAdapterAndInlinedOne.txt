@@ -3,7 +3,7 @@ public synthetic final class<null>  test/SamAdapterAndInlinedOneKt$sam$i$java_la
     // source: 'samAdapterAndInlinedOne.kt'
     public <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method run(): void
-    enclosing method test/SamAdapterAndInlinedOneKt.makeRunnable(Lkotlin/jvm/functions/Function0;)Ljava/lang/Runnable;
+    enclosing class test/SamAdapterAndInlinedOneKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
     inner (anonymous) class test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0
 }
@@ -13,7 +13,7 @@ synthetic final class<null>  test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnab
     // source: 'samAdapterAndInlinedOne.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method run(): void
-    enclosing method test/SamAdapterAndInlinedOneKt.noInline(Lkotlin/jvm/functions/Function0;)Ljava/lang/Runnable;
+    enclosing class test/SamAdapterAndInlinedOneKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
     inner (anonymous) class test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0
 }

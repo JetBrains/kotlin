@@ -13,8 +13,8 @@ data class Hash(
 )
 
 
-// 8 \.hashCode
-// 0 INVOKESTATIC java/lang/Boolean\.hashCode \(Z\)I
+// 9 \.hashCode
+// 1 INVOKESTATIC java/lang/Boolean\.hashCode \(Z\)I
 // 1 INVOKESTATIC java/lang/Byte\.hashCode \(B\)I
 // 1 INVOKESTATIC java/lang/Character\.hashCode \(C\)I
 // 1 INVOKESTATIC java/lang/Short\.hashCode \(S\)I

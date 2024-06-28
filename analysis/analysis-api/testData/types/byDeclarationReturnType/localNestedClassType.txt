@@ -1,15 +1,20 @@
-annotationsList: []
-classId: A.B.C
-classSymbol: KtNamedClassOrObjectSymbol(<local>/C)
-nullability: NON_NULLABLE
-ownTypeArguments: []
-qualifiers: [
-  qualifier:
-    name: B
-    symbol: KtNamedClassOrObjectSymbol(<local>/B)
-    typeArguments: []
-  qualifier:
-    name: C
-    symbol: KtNamedClassOrObjectSymbol(<local>/C)
-    typeArguments: []
-]
+KaUsualClassType:
+  abbreviatedType: null
+  annotations: []
+  classId: <local>/B.C
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: B
+      symbol: KaNamedClassSymbol(<local>/B)
+      typeArguments: []
+    qualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(<local>/C)
+  typeArguments: []
+
+Rendered type:
+B.C

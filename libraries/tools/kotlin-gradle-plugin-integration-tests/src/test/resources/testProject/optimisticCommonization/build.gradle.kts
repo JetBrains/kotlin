@@ -8,9 +8,15 @@ repositories {
 }
 
 kotlin {
-    linuxArm32Hfp("intPlatform") {
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
+    linuxArm64("shortPlatform") {
         compilations.get("main").cinterops.create("intPropertyInterop") {
-            header(file("libs/intPlatform.h"))
+            header(file("libs/shortPlatform.h"))
         }
     }
     linuxX64("longPlatform") {

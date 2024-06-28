@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperIeee754Comparisons
+// LANGUAGE: +ProperIeee754Comparisons
 
 fun eq1(a: Int?, b: Int) = a == b
 

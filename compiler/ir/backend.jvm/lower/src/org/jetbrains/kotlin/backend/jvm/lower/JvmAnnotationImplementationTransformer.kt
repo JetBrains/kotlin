@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -31,13 +31,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val annotationImplementationPhase = makeIrFilePhase<JvmBackendContext>(
-    { ctxt -> AnnotationImplementationLowering { JvmAnnotationImplementationTransformer(ctxt, it) } },
+@PhaseDescription(
     name = "AnnotationImplementation",
     description = "Create synthetic annotations implementations and use them in annotations constructor calls"
 )
+internal class JvmAnnotationImplementationLowering(context: JvmBackendContext) : AnnotationImplementationLowering(
+    { JvmAnnotationImplementationTransformer(context, it) }
+)
 
-class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, file: IrFile) :
+class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendContext, file: IrFile) :
     AnnotationImplementationTransformer(jvmContext, file) {
     private val publicAnnotationImplementationClasses = mutableSetOf<IrClassSymbol>()
 
@@ -93,7 +95,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
         // Mark the implClass as part of the public ABI if it was instantiated from a public
         // inline function, since annotation implementation classes are regenerated during inlining.
         if (annotationClass.symbol in publicAnnotationImplementationClasses) {
-            jvmContext.publicAbiSymbols += implClass.symbol
+            implClass.isPublicAbi = true
         }
 
         implClass.addFunction(
@@ -116,6 +118,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
         generatedConstructor: IrConstructor
     ) {
         implementor.implementAnnotationPropertiesAndConstructor(
+            annotationClass,
             annotationClass.getAnnotationProperties(),
             implClass,
             generatedConstructor,
@@ -231,6 +234,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             }
 
         fun implementAnnotationPropertiesAndConstructor(
+            annotationClass: IrClass,
             annotationProperties: List<IrProperty>,
             implClass: IrClass,
             generatedConstructor: IrConstructor,
@@ -247,6 +251,11 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             )
 
             generatedConstructor.body = ctorBody
+
+            // For annotations defined in Java, IrProperties do not contain initializers in backing fields, as annotation properties are represented as Java methods
+            // (that are later converted to synthetic properties w/o fields).
+            // However, K2 stores default values in annotation's constructor parameters.
+            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.valueParameters?.associateBy { it.name }.orEmpty()
 
             annotationProperties.forEach { property ->
                 val propType = property.getter!!.returnType
@@ -266,13 +275,16 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
 
                 val defaultExpression = property.backingField?.initializer?.expression
                 val newDefaultValue: IrExpressionBody? =
-                    if (defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter) {
-                        // INITIALIZE_PROPERTY_FROM_PARAMETER
-                        (defaultExpression.symbol.owner as IrValueParameter).defaultValue
-                    } else if (defaultExpression != null) {
-                        property.backingField!!.initializer
-                    } else null
-                parameter.defaultValue = newDefaultValue?.deepCopyWithVariables()
+                    // INITIALIZE_PROPERTY_FROM_PARAMETER
+                    when {
+                        defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter ->
+                            (defaultExpression.symbol.owner as IrValueParameter).defaultValue
+                        defaultExpression != null -> property.backingField!!.initializer
+                        propName in fallbackPrimaryCtorParamsMap ->
+                            fallbackPrimaryCtorParamsMap[propName]?.defaultValue?.takeIf { it.expression !is IrErrorExpression }
+                        else -> null
+                    }
+                parameter.defaultValue = newDefaultValue?.deepCopyWithoutPatchingParents()
                     ?.also { if (defaultValueTransformer != null) it.transformChildrenVoid(defaultValueTransformer) }
 
                 ctorBody.statements += with(ctorBodyBuilder) {

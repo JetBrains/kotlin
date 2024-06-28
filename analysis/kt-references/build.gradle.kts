@@ -8,7 +8,7 @@ dependencies {
     implementation(project(":analysis:light-classes-base"))
     implementation(intellijCore())
 
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

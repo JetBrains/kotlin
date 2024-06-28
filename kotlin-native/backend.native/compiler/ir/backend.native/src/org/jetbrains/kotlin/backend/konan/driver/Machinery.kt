@@ -1,22 +1,17 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.driver
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 
 /**
  * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
@@ -37,7 +32,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
  * It will take some time to rewrite it properly.
  */
 internal interface PhaseContext : LoggingContext, ConfigChecks, ErrorReportingContext {
-    val messageCollector: MessageCollector
 
     /**
      * Called by [PhaseEngine.useContext] after action completion to cleanup resources.
@@ -49,22 +43,9 @@ internal open class BasicPhaseContext(
         override val config: KonanConfig,
 ) : PhaseContext {
     override var inVerbosePhase = false
-    override fun log(message: () -> String) {
-        if (inVerbosePhase) {
-            println(message())
-        }
-    }
 
     override val messageCollector: MessageCollector
-        get() = config.configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        val location = element?.getCompilerMessageLocation(irFile ?: error("irFile should be not null for $element"))
-        this.messageCollector.report(
-                if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING,
-                message, location
-        )
-    }
+        get() = config.configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     override fun dispose() {
 

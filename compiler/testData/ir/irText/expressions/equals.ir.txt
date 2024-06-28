@@ -12,19 +12,19 @@ FILE fqName:<root> fileName:/equals.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testEquals (a: kotlin.Int, b: kotlin.Int): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Int' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Int' type=kotlin.Boolean origin=null
           $this: GET_VAR 'a: kotlin.Int declared in <root>.testEquals' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in <root>.testEquals' type=kotlin.Int origin=null
   FUN name:testJEqeqNull visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJEqeqNull (): kotlin.Boolean declared in <root>'
         CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-          arg0: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:INT_NULL type:@[FlexibleNullability] kotlin.Int? visibility:public [static]' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
+          arg0: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:INT_NULL type:@[FlexibleNullability] kotlin.Int? visibility:public [static] declared in <root>.J' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.J origin=null
           arg1: CONST Null type=kotlin.Nothing? value=null
   FUN name:testJEqualsNull visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testJEqualsNull (): kotlin.Boolean declared in <root>'
-        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Int' type=kotlin.Boolean origin=null
+        CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Int' type=kotlin.Boolean origin=null
           $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:INT_NULL type:@[FlexibleNullability] kotlin.Int? visibility:public [static]' type=@[FlexibleNullability] kotlin.Int? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:INT_NULL type:@[FlexibleNullability] kotlin.Int? visibility:public [static] declared in <root>.J' type=@[FlexibleNullability] kotlin.Int? superQualifierSymbol=<root>.J origin=null
           other: CONST Null type=kotlin.Nothing? value=null

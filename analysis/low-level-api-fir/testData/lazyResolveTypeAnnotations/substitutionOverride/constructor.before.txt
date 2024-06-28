@@ -1,0 +1,48 @@
+@R|second/Anno|(<strcat>(String(type param: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>>
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(<strcat>(String(type param: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>>
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String
+  context -> FirConstructorSymbol second/SubClass.SubClass
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+FILE: [ResolvedTo(IMPORTS)] constructor.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public abstract [ResolvedTo(TYPES)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type param: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>>>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+            LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type param: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type param: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type param: ), constant#))  kotlin/String>>>|>
+        }
+
+    }
+    public abstract [ResolvedTo(SUPER_TYPES)] class AbstractClass<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) t: @Anno[Unresolved](LAZY_EXPRESSION) T): R|second/AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

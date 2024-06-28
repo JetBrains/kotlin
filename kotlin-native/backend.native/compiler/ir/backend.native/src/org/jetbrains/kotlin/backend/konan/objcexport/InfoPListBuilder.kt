@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.platformName
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.name.Name
+
+internal enum class BundleType {
+    FRAMEWORK, XCTEST
+}
 
 /**
  * Creates an Info.plist file for an Apple framework.
@@ -22,13 +23,14 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class InfoPListBuilder(
         private val config: KonanConfig,
+        private val bundleType: BundleType = BundleType.FRAMEWORK
 ) {
     private val configuration = config.configuration
 
     fun build(
-            name: String,
-            mainPackageGuesser: MainPackageGuesser,
-            moduleDescriptor: ModuleDescriptor,
+        name: String,
+        mainPackageGuesser: MainPackageGuesser,
+        moduleDescriptor: ModuleDescriptor,
     ): String {
         val bundleId = computeBundleID(name, mainPackageGuesser, moduleDescriptor)
 
@@ -37,6 +39,10 @@ internal class InfoPListBuilder(
         val properties = config.platform.configurables as AppleConfigurables
         val platform = properties.platformName()
         val minimumOsVersion = properties.osVersionMin
+        val bundlePackageType = when (bundleType) {
+            BundleType.FRAMEWORK -> "FMWK"
+            BundleType.XCTEST -> "BNDL"
+        }
 
         val contents = StringBuilder()
         contents.append("""
@@ -53,7 +59,7 @@ internal class InfoPListBuilder(
                 <key>CFBundleName</key>
                 <string>$name</string>
                 <key>CFBundlePackageType</key>
-                <string>FMWK</string>
+                <string>$bundlePackageType</string>
                 <key>CFBundleShortVersionString</key>
                 <string>$bundleShortVersionString</string>
                 <key>CFBundleSupportedPlatforms</key>
@@ -79,6 +85,7 @@ internal class InfoPListBuilder(
 
                 """.trimMargin())
         }
+
         val target = config.target
         // UIDeviceFamily mapping:
         // 1 - iPhone
@@ -103,15 +110,40 @@ internal class InfoPListBuilder(
             )
         }
 
-        if (target == KonanTarget.IOS_ARM32) {
-            contents.append("""
-                |    <key>UIRequiredDeviceCapabilities</key>
-                |    <array>
-                |        <string>armv7</string>
-                |    </array>
+       if (bundleType == BundleType.XCTEST) {
+            val platformName = properties.platformName().lowercase()
+            val platformVersion = properties.sdkVersion
 
-                """.trimMargin()
-            )
+            contents.append("""
+                |    <key>DTPlatformName</key>
+                |    <string>${platformName}</string>
+                |    <key>DTPlatformVersion</key>
+                |    <string>${platformVersion}</string>
+                |    <key>DTSDKName</key>
+                |    <string>${platformName}${platformVersion}</string>
+
+            """.trimMargin())
+
+            // FIXME with KT-65601: These are hardcoded for the version of Xcode used in our toolchain (15.0)
+            //  They could be retrieved from `/usr/bin/xcrun --show-sdk-*-version --sdk SDK` for the installed Xcode
+            val sdkBuild = when (target.family) {
+                Family.OSX -> "23A334"
+                Family.IOS -> "21A325"
+                Family.TVOS -> "21J351"
+                Family.WATCHOS -> "21R354"
+                else -> error("Unknown Apple family: ${target.family}")
+            }
+            contents.append("""
+                |    <key>DTXcode</key>
+                |    <string>1500</string>
+                |    <key>DTXcodeBuild</key>
+                |    <string>15A240d</string>
+                |    <key>DTSDKBuild</key>
+                |    <string>$sdkBuild</string>
+                |    <key>DTPlatformBuild</key>
+                |    <string>$sdkBuild</string>
+
+            """.trimMargin())
         }
 
         contents.append("""
@@ -119,14 +151,13 @@ internal class InfoPListBuilder(
             </plist>
         """.trimIndent())
 
-        // TODO: Xcode also add some number of DT* keys.
         return contents.toString()
     }
 
     private fun computeBundleID(
-            bundleName: String,
-            mainPackageGuesser: MainPackageGuesser,
-            moduleDescriptor: ModuleDescriptor,
+        bundleName: String,
+        mainPackageGuesser: MainPackageGuesser,
+        moduleDescriptor: ModuleDescriptor,
     ): String {
         val deprecatedBundleIdOption = configuration[KonanConfigKeys.BUNDLE_ID]
         val bundleIdOption = configuration[BinaryOptions.bundleId]

@@ -12,8 +12,5 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
  * Generates synthetic parts for [ClassDescriptor]
  */
 interface Processor {
-
-    context(LazyJavaResolverContext)
-    fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder)
-
+    fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext)
 }

@@ -5,7 +5,6 @@ public abstract class A1 {
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public abstract method getSize(): int
-    public abstract method remove(p0: java.lang.Object): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -105,7 +104,6 @@ public abstract class A8 {
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public abstract method getSize(): int
-    public abstract method remove(p0: java.lang.Object): boolean
     public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]

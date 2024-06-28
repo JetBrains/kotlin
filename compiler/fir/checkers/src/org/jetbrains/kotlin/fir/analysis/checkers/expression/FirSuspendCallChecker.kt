@@ -9,21 +9,20 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -32,9 +31,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
+object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     private val BUILTIN_SUSPEND_NAME = StandardClassIds.Callables.suspend.callableName
 
     internal val KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID = CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, BUILTIN_SUSPEND_NAME)
@@ -47,7 +47,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         ) {
             checkSuspendModifierForm(expression, reference, symbol, context, reporter)
         }
-        if (reference is FirResolvedCallableReference) return
+
+        if (reference is FirResolvedCallableReference) {
+            checkCallableReference(expression, symbol, reporter, context)
+            return
+        }
+
         when (symbol) {
             is FirNamedFunctionSymbol -> if (!symbol.isSuspend) return
             is FirPropertySymbol -> if (symbol.callableId != StandardClassIds.Callables.coroutineContext) return
@@ -64,6 +69,14 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         } else {
             if (!checkNonLocalReturnUsage(enclosingSuspendFunction, context)) {
                 reporter.reportOn(expression.source, FirErrors.NON_LOCAL_SUSPENSION_POINT, context)
+            }
+            if (isInScopeForDefaultParameterValues(enclosingSuspendFunction, context)) {
+                reporter.reportOn(
+                    expression.source,
+                    FirErrors.UNSUPPORTED,
+                    "suspend function calls in a context of default parameter value",
+                    context
+                )
             }
             if (!checkRestrictsSuspension(expression, enclosingSuspendFunction, symbol, context)) {
                 reporter.reportOn(expression.source, FirErrors.ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL, context)
@@ -104,8 +117,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         if (this !is FirFunctionCall) return null
         val reference = this.calleeReference
         if (reference is FirResolvedCallableReference) return null
-        if (typeArguments.any { it.source != null }) return null
-        if (arguments.singleOrNull() is FirLambdaArgumentExpression) {
+        if (typeArguments.any { it.isExplicit }) return null
+        if (arguments.singleOrNull().let { it is FirAnonymousFunctionExpression && it.isTrailingLambda }) {
             // No brackets should be in a selector call
             val callExpressionSource =
                 if (explicitReceiver == null) source
@@ -130,28 +143,55 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {
         return context.containingDeclarations.lastOrNull {
             when (it) {
-                is FirAnonymousFunction -> it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session)
-                is FirSimpleFunction -> it.isSuspend
-                else -> false
+                is FirAnonymousFunction ->
+                    if (it.isLambda) it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session) else it.isSuspend
+                is FirSimpleFunction ->
+                    it.isSuspend
+                else ->
+                    false
             }
         } as? FirFunction
     }
 
-    private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
-        val containingFunction = context.containingDeclarations.lastIsInstanceOrNull<FirFunction>() ?: return false
-        return if (containingFunction is FirAnonymousFunction && enclosingSuspendFunction !== containingFunction) {
-            containingFunction.inlineStatus.returnAllowed
-        } else {
-            enclosingSuspendFunction === containingFunction
+    private fun isInScopeForDefaultParameterValues(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
+        val valueParameters = enclosingSuspendFunction.valueParameters
+        for (declaration in context.containingDeclarations.asReversed()) {
+            when {
+                declaration is FirValueParameter && declaration in valueParameters && declaration.defaultValue != null -> return true
+                declaration is FirAnonymousFunction && declaration.inlineStatus == InlineStatus.Inline -> continue
+                declaration is FirFunction && !declaration.isInline -> return false
+            }
         }
+        return false
+    }
+
+    private fun checkNonLocalReturnUsage(enclosingSuspendFunction: FirFunction, context: CheckerContext): Boolean {
+        for (declaration in context.containingDeclarations.asReversed()) {
+            // If we found the nearest suspend function, we're finished.
+            if (declaration == enclosingSuspendFunction) return true
+            // Local variables are okay.
+            if (declaration is FirProperty && declaration.isLocal) continue
+            // Inline lambdas are okay.
+            if (declaration is FirAnonymousFunction && declaration.inlineStatus.returnAllowed) continue
+            // We already report UNSUPPORTED on suspend calls in value parameters default values, so they are okay for our purposes.
+            if (declaration is FirValueParameter) continue
+            // Everything else (local classes, init blocks, non-inline lambdas, etc.F) is not okay.
+            return false
+        }
+
+        return false
     }
 
     private fun checkRestrictsSuspension(
         expression: FirQualifiedAccessExpression,
         enclosingSuspendFunction: FirFunction,
         calledDeclarationSymbol: FirCallableSymbol<*>,
-        context: CheckerContext
+        context: CheckerContext,
     ): Boolean {
+        if (expression is FirFunctionCall && isCaseMissedByK1(expression)) {
+            return true
+        }
+
         val session = context.session
 
         val enclosingSuspendFunctionDispatchReceiverOwnerSymbol =
@@ -162,7 +202,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             expression.computeReceiversInfo(session, calledDeclarationSymbol)
 
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
-            if (!receiverExpression.typeRef.coneType.isRestrictSuspensionReceiver(session)) continue
+            if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) continue
 
@@ -183,6 +223,49 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             }
         }
         return false
+    }
+
+    /**
+     * This function exists because of KT-65272:
+     *
+     * ```
+     * @RestrictsSuspension
+     * object TestScope
+     *
+     * val testLambda: suspend TestScope.() -> Unit
+     *     get() = TODO()
+     *
+     * suspend fun test() {
+     *     TestScope.testLambda()        // ❌️K1 ❌️K2
+     *     testLambda(TestScope)         // ✅️K1 ❌️K2  <-- Working K1 code now fails to compile
+     *     testLambda.invoke(TestScope)  // ✅️K1 ✅️K2
+     * }
+     * ```
+     *
+     * It was decided to replicate K1 behavior for now, so function
+     * returns `true` when given an expression like `testLambda(TestScope)`:
+     * an implicit invoke call on a receiver of an extension function type
+     * such that the receiver argument is passed as a value argument.
+     */
+    private fun isCaseMissedByK1(expression: FirFunctionCall): Boolean {
+        val isInvokeFromExtensionFunctionType = expression is FirImplicitInvokeCall
+                && expression.explicitReceiver?.resolvedType?.isExtensionFunctionType == true
+
+        if (!isInvokeFromExtensionFunctionType) {
+            return false
+        }
+
+        val source = expression.source
+            ?: return false
+
+        val visualValueArgumentsCount = source
+            .getChild(KtNodeTypes.VALUE_ARGUMENT_LIST, depth = 1)
+            ?.lighterASTNode?.getChildren(source.treeStructure)
+            ?.filter { it.tokenType == KtNodeTypes.VALUE_ARGUMENT }
+            ?.size
+            ?: return false
+
+        return visualValueArgumentsCount != expression.arguments.count() - 1
     }
 
     private fun ConeKotlinType.isRestrictSuspensionReceiver(session: FirSession): Boolean {
@@ -217,11 +300,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         session: FirSession,
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
+        val dispatchReceiver = dispatchReceiver
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendOrKSuspendFunctionType(session)
+            dispatchReceiver != null && dispatchReceiver.resolvedType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
-            val variableForInvokeType = variableForInvoke.typeRef.coneType
+            val variableForInvokeType = variableForInvoke.resolvedType
             if (!variableForInvokeType.isExtensionFunctionType) return Triple(null, null, null)
 
             // `a.foo()` is resolved to invokeExtension, so it's been desugared to `foo.invoke(a)`
@@ -234,10 +318,21 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         }
 
         return Triple(
-            dispatchReceiver.takeIf { it !is FirNoReceiverExpression },
-            extensionReceiver.takeIf { it !is FirNoReceiverExpression },
+            dispatchReceiver,
+            extensionReceiver,
             calledDeclarationSymbol.resolvedReceiverTypeRef?.coneType,
         )
+    }
+
+    private fun checkCallableReference(
+        expression: FirQualifiedAccessExpression,
+        symbol: FirCallableSymbol<*>,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (symbol.callableId == StandardClassIds.Callables.coroutineContext) {
+            reporter.reportOn(expression.calleeReference.source, FirErrors.UNSUPPORTED, "Callable reference to suspend property", context)
+        }
     }
 }
 

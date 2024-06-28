@@ -1,56 +1,32 @@
-group 'com.example'
-version '1.0'
-
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
 }
 
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+group = "com.example"
+version = "1.0"
 
 kotlin {
-    js('nodeJs')
+    js("nodeJs")
 
     targets {
         all {
             mavenPublication {
                 pom.withXml {
-                    asNode().appendNode('name', 'Sample MPP library')
+                    asNode().appendNode("name", "Sample MPP library")
                 }
-            }
-        }
-    }
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-            }
-        }
-        nodeJsMain {
-            dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
             }
         }
     }
 }
 
-kotlin.sourceSets.each { println it.kotlin.srcDirs }
-
-apply plugin: 'maven-publish'
+kotlin.sourceSets.each { println(it.kotlin.srcDirs) }
 
 publishing {
     repositories {
-        maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
+        }
     }
 }

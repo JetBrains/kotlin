@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildFieldCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -34,7 +37,7 @@ abstract class FirAbstractImportingScope(
 
     private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
         if (fir.classKind == ClassKind.OBJECT) {
-            unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+            unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS)
         } else {
             fir.scopeProvider.getStaticScope(fir, session, scopeSession)
         }
@@ -77,7 +80,7 @@ abstract class FirAbstractImportingScope(
                 if (staticsScope != null) {
                     staticsScope.processCallablesByName(importedName) {
                         if (it.isStatic || staticsScopeOwnerSymbol.classKind == ClassKind.OBJECT) {
-                            processor(it.buildImportedCopy(parentClassId))
+                            processor(it.buildImportedCopy(staticsScopeOwnerSymbol.classId))
                         } else {
                             processor(it)
                         }
@@ -98,7 +101,7 @@ abstract class FirAbstractImportingScope(
             name,
             imports,
             processor,
-            { classId -> fir.buildImportedCopy(classId).symbol },
+            { classId -> fir.buildImportedVersion(classId).symbol },
             FirContainingNamesAwareScope::processFunctionsByName,
             provider::getTopLevelFunctionSymbols
         )
@@ -109,37 +112,48 @@ abstract class FirAbstractImportingScope(
             name,
             imports,
             processor,
-            { classId -> fir.buildImportedCopy(classId).symbol },
-            { importedName, importedProcessor ->
-                processPropertiesByName(importedName) {
-                    if (it is FirPropertySymbol) {
-                        importedProcessor(it)
-                    } else {
-                        processor(it)
-                    }
-                }
-            },
+            { classId -> fir.buildImportedVersion(classId).symbol },
+            FirContainingNamesAwareScope::processPropertiesByName,
             provider::getTopLevelPropertySymbols
         )
     }
 }
 
-internal fun FirSimpleFunction.buildImportedCopy(importedClassId: ClassId): FirSimpleFunction {
+internal fun FirSimpleFunction.buildImportedVersion(importedClassId: ClassId): FirSimpleFunction {
     return buildSimpleFunctionCopy(this) {
         origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
         this.symbol = FirNamedFunctionSymbol(CallableId(importedClassId, name))
     }.apply {
-        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedCopy)
+        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
     }
 }
 
-internal fun FirProperty.buildImportedCopy(importedClassId: ClassId): FirProperty {
-    return buildPropertyCopy(this) {
-        origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
-        this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
-        this.delegateFieldSymbol = null
-    }.apply {
-        importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedCopy)
+internal fun FirVariable.buildImportedVersion(importedClassId: ClassId): FirVariable {
+    return when (this) {
+        is FirProperty -> {
+            buildPropertyCopy(this) {
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+                this.symbol = FirPropertySymbol(CallableId(importedClassId, name))
+                this.delegateFieldSymbol = null
+            }.apply {
+                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
+            }
+        }
+        is FirField -> {
+            buildFieldCopy(this) {
+                origin = FirDeclarationOrigin.ImportedFromObjectOrStatic
+                this.symbol = FirFieldSymbol(CallableId(importedClassId, name))
+            }.apply {
+                importedFromObjectOrStaticData = ImportedFromObjectOrStaticData(importedClassId, this@buildImportedVersion)
+            }
+        }
+        is FirEnumEntry -> {
+            // It's not important to create an imported copy of FirEnumEntry
+            this
+        }
+        else -> {
+            throw IllegalStateException("Unexpected variable in buildImportedCopy: ${render()} of type ${this::class.java}")
+        }
     }
 }
 

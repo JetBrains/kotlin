@@ -1,3 +1,3 @@
-import kotlin.Cloneable
+import kotlin.<!UNRESOLVED_IMPORT!>Cloneable<!>
 
-fun cloneable(): Cloneable = intArrayOf(42)
+fun cloneable(): <!UNRESOLVED_REFERENCE!>Cloneable<!> = intArrayOf(42)

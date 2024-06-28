@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 typealias L<T> = List<T>
 typealias NL<T> = List<T>?
@@ -29,7 +29,7 @@ fun testWrong4(x: List<Any>) = x is <!NO_TYPE_ARGUMENTS_ON_RHS!>ReadableList<!>
 
 fun <T> testLocal(x: Any) {
     class C
-    typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>CA<!> = C
-    if (x is <!NO_TYPE_ARGUMENTS_ON_RHS!>C<!>) {}
+    typealias CA = C
+    if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
     if (x is <!UNRESOLVED_REFERENCE!>CA<!>) {}
 }

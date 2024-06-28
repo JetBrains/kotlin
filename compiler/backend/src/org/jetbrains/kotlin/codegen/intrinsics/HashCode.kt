@@ -19,16 +19,15 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class HashCode(private val jvmTarget: JvmTarget) : IntrinsicMethod() {
+class HashCode : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
         val receiverType = method.dispatchReceiverType ?: method.extensionReceiverType ?: error("No receiver for callable: $method")
-        val useObjectHashCode = JvmTarget.JVM_1_6 == jvmTarget || !AsmUtil.isPrimitive(receiverType)
+        val useObjectHashCode = !AsmUtil.isPrimitive(receiverType)
         return object : IntrinsicCallable(
                 Type.INT_TYPE,
                 emptyList(),

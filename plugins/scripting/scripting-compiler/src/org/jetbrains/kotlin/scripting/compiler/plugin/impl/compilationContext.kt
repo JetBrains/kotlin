@@ -8,16 +8,14 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
+import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
-import org.jetbrains.kotlin.cli.common.checkPluginsArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -26,11 +24,9 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -38,32 +34,19 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.scriptConfigurators
-import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
-import org.jetbrains.kotlin.fir.resolve.createFunctionType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
-import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptConfiguratorExtensionImpl
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
@@ -139,39 +122,6 @@ internal class ScriptingSamWithReceiverComponentContributor(val annotations: Lis
     }
 }
 
-internal class FirScriptingSamWithReceiverExtensionRegistrar() : FirExtensionRegistrar() {
-    override fun ExtensionRegistrarContext.configurePlugin() {
-        +::FirScriptSamWithReceiverConventionTransformer
-    }
-
-    class FirScriptSamWithReceiverConventionTransformer(
-        session: FirSession
-    ) : FirSamConversionTransformerExtension(session) {
-
-        val knownAnnotations: Set<String> by lazy {
-            session.extensionService.scriptConfigurators.flatMapTo(mutableSetOf()) {
-                (it as? FirScriptConfiguratorExtensionImpl)?.knownAnnotationsForSamWithReceiver ?: emptySet()
-            }
-        }
-
-        override fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType? {
-            val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
-            return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in knownAnnotations }) {
-                val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
-                if (parameterTypes.isEmpty()) return null
-                val kind = session.functionTypeService.extractSingleSpecialKindForFunction(function.symbol) ?: FunctionTypeKind.Function
-                createFunctionType(
-                    kind,
-                    parameters = parameterTypes.subList(1, parameterTypes.size),
-                    receiverType = parameterTypes[0],
-                    rawReturnType = function.returnTypeRef.coneType
-                )
-            }
-        }
-    }
-
-}
-
 internal fun SharedScriptCompilationContext.applyConfigure(): SharedScriptCompilationContext = apply {
     val samWithReceiverAnnotations = baseScriptCompilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]
     if (samWithReceiverAnnotations?.isEmpty() == false) {
@@ -203,6 +153,9 @@ internal fun createInitialConfigurations(
     val initialScriptCompilationConfiguration =
         scriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration)
 
+    // this is the second processing of the same args from script configuration, the first happens inside createInitialComopilerConfiguration
+    // but this one important for the error reporting
+    // TODO: rewrite to avoid double processing of the options
     initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
         kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
     }
@@ -238,8 +191,7 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
         validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
     }
 ) {
-    val compilerArguments = K2JVMCompilerArguments()
-    parseCommandLineArguments(compilerOptions, compilerArguments)
+    val compilerArguments = makeScriptCompilerArguments(compilerOptions)
 
     if (!validate(compilerArguments)) return
 
@@ -254,6 +206,17 @@ internal fun CompilerConfiguration.updateWithCompilerOptions(
     configureKlibPaths(compilerArguments)
 }
 
+fun makeScriptCompilerArguments(compilerOptions: List<String>): K2JVMCompilerArguments {
+
+    val compilerArguments = K2JVMCompilerArguments()
+    val argumentsWithExternalProp =
+        (System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ') ?: emptyList()) +
+                compilerOptions
+
+    parseCommandLineArguments(argumentsWithExternalProp, compilerArguments)
+    return compilerArguments
+}
+
 private fun ScriptCompilationConfiguration.withUpdatesFromCompilerConfiguration(kotlinCompilerConfiguration: CompilerConfiguration) =
     withUpdatedClasspath(kotlinCompilerConfiguration.jvmClasspathRoots)
 
@@ -264,17 +227,15 @@ private fun createInitialCompilerConfiguration(
     reportingState: IgnoredOptionsReportingState
 ): CompilerConfiguration {
 
-    val baseArguments = K2JVMCompilerArguments()
-    parseCommandLineArguments(
-        scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions] ?: emptyList(),
-        baseArguments
+    val baseArguments = makeScriptCompilerArguments(
+        scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
     )
 
     reportArgumentsIgnoredGenerally(baseArguments, messageCollector, reportingState)
     reportingState.currentArguments = baseArguments
 
     return CompilerConfiguration().apply {
-        put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+        this.messageCollector = messageCollector
         setupCommonArguments(baseArguments)
 
         setupJvmSpecificArguments(baseArguments)
@@ -317,6 +278,10 @@ private fun createInitialCompilerConfiguration(
             ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
             ScriptingCompilerConfigurationComponentRegistrar()
         )
+        add(
+            CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
+            ScriptingK2CompilerPluginRegistrar()
+        )
 
         configureJavaModulesContentRoots(baseArguments)
         configureContentRootsFromClassPath(baseArguments)
@@ -350,7 +315,7 @@ private fun createInitialCompilerConfiguration(
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
             PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this)
         } else {
-            loadPlugins()
+            loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
         }
     }
 }

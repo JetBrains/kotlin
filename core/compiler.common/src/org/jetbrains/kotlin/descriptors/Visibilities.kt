@@ -10,6 +10,7 @@ object Visibilities {
         override fun mustCheckInImports(): Boolean = true
     }
 
+    // K2 doesn't use this visibility, see KT-55446 for details
     object PrivateToThis : Visibility("private_to_this", isPublicAPI = false) {
         override val internalDisplayName: String
             get() = "private/*private to this*/"
@@ -52,7 +53,6 @@ object Visibilities {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private val ORDERED_VISIBILITIES: Map<Visibility, Int> = buildMap {
         put(PrivateToThis, 0)
         put(Private, 0)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.js.analyze.JsNativeDiagnosticSuppressor
+import org.jetbrains.kotlin.js.naming.JsNameSuggestion
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
@@ -21,21 +22,21 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsExternalInheritorOnlyChecker,
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
-        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
+        JsExternalArgumentCallChecker
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
@@ -49,6 +50,8 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = true, allowUnsignedTypes = false))
+        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = true, includeUnsignedNumbers = false))
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

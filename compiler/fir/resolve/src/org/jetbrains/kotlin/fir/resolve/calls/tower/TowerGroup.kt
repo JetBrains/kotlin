@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import java.lang.Long.toBinaryString
+import java.lang.Long.compareUnsigned
 
 sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
     abstract class WithDepth(index: Byte, val depth: Int) : TowerGroupKind(index) {
@@ -26,29 +27,31 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
         }
     }
 
-    object Start : TowerGroupKind(0b0)
+    data object Start : TowerGroupKind(0b0)
 
-    object Qualifier : TowerGroupKind(1)
-
-    object Classifier : TowerGroupKind(2)
+    data object QualifierOrClassifier : TowerGroupKind(1)
 
     class TopPrioritized(depth: Int) : WithDepth(3, depth)
 
-    object Member : TowerGroupKind(4)
+    data object Member : TowerGroupKind(4)
 
-    class Local(depth: Int) : WithDepth(5, depth)
+    // If a variable of extension function type belong to some scope X, and there's an implicit receiver Y, then its invoke candidate
+    // should be less prioritized than the member scope of Y (see diagnostics/tests/resolve/priority/invokeExtensionVsOther2.kt),
+    // but more prioritized than extensions in X with bound receiver of Y (see analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt).
+    // That's why it's been places between Member and Local/ImplicitOrNonLocal.
+    data object InvokeExtensionWithImplicitReceiver : TowerGroupKind(5)
 
-    class ImplicitOrNonLocal(depth: Int, val kindForDebugSake: String) : WithDepth(6, depth)
+    class Local(depth: Int) : WithDepth(6, depth)
 
-    class ContextReceiverGroup(depth: Int) : WithDepth(7, depth)
+    class ImplicitOrNonLocal(depth: Int, @Suppress("unused") val kindForDebugSake: String) : WithDepth(7, depth)
 
-    object InvokeExtension : TowerGroupKind(8)
+    class ContextReceiverGroup(depth: Int) : WithDepth(8, depth)
 
-    object QualifierValue : TowerGroupKind(9)
+    data object QualifierValue : TowerGroupKind(9)
 
     class UnqualifiedEnum(depth: Int) : WithDepth(9, depth)
 
-    object Last : TowerGroupKind(0b1111)
+    data object Last : TowerGroupKind(0b1111)
 
     override fun compareTo(other: TowerGroupKind): Int {
         val indexResult = index.compareTo(other.index)
@@ -145,52 +148,85 @@ private constructor(
             }
         }
 
+        private fun compareDebugKinds(aDebugKinds: Array<TowerGroupKind>, bDebugKinds: Array<TowerGroupKind>): Int {
+            var index = 0
+            while (index < aDebugKinds.size) {
+                if (index >= bDebugKinds.size) return 1
+                when {
+                    aDebugKinds[index] < bDebugKinds[index] -> return -1
+                    aDebugKinds[index] > bDebugKinds[index] -> return 1
+                }
+                index++
+            }
+            if (index < bDebugKinds.size) return -1
+
+            return 0
+        }
+
+        val DEBUG_KINDS_COMPARATOR: Comparator<Array<TowerGroupKind>> = Comparator(::compareDebugKinds)
+
         private fun kindOf(kind: TowerGroupKind): TowerGroup {
             return TowerGroup(subscript(0, kind), debugKindArrayOf(kind))
         }
 
-        val EmptyRoot = TowerGroup(0, EMPTY_KIND_ARRAY)
+        val EmptyRoot: TowerGroup = TowerGroup(0, EMPTY_KIND_ARRAY)
+        val EmptyRootForInvokeReceiver: TowerGroup = TowerGroup(0, EMPTY_KIND_ARRAY, InvokeResolvePriority.INVOKE_RECEIVER)
 
-        val Start = kindOf(TowerGroupKind.Start)
+        val Start: TowerGroup = kindOf(TowerGroupKind.Start)
 
-        val Qualifier = kindOf(TowerGroupKind.Qualifier)
+        val QualifierOrClassifier: TowerGroup = kindOf(TowerGroupKind.QualifierOrClassifier)
 
-        val Classifier = kindOf(TowerGroupKind.Classifier)
+        val QualifierValue: TowerGroup = kindOf(TowerGroupKind.QualifierValue)
 
-        val QualifierValue = kindOf(TowerGroupKind.QualifierValue)
+        val Member: TowerGroup = kindOf(TowerGroupKind.Member)
 
-        val Member = kindOf(TowerGroupKind.Member)
+        fun UnqualifiedEnum(depth: Int): TowerGroup = kindOf(TowerGroupKind.UnqualifiedEnum(depth))
 
-        fun UnqualifiedEnum(depth: Int) = kindOf(TowerGroupKind.UnqualifiedEnum(depth))
+        fun Local(depth: Int): TowerGroup = kindOf(TowerGroupKind.Local(depth))
 
-        fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
+        fun Implicit(depth: Int): TowerGroup = kindOf(TowerGroupKind.Implicit(depth))
+        fun NonLocal(depth: Int): TowerGroup = kindOf(TowerGroupKind.NonLocal(depth))
 
-        fun Implicit(depth: Int) = kindOf(TowerGroupKind.Implicit(depth))
-        fun NonLocal(depth: Int) = kindOf(TowerGroupKind.NonLocal(depth))
+        fun ContextReceiverGroup(depth: Int): TowerGroup = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
 
-        fun ContextReceiverGroup(depth: Int) = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
+        fun TopPrioritized(depth: Int): TowerGroup = kindOf(TowerGroupKind.TopPrioritized(depth))
 
-        fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
-
-        val Last = kindOf(TowerGroupKind.Last)
+        val Last: TowerGroup = kindOf(TowerGroupKind.Last)
     }
 
     private fun kindOf(kind: TowerGroupKind): TowerGroup = TowerGroup(subscript(code, kind), appendDebugKind(debugKinds, kind))
 
-    val Member get() = kindOf(TowerGroupKind.Member)
+    val Member: TowerGroup get() = kindOf(TowerGroupKind.Member)
 
-    fun Local(depth: Int) = kindOf(TowerGroupKind.Local(depth))
+    val InvokeExtensionWithImplicitReceiver: TowerGroup get() = kindOf(TowerGroupKind.InvokeExtensionWithImplicitReceiver)
 
-    fun Implicit(depth: Int) = kindOf(TowerGroupKind.Implicit(depth))
-    fun NonLocal(depth: Int) = kindOf(TowerGroupKind.NonLocal(depth))
+    fun Local(depth: Int): TowerGroup = kindOf(TowerGroupKind.Local(depth))
 
-    fun ContextReceiverGroup(depth: Int) = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
+    fun Implicit(depth: Int): TowerGroup = kindOf(TowerGroupKind.Implicit(depth))
+    fun NonLocal(depth: Int): TowerGroup = kindOf(TowerGroupKind.NonLocal(depth))
 
-    val InvokeExtension get() = kindOf(TowerGroupKind.InvokeExtension)
+    fun ContextReceiverGroup(depth: Int): TowerGroup = kindOf(TowerGroupKind.ContextReceiverGroup(depth))
 
-    fun TopPrioritized(depth: Int) = kindOf(TowerGroupKind.TopPrioritized(depth))
+    fun TopPrioritized(depth: Int): TowerGroup = kindOf(TowerGroupKind.TopPrioritized(depth))
 
-    fun InvokeReceiver(receiverGroup: TowerGroup) = TowerGroup(code, debugKinds, invokeResolvePriority, receiverGroup)
+    fun InvokeReceiver(
+        receiverGroup: TowerGroup,
+        invokeResolvePriority: InvokeResolvePriority
+    ): TowerGroup {
+        require(receiverGroup.invokeResolvePriority == InvokeResolvePriority.INVOKE_RECEIVER) {
+            "Receivers for invoke should be resolved with INVOKE_RECEIVER, but ${receiverGroup.invokeResolvePriority} found"
+        }
+
+        require(invokeResolvePriority != InvokeResolvePriority.NONE && invokeResolvePriority != InvokeResolvePriority.INVOKE_RECEIVER) {
+            "invokeResolvePriority should be non-trivial when receiverGroup is specified"
+        }
+
+        require(receiverGroup.receiverGroup == null) {
+            "receiverGroup should be trivial, but ${receiverGroup.receiverGroup} was found"
+        }
+
+        return TowerGroup(code, debugKinds, invokeResolvePriority, receiverGroup)
+    }
 
     // Treating `a.foo()` common calls as more prioritized than `a.foo.invoke()`
     // It's not the same as TowerGroupKind because it's not about tower levels, but rather a different dimension semantically.
@@ -201,38 +237,94 @@ private constructor(
     }
 
     private fun debugCompareTo(other: TowerGroup): Int {
-        var index = 0
-        while (index < debugKinds.size) {
-            if (index >= other.debugKinds.size) return 1
-            when {
-                debugKinds[index] < other.debugKinds[index] -> return -1
-                debugKinds[index] > other.debugKinds[index] -> return 1
-            }
-            index++
-        }
-        if (index < other.debugKinds.size) return -1
+        // In case of `receiverGroup` presence, it means that candidate is invoke+variable or invokeExtension+variable.
+        // In both cases `receiverGroup` means the tower group of a receiver variable.
+        // For regular invoke+variable, this@debugKinds mean the tower level where the "invoke" function has been found.
+        // For invokeExtension, this@debugKinds is either TowerGroup.Member in case of explicit extension receiver value,
+        // like `explicitReceiver.myPropertyOfExtensionFunctionType()`
+        // or TowerGroup.Implicit(depth).InvokeExtensionWithImplicitReceiver in case of implicit extension receiver value
+        // like `with(myReceiver) { myPropertyOfExtensionFunctionType() }`
+        val receiverDebugKinds = receiverGroup?.debugKinds ?: emptyArray()
+        val otherReceiverDebugKinds = other.receiverGroup?.debugKinds ?: emptyArray()
 
-        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
-        if (actualResult == 0) {
-            return if (receiverGroup == null || other.receiverGroup == null) 0
-            else receiverGroup.debugCompareTo(other.receiverGroup)
+        // Maximums define how far resolution algorithm should go to find the candidate
+        val thisMax = maxOf(debugKinds, receiverDebugKinds, DEBUG_KINDS_COMPARATOR)
+        val otherMax = maxOf(other.debugKinds, otherReceiverDebugKinds, DEBUG_KINDS_COMPARATOR)
+
+        // If maximum tower groups are different, then just use more prioritized of maximums.
+        // It seems more or less obvious, because if one candidate uses X group and other uses Y and X > Y,
+        // then for the second candidate we wouldn't even need to continue resolution to the level of X, like we would already found
+        // complete and probably successful candidate on Y.
+        val maxResult = compareDebugKinds(thisMax, otherMax)
+        if (maxResult != 0) return maxResult
+
+        // If any of the candidate is not invoke/invokeExtension, choose it
+        // Otherwise, prefer invoke and then invokeExtension ones
+        val invokeKindPriority = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (invokeKindPriority != 0) return invokeKindPriority
+
+        // NB: thisMax == otherMax and kinds of invokes are the same
+        return if (compareDebugKinds(receiverDebugKinds, thisMax) == 0 && compareDebugKinds(otherReceiverDebugKinds, thisMax) == 0) {
+            // If both variables/receivers are obtained from the maximum current level, compare invoke/invokeExtension levels
+            // Also, here it might be viewed as comparing minimums of both candidates
+            compareDebugKinds(debugKinds, other.debugKinds)
+        } else {
+            // Otherwise prefer, the one with the closest variable/receiver
+            // See how groups are prioritized at org.jetbrains.kotlin.resolve.calls.tower.AbstractInvokeTowerProcessor.process
+            // Also, see the test testData/diagnostics/tests/resolve/invoke/closerVariableMatterMore.kt
+            // There, we have two candidates A, B for which maxTowerGroup(A) == maxTowerGroup(B) && minTowerGroup(A) == minTowerGroup(B)
+            // But we don't assume them as equally placed preferring one with the closest receiver.
+            //
+            // NB: receiverDebugKinds == otherReceiverDebugKinds => this == other
+            // Proof:
+            // - Let's assume receiverDebugKinds == otherReceiverDebugKinds
+            // - We know that thisMax == otherMax
+            // - If receiverDebugKinds == thisMax then otherReceiverDebugKinds == thisMax, so we wouldn't come to the `else` section
+            // - That means that receiverDebugKinds != thisMax && otherReceiverDebugKinds != thisMax
+            // - Thus we have thisMax == debugKinds (because thisMax = maxOf(debugKinds, receiverDebugKinds)
+            // - And the same for otherMax == otherDebugKinds
+            //
+            // Considering thisMax == otherMax we have debugKinds == otherDebugKinds
+            // And with initial condition of receiverDebugKinds == otherReceiverDebugKinds we've got candidates from completely the same level
+            compareDebugKinds(receiverDebugKinds, otherReceiverDebugKinds)
         }
-        return actualResult
     }
 
     override fun compareTo(other: TowerGroup): Int = run {
-        val result = java.lang.Long.compareUnsigned(code, other.code)
-        if (result != 0) return@run result
-        val actualResult = invokeResolvePriority.compareTo(other.invokeResolvePriority)
-        if (actualResult == 0) {
-            return@run if (receiverGroup == null || other.receiverGroup == null) 0
-            else receiverGroup.compareTo(other.receiverGroup)
+        // See detailed algorithm description at `debugCompareTo`
+        // Fast-path
+        if (receiverGroup == null && other.receiverGroup == null &&
+            invokeResolvePriority == InvokeResolvePriority.NONE && other.invokeResolvePriority == InvokeResolvePriority.NONE
+        ) {
+            return@run compareUnsigned(code, other.code)
         }
-        return@run actualResult
+
+        val receiverCode = receiverGroup?.code ?: 0 // TowerGroup.Start.code
+        val otherReceiverCode = other.receiverGroup?.code ?: 0
+
+        val thisMax: Long = if (compareUnsigned(code, receiverCode) >= 0) code else receiverCode
+        val otherMax: Long = if (compareUnsigned(other.code, otherReceiverCode) >= 0) other.code else otherReceiverCode
+
+        val resultMax = compareUnsigned(thisMax, otherMax)
+        if (resultMax != 0) return@run resultMax
+
+        val invokeKindPriority = invokeResolvePriority.compareTo(other.invokeResolvePriority)
+        if (invokeKindPriority != 0) return invokeKindPriority
+
+        return if (compareUnsigned(receiverCode, thisMax) == 0 && compareUnsigned(otherReceiverCode, thisMax) == 0) {
+            compareUnsigned(code, other.code)
+        } else {
+            compareUnsigned(receiverCode, otherReceiverCode)
+        }
     }.also {
         if (DEBUG) {
             val debugResult = debugCompareTo(other)
-            require(debugResult == it) { "Kind comparison incorrect: $this vs $other, expected: $it, $debugResult" }
+            require(debugResult == it) {
+                "Kind comparison incorrect: $this vs $other, expected: $it, $debugResult"
+            }
+            require((this == other) == (debugResult == 0)) {
+                "Equality and compareTo should work consistently, but $debugResult found"
+            }
         }
     }
 
@@ -266,5 +358,33 @@ private constructor(
 }
 
 enum class InvokeResolvePriority {
-    NONE, INVOKE_RECEIVER, COMMON_INVOKE, INVOKE_EXTENSION;
+    /**
+     * Looking for regular functions (or variables when the callee is a variable access)
+     */
+    NONE,
+
+    /**
+     * When resolving a function call, that kind of priority signifies looking for a variable candidates that might serve as a receivers
+     * for "invoke" calls.
+     *
+     * Semantically, that kind of priority is redundant and using NONE works just fine, but having it, helps not to trigger computation of
+     * property return type when we've already found some successful regular candidate.
+     *
+     * See testData/diagnostics/tests/resolve/invoke/errors/typeCheckerRanRecursive.kt as an example which would fail if we use NONE instead
+     * of INVOKE_RECEIVER
+     */
+    INVOKE_RECEIVER,
+
+    /**
+     * Looking for "invoke()" function member or extension that would match for already found variable that would be used as a receiver
+     */
+    COMMON_INVOKE,
+
+    /**
+     * Resolving "invoke()" call when the found variable candidate has a type of extension function type, and we've got a matching extension
+     * receiver (whether explicit or implicit one).
+     *
+     * It should be de-prioritized comparing with regular "invoke()" (COMMON_INVOKE).
+     */
+    INVOKE_EXTENSION
 }

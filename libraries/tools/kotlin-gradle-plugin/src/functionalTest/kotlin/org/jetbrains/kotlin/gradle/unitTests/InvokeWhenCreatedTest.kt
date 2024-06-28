@@ -10,9 +10,13 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.Named
 import org.gradle.api.UnknownDomainObjectException
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import org.junit.Test
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.fail
@@ -67,5 +71,17 @@ class InvokeWhenCreatedTest {
 
         val causes = assertFails { project.evaluate() }.withLinearClosure { it.cause }
         assertEquals<Class<*>>(UnknownDomainObjectException::class.java, causes.last().javaClass)
+    }
+
+    @Test
+    fun `test - is lenient up-to last stage of Kotlin Plugin Lifecycle`() = project.runLifecycleAwareTest {
+        project.kotlinExtension.apply {
+            val invocations = AtomicInteger(0)
+            container.invokeWhenCreated("x") { assertEquals(1, invocations.incrementAndGet()) }
+            KotlinPluginLifecycle.Stage.last.await()
+            assertEquals(0, invocations.get())
+            container.create("x")
+            assertEquals(1, invocations.get())
+        }
     }
 }

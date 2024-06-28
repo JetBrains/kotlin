@@ -16,10 +16,11 @@
 
 package kotlinx.cinterop
 
-import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.InvalidPathException
 import java.security.MessageDigest
 
 private fun decodeFromUtf8(bytes: ByteArray) = String(bytes)
@@ -114,7 +115,11 @@ private val systemTmpDir = System.getProperty("java.io.tmpdir")
 
 // TODO: File(..).deleteOnExit() does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
-    val fullLibraryPath = Paths.get(dir, fullLibraryName)
+    val fullLibraryPath = try {
+        Paths.get(dir, fullLibraryName)
+    } catch (ignored: InvalidPathException) {
+        return false
+    }
     if (!Files.exists(fullLibraryPath)) return false
 
     fun createTempDirWithLibrary() = if (runFromDaemon) {
@@ -187,7 +192,7 @@ fun loadKonanLibrary(name: String) {
     for (dir in paths) {
         if (tryLoadKonanLibrary(dir, fullLibraryName, runFromDaemon)) return
     }
-    val defaultNativeLibsDir = "${KonanHomeProvider.determineKonanHome()}/konan/nativelib"
+    val defaultNativeLibsDir = "${KotlinNativePaths.homePath.absolutePath}/konan/nativelib"
     if (tryLoadKonanLibrary(defaultNativeLibsDir, fullLibraryName, runFromDaemon))
         return
     error("Lib $fullLibraryName is not found in $defaultNativeLibsDir and ${paths.joinToString { it }}")

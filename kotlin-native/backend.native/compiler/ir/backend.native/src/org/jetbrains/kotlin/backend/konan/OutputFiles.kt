@@ -67,6 +67,8 @@ class OutputFiles(val outputName: String, target: KonanTarget, val produce: Comp
 
     val symbolicInfoFile = "$nativeBinaryFile.dSYM"
 
+    val hashFile = tempCacheDirectory?.child(CachedLibraries.HASH_FILE_NAME)
+
     val bitcodeDependenciesFile = tempCacheDirectory?.cacheBinaryPart()?.child(CachedLibraries.BITCODE_DEPENDENCIES_FILE_NAME)
 
     val inlineFunctionBodiesFile = tempCacheDirectory?.cacheIrPart()?.child(CachedLibraries.INLINE_FUNCTION_BODIES_FILE_NAME)

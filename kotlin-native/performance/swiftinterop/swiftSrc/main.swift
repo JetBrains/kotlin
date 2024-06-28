@@ -38,23 +38,26 @@ swiftLauncher.addBase(name: "createMultigraphOfInt", benchmark: companion.create
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
 swiftLauncher.addBase(
     name: "WeakRefBenchmark.aliveReference",
-    benchmark: BenchmarkEntryWithInit.companion.create(
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
         ctor: { return WeakRefBenchmark() },
-        lambda: { ($0 as! WeakRefBenchmark).aliveReference() }
+        benchmark: { ($0 as! WeakRefBenchmark).aliveReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
     )
 )
 swiftLauncher.addBase(
     name: "WeakRefBenchmark.deadReference",
-    benchmark: BenchmarkEntryWithInit.companion.create(
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
         ctor: { return WeakRefBenchmark() },
-        lambda: { ($0 as! WeakRefBenchmark).deadReference() }
+        benchmark: { ($0 as! WeakRefBenchmark).deadReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
     )
 )
 swiftLauncher.addBase(
     name: "WeakRefBenchmark.dyingReference",
-    benchmark: BenchmarkEntryWithInit.companion.create(
+    benchmark: BenchmarkEntryWithInitAndValidation.companion.create(
         ctor: { return WeakRefBenchmark() },
-        lambda: { ($0 as! WeakRefBenchmark).dyingReference() }
+        benchmark: { ($0 as! WeakRefBenchmark).dyingReference() },
+        validation: { ($0 as! WeakRefBenchmark).clean() }
     )
 )
 

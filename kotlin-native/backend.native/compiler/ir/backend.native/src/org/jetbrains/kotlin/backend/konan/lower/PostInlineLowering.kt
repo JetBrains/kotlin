@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -14,6 +13,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.ConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetConstantConstructorIntrinsicType
 import org.jetbrains.kotlin.backend.konan.renderCompilerError
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
+import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -22,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
@@ -58,7 +59,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 expression.transformChildren(this, data)
 
                 return data.at(expression).run {
-                    irCall(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
+                    irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
                         val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
                             putValueArgument(0, expression.argument)
                         }
@@ -82,7 +83,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                     val builder = StringBuilder()
                     args.elements.forEach {
                         require(it is IrConst<*>) { renderCompilerError(irFile, it, "expected const") }
-                        val value = (it as? IrConst<*>)?.value
+                        val value = it.value
                         require(value is Short && value >= 0 && value <= 0xff) {
                             renderCompilerError(irFile, it, "incorrect value for binary data: $value")
                         }
@@ -91,10 +92,9 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                         // Basic Multilingual Plane, so we could just append data "as is".
                         builder.append(value.toInt().toChar())
                     }
-                    expression.putValueArgument(0, IrConstImpl(
-                            expression.startOffset, expression.endOffset,
-                            context.irBuiltIns.stringType,
-                            IrConstKind.String, builder.toString()))
+                    return data.irCall(context.ir.symbols.immutableBlobOfImpl).apply {
+                        putValueArgument(0, data.irString(builder.toString()))
+                    }
                 }
 
                 return expression

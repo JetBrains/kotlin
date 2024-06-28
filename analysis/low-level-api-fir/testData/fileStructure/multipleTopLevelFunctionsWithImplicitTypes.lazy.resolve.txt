@@ -1,0 +1,13 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] multipleTopLevelFunctionsWithImplicitTypes.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo1(): R|kotlin/Int| {
+        ^foo1 Int(1)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|kotlin/Int| {
+        ^foo2 Int(2)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo3(): R|kotlin/Int| {
+        ^foo3 Int(3)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo4(): R|kotlin/Int| {
+        ^foo4 Int(4)
+    }

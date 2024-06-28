@@ -1,0 +1,14 @@
+Before shortening: val param: Outer.Nested = Outer.Nested()
+with default settings:
+[type] Outer.Nested
+[qualifier] Outer.Nested()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[type] Outer.Nested
+[qualifier] Outer.Nested()
+with SHORTEN_AND_IMPORT:
+[type] Outer.Nested
+[qualifier] Outer.Nested()
+with SHORTEN_AND_STAR_IMPORT:
+[type] Outer.Nested
+[qualifier] Outer.Nested()

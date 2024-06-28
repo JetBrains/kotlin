@@ -21,4 +21,7 @@ kotlin {
 
 // While this plugin seems not to do anything in this setup, IT IS needed to reproduce KT-29971
 plugins.apply("application")
-mainClassName = "foo"
+
+application {
+	mainClass = "foo"
+}

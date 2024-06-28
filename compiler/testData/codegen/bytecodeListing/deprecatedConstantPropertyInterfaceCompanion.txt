@@ -13,7 +13,7 @@ public final class A$Companion {
 public interface A {
     // source: 'deprecatedConstantPropertyInterfaceCompanion.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: A$Companion
-    public final static @kotlin.Deprecated(message="no") @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public deprecated final static @org.jetbrains.annotations.NotNull field s: java.lang.String
     static method <clinit>(): void
     public final inner class A$Companion
 }

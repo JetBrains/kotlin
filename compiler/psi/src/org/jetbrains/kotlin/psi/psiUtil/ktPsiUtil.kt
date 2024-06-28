@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -182,16 +183,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
 
         val file = containingFile
         if (file is KtFile) {
-            val directive = file.findImportByAlias(referencedName)
-            if (directive != null) {
-                var reference = directive.importedReference
-                while (reference is KtDotQualifiedExpression) {
-                    reference = reference.selectorExpression
-                }
-                if (reference is KtSimpleNameExpression) {
-                    result.add(reference.getReferencedName())
-                }
-            }
+            getImportedSimpleNameByImportAlias(file, referencedName)?.let(result::add)
         }
     }
 
@@ -297,9 +289,10 @@ fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Bool
 fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
     (this is KtCallExpression && calleeExpression?.text == "contract") || (this is KtQualifiedExpression && isContractDescriptionCallPsiCheck())
 
+@OptIn(KtPsiInconsistencyHandling::class)
 fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     val expression = selectorExpression ?: return false
-    return receiverExpression.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
+    return receiverExpressionOrNull?.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
 fun KtElement.isFirstStatement(): Boolean {
@@ -641,7 +634,7 @@ fun String.quoteIfNeeded(): String = if (this.isIdentifier()) this else "`$this`
 
 fun PsiElement.isTopLevelKtOrJavaMember(): Boolean {
     return when (this) {
-        is KtDeclaration -> parent is KtFile
+        is KtDeclaration -> isKtFile(parent)
         is PsiClass -> containingClass == null && this.qualifiedName != null
         else -> false
     }
@@ -651,9 +644,7 @@ fun KtNamedDeclaration.safeNameForLazyResolve(): Name {
     return nameAsName.safeNameForLazyResolve()
 }
 
-fun Name?.safeNameForLazyResolve(): Name {
-    return SpecialNames.safeIdentifier(this)
-}
+fun Name?.safeNameForLazyResolve(): Name = this?.takeUnless(Name::isSpecial) ?: SpecialNames.NO_NAME_PROVIDED
 
 fun KtNamedDeclaration.safeFqNameForLazyResolve(): FqName? {
     //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
@@ -709,9 +700,30 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
     return when (this) {
         is KtNullableType -> this.innerType?.unwrapNullability()
         else -> this
     }
+}
+
+internal fun isKtFile(parent: PsiElement?): Boolean {
+    //avoid loading KtFile which depends on java psi, which is not available in some setup
+    //e.g. remote dev https://youtrack.jetbrains.com/issue/GTW-7554
+    return parent is PsiFile && parent.language == KotlinLanguage.INSTANCE
+}
+
+fun getImportedSimpleNameByImportAlias(file: KtFile, aliasName: String): String? {
+    val directive = file.findImportByAlias(aliasName) ?: return null
+
+    var reference = directive.importedReference
+    while (reference is KtDotQualifiedExpression) {
+        reference = reference.selectorExpression
+    }
+    if (reference is KtSimpleNameExpression) {
+        return reference.getReferencedName()
+    }
+
+    return null
 }

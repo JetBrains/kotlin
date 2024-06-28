@@ -1,26 +1,31 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.backend.konan.cgen
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irBuilder
-import org.jetbrains.kotlin.ir.util.irCatch
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.name.Name
 
@@ -74,20 +79,24 @@ internal class KotlinBridgeBuilder(
 ) {
     private var counter = 0
     private val bridge: IrFunction = createKotlinBridge(startOffset, endOffset, cName, stubs, isExternal, foreignExceptionMode, origin)
-    val irBuilder: IrBuilderWithScope = irBuilder(stubs.irBuiltIns, bridge.symbol).at(startOffset, endOffset)
+    val irBuilder: IrBuilderWithScope = stubs.irBuiltIns.createIrBuilder(bridge.symbol).at(startOffset, endOffset)
 
     fun addParameter(type: IrType): IrValueParameter {
         val index = counter++
 
-        return IrValueParameterImpl(
-                bridge.startOffset, bridge.endOffset, bridge.origin,
-                IrValueParameterSymbolImpl(),
-                Name.identifier("p$index"), index, type,
-                null,
+        return irBuilder.context.irFactory.createValueParameter(
+                startOffset = bridge.startOffset,
+                endOffset = bridge.endOffset,
+                origin = bridge.origin,
+                name = Name.identifier("p$index"),
+                type = type,
+                isAssignable = false,
+                symbol = IrValueParameterSymbolImpl(),
+                index = index,
+                varargElementType = null,
                 isCrossinline = false,
                 isNoinline = false,
                 isHidden = false,
-                isAssignable = false
         ).apply {
             parent = bridge
             bridge.valueParameters += this
@@ -110,23 +119,23 @@ private fun createKotlinBridge(
         foreignExceptionMode: ForeignExceptionMode.Mode,
         origin: IrDeclarationOrigin
 ): IrFunction {
-    val bridge = IrFunctionImpl(
+    val bridge = stubs.irBuiltIns.irFactory.createSimpleFunction(
             startOffset,
             endOffset,
             origin,
-            IrSimpleFunctionSymbolImpl(),
             Name.identifier(cBridgeName),
             DescriptorVisibilities.PRIVATE,
-            Modality.FINAL,
-            IrUninitializedType,
             isInline = false,
-            isExternal = isExternal,
+            isExpect = false,
+            null,
+            Modality.FINAL,
+            IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = false,
-            isExpect = false,
-            isFakeOverride = false,
             isOperator = false,
-            isInfix = false
+            isInfix = false,
+            isExternal = isExternal,
+            isFakeOverride = false,
     )
     if (isExternal) {
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
@@ -149,7 +158,7 @@ internal class KotlinCBridgeBuilder(
         isKotlinToC: Boolean,
         foreignExceptionMode: ForeignExceptionMode.Mode = ForeignExceptionMode.default
 ) {
-    private val origin: CBridgeOrigin = if (isKotlinToC) CBridgeOrigin.KOTLIN_TO_C_BRIDGE else CBridgeOrigin.C_TO_KOTLIN_BRIDGE
+    private val origin = if (isKotlinToC) CBridgeOrigin.KOTLIN_TO_C_BRIDGE else CBridgeOrigin.C_TO_KOTLIN_BRIDGE
 
     private val kotlinBridgeBuilder = KotlinBridgeBuilder(startOffset, endOffset, cName, stubs, isExternal = isKotlinToC, foreignExceptionMode, origin)
     private val cBridgeBuilder = CFunctionBuilder()
@@ -225,12 +234,19 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     // Note: generating try-catch as finally blocks are already lowered.
                     val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
                         tryResult = kotlinCall
-                        catches += irCatch(context.irBuiltIns.throwableType).apply {
-                            result = irBlock(kotlinCall) {
-                                cleanup.forEach { +it() }
-                                +irThrow(irGet(catchParameter))
-                            }
-                        }
+                        val catchParameter = buildVariable(
+                                irBuilder.parent, startOffset, endOffset,
+                                IrDeclarationOrigin.CATCH_PARAMETER,
+                                Name.identifier("e"),
+                                context.irBuiltIns.throwableType
+                        )
+                        catches += irCatch(
+                                catchParameter = catchParameter,
+                                result = irBlock(kotlinCall) {
+                                    cleanup.forEach { +it() }
+                                    +irThrow(irGet(catchParameter))
+                                }
+                        )
                     })
                     // TODO: consider handling a cleanup failure properly.
                     cleanup.forEach { +it() }
@@ -252,7 +268,7 @@ internal class CCallBuilder {
     }
 }
 
-sealed class CBridgeOrigin(name: String): IrDeclarationOriginImpl(name, isSynthetic = true) {
-    object KOTLIN_TO_C_BRIDGE: CBridgeOrigin("KOTLIN_TO_C_BRIDGE")
-    object C_TO_KOTLIN_BRIDGE: CBridgeOrigin("C_TO_KOTLIN_BRIDGE")
+object CBridgeOrigin {
+    val KOTLIN_TO_C_BRIDGE by IrDeclarationOriginImpl.Synthetic
+    val C_TO_KOTLIN_BRIDGE by IrDeclarationOriginImpl.Synthetic
 }

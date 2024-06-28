@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 
 /** Data for a build operation (e.g., task or transform). */
 interface BuildOperationRecord {
@@ -14,7 +16,7 @@ interface BuildOperationRecord {
     val isFromKotlinPlugin: Boolean
     val startTimeMs: Long // Measured by System.currentTimeMillis()
     val totalTimeMs: Long
-    val buildMetrics: BuildMetrics
+    val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
     val didWork: Boolean
     val skipMessage: String?
     val icLogLines: List<String>

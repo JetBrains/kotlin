@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 package a
 
 import checkType
@@ -16,7 +16,7 @@ fun <T> otherGeneric(l: List<T>) {}
 fun test() {
     val a: Byte = id(1)
 
-    val b: Byte = <!TYPE_MISMATCH!>id(300)<!>
+    val b: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(300)<!>
 
     val c: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>id(9223372036854775807)<!>
 
@@ -28,11 +28,11 @@ fun test() {
 
     val f: Byte = either(1, 2)
 
-    val g: Byte = <!TYPE_MISMATCH!>either(1, 300)<!>
+    val g: Byte = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>either(1, 300)<!>
 
     other(<!ARGUMENT_TYPE_MISMATCH!>11<!>)
 
-    otherGeneric(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>otherGeneric<!>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 
     val r = either(1, "")
     r checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Any>() }

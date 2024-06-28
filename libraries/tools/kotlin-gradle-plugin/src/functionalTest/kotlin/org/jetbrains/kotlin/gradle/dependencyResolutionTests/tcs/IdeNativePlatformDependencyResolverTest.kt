@@ -7,10 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativePlatformDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -25,7 +25,9 @@ class IdeNativePlatformDependencyResolverTest {
     fun `test - posix on linux`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.linuxX64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -33,8 +35,8 @@ class IdeNativePlatformDependencyResolverTest {
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:posix:${project.konanVersion}:$LINUX_X64"),
-            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$LINUX_X64"""))
+            binaryCoordinates("org.jetbrains.kotlin.native:posix:$LINUX_X64:${project.nativeProperties.kotlinNativeVersion.get()}"),
+            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:$LINUX_X64:${project.nativeProperties.kotlinNativeVersion.get()}"""))
         )
 
         IdeNativePlatformDependencyResolver.resolve(commonMain).assertMatches(dependencies)
@@ -48,7 +50,9 @@ class IdeNativePlatformDependencyResolverTest {
         Assume.assumeTrue("Macos host required for this test", HostManager.hostIsMac)
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.macosArm64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
@@ -56,8 +60,8 @@ class IdeNativePlatformDependencyResolverTest {
         val macosArm64Test = kotlin.sourceSets.getByName("macosArm64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:CoreFoundation:${project.konanVersion}:$MACOS_ARM64"),
-            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$MACOS_ARM64"""))
+            binaryCoordinates("org.jetbrains.kotlin.native:CoreFoundation:$MACOS_ARM64:${project.nativeProperties.kotlinNativeVersion.get()}"),
+            binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:$MACOS_ARM64:${project.nativeProperties.kotlinNativeVersion.get()}"""))
         )
 
         IdeNativePlatformDependencyResolver.resolve(commonMain).assertMatches(dependencies)
@@ -72,6 +76,7 @@ class IdeNativePlatformDependencyResolverTest {
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
         kotlin.linuxX64()
+        project.evaluate()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")

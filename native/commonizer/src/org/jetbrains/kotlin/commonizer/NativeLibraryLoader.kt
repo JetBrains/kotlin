@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
@@ -29,11 +30,11 @@ internal class DefaultNativeLibraryLoader(
             )
 
             if (library.versions.metadataVersion == null)
-                logger.fatal("Library does not have metadata version specified in manifest: $file")
+                logger.errorAndExitJvmProcess("Library does not have metadata version specified in manifest: $file")
 
             val metadataVersion = library.metadataVersion
             if (metadataVersion?.isCompatibleWithCurrentCompilerVersion() != true)
-                logger.fatal(
+                logger.errorAndExitJvmProcess(
                     """
                 Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $file
                 Please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -58,9 +56,7 @@ class LocalFunInlineChecker : DeclarationChecker {
     }
 }
 
-class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
-    private val isLessJVM18 = jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion
-
+class JvmStaticChecker(languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
     private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -91,9 +87,6 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
                 descriptor is DeclarationDescriptorWithVisibility
             ) {
                 checkForInterface(descriptor, diagnosticHolder, declaration)
-                if (isLessJVM18) {
-                    diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
-                }
             } else {
                 diagnosticHolder.report(
                     (if (supportJvmStaticInInterface) ErrorsJvm.JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION
@@ -165,24 +158,6 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         val containingDescriptor = descriptor.containingDeclaration
 
         return containingDescriptor is PackageFragmentDescriptor || containingDescriptor is ClassDescriptor
-    }
-}
-
-class VolatileAnnotationChecker : DeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is PropertyDescriptor) return
-
-        val fieldAnnotation = descriptor.backingField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (fieldAnnotation != null && !descriptor.isVar) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(fieldAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
-        }
-
-        val delegateAnnotation = descriptor.delegateField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-        if (delegateAnnotation != null) {
-            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(delegateAnnotation) ?: return
-            context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
-        }
     }
 }
 

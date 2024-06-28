@@ -121,7 +121,7 @@ open class SingletonTypeComponentDescriptor(container: ComponentContainer, val k
     override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 
     private fun createInstanceOf(klass: Class<*>, context: ValueResolveContext): Any {
-        val binding = klass.bindToConstructor(context)
+        val binding = klass.bindToConstructor(container.containerId, context)
         state = ComponentState.Initializing
         for (argumentDescriptor in binding.argumentDescriptors) {
             if (argumentDescriptor is Closeable && argumentDescriptor !is SingletonDescriptor) {

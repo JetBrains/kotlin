@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -25,10 +23,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 import org.jetbrains.kotlin.resolve.multiplatform.onlyFromThisModule
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.SourceCodeAnalysisException
 import org.jetbrains.kotlin.util.getExceptionMessage
 import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
 object CodegenUtil {
     @JvmStatic
@@ -244,7 +244,7 @@ object CodegenUtil {
         // CompilationException (the only KotlinExceptionWithAttachments possible here) is already supposed
         // to have all information about the context.
         if (exception is KotlinExceptionWithAttachments) throw exception
-        if (exception is ProcessCanceledException) throw exception
+        rethrowIntellijPlatformExceptionIfNeeded(exception)
         val locationWithLineAndOffset = location
             ?.let { exception as? SourceCodeAnalysisException }
             ?.let { linesMapping(it.source.startOffset) }

@@ -1,0 +1,36 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|Foo.Nested|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassTypeScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public open [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? [ResolvedTo(RAW_FIR)] class Nested : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor(): R|Foo.Nested| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] class Bar : R|Foo| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                LAZY_super<R|Foo|>
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun create(): R|Foo.Nested| {
+            }
+
+        }

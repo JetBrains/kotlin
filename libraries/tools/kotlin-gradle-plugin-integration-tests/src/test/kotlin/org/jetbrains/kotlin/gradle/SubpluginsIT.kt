@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Other plugins tests")
-@OtherGradlePluginTests
 class SubpuginsIT : KGPBaseTest() {
 
+    @OtherGradlePluginTests
     @DisplayName("Subplugin example works as expected")
     @GradleTest
     fun testGradleSubplugin(gradleVersion: GradleVersion) {
@@ -34,6 +34,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Allopen plugin opens classes and methods")
     @GradleTest
     fun testAllOpenPlugin(gradleVersion: GradleVersion) {
@@ -60,6 +61,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Kotlin Spring plugin opens classes and methods")
     @GradleTest
     fun testKotlinSpringPlugin(gradleVersion: GradleVersion) {
@@ -88,6 +90,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Jpa plugin generates no-arg constructor")
     @GradleTest
     fun testKotlinJpaPlugin(gradleVersion: GradleVersion) {
@@ -107,6 +110,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("NoArg: Don't invoke initializers by default")
     @GradleTest
     fun testNoArgKt18668(gradleVersion: GradleVersion) {
@@ -115,6 +119,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("sam-with-receiver works")
     @GradleTest
     fun testSamWithReceiverSimple(gradleVersion: GradleVersion) {
@@ -123,6 +128,7 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("assignment works")
     @GradleTest
     fun testAssignmentSimple(gradleVersion: GradleVersion) {
@@ -131,11 +137,12 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
     @GradleTest
     fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
         project("allOpenFromNestedBuildscript", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 val nestedSubproject = subProject("a/b")
                 assertFileExists(nestedSubproject.kotlinClassesDir().resolve("MyClass.class"))
                 assertFileExists(nestedSubproject.kotlinClassesDir("test").resolve("MyTestClass.class"))
@@ -143,11 +150,12 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Allopen applied from script works")
     @GradleTest
     fun testAllopenFromScript(gradleVersion: GradleVersion) {
         project("allOpenFromScript", gradleVersion) {
-            build("build") {
+            build("testClasses") {
                 assertFileExists(kotlinClassesDir().resolve("MyClass.class"))
                 assertFileExists(kotlinClassesDir(sourceSet = "test").resolve("MyTestClass.class"))
             }
@@ -156,7 +164,6 @@ class SubpuginsIT : KGPBaseTest() {
 
     @AndroidGradlePluginTests
     @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
     @GradleAndroidTest
     fun testKotlinVersionDowngradeInSupbrojectKt39809(
         gradleVersion: GradleVersion,
@@ -188,14 +195,30 @@ class SubpuginsIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("Lombok plugin is working")
     @GradleTest
     fun testLombokPlugin(gradleVersion: GradleVersion) {
         project("lombokProject", gradleVersion) {
+            listOf(
+                subProject("yeskapt").buildGradle,
+                subProject("nokapt").buildGradle,
+                subProject("withconfig").buildGradle
+            ).forEach { buildGradle ->
+                buildGradle.modify {
+                    val freefairLombokVersion = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                        "5.3.0"
+                    } else {
+                        "8.4"
+                    }
+                    it.replace("<freefair_lombok_version>", freefairLombokVersion)
+                }
+            }
             build("build")
         }
     }
 
+    @OtherGradlePluginTests
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_0 // Kotlin compiler 1.9 throws error on 1.3 language level (Gradle 6)

@@ -1,15 +1,16 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 description = 'Kotlin Standard Library JDK 8 extension'
 
 apply plugin: 'kotlin'
 
-configurePublishing(project)
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.publish(project)
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
 
 dependencies {
     api project(':kotlin-stdlib')
     api project(':kotlin-stdlib-jdk7')
-    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -37,12 +38,12 @@ dependencies {
     moduleTestApi project(':kotlin-stdlib')
     moduleTestApi project(':kotlin-stdlib-jdk7')
     moduleTestCompileOnly project
-    moduleTestApi project(':kotlin-test:kotlin-test-junit')
+    moduleTestApi RepoDependencies.kotlinTest(project, "junit")
     moduleTestApi "org.ow2.asm:asm:9.0"
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
     from sourceSets.java9.output
 }
 
@@ -62,8 +63,6 @@ compileKotlin {
 compileTestKotlin {
 }
 
-configureFrontendIr(project)
-
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk8')
 
 tasks.named("compileModuleTestJava", JavaCompile) {
@@ -72,7 +71,9 @@ tasks.named("compileModuleTestJava", JavaCompile) {
 }
 
 compileModuleTestKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_9_0))
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
+    compilerOptions.jvmTarget = JvmTarget.JVM_9
+    compilerOptions.freeCompilerArgs = [ "-Xjdk-release=9" ]
 }
 
 check.dependsOn(tasks.register("moduleInfoTest", Test) {test ->

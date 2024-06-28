@@ -1,11 +1,5 @@
 @Suppress(names = ["INCOMPATIBLE_MODIFIERS"])
 open data class ValidatedProperties {
-  constructor(test1: String, test2: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   open val test1: String
     field = test1
     open get
@@ -13,6 +7,12 @@ open data class ValidatedProperties {
   open val test2: String
     field = test2
     open get
+
+  constructor(test1: String, test2: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
   operator fun component1(): String {
     return <this>.<get-test1>()
@@ -26,8 +26,21 @@ open data class ValidatedProperties {
     return ValidatedProperties(test1 = test1, test2 = test2)
   }
 
-  override fun toString(): String {
-    return "ValidatedProperties(" + "test1=" + <this>.<get-test1>() + ", " + "test2=" + <this>.<get-test2>() + ")"
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is ValidatedProperties -> return false
+    }
+    val tmp_0: ValidatedProperties = other as ValidatedProperties
+    when {
+      EQEQ(arg0 = <this>.<get-test1>(), arg1 = tmp_0.<get-test1>()).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.<get-test2>(), arg1 = tmp_0.<get-test2>()).not() -> return false
+    }
+    return true
   }
 
   override fun hashCode(): Int {
@@ -36,21 +49,9 @@ open data class ValidatedProperties {
     return result
   }
 
-  override operator fun equals(other: Any?): Boolean {
-    when {
-      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
-    }
-    when {
-      other !is ValidatedProperties -> return false
-    }
-    val tmp0_other_with_cast: ValidatedProperties = other as ValidatedProperties
-    when {
-      EQEQ(arg0 = <this>.<get-test1>(), arg1 = tmp0_other_with_cast.<get-test1>()).not() -> return false
-    }
-    when {
-      EQEQ(arg0 = <this>.<get-test2>(), arg1 = tmp0_other_with_cast.<get-test2>()).not() -> return false
-    }
-    return true
+  override fun toString(): String {
+    return "ValidatedProperties(" + "test1=" + <this>.<get-test1>() + ", " + "test2=" + <this>.<get-test2>() + ")"
   }
 
 }
+

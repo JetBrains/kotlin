@@ -1,0 +1,57 @@
+/**
+ * public abstract interface Callback : kotlin/Any {
+ *
+ *   // signature: invoke()Ljava/lang/String;
+ *   public abstract fun invoke(): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface Callback {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String invoke();
+}
+
+
+////////////////////
+
+/**
+ * public final enum class Foo : kotlin/Enum<Foo> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILCallback;)V
+ *   private constructor(callback: Callback)
+ *
+ *   // field: callback:LCallback;
+ *   // getter: getCallback()LCallback;
+ *   public final val callback: Callback
+ *     public final get
+ *
+ *   FOO,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
+@kotlin.Metadata()
+public enum Foo {
+    FOO;
+
+    @org.jetbrains.annotations.NotNull()
+    private final Callback callback = null;
+
+    Foo(Callback callback) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Callback getCallback() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Foo> getEntries() {
+        return null;
+    }
+}

@@ -1,0 +1,33 @@
+FILE: genericEntriesPropertyClashOn.fir.kt
+    package pckg
+
+    public final enum class A : R|kotlin/Enum<pckg/A>| {
+        private constructor(): R|pckg/A| {
+            super<R|kotlin/Enum<pckg/A>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|pckg/A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final static fun values(): R|kotlin/Array<pckg/A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|pckg/A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<pckg/A>|
+            public get(): R|kotlin/enums/EnumEntries<pckg/A>|
+
+    }
+    public final val <T> R|T|.entries: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(0)
+        }
+    public final fun test(): R|kotlin/Unit| {
+        Q|pckg/A|.R|pckg/entries|<R|pckg/A.Companion|>
+        Q|pckg/A.Companion|.R|pckg/entries|<R|pckg/A.Companion|>
+    }

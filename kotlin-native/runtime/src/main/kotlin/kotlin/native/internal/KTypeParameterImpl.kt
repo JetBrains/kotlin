@@ -10,15 +10,14 @@ import kotlin.reflect.*
 internal class KTypeParameterImpl(
         override val name: String,
         private val containerFqName: String,
-        override val upperBounds: List<KType>,
+        private val upperBoundsArray: Array<KType>,
         val varianceId: Int, // mapping is used to make static initialization possible
         override val isReified: Boolean
 ) : KTypeParameter {
+    override val upperBounds: List<KType>
+        get() = upperBoundsArray.asList()
     override val variance: KVariance
         get() = KVarianceMapper.varianceById(varianceId)!!
-
-    constructor(name: String, containerFqName: String, upperBounds: List<KType>, variance: KVariance, isReified: Boolean) :
-            this(name, containerFqName, upperBounds, KVarianceMapper.idByVariance(variance), isReified)
 
     override fun toString(): String = when (variance) {
         KVariance.INVARIANT -> ""

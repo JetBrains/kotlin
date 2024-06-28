@@ -17,6 +17,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -24,7 +26,7 @@ sourceSets {
     "test" {  projectDefault() }
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 }
 

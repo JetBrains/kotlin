@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
-import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.logging.progress.ProgressLogger
 import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecResult
 import org.gradle.process.internal.ExecAction
 import org.gradle.process.internal.ExecActionFactory
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
 import java.io.ByteArrayOutputStream
 import java.io.PipedInputStream
 import java.io.PipedOutputStream

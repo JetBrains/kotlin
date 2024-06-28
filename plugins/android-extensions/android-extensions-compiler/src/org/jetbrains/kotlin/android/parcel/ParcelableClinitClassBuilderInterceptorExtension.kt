@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+// Android-extensions is no longer supported, but its code is still used from AS.
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.android.synthetic.codegen
 
 import com.intellij.psi.PsiElement
@@ -22,7 +25,6 @@ import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -34,7 +36,8 @@ import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
+class ParcelableClinitClassBuilderInterceptorExtension :
+    @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,
             bindingContext: BindingContext,

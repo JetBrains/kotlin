@@ -1,0 +1,92 @@
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F<T : Float> {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#testCapturedType(1:0;kotlin.Any){}kotlin.Boolean
+  //   Public signature: /F.testCapturedType|7998726618500557854[0]
+  //   Public signature debug description: testCapturedType(1:0;kotlin.Any){}kotlin.Boolean
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: F#testCapturedType(1:0;kotlin.Any){}
+  //   Public signature: /F.testCapturedType|-5279256819944815124[0]
+  //   Public signature debug description: testCapturedType(1:0;kotlin.Any){}
+  fun testCapturedType(x: T, y: Any): Boolean
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #test0(kotlin.Any;0:0){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /test0|-7214751938385730433[0]
+//   Public signature debug description: test0(kotlin.Any;0:0){0§<kotlin.Any?>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test0(kotlin.Any;0:0){0§<kotlin.Any?>}
+//   Public signature: /test0|-6494678230253547579[0]
+//   Public signature debug description: test0(kotlin.Any;0:0){0§<kotlin.Any?>}
+fun <T : Any?> test0(x: Any, y: T): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Any;0:0){0§<kotlin.Float>}kotlin.Boolean
+//   Public signature: /test1|8387349745943080134[0]
+//   Public signature debug description: test1(kotlin.Any;0:0){0§<kotlin.Float>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Any;0:0){0§<kotlin.Float>}
+//   Public signature: /test1|-7902069641491444047[0]
+//   Public signature debug description: test1(kotlin.Any;0:0){0§<kotlin.Float>}
+fun <T : Float> test1(x: Any, y: T): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Any;0:0){0§<kotlin.Double>}kotlin.Boolean
+//   Public signature: /test2|3344527840705297453[0]
+//   Public signature debug description: test2(kotlin.Any;0:0){0§<kotlin.Double>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Any;0:0){0§<kotlin.Double>}
+//   Public signature: /test2|-2365905883998625988[0]
+//   Public signature debug description: test2(kotlin.Any;0:0){0§<kotlin.Double>}
+fun <T : Double> test2(x: Any, y: T): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Any;0:0){0§<kotlin.Float>}kotlin.Boolean
+//   Public signature: /test3|4021301847597929251[0]
+//   Public signature debug description: test3(kotlin.Any;0:0){0§<kotlin.Float>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.Any;0:0){0§<kotlin.Float>}
+//   Public signature: /test3|5264389487564885422[0]
+//   Public signature debug description: test3(kotlin.Any;0:0){0§<kotlin.Float>}
+fun <T : Float> test3(x: Any, y: T): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.Any;0:0){0§<kotlin.Float?>}kotlin.Boolean
+//   Public signature: /test4|6659113294374869639[0]
+//   Public signature debug description: test4(kotlin.Any;0:0){0§<kotlin.Float?>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.Any;0:0){0§<kotlin.Float?>}
+//   Public signature: /test4|9214831392286021674[0]
+//   Public signature debug description: test4(kotlin.Any;0:0){0§<kotlin.Float?>}
+fun <T : Float?> test4(x: Any, y: T): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test5(kotlin.Any;0:1){0§<kotlin.Float?>;1§<0:0>}kotlin.Boolean
+//   Public signature: /test5|-5393606181119122055[0]
+//   Public signature debug description: test5(kotlin.Any;0:1){0§<kotlin.Float?>;1§<0:0>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test5(kotlin.Any;0:1){0§<kotlin.Float?>;1§<0:0>}
+//   Public signature: /test5|-5498926079719286371[0]
+//   Public signature debug description: test5(kotlin.Any;0:1){0§<kotlin.Float?>;1§<0:0>}
+fun <T : Float?, R : T> test5(x: Any, y: R): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #test6(kotlin.Any;0:0){0§<kotlin.Number>}kotlin.Boolean
+//   Public signature: /test6|7328266218747057888[0]
+//   Public signature debug description: test6(kotlin.Any;0:0){0§<kotlin.Number>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test6(kotlin.Any;0:0){0§<kotlin.Number>}
+//   Public signature: /test6|-2167191220335209779[0]
+//   Public signature debug description: test6(kotlin.Any;0:0){0§<kotlin.Number>}
+fun <T : Number> test6(x: Any, y: T): Boolean
+

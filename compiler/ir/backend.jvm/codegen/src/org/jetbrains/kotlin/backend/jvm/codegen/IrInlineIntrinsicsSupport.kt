@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -33,6 +33,7 @@ import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 
 class IrInlineIntrinsicsSupport(
@@ -40,8 +41,8 @@ class IrInlineIntrinsicsSupport(
     private val reportErrorsOn: IrExpression,
     private val containingFile: IrFile,
 ) : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
-    override val state: GenerationState
-        get() = classCodegen.context.state
+    override val config: JvmBackendConfig
+        get() = classCodegen.context.config
 
     // todo: this likely need to be moved up as IrInlineIntrinsicsSupport is recreated every time in getOrCreateCallGenerator
     private val pluginExtensions = IrGenerationExtension.getInstances(classCodegen.context.state.project)
@@ -57,7 +58,7 @@ class IrInlineIntrinsicsSupport(
         when (val parent = typeParameter.owner.parent) {
             is IrClass -> putClassInstance(v, parent.defaultType).also { AsmUtil.wrapJavaClassIntoKClass(v) }
             is IrSimpleFunction -> {
-                check(classCodegen.context.state.generateOptimizedCallableReferenceSuperClasses) {
+                check(classCodegen.context.config.generateOptimizedCallableReferenceSuperClasses) {
                     "typeOf() of a non-reified type parameter is only allowed if optimized callable references are enabled.\n" +
                             "Please make sure API version is set to 1.4, and -Xno-optimized-callable-references is NOT used.\n" +
                             "Container: $parent"
@@ -118,6 +119,9 @@ class IrInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
+
+    override fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType): FieldInsnNode? =
+        generateExternalEntriesForEnumTypeIfNeeded(type, classCodegen)
 
     override fun reportSuspendTypeUnsupported() {
         classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)

@@ -1,6 +1,5 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54708
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -13,15 +12,15 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
-        yield(materialize())
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
+        yield(<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>())
     }
 }
 
 fun test_3() {
     sequence {
         yield(materialize<Int>())
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
     }
 }
 

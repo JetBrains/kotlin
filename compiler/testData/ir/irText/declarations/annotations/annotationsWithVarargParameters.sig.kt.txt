@@ -1,0 +1,48 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A{}xs
+  //   Public signature: /A.xs|1063330853857063704[0]
+  //   Public signature debug description: {}xs
+  val xs: Array<out String>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-xs>(){}kotlin.Array<out|kotlin.String>
+    //   Public signature: /A.xs.<get-xs>|9188548163055185324[0]
+    //   Public signature debug description: <get-xs>(){}kotlin.Array<out|kotlin.String>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-xs>(){}
+    //   Public signature: /A.xs.<get-xs>|-6958094100501701183[0]
+    //   Public signature debug description: <get-xs>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.Array<out|kotlin.String>...){}
+  //   Public signature: /A.<init>|-6780234697714860085[0]
+  //   Public signature debug description: <init>(kotlin.Array<out|kotlin.String>...){}
+  constructor(vararg xs: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
+@A(xs = ["abc", "def"])
+fun test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2(){}
+//   Public signature: /test2|4279114864133353152[0]
+//   Public signature debug description: test2(){}
+@A(xs = ["abc"])
+fun test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3(){}
+//   Public signature: /test3|-3759735065270951803[0]
+//   Public signature debug description: test3(){}
+@A(xs = [])
+fun test3(): Unit
+

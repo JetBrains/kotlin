@@ -1,12 +1,14 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// ISSUE: KT-63068
 fun List<Int>.f() {
-    this@List.size
+    this<!UNRESOLVED_LABEL!>@List<!>.size
 }
 
-context(String)
+<!UNSUPPORTED_FEATURE!>context(String)<!>
 fun Int.f() {
     this@String.length
-    this@Int.toDouble()
+    this<!UNRESOLVED_LABEL!>@Int<!>.toDouble()
 }
 
-context(String)
+<!UNSUPPORTED_FEATURE!>context(String)<!>
 val p: String get() = this@String

@@ -29,8 +29,7 @@ abstract class MemoizedValueClassAbstractReplacements(
     /**
      * Get a replacement for a function or a constructor.
      */
-    fun getReplacementFunction(function: IrFunction) =
-        if (quickCheckIfFunctionIsNotApplicable(function)) null else getReplacementFunctionImpl(function)
+    fun getReplacementFunction(function: IrFunction) = getReplacementFunctionImpl(function)
 
     protected abstract val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction?
 
@@ -54,7 +53,7 @@ abstract class MemoizedValueClassAbstractReplacements(
         // It is a JVM default interface method if one of the following conditions are true:
         // - it is a Java method,
         // - it is a Kotlin function compiled to JVM default interface method.
-        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.state.jvmDefaultMode)
+        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.config.jvmDefaultMode)
     }
 
     protected abstract fun createStaticReplacement(function: IrFunction): IrSimpleFunction
@@ -85,25 +84,32 @@ abstract class MemoizedValueClassAbstractReplacements(
         if (function is IrSimpleFunction) {
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
+                val oldProperty = propertySymbol.owner
                 val property = propertyMap.getOrPut(propertySymbol) {
                     irFactory.buildProperty {
-                        name = propertySymbol.owner.name
-                        updateFrom(propertySymbol.owner)
+                        name = oldProperty.name
+                        updateFrom(oldProperty)
                     }.apply {
-                        parent = propertySymbol.owner.parent
-                        copyAttributes(propertySymbol.owner)
-                        annotations = propertySymbol.owner.annotations
+                        parent = oldProperty.parent
+                        copyAttributes(oldProperty)
+                        annotations = oldProperty.annotations
                         // In case this property is declared in an object in another file which is not yet lowered, its backing field will
                         // be made static later. We have to handle it here though, because this new property will be saved to the cache
                         // and reused when lowering the same call in all subsequent files, which would be incorrect if it was not lowered.
-                        backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
-                            ?: propertySymbol.owner.backingField
+                        val newBackingField = context.cachedDeclarations.getStaticBackingField(oldProperty) ?: oldProperty.backingField
+                        if (newBackingField != null) {
+                            context.multiFieldValueClassReplacements.getMfvcFieldNode(newBackingField)
+                            val fieldsToRemove = context.multiFieldValueClassReplacements.getFieldsToRemove(oldProperty.parentAsClass)
+                            if (newBackingField !in fieldsToRemove) {
+                                backingField = newBackingField
+                            }
+                        }
                     }
                 }
                 correspondingPropertySymbol = property.symbol
                 when (function) {
-                    propertySymbol.owner.getter -> property.getter = this
-                    propertySymbol.owner.setter -> property.setter = this
+                    oldProperty.getter -> property.getter = this
+                    oldProperty.setter -> property.setter = this
                     else -> error("Orphaned property getter/setter: ${function.render()}")
                 }
             }
@@ -132,5 +138,5 @@ abstract class MemoizedValueClassAbstractReplacements(
             function.overriddenSymbols = replaceOverriddenSymbols(function)
         }
 
-    abstract fun quickCheckIfFunctionIsNotApplicable(function: IrFunction): Boolean
+    protected fun IrSimpleFunction.overridesOnlyMethodsFromJava(): Boolean = allOverridden().all { it.isFromJava() }
 }

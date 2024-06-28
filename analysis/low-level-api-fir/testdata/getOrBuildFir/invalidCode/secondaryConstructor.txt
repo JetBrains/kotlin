@@ -1,6 +1,0 @@
-KT element: KtDeclarationModifierList
-FIR element: FirDanglingModifierListImpl
-FIR source kind: DanglingModifierList
-
-FIR element rendered:
-<DANGLING MODIFIER: Top level declaration expected>

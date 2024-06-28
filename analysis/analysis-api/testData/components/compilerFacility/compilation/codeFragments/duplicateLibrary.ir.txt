@@ -1,0 +1,33 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:kotlin.String) returnType:kotlin.Int?
+        VALUE_PARAMETER name:p0 index:0 type:kotlin.String
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int? origin=null
+            BLOCK type=kotlin.Int? origin=SAFE_CALL
+              VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String? [val]
+                CALL 'public final fun takeUnless <T> (predicate: kotlin.Function1<T of kotlin.takeUnless, kotlin.Boolean>): T of kotlin.takeUnless? [inline] declared in kotlin' type=kotlin.String? origin=null
+                  <T>: kotlin.String
+                  $receiver: GET_VAR 'p0: kotlin.String declared in <root>.CodeFragment.run' type=kotlin.String origin=null
+                  predicate: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Boolean> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Boolean
+                      VALUE_PARAMETER name:it index:0 type:kotlin.String
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String): kotlin.Boolean declared in <root>.CodeFragment.run'
+                          CALL 'public final fun isEmpty (): kotlin.Boolean [inline] declared in kotlin.text' type=kotlin.Boolean origin=null
+                            $receiver: GET_VAR 'it: kotlin.String declared in <root>.CodeFragment.run.<anonymous>' type=kotlin.String origin=null
+              WHEN type=kotlin.Int? origin=null
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.CodeFragment.run' type=kotlin.String? origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+                  then: CONST Null type=kotlin.Nothing? value=null
+                BRANCH
+                  if: CONST Boolean type=kotlin.Boolean value=true
+                  then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                    $this: GET_VAR 'val tmp_0: kotlin.String? [val] declared in <root>.CodeFragment.run' type=kotlin.String? origin=null

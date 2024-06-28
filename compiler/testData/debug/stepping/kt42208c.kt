@@ -1,3 +1,5 @@
+
+// IGNORE_INLINER: IR
 // FILE: test.kt
 
 fun box() {
@@ -13,40 +15,46 @@ inline fun foo() = {
 fun baz(v:(() -> Unit)) {
     v()
 }
-// EXPECTATIONS JVM JVM_IR
-// test.kt:4 box
-// test1.kt:10 box
-// test1.kt:11 box
-// test.kt:4 box
-// test3.kt:14 baz
+
 // EXPECTATIONS JVM_IR
-// test1.kt:11 invoke
-// test3.kt:14 baz
-// EXPECTATIONS JVM JVM_IR
-// test3.kt:15 baz
-// test.kt:5 box
-// test1.kt:10 box
-// test1.kt:11 box
-// test.kt:5 box
 // test.kt:6 box
-// EXPECTATIONS JVM_IR
-// test3.kt:14 baz
-// test1.kt:11 invoke
-// EXPECTATIONS JVM JVM_IR
-// test3.kt:14 baz
-// test3.kt:15 baz
+// test1.kt:12 box
+// test1.kt:13 box
+// test.kt:6 box
+// test3.kt:16 baz
+// test1.kt:13 invoke
+// test3.kt:16 baz
+// test3.kt:17 baz
 // test.kt:7 box
+// test1.kt:12 box
+// test1.kt:13 box
+// test.kt:7 box
+// test.kt:8 box
+// test3.kt:16 baz
+// test1.kt:13 invoke
+// test3.kt:16 baz
+// test3.kt:17 baz
+// test.kt:9 box
 
 // EXPECTATIONS JS_IR
-// test1.kt:11 box
-// test.kt:4 box
-// test3.kt:14 baz
-// test1.kt:8 box$lambda
-// test3.kt:15 baz
-// test1.kt:11 box
-// test.kt:5 box
+// test1.kt:12 box
 // test.kt:6 box
-// test3.kt:14 baz
-// test1.kt:8 box$lambda
-// test3.kt:15 baz
-// test.kt:7 box
+// test3.kt:16 baz
+// test1.kt:10 box$lambda
+// test3.kt:17 baz
+// test1.kt:12 box
+// test.kt:8 box
+// test3.kt:16 baz
+// test1.kt:10 box$lambda
+// test3.kt:17 baz
+// test.kt:9 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (8, 4)
+// test1.kt:13 $box (1, 1)
+// test3.kt:16 $baz (4, 4)
+// test.kt:10 $box$lambda.invoke
+// test3.kt:17 $baz (1, 1)
+// test.kt:7 $box
+// test.kt:8 $box (8, 4)
+// test.kt:9 $box

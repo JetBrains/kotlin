@@ -1,0 +1,21 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit|
+    [Contract description] <
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: req> <inline=Unknown>  {
+            ^ <Unresolved name: req>#
+        }
+        )
+    >
+ {
+     {
+        <Unresolved name: contract>#(<L> = [ResolvedTo(BODY_RESOLVE)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: req> <inline=Unknown>  {
+            ^ <Unresolved name: req>#
+        }
+        )
+    }
+
+    [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|/doSmth|(String(str))
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun x(): R|kotlin/Unit| { LAZY_BLOCK }

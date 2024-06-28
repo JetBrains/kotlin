@@ -39,7 +39,7 @@ rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
     tasks.register("runWebpack", Exec) {
         dependsOn(tasks.named('browserProductionWebpack'))
 
-        executable(kotlinNodeJs.requireConfigured().nodeExecutable)
+        executable(kotlinNodeJs.requireConfigured().executable)
 
         workingDir = "${rootProject.buildDir}/js/packages/kotlin-js-dce-mainProject"
         args = ["../../node_modules/webpack/bin/webpack.js"]

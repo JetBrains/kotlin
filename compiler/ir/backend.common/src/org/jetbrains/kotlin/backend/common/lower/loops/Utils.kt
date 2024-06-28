@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -166,6 +169,7 @@ internal fun DeclarationIrBuilder.createLoopTemporaryVariableIfNecessary(
         Pair(null, expression)
     }
 
+// `this` may be of nullable type, while targetClass is assumed to be non-nullable
 internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
     when {
         // This expression's type could be Nothing from an exception throw.
@@ -183,17 +187,67 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
             }
         }
         else -> {
-            val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-            val classifier = type.getClass() ?: error("Has to be a class ${type.render()}")
-            val castFun = classifier.functions.single {
-                it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+            val classifier = (type as IrSimpleType).classifier
+            // Nullable type is not a subtype of assumed non-nullable type of targetClass
+            // KT-68888: TODO `!type.isNullable()` can(?) be removed to get rid of conversion from nullable to non-nullable
+            if (!type.isNullable() && classifier.isSubtypeOfClass(targetClass.symbol)) this
+            else {
+                makeIrCallConversionToTargetClass(classifier.closestSuperClass()!!.owner, targetClass)
             }
-            IrCallImpl(
-                startOffset, endOffset,
-                castFun.returnType, castFun.symbol,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = 0
-            ).apply { dispatchReceiver = this@castIfNecessary }
         }
     }
+
+// For a class, returns `this`,
+// For an interface, returns null,
+// For a type parameter, finds nearest class ancestor.
+internal fun IrClassifierSymbol.closestSuperClass(): IrClassSymbol? =
+    if (this is IrClassSymbol)
+        if (owner.isInterface) null
+        else this
+    else
+        superTypes().mapNotNull { it.classifierOrFail.closestSuperClass() }.singleOrNull()
+
+private fun IrExpression.makeIrCallConversionToTargetClass(
+    sourceClass: IrClass,
+    targetClass: IrClass,
+): IrExpression {
+    val numberCastFunctionName = Name.identifier("to${targetClass.name}")
+    val castFun = sourceClass.functions.singleOrNull {
+        it.name == numberCastFunctionName &&
+                it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+    } ?: error("Internal error: cannot convert ${sourceClass.name} to ${targetClass.name}: ${render()}")
+
+    return IrCallImpl(
+        startOffset, endOffset,
+        castFun.returnType, castFun.symbol,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 0
+    ).also { it.dispatchReceiver = this }
+}
+
+// Gets type of the deepest EXPRESSION from possible recursive snippet `IrGetValue(IrVariable(initializer=EXPRESSION))`.
+// In case it cannot be unwrapped, just returns back type of `expression` parameter
+internal fun IrExpression.getMostPreciseTypeFromValInitializer(): IrType {
+    fun unwrapValInitializer(expression: IrExpression): IrExpression? {
+        val irVariable = (expression as? IrGetValue)?.symbol?.owner as? IrVariable ?: return null
+        if (irVariable.isVar)
+            return null // The actual type of the variable's value may change after reassignment, so its declared type is what matters
+        return irVariable.initializer
+    }
+
+    fun unwrapStatementContainer(expression: IrExpression): IrExpression? =
+        (expression as? IrStatementContainer)?.let {
+            when (it) {
+                is IrReturnTarget -> // KT-67695: TODO: Perform full traverse to calculate the common type for all IrReturn statements.
+                    null // Meanwhile, conservatively returning `null`, which sadly prevents iterator removal in some tests in `nested.kt`.
+                else -> it.statements.lastOrNull() as? IrExpression
+            }
+        }
+
+    var temp = this
+    do {
+        unwrapValInitializer(temp)?.let { temp = it }
+            ?: unwrapStatementContainer(temp)?.let { temp = it }
+            ?: return temp.type
+    } while (true)
+}

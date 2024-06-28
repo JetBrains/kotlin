@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,19 +33,27 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirValueParameterSymbol,
     annotationBuilder: () -> List<FirAnnotation>,
-    override var defaultValue: FirExpression?,
+    var lazyDefaultValue: Lazy<FirExpression>?,
     override val containingFunctionSymbol: FirFunctionSymbol<*>,
     override val isVararg: Boolean,
 ) : FirValueParameter() {
+    override var defaultValue: FirExpression?
+        get() = lazyDefaultValue?.value
+        set(value) {
+            lazyDefaultValue = value?.let(::lazyOf)
+        }
+
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val isCrossinline: Boolean
@@ -163,10 +171,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
-    }
-
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
@@ -179,6 +183,8 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
     }
+
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
     }
@@ -210,7 +216,7 @@ class FirJavaValueParameterBuilder {
     lateinit var returnTypeRef: FirTypeRef
     lateinit var name: Name
     lateinit var annotationBuilder: () -> List<FirAnnotation>
-    var defaultValue: FirExpression? = null
+    var defaultValue: Lazy<FirExpression>? = null
     lateinit var containingFunctionSymbol: FirFunctionSymbol<*>
     var isVararg: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
@@ -252,7 +258,7 @@ inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJav
     copyBuilder.name = original.name
     val annotations = original.annotations
     copyBuilder.annotationBuilder = { annotations }
-    copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.defaultValue = if (original is FirJavaValueParameter) original.lazyDefaultValue else original.defaultValue?.let(::lazyOf)
     copyBuilder.containingFunctionSymbol = original.containingFunctionSymbol
     copyBuilder.isVararg = original.isVararg
     return copyBuilder.apply(init).build()

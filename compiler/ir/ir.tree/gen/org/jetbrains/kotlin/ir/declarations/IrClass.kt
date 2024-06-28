@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -23,12 +19,9 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.class
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
  */
-abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
-        IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer,
-        IrAttributeContainer, IrMetadataSourceOwner {
+abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer, IrAttributeContainer, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
 
@@ -50,6 +43,14 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var isFun: Boolean
 
+    /**
+     * Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
+     * This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
+     * in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
+     * old versions of Kotlin which did not support the EnumEntries language feature.
+     */
+    abstract var hasEnumEntries: Boolean
+
     abstract val source: SourceElement
 
     abstract var superTypes: List<IrType>
@@ -58,6 +59,13 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
+    /**
+     * If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
+     * Otherwise, this is an empty list.
+     *
+     * NOTE: If this [IrClass] was deserialized from a klib, this list will always be empty!
+     * See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+     */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

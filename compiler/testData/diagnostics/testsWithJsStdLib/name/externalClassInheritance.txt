@@ -1,0 +1,460 @@
+package
+
+package FinalExternalClass {
+
+    public final external class ExternalClass {
+        public constructor ExternalClass()
+        @kotlin.js.JsName(name = "test") public final val notTest: kotlin.String
+        public final val test: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public final fun notTest(): kotlin.String
+        public final fun test(): kotlin.String
+        public final fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public final fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public final fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package InheritGenericInExternalClass {
+
+    public open external class ExternalClass</*0*/ in T> {
+        public constructor ExternalClass</*0*/ in T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: T?): kotlin.Int
+        public open fun test(/*0*/ x: T?, /*1*/ y: kotlin.String?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : InheritGenericInExternalClass.ExternalClass<kotlin.Int> {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int?): kotlin.Int
+        public final fun test(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.Int?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.String?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package InheritGenericInExternalClassClash {
+
+    public open external class ExternalClass</*0*/ in T> {
+        public constructor ExternalClass</*0*/ in T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: T?): kotlin.Int
+        public open fun test(/*0*/ x: T?, /*1*/ y: kotlin.String?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : InheritGenericInExternalClassClash.ExternalClass<kotlin.Int> {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun test(/*0*/ x: kotlin.Int?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.String?): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package InheritGenericOutExternalClass {
+
+    public open external class ExternalClass</*0*/ out T> {
+        public constructor ExternalClass</*0*/ out T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int?): T
+        public open fun test(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.String?): T
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : InheritGenericOutExternalClass.ExternalClass<kotlin.Unit> {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int?): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int?, /*1*/ y: kotlin.String?): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenExternalClassWithFinalMethods {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        @kotlin.js.JsName(name = "test") public final val notTest: kotlin.String
+        public final val test: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public final fun notTest(): kotlin.String
+        public final fun test(): kotlin.String
+        public final fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public final fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public final fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass1 : OpenExternalClassWithFinalMethods.ExternalClass {
+        public constructor MyClass1()
+        @kotlin.js.JsName(name = "test") public final override /*1*/ /*fake_override*/ val notTest: kotlin.String
+        public final override /*1*/ /*fake_override*/ val test: kotlin.String
+        public final val kotlin.Int.test: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public final override /*1*/ /*fake_override*/ fun notTest(): kotlin.String
+        @kotlin.js.JsName(name = "test") public final fun notTest2(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun test(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public final fun test(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public final fun test(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun kotlin.Int.test(): kotlin.Unit
+    }
+
+    public final class MyClass2 : OpenExternalClassWithFinalMethods.ExternalClass {
+        public constructor MyClass2()
+        @kotlin.js.JsName(name = "test") public final override /*1*/ /*fake_override*/ val notTest: kotlin.String
+        @kotlin.js.JsName(name = "test") public final val notTest2: kotlin.Int = 1
+        public final override /*1*/ /*fake_override*/ val test: kotlin.String
+        public final val kotlin.Int.test: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public final override /*1*/ /*fake_override*/ fun notTest(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun test(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public final fun test(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
+        public final override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public final fun test(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun kotlin.Int.test(): kotlin.Unit
+    }
+}
+
+package OpenExternalClassWithOpenMethods {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        @kotlin.js.JsName(name = "test") public open val notTest: kotlin.String
+        public open val test: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public open fun notTest(): kotlin.String
+        public open fun test(): kotlin.String
+        public open fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenExternalClassWithOpenMethods.ExternalClass {
+        public constructor MyClass()
+        @kotlin.js.JsName(name = "test") public open override /*1*/ /*fake_override*/ val notTest: kotlin.String
+        public open override /*1*/ /*fake_override*/ val test: kotlin.String
+        public final val kotlin.Int.test: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public open override /*1*/ /*fake_override*/ fun notTest(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public final fun test(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.IntArray
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public final fun test(/*0*/ x: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun kotlin.Int.test(): kotlin.Unit
+    }
+}
+
+package OpenInheritedMethodClashedWithChildMethodJsName {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildMethodJsName.ExternalClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public final fun notTest(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildOverload {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildOverload.ExternalClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildOverridde {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildOverridde.ExternalClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildProperty {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildProperty.ExternalClass {
+        public constructor MyClass()
+        public final val test: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildPropertyGetterJsName {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildPropertyGetterJsName.ExternalClass {
+        public constructor MyClass()
+        @get:kotlin.js.JsName(name = "test") public final val notTest: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildPropertyJsName {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildPropertyJsName.ExternalClass {
+        public constructor MyClass()
+        @kotlin.js.JsName(name = "test") public final val notTest: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildPropertyOverridde {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open val test: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildPropertyOverridde.ExternalClass {
+        public constructor MyClass()
+        public open override /*1*/ val test: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithChildPropertySetterJsName {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithChildPropertySetterJsName.ExternalClass {
+        public constructor MyClass()
+        @get:kotlin.js.JsName(name = "getterTest") @set:kotlin.js.JsName(name = "test") public final var notTest: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodClashedWithOtherInheritedMethod {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodClashedWithOtherInheritedMethod.ExternalClass, OpenInheritedMethodClashedWithOtherInheritedMethod.MyInterface {
+        public constructor MyClass()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public open override /*1*/ /*fake_override*/ fun noTest(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun test(/*0*/ x: kotlin.String): kotlin.String
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface MyInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public open fun noTest(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodNotClashedWithAbstractMethod {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodNotClashedWithAbstractMethod.ExternalClass, OpenInheritedMethodNotClashedWithAbstractMethod.MyInterface {
+        public constructor MyClass()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun test(): kotlin.String
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface MyInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodNotClashedWithAbstractMethodWithSameName {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodNotClashedWithAbstractMethodWithSameName.ExternalClass, OpenInheritedMethodNotClashedWithAbstractMethodWithSameName.MyInterface {
+        public constructor MyClass()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface MyInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.js.JsName(name = "test") public abstract fun test(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedMethodNotClashedWithExternalAbstractMethod {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedMethodNotClashedWithExternalAbstractMethod.ExternalClass, OpenInheritedMethodNotClashedWithExternalAbstractMethod.MyInterface {
+        public constructor MyClass()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun test(): kotlin.String
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public external interface MyInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun test(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package OpenInheritedPropertyClashedWithChildMethod {
+
+    public open external class ExternalClass {
+        public constructor ExternalClass()
+        public open val test: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class MyClass : OpenInheritedPropertyClashedWithChildMethod.ExternalClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ val test: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
@@ -19,11 +21,21 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
     return resolveProcessor.scopeSession to firFiles
 }
 
-fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
-    val collector = FirDiagnosticsCollector.create(this, scopeSession)
+fun FirSession.runCheckers(
+    scopeSession: ScopeSession,
+    firFiles: Collection<FirFile>,
+    reporter: BaseDiagnosticsCollector,
+    mppCheckerKind: MppCheckerKind
+): Map<FirFile, List<KtDiagnostic>> {
+    val collector = DiagnosticComponentsFactory.create(this, scopeSession, mppCheckerKind)
+    collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
             collector.collectDiagnostics(file, reporter)
         }
+    }
+    return firFiles.associateWith {
+        val path = it.sourceFile?.path ?: return@associateWith emptyList()
+        reporter.diagnosticsByFilePath[path] ?: emptyList()
     }
 }

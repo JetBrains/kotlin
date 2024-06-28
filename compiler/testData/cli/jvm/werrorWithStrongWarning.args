@@ -1,4 +1,4 @@
-$TESTDATA_DIR$/werrorWithStrongWarning.kt
+$TESTDATA_DIR$/werror.kt
 -Xdisable-default-scripting-plugin
 -d
 $TEMP_DIR$

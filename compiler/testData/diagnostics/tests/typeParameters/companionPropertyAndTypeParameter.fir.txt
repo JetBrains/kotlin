@@ -1,0 +1,101 @@
+FILE: companionPropertyAndTypeParameter.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(any: R|kotlin/Any|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Base.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val test: R|kotlin/Long| = Long(42)
+                public get(): R|kotlin/Long|
+
+        }
+
+    }
+    public final class C1<test> : R|Base| {
+        public constructor<test>(): R|C1<test>| {
+            super<R|Base|>(this@R|/C1.Companion|.R|/C1.Companion.test|)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|C1.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val test: R|kotlin/Int| = Int(12)
+                public get(): R|kotlin/Int|
+
+            public final val some: R|kotlin/Int| = this@R|/C1.Companion|.R|/C1.Companion.test|
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final val test: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final val some: R|kotlin/String| = this@R|/C1|.R|/C1.test|
+            public get(): R|kotlin/String|
+
+        public final fun f(): R|kotlin/Unit| {
+            lval test: R|kotlin/Double| = Double(1.0)
+            lval some: R|kotlin/Double| = R|<local>/test|
+        }
+
+    }
+    public final class C2<test> : R|Base| {
+        public constructor<test>(): R|C2<test>| {
+            super<R|Base|>(this@R|/C2.Companion|.R|/C2.Companion.test|)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|C2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val test: R|kotlin/Int| = Int(12)
+                public get(): R|kotlin/Int|
+
+            public final val some: R|kotlin/Int| = this@R|/C2.Companion|.R|/C2.Companion.test|
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final val some: R|kotlin/Int| = this@R|/C2.Companion|.R|/C2.Companion.test|
+            public get(): R|kotlin/Int|
+
+        public final fun f(): R|kotlin/Unit| {
+            lval test: R|kotlin/Double| = Double(1.0)
+            lval some: R|kotlin/Double| = R|<local>/test|
+        }
+
+    }
+    public final class C3<test> : R|Base| {
+        public constructor<test>(): R|C3<test>| {
+            super<R|Base|>(this@R|/Base.Companion|.R|/Base.Companion.test|)
+        }
+
+        public final val some: R|kotlin/Long| = this@R|/Base.Companion|.R|/Base.Companion.test|
+            public get(): R|kotlin/Long|
+
+        public final fun f(): R|kotlin/Unit| {
+            lval test: R|kotlin/Double| = Double(1.0)
+            lval some: R|kotlin/Double| = R|<local>/test|
+        }
+
+    }
+    public final class C4<test> : R|kotlin/Any| {
+        public constructor<test>(): R|C4<test>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?<Type parameter test in qualified access>#|
+            public get(): <ERROR TYPE REF: Type parameter test in qualified access>
+
+        public final fun f(): R|kotlin/Unit| {
+            lval some: <ERROR TYPE REF: Type parameter test in qualified access> = R|?<Type parameter test in qualified access>#|
+        }
+
+    }

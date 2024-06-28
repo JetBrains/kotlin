@@ -12,4 +12,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "lib2"
+includeBuild("../base")
+include("lib-2")

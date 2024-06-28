@@ -1,8 +1,7 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 
 val i: Int = 10
     get() {
-        ::<!UNSUPPORTED!>field<!>
+        ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>field<!>
         return field
     }

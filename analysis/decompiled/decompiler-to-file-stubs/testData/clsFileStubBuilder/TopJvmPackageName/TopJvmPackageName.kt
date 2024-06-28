@@ -1,3 +1,8 @@
+// FIR_IDENTICAL
+/* Unavailable JvmName */
+// KNM_K2_IGNORE
+// KNM_FE10_IGNORE
+
 @file:Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmName("OtherKt")
 @file:kotlin.jvm.JvmPackageName("some.other.jvm")

@@ -1,0 +1,45 @@
+abstract class C : I {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract override fun foo()
+
+}
+
+abstract class D : C, J {
+  constructor() /* primary */ {
+    super/*C*/()
+    /* <init>() */
+
+  }
+
+}
+
+class E : D {
+  constructor() /* primary */ {
+    super/*D*/()
+    /* <init>() */
+
+  }
+
+  override fun foo() {
+  }
+
+}
+
+interface I : II {
+}
+
+interface II {
+  fun foo() {
+  }
+
+}
+
+fun foo(x: I) {
+  x.foo()
+}
+

@@ -1,3 +1,22 @@
+/**
+ * public final class Outer : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: abstract(Ljava/lang/String;I)V
+ *   public abstract fun abstract(s: kotlin/String, i: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: nonAbstract(Ljava/lang/String;I)V
+ *   public final fun nonAbstract(s: kotlin/String, i: kotlin/Int): kotlin/Unit
+ *
+ *   // nested class: Inner
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Outer {
 
@@ -9,6 +28,25 @@ public final class Outer {
     java.lang.String s, int i) {
     }
 
+    /**
+     * private final inner class Outer.Inner : kotlin/Any {
+     *
+     *   // signature: <init>(LOuter;Ljava/lang/String;Ljava/lang/String;)V
+     *   public constructor(foo: kotlin/String, bar: kotlin/String)
+     *
+     *   // field: bar:Ljava/lang/String;
+     *   // getter: getBar()Ljava/lang/String;
+     *   public final val bar: kotlin/String
+     *     public final get
+     *
+     *   // field: foo:Ljava/lang/String;
+     *   // getter: getFoo()Ljava/lang/String;
+     *   public final val foo: kotlin/String
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     final class Inner {
         @org.jetbrains.annotations.NotNull()
@@ -33,6 +71,25 @@ public final class Outer {
         }
     }
 
+    /**
+     * private final class Outer.Nested : kotlin/Any {
+     *
+     *   // signature: <init>(Ljava/lang/String;Ljava/lang/String;)V
+     *   public constructor(foo: kotlin/String, bar: kotlin/String)
+     *
+     *   // field: bar:Ljava/lang/String;
+     *   // getter: getBar()Ljava/lang/String;
+     *   public final val bar: kotlin/String
+     *     public final get
+     *
+     *   // field: foo:Ljava/lang/String;
+     *   // getter: getFoo()Ljava/lang/String;
+     *   public final val foo: kotlin/String
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     static final class Nested {
         @org.jetbrains.annotations.NotNull()

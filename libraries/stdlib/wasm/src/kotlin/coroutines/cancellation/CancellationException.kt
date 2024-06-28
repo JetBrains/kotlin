@@ -7,8 +7,8 @@ package kotlin.coroutines.cancellation
 
 @SinceKotlin("1.4")
 public actual open class CancellationException : IllegalStateException {
-    actual constructor() : super()
-    actual constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    public actual constructor() : super()
+    public actual constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }

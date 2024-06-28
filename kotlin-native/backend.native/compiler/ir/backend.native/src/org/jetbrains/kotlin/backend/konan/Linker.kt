@@ -2,13 +2,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
+import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.uniqueName
 
 internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
         when (context.config.produce) {
@@ -16,6 +16,7 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
                 val staticFramework = context.config.produceStaticFramework
                 if (staticFramework) LinkerOutputKind.STATIC_LIBRARY else LinkerOutputKind.DYNAMIC_LIBRARY
             }
+            CompilerOutputKind.TEST_BUNDLE,
             CompilerOutputKind.DYNAMIC_CACHE,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
             CompilerOutputKind.STATIC_CACHE,
@@ -37,8 +38,8 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
 internal class Linker(
         private val config: KonanConfig,
         private val linkerOutput: LinkerOutputKind,
-        private val isCoverageEnabled: Boolean = false,
         private val outputFiles: OutputFiles,
+        private val tempFiles: TempFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -89,52 +90,66 @@ internal class Linker(
         val additionalLinkerArgs: List<String>
         val executable: String
 
-        if (config.produce != CompilerOutputKind.FRAMEWORK) {
-            additionalLinkerArgs = if (target.family.isAppleFamily) {
-                when (config.produce) {
-                    CompilerOutputKind.DYNAMIC_CACHE ->
-                        listOf("-install_name", outputFiles.dynamicCacheInstallName)
-                    else -> listOf("-dead_strip")
+        when (config.produce) {
+            CompilerOutputKind.TEST_BUNDLE -> {
+                val bundleDir = File(outputFile)
+                val name = bundleDir.name.removeSuffix(config.produce.suffix())
+                require(target.family.isAppleFamily)
+                val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
+                additionalLinkerArgs = listOf("-bundle", "-dead_strip")
+                val bundlePath = bundleDir.child(bundleRelativePath)
+                bundlePath.parentFile.mkdirs()
+                executable = bundlePath.absolutePath
+            }
+            CompilerOutputKind.FRAMEWORK -> {
+                val framework = File(outputFile)
+                val dylibName = framework.name.removeSuffix(".framework")
+                val dylibRelativePath = when (target.family) {
+                    Family.IOS,
+                    Family.TVOS,
+                    Family.WATCHOS -> dylibName
+                    Family.OSX -> "Versions/A/$dylibName"
+                    else -> error(target)
                 }
-            } else {
-                emptyList()
+                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                val dylibPath = framework.child(dylibRelativePath)
+                dylibPath.parentFile.mkdirs()
+                executable = dylibPath.absolutePath
             }
-            executable = outputFiles.nativeBinaryFile
-        } else {
-            val framework = File(outputFile)
-            val dylibName = framework.name.removeSuffix(".framework")
-            val dylibRelativePath = when (target.family) {
-                Family.IOS,
-                Family.TVOS,
-                Family.WATCHOS -> dylibName
-                Family.OSX -> "Versions/A/$dylibName"
-                else -> error(target)
+            else -> {
+                additionalLinkerArgs = if (target.family.isAppleFamily) {
+                    when (config.produce) {
+                        CompilerOutputKind.DYNAMIC_CACHE ->
+                            listOf("-install_name", outputFiles.dynamicCacheInstallName)
+                        else -> listOf("-dead_strip")
+                    }
+                } else {
+                    emptyList()
+                }
+                executable = outputFiles.nativeBinaryFile
             }
-            additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
-            val dylibPath = framework.child(dylibRelativePath)
-            dylibPath.parentFile.mkdirs()
-            executable = dylibPath.absolutePath
         }
         File(executable).delete()
 
         val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                BitcodeEmbedding.getLinkerOptions(config) +
                 caches.dynamic +
                 libraryProvidedLinkerFlags + additionalLinkerArgs
 
-        return linker.finalLinkCommands(
-                objectFiles = objectFiles,
-                executable = executable,
-                libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
-                linkerArgs = linkerArgs,
-                optimize = optimize,
-                debug = debug,
-                kind = linkerOutput,
-                outputDsymBundle = outputFiles.symbolicInfoFile,
-                needsProfileLibrary = isCoverageEnabled,
-                mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
-                sanitizer = config.sanitizer
-        )
+        return with(linker) {
+            LinkerArguments(
+                    tempFiles = tempFiles,
+                    objectFiles = objectFiles,
+                    executable = executable,
+                    libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    linkerArgs = linkerArgs,
+                    optimize = optimize,
+                    debug = debug,
+                    kind = linkerOutput,
+                    outputDsymBundle = outputFiles.symbolicInfoFile,
+                    mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
+                    sanitizer = config.sanitizer,
+            ).finalLinkCommands()
+        }
     }
 }
 
@@ -144,15 +159,33 @@ internal fun runLinkerCommands(context: PhaseContext, commands: List<Command>, c
         it.execute()
     }
 } catch (e: KonanExternalToolFailure) {
-    val extraUserInfo =
-            if (cachingInvolved)
-                """
-                        Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
-                            
-                            kotlin.native.cacheKind.${context.config.target.presetName}=none
-                            
-                        Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
-                        """.trimIndent()
-            else ""
-    context.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
+    val extraUserInfo = if (cachingInvolved)
+        """
+                    Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
+                        
+                        kotlin.native.cacheKind.${context.config.target.presetName}=none
+                        
+                    Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                    """.trimIndent()
+    else null
+
+    val extraUserSetupInfo = run {
+        context.config.resolvedLibraries.getFullResolvedList()
+                .filter { it.library.isCInteropLibrary() }
+                .mapNotNull { library ->
+                    library.library.manifestProperties["userSetupHint"]?.let {
+                        "From ${library.library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
+                    }
+                }
+                .mapIndexed { index, message -> "$index. $message" }
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString(separator = "\n\n")
+                ?.let {
+                    "It seems your project produced link errors.\nProposed solutions:\n\n$it\n"
+                }
+    }
+
+    val extraInfo = listOfNotNull(extraUserInfo, extraUserSetupInfo).joinToString(separator = "\n")
+
+    context.reportCompilationError("${e.toolName} invocation reported errors\n$extraInfo\n${e.message}")
 }

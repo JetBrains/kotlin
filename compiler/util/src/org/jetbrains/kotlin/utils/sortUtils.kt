@@ -16,13 +16,17 @@ package org.jetbrains.kotlin.utils
  * first in the list of dependencies of `C`. Without a way to find the incoming edge from `B` to `A` while processing `C -> A`, a naive
  * implementation of Kahn's algorithm might order `A` before `B`.
  */
-fun <A> topologicalSort(nodes: Iterable<A>, dependencies: A.() -> Iterable<A>): List<A> {
+fun <A> topologicalSort(
+    nodes: Iterable<A>,
+    reportCycle: (A) -> Nothing = { throw IllegalStateException("Cannot compute a topological sort: The node $it is in a cycle.") },
+    dependencies: A.() -> Iterable<A>,
+): List<A> {
     val visiting = mutableSetOf<A>()
     val visited = mutableSetOf<A>()
 
     fun visit(node: A) {
         if (node in visited) return
-        if (node in visiting) throw IllegalStateException("Cannot compute a topological sort: The node $node is in a cycle.")
+        if (node in visiting) reportCycle(node)
 
         // Keeping track of the nodes that are being visited allows the algorithm to throw an exception in case of a cycle. The input should
         // never be cyclic, but this approach gives some additional safety in case of bugs.

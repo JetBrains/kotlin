@@ -6,7 +6,7 @@ build:
   [kotlinc] warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
   [kotlinc] [TestData]/main.kt:1:15: error: suspend function type is allowed as a supertype only since version 1.6
   [kotlinc] interface A : suspend () -> Unit
-  [kotlinc]               ^
+  [kotlinc]               ^^^^^^^^^^^^^^^^^^
 
 ERR:
 

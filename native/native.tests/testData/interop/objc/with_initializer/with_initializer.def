@@ -1,0 +1,5 @@
+language = Objective-C
+headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
+headerFilter = **/with_initializer.h Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
+linkerOpts = -lwith_initializer
+

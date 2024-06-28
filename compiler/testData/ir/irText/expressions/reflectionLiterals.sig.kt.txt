@@ -1,0 +1,129 @@
+// CHECK:
+//   Mangled name: {}qux
+//   Public signature: /qux|-2015941539611120266[0]
+//   Public signature debug description: {}qux
+val qux: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-qux>(){}kotlin.Int
+  //   Public signature: /qux.<get-qux>|-1099208922439428320[0]
+  //   Public signature debug description: <get-qux>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-qux>(){}
+  //   Public signature: /qux.<get-qux>|-3266840963026289453[0]
+  //   Public signature debug description: <get-qux>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
+val test1: KClass<A>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.reflect.KClass<A>
+  //   Public signature: /test1.<get-test1>|3298538394700924216[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.reflect.KClass<A>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
+val test2: KClass<out Int>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.reflect.KClass<out|kotlin.Int>
+  //   Public signature: /test2.<get-test2>|-915744501252622944[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.reflect.KClass<out|kotlin.Int>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
+//   Public signature debug description: {}test3
+val test3: KFunction1<A, Unit>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test3>(){}kotlin.reflect.KFunction1<A,kotlin.Unit>
+  //   Public signature: /test3.<get-test3>|2842505798415693843[0]
+  //   Public signature debug description: <get-test3>(){}kotlin.reflect.KFunction1<A,kotlin.Unit>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test3>(){}
+  //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
+  //   Public signature debug description: <get-test3>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+//   Public signature debug description: {}test4
+val test4: KFunction0<A>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.reflect.KFunction0<A>
+  //   Public signature: /test4.<get-test4>|4611528126156067014[0]
+  //   Public signature debug description: <get-test4>(){}kotlin.reflect.KFunction0<A>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
+  //   Public signature debug description: <get-test4>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test5
+//   Public signature: /test5|4734809624271551895[0]
+//   Public signature debug description: {}test5
+val test5: KFunction0<Unit>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test5>(){}kotlin.reflect.KFunction0<kotlin.Unit>
+  //   Public signature: /test5.<get-test5>|-3888408401644908313[0]
+  //   Public signature debug description: <get-test5>(){}kotlin.reflect.KFunction0<kotlin.Unit>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test5>(){}
+  //   Public signature: /test5.<get-test5>|-839819880171293643[0]
+  //   Public signature debug description: <get-test5>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test6
+//   Public signature: /test6|-2606527149405855403[0]
+//   Public signature debug description: {}test6
+val test6: KFunction0<Unit>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test6>(){}kotlin.reflect.KFunction0<kotlin.Unit>
+  //   Public signature: /test6.<get-test6>|1824677461908807980[0]
+  //   Public signature debug description: <get-test6>(){}kotlin.reflect.KFunction0<kotlin.Unit>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test6>(){}
+  //   Public signature: /test6.<get-test6>|2028965735388282488[0]
+  //   Public signature debug description: <get-test6>(){}
+  get
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(){}
+  //   Public signature: /A.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+//   Public signature debug description: bar(){}
+fun bar(): Unit
+

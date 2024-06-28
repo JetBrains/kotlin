@@ -1,0 +1,44 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(param: String, unstable: List<*>) {
+    remember(unstable) {
+        unstable[0]
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(param: String, unstable: List<*>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(unstable)) 0b00100000 else 0b00010000
+  }
+  if (%dirty and 0b00010001 != 0b00010000 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp0_group = %composer.cache(%composer.changed(unstable)) {
+      unstable[0]
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp0_group
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(param, unstable, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

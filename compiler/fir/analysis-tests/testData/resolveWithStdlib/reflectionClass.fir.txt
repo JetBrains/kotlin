@@ -5,5 +5,5 @@ FILE: reflectionClass.kt
         public get(): R|kotlin/reflect/KClass<kotlin/String>|
     public final fun foo(): R|kotlin/Unit| {
         lval stringClass: R|java/lang/Class<kotlin/String>| = <getClass>(Q|kotlin/String|).R|kotlin/jvm/java|<R|kotlin/String|>
-        lval arrayStringClass: R|java/lang/Class<kotlin/Array<kotlin/String>>| = <getClass>(Q|kotlin/Array|).R|kotlin/jvm/java|<R|kotlin/Array<kotlin/String>|>
+        lval arrayStringClass: R|java/lang/Class<kotlin/Array<kotlin/String>>| = <getClass>(Q|kotlin/Array|<R|kotlin/String|>).R|kotlin/jvm/java|<R|kotlin/Array<kotlin/String>|>
     }

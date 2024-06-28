@@ -7,10 +7,6 @@ class A : Cloneable {
 
 }
 
-interface I : Cloneable {
-
-}
-
 class C : I {
   constructor() /* primary */ {
     super/*Any*/()
@@ -32,3 +28,7 @@ class OC : I {
   }
 
 }
+
+interface I : Cloneable {
+}
+

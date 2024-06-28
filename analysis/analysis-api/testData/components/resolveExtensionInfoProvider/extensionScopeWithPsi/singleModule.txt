@@ -1,0 +1,495 @@
+packages: 1
+  KaPackageSymbol:
+    fqName: generated
+    location: TOP_LEVEL
+    origin: SOURCE
+classifiers: 2
+  KaNamedClassSymbol:
+    annotations: []
+    classId: generated/GenClass1
+    classKind: CLASS
+    companionObject: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isData: false
+    isExpect: false
+    isExternal: false
+    isFun: false
+    isInline: false
+    isInner: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: GenClass1
+    origin: SOURCE
+    superTypes: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any
+    ]
+    typeParameters: []
+    visibility: PUBLIC
+    PSI: KtClass GenClass1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass GenClass1]
+  KaNamedClassSymbol:
+    annotations: []
+    classId: generated/GenClass2
+    classKind: CLASS
+    companionObject: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isData: false
+    isExpect: false
+    isExternal: false
+    isFun: false
+    isInline: false
+    isInner: false
+    location: TOP_LEVEL
+    modality: OPEN
+    name: GenClass2
+    origin: SOURCE
+    superTypes: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any
+    ]
+    typeParameters: []
+    visibility: PUBLIC
+    PSI: KtClass GenClass2 [from extension2.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtClass GenClass2]
+callables: 5
+  KaNamedFunctionSymbol:
+    annotations: []
+    callableId: generated/genTopLevelFun1
+    compilerVisibility: Public
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: true
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isExpect: false
+    isExtension: false
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: false
+    isTailRec: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: genTopLevelFun1
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    typeParameters: []
+    valueParameters: [
+      KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: foo
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: generated/GenClass2
+        visibility: PUBLIC
+    ]
+    visibility: PUBLIC
+    PSI: KtNamedFunction genTopLevelFun1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction genTopLevelFun1]
+  KaNamedFunctionSymbol:
+    annotations: []
+    callableId: generated/genTopLevelExtension1
+    compilerVisibility: Public
+    contextReceivers: []
+    contractEffects: []
+    hasStableParameterNames: true
+    isActual: false
+    isBuiltinFunctionInvoke: false
+    isExpect: false
+    isExtension: true
+    isExternal: false
+    isInfix: false
+    isInline: false
+    isOperator: false
+    isOverride: false
+    isStatic: false
+    isSuspend: false
+    isTailRec: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: genTopLevelExtension1
+    origin: SOURCE
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: []
+      location: LOCAL
+      origin: SOURCE
+      owningCallableSymbol: KaNamedFunctionSymbol(generated/genTopLevelExtension1)
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    typeParameters: []
+    valueParameters: []
+    visibility: PUBLIC
+    PSI: KtNamedFunction genTopLevelExtension1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtNamedFunction genTopLevelExtension1]
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Private
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: PROPERTY
+      modality: FINAL
+      name: field
+      origin: PROPERTY_BACKING_FIELD
+      owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVal1)
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PRIVATE
+    callableId: generated/genTopLevelVal1
+    compilerVisibility: Public
+    contextReceivers: []
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      hasBody: false
+      hasStableParameterNames: true
+      isActual: false
+      isDefault: true
+      isExpect: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      location: PROPERTY
+      modality: FINAL
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      valueParameters: []
+      visibility: PUBLIC
+    hasBackingField: true
+    hasGetter: true
+    hasSetter: false
+    initializer: KtConstantInitializerValue("baz")
+    isActual: false
+    isConst: false
+    isDelegatedProperty: false
+    isExpect: false
+    isExtension: false
+    isFromPrimaryConstructor: false
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: true
+    location: TOP_LEVEL
+    modality: FINAL
+    name: genTopLevelVal1
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    setter: null
+    typeParameters: []
+    visibility: PUBLIC
+    PSI: KtProperty genTopLevelVal1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genTopLevelVal1]
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Private
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: PROPERTY
+      modality: FINAL
+      name: field
+      origin: PROPERTY_BACKING_FIELD
+      owningProperty: KaKotlinPropertySymbol(generated/genTopLevelVar1)
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PRIVATE
+    callableId: generated/genTopLevelVar1
+    compilerVisibility: Public
+    contextReceivers: []
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      hasBody: false
+      hasStableParameterNames: true
+      isActual: false
+      isDefault: true
+      isExpect: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      location: PROPERTY
+      modality: FINAL
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      valueParameters: []
+      visibility: PUBLIC
+    hasBackingField: true
+    hasGetter: true
+    hasSetter: true
+    initializer: KtConstantInitializerValue("quux")
+    isActual: false
+    isConst: false
+    isDelegatedProperty: false
+    isExpect: false
+    isExtension: false
+    isFromPrimaryConstructor: false
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: false
+    location: TOP_LEVEL
+    modality: FINAL
+    name: genTopLevelVar1
+    origin: SOURCE
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/String
+    setter: KaPropertySetterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Internal
+      contextReceivers: []
+      hasBody: false
+      hasStableParameterNames: true
+      isActual: false
+      isDefault: true
+      isExpect: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      location: PROPERTY
+      modality: FINAL
+      origin: SOURCE
+      parameter: KaValueParameterSymbol:
+        annotations: []
+        callableId: null
+        compilerVisibility: Public
+        contextReceivers: []
+        generatedPrimaryConstructorProperty: null
+        hasDefaultValue: false
+        isActual: false
+        isCrossinline: false
+        isExpect: false
+        isExtension: false
+        isImplicitLambdaParameter: false
+        isNoinline: false
+        isVal: true
+        isVararg: false
+        location: LOCAL
+        modality: FINAL
+        name: value
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+        visibility: PUBLIC
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Unit
+      valueParameters: [
+        KaValueParameterSymbol:
+          annotations: []
+          callableId: null
+          compilerVisibility: Public
+          contextReceivers: []
+          generatedPrimaryConstructorProperty: null
+          hasDefaultValue: false
+          isActual: false
+          isCrossinline: false
+          isExpect: false
+          isExtension: false
+          isImplicitLambdaParameter: false
+          isNoinline: false
+          isVal: true
+          isVararg: false
+          location: LOCAL
+          modality: FINAL
+          name: value
+          origin: SOURCE
+          receiverParameter: null
+          returnType: KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/String
+          visibility: PUBLIC
+      ]
+      visibility: INTERNAL
+    typeParameters: []
+    visibility: PUBLIC
+    PSI: KtProperty genTopLevelVar1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genTopLevelVar1]
+  KaKotlinPropertySymbol:
+    annotations: []
+    backingFieldSymbol: KaBackingFieldSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Private
+      contextReceivers: []
+      isActual: false
+      isExpect: false
+      isExtension: false
+      isVal: true
+      location: PROPERTY
+      modality: FINAL
+      name: field
+      origin: PROPERTY_BACKING_FIELD
+      owningProperty: KaKotlinPropertySymbol(generated/genExtensionVal1)
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      visibility: PRIVATE
+    callableId: generated/genExtensionVal1
+    compilerVisibility: Public
+    contextReceivers: []
+    getter: KaPropertyGetterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      hasBody: true
+      hasStableParameterNames: true
+      isActual: false
+      isDefault: false
+      isExpect: false
+      isExtension: false
+      isInline: false
+      isOverride: false
+      location: PROPERTY
+      modality: FINAL
+      origin: SOURCE
+      receiverParameter: KaReceiverParameterSymbol:
+        annotations: []
+        location: LOCAL
+        origin: SOURCE
+        owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+        type: KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: generated/GenClass2
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Int
+      valueParameters: []
+      visibility: PUBLIC
+    hasBackingField: false
+    hasGetter: true
+    hasSetter: false
+    initializer: null
+    isActual: false
+    isConst: false
+    isDelegatedProperty: false
+    isExpect: false
+    isExtension: true
+    isFromPrimaryConstructor: false
+    isLateInit: false
+    isOverride: false
+    isStatic: false
+    isVal: true
+    location: TOP_LEVEL
+    modality: FINAL
+    name: genExtensionVal1
+    origin: SOURCE
+    receiverParameter: KaReceiverParameterSymbol:
+      annotations: []
+      location: LOCAL
+      origin: SOURCE
+      owningCallableSymbol: KaKotlinPropertySymbol(generated/genExtensionVal1)
+      type: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: generated/GenClass2
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/Int
+    setter: null
+    typeParameters: []
+    visibility: PUBLIC
+    PSI: KtProperty genExtensionVal1 [from extension1.kt]
+      From resolve extension: true
+      Resolve extension navigation targets: 1
+        [Resolve extension navigation target for test for KtProperty genExtensionVal1]
+constructors: 0

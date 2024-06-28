@@ -5,11 +5,5 @@
 
 package kotlin.random
 
-private fun initialSeed(): Int =
-    js("((Math.random() * Math.pow(2, 32)) | 0)")
-
-internal actual fun defaultPlatformRandom(): Random =
-    Random(initialSeed())
-
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
     (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()

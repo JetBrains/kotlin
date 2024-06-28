@@ -1,8 +1,0 @@
-@PropertyAnnotation
-var x: kotlin.Int
-  @GetAnnotation
-  @ExplicitGetAnnotation
-  get()
-  @SetAnnotation
-  @ExplicitSetAnnotation
-  set(@ExplicitSetparamAnnotation @SetparamAnnotation value: kotlin.Int)

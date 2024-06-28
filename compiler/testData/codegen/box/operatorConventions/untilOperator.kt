@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// !LANGUAGE: +RangeUntilOperator
+// LANGUAGE: +RangeUntilOperator
 
 class ARange(_start: A, _end: A): ClosedRange<A>, Iterable<A> {
     override val endInclusive: A = _end

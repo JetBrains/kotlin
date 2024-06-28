@@ -1,0 +1,25 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] multipleTopLevelClasses.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class D : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

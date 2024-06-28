@@ -1,0 +1,15 @@
+@FILE:FileAnnotation(String(file annotation))
+owner -> FirFileSymbol fileAnnotations.kt
+context -> FirFileSymbol fileAnnotations.kt
+
+@FILE:Annotation1(String(foo))
+owner -> FirFileSymbol fileAnnotations.kt
+context -> FirFileSymbol fileAnnotations.kt
+
+@FILE:Annotation2()
+owner -> FirFileSymbol fileAnnotations.kt
+context -> FirFileSymbol fileAnnotations.kt
+
+@WithouTarget(String(argument))
+owner -> FirFileSymbol fileAnnotations.kt
+context -> FirFileSymbol fileAnnotations.kt

@@ -1,0 +1,105 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] init: R|A.() -> kotlin/Unit|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/String| = String()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] object B : R|A| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] object C : R|A| {
+        private [ResolvedTo(BODY_RESOLVE)] constructor(): R|C| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class D : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|D| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class E : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|E| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class F : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|F| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|F| {
+            super<R|A|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] error_constructor(): R|G| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|G| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class H : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|H| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
+    }

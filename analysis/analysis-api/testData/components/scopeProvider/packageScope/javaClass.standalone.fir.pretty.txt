@@ -1,0 +1,5 @@
+class KotlinClass : test.JavaClass()
+
+abstract class SuperClass : test.api.SuperInterface
+
+open class JavaClass : test.SuperClass()

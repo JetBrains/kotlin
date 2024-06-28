@@ -1,87 +1,14 @@
-object X1 {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  var x1: Int
-    field = 0
+class B {
+  var s: Int
+    field = s
     get
     set
 
-  object X2 {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    var x2: Int
-      field = 0
-      get
-      set
-
-    object X3 {
-      private constructor() /* primary */ {
-        super/*Any*/()
-        /* <init>() */
-
-      }
-
-      var x3: Int
-        field = 0
-        get
-        set
-
-    }
-
-  }
-
-}
-
-fun test1(a: IntArray) {
-  var i: Int = 0
-  val <array>: IntArray = a
-  val <index_0>: Int = { // BLOCK
-    val <unary>: Int = i
-    i = <unary>.inc()
-    <unary>
-  }
-  val <unary>: Int = <array>.get(index = <index_0>)
-  <array>.set(index = <index_0>, value = <unary>.inc())
-  <unary> /*~> Unit */
-}
-
-fun test2() {
-  { // BLOCK
-    val <unary>: Int = X1.<get-x1>()
-    X1.<set-x1>(<set-?> = <unary>.inc())
-    <unary>
-  } /*~> Unit */
-  { // BLOCK
-    val <unary>: Int = X2.<get-x2>()
-    X2.<set-x2>(<set-?> = <unary>.inc())
-    <unary>
-  } /*~> Unit */
-  { // BLOCK
-    val <unary>: Int = X3.<get-x3>()
-    X3.<set-x3>(<set-?> = <unary>.inc())
-    <unary>
-  } /*~> Unit */
-}
-
-class B {
   constructor(s: Int = 0) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var s: Int
-    field = s
-    get
-    set
 
 }
 
@@ -98,6 +25,80 @@ object Host {
 
 }
 
+object X1 {
+  var x1: Int
+    field = 0
+    get
+    set
+
+  object X2 {
+    var x2: Int
+      field = 0
+      get
+      set
+
+    object X3 {
+      var x3: Int
+        field = 0
+        get
+        set
+
+      private constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+    }
+
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test1(a: IntArray) {
+  var i: Int = 0
+  val tmp_0: IntArray = a
+  val tmp_1: Int = { // BLOCK
+    val tmp_2: Int = i
+    i = tmp_2.inc()
+    tmp_2
+  }
+  val tmp_3: Int = tmp_0.get(index = tmp_1)
+  tmp_0.set(index = tmp_1, value = tmp_3.inc())
+  tmp_3 /*~> Unit */
+}
+
+fun test2() {
+  { // BLOCK
+    val tmp_4: Int = X1.<get-x1>()
+    X1.<set-x1>(<set-?> = tmp_4.inc())
+    tmp_4
+  } /*~> Unit */
+  { // BLOCK
+    val tmp_5: Int = X2.<get-x2>()
+    X2.<set-x2>(<set-?> = tmp_5.inc())
+    tmp_5
+  } /*~> Unit */
+  { // BLOCK
+    val tmp_6: Int = X3.<get-x3>()
+    X3.<set-x3>(<set-?> = tmp_6.inc())
+    tmp_6
+  } /*~> Unit */
+}
+
 fun Host.test3(v: B) {
   (<this>, v).plusAssign(b = B(s = 1000))
 }
+

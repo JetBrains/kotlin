@@ -1,0 +1,29 @@
+public open override [ResolvedTo(BODY_RESOLVE)] fun isSchemeFile([ResolvedTo(BODY_RESOLVE)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| {
+    ^isSchemeFile !=(R|<local>/name|, String(str))
+}
+
+public open override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.isSchemeFile] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
+
+public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+@R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.propertyWithAnnotations] var propertyWithAnnotations: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] get(): R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=<anonymous>] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|): R|kotlin/Unit|
+
+@R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var propertyWithAnnotations: R|SCHEME|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|SCHEME|): R|kotlin/Unit|
+
+public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/LazySchemeProcessor.property] var property: R|@R|second/Anno|(str = <strcat>(String(super1 ), R|second/constant|))  kotlin/Int|
+
+
+
+public final [ResolvedTo(STATUS)] var property: R|SCHEME|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] get(): R|SCHEME|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=LazySchemeProcessor] set([ResolvedTo(STATUS)] value: R|SCHEME|): R|kotlin/Unit|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

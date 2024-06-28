@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,16 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class RawFirBuilderSourceElementMappingTestCaseGenerated extends AbstractRawFirBuilderSourceElementMappingTestCase {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInSourceElementMapping() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  public void testAllFilesPresentInSourceElementMapping() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @TestMetadata("qualifiedExpression.kt")
-    public void testQualifiedExpression() throws Exception {
-        runTest("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping/qualifiedExpression.kt");
-    }
+  @TestMetadata("qualifiedExpression.kt")
+  public void testQualifiedExpression() {
+    runTest("compiler/fir/raw-fir/psi2fir/testData/sourceElementMapping/qualifiedExpression.kt");
+  }
 }

@@ -1,10 +1,13 @@
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: /foo2
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /foo2
+  compilerVisibility: Public
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -13,18 +16,20 @@ KtFunctionSymbol:
   isOverride: false
   isStatic: false
   isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
   modality: FINAL
   name: foo2
   origin: SOURCE
   receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtUsualClassType:
-        annotationsList: []
-        ownTypeArguments: [
-          KtUsualClassType:
-            annotationsList: [
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: [
+          KaUsualClassType:
+            annotations: [
               Anno3()
                 psi: KtAnnotationEntry
               Anno2()
@@ -32,15 +37,16 @@ KtFunctionSymbol:
               Anno1(s = "s")
                 psi: KtAnnotationEntry
             ]
-            ownTypeArguments: []
+            typeArguments: []
             type: @R|Anno3|() @R|Anno2|() @R|Anno1|(s = String(s))  @R|Anno3|()  SecondTypeAlias
         ]
         type: kotlin/collections/List<@R|Anno3|() @R|Anno2|() @R|Anno1|(s = String(s))  @R|Anno3|()  SecondTypeAlias>
     ]
     type: kotlin/collections/List<kotlin/collections/List<@R|Anno3|() @R|Anno2|() @R|Anno1|(s = String(s))  @R|Anno3|()  SecondTypeAlias>>?
-  symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
-  visibility: Public
-  getContainingModule: KtSourceModule "Sources of main"
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(nestedTypeAnnotationWithTypeAlias.kt)
+  getContainingJvmClassName: NestedTypeAnnotationWithTypeAliasKt
+  getContainingModule: KaSourceModule "Sources of main"
   deprecationStatus: null

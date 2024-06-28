@@ -1,0 +1,1 @@
+fun foo(): kotlin.collections.List<@Anno5(s = "1") kotlin.Int>?

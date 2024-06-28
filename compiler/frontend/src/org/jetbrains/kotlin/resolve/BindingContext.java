@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
@@ -89,7 +90,16 @@ public interface BindingContext {
         public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
             // Do nothing
         }
+
+        @Nullable
+        @Override
+        public Project getProject() {
+            return null;
+        }
     };
+
+    @Nullable
+    Project getProject();
 
     WritableSlice<KtAnnotationEntry, AnnotationDescriptor> ANNOTATION = Slices.createSimpleSlice();
 
@@ -224,6 +234,7 @@ public interface BindingContext {
         }
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
+    WritableSlice<PropertyDescriptor, Boolean> IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR = Slices.createSimpleSetSlice();
     WritableSlice<PropertyDescriptor, Boolean> MUST_BE_LATEINIT = Slices.createSimpleSetSlice();
 
     WritableSlice<KtLambdaExpression, EventOccurrencesRange> LAMBDA_INVOCATIONS = Slices.createSimpleSlice();

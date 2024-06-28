@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -19,12 +21,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.script
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
-abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent,
-        IrStatementContainer, IrMetadataSourceOwner {
+abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrScriptSymbol
+
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: ScriptDescriptor
 
     abstract var thisReceiver: IrValueParameter?
 
@@ -41,6 +44,8 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
     abstract var resultProperty: IrPropertySymbol?
 
     abstract var earlierScriptsParameter: IrValueParameter?
+
+    abstract var importedScripts: List<IrScriptSymbol>?
 
     abstract var earlierScripts: List<IrScriptSymbol>?
 
@@ -64,10 +69,8 @@ abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarat
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)
-        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer,
-                data)
-        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer,
-                data)
+        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer, data)
+        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer, data)
         earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
     }
 }

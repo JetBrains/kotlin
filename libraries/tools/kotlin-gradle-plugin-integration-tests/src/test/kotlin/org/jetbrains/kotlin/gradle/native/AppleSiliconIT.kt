@@ -1,34 +1,30 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Assume.assumeTrue
-import org.junit.Test
-import kotlin.test.BeforeTest
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.fail
 
-class AppleSiliconIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+@DisplayName("Tests for Apple Silicon builds")
+@NativeGradlePluginTests
+class AppleSiliconIT : KGPBaseTest() {
 
     private val host = HostManager.host
 
-    @BeforeTest
-    fun assumeMacosHost() {
-        assumeTrue("Test requires MacOS host", HostManager.hostIsMac)
-    }
-
-    @Test
-    fun `test compilation`() {
-        with(Project("appleSilicon")) {
+    @DisplayName("Tests compilation")
+    @GradleTest
+    fun shouldCompiledSuccessfully(gradleVersion: GradleVersion) {
+        nativeProject("appleSilicon", gradleVersion) {
             build("assemble") {
-                assertSuccessful()
                 assertTasksExecuted(
                     ":compileKotlinIosArm64",
                     ":compileKotlinIosSimulatorArm64",
@@ -53,13 +49,13 @@ class AppleSiliconIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `test execution`() {
-        with(Project("appleSilicon")) {
+    @DisplayName("Tests execution")
+    @GradleTest
+    fun shouldExecuteTestsSuccessfully(gradleVersion: GradleVersion) {
+        nativeProject("appleSilicon", gradleVersion) {
             build("check") {
-                assertSuccessful()
                 assertTasksExecuted(":jvmTest")
-                assertContains("Executed Code from: commonMain/jvmMain")
+                assertOutputContains("Executed Code from: commonMain/jvmMain")
 
                 val armTestOutputs = listOf(
                     "commonMain/iosMain/iosSimulatorArm64Main",
@@ -77,13 +73,22 @@ class AppleSiliconIT : BaseGradleIT() {
 
                 when (host) {
                     KonanTarget.MACOS_ARM64 -> {
-                        assertContains(*armTestOutputs.toTypedArray())
-                        assertNotContains(*x64TestOutputs.toTypedArray())
+                        for (s in armTestOutputs) {
+                            assertOutputContains(s)
+                        }
+                        for (s in x64TestOutputs) {
+                            assertOutputDoesNotContain(s)
+                        }
+
                     }
 
                     KonanTarget.MACOS_X64 -> {
-                        assertContains(*x64TestOutputs.toTypedArray())
-                        assertNotContains(*armTestOutputs.toTypedArray())
+                        for (s in x64TestOutputs) {
+                            assertOutputContains(s)
+                        }
+                        for (s in armTestOutputs) {
+                            assertOutputDoesNotContain(s)
+                        }
                     }
 
                     else -> fail("Unexpected host $host")
@@ -98,7 +103,6 @@ class AppleSiliconIT : BaseGradleIT() {
 
                 val x64Tests = listOf(
                     ":iosX64Test",
-                    ":jvmTest",
                     ":macosX64Test",
                     ":tvosX64Test",
                     ":watchosX64Test",
@@ -107,12 +111,12 @@ class AppleSiliconIT : BaseGradleIT() {
                 when (host) {
                     KonanTarget.MACOS_ARM64 -> {
                         assertTasksExecuted(armTests)
-                        assertTasksNotExecuted(x64Tests)
+                        assertTasksSkipped(*x64Tests.toTypedArray())
                     }
 
                     KonanTarget.MACOS_X64 -> {
                         assertTasksExecuted(x64Tests)
-                        assertTasksNotExecuted(armTests)
+                        assertTasksSkipped(*armTests.toTypedArray())
                     }
 
                     else -> fail("Unexpected host $host")

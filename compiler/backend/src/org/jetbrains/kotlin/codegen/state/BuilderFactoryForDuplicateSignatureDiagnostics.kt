@@ -71,17 +71,17 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun reportConflictingJvmSignatures(data: ConflictingJvmDeclarationsData) {
-        val noOwnImplementations = data.signatureOrigins.all { it.originKind in EXTERNAL_SOURCES_KINDS }
+        val noOwnImplementations = data.signatureOrigins!!.all { it.originKind in EXTERNAL_SOURCES_KINDS }
 
         val elements = LinkedHashSet<PsiElement>()
         if (noOwnImplementations) {
-            elements.addIfNotNull(data.classOrigin.element)
+            elements.addIfNotNull(data.classOrigin!!.element)
         } else {
-            for (origin in data.signatureOrigins) {
+            for (origin in data.signatureOrigins!!) {
                 var element = origin.element
 
                 if (element == null || origin.originKind in EXTERNAL_SOURCES_KINDS) {
-                    element = data.classOrigin.element
+                    element = data.classOrigin!!.element
                 }
 
                 elements.addIfNotNull(element)
@@ -186,7 +186,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             }
         }
 
-        val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
+        val data = ConflictingJvmDeclarationsData(
+            classInternalName, classOrigin, rawSignature, origins, origins.mapNotNull(JvmDeclarationOrigin::descriptor),
+        )
         if (memberElement != null) {
             return ConflictingDeclarationError.AccidentalOverride(memberElement, data)
         }

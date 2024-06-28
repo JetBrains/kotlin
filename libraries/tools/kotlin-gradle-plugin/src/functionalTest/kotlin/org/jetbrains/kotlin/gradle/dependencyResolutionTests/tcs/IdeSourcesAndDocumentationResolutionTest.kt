@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -33,12 +34,12 @@ class IdeSourcesAndDocumentationResolutionTest {
         val project = buildProject {
             enableDefaultStdlibDependency(false)
             enableDependencyVerification(false)
+            configureRepositoriesForTests()
             applyMultiplatformPlugin()
-            repositories.mavenCentralCacheRedirector()
         }
 
         val kotlin = project.multiplatformExtension
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.jvm()
         kotlin.linuxX64()
         kotlin.linuxArm64()
@@ -64,9 +65,9 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check commonMain&commonTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
             )
 
             val resolvedDependencies = resolveDependencySources(commonMain)
@@ -78,12 +79,12 @@ class IdeSourcesAndDocumentationResolutionTest {
         /* Check nativeMain&nativeTest */
         run {
             val expectedDependencies = listOf(
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:commonMain"),
-                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:jsNativeMain"),
-                binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
+                binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
                 IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
-                binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                binaryCoordinates(Regex(".*stdlib.*")) /* KT-56278 */
             )
 
             val resolvedDependencies = resolveDependencySources(nativeMain)

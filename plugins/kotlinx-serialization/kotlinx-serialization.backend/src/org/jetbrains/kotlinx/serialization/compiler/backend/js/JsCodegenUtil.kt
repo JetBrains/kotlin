@@ -303,7 +303,7 @@ fun TranslationContext.buildInitializersRemapping(
 ): Map<PropertyDescriptor, KtExpression?> {
     val myMap = (forClass.bodyPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
             forClass.primaryConstructorPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.defaultValue })
-    val parentPsi = superClass?.takeIf { it.isInternalSerializable }?.findPsi() as? KtPureClassOrObject ?: return myMap
+    val parentPsi = superClass?.takeIf { it.shouldHaveGeneratedMethods }?.findPsi() as? KtPureClassOrObject ?: return myMap
     val parentMap = buildInitializersRemapping(parentPsi, superClass.getSuperClassNotAny())
     return myMap + parentMap
 }

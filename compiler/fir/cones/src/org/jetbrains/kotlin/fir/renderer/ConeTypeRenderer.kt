@@ -1,15 +1,20 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-open class ConeTypeRenderer {
-
+open class ConeTypeRenderer(
+    private val attributeRenderer: ConeAttributeRenderer = ConeAttributeRenderer.ToString
+) {
     lateinit var builder: StringBuilder
     lateinit var idRenderer: ConeIdRenderer
 
@@ -24,6 +29,8 @@ open class ConeTypeRenderer {
             return
         }
 
+        type.renderNonCompilerAttributes()
+
         if (type.isMarkedNullable) {
             builder.append("(")
         }
@@ -33,7 +40,7 @@ open class ConeTypeRenderer {
         }
         val typeArguments = type.typeArguments
         val isExtension = type.isExtensionFunctionType
-        val (receiver, otherTypeArguments) = if (isExtension && typeArguments.first() != ConeStarProjection) {
+        val (receiver, otherTypeArguments) = if (isExtension && typeArguments.size >= 2 && typeArguments.first() != ConeStarProjection) {
             typeArguments.first() to typeArguments.drop(1)
         } else {
             null to typeArguments.toList()
@@ -65,41 +72,9 @@ open class ConeTypeRenderer {
             type.renderAttributes()
         }
         when (type) {
-            is ConeTypeVariableType -> {
-                builder.append("TypeVariable(")
-                builder.append(type.lookupTag.name)
-                builder.append(")")
-            }
-
             is ConeDefinitelyNotNullType -> {
                 render(type.original)
                 builder.append(" & Any")
-            }
-
-            is ConeErrorType -> {
-                builder.append("ERROR CLASS: ${type.diagnostic.reason}")
-            }
-
-            is ConeCapturedType -> {
-                builder.append("CapturedType(")
-                type.constructor.projection.render()
-                builder.append(")")
-            }
-
-            is ConeClassLikeType -> {
-                type.render()
-            }
-
-            is ConeLookupTagBasedType -> {
-                builder.append(type.lookupTag.name.asString())
-            }
-
-            is ConeDynamicType -> {
-                builder.append("dynamic")
-            }
-
-            is ConeFlexibleType -> {
-                render(type)
             }
 
             is ConeIntersectionType -> {
@@ -113,24 +88,21 @@ open class ConeTypeRenderer {
                 builder.append(")")
             }
 
-            is ConeStubTypeForSyntheticFixation -> {
-                builder.append("Stub (fixation): ${type.constructor.variable}")
+            is ConeDynamicType -> {
+                builder.append("dynamic")
             }
 
-            is ConeStubTypeForChainInference -> {
-                builder.append("Stub (chain inference): ${type.constructor.variable}")
+            is ConeFlexibleType -> {
+                render(type)
             }
 
-            is ConeStubType -> {
-                builder.append("Stub (subtyping): ${type.constructor.variable}")
-            }
+            is ConeErrorType -> builder.append("ERROR CLASS: ${type.diagnostic.reason}")
 
-            is ConeIntegerLiteralConstantType -> {
-                builder.append("ILT: ${type.value}")
-            }
-
-            is ConeIntegerConstantOperatorType -> {
-                builder.append("IOT")
+            is ConeSimpleKotlinType -> {
+                renderConstructor(type.getConstructor())
+                if (type is ConeClassLikeType) {
+                    type.renderTypeArguments()
+                }
             }
         }
         if (type !is ConeFlexibleType && type !is ConeErrorType) {
@@ -138,8 +110,34 @@ open class ConeTypeRenderer {
         }
     }
 
-    private fun ConeClassLikeType.render() {
-        idRenderer.renderClassId(lookupTag.classId)
+    open fun renderConstructor(constructor: TypeConstructorMarker) {
+        when (constructor) {
+            is ConeTypeVariableTypeConstructor -> {
+                builder.append("TypeVariable(")
+                builder.append(constructor.name)
+                builder.append(")")
+            }
+
+            is ConeCapturedTypeConstructor -> {
+                builder.append("CapturedType(")
+                constructor.projection.render()
+                builder.append(")")
+            }
+
+            is ConeClassLikeLookupTag -> idRenderer.renderClassId(constructor.classId)
+            is ConeClassifierLookupTag -> builder.append(constructor.name.asString())
+
+            is ConeStubTypeConstructor -> builder.append("Stub (subtyping): ${constructor.variable}")
+            is ConeIntegerLiteralType -> render(constructor)
+
+            is ConeIntersectionType -> error(
+                "`renderConstructor` mustn't be called with an intersection type argument. " +
+                        "Call `render` to simply render the type or filter out intersection types on the call-site."
+            )
+        }
+    }
+
+    private fun ConeClassLikeType.renderTypeArguments() {
         if (typeArguments.isEmpty()) return
         builder.append("<")
         for ((index, typeArgument) in typeArguments.withIndex()) {
@@ -178,9 +176,16 @@ open class ConeTypeRenderer {
         builder.append(">")
     }
 
-    private fun ConeKotlinType.renderAttributes() {
+    protected open fun ConeKotlinType.renderAttributes() {
         if (!attributes.any()) return
-        builder.append(attributes.joinToString(" ", postfix = " ") { it.toString() })
+        builder.append(attributeRenderer.render(attributes))
+    }
+
+    protected fun ConeKotlinType.renderNonCompilerAttributes() {
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        attributes
+            .filter { it.key !in compilerAttributes }
+            .ifNotEmpty { builder.append(attributeRenderer.render(this)) }
     }
 
     private fun ConeTypeProjection.render() {
@@ -206,6 +211,18 @@ open class ConeTypeRenderer {
 
             is ConeKotlinType -> {
                 render(this)
+            }
+        }
+    }
+
+    protected open fun render(type: ConeIntegerLiteralType) {
+        when (type) {
+            is ConeIntegerLiteralConstantType -> {
+                builder.append("ILT: ${type.value}")
+            }
+
+            is ConeIntegerConstantOperatorType -> {
+                builder.append("IOT")
             }
         }
     }

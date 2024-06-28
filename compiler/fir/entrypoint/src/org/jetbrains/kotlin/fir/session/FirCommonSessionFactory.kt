@@ -9,21 +9,20 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
-import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
-import org.jetbrains.kotlin.fir.checkers.registerNativeCheckers
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultExtraComponentsForModuleBased
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -37,6 +36,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
+        extensionRegistrars: List<FirExtensionRegistrar>,
         librariesScope: AbstractProjectFileSearchScope,
         resolvedKLibs: List<KotlinResolvedLibrary>,
         packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
@@ -48,11 +48,13 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             sessionProvider,
             moduleDataProvider,
             languageVersionSettings,
+            extensionRegistrars,
             registerExtraComponents = {
+                it.registerDefaultComponents()
                 registerExtraComponents(it)
             },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
+            createKotlinScopeProvider = { FirKotlinScopeProvider() },
+            createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 listOfNotNull(
                     MetadataSymbolProvider(
                         session,
@@ -66,10 +68,12 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                             session,
                             moduleDataProvider,
                             kotlinScopeProvider,
-                            resolvedKLibs
+                            resolvedKLibs.map { it.library }
                         )
                     },
+                    syntheticFunctionInterfaceProvider,
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                    FirBuiltinSyntheticFunctionInterfaceProvider.initialize(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                 )
             }
@@ -85,6 +89,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
+        importTracker: ImportTracker? = null,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
@@ -95,18 +100,15 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             lookupTracker,
             enumWhenTracker,
+            importTracker,
             init,
             registerExtraComponents = {
-                it.registerDefaultExtraComponentsForModuleBased()
+                it.registerDefaultComponents()
                 registerExtraComponents(it)
             },
-            registerExtraCheckers = {
-                it.registerJvmCheckers()
-                it.registerJsCheckers()
-                it.registerNativeCheckers()
-            },
-            createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
+            registerExtraCheckers = {},
+            createKotlinScopeProvider = { FirKotlinScopeProvider() },
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 incrementalCompilationContext?.let {
                     val precompiledBinariesPackagePartProvider = it.precompiledBinariesPackagePartProvider
@@ -129,7 +131,6 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                     *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                     symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
-                    syntheticFunctionalInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
             }

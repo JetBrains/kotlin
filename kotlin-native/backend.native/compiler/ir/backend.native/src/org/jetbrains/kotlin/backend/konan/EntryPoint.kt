@@ -7,20 +7,22 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.irCatch
 import org.jetbrains.kotlin.name.Name
 
-internal object DECLARATION_ORIGIN_ENTRY_POINT : IrDeclarationOriginImpl("ENTRY_POINT")
+internal val DECLARATION_ORIGIN_ENTRY_POINT = IrDeclarationOriginImpl("ENTRY_POINT")
 
 internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction {
     val context = generationState.context
@@ -64,16 +66,23 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
                 }
                 +irReturn(irInt(0))
             }
-            catches += irCatch(context.irBuiltIns.throwableType).apply {
-                result = irBlock {
-                    +irCall(context.ir.symbols.processUnhandledException).apply {
-                        putValueArgument(0, irGet(catchParameter))
+            val catchParameter = buildVariable(
+                    builder.parent, startOffset, endOffset,
+                    IrDeclarationOrigin.CATCH_PARAMETER,
+                    Name.identifier("e"),
+                    context.irBuiltIns.throwableType
+            )
+            catches += irCatch(
+                    catchParameter,
+                    result = irBlock {
+                        +irCall(context.ir.symbols.processUnhandledException).apply {
+                            putValueArgument(0, irGet(catchParameter))
+                        }
+                        +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
+                            putValueArgument(0, irGet(catchParameter))
+                        }
                     }
-                    +irCall(context.ir.symbols.terminateWithUnhandledException).apply {
-                        putValueArgument(0, irGet(catchParameter))
-                    }
-                }
-            }
+            )
         }
     }
 

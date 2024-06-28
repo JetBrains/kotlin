@@ -1,0 +1,17 @@
+FILE: enumEntryWithAnnotations.kt
+    @EnumAnnotation(LAZY_EXPRESSION) public final? enum class MyEnumClass : R|kotlin/Enum<MyEnumClass>| {
+        private constructor(): R|MyEnumClass| {
+            LAZY_super<R|kotlin/Enum<MyEnumClass>|>
+        }
+
+        @Anno(LAZY_EXPRESSION) @PROPERTY:Anno(LAZY_EXPRESSION) public final static enum entry ENUM_ENTRY: R|MyEnumClass| = LAZY_EXPRESSION
+        public final static fun values(): R|kotlin/Array<MyEnumClass>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnumClass| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<MyEnumClass>|
+
+    }

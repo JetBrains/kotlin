@@ -1,15 +1,37 @@
+val a: Int
+  field = 0
+  get
+
+class Z {
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 enum class Enum : Enum<Enum> {
+  A = Enum()
+
   private constructor() /* primary */ {
     super/*Enum*/<Enum>()
     /* <init>() */
 
   }
 
-  A = Enum()
+  fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<Enum> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
 
   val entries: EnumEntries<Enum>
     get(): EnumEntries<Enum> /* Synthetic body for ENUM_ENTRIES */
@@ -20,28 +42,6 @@ object A {
   private constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
-
-  }
-
-}
-
-val a: Int
-  field = 0
-  get
-
-class Z {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
 
   }
 
@@ -62,3 +62,4 @@ fun test3(): Int {
 fun test4(): Companion {
   return Companion
 }
+

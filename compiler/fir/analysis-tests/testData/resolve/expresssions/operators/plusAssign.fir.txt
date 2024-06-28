@@ -15,7 +15,7 @@ FILE: plusAssign.kt
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval f: R|Foo| = R|/Foo.Foo|()
-        R|<local>/f|.<Unresolved name: plus>#(R|<local>/f|)
+        R|<local>/f|.<Unresolved name: plus (+)>#(R|<local>/f|)
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval f: R|Foo| = R|/Foo.Foo|()

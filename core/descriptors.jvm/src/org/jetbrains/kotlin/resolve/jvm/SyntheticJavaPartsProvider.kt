@@ -18,84 +18,90 @@ interface SyntheticJavaPartsProvider {
         val EMPTY = CompositeSyntheticJavaPartsProvider(emptyList())
     }
 
-    context(LazyJavaResolverContext)
-    fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name>
+    fun getMethodNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name>
 
-    context(LazyJavaResolverContext)
     fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
     )
 
-    context(LazyJavaResolverContext)
-    fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name>
+    fun getStaticFunctionNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name>
 
-    context(LazyJavaResolverContext)
     fun generateStaticFunctions(
         thisDescriptor: ClassDescriptor,
         name: Name,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
     )
 
-    context(LazyJavaResolverContext)
-    fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>)
+    fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>, c: LazyJavaResolverContext)
 
-    context(LazyJavaResolverContext)
-    fun getNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>
+    fun getNestedClassNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name>
 
-    context(LazyJavaResolverContext)
-    fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>)
+    fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>, c: LazyJavaResolverContext)
 
-    context(LazyJavaResolverContext)
-    fun modifyField(thisDescriptor: ClassDescriptor, propertyDescriptor: PropertyDescriptorImpl): PropertyDescriptorImpl
+    fun modifyField(
+        thisDescriptor: ClassDescriptor,
+        propertyDescriptor: PropertyDescriptorImpl,
+        c: LazyJavaResolverContext,
+    ): PropertyDescriptorImpl
 }
 
 @Suppress("IncorrectFormatting") // KTIJ-22227
 class CompositeSyntheticJavaPartsProvider(private val inner: List<SyntheticJavaPartsProvider>) : SyntheticJavaPartsProvider {
-    context(LazyJavaResolverContext)
-    override fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name> {
-        return inner.flatMap { it.getMethodNames(thisDescriptor) }
+    override fun getMethodNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> {
+        return inner.flatMap { it.getMethodNames(thisDescriptor, c) }
     }
 
-    context(LazyJavaResolverContext)
     override fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
     ) {
-        inner.forEach { it.generateMethods(thisDescriptor, name, result) }
+        inner.forEach { it.generateMethods(thisDescriptor, name, result, c) }
     }
 
-    context(LazyJavaResolverContext)
-    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
-        inner.flatMap { it.getStaticFunctionNames(thisDescriptor) }
+    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> =
+        inner.flatMap { it.getStaticFunctionNames(thisDescriptor, c) }
 
-    context(LazyJavaResolverContext)
-    override fun generateStaticFunctions(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
-        inner.forEach { it.generateStaticFunctions(thisDescriptor, name, result) }
+    override fun generateStaticFunctions(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
+    ) {
+        inner.forEach { it.generateStaticFunctions(thisDescriptor, name, result, c) }
     }
 
-    context(LazyJavaResolverContext)
-    override fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
-        inner.forEach { it.generateConstructors(thisDescriptor, result) }
+    override fun generateConstructors(
+        thisDescriptor: ClassDescriptor,
+        result: MutableList<ClassConstructorDescriptor>,
+        c: LazyJavaResolverContext,
+    ) {
+        inner.forEach { it.generateConstructors(thisDescriptor, result, c) }
     }
 
-    context(LazyJavaResolverContext)
-    override fun getNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> {
-        return inner.flatMap { it.getNestedClassNames(thisDescriptor) }
+    override fun getNestedClassNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> {
+        return inner.flatMap { it.getNestedClassNames(thisDescriptor, c) }
     }
 
-    context(LazyJavaResolverContext)
-    override fun generateNestedClass(thisDescriptor: ClassDescriptor, name: Name, result: MutableList<ClassDescriptor>) {
-        inner.forEach { it.generateNestedClass(thisDescriptor, name, result) }
+    override fun generateNestedClass(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        result: MutableList<ClassDescriptor>,
+        c: LazyJavaResolverContext,
+    ) {
+        inner.forEach { it.generateNestedClass(thisDescriptor, name, result, c) }
     }
 
-    context(LazyJavaResolverContext)
     override fun modifyField(
         thisDescriptor: ClassDescriptor,
-        propertyDescriptor: PropertyDescriptorImpl
+        propertyDescriptor: PropertyDescriptorImpl,
+        c: LazyJavaResolverContext,
     ): PropertyDescriptorImpl {
-        return inner.fold(propertyDescriptor) { property, provider -> provider.modifyField(thisDescriptor, property) }
+        return inner.fold(propertyDescriptor) { property, provider -> provider.modifyField(thisDescriptor, property, c) }
     }
 }

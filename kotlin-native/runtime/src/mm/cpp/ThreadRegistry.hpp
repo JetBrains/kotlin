@@ -44,10 +44,22 @@ public:
         RuntimeAssert(currentThreadDataNode_ != nullptr, "Thread is not attached to the runtime");
         return currentThreadDataNode_;
     }
+    Node* CurrentThreadDataNodeOrNull() const noexcept { return currentThreadDataNode_; }
 
-    bool IsCurrentThreadRegistered() const noexcept { return currentThreadDataNode_ != nullptr; }
+    static bool IsCurrentThreadRegistered() noexcept { return currentThreadDataNode_ != nullptr; }
 
     static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
+
+    template <typename F>
+    void waitAllThreads(F&& f) noexcept {
+        // Disable new threads coming and going.
+        auto iter = LockForIter();
+        while (!std::all_of(iter.begin(), iter.end(), std::forward<F>(f))) {
+            std::this_thread::yield();
+        }
+    }
+
+    void PublishAll() noexcept;
 
 private:
     friend class GlobalData;

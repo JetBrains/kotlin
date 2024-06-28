@@ -44,6 +44,17 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     if (extractedBranches.isEmpty()) return false
     val subject = extractedBranches[0].conditions[0].condition.getValueArgument(0) ?: return false
 
+    // Do the optimization only if all conditions read and compare the same var or val
+    // TODO: consider supporting other cases
+    if (subject !is IrGetValue) return false
+    val subjectValue = subject.symbol
+    val allConditionsReadsSameValue = !extractedBranches.all { branch ->
+        branch.conditions.all { whenCondition ->
+            (whenCondition.condition.getValueArgument(0) as? IrGetValue)?.symbol == subjectValue
+        }
+    }
+    if (allConditionsReadsSameValue) return false
+
     // Check all kinds are the same
     for (branch in extractedBranches) {
         //TODO: Support all primitive types
@@ -318,7 +329,10 @@ private fun BodyGenerator.genTableIntSwitch(
         body.buildBlock(resultType)
     }
 
-    resultType?.let { generateDefaultInitializerForType(it, body) } //stub value
+    if (resultType != null && resultType !is WasmUnreachableType) {
+        generateDefaultInitializerForType(resultType, body) //stub value
+    }
+
     body.buildGetLocal(selectorLocal, location)
     if (shift != 0) {
         body.buildConstI32(shift, location)
@@ -333,7 +347,7 @@ private fun BodyGenerator.genTableIntSwitch(
     body.buildEnd()
 
     for (expression in branches) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(expression.expression, expectedType)
@@ -343,7 +357,7 @@ private fun BodyGenerator.genTableIntSwitch(
     }
 
     if (elseExpression != null) {
-        if (resultType != null) {
+        if (resultType != null && resultType !is WasmUnreachableType) {
             body.buildDrop(location)
         }
         generateWithExpectedType(elseExpression, expectedType)

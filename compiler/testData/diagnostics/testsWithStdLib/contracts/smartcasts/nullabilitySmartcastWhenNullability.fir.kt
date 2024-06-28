@@ -1,6 +1,6 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
@@ -31,9 +31,9 @@ fun testNullWhenNull(x: Int?) {
 
 // NB. it is the same function as `nullWhenNull`, but annotations specifies other facet of the function behaviour
 fun notNullWhenNotNull (x: Int?): Int? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(null) implies (x == null)
-    }<!>
+    }
     return x?.inc()
 }
 

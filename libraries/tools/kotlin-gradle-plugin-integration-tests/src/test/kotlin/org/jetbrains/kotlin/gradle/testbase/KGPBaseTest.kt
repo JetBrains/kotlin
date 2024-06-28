@@ -5,21 +5,47 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.test.WithMuteInDatabase
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Base class for all Kotlin Gradle plugin integration tests.
+ *
+ * @[TestDataPath] helps DevKit IDE Plugin to find "related testData".
+ * It provides various IDE-assistance (e.g. "NavigateToTestData"-actions and gutter icons)
+ * For the test named 'testFoo' the "related testData" will be checked at:
+ *      '<argument-of-@TestDataPath>/foo'
+ *
+ * If the test uses a name that doesn't correspond to the testdata, you can add
+ *      @org.jetbrains.kotlin.test.TestMetadata("<path relative to resources/testProject">)
+ *
  */
 @Tag("JUnit5")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithMuteInDatabase
+@TagsCountValidator
+@TestDataPath("\$CONTENT_ROOT/resources/testProject")
+@OsCondition
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 
     @TempDir
     lateinit var workingDir: Path
+
+    internal open fun TestProject.customizeProject() {}
+
+    @AfterAll
+    fun checkThatDefaultKonanHasNotBeenCreated() {
+        if (isTeamCityRun) {
+            val userHomeDir = System.getProperty("user.home")
+            assertDirectoryDoesNotExist(Paths.get("$userHomeDir/.konan"))
+        }
+    }
 }

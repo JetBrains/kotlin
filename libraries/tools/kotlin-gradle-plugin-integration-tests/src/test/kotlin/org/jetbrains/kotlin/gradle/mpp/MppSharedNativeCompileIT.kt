@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.properties.hasProperty
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 
@@ -25,8 +26,8 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
     fun `test - shared native klib - does not contain 'depends=' manifest property`(gradleVersion: GradleVersion) {
         project("kt-54995-compileSharedNative-with-okio", gradleVersion) {
             build("compileNativeMainKotlinMetadata") {
-                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib")
-                assertFileExists(nativeMainKlib)
+                val nativeMainKlib = projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain")
+                assertDirectoryExists(nativeMainKlib)
 
                 val libraryFile = org.jetbrains.kotlin.library.resolveSingleFileKlib(
                     org.jetbrains.kotlin.konan.file.File(nativeMainKlib),
@@ -43,6 +44,21 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
                                 "Value: ${libraryFile.manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS)}"
                     )
                 }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    @GradleTest
+    @Disabled("KT-60943: Will be fixed in K2")
+    fun `test - K2 - shared native compilation - assemble`(gradleVersion: GradleVersion) {
+        project("kt-57944-k2-native-compilation", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")) {
+            build("assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":compileKotlinLinuxX64")
             }
         }
     }

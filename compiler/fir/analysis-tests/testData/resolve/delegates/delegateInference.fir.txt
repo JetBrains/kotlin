@@ -42,18 +42,18 @@ FILE: delegateInference.kt
 
         public final var x: R|kotlin/Boolean|by R|/FreezableVar.FreezableVar|<R|kotlin/Boolean|>(Boolean(true))
             public get(): R|kotlin/Boolean| {
-                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</FreezableVar.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.x|)
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</FreezableVar.getValue: R|kotlin/Boolean|>|(this@R|/Test|, ::R|/Test.x|)
             }
             public set(<set-?>: R|kotlin/Boolean|): R|kotlin/Unit| {
-                this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</FreezableVar.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.x|, R|<local>/x|)
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</FreezableVar.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.x|, R|<local>/x|)
             }
 
         public final var y: R|kotlin/String|by R|/FreezableVar.FreezableVar|<R|kotlin/String|>(String())
             public get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.y|.R|SubstitutionOverride</FreezableVar.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.y|)
+                ^ this@R|/Test|.D|/Test.y|.R|SubstitutionOverride</FreezableVar.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.y|)
             }
             public set(<set-?>: R|kotlin/String|): R|kotlin/Unit| {
-                this@R|/Test|.D|/Test.y|.R|SubstitutionOverride</FreezableVar.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.y|, R|<local>/y|)
+                ^ this@R|/Test|.D|/Test.y|.R|SubstitutionOverride</FreezableVar.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.y|, R|<local>/y|)
             }
 
     }

@@ -205,6 +205,19 @@ object AbstractTypeChecker {
         return isSubtypeOf(context.newTypeCheckerState(true, stubTypesEqualToAnything), subType, superType)
     }
 
+    /**
+     * It matches class types but ignores their type parameters
+     *
+     * Consider the following example:
+     *
+     * ```
+     * abstract class Foo<T>
+     * class FooBar : Foo<Any>()
+     * ```
+     *
+     * In this case `isSubtypeOfClass` returns `true` for `FooBar` and `Foo<T>` input arguments
+     * But `isSubtypeOf` returns `false` for the same input arguments
+     */
     fun isSubtypeOfClass(
         state: TypeCheckerState,
         typeConstructor: TypeConstructorMarker,
@@ -374,8 +387,20 @@ object AbstractTypeChecker {
         if (areEqualTypeConstructors(subType.typeConstructor(), superConstructor) && superConstructor.parametersCount() == 0) return true
         if (superType.typeConstructor().isAnyConstructor()) return true
 
-        val supertypesWithSameConstructor = findCorrespondingSupertypes(state, subType, superConstructor)
-            .map { state.prepareType(it).asSimpleType() ?: it }
+        val supertypesWithSameConstructor = with(findCorrespondingSupertypes(state, subType, superConstructor)) {
+            // Note: in K1, we can have partially computed types here, like SomeType<NON COMPUTED YET>
+            // (see e.g. interClassesRecursion.kt from diagnostic tests)
+            // In this case we don't want to affect lazy computation in normal case (size <= 1), that's why we don't create a set
+            // (adding to a hash set requires hash-code calculation for each set element)
+
+            if (size > 1 && (state.typeSystemContext as? TypeSystemInferenceExtensionContext)?.isK2 == true) {
+                // Here we want to filter out equivalent types to avoid unnecessary forking
+                mapTo(mutableSetOf()) { state.prepareType(it).asSimpleType() ?: it }
+            } else {
+                // TODO: drop this branch together with K1 code
+                map { state.prepareType(it).asSimpleType() ?: it }
+            }
+        }
         when (supertypesWithSameConstructor.size) {
             0 -> return hasNothingSupertype(state, subType) // todo Nothing & Array<Number> <: Array<String>
             1 -> return state.isSubtypeForSameConstructor(supertypesWithSameConstructor.first().asArgumentList(), superType)
@@ -488,7 +513,7 @@ object AbstractTypeChecker {
     private fun TypeSystemContext.isCommonDenotableType(type: KotlinTypeMarker): Boolean =
         type.typeConstructor().isDenotable() &&
                 !type.isDynamic() && !type.isDefinitelyNotNullType() && !type.isNotNullTypeParameter() &&
-                type.lowerBoundIfFlexible().typeConstructor() == type.upperBoundIfFlexible().typeConstructor()
+                !type.isFlexibleWithDifferentTypeConstructors()
 
     fun effectiveVariance(declared: TypeVariance, useSite: TypeVariance): TypeVariance? {
         if (declared == TypeVariance.INV) return useSite

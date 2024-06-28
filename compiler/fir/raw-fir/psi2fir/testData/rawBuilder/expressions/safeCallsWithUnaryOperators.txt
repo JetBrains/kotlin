@@ -54,44 +54,38 @@ FILE: safeCallsWithUnaryOperators.kt
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#
             lval <index_0>: <implicit> = IntegerLiteral(0)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
         a#?.{ $subj$.b# }?.{  {
             lval <array>: <implicit> = $subj$.c#
             lval <index_0>: <implicit> = IntegerLiteral(0)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
         lval <array>: <implicit> = a#?.{ $subj$.b# }.c#
         lval <index_0>: <implicit> = IntegerLiteral(0)
-        lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-        R|<local>/<unary-result>|
+        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+        R|<local>/<array>|.get#(R|<local>/<index_0>|)
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#.get#(IntegerLiteral(0))
             lval <index_0>: <implicit> = IntegerLiteral(0)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
         a#?.{ $subj$.b# }?.{  {
             lval <array>: <implicit> = $subj$.c#.get#(IntegerLiteral(0))
             lval <index_0>: <implicit> = IntegerLiteral(0)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
          }
         lval <array>: <implicit> = a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0))
         lval <index_0>: <implicit> = IntegerLiteral(0)
-        lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-        R|<local>/<unary-result>|
+        R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+        R|<local>/<array>|.get#(R|<local>/<index_0>|)
         ++a#?.{ $subj$.b# }.d#()
     }

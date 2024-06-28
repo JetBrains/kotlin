@@ -1,0 +1,14 @@
+fun testMemberAssignment(d: dynamic) {
+  d.m = 1
+}
+
+fun testSafeMemberAssignment(d: dynamic) {
+  { // BLOCK
+    val tmp_0: dynamic = d
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null /*~> Unit */
+      else -> tmp_0.m = 1
+    }
+  }
+}
+

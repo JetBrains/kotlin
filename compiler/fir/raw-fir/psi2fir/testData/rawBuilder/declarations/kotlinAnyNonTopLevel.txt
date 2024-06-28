@@ -1,0 +1,23 @@
+FILE: kotlinAnyNonTopLevel.kt
+    public final? class Owner : R|kotlin/Any| {
+        public? [ContainingClassKey=Owner] constructor(): R|kotlin/Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final? class Any : R|kotlin/Any| {
+            public? [ContainingClassKey=Any] constructor(): R|kotlin/Owner.Any| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public? final? fun foo(): R|kotlin/Unit| {
+        local final? class Any : R|kotlin/Any| {
+            public? [ContainingClassKey=Any] constructor(): R|<local>/Any| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

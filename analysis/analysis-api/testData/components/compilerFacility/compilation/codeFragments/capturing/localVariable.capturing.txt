@@ -1,0 +1,3 @@
+Local[name: x; isMutated: true; displayText: x]
+    lvar x: R|kotlin/String|
+    R|kotlin/String|

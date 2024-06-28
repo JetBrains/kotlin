@@ -6,69 +6,28 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
-import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
-import org.gradle.process.ExecResult
-import org.gradle.process.JavaExecSpec
-import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
+import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
+import org.jetbrains.kotlin.gradle.logging.gradleLogLevel
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
-// Note: this class is public because it is used in the K/N build infrastructure.
-abstract class KotlinToolRunner(
-    private val executionContext: GradleExecutionContext
+abstract class KotlinToolRunner @Inject constructor(
+    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val objectFactory: ObjectFactory,
+    private val execOperations: ExecOperations,
 ) {
-    @Deprecated(
-        "Using Project object is not compatible with Gradle Configuration Cache",
-        ReplaceWith("KotlinToolRunner(GradleExecutionContext.fromTaskContext())"),
-        DeprecationLevel.WARNING
-    )
-    constructor(project: Project): this(GradleExecutionContext.fromProject(project))
 
-    /**
-     * Context Services that are required for [KotlinToolRunner] during Gradle Task Execution Phase
-     */
-    class GradleExecutionContext(
-        val filesProvider: (Any) -> ConfigurableFileCollection,
-        val javaexec: ((JavaExecSpec) -> Unit) -> ExecResult,
-        val logger: Logger,
-    ) {
-        companion object {
-            /**
-             * Executing [KotlinToolRunner] during Gradle Configuration Phase is undesired behaviour.
-             * Currently only [KotlinNativeLibraryGenerationRunner] used in this way.
-             * It should be fixed as part of KT-51255
-             */
-            @Deprecated(
-                "Building execution context from Project object isn't compatible with Gradle Configuration Cache",
-                ReplaceWith("fromTaskContext()"),
-                DeprecationLevel.WARNING
-            )
-            fun fromProject(project: Project) = GradleExecutionContext(
-                filesProvider = project::files,
-                javaexec = { spec -> project.javaexec(spec) }, // project::javaexec won't work due to different Classloaders
-                logger = project.logger
-            )
-
-            /** Gradle Configuration Cache friendly context, should be used inside Task Execution Phase */
-            fun fromTaskContext(
-                objectFactory: ObjectFactory,
-                execOperations: ExecOperations,
-                logger: Logger
-            ) = GradleExecutionContext(
-                filesProvider = objectFactory.fileCollection()::from,
-                javaexec = { spec -> execOperations.javaexec(spec) }, // execOperations::javaexec won't work due to different Classloaders
-                logger = logger
-            )
-        }
-    }
+    private val logger = Logging.getLogger(this::class.java)
 
     // name that will be used in logs
     abstract val displayName: String
@@ -94,7 +53,7 @@ abstract class KotlinToolRunner(
 
     private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null).apply {
+        URLClassLoader(arrayOfURLs, @OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()).apply {
             setDefaultAssertionStatus(enableAssertions)
         }
     }
@@ -102,6 +61,11 @@ abstract class KotlinToolRunner(
     open val defaultMaxHeapSize: String get() = "3G"
     open val enableAssertions: Boolean get() = true
     open val disableC2: Boolean get() = true
+
+    /**
+     * Represents the log level for compiler arguments
+     */
+    internal open val compilerArgumentsLogLevel: KotlinCompilerArgumentsLogLevel = KotlinCompilerArgumentsLogLevel.INFO
 
     abstract val mustRunViaExec: Boolean
     open fun transformArgs(args: List<String>): List<String> = args
@@ -127,71 +91,81 @@ abstract class KotlinToolRunner(
         }
     }
 
-    fun run(args: List<String>) {
-        checkClasspath()
+    open fun run(args: List<String>) {
+        metricsReporter.measure(GradleBuildTime.RUN_COMPILATION_IN_WORKER) {
+            checkClasspath()
 
-        if (mustRunViaExec) runViaExec(args) else runInProcess(args)
-    }
-
-    private fun runViaExec(args: List<String>) {
-        val transformedArgs = transformArgs(args)
-        val classpath = executionContext.filesProvider(classpath)
-        val systemProperties = System.getProperties()
-            /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
-            .snapshot()
-            .asSequence()
-            .map { (k, v) -> k.toString() to v.toString() }
-            .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
-            .escapeQuotesForWindows()
-            .toMap() + execSystemProperties
-
-        executionContext.logger.info(
-            """|Run "$displayName" tool in a separate JVM process
-               |Main class = $mainClass
-               |Arguments = ${args.toPrettyString()}
-               |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
-               |Classpath = ${classpath.files.map { it.absolutePath }.toPrettyString()}
-               |JVM options = ${jvmArgs.toPrettyString()}
-               |Java system properties = ${systemProperties.toPrettyString()}
-               |Suppressed ENV variables = ${execEnvironmentBlacklist.toPrettyString()}
-               |Custom ENV variables = ${execEnvironment.toPrettyString()}
-            """.trimMargin()
-        )
-
-        executionContext.javaexec { spec ->
-            @Suppress("DEPRECATION")
-            if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
-            else spec.main = mainClass
-            spec.classpath = classpath
-            spec.jvmArgs(jvmArgs)
-            spec.systemProperties(systemProperties)
-            execEnvironmentBlacklist.forEach { spec.environment.remove(it) }
-            spec.environment(execEnvironment)
-            spec.args(transformedArgs)
+            if (mustRunViaExec) runViaExec(args, metricsReporter) else runInProcess(args, metricsReporter)
         }
     }
 
-    private fun runInProcess(args: List<String>) {
-        val transformedArgs = transformArgs(args)
-        val isolatedClassLoader = getIsolatedClassLoader()
 
-        executionContext.logger.info(
-            """|Run in-process tool "$displayName"
-               |Entry point method = $mainClass.$daemonEntryPoint
-               |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}
-               |Arguments = ${args.toPrettyString()}
-               |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
-            """.trimMargin()
-        )
+    private fun runViaExec(args: List<String>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
+        metricsReporter.measure(GradleBuildTime.NATIVE_IN_EXECUTOR) {
+            val transformedArgs = transformArgs(args)
+            val classpath = objectFactory.fileCollection().from(classpath)
+            val systemProperties = System.getProperties()
+                /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
+                .snapshot()
+                .asSequence()
+                .map { (k, v) -> k.toString() to v.toString() }
+                .filter { (k, _) -> k !in execSystemPropertiesBlacklist }
+                .escapeQuotesForWindows()
+                .toMap() + execSystemProperties
 
-        try {
-            val mainClass = isolatedClassLoader.loadClass(mainClass)
-            val entryPoint = mainClass.methods
-                .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
 
-            entryPoint.invoke(null, transformedArgs.toTypedArray())
-        } catch (t: InvocationTargetException) {
-            throw t.targetException
+            logger.log(
+                compilerArgumentsLogLevel.gradleLogLevel,
+                """|Run "$displayName" tool in a separate JVM process
+                   |Main class = $mainClass
+                   |Arguments = ${args.toPrettyString()}
+                   |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
+                   |Classpath = ${classpath.files.map { it.absolutePath }.toPrettyString()}
+                   |JVM options = ${jvmArgs.toPrettyString()}
+                   |Java system properties = ${systemProperties.toPrettyString()}
+                   |Suppressed ENV variables = ${execEnvironmentBlacklist.toPrettyString()}
+                   |Custom ENV variables = ${execEnvironment.toPrettyString()}
+                """.trimMargin()
+            )
+
+            execOperations.javaexec { spec ->
+                spec.mainClass.set(mainClass)
+                spec.classpath = classpath
+                spec.jvmArgs(jvmArgs)
+                spec.systemProperties(systemProperties)
+                execEnvironmentBlacklist.forEach { spec.environment.remove(it) }
+                spec.environment(execEnvironment)
+                spec.args(transformedArgs)
+            }
+        }
+    }
+
+    private fun runInProcess(args: List<String>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter) {
+        metricsReporter.measure(GradleBuildTime.NATIVE_IN_PROCESS) {
+            val transformedArgs = transformArgs(args)
+            val isolatedClassLoader = getIsolatedClassLoader()
+
+            logger.log(
+                compilerArgumentsLogLevel.gradleLogLevel,
+                """|Run in-process tool "$displayName"
+                   |Entry point method = $mainClass.$daemonEntryPoint
+                   |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}
+                   |Arguments = ${args.toPrettyString()}
+                   |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
+                """.trimMargin()
+            )
+
+            try {
+                val mainClass = isolatedClassLoader.loadClass(mainClass)
+                val entryPoint = mainClass.methods
+                    .singleOrNull { it.name == daemonEntryPoint } ?: error("Couldn't find daemon entry point '$daemonEntryPoint'")
+
+                metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
+                    entryPoint.invoke(null, transformedArgs.toTypedArray())
+                }
+            } catch (t: InvocationTargetException) {
+                throw t.targetException
+            }
         }
     }
 

@@ -1,0 +1,43 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (71,21-39)
+    DEPRECATION      text ranges: [(302,320)]
+      PSI: KtNameReferenceExpression at (71,21-39)
+  for PSI element of type KtNameReferenceExpression at (72,21-39)
+    DEPRECATION      text ranges: [(352,370)]
+      PSI: KtNameReferenceExpression at (72,21-39)
+  for PSI element of type KtNameReferenceExpression at (74,21-40)
+    DEPRECATION      text ranges: [(396,415)]
+      PSI: KtNameReferenceExpression at (74,21-40)
+  for PSI element of type KtNameReferenceExpression at (75,21-40)
+    DEPRECATION      text ranges: [(447,466)]
+      PSI: KtNameReferenceExpression at (75,21-40)
+  for PSI element of type KtNameReferenceExpression at (77,21-39)
+    DEPRECATION      text ranges: [(492,510)]
+      PSI: KtNameReferenceExpression at (77,21-39)
+  for PSI element of type KtNameReferenceExpression at (79,5-23)
+    DEPRECATION      text ranges: [(518,536)]
+      PSI: KtNameReferenceExpression at (79,5-23)
+  for PSI element of type KtNameReferenceExpression at (80,5-23)
+    DEPRECATION      text ranges: [(552,570)]
+      PSI: KtNameReferenceExpression at (80,5-23)
+  for PSI element of type KtNameReferenceExpression at (82,5-24)
+    DEPRECATION      text ranges: [(580,599)]
+      PSI: KtNameReferenceExpression at (82,5-24)
+  for PSI element of type KtNameReferenceExpression at (83,5-24)
+    DEPRECATION      text ranges: [(615,634)]
+      PSI: KtNameReferenceExpression at (83,5-24)
+  for PSI element of type KtNameReferenceExpression at (85,5-23)
+    DEPRECATION      text ranges: [(644,662)]
+      PSI: KtNameReferenceExpression at (85,5-23)
+  for PSI element of type KtNameReferenceExpression at (87,5-37)
+    DEPRECATION      text ranges: [(670,702)]
+      PSI: KtNameReferenceExpression at (87,5-37)
+  for PSI element of type KtTypeReference at (67,22-39)
+    DEPRECATION      text ranges: [(145,162)]
+      PSI: KtTypeReference at (67,22-39)
+  for PSI element of type KtTypeReference at (68,26-47)
+    DEPRECATION      text ranges: [(189,210)]
+      PSI: KtTypeReference at (68,26-47)
+  for PSI element of type KtTypeReference at (69,35-65)
+    TYPEALIAS_EXPANSION_DEPRECATION      text ranges: [(246,276)]
+      PSI: KtTypeReference at (69,35-65)

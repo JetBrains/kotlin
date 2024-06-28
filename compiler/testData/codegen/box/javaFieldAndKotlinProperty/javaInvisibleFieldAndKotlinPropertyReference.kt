@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // Field VS property: case "reference", field is invisible
-
-// FILE: BaseJava.java
+// FILE: base/BaseJava.java
 
 package base;
 

@@ -1,0 +1,889 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] <script-script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(COMPANION_GENERATION)] <script-script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(COMPANION_GENERATION)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(SUPER_TYPES)] <script-script.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(SUPER_TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(STATUS)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(STATUS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(CONTRACTS)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(CONTRACTS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(CONSTANT_EVALUATION)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(CONSTANT_EVALUATION)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init {
+            builder#.version# = String()
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] script.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] get(): R|kotlin/String|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit|
+
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun execute(): R|kotlin/Unit| {
+                println#(version#)
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=En] constructor(): R|En| {
+                LAZY_super<R|kotlin/Enum<En>|>
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|En|): R|Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|En| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|En|
+
+        }
+
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+            ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    }
+
+                }
+
+                this@R|special/anonymous|.R|/Builder.execute|()
+            }
+            )
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-script.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] var version: R|kotlin/String| = String()
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] get(): R|kotlin/String|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit|
+
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun execute(): R|kotlin/Unit| {
+                R|kotlin/io/println|(this@R|/Builder|.R|/Builder.version|)
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=En] constructor(): R|En| {
+                super<R|kotlin/Enum<En>|>()
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=En] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|En| {
+            }
+
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<En>|
+
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|En|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|En| = R|<local>/s|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|En|
+
+        }
+
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+            ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                this@R|special/anonymous|.R|/Builder.version| = String(123)
+                local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+                    }
+
+                }
+
+                this@R|special/anonymous|.R|/Builder.execute|()
+            }
+            )
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.R|/Builder.execute|()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            R|/builder|.R|/Builder.version| = String()
+        }
+

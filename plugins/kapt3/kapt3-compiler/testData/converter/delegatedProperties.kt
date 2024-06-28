@@ -11,4 +11,5 @@ class A {
     val y by object: C<String>("y") {}
     val a by lazy { C<String>("a") }
     val b by lazy { object: C<String>("b") {} }
+    val c by ::a
 }

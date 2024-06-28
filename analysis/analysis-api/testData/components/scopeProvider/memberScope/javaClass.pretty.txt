@@ -1,0 +1,22 @@
+open fun hello()
+
+open fun <T : kotlin.Any!> method(vararg classes: java.lang.Class<out T!>!)
+
+@java.lang.Override
+open fun getActualRandomNumber(): kotlin.Int
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+open class NestedClass
+
+open inner class InnerClass
+
+open class NestedSuperClass
+
+open inner class InnerSuperClass
+
+constructor()

@@ -16,7 +16,7 @@ dependencies {
     api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

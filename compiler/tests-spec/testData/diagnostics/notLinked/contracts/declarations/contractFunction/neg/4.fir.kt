@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 4
+ * DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
+ * ISSUES: KT-27090
+ */
 
 import kotlin.contracts.*
 
@@ -27,9 +36,9 @@ var Boolean.case_3: () -> Unit
         return {}
     }
     set(value) {
-        <!WRONG_INVOCATION_KIND!><!CONTRACT_NOT_ALLOWED!>contract<!> {
-            callsInPlace(value, InvocationKind.EXACTLY_ONCE)
-        }<!>
+        <!CONTRACT_NOT_ALLOWED!>contract<!> {
+            <!WRONG_INVOCATION_KIND!>callsInPlace(value, InvocationKind.EXACTLY_ONCE)<!>
+        }
     }
 
 // TESTCASE NUMBER: 4

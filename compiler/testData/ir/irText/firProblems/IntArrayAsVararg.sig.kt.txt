@@ -1,0 +1,13 @@
+// CHECK:
+//   Mangled name: #consumeVarargs(kotlin.IntArray...){}
+//   Public signature: /consumeVarargs|2702777436513705083[0]
+//   Public signature debug description: consumeVarargs(kotlin.IntArray...){}
+fun consumeVarargs(vararg arr: Int): Unit
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+
+

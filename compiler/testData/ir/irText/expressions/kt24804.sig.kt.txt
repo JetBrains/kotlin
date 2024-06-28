@@ -1,0 +1,30 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.Boolean
+//   Public signature: /foo|6817124238991280153[0]
+//   Public signature debug description: foo(){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+inline fun foo(): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #run(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+//   Public signature: /run|-3816013026832590302[0]
+//   Public signature debug description: run(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #run(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /run|-3884343627033370648[0]
+//   Public signature debug description: run(kotlin.Boolean;kotlin.Boolean){}
+fun run(x: Boolean, y: Boolean): String
+

@@ -1,0 +1,12 @@
+KT element: KtTypeProjection
+FIR element: FirTypeProjectionWithVarianceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedTypeConsturctorResolvedNestedTypeArgument.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Symbol not found for UNRESOLVED> {
+        ^x IntegerLiteral(1)
+    }

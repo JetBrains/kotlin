@@ -1,0 +1,263 @@
+KtNameReferenceExpression(78,79): 'T'
+  KtSimpleNameReference:
+    (in <local>: ItemCallback) T
+
+KtNameReferenceExpression(90,91): 'T'
+  KtSimpleNameReference:
+    (in <local>: ItemCallback) T
+
+KtNameReferenceExpression(94,101): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(175,178): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(182,189): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(256,259): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(263,270): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(311,323): 'ItemCallback'
+  KtSimpleNameReference:
+    (in ROOT) abstract class ItemCallback<T>
+
+KtNameReferenceExpression(324,325): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(333,334): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(337,356): 'InterfaceWithEquals'
+  KtSimpleNameReference:
+    (in ROOT) interface InterfaceWithEquals
+
+KtNameReferenceExpression(358,359): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(362,376): 'MessagePreview'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MessagePreview
+
+KtNameReferenceExpression(388,400): 'ItemCallback'
+  KtSimpleNameReference:
+    (in ItemCallback) constructor()
+
+KtNameReferenceExpression(401,402): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(453,454): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(465,466): 'T'
+  KtSimpleNameReference:
+    (in <local>: interfaceAndClass) T
+
+KtNameReferenceExpression(469,476): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(479,486): 'oldItem'
+  KtSimpleNameReference:
+    oldItem: T
+
+KtOperationReferenceExpression(487,489): '=='
+  KtSimpleNameReference:
+    (in InterfaceWithEquals) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(490,497): 'newItem'
+  KtSimpleNameReference:
+    newItem: T
+
+KtNameReferenceExpression(538,550): 'ItemCallback'
+  KtSimpleNameReference:
+    (in ROOT) abstract class ItemCallback<T>
+
+KtNameReferenceExpression(551,552): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(560,561): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(564,578): 'MessagePreview'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MessagePreview
+
+KtNameReferenceExpression(580,581): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(584,603): 'InterfaceWithEquals'
+  KtSimpleNameReference:
+    (in ROOT) interface InterfaceWithEquals
+
+KtNameReferenceExpression(615,627): 'ItemCallback'
+  KtSimpleNameReference:
+    (in ItemCallback) constructor()
+
+KtNameReferenceExpression(628,629): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(680,681): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(692,693): 'T'
+  KtSimpleNameReference:
+    (in <local>: classAndInterface) T
+
+KtNameReferenceExpression(696,703): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(706,713): 'oldItem'
+  KtSimpleNameReference:
+    oldItem: T
+
+KtOperationReferenceExpression(714,716): '=='
+  KtSimpleNameReference:
+    (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(717,724): 'newItem'
+  KtSimpleNameReference:
+    newItem: T
+
+KtNameReferenceExpression(745,759): 'MessagePreview'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MessagePreview
+
+KtNameReferenceExpression(784,796): 'ItemCallback'
+  KtSimpleNameReference:
+    (in ItemCallback) constructor()
+
+KtNameReferenceExpression(797,798): 'T'
+  KtSimpleNameReference:
+    (in <local>: classOnly) T
+
+KtNameReferenceExpression(849,850): 'T'
+  KtSimpleNameReference:
+    (in <local>: classOnly) T
+
+KtNameReferenceExpression(861,862): 'T'
+  KtSimpleNameReference:
+    (in <local>: classOnly) T
+
+KtNameReferenceExpression(865,872): 'Boolean'
+  KtSimpleNameReference:
+    (in kotlin) class Booleanprivate constructor : kotlin.Comparable<kotlin.Boolean>, java.io.Serializable
+
+KtNameReferenceExpression(875,882): 'oldItem'
+  KtSimpleNameReference:
+    oldItem: T
+
+KtOperationReferenceExpression(883,885): '=='
+  KtSimpleNameReference:
+    (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(886,893): 'newItem'
+  KtSimpleNameReference:
+    newItem: T
+
+KtNameReferenceExpression(910,929): 'InterfaceWithEquals'
+  KtSimpleNameReference:
+    (in ROOT) interface InterfaceWithEquals
+
+KtNameReferenceExpression(934,948): 'MessagePreview'
+  KtSimpleNameReference:
+    (in ROOT) sealed class MessagePreview
+
+KtNameReferenceExpression(956,957): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals
+
+KtOperationReferenceExpression(958,960): '=='
+  KtSimpleNameReference:
+    (in InterfaceWithEquals) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(961,962): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtNameReferenceExpression(967,968): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals
+
+KtOperationReferenceExpression(969,971): '!='
+  KtSimpleNameReference:
+    (in InterfaceWithEquals) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(972,973): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtNameReferenceExpression(979,980): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtOperationReferenceExpression(981,983): '=='
+  KtSimpleNameReference:
+    (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(984,985): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals
+
+KtNameReferenceExpression(990,991): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtOperationReferenceExpression(992,994): '!='
+  KtSimpleNameReference:
+    (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(995,996): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals
+
+KtNameReferenceExpression(1002,1003): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals
+
+KtCallExpression(1004,1013): 'equals(m)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1004,1010): 'equals'
+  KtSimpleNameReference:
+    (in InterfaceWithEquals) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1011,1012): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtNameReferenceExpression(1018,1019): 'm'
+  KtSimpleNameReference:
+    m: MessagePreview
+
+KtCallExpression(1020,1029): 'equals(i)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(1020,1026): 'equals'
+  KtSimpleNameReference:
+    (in MessagePreview) override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+KtNameReferenceExpression(1027,1028): 'i'
+  KtSimpleNameReference:
+    i: InterfaceWithEquals

@@ -1,0 +1,19 @@
+Classifier names:
+  OuterClass
+
+Callable names:
+  constant
+  customGetter
+  function
+  functionWithDefault
+  initializedVariable
+  jvmField
+  jvmNameOnGetter
+  jvmNameOnSetter
+  lateinitVariable
+  privateSetter
+  propertyWithGenericReceiver
+  propertyWithReceiver
+  testVal
+  unitializedVariable
+  variableWithBackingField

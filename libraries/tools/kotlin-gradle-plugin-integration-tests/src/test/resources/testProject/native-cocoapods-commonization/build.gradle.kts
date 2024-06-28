@@ -1,6 +1,6 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-    id("org.jetbrains.kotlin.native.cocoapods").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("org.jetbrains.kotlin.native.cocoapods")
 }
 
 repositories {

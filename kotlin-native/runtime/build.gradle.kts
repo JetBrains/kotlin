@@ -6,22 +6,22 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
+import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
+import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
-// These properties are used by the 'konan' plugin, thus we set them before applying it.
-val distDir: File by project
-val konanHome: String by extra(distDir.absolutePath)
-extra["org.jetbrains.kotlin.native.home"] = konanHome
+val kotlinVersion: String by rootProject.extra
 
 plugins {
+    id("base")
     id("compile-to-bitcode")
     id("runtime-testing")
-    id("konan")
 }
 
 if (HostManager.host == KonanTarget.MACOS_ARM64) {
@@ -33,12 +33,12 @@ googletest {
     refresh = project.hasProperty("refresh-gtest")
 }
 
-val hostName: String by project
-val targetList: List<String> by project
+val targetList = enabledTargets(extensions.getByType<PlatformManager>())
 
 bitcode {
     allTargets {
         module("main") {
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp")
             sourceSets {
                 main {
                     // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
@@ -49,6 +49,18 @@ bitcode {
                 testFixtures {}
                 test {}
             }
+        }
+
+        testsGroup("main_test") {
+            testedModules.addAll("main")
+            // TODO(KT-53776): Some tests depend on allocator being legacy.
+            testSupportModules.addAll("mm", "noop_externalCallsChecker", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
+        // Headers from here get reused by Swift Export, so this module should not depend on anything in the runtime
+        module("objcExport") {
+            // There must not be any implementation files, only headers.
+            sourceSets {}
         }
 
         module("mimalloc") {
@@ -74,15 +86,14 @@ bitcode {
                     "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
             ))
 
-            onlyIf { target.supportsMimallocAllocator() }
+            onlyIf { it.supportsMimallocAllocator() }
         }
 
         module("libbacktrace") {
             val elfSize = when (target.architecture) {
                 TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
-                TargetArchitecture.X86, TargetArchitecture.ARM32,
-                TargetArchitecture.MIPS32, TargetArchitecture.MIPSEL32,
-                TargetArchitecture.WASM32 -> 32
+                TargetArchitecture.X86, TargetArchitecture.ARM32 -> 32
+                else -> 32 // TODO(KT-66500): remove after the bootstrap
             }
             val useMachO = target.family.isAppleFamily
             val useElf = target.family in listOf(Family.LINUX, Family.ANDROID)
@@ -126,60 +137,103 @@ bitcode {
                     "-Wno-atomic-alignment"
             ))
 
-            onlyIf { target.supportsLibBacktrace() }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("compiler_interface") {
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("launcher") {
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("debug") {
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
+        module("common_alloc") {
+            srcRoot.set(layout.projectDirectory.dir("src/alloc/common"))
+            headersDirs.from(files("src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+        }
+
+        testsGroup("common_alloc_test") {
+            testedModules.addAll("common_alloc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
         module("std_alloc") {
-            headersDirs.from(files("src/main/cpp"))
+            srcRoot.set(layout.projectDirectory.dir("src/alloc/std"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("custom_alloc") {
-            headersDirs.from(files("src/main/cpp", "src/mm/cpp", "src/gc/common/cpp", "src/gc/cms/cpp"))
+            srcRoot.set(layout.projectDirectory.dir("src/alloc/custom"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
+                testFixtures {}
             }
 
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
-
-            // Directly depends on cms which is only supported with threads.
-            onlyIf { target.supportsThreads() }
         }
 
-        module("opt_alloc") {
-            headersDirs.from(files("src/main/cpp"))
+        testsGroup("custom_alloc_test") {
+            testedModules.addAll("custom_alloc")
+            // TODO(KT-53776): Some tests depend on GC not being noop.
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "common_gc", "concurrent_ms_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
+        module("mimalloc_alloc") {
+            srcRoot.set(layout.projectDirectory.dir("src/alloc/mimalloc"))
+            headersDirs.from(files("src/mimalloc/c/include", "src/alloc/common/cpp", "src/alloc/legacy/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
+
+            compilerArgs.add("-DKONAN_MI_MALLOC=1")
+        }
+
+        module("legacy_alloc") {
+            srcRoot.set(layout.projectDirectory.dir("src/alloc/legacy"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+                testFixtures {}
+            }
+        }
+
+        testsGroup("mimalloc_legacy_alloc_test") {
+            testedModules.addAll("legacy_alloc")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "mimalloc_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc", "mimalloc")
+        }
+
+        testsGroup("std_legacy_alloc_test") {
+            testedModules.addAll("legacy_alloc")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "mm", "common_alloc", "std_alloc", "common_gc", "noop_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("exceptionsSupport") {
             srcRoot.set(layout.projectDirectory.dir("src/exceptions_support"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
@@ -187,53 +241,33 @@ bitcode {
 
         module("source_info_core_symbolication") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/core_symbolication"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
 
-            onlyIf { target.supportsCoreSymbolication() }
+            onlyIf { it.supportsCoreSymbolication() }
         }
+
         module("source_info_libbacktrace") {
             srcRoot.set(layout.projectDirectory.dir("src/source_info/libbacktrace"))
-            headersDirs.from(files("src/main/cpp", "src/libbacktrace/c/include"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/libbacktrace/c/include"))
             sourceSets {
                 main {}
             }
 
-            onlyIf { target.supportsLibBacktrace() }
-        }
-
-        module("strict") {
-            headersDirs.from(files("src/main/cpp"))
-            sourceSets {
-                main {}
-            }
-        }
-
-        module("relaxed") {
-            headersDirs.from(files("src/main/cpp"))
-            sourceSets {
-                main {}
-            }
-        }
-
-        module("profileRuntime") {
-            srcRoot.set(layout.projectDirectory.dir("src/profile_runtime"))
-            sourceSets {
-                main {}
-            }
+            onlyIf { it.supportsLibBacktrace() }
         }
 
         module("objc") {
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
             }
         }
 
         module("test_support") {
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 testFixtures {
                     inputFiles.include("**/*.cpp", "**/*.mm")
@@ -241,18 +275,8 @@ bitcode {
             }
         }
 
-        module("legacy_memory_manager") {
-            srcRoot.set(layout.projectDirectory.dir("src/legacymm"))
-            headersDirs.from(files("src/main/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-            }
-        }
-
-        module("experimental_memory_manager") {
-            srcRoot.set(layout.projectDirectory.dir("src/mm"))
-            headersDirs.from(files("src/gc/common/cpp", "src/main/cpp"))
+        module("mm") {
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -260,109 +284,223 @@ bitcode {
             }
         }
 
-        module("experimental_memory_manager_custom") {
-            srcRoot.set(layout.projectDirectory.dir("src/mm"))
-            headersDirs.from(files("src/gc/common/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-                test {}
-            }
-            
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+        testsGroup("mm_test") {
+            testedModules.addAll("mm")
+            testSupportModules.addAll("main", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("common_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
-            headersDirs.from(files("src/mm/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
             sourceSets {
                 main {}
                 test {}
             }
+        }
+
+        testsGroup("common_gc_test") {
+            testedModules.addAll("common_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "noop_gc_custom", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
         module("noop_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
-            headersDirs.from(files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
-                testFixtures {}
             }
+        }
+
+        module("noop_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            sourceSets {
+                main {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
         module("same_thread_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
-            headersDirs.from(files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
-                testFixtures {}
                 test {}
             }
         }
 
-        module("concurrent_ms_gc") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-                test {}
-            }
-
-            onlyIf { target.supportsThreads() }
+        testsGroup("stms_gc_test") {
+            testedModules.addAll("same_thread_ms_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        module("concurrent_ms_gc_custom") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
+        module("same_thread_ms_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
-                testFixtures {}
                 test {}
             }
 
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
-
-            onlyIf { target.supportsThreads() }
         }
 
-        testsGroup("std_alloc_runtime_tests") {
-            testedModules.addAll("main", "legacy_memory_manager", "strict", "std_alloc", "objc")
+        testsGroup("stms_gc_custom_test") {
+            testedModules.addAll("same_thread_ms_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        testsGroup("custom_alloc_runtime_tests") {
-            testedModules.addAll("custom_alloc")
-            testSupportModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "objc")
+        module("pmcs_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
         }
 
-        testsGroup("mimalloc_runtime_tests") {
-            testedModules.addAll("main", "legacy_memory_manager", "strict", "mimalloc", "opt_alloc", "objc")
+        testsGroup("pmcs_gc_test") {
+            testedModules.addAll("pmcs_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        testsGroup("experimentalMM_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "mimalloc", "opt_alloc", "objc")
+        module("pmcs_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
-        testsGroup("experimentalMM_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "same_thread_ms_gc", "std_alloc", "objc")
+        testsGroup("pmcs_gc_custom_test") {
+            testedModules.addAll("pmcs_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        testsGroup("experimentalMM_cms_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "mimalloc", "opt_alloc", "objc")
+        module("concurrent_ms_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
         }
 
-        testsGroup("experimentalMM_cms_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "std_alloc", "objc")
+        testsGroup("cms_gc_test") {
+            testedModules.addAll("concurrent_ms_gc")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "common_alloc", "legacy_alloc", "std_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
         }
 
-        testsGroup("experimentalMM_noop_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "mimalloc", "opt_alloc", "objc")
+        module("concurrent_ms_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
-        testsGroup("experimentalMM_noop_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "std_alloc", "objc")
+        testsGroup("cms_gc_custom_test") {
+            testedModules.addAll("concurrent_ms_gc_custom")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "objc")
+        }
+
+        module("common_gcScheduler") {
+            srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/common"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+        }
+
+        testsGroup("common_gcScheduler_test") {
+            testedModules.addAll("common_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "manual_gcScheduler", "objc")
+        }
+
+        module("manual_gcScheduler") {
+            srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/manual"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("adaptive_gcScheduler") {
+            srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/adaptive"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+        }
+
+        testsGroup("adaptive_gcScheduler_test") {
+            testedModules.addAll("adaptive_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "objc")
+        }
+
+        module("aggressive_gcScheduler") {
+            srcRoot.set(layout.projectDirectory.dir("src/gcScheduler/aggressive"))
+            headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+        }
+
+        testsGroup("aggressive_gcScheduler_test") {
+            testedModules.addAll("aggressive_gcScheduler")
+            testSupportModules.addAll("main", "mm", "noop_externalCallsChecker", "common_alloc", "custom_alloc", "common_gc", "noop_gc_custom", "common_gcScheduler", "objc")
+        }
+
+        module("impl_externalCallsChecker") {
+            srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/impl"))
+            headersDirs.from("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("noop_externalCallsChecker") {
+            srcRoot.set(layout.projectDirectory.dir("src/externalCallsChecker/noop"))
+            headersDirs.from("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp")
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("xctest_launcher") {
+            headersDirs.from(files("src/externalCallsChecker/common/cpp", "src/objcExport/cpp", "src/main/cpp"))
+
+            sourceSets {
+                main {}
+            }
+            onlyIf { it.family.isAppleFamily }
         }
     }
+}
+
+val objcExportApi by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.API))
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+    }
+}
+
+artifacts {
+    // This should be a "public headers" directory and this configuration with artifacts should be defined by
+    // CompileToBitcodePlugin itself.
+    add(objcExportApi.name, layout.projectDirectory.dir("src/objcExport/cpp"))
 }
 
 val runtimeBitcode by configurations.creating {
@@ -377,15 +515,15 @@ dependencies {
     runtimeBitcode(project(":kotlin-native:runtime"))
 }
 
-targetList.forEach { targetName ->
+targetList.forEach { target ->
     // TODO: replace with a more convenient user-facing task that can build for a specific target.
     //       like compileToBitcode with optional argument --target.
-    tasks.register("${targetName}Runtime") {
-        description = "Build all main runtime modules for $targetName"
+    tasks.register("${target}Runtime") {
+        description = "Build all main runtime modules for $target"
         group = CompileToBitcodeExtension.BUILD_TASK_GROUP
         val dependencies = runtimeBitcode.incoming.artifactView {
             attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
             }
         }.files
         dependsOn(dependencies)
@@ -395,160 +533,120 @@ targetList.forEach { targetName ->
 val hostRuntime by tasks.registering {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
-    dependsOn("${hostName}Runtime")
+    dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
 val hostRuntimeTests by tasks.registering {
     description = "Runs all runtime tests for host"
     group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
-    dependsOn("${hostName}RuntimeTests")
+    dependsOn("${PlatformInfo.hostName}RuntimeTests")
 }
 
-val assemble by tasks.getting {
+tasks.named("assemble") {
     dependsOn(targetList.map { "${it}Runtime" })
 }
 
 val hostAssemble by tasks.registering {
-    dependsOn("${hostName}Runtime")
+    dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
-val clean by tasks.getting {
-    doFirst {
-        delete(buildDir)
-    }
-}
-
-val generateJsMath by tasks.registering {
-    dependsOn(":distCompiler")
-    doLast {
-        val distDir: File by project
-        val jsinteropScript = if (PlatformInfo.isWindows()) "jsinterop.bat" else "jsinterop"
-        val jsinterop = "$distDir/bin/$jsinteropScript"
-        val targetDir = "$buildDir/generated"
-
-        project.exec {
-            commandLine(
-                    jsinterop,
-                    "-pkg", "kotlinx.interop.wasm.math",
-                    "-o", "$targetDir/math",
-                    "-target", "wasm32"
-            )
-        }
-
-        val generated = file("$targetDir/math-build/natives/js_stubs.js")
-        val mathJs = file("src/main/js/math.js")
-        mathJs.writeText(
-            "// NOTE: THIS FILE IS AUTO-GENERATED!\n" +
-            "// Run ':runtime:generateJsMath' to re-generate it.\n\n"
-        )
-        mathJs.appendText(generated.readText())
-    }
+tasks.named("clean", Delete::class) {
+    this.delete(layout.buildDirectory)
 }
 
 // region: Stdlib
 
-val commonStdlibSrcDirs = project(":kotlin-stdlib-common")
-        .files(
-                "src/kotlin",
-                "src/generated",
-                "../unsigned/src",
-                "../src"
-        ).files
+val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+    group = BasePlugin.BUILD_GROUP
+    description = "Build the Kotlin/Native standard library '$name'"
 
-val interopRuntimeCommonSrcDir = project(":kotlin-native:Interop:Runtime").file("src/main/kotlin")
-val interopSrcDirs = listOf(
-        project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"),
-        project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin")
-)
+    this.compilerDistributionPath.set(kotlinNativeDist.absolutePath)
+    dependsOn(":kotlin-native:distCompiler")
 
-val testAnnotationCommonSrcDir = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
-val testCommonSrcDir = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
+    this.konanTarget.set(HostManager.host)
+    this.outputDirectory.set(
+            layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
+    )
 
-val stdLibSrcDirs =  interopSrcDirs + listOf(
-        project.file("src/main/kotlin"),
-        project(":kotlin-stdlib-common").file("../native-wasm/src/")
-)
+    this.extraOpts.addAll(
+            "-no-default-libs",
+            "-no-endorsed-libs",
+            "-nostdlib",
+            "-Werror",
+            "-Xexplicit-api=strict",
+            "-Xexpect-actual-classes",
+            "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=kotlin.ExperimentalMultiplatform",
+            "-opt-in=kotlin.native.internal.InternalForKotlinNative",
+            "-language-version",
+            "1.9",
+            "-api-version",
+            "2.0",
+            "-Xsuppress-api-version-greater-than-language-version-error",
+    )
 
-lateinit var stdlibBuildTask: TaskProvider<Task>
-
-konanArtifacts {
-    library("stdlib") {
-        baseDir(project.buildDir.resolve("stdlib"))
-
-        enableMultiplatform(true)
-        noStdLib(true)
-        noPack(true)
-        noDefaultLibs(true)
-        noEndorsedLibs(true)
-
-        extraOpts(project.globalBuildArgs)
-        extraOpts(
-                "-Werror",
-                "-module-name", "stdlib",
-                "-opt-in=kotlin.RequiresOptIn",
-                "-opt-in=kotlin.contracts.ExperimentalContracts",
-                "-opt-in=kotlin.ExperimentalMultiplatform",
-                "-opt-in=kotlin.native.internal.InternalForKotlinNative",
-                "-XXLanguage:+RangeUntilOperator",
-        )
-
-        commonStdlibSrcDirs.forEach { commonSrcDir(it) }
-        testAnnotationCommonSrcDir.forEach { commonSrcDir(it) }
-        testCommonSrcDir.forEach { commonSrcDir(it) }
-        commonSrcDir(interopRuntimeCommonSrcDir)
-        stdLibSrcDirs.forEach { srcDir(it) }
+    val common by sourceSets.creating {
+        srcDir(project(":kotlin-stdlib").file("common/src/kotlin"))
+        srcDir(project(":kotlin-stdlib").file("common/src/generated"))
+        srcDir(project(":kotlin-stdlib").file("unsigned/src"))
+        srcDir(project(":kotlin-stdlib").file("src"))
+        srcDir(project(":kotlin-stdlib").file("native-wasm/src/"))
+        srcDir(project(":kotlin-test").files("annotations-common/src/main/kotlin"))
+        srcDir(project(":kotlin-test").files("common/src/main/kotlin"))
+        srcDir(project(":kotlin-native:Interop:Runtime").file("src/main/kotlin"))
     }
 
-    stdlibBuildTask = project.findKonanBuildTask("stdlib", project.platformManager.hostPlatform.target).apply {
-        configure {
-            dependsOn(":kotlin-native:distCompiler")
+    val nativeMain by sourceSets.creating {
+        srcDir(project(":kotlin-native:Interop:Runtime").file("src/native/kotlin"))
+        srcDir(project(":kotlin-native:Interop:JsRuntime").file("src/main/kotlin"))
+        srcDir(project.file("src/main/kotlin"))
+    }
+
+    dependsOn(":prepare:build.version:writeStdlibVersion")
+}
+
+val stdlibTask = tasks.register<Copy>("nativeStdlib") {
+    from(stdlibBuildTask.map { it.outputs.files })
+    into(project.layout.buildDirectory.dir("nativeStdlib"))
+
+    val allPossibleTargets = project.extensions.getByType<PlatformManager>().targetValues.map { it.name }
+    val kotlinVersion = kotlinVersion
+    eachFile {
+        if (name == "manifest") {
+            // Stdlib is a common library that doesn't depend on anything target-specific.
+            // The current compiler can't create a library with manifest file that lists all targets.
+            // So, add all targets to the manifest file.
+            KFile(file.absolutePath).run {
+                val props = loadProperties()
+                props[KLIB_PROPERTY_NATIVE_TARGETS] = allPossibleTargets.joinToString(separator = " ")
+
+                // Check that we didn't get other than the requested version from cache, previous build or due to some other build issue
+                val versionFromManifest = props[KLIB_PROPERTY_COMPILER_VERSION]
+                check(versionFromManifest == kotlinVersion) {
+                    "Manifest file ($this) processing: $versionFromManifest was found while $kotlinVersion was expected"
+                }
+
+                saveProperties(props)
+            }
         }
     }
 }
 
-targetList.forEach { targetName ->
-    tasks.register("${targetName}Stdlib", Copy::class.java) {
-        require(::stdlibBuildTask.isInitialized)
-        dependsOn(stdlibBuildTask)
-        dependsOn("${targetName}Runtime")
+val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
-        destinationDir = project.buildDir.resolve("${targetName}Stdlib")
+cacheableTargetNames.forEach { targetName ->
+    tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
+        notCompatibleWithConfigurationCache("project used in execution time")
+        target = targetName
+        originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
+        klibUniqName = "stdlib"
+        cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
-        from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
-        val runtimeFiles = runtimeBitcode.incoming.artifactView {
-            attributes {
-                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
-            }
-        }.files
-        from(runtimeFiles) {
-            include("runtime.bc", "compiler_interface.bc")
-            into("default/targets/$targetName/native")
-        }
-
-        if (targetName != hostName) {
-            doLast {
-                // Change target in manifest file
-                with(KFile(destinationDir.resolve("default/manifest").absolutePath)) {
-                    val props = loadProperties()
-                    props[KLIB_PROPERTY_NATIVE_TARGETS] = targetName
-                    saveProperties(props)
-                }
-            }
-        }
-    }
-
-    val cacheableTargetNames: List<String> by project
-
-    if (targetName in cacheableTargetNames) {
-        tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-            target = targetName
-            originalKlib = project.buildDir.resolve("${targetName}Stdlib")
-            klibUniqName = "stdlib"
-            cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
-
-            dependsOn("${targetName}Stdlib")
-            dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
-        }
+        dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
+        // stdlib cache links in runtime modules from the K/N distribution.
+        inputs.dir("$kotlinNativeDist/konan/targets/$targetName/native")
     }
 }
 

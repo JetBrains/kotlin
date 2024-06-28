@@ -1,36 +1,36 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54568
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun callAny(arg: Any?) {}
 fun <T> callParam(arg: T) {}
 
 fun testAny() {
-    callAny { error -> error }
-    callAny l@{ error -> error }
-    callAny({error -> error})
-    callAny(({error -> error}))
-    callAny(l@{error -> error})
-    callAny((l@{error -> error}))
+    callAny { <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error }
+    callAny l@{ <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error }
+    callAny({<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error})
+    callAny(({<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error}))
+    callAny(l@{<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error})
+    callAny((l@{<!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> error}))
 }
 
 fun testAnyCall() {
     callAny {
-        error -> <!UNRESOLVED_REFERENCE!>error<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>error<!> -> <!UNRESOLVED_REFERENCE!>error<!>()
     }
 }
 
 fun testParam() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
-        param -> param
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> param
     }
 }
 
 fun testParamCall() {
-    callParam {
-        param -> <!UNRESOLVED_REFERENCE!>param<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE!>callParam<!> {
+        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }
 
 fun testNoContext() {
-    { it -> it }
+    { <!VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>it<!> -> it }
 }

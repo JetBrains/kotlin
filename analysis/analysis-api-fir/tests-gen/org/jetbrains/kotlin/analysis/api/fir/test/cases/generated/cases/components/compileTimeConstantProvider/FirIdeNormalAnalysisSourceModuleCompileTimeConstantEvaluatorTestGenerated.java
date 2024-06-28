@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,265 +28,283 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate")
 @TestDataPath("$PROJECT_ROOT")
 public class FirIdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGenerated extends AbstractCompileTimeConstantEvaluatorTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInEvaluate() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("arrayWithInc.kt")
+  public void testArrayWithInc() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/arrayWithInc.kt");
+  }
+
+  @Test
+  @TestMetadata("binaryExpressionWithString.kt")
+  public void testBinaryExpressionWithString() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_minusOne_entire.kt")
+  public void testIntegerLiteral_minusOne_entire() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_entire.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_minusOne_justOne.kt")
+  public void testIntegerLiteral_minusOne_justOne() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_justOne.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_plusOne_entire.kt")
+  public void testIntegerLiteral_plusOne_entire() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_entire.kt");
+  }
+
+  @Test
+  @TestMetadata("integerLiteral_plusOne_justOne.kt")
+  public void testIntegerLiteral_plusOne_justOne() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_justOne.kt");
+  }
+
+  @Test
+  @TestMetadata("interpolationWithInc.kt")
+  public void testInterpolationWithInc() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/interpolationWithInc.kt");
+  }
+
+  @Test
+  @TestMetadata("javaFinalField.kt")
+  public void testJavaFinalField() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaFinalField.kt");
+  }
+
+  @Test
+  @TestMetadata("javaStaticField.kt")
+  public void testJavaStaticField() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticField.kt");
+  }
+
+  @Test
+  @TestMetadata("javaStaticFinalField.kt")
+  public void testJavaStaticFinalField() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticFinalField.kt");
+  }
+
+  @Test
+  @TestMetadata("namedReference_const.kt")
+  public void testNamedReference_const() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
+  }
+
+  @Test
+  @TestMetadata("namedReference_userType.kt")
+  public void testNamedReference_userType() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_userType.kt");
+  }
+
+  @Test
+  @TestMetadata("namedReference_val.kt")
+  public void testNamedReference_val() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_val.kt");
+  }
+
+  @Test
+  @TestMetadata("namedReference_var.kt")
+  public void testNamedReference_var() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_var.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInCompanionObject.kt")
+  public void testPropertyInCompanionObject() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInCompanionObject_indirect.kt")
+  public void testPropertyInCompanionObject_indirect() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInCompanionObject_indirect_twice.kt")
+  public void testPropertyInCompanionObject_indirect_twice() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect_twice.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_Byte.kt")
+  public void testPropertyInit_Byte() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_DivByOtherProperty_const.kt")
+  public void testPropertyInit_DivByOtherProperty_const() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_const.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_DivByOtherProperty_val.kt")
+  public void testPropertyInit_DivByOtherProperty_val() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_val.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_DivByZero.kt")
+  public void testPropertyInit_DivByZero() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByZero.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_Double.kt")
+  public void testPropertyInit_Double() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Double.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_Float.kt")
+  public void testPropertyInit_Float() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Float.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_Int.kt")
+  public void testPropertyInit_Int() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Int.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_Long.kt")
+  public void testPropertyInit_Long() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Long.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyInit_UInt.kt")
+  public void testPropertyInit_UInt() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_UInt.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveJavaFieldsReference.kt")
+  public void testRecursiveJavaFieldsReference() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/recursiveJavaFieldsReference.kt");
+  }
+
+  @Test
+  @TestMetadata("recursivePropertyReference.kt")
+  public void testRecursivePropertyReference() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/recursivePropertyReference.kt");
+  }
+
+  @Test
+  @TestMetadata("stringLiteral.kt")
+  public void testStringLiteral() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/stringLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("string_compareTo.kt")
+  public void testString_compareTo() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_compareTo.kt");
+  }
+
+  @Test
+  @TestMetadata("string_length.kt")
+  public void testString_length() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_length.kt");
+  }
+
+  @Test
+  @TestMetadata("string_plusMany.kt")
+  public void testString_plusMany() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusMany.kt");
+  }
+
+  @Test
+  @TestMetadata("string_plusOnce.kt")
+  public void testString_plusOnce() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusOnce.kt");
+  }
+
+  @Test
+  @TestMetadata("string_plusTwice.kt")
+  public void testString_plusTwice() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusTwice.kt");
+  }
+
+  @Test
+  @TestMetadata("string_templateConst.kt")
+  public void testString_templateConst() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateConst.kt");
+  }
+
+  @Test
+  @TestMetadata("string_templateNonConst.kt")
+  public void testString_templateNonConst() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateNonConst.kt");
+  }
+
+  @Test
+  @TestMetadata("string_toString.kt")
+  public void testString_toString() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
+  }
+
+  @Test
+  @TestMetadata("string_trimIndent.kt")
+  public void testString_trimIndent() {
+    runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
+  @TestDataPath("$PROJECT_ROOT")
+  public class IncompleteCode {
+    @Test
+    public void testAllFilesPresentInIncompleteCode() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInEvaluate() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("incompleteRange.kt")
+    public void testIncompleteRange() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/incompleteRange.kt");
     }
 
     @Test
-    @TestMetadata("arrayWithInc.kt")
-    public void testArrayWithInc() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/arrayWithInc.kt");
+    @TestMetadata("noRightOperand.kt")
+    public void testNoRightOperand() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperand.kt");
     }
 
     @Test
-    @TestMetadata("binaryExpressionWithString.kt")
-    public void testBinaryExpressionWithString() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
+    @TestMetadata("noRightOperandLong.kt")
+    public void testNoRightOperandLong() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandLong.kt");
     }
 
     @Test
-    @TestMetadata("integerLiteral_minusOne_entire.kt")
-    public void testIntegerLiteral_minusOne_entire() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_entire.kt");
+    @TestMetadata("noRightOperandUnsignedLong.kt")
+    public void testNoRightOperandUnsignedLong() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandUnsignedLong.kt");
     }
-
-    @Test
-    @TestMetadata("integerLiteral_minusOne_justOne.kt")
-    public void testIntegerLiteral_minusOne_justOne() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_minusOne_justOne.kt");
-    }
-
-    @Test
-    @TestMetadata("integerLiteral_plusOne_entire.kt")
-    public void testIntegerLiteral_plusOne_entire() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_entire.kt");
-    }
-
-    @Test
-    @TestMetadata("integerLiteral_plusOne_justOne.kt")
-    public void testIntegerLiteral_plusOne_justOne() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_justOne.kt");
-    }
-
-    @Test
-    @TestMetadata("interpolationWithInc.kt")
-    public void testInterpolationWithInc() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/interpolationWithInc.kt");
-    }
-
-    @Test
-    @TestMetadata("javaFinalField.kt")
-    public void testJavaFinalField() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaFinalField.kt");
-    }
-
-    @Test
-    @TestMetadata("javaStaticField.kt")
-    public void testJavaStaticField() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticField.kt");
-    }
-
-    @Test
-    @TestMetadata("javaStaticFinalField.kt")
-    public void testJavaStaticFinalField() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/javaStaticFinalField.kt");
-    }
-
-    @Test
-    @TestMetadata("namedReference_const.kt")
-    public void testNamedReference_const() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_const.kt");
-    }
-
-    @Test
-    @TestMetadata("namedReference_val.kt")
-    public void testNamedReference_val() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_val.kt");
-    }
-
-    @Test
-    @TestMetadata("namedReference_var.kt")
-    public void testNamedReference_var() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/namedReference_var.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInCompanionObject.kt")
-    public void testPropertyInCompanionObject() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInCompanionObject_indirect.kt")
-    public void testPropertyInCompanionObject_indirect() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInCompanionObject_indirect_twice.kt")
-    public void testPropertyInCompanionObject_indirect_twice() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInCompanionObject_indirect_twice.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_Byte.kt")
-    public void testPropertyInit_Byte() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Byte.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_DivByOtherProperty_const.kt")
-    public void testPropertyInit_DivByOtherProperty_const() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_const.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_DivByOtherProperty_val.kt")
-    public void testPropertyInit_DivByOtherProperty_val() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByOtherProperty_val.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_DivByZero.kt")
-    public void testPropertyInit_DivByZero() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_DivByZero.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_Double.kt")
-    public void testPropertyInit_Double() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Double.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_Float.kt")
-    public void testPropertyInit_Float() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Float.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_Int.kt")
-    public void testPropertyInit_Int() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Int.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_Long.kt")
-    public void testPropertyInit_Long() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_Long.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyInit_UInt.kt")
-    public void testPropertyInit_UInt() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/propertyInit_UInt.kt");
-    }
-
-    @Test
-    @TestMetadata("stringLiteral.kt")
-    public void testStringLiteral() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/stringLiteral.kt");
-    }
-
-    @Test
-    @TestMetadata("string_compareTo.kt")
-    public void testString_compareTo() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_compareTo.kt");
-    }
-
-    @Test
-    @TestMetadata("string_length.kt")
-    public void testString_length() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_length.kt");
-    }
-
-    @Test
-    @TestMetadata("string_plusMany.kt")
-    public void testString_plusMany() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusMany.kt");
-    }
-
-    @Test
-    @TestMetadata("string_plusOnce.kt")
-    public void testString_plusOnce() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusOnce.kt");
-    }
-
-    @Test
-    @TestMetadata("string_plusTwice.kt")
-    public void testString_plusTwice() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_plusTwice.kt");
-    }
-
-    @Test
-    @TestMetadata("string_templateConst.kt")
-    public void testString_templateConst() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateConst.kt");
-    }
-
-    @Test
-    @TestMetadata("string_templateNonConst.kt")
-    public void testString_templateNonConst() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateNonConst.kt");
-    }
-
-    @Test
-    @TestMetadata("string_toString.kt")
-    public void testString_toString() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
-    }
-
-    @Test
-    @TestMetadata("string_trimIndent.kt")
-    public void testString_trimIndent() throws Exception {
-        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_trimIndent.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode")
-    @TestDataPath("$PROJECT_ROOT")
-    public class IncompleteCode {
-        @Test
-        public void testAllFilesPresentInIncompleteCode() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("incompleteRange.kt")
-        public void testIncompleteRange() throws Exception {
-            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/incompleteRange.kt");
-        }
-
-        @Test
-        @TestMetadata("noRightOperand.kt")
-        public void testNoRightOperand() throws Exception {
-            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperand.kt");
-        }
-
-        @Test
-        @TestMetadata("noRightOperandLong.kt")
-        public void testNoRightOperandLong() throws Exception {
-            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandLong.kt");
-        }
-
-        @Test
-        @TestMetadata("noRightOperandUnsignedLong.kt")
-        public void testNoRightOperandUnsignedLong() throws Exception {
-            runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/incompleteCode/noRightOperandUnsignedLong.kt");
-        }
-    }
+  }
 }

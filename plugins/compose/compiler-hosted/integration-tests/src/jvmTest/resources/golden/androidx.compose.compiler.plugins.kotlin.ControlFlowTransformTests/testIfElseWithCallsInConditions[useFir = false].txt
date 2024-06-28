@@ -1,0 +1,60 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // Since the condition in the else-if is conditionally executed, it means we have
+    // dynamic execution and we can't statically guarantee the number of groups. As a
+    // result, we generate a group around the if statement in addition to a group around
+    // each of the conditions with composable calls in them. Note that no group is
+    // needed around the else condition
+    if (B(a)) {
+        NA()
+    } else if (B(b)) {
+        NA()
+    } else {
+        NA()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "")
+  if (%composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "<B(a)>")
+  val tmp0_group = B(a, %composer, 0)
+  %composer.endReplaceGroup()
+  tmp0_group) {
+    NA()
+  } else if (%composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "<B(b)>")
+  val tmp1_group = B(b, %composer, 0)
+  %composer.endReplaceGroup()
+  tmp1_group) {
+    NA()
+  } else {
+    NA()
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

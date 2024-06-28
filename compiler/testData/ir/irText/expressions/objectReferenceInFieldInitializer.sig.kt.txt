@@ -1,0 +1,57 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+object A {
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  private val a: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}kotlin.String
+    //   Public signature: /A.a.<get-a>|-6318309956076983327[0]
+    //   Public signature debug description: <get-a>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-a>(){}
+    //   Public signature: /A.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    private get
+
+  // CHECK:
+  //   Mangled name: A{}b
+  //   Public signature: /A.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  private val b: String
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-b>(){}kotlin.String
+    //   Public signature: /A.b.<get-b>|5457451065030643294[0]
+    //   Public signature debug description: <get-b>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-b>(){}
+    //   Public signature: /A.b.<get-b>|812004636995167743[0]
+    //   Public signature debug description: <get-b>(){}
+    private get
+
+  // CHECK:
+  //   Mangled name: A{}c
+  //   Public signature: /A.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  private val c: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-c>(){}kotlin.Int
+    //   Public signature: /A.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-c>(){}
+    //   Public signature: /A.c.<get-c>|2368736057102379596[0]
+    //   Public signature debug description: <get-c>(){}
+    private get
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+}
+

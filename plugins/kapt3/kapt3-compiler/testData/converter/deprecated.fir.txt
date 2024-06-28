@@ -1,0 +1,85 @@
+package deprecated;
+
+/**
+ * public final annotation class deprecated/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Deprecated(message = "Deprecated annotation")
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.Deprecated
+public abstract @interface Anno {
+}
+
+
+////////////////////
+
+package deprecated;
+
+/**
+ * public final class deprecated/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo(I)V
+ *   public final fun foo(a: kotlin/Int): kotlin/Unit
+ *
+ *   // getter: getFoo()I
+ *   // setter: setFoo(I)V
+ *   public final var foo: kotlin/Int
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/Int)
+ *
+ *   // field: prop:I
+ *   // getter: getProp()I
+ *   // synthetic method for annotations: getProp$annotations()V
+ *   public final val prop: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.Deprecated(message = "Deprecated class")
+@Anno()
+@java.lang.Deprecated
+public final class Foo {
+    @java.lang.Deprecated
+    private final int prop = 0;
+
+    public Foo() {
+        super();
+    }
+
+    @kotlin.Deprecated(message = "Deprecated function")
+    @java.lang.Deprecated
+    public final void foo(int a) {
+    }
+
+    @java.lang.Deprecated
+    public final int getProp() {
+        return 0;
+    }
+
+    @kotlin.Deprecated(message = "Deprecated property")
+    @java.lang.Deprecated()
+    public static void getProp$annotations() {
+    }
+
+    @kotlin.Deprecated(message = "Deprecated getter")
+    @java.lang.Deprecated
+    public final int getFoo() {
+        return 0;
+    }
+
+    @kotlin.Deprecated(message = "Deprecated setter")
+    @java.lang.Deprecated
+    public final void setFoo(int value) {
+    }
+}

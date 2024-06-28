@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.leastUpperBound
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -22,12 +24,11 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
-object FirFunctionParameterChecker : FirFunctionChecker() {
+object FirFunctionParameterChecker : FirFunctionChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         checkVarargParameters(declaration, context, reporter)
         checkParameterTypes(declaration, context, reporter)
@@ -46,7 +47,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
                 reporter.reportOn(
-                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
+                    valueParameter.source, FirErrors.VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE,
                     context
                 )
             }
@@ -61,10 +62,17 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             }
         }
 
-        val nullableNothingType = context.session.builtinTypes.nullableNothingType.coneType
         for (varargParameter in varargParameters) {
-            val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
-            if (AbstractTypeChecker.isSubtypeOf(context.session.typeContext, varargParameterType, nullableNothingType) ||
+            val coneType = varargParameter.returnTypeRef.coneType
+            val varargParameterType = when (function) {
+                is FirAnonymousFunction -> coneType
+                else -> coneType.arrayElementType()
+            }?.fullyExpandedType(context.session) ?: continue
+            // LUB is checked to ensure varargParameterType may
+            // never be anything except `Nothing` or `Nothing?`
+            // in case it is a complex type that quantifies
+            // over many other types.
+            if (varargParameterType.leastUpperBound(context.session).fullyExpandedType(context.session).isNothingOrNullableNothing ||
                 (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
@@ -90,8 +98,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
                 override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
                     val referredParameter = qualifiedAccessExpression.calleeReference.toResolvedValueParameterSymbol() ?: return
 
-                    @OptIn(SymbolInternals::class)
-                    val referredParameterIndex = function.valueParameters.indexOf(referredParameter.fir)
+                    val referredParameterIndex = function.valueParameters.indexOfFirst { it.symbol == referredParameter }
                     // Skip if the referred parameter is not declared in the same function.
                     if (referredParameterIndex < 0) return
 

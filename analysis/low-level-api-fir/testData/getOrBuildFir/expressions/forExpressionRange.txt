@@ -1,0 +1,22 @@
+KT element: KtBinaryExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(0).R|kotlin/Int.rangeTo|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] forExpressionRange.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                 {
+                }
+
+            }
+
+        }
+
+    }

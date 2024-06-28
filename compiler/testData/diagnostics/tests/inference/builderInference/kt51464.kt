@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_DIAGNOSTICS_FULL_TEXT
 fun <T> flowOf(value: T): Flow<T> = TODO()
 
 interface FlowCollector<in T> {}
@@ -10,5 +9,5 @@ fun <T, R> Flow<T>.transform(transform: FlowCollector<R>.(T) -> Unit): Flow<R> =
 
 fun f() {
     fun <T> doEmit(collector: FlowCollector<T>) {}
-    flowOf(1).<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>transform<!> { doEmit(this) }
+    flowOf(1).<!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>transform<!> { doEmit(this) }
 }

@@ -9,5 +9,6 @@ import org.jetbrains.kotlin.codegen.AbstractCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrCheckLocalVariablesTableTest : AbstractCheckLocalVariablesTableTest() {
-    override val backend = TargetBackend.JVM_IR
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }

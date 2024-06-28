@@ -5,107 +5,103 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.copyAnnotations
+import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.EnhancedNullability
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.FlexibleNullability
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-// This is basically modelled after the inliner copier.
 class CopyIrTreeWithSymbolsForFakeOverrides(
     private val overridableMember: IrOverridableMember,
-    typeArguments: Map<IrTypeParameterSymbol, IrType>,
-    private val parent: IrClass,
-    unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
+    private val substitution: Map<IrTypeParameterSymbol, IrType>,
+    private val parentClass: IrClass,
+    private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
     fun copy(): IrOverridableMember {
-        // Create new symbols.
-        overridableMember.acceptVoid(symbolRemapper)
+        val typeParameters = HashMap<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+        val valueParameters = HashMap<IrValueParameterSymbol, IrValueParameterSymbol>()
 
-        // Make symbol remapper aware of the callsite's type arguments.
-        // Copy IR.
-        val result = overridableMember.transform(
-            if (parent.isEffectivelyExternal()) copierMakingExternal else copier,
-            data = null
-        ) as IrOverridableMember
+        val copier = FakeOverrideCopier(
+            valueParameters,
+            typeParameters,
+            FakeOverrideTypeRemapper(typeParameters, substitution),
+            parentClass,
+            unimplementedOverridesStrategy
+        )
 
-        result.patchDeclarationParents(parent)
-
-        return result
+        return when (overridableMember) {
+            is IrSimpleFunction -> copier.copySimpleFunction(overridableMember)
+            is IrProperty -> copier.copyProperty(overridableMember)
+            else -> error("Unsupported member: ${overridableMember.render()}")
+        }
     }
 
-    private inner class FakeOverrideTypeRemapper(
-        val symbolRemapper: SymbolRemapper,
-        val typeArguments: Map<IrTypeParameterSymbol, IrType>
+    private class FakeOverrideTypeRemapper(
+        val typeParameters: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>,
+        val substitution: Map<IrTypeParameterSymbol, IrType>
     ) : TypeRemapper {
-
         override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {}
 
         override fun leaveScope() {}
 
         private fun remapTypeArguments(arguments: List<IrTypeArgument>) =
-            arguments.map { argument ->
+            arguments.memoryOptimizedMap { argument ->
                 (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
                     ?: argument
             }
 
+        private fun IrType.mergeTypeAnnotations(other: IrType): IrType {
+            // Flexible types are represented as a type annotation in IR, so we need to keep it when substituting type during override.
+            // Note that it's incorrect to merge _all_ type annotations though, because for a Collection subclass:
+            //
+            //     abstract class Z : Collection<Int>
+            //
+            // `Z.contains` should have the signature `(Int) -> Boolean`, NOT `(@UnsafeVariance Int) -> Boolean` which would occur if we
+            // copied all type annotations.
+            return addAnnotations(buildList {
+                for (fqName in TYPE_ANNOTATIONS_TO_MERGE) {
+                    addIfNotNull(other.annotations.findAnnotation(fqName))
+                }
+            })
+        }
+
         override fun remapType(type: IrType): IrType {
             if (type !is IrSimpleType) return type
 
-            return when (val substitutedType = typeArguments[type.classifier]) {
+            return when (val substitutedType = substitution[type.classifier]) {
                 is IrDynamicType -> substitutedType
-                is IrSimpleType -> substitutedType.mergeNullability(type)
+                is IrSimpleType -> substitutedType.mergeNullability(type).mergeTypeAnnotations(type)
                 else -> type.buildSimpleType {
                     kotlinType = null
-                    classifier = symbolRemapper.getReferencedClassifier(type.classifier)
+                    classifier = remapClassifier(type.classifier)
                     arguments = remapTypeArguments(type.arguments)
-                    annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
+                    annotations = type.copyAnnotations()
                 }
             }
         }
+
+        private fun remapClassifier(classifier: IrClassifierSymbol): IrClassifierSymbol =
+            if (classifier is IrTypeParameterSymbol)
+                typeParameters.getOrElse(classifier) { classifier }
+            else
+                classifier
     }
 
-    private class FakeOverrideSymbolRemapperImpl(
-        private val typeArguments: Map<IrTypeParameterSymbol, IrType>,
-        descriptorsRemapper: DescriptorsRemapper
-    ) :
-        DeepCopySymbolRemapper(descriptorsRemapper) {
-
-        override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol {
-            val result = super.getReferencedClassifier(symbol)
-            if (result !is IrTypeParameterSymbol)
-                return result
-            return typeArguments[result]?.classifierOrNull ?: result
-        }
-    }
-
-    private val symbolRemapper =
-        FakeOverrideSymbolRemapperImpl(
-            typeArguments,
-            NullDescriptorsRemapper
+    private companion object {
+        // TODO (KT-64715): RawTypeAnnotation, FlexibleMutability, RawType, FlexibleArrayElementVariance?
+        val TYPE_ANNOTATIONS_TO_MERGE = listOf(
+            FlexibleNullability.asSingleFqName(),
+            EnhancedNullability.asSingleFqName(),
         )
-
-    private val copier = FakeOverrideCopier(
-        symbolRemapper,
-        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
-        makeExternal = false,
-        parent,
-        unimplementedOverridesStrategy
-    )
-
-    private val copierMakingExternal = FakeOverrideCopier(
-        symbolRemapper,
-        FakeOverrideTypeRemapper(symbolRemapper, typeArguments),
-        SymbolRenamer.DEFAULT,
-        makeExternal = true,
-        parent,
-        unimplementedOverridesStrategy
-    )
+    }
 }

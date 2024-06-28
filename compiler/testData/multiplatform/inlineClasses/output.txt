@@ -1,37 +1,38 @@
 -- Common --
 Exit code: OK
 Output:
-compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: 'inline' modifier is deprecated. Use 'value' instead
+compiler/testData/multiplatform/inlineClasses/common.kt:1:16: warning: this code uses error suppression for 'UNSUPPORTED_FEATURE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WON'T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
+@file:Suppress("UNSUPPORTED_FEATURE")
+               ^^^^^^^^^^^^^^^^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:3:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo1(val x: Int)
-       ^
-compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: 'inline' modifier is deprecated. Use 'value' instead
+^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:3:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+expect inline class Foo1(val x: Int)
+       ^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:4:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 expect inline class Foo2(val y: String)
-       ^
+^^^^^^
+compiler/testData/multiplatform/inlineClasses/common.kt:4:8: warning: 'inline' modifier is deprecated. Use 'value' instead.
+expect inline class Foo2(val y: String)
+       ^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/inlineClasses/jvm.kt:5:1: error: actual class 'Foo2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline):
-    public final expect inline class Foo2
+compiler/testData/multiplatform/inlineClasses/jvm.kt:5:14: error: 'actual class Foo2 : Any' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
+    expect class Foo2 : Any
 
 actual class Foo2 actual constructor(actual val y: String)
-^
+             ^^^^
 
 -- JS --
 Exit code: COMPILATION_ERROR
 Output:
-warning: ==========
-This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-
-Please migrate your project to the new IR-based compiler (https://kotl.in/jsir).
-Because your build tool will not support the new Kotlin/JS compiler, you will also need to migrate to Gradle.
-
-You can continue to use the deprecated legacy compiler in the current version of the toolchain by providing the compiler option -Xuse-deprecated-legacy-compiler.
-==========
-compiler/testData/multiplatform/inlineClasses/js.kt:5:1: error: actual class 'Foo2' has no corresponding expected declaration
-The following declaration is incompatible because modifiers are different (companion, inner, inline):
-    public final expect inline class Foo2
+compiler/testData/multiplatform/inlineClasses/js.kt:5:14: error: 'actual class Foo2 : Any' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner, inline, value):
+    expect class Foo2 : Any
 
 actual class Foo2 actual constructor(actual val y: String)
-^
+             ^^^^

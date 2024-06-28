@@ -7,18 +7,17 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
-import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.messages.toLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -31,21 +30,20 @@ import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
-import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
+import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 internal class FirMetadataSerializer(
     configuration: CompilerConfiguration,
@@ -56,19 +54,20 @@ internal class FirMetadataSerializer(
         performanceManager.notifyAnalysisStarted()
 
         val configuration = environment.configuration
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val rootModuleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
         val isLightTree = configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
 
         val binaryModuleData = BinaryModuleData.initialize(
             rootModuleName,
             CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
         )
         val libraryList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+            val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
+            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.toPath() })
             dependencies(configuration.jvmModularRoots.map { it.toPath() })
-            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            dependsOnDependencies(refinedPaths.map { it.toPath() })
         }
 
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
@@ -77,7 +76,12 @@ internal class FirMetadataSerializer(
             .filterIsInstance<JvmClasspathRoot>()
             .filter { it.file.isDirectory || it.file.extension == "klib" }
             .map { it.file.absolutePath }
-        val resolvedLibraries = CommonJsKLibResolver.resolve(klibFiles, DummyLogger).getFullResolvedList()
+
+        val logger = messageCollector.toLogger()
+
+        // TODO: This is a workaround for KT-63573. Revert it back when KT-64169 is fixed.
+//        val resolvedLibraries = CommonKLibResolver.resolve(klibFiles, logger).getFullResolvedList()
+        val resolvedLibraries = klibFiles.map { KotlinResolvedLibraryImpl(resolveSingleFileKlib(KFile(it), logger)) }
 
         val outputs = if (isLightTree) {
             val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
@@ -139,10 +143,12 @@ internal class FirMetadataSerializer(
             }
         }
 
+        outputs.runPlatformCheckers(diagnosticsReporter)
+
+        val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
         return if (diagnosticsReporter.hasErrors) {
-            val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
             null
         } else {
             outputs
@@ -163,8 +169,13 @@ internal class FirMetadataSerializer(
                     firFile,
                     session,
                     scopeSession,
-                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
-                    languageVersionSettings
+                    actualizedExpectDeclarations = null,
+                    FirKLibSerializerExtension(
+                        session, scopeSession, session.firProvider, metadataVersion, constValueProvider = null,
+                        allowErrorTypes = false, exportKDoc = false,
+                        additionalMetadataProvider = null
+                    ),
+                    languageVersionSettings,
                 )
                 fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
             }

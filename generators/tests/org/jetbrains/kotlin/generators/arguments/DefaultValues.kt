@@ -35,6 +35,8 @@ open class DefaultValues(
 
     object BooleanTrueDefault : DefaultBoolean(true)
 
+    object BooleanNullDefault : DefaultValues("null", typeOf<Boolean?>(), typeOf<Boolean?>())
+
     object StringNullDefault : DefaultValues("null", typeOf<String?>(), typeOf<String?>())
 
     object EmptyStringListDefault : DefaultValues("emptyList<String>()", typeOf<List<String>>(), typeOf<List<String>>())
@@ -78,35 +80,35 @@ open class DefaultValues(
     )
 
     object JvmTargetVersions : DefaultValues(
-        "null",
-        typeOf<JvmTargetDsl?>(),
+        "org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT",
+        typeOf<JvmTargetDsl>(),
         typeOf<String?>(),
         possibleValues = JvmTarget.supportedValues().map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<JvmTargetDsl>()}.fromTarget(this) else null
         """.trimIndent(),
         toKotlinOptionConverterProp = """
-        this?.target
-        """.trimIndent()
+        this.target
+        """.trimIndent(),
     )
 
     object JsEcmaVersions : DefaultValues(
-        "\"v5\"",
+        "\"es5\"",
         typeOf<String>(),
         typeOf<String>(),
-        possibleValues = listOf("\"v5\"")
+        possibleValues = listOf("\"es5\"", "\"es2015\"")
     )
 
     object JsModuleKinds : DefaultValues(
-        "${typeOf<JsModuleKind>()}.${JsModuleKind.MODULE_PLAIN.name}",
-        typeOf<JsModuleKind>(),
-        typeOf<String>(),
+        "null",
+        typeOf<JsModuleKind?>(),
+        typeOf<String?>(),
         possibleValues = listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\""),
         fromKotlinOptionConverterProp = """
-        ${typeOf<JsModuleKind>()}.fromKind(this)
+        this?.let { ${typeOf<JsModuleKind>()}.fromKind(it) }
         """.trimIndent(),
         toKotlinOptionConverterProp = """
-        this.kind
+        this?.kind
         """.trimIndent()
     )
 

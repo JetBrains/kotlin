@@ -1,0 +1,29 @@
+FILE: complexTypeUnwrapping.kt
+    public abstract class AbstractField<out F : R|AbstractField<F>|> : R|kotlin/Any| {
+        public constructor<out F : R|AbstractField<F>|>(): R|AbstractField<F>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class AbstractElement<EE : R|AbstractElement<EE, EF>|, EF : R|AbstractField<EF>|> : R|kotlin/Any| {
+        public constructor<EE : R|AbstractElement<EE, EF>|, EF : R|AbstractField<EF>|>(): R|AbstractElement<EE, EF>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface ElementOrRef<RE : R|AbstractElement<RE, RF>|, RF : R|AbstractField<RF>|> : R|kotlin/Any| {
+        public abstract val element: R|RE|
+            public get(): R|RE|
+
+    }
+    public final fun foo(x: R|ElementOrRef<*, *>|): R|AbstractElement<*, out AbstractField<*>>| {
+        ^foo R|<local>/x|.R|SubstitutionOverride</ElementOrRef.element: R|CapturedType(*)|>|
+    }
+    public abstract interface FieldOrRef<FF : R|AbstractField<FF>|> : R|kotlin/Any| {
+        public abstract val field: R|FF|
+            public get(): R|FF|
+
+    }
+    public final fun bar(y: R|FieldOrRef<*>|): R|AbstractField<*>| {
+        ^bar R|<local>/y|.R|SubstitutionOverride</FieldOrRef.field: R|CapturedType(*)|>|
+    }

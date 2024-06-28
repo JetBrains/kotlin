@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtStringTemplateExpression at (1,16-39)
+    ERROR_SUPPRESSION      text ranges: [(15,38)]
+      PSI: KtStringTemplateExpression at (1,16-39)

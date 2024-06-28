@@ -14,7 +14,7 @@ fun <T> bar(ff: <!UNRESOLVED_REFERENCE!>Err<!>.() -> Unit) {
 data class User(val surname: String)
 
 fun foo() {
-    bar<String> {
+    bar<String> <!UNRESOLVED_REFERENCE!>{
         User::surname
-    }
+    }<!>
 }

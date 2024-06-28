@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 
 inline fun on(body: () -> Any) = body().toString()
 

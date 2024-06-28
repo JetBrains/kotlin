@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
     companion object {

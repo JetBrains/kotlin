@@ -1,0 +1,46 @@
+KT element: KtClass
+KT element text:
+public final class I public constructor(p: A) : A {
+    private final val p: A /* compiled code */
+
+    public open var bar: kotlin.Long /* compiled code */
+
+    public open val kotlin.Int.doo: kotlin.String /* compiled code */
+
+    public open val foo: kotlin.Int /* compiled code */
+
+    public open var kotlin.Int.zoo: kotlin.Unit /* compiled code */
+
+    public open fun foo(): kotlin.Unit { /* compiled code */ }
+
+    public open fun kotlin.Int.smth(): kotlin.Short { /* compiled code */ }
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] class I : R|A| {
+    public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+    public open [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/Int|.smth(): R|kotlin/Short|
+
+    public open [ResolvedTo(BODY_RESOLVE)] var bar: R|kotlin/Long|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Long|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Long|): R|kotlin/Unit|
+
+    public open [ResolvedTo(BODY_RESOLVE)] val R|kotlin/Int|.doo: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+    public open [ResolvedTo(BODY_RESOLVE)] val foo: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    private final [ResolvedTo(BODY_RESOLVE)] val p: R|A|
+        private [ResolvedTo(BODY_RESOLVE)] get(): R|A|
+
+    public open [ResolvedTo(BODY_RESOLVE)] var R|kotlin/Int|.zoo: R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Unit|): R|kotlin/Unit|
+
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor([ResolvedTo(BODY_RESOLVE)] p: R|A|): R|I|
+
+}

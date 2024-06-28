@@ -6,28 +6,17 @@
 package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import com.intellij.util.containers.FactoryMap
-import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.*
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
 import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
 import org.jetbrains.kotlin.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
-import kotlin.Any
-import kotlin.Array
-import kotlin.Boolean
-import kotlin.Int
-import kotlin.String
-import kotlin.Suppress
-import kotlin.Unit
-import kotlin.apply
-import kotlin.arrayOf
-import kotlin.check
 import kotlin.contracts.ExperimentalContracts
-import kotlin.error
-import kotlin.let
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
 
 /**
  * Compares two metadata modules ([KlibModuleMetadata]). Returns [Result], which may hold a list
@@ -36,7 +25,6 @@ import kotlin.reflect.KProperty0
  * The entry point is [MetadataDeclarationsComparator.Companion.compare] function.
  */
 // TODO: extract to kotlinx-metadata-klib library?
-@Suppress("unused")
 class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {
@@ -54,9 +42,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
     }
 
     sealed class Result {
-        object Success : Result() {
-            override fun toString() = "Success"
-        }
+        data object Success : Result()
 
         class Failure(val mismatches: Collection<Mismatch>) : Result() {
             init {
@@ -67,126 +53,174 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate", "unused")
+    @OptIn(ExperimentalContracts::class)
     sealed interface PathElement {
-        val name: String
-
-        object Root : PathElement {
-            override val name get() = "Root"
-        }
+        data object Root : PathElement
 
         class Module(val moduleA: KlibModuleMetadata, val moduleB: KlibModuleMetadata) : PathElement {
-            override val name get() = moduleA.name
+            override fun toString() = "Module ${moduleA.name}"
         }
 
-        class Package(packageFqName: String, val fragmentsA: List<KmModuleFragment>, val fragmentsB: List<KmModuleFragment>) : PathElement {
-            override val name = packageFqName.ifEmpty { "<root>" }
+        class Package(
+            val packageFqName: String,
+            val fragmentsA: List<KmModuleFragment>,
+            val fragmentsB: List<KmModuleFragment>
+        ) : PathElement {
+            override fun toString() = "Package ${if (packageFqName.isEmpty()) "<root>" else "'$packageFqName'"}"
         }
 
         class Class(val clazzA: KmClass, val clazzB: KmClass) : PathElement {
-            override val name get() = clazzA.name.split("/").last()
+            override fun toString() = "Class '${clazzA.name.split("/").last()}'"
         }
 
         class TypeAlias(val typeAliasA: KmTypeAlias, val typeAliasB: KmTypeAlias) : PathElement {
-            override val name get() = typeAliasA.name
+            override fun toString() = "TypeAlias '${typeAliasA.name}'"
         }
 
         class Property(val propertyA: KmProperty, val propertyB: KmProperty) : PathElement {
-            override val name get() = propertyA.name
+            override fun toString() = "Property '${propertyA.name}'"
         }
 
         class Function(val functionA: KmFunction, val functionB: KmFunction) : PathElement {
-            override val name get() = functionA.name
+            override fun toString() = "Function '${functionA.name}', TxtDump: ${functionA.dumpToString()}"
         }
 
         class Constructor(val constructorA: KmConstructor, val constructorB: KmConstructor) : PathElement {
-            override val name get() = "constructor"
+            override fun toString() = "Constructor, TxtDump: ${constructorA.dumpToString()}"
         }
 
         class ValueParameter(val parameterA: KmValueParameter, val parameterB: KmValueParameter, val index: Int) : PathElement {
-            override val name get() = index.toString()
+            override fun toString() = "ValueParameter #$index"
         }
 
         class TypeParameter(val parameterA: KmTypeParameter, val parameterB: KmTypeParameter, val index: Int) : PathElement {
-            override val name get() = index.toString()
+            override fun toString() = "TypeParameter #$index"
         }
 
         class Type(val typeA: KmType, val typeB: KmType, val kind: TypeKind, val index: Int?) : PathElement {
-            override val name get() = if (index != null) "$kind $index" else kind.toString()
+            override fun toString() = buildString {
+                append(kind)
+                if (index != null) append(" #$index")
+                appendLine()
+
+                val typeADump = typeA.dumpToString(dumpExtras = true)
+                val typeBDump = typeB.dumpToString(dumpExtras = true)
+
+                if (typeADump == typeBDump)
+                    append("   TxtDump (A, B): ").append(typeADump)
+                else {
+                    append("   TxtDump (A): ").appendLine(typeADump)
+                    append("   TxtDump (B): ").append(typeBDump)
+                }
+            }
         }
 
         class TypeArgument(val argumentA: KmTypeProjection, val argumentB: KmTypeProjection, val index: Int) : PathElement {
-            override val name get() = index.toString()
+            override fun toString() = "TypeArgument #$index"
+        }
+
+        class FlexibleTypeUpperBound(val upperBoundA: KmFlexibleTypeUpperBound, val upperBoundB: KmFlexibleTypeUpperBound) : PathElement {
+            override fun toString() = "TypeFlexibleUpperBound"
         }
 
         class EnumEntry(val entryA: KlibEnumEntry, val entryB: KlibEnumEntry) : PathElement {
-            override val name get() = entryA.name
+            override fun toString() = "EnumEntry '${entryA.name}'"
+        }
+
+        class Contract(val contractA: KmContract, val contractB: KmContract) : PathElement {
+            override fun toString() = "Contract"
+        }
+
+        class Effect(val effectA: KmEffect, val effectB: KmEffect, val index: Int) : PathElement {
+            override fun toString() = "Effect #$index"
+        }
+
+        class EffectExpression(
+            val effectExpressionA: KmEffectExpression,
+            val effectExpressionB: KmEffectExpression,
+            val index: Int?
+        ) : PathElement {
+            override fun toString() = if (index != null) "EffectExpression #$index" else "EffectExpression"
         }
 
         companion object {
-            internal fun <E : Any> guess(entityA: E, entityB: E, entityKind: EntityKind, entityKey: String?): PathElement {
-                return when {
-                    entityA is KmClass && entityB is KmClass -> Class(entityA, entityB)
-                    entityA is KmTypeAlias && entityB is KmTypeAlias -> TypeAlias(entityA, entityB)
-                    entityA is KmProperty && entityB is KmProperty -> Property(entityA, entityB)
-                    entityA is KmFunction && entityB is KmFunction -> Function(entityA, entityB)
-                    entityA is KmConstructor && entityB is KmConstructor -> Constructor(entityA, entityB)
-                    entityA is KmValueParameter && entityB is KmValueParameter -> {
-                        // there is single value parameter for property setter that does not have index, use 0 as fallback value
-                        val index = entityKey?.toInt() ?: 0
-                        ValueParameter(entityA, entityB, index)
-                    }
-                    entityA is KmTypeParameter && entityB is KmTypeParameter -> {
-                        val index = entityKey!!.toInt()
-                        TypeParameter(entityA, entityB, index)
-                    }
-                    entityA is KmType && entityB is KmType -> {
-                        val optionalIndex = entityKey?.toInt()
-                        val typeKind = entityKind as TypeKind
-                        Type(entityA, entityB, typeKind, optionalIndex)
-                    }
-                    entityA is KmTypeProjection && entityB is KmTypeProjection -> {
-                        val index = entityKey!!.toInt()
-                        TypeArgument(entityA, entityB, index)
-                    }
-                    entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
-                    else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
+            internal fun <E : Any> guess(entityA: E, entityB: E, entityKind: EntityKind, entityKey: String?): PathElement = when {
+                entityA is KmClass && entityB is KmClass -> Class(entityA, entityB)
+                entityA is KmTypeAlias && entityB is KmTypeAlias -> TypeAlias(entityA, entityB)
+                entityA is KmProperty && entityB is KmProperty -> Property(entityA, entityB)
+                entityA is KmFunction && entityB is KmFunction -> Function(entityA, entityB)
+                entityA is KmConstructor && entityB is KmConstructor -> Constructor(entityA, entityB)
+                entityA is KmValueParameter && entityB is KmValueParameter -> {
+                    // there is single value parameter for property setter that does not have index, use 0 as fallback value
+                    val index = entityKey?.toInt() ?: 0
+                    ValueParameter(entityA, entityB, index)
                 }
+                entityA is KmTypeParameter && entityB is KmTypeParameter -> {
+                    val index = entityKey!!.toInt()
+                    TypeParameter(entityA, entityB, index)
+                }
+                entityA is KmType && entityB is KmType -> {
+                    val optionalIndex = entityKey?.toIntOrNull()
+                    val typeKind = entityKind as TypeKind
+                    Type(entityA, entityB, typeKind, optionalIndex)
+                }
+                entityA is KmTypeProjection && entityB is KmTypeProjection -> {
+                    val index = entityKey!!.toInt()
+                    TypeArgument(entityA, entityB, index)
+                }
+                entityA is KmContract && entityB is KmContract -> Contract(entityA, entityB)
+                entityA is KmEffect && entityB is KmEffect -> {
+                    val index = entityKey!!.toInt()
+                    Effect(entityA, entityB, index)
+                }
+                entityA is KmEffectExpression && entityB is KmEffectExpression -> {
+                    val optionalIndex = entityKey?.toInt()
+                    EffectExpression(entityA, entityB, optionalIndex)
+                }
+                entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                entityA is KmFlexibleTypeUpperBound && entityB is KmFlexibleTypeUpperBound -> FlexibleTypeUpperBound(entityA, entityB)
+                else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
             }
         }
     }
 
     sealed interface EntityKind {
-        enum class AnnotationKind : EntityKind {
-            REGULAR,
-            GETTER,
-            SETTER;
+        enum class AnnotationKind(val alias: String) : EntityKind {
+            REGULAR("Annotation"),
+            GETTER("GetterAnnotation"),
+            SETTER("SetterAnnotation");
 
-            override fun toString() = "AnnotationKind.$name"
+            override fun toString() = alias
         }
 
-        enum class TypeKind : EntityKind {
-            RETURN,
-            SUPERTYPE,
-            UNDERLYING,
-            EXPANDED,
-            RECEIVER,
-            ABBREVIATED,
-            OUTER,
-            UPPER_BOUND,
-            VALUE_PARAMETER,
-            VALUE_PARAMETER_VARARG,
-            TYPE_ARGUMENT;
+        enum class TypeKind(val alias: String) : EntityKind {
+            RETURN("ReturnType"),
+            SUPERTYPE("SuperType"),
+            UNDERLYING("TypeAliasUnderlyingType"),
+            EXPANDED("TypeAliasExpandedType"),
+            RECEIVER("ReceiverParameterType"),
+            CONTEXT_RECEIVER("ContextReceiverType"),
+            ABBREVIATED("AbbreviatedType"),
+            OUTER("OuterType"),
+            UPPER_BOUND("UpperBoundType"),
+            VALUE_PARAMETER("ValueParameterType"),
+            VALUE_PARAMETER_VARARG("ValueParameterVarargType"),
+            TYPE_ARGUMENT("TypeArgumentType"),
+            INLINE_CLASS_UNDERLYING("InlineClassUnderlyingType"),
+            EFFECT_TYPE("EffectType"),
+            EFFECT_EXPRESSION_IS_INSTANCE_TYPE("EffectExpressionIsInstanceType"),
+            ;
 
-            override fun toString() = "TypeKind.$name"
+            override fun toString() = alias
         }
 
-        enum class FlagKind : EntityKind {
-            REGULAR,
-            GETTER,
-            SETTER;
+        enum class FlagKind(val alias: String) : EntityKind {
+            REGULAR("flag"),
+            GETTER("getter flag"),
+            SETTER("setter flag");
 
-            override fun toString() = "FlagKind.$name"
+            override fun toString() = alias
         }
 
         companion object {
@@ -217,18 +251,17 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val EnumEntry by EntityKindImpl
             val EnumEntryInKlib by EntityKindImpl
             val EnumEntryInKlibOrdinal by EntityKindImpl
+            val InlineClassUnderlyingProperty by EntityKindImpl
 
             val CompileTimeValue by EntityKindImpl
 
             val Contract by EntityKindImpl
             val Effect by EntityKindImpl
-            val EffectType by EntityKindImpl
             val EffectInvocationKind by EntityKindImpl
             val EffectConstructorArguments by EntityKindImpl
             val EffectConclusion by EntityKindImpl
             val EffectExpressionParameterIndex by EntityKindImpl
             val EffectExpressionConstantValue by EntityKindImpl
-            val EffectExpressionIsInstanceType by EntityKindImpl
             val EffectExpressionAndArguments by EntityKindImpl
             val EffectExpressionOrArguments by EntityKindImpl
 
@@ -251,7 +284,28 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         abstract val name: String
         abstract val path: List<PathElement>
 
-        protected fun pathString() = path.joinToString("/") { it.name }
+        protected fun StringBuilder.appendNameKind(): StringBuilder {
+            when (val kind = kind) {
+                is FlagKind -> append("state of ").append(kind)
+                else -> append(kind)
+            }
+            return append(if (name.isEmpty()) "" else " '$name'")
+        }
+
+        protected fun StringBuilder.appendPath(): StringBuilder {
+            val filteredPath = path.filter { it !is PathElement.Root }
+            filteredPath.forEachIndexed { pathElementIndex, pathElement ->
+                val pathElementLines = pathElement.toString().lines()
+                pathElementLines.forEachIndexed { pathElementLineIndex, pathElementLine ->
+                    val prefix = when {
+                        pathElementIndex == 0 && pathElementLineIndex == 0 -> "at "
+                        else -> "   "
+                    }
+                    append(prefix).appendLine(pathElementLine)
+                }
+            }
+            return this
+        }
 
         // an entity has different non-nullable values
         data class DifferentValues(
@@ -261,10 +315,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val valueA: Any,
             val valueB: Any
         ) : Mismatch() {
-            // TODO: fix Kotlin metadata rendering for values
-            override fun toString(): String {
-                val spacedName = if (name.isEmpty()) "" else "$name "
-                return "$kind ${spacedName}is different in (A): $valueA and (B): $valueB; path: ${pathString()}"
+            override fun toString() = buildString {
+                append("Different ").appendNameKind().appendLine()
+                append("(A): ").appendLine(valueA)
+                append("(B): ").appendLine(valueB)
+                appendPath()
             }
         }
 
@@ -277,12 +332,22 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             val existentValue: Any,
             val missingInA: Boolean
         ) : Mismatch() {
-            val missingInB: Boolean
-                get() = !missingInA
+            @Suppress("unused")
+            val missingInB: Boolean get() = !missingInA
 
-            override fun toString(): String {
+            override fun toString() = buildString {
                 val (missing, existing) = if (missingInA) "A" to "B" else "B" to "A"
-                return "Missing $kind in ($missing): '$name'; in ($existing) it's: $existentValue; path: '${pathString()}'"
+                appendNameKind().appendLine(" is missing in ($missing)")
+                val existentValueText = when (val existentValue = existentValue) {
+                    is KmType -> existentValue.dumpToString(dumpExtras = true)
+                    is KmClass -> "Class '${existentValue.name}'"
+                    is KmFunction -> existentValue.dumpToString()
+                    is KmConstructor -> existentValue.dumpToString()
+                    is KmTypeProjection -> existentValue.dumpToString(dumpExtras = true)
+                    else -> existentValue.toString()
+                }
+                appendLine("($existing): $existentValueText")
+                appendPath()
             }
         }
     }
@@ -428,7 +493,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityListA = functionListA,
             entityListB = functionListB,
             entityKind = EntityKind.Function,
-            groupingKeySelector = { _, function -> function.mangle() },
+            groupingKeySelector = { _, function -> function.dumpToString() },
             entitiesComparator = ::compareFunctions
         )
     }
@@ -443,7 +508,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityListA = constructorListA,
             entityListB = constructorListB,
             entityKind = EntityKind.Constructor,
-            groupingKeySelector = { _, constructor -> constructor.mangle() },
+            groupingKeySelector = { _, constructor -> constructor.dumpToString() },
             entitiesComparator = ::compareConstructors
         )
     }
@@ -463,11 +528,27 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
-    private fun compareTypeLists(
+    private fun compareOrderInsensitiveTypeLists(
         containerContext: Context,
         typeListA: List<KmType>,
         typeListB: List<KmType>,
         typeKind: TypeKind
+    ) {
+        compareUniqueEntityLists(
+            containerContext = containerContext,
+            entityListA = typeListA,
+            entityListB = typeListB,
+            entityKind = typeKind,
+            groupingKeySelector = { _, type -> type.dumpToString(dumpExtras = false) },
+            entitiesComparator = ::compareTypes
+        )
+    }
+
+    private fun compareOrderSensitiveTypeLists(
+        containerContext: Context,
+        typeListA: List<KmType>,
+        typeListB: List<KmType>,
+        @Suppress("SameParameterValue") typeKind: TypeKind
     ) {
         compareUniqueEntityLists(
             containerContext = containerContext,
@@ -511,17 +592,33 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    @OptIn(ExperimentalContextReceivers::class)
     private fun compareClasses(
         classContext: Context,
         classA: KmClass,
         classB: KmClass
     ) {
-        compareFlags(classContext, classA.flags, classB.flags, CLASS_FLAGS)
+        compareFlags(classContext, classA, classB, CLASS_FLAGS)
         compareAnnotationLists(classContext, classA.annotations, classB.annotations)
 
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
-        compareTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        compareOrderInsensitiveTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
+        compareOrderSensitiveTypeLists(classContext, classA.contextReceiverTypes, classB.contextReceiverTypes, TypeKind.CONTEXT_RECEIVER)
+
+        compareNullableEntities(
+            containerContext = classContext,
+            entityA = classA.inlineClassUnderlyingType,
+            entityB = classB.inlineClassUnderlyingType,
+            entityKind = TypeKind.INLINE_CLASS_UNDERLYING,
+            entitiesComparator = ::compareTypes
+        )
+        compareNullableValues(
+            containerContext = classContext,
+            valueA = classA.inlineClassUnderlyingPropertyName,
+            valueB = classB.inlineClassUnderlyingPropertyName,
+            valueKind = EntityKind.InlineClassUnderlyingProperty
+        )
 
         compareConstructorLists(classContext, classA.constructors, classB.constructors)
         compareTypeAliasLists(classContext, classA.typeAliases, classB.typeAliases)
@@ -550,7 +647,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeAliasA: KmTypeAlias,
         typeAliasB: KmTypeAlias
     ) {
-        compareFlags(typeAliasContext, typeAliasA.flags, typeAliasB.flags, TYPE_ALIAS_FLAGS)
+        compareFlags(typeAliasContext, typeAliasA, typeAliasB, TYPE_ALIAS_FLAGS)
         compareAnnotationLists(typeAliasContext, typeAliasA.annotations, typeAliasB.annotations)
 
         compareTypeParameterLists(typeAliasContext, typeAliasA.typeParameters, typeAliasB.typeParameters)
@@ -571,15 +668,18 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    @OptIn(ExperimentalContextReceivers::class)
     @Suppress("DuplicatedCode")
     private fun compareProperties(
         propertyContext: Context,
         propertyA: KmProperty,
         propertyB: KmProperty
     ) {
-        compareFlags(propertyContext, propertyA.flags, propertyB.flags, PROPERTY_FLAGS)
-        compareFlags(propertyContext, propertyA.getterFlags, propertyB.getterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
-        compareFlags(propertyContext, propertyA.setterFlags, propertyB.setterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
+        compareFlags(propertyContext, propertyA, propertyB, PROPERTY_FLAGS)
+        compareFlags(propertyContext, propertyA.getter, propertyB.getter, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
+        compareValues(propertyContext, propertyA.setter != null, propertyB.setter != null, FlagKind.REGULAR, "hasSetter")
+        if (propertyA.setter != null && propertyB.setter != null)
+            compareFlags(propertyContext, propertyA.setter!!, propertyB.setter!!, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
 
         compareAnnotationLists(propertyContext, propertyA.annotations, propertyB.annotations)
         compareAnnotationLists(propertyContext, propertyA.getterAnnotations, propertyB.getterAnnotations, AnnotationKind.GETTER)
@@ -593,6 +693,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityB = propertyB.receiverParameterType,
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
+        )
+        compareOrderSensitiveTypeLists(
+            containerContext = propertyContext,
+            typeListA = propertyA.contextReceiverTypes,
+            typeListB = propertyB.contextReceiverTypes,
+            typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
             containerContext = propertyContext,
@@ -613,14 +719,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
-    @OptIn(ExperimentalContracts::class)
+    @OptIn(ExperimentalContracts::class, ExperimentalContextReceivers::class)
     @Suppress("DuplicatedCode")
     private fun compareFunctions(
         functionContext: Context,
         functionA: KmFunction,
         functionB: KmFunction
     ) {
-        compareFlags(functionContext, functionA.flags, functionB.flags, FUNCTION_FLAGS)
+        compareFlags(functionContext, functionA, functionB, FUNCTION_FLAGS)
         compareAnnotationLists(functionContext, functionA.annotations, functionB.annotations)
 
         compareTypeParameterLists(functionContext, functionA.typeParameters, functionB.typeParameters)
@@ -631,6 +737,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityB = functionB.receiverParameterType,
             entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
+        )
+        compareOrderSensitiveTypeLists(
+            containerContext = functionContext,
+            typeListA = functionA.contextReceiverTypes,
+            typeListB = functionB.contextReceiverTypes,
+            typeKind = TypeKind.CONTEXT_RECEIVER
         )
         compareEntities(
             containerContext = functionContext,
@@ -655,7 +767,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                 entityKind = EntityKind.Effect,
                 groupingKeySelector = { index, _ -> index.toString() }
             ) { effectContext, effectA, effectB ->
-                compareValues(effectContext, effectA.type, effectB.type, EntityKind.EffectType)
+                compareValues(effectContext, effectA.type, effectB.type, TypeKind.EFFECT_TYPE)
                 compareNullableValues(effectContext, effectA.invocationKind, effectB.invocationKind, EntityKind.EffectInvocationKind)
 
                 compareEffectExpressionLists(
@@ -680,7 +792,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         constructorA: KmConstructor,
         constructorB: KmConstructor
     ) {
-        compareFlags(constructorContext, constructorA.flags, constructorB.flags, CONSTRUCTOR_FLAGS)
+        compareFlags(constructorContext, constructorA, constructorB, CONSTRUCTOR_FLAGS)
         compareAnnotationLists(constructorContext, constructorA.annotations, constructorB.annotations)
 
         compareValueParameterLists(constructorContext, constructorA.valueParameters, constructorB.valueParameters)
@@ -691,7 +803,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         valueParameterA: KmValueParameter,
         valueParameterB: KmValueParameter
     ) {
-        compareFlags(valueParameterContext, valueParameterA.flags, valueParameterB.flags, VALUE_PARAMETER_FLAGS)
+        compareFlags(valueParameterContext, valueParameterA, valueParameterB, VALUE_PARAMETER_FLAGS)
         compareAnnotationLists(valueParameterContext, valueParameterA.annotations, valueParameterB.annotations)
 
         compareNullableEntities(
@@ -715,7 +827,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeA: KmType,
         typeB: KmType
     ) {
-        compareFlags(typeContext, typeA.flags, typeB.flags, TYPE_FLAGS)
+        compareFlags(typeContext, typeA, typeB, TYPE_FLAGS)
         compareAnnotationLists(typeContext, typeA.annotations, typeB.annotations)
 
         compareValues(typeContext, typeA.classifier, typeB.classifier, EntityKind.Classifier)
@@ -784,14 +896,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeParameterA: KmTypeParameter,
         typeParameterB: KmTypeParameter
     ) {
-        compareFlags(typeParameterContext, typeParameterA.flags, typeParameterB.flags, TYPE_PARAMETER_FLAGS)
+        compareFlags(typeParameterContext, typeParameterA, typeParameterB, TYPE_PARAMETER_FLAGS)
         compareAnnotationLists(typeParameterContext, typeParameterA.annotations, typeParameterB.annotations)
 
         compareValues(typeParameterContext, typeParameterA.id, typeParameterB.id, EntityKind.TypeParameterId)
         compareValues(typeParameterContext, typeParameterA.name, typeParameterB.name, EntityKind.TypeParameterName)
 
         compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, EntityKind.TypeParameterVariance)
-        compareTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
+        compareOrderInsensitiveTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -800,7 +912,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         effectExpressionA: KmEffectExpression,
         effectExpressionB: KmEffectExpression
     ) {
-        compareFlags(effectExpressionContext, effectExpressionA.flags, effectExpressionB.flags, EFFECT_EXPRESSION_FLAGS)
+        compareFlags(effectExpressionContext, effectExpressionA, effectExpressionB, EFFECT_EXPRESSION_FLAGS)
         compareNullableValues(
             containerContext = effectExpressionContext,
             valueA = effectExpressionA.parameterIndex,
@@ -818,7 +930,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = effectExpressionContext,
             entityA = effectExpressionA.isInstanceType,
             entityB = effectExpressionB.isInstanceType,
-            entityKind = EntityKind.EffectExpressionIsInstanceType,
+            entityKind = TypeKind.EFFECT_EXPRESSION_IS_INSTANCE_TYPE,
             entitiesComparator = ::compareTypes
         )
 
@@ -847,6 +959,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             mismatches += Mismatch.DifferentValues(valueKind, valueName.orEmpty(), containerContext.path, valueA, valueB)
     }
 
+    @Suppress("ConvertArgumentToSet")
     private fun <E : Any> compareValueLists(
         containerContext: Context,
         listA: Collection<E>,
@@ -969,16 +1082,16 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
-    private fun compareFlags(
+    private fun <T> compareFlags(
         containerContext: Context,
-        flagsA: Flags,
-        flagsB: Flags,
-        flagsToCompare: Array<KProperty0<Flag>>,
+        flagsA: T,
+        flagsB: T,
+        flagsToCompare: Array<out KProperty1<T, Any>>,
         flagKind: FlagKind = FlagKind.REGULAR
     ) {
         for (flag in flagsToCompare) {
-            val valueA = flag.get()(flagsA)
-            val valueB = flag.get()(flagsB)
+            val valueA = flag.get(flagsA)
+            val valueB = flag.get(flagsB)
 
             compareValues(containerContext, valueA, valueB, flagKind, flag.name)
         }
@@ -991,138 +1104,161 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             config: Config = Config.Default
         ): Result = MetadataDeclarationsComparator(config).compareModules(metadataA, metadataB)
 
-        private val VISIBILITY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::IS_INTERNAL,
-            Flag.Common::IS_PRIVATE,
-            Flag.Common::IS_PROTECTED,
-            Flag.Common::IS_PUBLIC,
-            Flag.Common::IS_PRIVATE_TO_THIS,
-            Flag.Common::IS_LOCAL
+        private val CLASS_FLAGS: Array<KProperty1<KmClass, Any>> = arrayOf(
+            KmClass::hasAnnotations,
+            KmClass::visibility,
+            KmClass::modality,
+            KmClass::kind,
+            KmClass::isInner,
+            KmClass::isData,
+            KmClass::isExternal,
+            KmClass::isExpect,
+            KmClass::isValue,
+            KmClass::isFunInterface,
+            KmClass::hasEnumEntries
         )
 
-        private val MODALITY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::IS_FINAL,
-            Flag.Common::IS_OPEN,
-            Flag.Common::IS_ABSTRACT,
-            Flag.Common::IS_SEALED
+        private val TYPE_ALIAS_FLAGS: Array<KProperty1<KmTypeAlias, Any>> = arrayOf(
+            KmTypeAlias::hasAnnotations,
+            KmTypeAlias::visibility
         )
 
-        private val CLASS_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Class::IS_CLASS,
-            Flag.Class::IS_INTERFACE,
-            Flag.Class::IS_ENUM_CLASS,
-            Flag.Class::IS_ENUM_ENTRY,
-            Flag.Class::IS_ANNOTATION_CLASS,
-            Flag.Class::IS_OBJECT,
-            Flag.Class::IS_COMPANION_OBJECT,
-            Flag.Class::IS_INNER,
-            Flag.Class::IS_DATA,
-            Flag.Class::IS_EXTERNAL,
-            Flag.Class::IS_EXPECT,
-            Flag.Class::IS_VALUE,
-            Flag.Class::IS_FUN,
-            Flag.Class::HAS_ENUM_ENTRIES,
+        private val CONSTRUCTOR_FLAGS: Array<KProperty1<KmConstructor, Any>> = arrayOf(
+            KmConstructor::hasAnnotations,
+            KmConstructor::visibility,
+            KmConstructor::isSecondary,
+            KmConstructor::hasNonStableParameterNames
         )
 
-        private val TYPE_ALIAS_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS
+        private val FUNCTION_FLAGS: Array<KProperty1<KmFunction, Any>> = arrayOf(
+            KmFunction::hasAnnotations,
+            KmFunction::visibility,
+            KmFunction::modality,
+            KmFunction::kind,
+            KmFunction::isOperator,
+            KmFunction::isInfix,
+            KmFunction::isInline,
+            KmFunction::isTailrec,
+            KmFunction::isExternal,
+            KmFunction::isSuspend,
+            KmFunction::isExpect,
+            KmFunction::hasNonStableParameterNames
         )
 
-        private val CONSTRUCTOR_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            Flag.Constructor::IS_SECONDARY,
-            Flag.Constructor::HAS_NON_STABLE_PARAMETER_NAMES
+        private val PROPERTY_FLAGS: Array<KProperty1<KmProperty, Any>> = arrayOf(
+            KmProperty::hasAnnotations,
+            KmProperty::visibility,
+            KmProperty::modality,
+            KmProperty::kind,
+            KmProperty::isVar,
+            KmProperty::isConst,
+            KmProperty::isLateinit,
+            KmProperty::hasConstant,
+            KmProperty::isExternal,
+            KmProperty::isDelegated,
+            KmProperty::isExpect
         )
 
-        private val FUNCTION_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Function::IS_DECLARATION,
-            Flag.Function::IS_FAKE_OVERRIDE,
-            Flag.Function::IS_DELEGATION,
-            Flag.Function::IS_SYNTHESIZED,
-            Flag.Function::IS_OPERATOR,
-            Flag.Function::IS_INFIX,
-            Flag.Function::IS_INLINE,
-            Flag.Function::IS_TAILREC,
-            Flag.Function::IS_EXTERNAL,
-            Flag.Function::IS_SUSPEND,
-            Flag.Function::IS_EXPECT,
-            Flag.Function::HAS_NON_STABLE_PARAMETER_NAMES
+        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty1<KmPropertyAccessorAttributes, Any>> = arrayOf(
+            KmPropertyAccessorAttributes::hasAnnotations,
+            KmPropertyAccessorAttributes::visibility,
+            KmPropertyAccessorAttributes::modality,
+            KmPropertyAccessorAttributes::isNotDefault,
+            KmPropertyAccessorAttributes::isExternal,
+            KmPropertyAccessorAttributes::isInline
         )
 
-        private val PROPERTY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Property::IS_DECLARATION,
-            Flag.Property::IS_FAKE_OVERRIDE,
-            Flag.Property::IS_DELEGATION,
-            Flag.Property::IS_SYNTHESIZED,
-            Flag.Property::IS_VAR,
-            Flag.Property::HAS_GETTER,
-            Flag.Property::HAS_SETTER,
-            Flag.Property::IS_CONST,
-            Flag.Property::IS_LATEINIT,
-            Flag.Property::HAS_CONSTANT,
-            Flag.Property::IS_EXTERNAL,
-            Flag.Property::IS_DELEGATED,
-            Flag.Property::IS_EXPECT
+        private val TYPE_FLAGS: Array<KProperty1<KmType, Boolean>> = arrayOf(
+            KmType::isNullable,
+            KmType::isSuspend,
+            KmType::isDefinitelyNonNull,
         )
 
-        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.PropertyAccessor::IS_NOT_DEFAULT,
-            Flag.PropertyAccessor::IS_EXTERNAL,
-            Flag.PropertyAccessor::IS_INLINE
+        private val TYPE_PARAMETER_FLAGS: Array<KProperty1<KmTypeParameter, Boolean>> = arrayOf(
+            KmTypeParameter::isReified
         )
 
-        private val TYPE_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Type::IS_NULLABLE,
-            Flag.Type::IS_SUSPEND
+        private val VALUE_PARAMETER_FLAGS: Array<KProperty1<KmValueParameter, Boolean>> = arrayOf(
+            KmValueParameter::hasAnnotations,
+            KmValueParameter::declaresDefaultValue,
+            KmValueParameter::isCrossinline,
+            KmValueParameter::isNoinline
         )
 
-        private val TYPE_PARAMETER_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.TypeParameter::IS_REIFIED
-        )
-
-        private val VALUE_PARAMETER_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            Flag.ValueParameter::DECLARES_DEFAULT_VALUE,
-            Flag.ValueParameter::IS_CROSSINLINE,
-            Flag.ValueParameter::IS_NOINLINE
-        )
-
-        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.EffectExpression::IS_NEGATED,
-            Flag.EffectExpression::IS_NULL_CHECK_PREDICATE
+        @ExperimentalContracts
+        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty1<KmEffectExpression, Boolean>> = arrayOf(
+            KmEffectExpression::isNegated,
+            KmEffectExpression::isNullCheckPredicate
         )
 
         /**
          * We need a stable order for overloaded functions.
          */
-        private fun KmFunction.mangle(): String {
-            return buildString {
-                receiverParameterType?.classifier?.let(::append)
-                append('.')
-                append(name)
-                append('.')
-                typeParameters.joinTo(this, prefix = "<", postfix = ">", transform = KmTypeParameter::name)
-                append('.')
-                valueParameters.joinTo(this, prefix = "(", postfix = ")", transform = KmValueParameter::name)
+        private fun KmFunction.dumpToString(): String = buildString {
+            receiverParameterType?.classifier?.let { classifier ->
+                append(classifier.dumpToString(dumpClassifierType = true)).append('.')
+            }
+            append(name)
+            if (typeParameters.isNotEmpty()) {
+                typeParameters.joinTo(this, prefix = "<", postfix = ">") { typeParameter ->
+                    val typeParameterText = "#${typeParameter.id}"
+                    if (typeParameter.upperBounds.isNotEmpty()) {
+                        val upperBoundsText = typeParameter.upperBounds.joinToString { type -> type.dumpToString(dumpExtras = false) }
+                        "$typeParameterText: $upperBoundsText"
+                    } else typeParameterText
+                }
+            }
+            valueParameters.joinTo(this, prefix = "(", postfix = ")") { valueParameter ->
+                valueParameter.type.dumpToString(dumpExtras = false)
             }
         }
 
-        private fun KmConstructor.mangle(): String {
-            return valueParameters.joinToString(prefix = "(", postfix = ")", transform = KmValueParameter::name)
+        private fun KmConstructor.dumpToString(): String =
+            valueParameters.joinToString(prefix = "(", postfix = ")", transform = KmValueParameter::name)
+
+        private fun KmClassifier.dumpToString(dumpClassifierType: Boolean): String {
+            return when (this) {
+                is KmClassifier.Class -> if (dumpClassifierType) "Class($name)" else name
+                is KmClassifier.TypeAlias -> if (dumpClassifierType) "TypeAlias($name)" else name
+                is KmClassifier.TypeParameter -> if (dumpClassifierType) "TypeParameter(#$id)" else "#$id"
+            }
+        }
+
+        private fun KmTypeProjection.dumpToString(dumpExtras: Boolean): String {
+            val prefix = when (variance) {
+                null -> if (type == null) return "*" else "? "
+                KmVariance.INVARIANT -> ""
+                KmVariance.IN -> "in "
+                KmVariance.OUT -> "out "
+            }
+            val suffix = type?.dumpToString(dumpExtras) ?: "?"
+            return "$prefix$suffix"
+        }
+
+        private fun KmType.dumpToString(dumpExtras: Boolean): String = buildString {
+            append(classifier.dumpToString(dumpClassifierType = false))
+            if (isNullable) append("?")
+            if (isDefinitelyNonNull) append("!!")
+            if (arguments.isNotEmpty()) {
+                arguments.joinTo(this, prefix = "<", postfix = ">") { argument ->
+                    argument.dumpToString(dumpExtras = false)
+                }
+            }
+            if (dumpExtras) {
+                abbreviatedType?.let { abbreviatedType ->
+                    append(", abbreviation=")
+                    append(abbreviatedType.dumpToString(dumpExtras = false))
+                }
+                outerType?.let { outerType ->
+                    append(", outer=")
+                    append(outerType.dumpToString(dumpExtras = false))
+                }
+                flexibleTypeUpperBound?.let { flexibleTypeUpperBound ->
+                    append(", flexibleTypeUpperBound=")
+                    flexibleTypeUpperBound.typeFlexibilityId?.let { append(it).append(" ") }
+                    append(flexibleTypeUpperBound.type.dumpToString(dumpExtras = false))
+                }
+            }
         }
 
         private inline fun <T, K> Iterable<T>.groupByIndexed(keySelector: (Int, T) -> K): Map<K, List<T>> {

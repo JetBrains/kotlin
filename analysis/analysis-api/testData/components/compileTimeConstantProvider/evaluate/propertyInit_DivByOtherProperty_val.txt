@@ -1,9 +1,3 @@
 expression: 42 / d
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: NOT_EVALUATED
 constantValueKind: NOT_EVALUATED
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 42
-constantLikeValueKind: Int

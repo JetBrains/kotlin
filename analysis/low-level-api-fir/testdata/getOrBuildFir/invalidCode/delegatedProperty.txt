@@ -1,9 +1,0 @@
-KT element: KtProperty
-FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public final val p: R|kotlin/String|by ERROR_EXPR(Should have delegate)
-    public get(): R|kotlin/String| {
-        ^ D|/p|.<Unresolved name: getValue>#(Null(null), ::R|/p|)
-    }

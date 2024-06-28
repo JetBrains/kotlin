@@ -1,5 +1,0 @@
-package
-
-public inline fun </*0*/ reified X> f(): kotlin.reflect.KType
-public inline fun </*0*/ reified Y> g(): kotlin.reflect.KType
-public fun test(): kotlin.Unit

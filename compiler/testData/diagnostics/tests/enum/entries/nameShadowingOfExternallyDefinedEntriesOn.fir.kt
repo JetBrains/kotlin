@@ -1,5 +1,6 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
+// FIR_DUMP
 
 package pckg
 
@@ -9,7 +10,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!OPT_IN_USAGE_ERROR!>entries<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>.length
         pckg.entries.length
     }
 }
@@ -20,7 +21,7 @@ class A {
 
         class B {
             fun foo() {
-                <!OPT_IN_USAGE_ERROR!>entries<!>.<!UNRESOLVED_REFERENCE!>length<!>
+                <!DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM!>entries<!>.length
                 pckg.entries.length
             }
         }

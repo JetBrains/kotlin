@@ -3,9 +3,6 @@ package test.wasm.unsafe
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
 
-private fun jsConcatStrings(a: String, b: String): String =
-    js("a + b")
-
 @OptIn(UnsafeWasmMemoryApi::class)
 class MemoryAllocationTest {
     val pageSize = 65_536
@@ -126,14 +123,6 @@ class MemoryAllocationTest {
         val max1: UInt = allocations1.maxOf { it.address }
         val min1_1: UInt = allocations1_1.minOf { it.address }
         assertTrue(max1 < min1_1)
-    }
-
-    @Test
-    fun testJsIntropInsideAllocations() {
-        withScopedMemoryAllocator { allocator ->
-            assertEquals(jsConcatStrings("str1", "str2"), "str1str2")
-            allocator.allocate(10)
-        }
     }
 
     @Test

@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int?) {
+    // The composable call is made conditionally, which means it is like an if, but with
+    // only one result having a composable call, so we just generate a single group
+    // around the whole expression.
+    val y = x ?: R()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int?, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val y = <block>{
+    val <elvis> = x
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<R()>")
+    val tmp0_group = when {
+      <elvis> == null -> {
+        R(%composer, 0)
+      }
+      else -> {
+        <elvis>
+      }
+    }
+    %composer.endReplaceGroup()
+    tmp0_group
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

@@ -6,10 +6,11 @@
 @file:Suppress("INVISIBLE_MEMBER")
 package test.time
 
+import test.TestPlatform
+import test.current
 import test.numbers.assertAlmostEquals
 import kotlin.math.nextDown
 import kotlin.math.pow
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 import kotlin.time.*
 import kotlin.random.*
@@ -21,8 +22,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
-@SharedImmutable
-private val units = DurationUnit.values()
+private val units = DurationUnit.entries
 
 class DurationTest {
 
@@ -497,6 +497,50 @@ class DurationTest {
     }
 
     @Test
+    fun truncation() {
+        fun expect(expected: Duration, value: Duration, unit: DurationUnit) {
+            assertEquals(expected, value.truncateTo(unit))
+            assertEquals(-expected, (-value).truncateTo(unit))
+        }
+        for (unit in units) {
+            expect(Duration.ZERO, Duration.ZERO, unit)
+            expect(Duration.INFINITE, Duration.INFINITE, unit)
+            expect(Duration.ZERO, 1.toDuration(unit) - 1.nanoseconds, unit)
+            repeat(100) {
+                val whole = Random.nextInt(100_000).toDuration(unit)
+                expect(whole, whole, unit)
+                if (unit > DurationUnit.NANOSECONDS) {
+                    val part = Random.nextLong(1, 1.toDuration(unit).inWholeNanoseconds).nanoseconds
+                    expect(Duration.ZERO, part, unit)
+                    expect(whole, whole + part, unit)
+                }
+            }
+        }
+        repeat(10) {
+            val d = Random.nextLong().nanoseconds
+            expect(d, d, DurationUnit.NANOSECONDS)
+        }
+        expect(12.microseconds, 12998.nanoseconds, DurationUnit.MICROSECONDS)
+        expect(1503.milliseconds, 1503_889_404.nanoseconds, DurationUnit.MILLISECONDS)
+        expect(340.seconds, 340_990_567_444L.nanoseconds, DurationUnit.SECONDS)
+        expect(3.minutes, 200.seconds, DurationUnit.MINUTES)
+        expect(4.hours, 250.minutes, DurationUnit.HOURS)
+        expect(1.days, 30.hours, DurationUnit.DAYS)
+
+        // big durations
+        run {
+            val d = (Long.MAX_VALUE / 4).milliseconds
+            for (unit in units) {
+                if (unit <= DurationUnit.MILLISECONDS) {
+                    expect(d, d, unit)
+                } else {
+                    expect(d.toLong(unit).toDuration(unit), d, unit)
+                }
+            }
+        }
+    }
+
+    @Test
     fun parseAndFormatIsoString() {
         fun test(duration: Duration, vararg isoStrings: String) {
             assertEquals(isoStrings.first(), duration.toIsoString())
@@ -567,6 +611,8 @@ class DurationTest {
 
     @Test
     fun parseAndFormatInUnits() {
+        if (TestPlatform.current == TestPlatform.WasmWasi) return
+
         var d = 1.days + 15.hours + 31.minutes + 45.seconds +
                 678.milliseconds + 920.microseconds + 516.34.nanoseconds
 

@@ -1,0 +1,26 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] lambdasInWithBodyFunction.kt
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] R> with([ResolvedTo(BODY_RESOLVE)] receiver: R|T|, [ResolvedTo(BODY_RESOLVE)] block: R|T.() -> R|): R|R| {
+        ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
+    }
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] R> R|T|.let([ResolvedTo(BODY_RESOLVE)] block: R|(T) -> R|): R|R| {
+        ^let R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(this@R|/let|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|/with|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), <L> = [ResolvedTo(BODY_RESOLVE)] with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                ^ this@R|special/anonymous|.R|/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    ^ R|<local>/it|
+                }
+                )
+            }
+            ).R|/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                ^ Int(2)
+            }
+            )
+        }
+
+    }

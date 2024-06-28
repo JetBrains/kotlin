@@ -14,4 +14,3 @@ inline class InlineMutableMap<K, V>(private val mmap: MutableMap<K, V>) : Mutabl
     override fun putAll(from: Map<out K, V>) { mmap.putAll(from) }
     override fun remove(key: K): V? = mmap.remove(key)
 }
-

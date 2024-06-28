@@ -1,0 +1,25 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@CONSTRUCTOR_PARAMETER:R|Ann|[Types]()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] param.kt
+    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/X.x] @CONSTRUCTOR_PARAMETER:R|Ann|[Types]() x: R|kotlin/Int|): R|X| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

@@ -161,6 +161,7 @@ public final class DGenericMap {
     public method replaceAll(p0: java.util.function.BiFunction): void
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -171,6 +172,7 @@ public final class DGenericMapEntry {
     public method getKey(): java.lang.Object
     public method getValue(): java.lang.Object
     public method setValue(p0: java.lang.Object): java.lang.Object
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata

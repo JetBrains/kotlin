@@ -34,25 +34,25 @@ internal fun dce(
             moduleDFG,
             externalModulesDFG,
             devirtualizationAnalysisResult,
-            // For DCE we don't wanna miss any potentially reachable function.
-            nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
+            // Do not devirtualize anything to keep the graph smaller (albeit less precise which is fine for DCE).
+            devirtualizedCallSitesUnfoldFactor = -1,
+            nonDevirtualizedCallSitesUnfoldFactor = -1,
     ).build()
 
     val referencedFunctions = mutableSetOf<IrFunction>()
     callGraph.rootExternalFunctions.forEach {
-        if (!it.isStaticFieldInitializer)
-            referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
+        referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
     }
     for (node in callGraph.directEdges.values) {
         if (!node.symbol.isStaticFieldInitializer)
             referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
         node.callSites.forEach {
-            assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
-            referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
+            if (!it.isVirtual)
+                referencedFunctions.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
         }
     }
 
-    irModule.acceptChildrenVoid(object: IrElementVisitorVoid {
+    irModule.acceptChildrenVoid(object : IrElementVisitorVoid {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -77,7 +77,7 @@ internal fun dce(
         }
     })
 
-    irModule.transformChildrenVoid(object: IrElementTransformerVoid() {
+    irModule.transformChildrenVoid(object : IrElementTransformerVoid() {
         override fun visitFile(declaration: IrFile): IrFile {
             declaration.declarations.removeAll {
                 (it is IrFunction && !referencedFunctions.contains(it))

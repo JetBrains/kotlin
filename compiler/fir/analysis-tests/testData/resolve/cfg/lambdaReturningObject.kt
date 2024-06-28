@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 
 interface Out<out E>
 fun bar(arguments: Out<IrTypeArgument>) {}

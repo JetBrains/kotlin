@@ -1,3 +1,5 @@
+// K2: See KT-65342
+
 fun main() {
     val a : Int? = null;
     var v = 1

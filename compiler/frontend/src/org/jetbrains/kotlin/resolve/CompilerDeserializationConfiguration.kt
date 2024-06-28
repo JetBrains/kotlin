@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
 open class CompilerDeserializationConfiguration(
@@ -17,7 +20,7 @@ open class CompilerDeserializationConfiguration(
     final override val skipPrereleaseCheck = languageVersionSettings.getFlag(AnalysisFlags.skipPrereleaseCheck)
 
     final override val reportErrorsOnPreReleaseDependencies =
-        !skipPrereleaseCheck && !languageVersionSettings.isPreRelease()
+        !skipPrereleaseCheck && !languageVersionSettings.isPreRelease() && !KotlinCompilerVersion.isPreRelease()
 
     final override val allowUnstableDependencies = languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies)
 

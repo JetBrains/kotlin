@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class IncDec() {
   operator fun inc() : IncDec = this
   operator fun dec() : IncDec = this

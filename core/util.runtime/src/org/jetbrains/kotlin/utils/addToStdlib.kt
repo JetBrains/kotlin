@@ -81,10 +81,20 @@ inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<
     return Pair(first, second)
 }
 
-inline fun <reified T> Iterable<*>.castAll(): Iterable<T> {
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@UnsafeCastFunction
+inline fun <reified T> List<*>.castAll(): List<@kotlin.internal.NoInfer T> {
     for (element in this) element as T
     @Suppress("UNCHECKED_CAST")
-    return this as Iterable<T>
+    return this as List<T>
+}
+
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@UnsafeCastFunction
+inline fun <reified T> Collection<*>.castAll(): Collection<@kotlin.internal.NoInfer T> {
+    for (element in this) element as T
+    @Suppress("UNCHECKED_CAST")
+    return this as Collection<T>
 }
 
 fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
@@ -216,6 +226,8 @@ inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
 inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null
 inline fun <R> runUnless(condition: Boolean, block: () -> R): R? = if (condition) null else block()
 
+inline fun <A : B, B> A.butIf(condition: Boolean, block: (A) -> B): B = if (condition) block(this) else this
+
 inline fun <T, R> Collection<T>.foldMap(transform: (T) -> R, operation: (R, R) -> R): R {
     val iterator = iterator()
     var result = transform(iterator.next())
@@ -329,4 +341,51 @@ private inline fun <T, R> Iterable<T>.zipWithDefault(other: Iterable<R>, leftDef
 
 fun <T, R> Iterable<T>.zipWithNulls(other: Iterable<R>): List<Pair<T?, R?>> {
     return zipWithDefault(other, { null }, { null })
+}
+
+/**
+ * Use this function to indicate that some when branch is semantically unreachable
+ */
+fun unreachableBranch(argument: Any?): Nothing {
+    error("This argument should've been processed by previous when branches but it wasn't: $argument")
+}
+
+/**
+ * Calls [appendElement] on [buffer] for all the elements, also appending [separator] between them and using the given [prefix]
+ * and [postfix] if supplied.
+ *
+ * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
+ * elements will be appended, followed by the [truncated] string (which defaults to "...").
+ */
+fun <T, A : Appendable> Iterable<T>.joinToWithBuffer(
+    buffer: A,
+    separator: CharSequence = ", ",
+    prefix: CharSequence = "",
+    postfix: CharSequence = "",
+    limit: Int = -1,
+    truncated: CharSequence = "...",
+    appendElement: A.(T) -> Unit,
+): A {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            buffer.appendElement(element)
+        } else break
+    }
+    if (limit in 0..<count) buffer.append(truncated)
+    buffer.append(postfix)
+    return buffer
+}
+
+fun String.countOccurrencesOf(substring: String): Int {
+    var result = 0
+    var lastIndex = 0
+    while (true) {
+        lastIndex = indexOf(substring, lastIndex) + 1
+        if (lastIndex == 0) break
+        result++
+    }
+    return result
 }

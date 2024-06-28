@@ -17,6 +17,7 @@ plugins {
 apply plugin: 'realm-android'
 
 android {
+    namespace "io.realm.examples.kotlin"
     compileSdkVersion 23
     defaultConfig {
         applicationId 'io.realm.examples.kotlin'
@@ -32,9 +33,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 }
 

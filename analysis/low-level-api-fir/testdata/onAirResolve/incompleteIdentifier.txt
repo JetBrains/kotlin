@@ -1,2 +1,0 @@
-public final [BODY_RESOLVE] val b: R|A.B|
-    public [BODY_RESOLVE] get(): R|A.B|

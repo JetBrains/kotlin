@@ -9,15 +9,17 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
-import org.jetbrains.kotlin.gradle.utils.projectCacheDir
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
+import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
@@ -25,7 +27,6 @@ import javax.inject.Inject
 abstract class GradleCompileTaskProvider @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
-    gradle: Gradle,
     task: Task,
     project: Project,
     incrementalModuleInfoProvider: Provider<IncrementalModuleInfoProvider>
@@ -45,12 +46,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(project.rootProject.projectDir)
 
     @get:Internal
-    val projectCacheDir: Provider<File> = objectFactory
-        .property(gradle.projectCacheDir)
-
-    @get:Internal
     val sessionsDir: Provider<File> = objectFactory
-        .property(GradleCompilerRunner.sessionsDir(gradle.projectCacheDir))
+        .property(project.kotlinSessionsDir)
 
     @get:Internal
     val projectName: Provider<String> = objectFactory
@@ -61,8 +58,19 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(incrementalModuleInfoProvider)
 
     @get:Internal
-    val errorsFile: Provider<File?> = objectFactory
-        .property(
-            gradle.rootProject.rootDir.resolve(".gradle/kotlin/errors/").also { it.mkdirs() }
-                .resolve("errors-${System.currentTimeMillis()}.log"))
+    val errorsFiles: SetProperty<File> = objectFactory
+        .setPropertyWithValue<File>(
+            setOfNotNull(
+                project.kotlinErrorsDir
+                    .errorFile,
+                if (!project.kotlinPropertiesProvider.kotlinProjectPersistentDirGradleDisableWrite) {
+                    project.rootDir
+                        .resolve(".gradle/kotlin/errors/")
+                        .errorFile
+                } else null,
+            )
+        )
+        .chainedDisallowChanges()
 }
+
+private val File.errorFile get() = resolve("errors-${System.currentTimeMillis()}.log")

@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyFunction(
-    override val startOffset: Int,
-    override val endOffset: Int,
+    startOffset: Int,
+    endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override val descriptor: FunctionDescriptor,
@@ -44,7 +45,10 @@ class IrLazyFunction(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : AbstractIrLazyFunction(), IrLazyFunctionBase {
-    override var parent: IrDeclarationParent by createLazyParent()
+    override var startOffset: Int = startOffset
+        set(_) = shouldNotBeCalled()
+    override var endOffset: Int = endOffset
+        set(_) = shouldNotBeCalled()
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
@@ -103,6 +107,10 @@ class IrLazyFunction(
     override var attributeOwnerId: IrAttributeContainer
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
+
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = null
+        set(_) = error("We should never need to change originalBeforeInline of external declarations.")
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

@@ -1,0 +1,58 @@
+// CHECK:
+//   Mangled name: {}testGlobalVal
+//   Public signature: /testGlobalVal|-7890151294500331033[0]
+//   Public signature debug description: {}testGlobalVal
+val testGlobalVal: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testGlobalVal>(){}kotlin.String
+  //   Public signature: /testGlobalVal.<get-testGlobalVal>|-3066052240315060283[0]
+  //   Public signature debug description: <get-testGlobalVal>(){}kotlin.String
+  get
+
+// CHECK:
+//   Mangled name: #testJUse(){}
+//   Public signature: /testJUse|-778395660464810777[0]
+//   Public signature debug description: testJUse(){}
+fun testJUse(): Unit
+
+// CHECK:
+//   Mangled name: #testLocalVal(){}
+//   Public signature: /testLocalVal|-7792259248330039914[0]
+//   Public signature debug description: testLocalVal(){}
+fun testLocalVal(): Unit
+
+// CHECK:
+//   Mangled name: #testLocalVarUse(){}
+//   Public signature: /testLocalVarUse|-2742930964593648658[0]
+//   Public signature debug description: testLocalVarUse(){}
+fun testLocalVarUse(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #testReturnValue(){}kotlin.String
+//   Public signature: /testReturnValue|5442151564926968913[0]
+//   Public signature debug description: testReturnValue(){}kotlin.String
+fun testReturnValue(): String
+
+// CHECK:
+//   Mangled name: #testUse(){}
+//   Public signature: /testUse|-7403625566932697674[0]
+//   Public signature debug description: testUse(){}
+fun testUse(): Unit
+
+// CHECK:
+//   Mangled name: #use(kotlin.String){}
+//   Public signature: /use|282927213234974825[0]
+//   Public signature debug description: use(kotlin.String){}
+fun use(s: String): Unit
+
+// CHECK:
+//   Mangled name: {}testGlobalValGetter
+//   Public signature: /testGlobalValGetter|4373373755408489194[0]
+//   Public signature debug description: {}testGlobalValGetter
+val testGlobalValGetter: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testGlobalValGetter>(){}kotlin.String
+  //   Public signature: /testGlobalValGetter.<get-testGlobalValGetter>|4232922191754925744[0]
+  //   Public signature debug description: <get-testGlobalValGetter>(){}kotlin.String
+  get(): String
+

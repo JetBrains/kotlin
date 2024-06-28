@@ -1,0 +1,34 @@
+@file:Suppress("unused", "UNUSED_PARAMETER", "NOTHING_TO_INLINE")
+
+open class OpenClass {
+    @Suppress("MemberVisibilityCanBePrivate")
+    var lastRecordedState: String = ""
+
+    inline var openNonInlineToInlineProperty: String
+        get() = "OpenClassV2.openNonInlineToInlineProperty"
+        set(value) { lastRecordedState = "OpenClassV2.openNonInlineToInlineProperty=$value" }
+
+    inline var openNonInlineToInlinePropertyWithDelegation: String
+        get() = "OpenClassV2.openNonInlineToInlinePropertyWithDelegation"
+        set(value) { lastRecordedState = "OpenClassV2.openNonInlineToInlinePropertyWithDelegation=$value" }
+
+    inline var newInlineProperty1: String
+        get() = "OpenClassV2.newInlineProperty1"
+        set(value) { lastRecordedState = "OpenClassV2.newInlineProperty1=$value" }
+
+    inline var newInlineProperty2: String
+        get() = "OpenClassV2.newInlineProperty2"
+        set(value) { lastRecordedState = "OpenClassV2.newInlineProperty2=$value" }
+
+    var newNonInlineProperty: String
+        get() = "OpenClassV2.newNonInlineProperty"
+        set(value) { lastRecordedState = "OpenClassV2.newNonInlineProperty=$value" }
+
+    fun newInlineProperty1Reader(): String = newInlineProperty1
+    fun newInlineProperty2Reader(): String = newInlineProperty2
+    fun newNonInlinePropertyReader(): String = newNonInlineProperty
+
+    fun newInlineProperty1Writer(value: String) { newInlineProperty1 = value }
+    fun newInlineProperty2Writer(value: String) { newInlineProperty2 = value }
+    fun newNonInlinePropertyWriter(value: String) { newNonInlineProperty = value }
+}

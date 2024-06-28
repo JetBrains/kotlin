@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
@@ -44,6 +45,16 @@ internal val IrClass.isInternalSerializable: Boolean
         if (kind != ClassKind.CLASS) return false
         return hasSerializableOrMetaAnnotationWithoutArgs()
     }
+
+internal fun IrClass.shouldHaveGeneratedMethods(): Boolean =
+    isInternalSerializable
+            // If runtime contains `@KeepGeneratedSerializer`, then it also contains the enum factory, therefore
+            // there is no need to generate additional methods
+            || (hasKeepGeneratedSerializerAnnotation && kind != ClassKind.ENUM_CLASS && kind != ClassKind.OBJECT)
+
+internal val IrClass.hasKeepGeneratedSerializerAnnotation: Boolean
+    get() = hasAnnotation(SerializationAnnotations.keepGeneratedSerializerAnnotationFqName)
+
 
 internal val IrClass.isAbstractOrSealedSerializableClass: Boolean get() = isInternalSerializable && (modality == Modality.ABSTRACT || modality == Modality.SEALED)
 
@@ -78,6 +89,9 @@ internal fun IrClass.findEnumLegacySerializer(): IrClass? {
 internal val IrClass.isSealedSerializableInterface: Boolean
     get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableOrMetaAnnotation()
 
+internal val IrClass.isSerializableInterfaceWithCustom: Boolean
+    get() = kind == ClassKind.INTERFACE && hasSerializableAnnotationWithArgs()
+
 internal fun IrClass.isInternallySerializableEnum(): Boolean =
     kind == ClassKind.ENUM_CLASS && hasSerializableOrMetaAnnotationWithoutArgs()
 
@@ -85,12 +99,38 @@ fun IrType.isGeneratedSerializableObject(): Boolean {
     return classOrNull?.run { owner.kind == ClassKind.OBJECT && owner.hasSerializableOrMetaAnnotationWithoutArgs() } == true
 }
 
+fun IrType.isGeneratedSerializableObjectWithKeep(): Boolean {
+    return classOrNull?.run { owner.kind == ClassKind.OBJECT && owner.hasSerializableOrMetaAnnotation() } == true
+}
+
 internal val IrClass.isSerializableObject: Boolean
     get() = kind == ClassKind.OBJECT && hasSerializableOrMetaAnnotation()
+
+internal fun IrClass.shouldHaveSerializerCache(serializer: IrClass): Boolean {
+    if (hasCustomObjectSerializer(serializer)) return false
+
+    return isSerializableObject
+            || isAbstractOrSealedSerializableClass
+            || isSerializableEnum()
+}
+
+internal fun IrClass.shouldHaveKeepSerializerCache(): Boolean {
+    return isEnumClass || isObject
+}
+
+private fun IrClass.hasCustomObjectSerializer(serializer: IrClass): Boolean {
+    return hasSerializableAnnotationWithArgs() && serializer.isObject
+}
+
 
 internal fun IrClass.hasSerializableOrMetaAnnotationWithoutArgs(): Boolean = checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs = true)
 
 fun IrClass.hasSerializableOrMetaAnnotation() = checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs = false)
+
+private fun IrClass.hasSerializableAnnotationWithArgs(): Boolean {
+    val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+    return annot?.getValueArgument(0) != null
+}
 
 private fun IrClass.checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs: Boolean): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
@@ -115,9 +155,11 @@ internal val IrClass.isInheritableSerialInfoAnnotation: Boolean
 internal fun IrClass.shouldHaveGeneratedSerializer(): Boolean =
     (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
             || isEnumWithLegacyGeneratedSerializer()
+            // enum factory must be used for enums
+            || (shouldHaveGeneratedMethods() && kind != ClassKind.ENUM_CLASS)
 
 internal val IrClass.shouldHaveGeneratedMethodsInCompanion: Boolean
-    get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface
+    get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface || this.isSerializableInterfaceWithCustom
 
 internal fun IrClass.isSerializableEnum(): Boolean = kind == ClassKind.ENUM_CLASS && hasSerializableOrMetaAnnotation()
 
@@ -186,12 +228,13 @@ fun IrClass.findSerializableSyntheticConstructor(): IrConstructorSymbol? {
 }
 
 internal fun IrClass.needSerializerFactory(compilerContext: SerializationPluginContext): Boolean {
-    if (!(compilerContext.platform?.isNative() == true || compilerContext.platform.isJs())) return false
+    if (!(compilerContext.platform?.isNative() == true || compilerContext.platform.isJs() || compilerContext.platform.isWasm())) return false
     val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
     if (serializableClass.isSerializableObject) return true
     if (serializableClass.isSerializableEnum()) return true
     if (serializableClass.isAbstractOrSealedSerializableClass) return true
     if (serializableClass.isSealedSerializableInterface) return true
+    if (serializableClass.isSerializableInterfaceWithCustom) return true
     if (serializableClass.typeParameters.isEmpty()) return false
     return true
 }
@@ -247,11 +290,11 @@ fun findSerializerConstructorForTypeArgumentsSerializers(serializer: IrClass): I
     }?.symbol
 }
 
-fun IrType.classOrUpperBound(): IrClassSymbol? = when(val cls = classifierOrNull) {
+fun IrType.classOrUpperBound(): IrClassSymbol? = when (val cls = classifierOrNull) {
     is IrClassSymbol -> cls
     is IrScriptSymbol -> cls.owner.targetClass
     is IrTypeParameterSymbol -> cls.owner.representativeUpperBound.classOrUpperBound()
-    else -> null
+    null -> null
 }
 
 /**

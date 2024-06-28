@@ -4,7 +4,9 @@
     <target name="build">
         <mkdir dir="${temp}/classes"/>
         <javac srcdir="${test.data}" destdir="${temp}/classes" includeantruntime="false">
-            <withKotlin/>
+            <withKotlin>
+                <compilerarg line="-Xuse-fir-lt=false"/>
+            </withKotlin>
         </javac>
         <jar destfile="${temp}/hello.jar">
             <fileset dir="${temp}/classes"/>

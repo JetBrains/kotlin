@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 inline fun <reified T : Any> classRefFun() = T::class
 
 inline fun <reified T : Any> Any.classRefExtFun() = T::class

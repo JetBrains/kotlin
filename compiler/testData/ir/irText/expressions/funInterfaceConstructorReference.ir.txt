@@ -1,50 +1,10 @@
 FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
-  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
-    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:KR visibility:public expandedType:<root>.KRunnable
-  CLASS INTERFACE name:KSupplier modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.KSupplier<T of <root>.KSupplier>) returnType:T of <root>.KSupplier
-      $this: VALUE_PARAMETER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:KSS visibility:public expandedType:<root>.KSupplier<kotlin.String>
   CLASS INTERFACE name:KConsumer modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-    FUN name:accept visibility:public modality:ABSTRACT <> ($this:<root>.KConsumer<T of <root>.KConsumer>, x:T of <root>.KConsumer) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
-      VALUE_PARAMETER name:x index:0 type:T of <root>.KConsumer
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -55,11 +15,48 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  TYPEALIAS name:KCS visibility:public expandedType:<root>.KConsumer<kotlin.String>
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
+    FUN name:accept visibility:public modality:ABSTRACT <> ($this:<root>.KConsumer<T of <root>.KConsumer>, x:T of <root>.KConsumer) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
+      VALUE_PARAMETER name:x index:0 type:T of <root>.KConsumer
+  CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.KRunnable
+  CLASS INTERFACE name:KSupplier modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:ABSTRACT <> ($this:<root>.KSupplier<T of <root>.KSupplier>) returnType:T of <root>.KSupplier
+      $this: VALUE_PARAMETER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+      RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
           FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
@@ -68,11 +65,11 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=null
                     <T0>: kotlin.Function0<kotlin.Unit>
                     arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
-  FUN name:test1a visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+  FUN name:test1a visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1a (): kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+      RETURN type=kotlin.Nothing from='public final fun test1a (): kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
           FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
@@ -81,11 +78,11 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=null
                     <T0>: kotlin.Function0<kotlin.Unit>
                     arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1a.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1a' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test1b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KRunnable>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1b (): kotlin.reflect.KFunction<<root>.KRunnable> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
           FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KRunnable visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.Unit>) returnType:<root>.KRunnable
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.Unit>
             BLOCK_BODY
@@ -94,11 +91,11 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.Unit> origin=null
                     <T0>: kotlin.Function0<kotlin.Unit>
                     arg0: GET_VAR 'function: kotlin.Function0<kotlin.Unit> declared in <root>.test1b.KRunnable' type=kotlin.Function0<kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KRunnable (function: kotlin.Function0<kotlin.Unit>): <root>.KRunnable declared in <root>.test1b' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.Unit>, <root>.KRunnable> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
           FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.String>
             BLOCK_BODY
@@ -107,11 +104,11 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.String> origin=null
                     <T0>: kotlin.Function0<kotlin.String>
                     arg0: GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test2a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2a (): kotlin.Function1<kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
           FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KSupplier visibility:local modality:FINAL <> (function:kotlin.Function0<kotlin.String>) returnType:<root>.KSupplier<kotlin.String>
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function0<kotlin.String>
             BLOCK_BODY
@@ -120,43 +117,46 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
                   CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function0<kotlin.String> origin=null
                     <T0>: kotlin.Function0<kotlin.String>
                     arg0: GET_VAR 'function: kotlin.Function0<kotlin.String> declared in <root>.test2a.KSupplier' type=kotlin.Function0<kotlin.String> origin=null
-          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2a' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+          FUNCTION_REFERENCE 'local final fun KSupplier (function: kotlin.Function0<kotlin.String>): <root>.KSupplier<kotlin.String> declared in <root>.test2a' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function0<kotlin.String>, <root>.KSupplier<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3'
+              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-                    <T0>: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
-                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> declared in <root>.test3.KConsumer' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+                    <T0>: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> declared in <root>.test3.KConsumer' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3a visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3a (): kotlin.Function1<kotlin.Function1<kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a'
+              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-                    <T0>: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
-                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> declared in <root>.test3a.KConsumer' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+                    <T0>: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> declared in <root>.test3a.KConsumer' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3a' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
   FUN name:test3b visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction<<root>.KConsumer<kotlin.String>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3b (): kotlin.reflect.KFunction<<root>.KConsumer<kotlin.String>> declared in <root>'
-        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
-          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
-            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
+        BLOCK type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE
+          FUN ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR name:KConsumer visibility:local modality:FINAL <> (function:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>) returnType:<root>.KConsumer<kotlin.String>
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:function index:0 type:kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b'
+              RETURN type=kotlin.Nothing from='local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b'
                 TYPE_OP type=<root>.KConsumer<kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.KConsumer<kotlin.String>
-                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-                    <T0>: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>
-                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> declared in <root>.test3b.KConsumer' type=kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit> origin=null
-          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b' type=kotlin.reflect.KFunction1<@[ParameterName(name = 'function')] kotlin.Function1<@[ParameterName(name = 'x')] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+                  CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+                    <T0>: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>
+                    arg0: GET_VAR 'function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> declared in <root>.test3b.KConsumer' type=kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit> origin=null
+          FUNCTION_REFERENCE 'local final fun KConsumer (function: kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>): <root>.KConsumer<kotlin.String> declared in <root>.test3b' type=kotlin.reflect.KFunction1<@[ParameterName(name = "function")] kotlin.Function1<@[ParameterName(name = "x")] kotlin.String, kotlin.Unit>, <root>.KConsumer<kotlin.String>> origin=FUN_INTERFACE_CONSTRUCTOR_REFERENCE reflectionTarget=<same>
+  TYPEALIAS name:KCS visibility:public expandedType:<root>.KConsumer<kotlin.String>
+  TYPEALIAS name:KR visibility:public expandedType:<root>.KRunnable
+  TYPEALIAS name:KSS visibility:public expandedType:<root>.KSupplier<kotlin.String>

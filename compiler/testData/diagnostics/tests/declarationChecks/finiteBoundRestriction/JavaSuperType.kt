@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 public class A<T extends A> {}
 

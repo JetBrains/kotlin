@@ -151,7 +151,11 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         //   descriptor = Foo
         //   toInterface = Bar
         //   delegateExpressionType = typeof(baz)
-        // return Map<member of Foo, corresponding member of typeOf(baz)>
+        //
+        // This method returns a map where keys are members of Foo, and values are members of typeof(baz).
+        //
+        // In case delegation is to an error type, which is useful for KAPT stub generation mode, typeof(baz) has no members, so we return
+        // a map from each element to it (so keys = values in the returned map).
         fun getDelegates(
             descriptor: ClassDescriptor,
             toInterface: ClassDescriptor,
@@ -175,18 +179,22 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                     val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
                         .filter { it.containingDeclaration == toInterface }
                         .map { overriddenDescriptor ->
-                            val name = overriddenDescriptor.name
-                            // this is the actual member of delegateExpressionType that we are delegating to
-                            (scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_OVERRIDES) +
-                                    scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
-                                .firstOrNull {
-                                    it == overriddenDescriptor || OverridingUtil.overrides(
-                                        it,
-                                        overriddenDescriptor,
-                                        it.module.isTypeRefinementEnabled(),
-                                        true
-                                    )
-                                }
+                            if (scopeType.isError) {
+                                overriddenDescriptor
+                            } else {
+                                val name = overriddenDescriptor.name
+                                // This is the actual member of delegateExpressionType that we are delegating to.
+                                (scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_OVERRIDES) +
+                                        scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
+                                    .firstOrNull {
+                                        it == overriddenDescriptor || OverridingUtil.overrides(
+                                            it,
+                                            overriddenDescriptor,
+                                            it.module.isTypeRefinementEnabled(),
+                                            true
+                                        )
+                                    }
+                            }
                         }
 
                     actualDelegates.firstOrNull()

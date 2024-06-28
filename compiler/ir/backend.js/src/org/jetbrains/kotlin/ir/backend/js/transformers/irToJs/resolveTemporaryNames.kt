@@ -24,7 +24,7 @@ fun JsNode.resolveTemporaryNames() {
 
 private fun JsNode.resolveNames(): Map<JsName, JsName> {
     val rootScope = computeScopes().liftUsedNames()
-    val replacements = mutableMapOf<JsName, JsName>()
+    val replacements = hashMapOf<JsName, JsName>()
     fun traverse(scope: Scope) {
         // Don't clash with non-temporary names declared in current scope. It's for rare cases like `_` or `Kotlin` names,
         // since most of local declarations are temporary.
@@ -37,11 +37,11 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
         // Outer `foo` resolves first, so when traversing inner scope, we should take it into account.
         occupiedNames += scope.usedNames.asSequence().mapNotNull { if (!it.isTemporary) it.ident else replacements[it]?.ident }
 
-        val nextSuffix = mutableMapOf<String, Int>()
+        val nextSuffix = hashMapOf<String, Int>()
         for (temporaryName in scope.declaredNames.asSequence().filter { it.isTemporary }) {
             var resolvedName = temporaryName.ident
             var suffix = nextSuffix.getOrDefault(temporaryName.ident, 0)
-            while (resolvedName in JsDeclarationScope.RESERVED_WORDS || !occupiedNames.add(resolvedName)) {
+            while (resolvedName in JsDeclarationScope.RESERVED_WORDS || resolvedName in occupiedNames) {
                 resolvedName = "${temporaryName.ident}_${suffix++}"
             }
             nextSuffix[temporaryName.ident] = suffix
@@ -79,6 +79,7 @@ private fun JsNode.computeScopes(): Scope {
             // We need it to not rename methods and fields inside class body
             // Because if they are in clash with something, it means overriding
             x.constructor?.accept(this)
+            x.baseClass?.accept(this)
             x.members.forEach { visitFunction(it, shouldReserveName = false) }
         }
 
@@ -114,6 +115,18 @@ private fun JsNode.computeScopes(): Scope {
             }
 
             super.visitNameRef(nameRef)
+        }
+
+        override fun visitImport(import: JsImport) {
+            when (val target = import.target) {
+                is JsImport.Target.Effect -> {}
+                is JsImport.Target.All -> target.alias.name?.let { currentScope.declaredNames += it }
+                is JsImport.Target.Default -> target.name.name?.let { currentScope.declaredNames += it }
+                is JsImport.Target.Elements -> target.elements.forEach {
+                    currentScope.declaredNames += it.alias?.name ?: it.name
+                }
+            }
+            super.visitImport(import)
         }
 
         override fun visitBreak(x: JsBreak) {}

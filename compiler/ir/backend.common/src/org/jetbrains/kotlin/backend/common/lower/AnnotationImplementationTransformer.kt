@@ -17,19 +17,23 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isArray
+import org.jetbrains.kotlin.ir.types.isBoxedArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-val ANNOTATION_IMPLEMENTATION = object : IrDeclarationOriginImpl("ANNOTATION_IMPLEMENTATION", isSynthetic = true) {}
+val ANNOTATION_IMPLEMENTATION by IrDeclarationOriginImpl.Synthetic
 
-class AnnotationImplementationLowering(
+open class AnnotationImplementationLowering(
     val transformer: (IrFile) -> AnnotationImplementationTransformer
 ) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -78,7 +82,6 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
-        if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
         require(expression.symbol.owner.isPrimary) { "Non-primary constructors of annotations are not supported" }
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
@@ -104,11 +107,36 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
 
         destination.symbol.owner.valueParameters.forEachIndexed { index, parameter ->
             val valueArg = argumentsByName[parameter.name]
-            if (parameter.defaultValue == null && valueArg == null)
-                error(
-                    "Usage of default value argument for this annotation is not yet possible.\n" +
-                            "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly"
-                )
+
+            if (parameter.defaultValue == null && valueArg == null) {
+                // if parameter is vararg, put an empty array as argument
+                // The vararg is already lowered to array, so `isVararg` is false.
+                if (parameter.type.isBoxedArray || parameter.type.isPrimitiveArray() || parameter.type.isUnsignedArray()) {
+                    val arrayType = parameter.type
+
+                    val arrayConstructorCall =
+                        if (arrayType.isBoxedArray) {
+                            val arrayFunction = context.ir.symbols.arrayOfNulls
+                            IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
+                        } else {
+                            val arrayConstructor = arrayType.classOrNull!!.constructors.single {
+                                it.owner.valueParameters.size == 1 && it.owner.valueParameters.single().type == context.irBuiltIns.intType
+                            }
+                            IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
+                        }
+                    arrayConstructorCall.putValueArgument(
+                        0,
+                        IrConstImpl.int(source.startOffset, source.endOffset, context.irBuiltIns.intType, 0)
+                    )
+                    destination.putValueArgument(index, arrayConstructorCall)
+                    return
+                } else {
+                    error(
+                        "Usage of default value argument for this annotation is not yet possible.\n" +
+                                "Please specify value for '${source.type.classOrNull?.owner?.name}.${parameter.name}' explicitly"
+                    )
+                }
+            }
             destination.putValueArgument(index, valueArg)
         }
     }
@@ -132,6 +160,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes = listOf(annotationClass.defaultType)
             platformSetup()
+            // Type parameters can be copied from annotationClass, but in fact they are never used by any of the backends.
         }
 
         val ctor = subclass.addConstructor {
@@ -156,7 +185,8 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         // (although annotations imported from Java do have)
         val props = declarations.filterIsInstance<IrProperty>()
         if (props.isNotEmpty()) return props
-        return declarations.filterIsInstance<IrSimpleFunction>().filter { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
+        return declarations
+            .filterIsInstanceAnd<IrSimpleFunction> { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
             .mapNotNull { it.correspondingPropertySymbol?.owner }
     }
 
@@ -243,6 +273,10 @@ class AnnotationImplementationMemberGenerator(
         val propertyNameHashCode = getHashCodeOf(backendContext.irBuiltIns.stringType, irString(property.name.toString()))
         val multiplied = irCallOp(context.irBuiltIns.intTimesSymbol, context.irBuiltIns.intType, propertyNameHashCode, irInt(127))
         return irCallOp(context.irBuiltIns.intXorSymbol, context.irBuiltIns.intType, multiplied, propertyValueHashCode)
+    }
+
+    private fun IrBuilderWithScope.getHashCodeOf(type: IrType, irValue: IrExpression): IrExpression {
+        return getHashCodeOf(getHashCodeFunctionInfo(type), irValue)
     }
 
     // Manual implementation of equals is required for following reasons:

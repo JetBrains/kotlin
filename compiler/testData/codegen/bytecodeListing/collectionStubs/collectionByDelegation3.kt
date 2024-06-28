@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-65323
+
 class DIntIterator(d: Iterator<Int>) : Iterator<Int> by d
 
 class DIntListIterator(d: ListIterator<Int>) : ListIterator<Int> by d

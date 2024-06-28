@@ -1,5 +1,6 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries -PrioritizedEnumEntries
 // WITH_STDLIB
+// FIR_DUMP
 
 package foo
 

@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // FIR_IDENTICAL
+
 // FILE: nnStringVsTConstrained.kt
 fun <T> useTConstrained(xs: Array<T>, fn: () -> T) = fn()
 

@@ -50,21 +50,29 @@ public final class foo/Kotlin : java/lang/Object {
 
     public final void fooArrayIn(java.lang.Object[] s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, [
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, [0;
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
     ()[Lfoo/Outer$NestedStatic<Ljava/lang/String;>;
     public final foo.Outer$NestedStatic[] fooArrayOut()
       @Lorg/jetbrains/annotations/Nullable;([]) // invisible
       @Lfoo/Ann;([]) : METHOD_RETURN, null
+      @Lfoo/Ann2;([]) : METHOD_RETURN, [
+      @Lfoo/Ann3;([]) : METHOD_RETURN, [0;
 
-    <T:Ljava/lang/Object;>(Lfoo/Bar<-TT;>;)V
+    <T:Ljava/lang/Object;>(Lfoo/Bar<-Lfoo/Outer$NestedStatic<TT;>;>;)V
     public final void fooGenericIn(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 
-    <T:Ljava/lang/Object;>(Lfoo/Bar<+TT;>;)V
+    <T:Ljava/lang/Object;>(Lfoo/Bar<+Lfoo/Outer$NestedStatic<TT;>;>;)V
     public final void fooGenericOut(foo.Bar s)
       @Lfoo/Ann;([]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/Ann2;([]) : METHOD_FORMAL_PARAMETER 0, 0;*
+      @Lfoo/Ann3;([]) : METHOD_FORMAL_PARAMETER 0, 0;*0;
         @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0
 }
 

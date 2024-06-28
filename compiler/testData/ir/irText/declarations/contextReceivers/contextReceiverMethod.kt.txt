@@ -13,19 +13,20 @@ class Context {
 
 class Test {
   private /* final field */ val contextReceiverField0: Context
-  constructor(_context_receiver_0: Context) /* primary */ {
+  constructor($context_receiver_0: Context) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
+    <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
 
-  }
-
-  fun foo(): Int {
-    return 2
   }
 
   fun bar() {
     val x: Int = <this>.#contextReceiverField0.foo()
   }
 
+  fun foo(): Int {
+    return 2
+  }
+
 }
+

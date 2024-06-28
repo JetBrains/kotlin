@@ -88,17 +88,36 @@ abstract class WasmExpressionBuilder {
         buildInstrWithNoLocation(WasmOp.END)
     }
 
-
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, location: SourceLocation) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
         buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel))
     }
 
-    fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, symbol: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
+    fun buildBrOnCastInstr(
+        brOp: WasmOp,
+        absoluteBlockLevel: Int,
+        fromIsNullable: Boolean,
+        toIsNullable: Boolean,
+        from: WasmHeapType,
+        to: WasmHeapType,
+        location: SourceLocation,
+    ) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel), WasmImmediate.TypeIdx(symbol))
+
+        val fromTypeFlag = if (fromIsNullable) 0b01 else 0
+        val toTypeFlag = if (toIsNullable) 0b10 else 0
+        val flags = fromTypeFlag or toTypeFlag
+
+        buildInstr(
+            brOp,
+            location,
+            WasmImmediate.ConstU8(flags.toUByte()),
+            WasmImmediate.LabelIdx(relativeLevel),
+            WasmImmediate.HeapType(from),
+            WasmImmediate.HeapType(to)
+        )
     }
 
     fun buildBr(absoluteBlockLevel: Int, location: SourceLocation) {
@@ -115,8 +134,50 @@ abstract class WasmExpressionBuilder {
         buildInstrWithNoLocation(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
     }
 
+    @Suppress("UNUSED_PARAMETER")
+    fun buildTryTable(
+        label: String?,
+        catches: List<WasmImmediate.Catch>,
+        resultType: WasmType? = null
+    ) {
+        numberOfNestedBlocks++
+        buildInstrWithNoLocation(
+            WasmOp.TRY_TABLE,
+            WasmImmediate.BlockType.Value(resultType),
+            WasmImmediate.ConstI32(catches.size),
+            *catches.toTypedArray()
+        )
+    }
+
+    fun createNewCatch(tagIdx: Int, absoluteBlockLevel: Int) =
+        createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH, absoluteBlockLevel, tagIdx)
+
+    fun createNewCatchAll(absoluteBlockLevel: Int) =
+        createNewCatchImmediate(WasmImmediate.Catch.CatchType.CATCH_ALL, absoluteBlockLevel)
+
+    private fun createNewCatchImmediate(
+        catchType: WasmImmediate.Catch.CatchType,
+        absoluteBlockLevel: Int,
+        tagIdx: Int? = null
+    ): WasmImmediate.Catch {
+        val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
+        assert(relativeLevel >= 0) { "Negative relative block index" }
+
+        return WasmImmediate.Catch(
+            catchType,
+            listOfNotNull(
+                tagIdx?.let(WasmImmediate::TableIdx),
+                WasmImmediate.LabelIdx(relativeLevel)
+            )
+        )
+    }
+
     fun buildCatch(tagIdx: Int) {
         buildInstrWithNoLocation(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    }
+
+    fun buildCatchAll() {
+        buildInstrWithNoLocation(WasmOp.CATCH_ALL)
     }
 
     fun buildBrIf(absoluteBlockLevel: Int, location: SourceLocation) {
@@ -179,11 +240,15 @@ abstract class WasmExpressionBuilder {
     }
 
     fun buildRefCastNullStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
-        buildInstr(WasmOp.REF_CAST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
+    }
+
+    fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(WasmOp.REF_CAST, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
     }
 
     fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
-        buildInstr(WasmOp.REF_TEST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_TEST, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
     }
 
     fun buildRefNull(type: WasmHeapType, location: SourceLocation) {
@@ -192,6 +257,10 @@ abstract class WasmExpressionBuilder {
 
     fun buildDrop(location: SourceLocation) {
         buildInstr(WasmOp.DROP, location)
+    }
+
+    fun buildNop(location: SourceLocation) {
+        buildInstr(WasmOp.NOP, location)
     }
 
     inline fun commentPreviousInstr(text: () -> String) {

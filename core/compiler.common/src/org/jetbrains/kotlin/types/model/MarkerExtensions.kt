@@ -9,22 +9,22 @@ fun TypeVariableMarker.freshTypeConstructor(c: TypeSystemInferenceExtensionConte
 fun TypeSubstitutorMarker.safeSubstitute(
     c: TypeSystemInferenceExtensionContext,
     type: KotlinTypeMarker
-) = with(c) { safeSubstitute(type) }
+): KotlinTypeMarker = with(c) { safeSubstitute(type) }
 
-fun TypeVariableMarker.defaultType(c: TypeSystemInferenceExtensionContext) = with(c) { defaultType() }
+fun TypeVariableMarker.defaultType(c: TypeSystemInferenceExtensionContext): SimpleTypeMarker = with(c) { defaultType() }
 
-fun KotlinTypeMarker.dependsOnTypeConstructor(c: TypeSystemInferenceExtensionContext, typeConstructors: Set<TypeConstructorMarker>) =
+fun KotlinTypeMarker.dependsOnTypeConstructor(c: TypeSystemInferenceExtensionContext, typeConstructors: Set<TypeConstructorMarker>): Boolean =
     with(c) {
         contains { it.typeConstructor() in typeConstructors }
     }
 
-fun KotlinTypeMarker.dependsOnTypeParameters(c: TypeSystemInferenceExtensionContext, typeParameters: Collection<TypeParameterMarker>) =
+fun KotlinTypeMarker.dependsOnTypeParameters(c: TypeSystemInferenceExtensionContext, typeParameters: Collection<TypeParameterMarker>): Boolean =
     with(c) {
         val typeConstructors = typeParameters.mapTo(mutableSetOf()) { it.getTypeConstructor() }
         dependsOnTypeConstructor(c, typeConstructors)
     }
 
-fun CapturedTypeMarker.captureStatus(c: TypeSystemInferenceExtensionContext) =
+fun CapturedTypeMarker.captureStatus(c: TypeSystemInferenceExtensionContext): CaptureStatus =
     with(c) {
         captureStatus()
     }

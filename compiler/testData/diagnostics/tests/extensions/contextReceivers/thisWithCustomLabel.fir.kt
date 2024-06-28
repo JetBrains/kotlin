@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 class A<T>(val a: T)
 class B(val b: Any)

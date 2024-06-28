@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class SimpleTypeRemapper(
     private val symbolRemapper: SymbolRemapper
@@ -26,12 +27,11 @@ class SimpleTypeRemapper(
             type
         else {
             val symbol = symbolRemapper.getReferencedClassifier(type.classifier)
-            val arguments = type.arguments.map { remapTypeArgument(it) }
+            val arguments = type.arguments.memoryOptimizedMap { remapTypeArgument(it) }
             if (symbol == type.classifier && arguments == type.arguments)
                 type
             else {
                 IrSimpleTypeImpl(
-                    null,
                     symbol,
                     type.nullability,
                     arguments,
@@ -51,7 +51,7 @@ class SimpleTypeRemapper(
         IrTypeAbbreviationImpl(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
+            arguments.memoryOptimizedMap { remapTypeArgument(it) },
             annotations
         )
 }

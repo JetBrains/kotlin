@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.cexport.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
@@ -19,7 +20,7 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, Fron
 ) { context, input ->
     val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     val typeTranslator = CAdapterTypeTranslator(prefix, context.builtIns)
-    CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
+    CAdapterGenerator(context, input.environment.configuration, typeTranslator).buildExports(input.moduleDescriptor)
 }
 
 internal data class CExportGenerateApiInput(

@@ -6,19 +6,25 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
@@ -43,15 +49,13 @@ class TooManyArguments(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NamedArgumentNotAllowed(
-    override val argument: FirExpression,
+    val argument: FirExpression,
     val function: FirFunction,
     val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
-) : InapplicableArgumentDiagnostic()
+) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class ArgumentPassedTwice(
-    override val argument: FirExpression,
-    val valueParameter: FirValueParameter,
-    val firstOccurrence: ResolvedCallArgument
+    override val argument: FirNamedArgumentExpression,
 ) : InapplicableArgumentDiagnostic()
 
 class VarargArgumentOutsideParentheses(
@@ -72,12 +76,12 @@ class NameNotFound(
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NameForAmbiguousParameter(
-    val argument: FirNamedArgumentExpression,
-    val matchedParameter: FirValueParameter,
-    val anotherParameter: FirValueParameter
+    val argument: FirNamedArgumentExpression
 ) : ResolutionDiagnostic(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
+
+object UnsuccessfulCallableReferenceAtom : ResolutionDiagnostic(INAPPLICABLE)
 
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
@@ -94,6 +98,10 @@ class InapplicableWrongReceiver(
     val actualType: ConeKotlinType? = null,
 ) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
 
+class DynamicReceiverExpectedButWasNonDynamic(
+    val actualType: ConeKotlinType,
+) : ResolutionDiagnostic(INAPPLICABLE_WRONG_RECEIVER)
+
 object NoCompanionObject : ResolutionDiagnostic(K2_NO_COMPANION_OBJECT)
 
 class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_CALL)
@@ -104,7 +112,7 @@ object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 
-class UnstableSmartCast(val argument: FirSmartCastExpression, val targetType: ConeKotlinType, val isCastToNotNull: Boolean) :
+class UnstableSmartCast(val argument: FirSmartCastExpression, val targetType: ConeKotlinType, val isCastToNotNull: Boolean, val isImplicitInvokeReceiver: Boolean) :
     ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(
@@ -114,8 +122,14 @@ class ArgumentTypeMismatch(
     val isMismatchDueToNullability: Boolean,
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
+class UnitReturnTypeLambdaContradictsExpectedType(
+    val lambda: FirAnonymousFunction,
+    val wholeLambdaExpectedType: ConeKotlinType,
+    val sourceForFunctionExpression: KtSourceElement?
+) : ResolutionDiagnostic(INAPPLICABLE)
+
 class NullForNotNullType(
-    val argument: FirExpression
+    val argument: FirExpression, val expectedType: ConeKotlinType
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class ManyLambdaExpressionArguments(
@@ -124,20 +138,49 @@ class ManyLambdaExpressionArguments(
 
 class InfixCallOfNonInfixFunction(val function: FirNamedFunctionSymbol) : ResolutionDiagnostic(CONVENTION_ERROR)
 class OperatorCallOfNonOperatorFunction(val function: FirNamedFunctionSymbol) : ResolutionDiagnostic(CONVENTION_ERROR)
+class OperatorCallOfConstructor(val constructor: FirConstructorSymbol) : ResolutionDiagnostic(CONVENTION_ERROR)
 
 class InferenceError(val constraintError: ConstraintSystemError) : ResolutionDiagnostic(constraintError.applicability)
-class Unsupported(val message: String, val source: KtSourceElement? = null) : ResolutionDiagnostic(K2_UNSUPPORTED)
+class Unsupported(val message: String, val source: KtSourceElement?) : ResolutionDiagnostic(K2_UNSUPPORTED)
 
-object PropertyAsOperator : ResolutionDiagnostic(K2_PROPERTY_AS_OPERATOR)
+class NotFunctionAsOperator(val symbol: FirBasedSymbol<*>) : ResolutionDiagnostic(K2_NOT_FUNCTION_AS_OPERATOR)
 
 class DslScopeViolation(val calleeSymbol: FirBasedSymbol<*>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
 
 class MultipleContextReceiversApplicableForExtensionReceivers : ResolutionDiagnostic(INAPPLICABLE)
 
+object NoReceiverAllowed : ResolutionDiagnostic(INAPPLICABLE)
+
 class NoApplicableValueForContextReceiver(
     val expectedContextReceiverType: ConeKotlinType
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
+object UnsupportedContextualDeclarationCall : ResolutionDiagnostic(INAPPLICABLE)
+
 class AmbiguousValuesForContextReceiverParameter(
     val expectedContextReceiverType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE)
+
+object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnostic(RESOLVED)
+
+object AdaptedCallableReferenceIsUsedWithReflection : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
+object TypeParameterAsExpression : ResolutionDiagnostic(INAPPLICABLE)
+
+class TypeVariableAsExplicitReceiver(
+    val explicitReceiver: FirExpression,
+    val typeParameter: FirTypeParameter,
+) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
+object CallToDeprecatedOverrideOfHidden : ResolutionDiagnostic(RESOLVED)
+
+class AmbiguousInterceptedSymbol(val pluginNames: List<String>) : ResolutionDiagnostic(RESOLVED_WITH_ERROR)
+
+class MissingInnerClassConstructorReceiver(val candidateSymbol: FirRegularClassSymbol) : ResolutionDiagnostic(INAPPLICABLE)
+
+@OptIn(ApplicabilityDetail::class)
+val Collection<ResolutionDiagnostic>.allSuccessful: Boolean get() = all { it.applicability.isSuccess }
+val Collection<ResolutionDiagnostic>.anyUnsuccessful: Boolean get() = !allSuccessful
+
+@OptIn(ApplicabilityDetail::class)
+val ResolutionDiagnostic.isSuccess get() = applicability.isSuccess

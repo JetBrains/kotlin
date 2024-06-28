@@ -1,3 +1,5 @@
+// SKIP_TXT
+
 fun foo(x: String?) = x
 
 class Test

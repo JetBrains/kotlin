@@ -5,7 +5,6 @@
 
 package kotlin.text
 
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.native.internal.GCUnsafeCall
 
 /**
@@ -116,13 +115,6 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
 }
 
 /**
- * Returns `true` if this string is empty or consists solely of whitespace characters.
- *
- * @sample samples.text.Strings.stringIsBlank
- */
-public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
-
-/**
  * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
  *
  * @param startIndex the start index (inclusive).
@@ -185,7 +177,8 @@ public actual fun CharSequence.regionMatches(
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
         ignoreCase: Boolean = false): Boolean {
     if (length < 0 || thisOffset < 0 || otherOffset < 0
@@ -256,10 +249,10 @@ public actual fun String.lowercase(): String = lowercaseImpl()
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-public actual fun String.toCharArray(): CharArray = toCharArray(this, 0, length)
+public actual fun String.toCharArray(): CharArray = toCharArray(this, CharArray(length), 0, 0, length)
 
 @GCUnsafeCall("Kotlin_String_toCharArray")
-private external fun toCharArray(string: String, start: Int, size: Int): CharArray
+private external fun toCharArray(string: String, destination: CharArray, destinationOffset: Int, start: Int, size: Int): CharArray
 
 /**
  * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
@@ -334,7 +327,7 @@ public actual fun String(chars: CharArray): String = chars.concatToString()
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
-        throw ArrayIndexOutOfBoundsException()
+        throw IndexOutOfBoundsException()
 
     return unsafeStringFromCharArray(chars, offset, length)
 }
@@ -357,21 +350,12 @@ public actual fun CharArray.concatToString(): String = unsafeStringFromCharArray
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return unsafeStringFromCharArray(this, startIndex, endIndex - startIndex)
 }
 
-internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
-    if (startIndex < 0 || endIndex > size) {
-        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
-    }
-    if (startIndex > endIndex) {
-        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
-    }
-}
-
 @GCUnsafeCall("Kotlin_String_unsafeStringFromCharArray")
-internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
+internal actual external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 /**
  * Returns a [CharArray] containing characters of this string or its substring.
@@ -385,8 +369,35 @@ internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, si
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
-    return toCharArray(this, startIndex, endIndex - startIndex)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    return toCharArray(this, CharArray(rangeSize), 0, startIndex, rangeSize)
+}
+
+/**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ *
+ * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
+ *  or when that index is out of the [destination] array indices range.
+ */
+@SinceKotlin("2.0")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.toCharArray(
+        destination: CharArray,
+        destinationOffset: Int = 0,
+        startIndex: Int = 0,
+        endIndex: Int = length
+): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    val rangeSize = endIndex - startIndex
+    AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+    return toCharArray(this, destination, destinationOffset, startIndex, rangeSize)
 }
 
 /**
@@ -411,7 +422,7 @@ public actual fun ByteArray.decodeToString(): String = unsafeStringFromUtf8(0, s
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(startIndex: Int = 0, endIndex: Int = this.size, throwOnInvalidSequence: Boolean = false): String {
-    checkBoundsIndexes(startIndex, endIndex, size)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return if (throwOnInvalidSequence)
         unsafeStringFromUtf8OrThrow(startIndex, endIndex - startIndex)
     else
@@ -440,7 +451,7 @@ public actual fun String.encodeToByteArray(): ByteArray = unsafeStringToUtf8(0, 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(startIndex: Int = 0, endIndex: Int = this.length, throwOnInvalidSequence: Boolean = false): ByteArray {
-    checkBoundsIndexes(startIndex, endIndex, length)
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
     return if (throwOnInvalidSequence)
         unsafeStringToUtf8OrThrow(startIndex, endIndex - startIndex)
     else
@@ -513,7 +524,6 @@ public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: 
         this.contentEqualsImpl(other)
 }
 
-@SharedImmutable
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>

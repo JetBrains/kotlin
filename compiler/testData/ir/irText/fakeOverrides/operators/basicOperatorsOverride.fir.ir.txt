@@ -1,0 +1,157 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:get visibility:public modality:OPEN <> ($this:<root>.Java1, i:@[FlexibleNullability] kotlin.Int?) returnType:@[FlexibleNullability] kotlin.Int? [fake_override,operator]
+      overridden:
+        public open fun get (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] kotlin.Int? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:i index:0 type:@[FlexibleNullability] kotlin.Int?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:invoke visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:kotlin.Unit [fake_override,operator]
+      overridden:
+        public open fun invoke (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:plus visibility:public modality:OPEN <> ($this:<root>.Java1, i:@[FlexibleNullability] kotlin.Int?) returnType:@[FlexibleNullability] <root>.Java1? [fake_override,operator]
+      overridden:
+        public open fun plus (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] <root>.Java1? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:i index:0 type:@[FlexibleNullability] kotlin.Int?
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.B, i:kotlin.Int?) returnType:kotlin.Int [operator]
+      overridden:
+        public open fun get (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] kotlin.Int? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (i: kotlin.Int?): kotlin.Int declared in <root>.B'
+          CONST Int type=kotlin.Int value=2
+    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit [operator]
+      overridden:
+        public open fun invoke (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+    FUN name:plus visibility:public modality:OPEN <> ($this:<root>.B, i:kotlin.Int?) returnType:<root>.Java1 [operator]
+      overridden:
+        public open fun plus (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] <root>.Java1? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.B'
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1' type=<root>.Java1 origin=null
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.C, i:kotlin.Int?) returnType:kotlin.Int [operator]
+      overridden:
+        public open fun get (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] kotlin.Int? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun get (i: kotlin.Int?): kotlin.Int declared in <root>.C'
+          CONST Int type=kotlin.Int value=2
+    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Unit [operator]
+      overridden:
+        public open fun invoke (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+    FUN name:plus visibility:public modality:OPEN <> ($this:<root>.C, i:kotlin.Int?) returnType:<root>.Java1 [operator]
+      overridden:
+        public open fun plus (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] <root>.Java1? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.C'
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1' type=<root>.Java1 origin=null
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:a type:<root>.A [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+      VAR name:k type:kotlin.Unit [val]
+        CALL 'public open fun invoke (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+          $this: GET_VAR 'val a: <root>.A declared in <root>.test' type=<root>.A origin=VARIABLE_AS_FUNCTION
+      VAR name:k1 type:<root>.Java1 [val]
+        TYPE_OP type=<root>.Java1 origin=IMPLICIT_NOTNULL typeOperand=<root>.Java1
+          CALL 'public open fun plus (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] <root>.Java1? declared in <root>.A' type=@[FlexibleNullability] <root>.Java1? origin=PLUS
+            $this: GET_VAR 'val a: <root>.A declared in <root>.test' type=<root>.A origin=null
+            i: CONST Int type=kotlin.Int value=1
+      VAR name:k2 type:kotlin.Int [val]
+        TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
+          CALL 'public open fun get (i: @[FlexibleNullability] kotlin.Int?): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val a: <root>.A declared in <root>.test' type=<root>.A origin=null
+            i: CONST Int type=kotlin.Int value=1
+      VAR name:b type:<root>.B [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.B' type=<root>.B origin=null
+      VAR name:k3 type:kotlin.Unit [val]
+        CALL 'public open fun invoke (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+          $this: GET_VAR 'val b: <root>.B declared in <root>.test' type=<root>.B origin=VARIABLE_AS_FUNCTION
+      VAR name:k4 type:<root>.Java1 [val]
+        CALL 'public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.B' type=<root>.Java1 origin=PLUS
+          $this: GET_VAR 'val b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          i: CONST Int type=kotlin.Int value=1
+      VAR name:k5 type:kotlin.Int [val]
+        CALL 'public open fun get (i: kotlin.Int?): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'val b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          i: CONST Int type=kotlin.Int value=1
+      VAR name:c type:<root>.C [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+      VAR name:k6 type:kotlin.Unit [val]
+        CALL 'public open fun invoke (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+          $this: GET_VAR 'val c: <root>.C declared in <root>.test' type=<root>.C origin=VARIABLE_AS_FUNCTION
+      VAR name:k7 type:<root>.Java1 [val]
+        CALL 'public open fun plus (i: kotlin.Int?): <root>.Java1 declared in <root>.C' type=<root>.Java1 origin=PLUS
+          $this: GET_VAR 'val c: <root>.C declared in <root>.test' type=<root>.C origin=null
+          i: CONST Int type=kotlin.Int value=1
+      VAR name:k8 type:kotlin.Int [val]
+        CALL 'public open fun get (i: kotlin.Int?): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'val c: <root>.C declared in <root>.test' type=<root>.C origin=null
+          i: CONST Int type=kotlin.Int value=1

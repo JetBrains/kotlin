@@ -1,5 +1,6 @@
 // See KT-44891, https://issuetracker.google.com/180193969
 // WITH_STDLIB
+// LAMBDAS: CLASS
 
 @file:JvmName("TestKt")
 package test

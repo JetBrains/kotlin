@@ -7,8 +7,8 @@ public open class ReferenceCycleThroughAnnotation : R|kotlin/Any| {
         public test/ReferenceCycleThroughAnnotation.constructor<T : R|kotlin/Any!|>(): R|test/ReferenceCycleThroughAnnotation.A<T>|
 
     }
-    public open inner class B<T : R|ft<test/ReferenceCycleThroughAnnotation.A<ft<T & Any, T?>>, test/ReferenceCycleThroughAnnotation.A<ft<T & Any, T?>>?>|> : R|kotlin/Any| {
-        public test/ReferenceCycleThroughAnnotation.constructor<T : R|ft<test/ReferenceCycleThroughAnnotation.A<ft<T & Any, T?>>, test/ReferenceCycleThroughAnnotation.A<ft<T & Any, T?>>?>|>(): R|test/ReferenceCycleThroughAnnotation.B<T>|
+    public open inner class B<T : R|ft<test/ReferenceCycleThroughAnnotation.A<T!>, test/ReferenceCycleThroughAnnotation.A<T!>?>|> : R|kotlin/Any| {
+        public test/ReferenceCycleThroughAnnotation.constructor<T : R|ft<test/ReferenceCycleThroughAnnotation.A<T!>, test/ReferenceCycleThroughAnnotation.A<T!>?>|>(): R|test/ReferenceCycleThroughAnnotation.B<T>|
 
     }
     public final annotation class C : R|kotlin/Annotation| {

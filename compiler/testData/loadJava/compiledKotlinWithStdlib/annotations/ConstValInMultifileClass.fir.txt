@@ -1,0 +1,10 @@
+@PROPERTY:R|test/Anno|(value = String(OK)) public final const val constant: R|kotlin/String| = String(OK)
+    public get(): R|kotlin/String|
+
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val value: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(value: R|kotlin/String|): R|test/Anno|
+
+}

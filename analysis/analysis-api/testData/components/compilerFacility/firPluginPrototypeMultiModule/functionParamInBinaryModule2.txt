@@ -1,0 +1,30 @@
+final class MainKt$ArticleScreenContent$1 {
+    // source: 'main.kt'
+    enclosing method MainKt.ArticleScreenContent$default(Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+    public final static field INSTANCE: MainKt$ArticleScreenContent$1
+    inner (anonymous) class MainKt$ArticleScreenContent$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+final class MainKt$ArticleScreenContent$2 {
+    // source: 'main.kt'
+    enclosing method MainKt.ArticleScreenContent(Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+    synthetic final field $title: java.lang.String
+    inner (anonymous) class MainKt$ArticleScreenContent$2
+    method <init>(p0: java.lang.String): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class MainKt$ArticleScreenContent$1
+    inner (anonymous) class MainKt$ArticleScreenContent$2
+    synthetic static method ArticleScreenContent$default(p0: java.lang.String, p1: kotlin.jvm.functions.Function0, p2: int, p3: java.lang.Object): void
+    private final static method ArticleScreenContent(p0: java.lang.String, p1: kotlin.jvm.functions.Function0): void
+    private final static method TopAppBar(p0: java.lang.String): void
+    public synthetic final static method access$TopAppBar(p0: java.lang.String): void
+}

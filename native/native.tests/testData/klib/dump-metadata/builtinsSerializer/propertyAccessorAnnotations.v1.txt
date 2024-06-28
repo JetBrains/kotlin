@@ -1,0 +1,39 @@
+library {
+  // module name: <propertyAccessorAnnotations.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Anno
+
+    // signature: test/Anno|null[0]
+    public final annotation class test/Anno : kotlin/Annotation {
+
+      // signature: test/Anno.<init>|1280618353163213788[0]
+      public constructor(value: kotlin/String)
+
+      // signature: test/Anno.value|1987073854177347439[0]
+      public final val value: kotlin/String
+        // signature: test/Anno.value.<get-value>|3260093555963109437[0]
+        public final get
+    }
+
+    package {
+
+      // signature: test/v1|7393439784805956893[0]
+      @test/Anno(value = "property")
+      public final val v1: kotlin/String /* = "" */
+        // signature: test/v1.<get-v1>|6078408232880608613[0]
+        public final get
+
+      // signature: test/v2|-7674839086071973207[0]
+      public final var v2: kotlin/String
+        // signature: test/v2.<get-v2>|-1626959823585604055[0]
+        @test/Anno(value = "getter")
+        public final /* non-default */ get
+        // signature: test/v2.<set-v2>|-3541921589822523570[0]
+        @test/Anno(value = "setter")
+        public final /* non-default */ set(@test/Anno(value = "setparam") value: kotlin/String)
+    }
+  }
+}

@@ -1,0 +1,53 @@
+// FILE: b.kt
+package b
+
+// CHECK:
+//   Mangled name: b.Obj
+//   Public signature: b/Obj|null[0]
+object Obj {
+  // CHECK:
+  //   Mangled name: b.Obj{}prop
+  //   Public signature: b/Obj.prop|3598315380056892812[0]
+  //   Public signature debug description: {}prop
+  val prop: Int
+    // CHECK JVM_IR:
+    //   Mangled name: b.Obj#<get-prop>(){}kotlin.Int
+    //   Public signature: b/Obj.prop.<get-prop>|-2094203252476742575[0]
+    //   Public signature debug description: <get-prop>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: b.Obj#<get-prop>(){}
+    //   Public signature: b/Obj.prop.<get-prop>|-5734736374948136327[0]
+    //   Public signature debug description: <get-prop>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: b.Obj#<init>(){}
+  //   Public signature: b/Obj.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: b.Obj#method(){}
+  //   Public signature: b/Obj.method|-7743896142468242250[0]
+  //   Public signature debug description: method(){}
+  fun method(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: b.ObjTA
+//   Public signature: b/ObjTA|null[0]
+typealias ObjTA = Obj
+// FILE: a.kt
+package a
+
+// CHECK JVM_IR:
+//   Mangled name: a#test(){}
+//   Public signature: a/test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+// CHECK JS_IR NATIVE:
+//   Mangled name: a#test(){}
+//   Public signature: a/test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+

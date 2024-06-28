@@ -1,0 +1,51 @@
+@A()
+owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.receiverArgument
+context -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.receiverArgument
+
+@A()
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.parameter
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.parameter
+
+@A()
+owner -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.parameterArgument
+context -> FirValueParameterSymbol <local>/a from FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.parameterArgument
+
+@A()
+owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnValue
+context -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnValue
+
+@A()
+owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnTypeParameterValue
+context -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnTypeParameterValue
+
+@A()
+owner -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnArgument
+context -> FirNamedFunctionSymbol /AnnotationsOnNullableParenthesizedTypes.returnArgument
+
+@A()
+owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaType
+
+@A()
+owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaParameter
+
+@A()
+owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReturnValue
+
+@A()
+owner -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /AnnotationsOnNullableParenthesizedTypes.lambdaReceiver
+
+@Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#)
+owner -> FirRegularClassSymbol A
+context -> FirRegularClassSymbol A

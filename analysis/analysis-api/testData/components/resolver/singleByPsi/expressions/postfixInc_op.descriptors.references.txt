@@ -1,0 +1,3 @@
+KtOperationReferenceExpression(146,148): '++'
+  KtSimpleNameReference:
+    (in MyClass) operator fun inc(): MyClass

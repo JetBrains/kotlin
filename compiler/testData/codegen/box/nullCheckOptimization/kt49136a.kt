@@ -1,4 +1,6 @@
-// IGNORE_BACKEND: NATIVE
+// https://youtrack.jetbrains.com/issue/KT-50289/EXCBADACCESS-getting-non-null-property-in-safe-call-chain
+// IGNORE_NATIVE: optimizationMode=DEBUG
+// IGNORE_NATIVE: optimizationMode=NO
 
 abstract class Z {
     init {

@@ -1,1 +1,0 @@
-actual fun foo(): Int = 2

@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
+// LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 sealed class TestNoSubclasses(val x: Int)
 
@@ -12,3 +12,19 @@ class X3 : TestSubclassAfterAllDefaults()
 
 class X4: TestSubclassBefore(1)
 sealed class TestSubclassBefore(val x: Int)
+
+sealed class TestPrimaryConstructorPrivateVisibility private constructor(val x: Int)
+
+sealed class TestPrimaryConstructorProtectedVisibility protected constructor(val x: Int)
+
+sealed class TestSecondaryConstructorUnspecifiedVisibility(val x: Int) {
+    constructor() : this(42)
+}
+
+sealed class TestSecondaryConstructorPrivateVisibility(val x: Int) {
+    private constructor() : this(42)
+}
+
+sealed class TestSecondaryConstructorProtectedVisibility(val x: Int) {
+    protected constructor() : this(42)
+}

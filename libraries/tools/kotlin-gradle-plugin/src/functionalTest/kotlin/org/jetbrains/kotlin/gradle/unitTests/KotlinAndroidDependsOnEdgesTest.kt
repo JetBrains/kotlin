@@ -12,8 +12,12 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
+import org.jetbrains.kotlin.gradle.util.androidLibrary
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.tooling.core.withClosure
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,7 +35,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Minimal MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
-        kotlin.android("android")
+        kotlin.androidTarget("android")
 
         /* Force evaluation */
         project as ProjectInternal
@@ -40,8 +44,8 @@ class KotlinAndroidDependsOnEdgesTest {
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val androidMain = kotlin.sourceSets.getByName("androidMain")
-        val androidTest = kotlin.sourceSets.getByName("androidTest")
-        val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
+        val androidUnitTest = kotlin.sourceSets.getByName("androidUnitTest")
+        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidInstrumentedTest")
 
         assertEquals(
             setOf(commonMain), androidMain.dependsOn,
@@ -49,13 +53,13 @@ class KotlinAndroidDependsOnEdgesTest {
         )
 
         assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to dependOn commonTest"
+            setOf(commonTest), androidUnitTest.dependsOn,
+            "Expected androidUnitTest to dependOn commonTest"
         )
 
         assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to dependOn commonTest"
+            setOf(), androidInstrumentedTest.dependsOn,
+            "Expected androidInstrumentedTest to dependOn no default SourceSet"
         )
     }
 
@@ -71,7 +75,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Custom MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
-        kotlin.android("android")
+        kotlin.androidTarget("android")
         kotlin.sourceSets.apply {
             val jvmMain = create("jvmMain") {
                 it.dependsOn(getByName("commonMain"))
@@ -89,8 +93,8 @@ class KotlinAndroidDependsOnEdgesTest {
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
         val androidMain = kotlin.sourceSets.getByName("androidMain")
-        val androidTest = kotlin.sourceSets.getByName("androidTest")
-        val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
+        val androidUnitTest = kotlin.sourceSets.getByName("androidUnitTest")
+        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidInstrumentedTest")
 
         assertEquals(
             setOf(commonMain, jvmMain).sorted(), androidMain.dependsOn.sorted(),
@@ -98,19 +102,51 @@ class KotlinAndroidDependsOnEdgesTest {
         )
 
         assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to only depend on commonTest"
+            setOf(commonTest), androidUnitTest.dependsOn,
+            "Expected androidUnitTest to only depend on commonTest"
         )
 
         assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to only depend on commonTest"
+            setOf(), androidInstrumentedTest.dependsOn,
+            "Expected androidInstrumentedTest to *not* depend on commonTest"
+        )
+    }
+
+    @Test
+    fun `dependsOn closure for android source sets`() {
+        val project = buildProjectWithMPP {
+            androidLibrary {
+                compileSdk = 31
+            }
+            kotlin {
+                androidTarget()
+            }
+        }.evaluate()
+
+        val androidCompilations = project.multiplatformExtension.androidTarget().compilations
+
+        assertEquals(
+            listOf(
+                "androidDebug",
+                "androidMain",
+                "commonMain",
+            ),
+            androidCompilations.getByName("debug").kotlinSourceSets
+                .withClosure { sourceSet: KotlinSourceSet -> sourceSet.dependsOn }
+                .map { it.name },
+        )
+        assertEquals(
+            listOf(
+                "androidDebug",
+                "commonMain",
+            ),
+            androidCompilations.getByName("debug").defaultSourceSet
+                .withClosure { sourceSet: KotlinSourceSet -> sourceSet.dependsOn }
+                .map { it.name },
         )
     }
 
     private fun createProject() = ProjectBuilder.builder().build()
-        .also { addBuildEventsListenerRegistryMock(it) }
-
 }
 
 private fun Iterable<KotlinSourceSet>.sorted() = this.sortedBy { it.name }

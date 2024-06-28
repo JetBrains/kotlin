@@ -1,13 +1,28 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    var podImportsQuoteQuote: Int
-        @CCall(id = "knifunptr_pod10_podImportsQuoteQuote_getter") get
-        @CCall(id = "knifunptr_pod11_podImportsQuoteQuote_setter") set
-    var podImportsQuoteQuoteA: Int
-        @CCall(id = "knifunptr_pod12_podImportsQuoteQuoteA_getter") get
-        @CCall(id = "knifunptr_pod13_podImportsQuoteQuoteA_setter") set
-    var podImportsQuoteQuote_umbrella: Int
-        @CCall(id = "knifunptr_pod14_podImportsQuoteQuote_umbrella_getter") get
-        @CCall(id = "knifunptr_pod15_podImportsQuoteQuote_umbrella_setter") set
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final var podImportsQuoteQuote: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_podImportsQuoteQuote_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_podImportsQuoteQuote_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var podImportsQuoteQuoteA: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_podImportsQuoteQuoteA_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_podImportsQuoteQuoteA_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var podImportsQuoteQuote_umbrella: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_podImportsQuoteQuote_umbrella_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod15_podImportsQuoteQuote_umbrella_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

@@ -7,17 +7,15 @@ plugins {
 
 dependencies {
     api(project(":compiler:frontend.common"))
+    api(project(":core:compiler.common"))
     api(project(":compiler:fir:cones"))
+
+    if (kotlinBuildProperties.isInIdeaSync) {
+        compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
+    }
 
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCore())
-}
-
-sourceSets {
-    "main" {
-        projectDefault()
-        generatedDir()
-    }
 }
 
 val generatorClasspath by configurations.creating
@@ -46,8 +44,11 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     systemProperties["line.separator"] = "\n"
 }
 
-tasks.named("compileKotlin") {
-    dependsOn(generateTree)
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDir(generateTree)
+    }
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

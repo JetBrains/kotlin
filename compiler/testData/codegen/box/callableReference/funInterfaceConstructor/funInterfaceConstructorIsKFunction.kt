@@ -1,10 +1,12 @@
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // DONT_TARGET_EXACT_BACKEND: JVM
 //  ^ old JVM BE generates bogus code
 
 // IGNORE_BACKEND: JS
 //  ^ Failed: kr is class Function1
+
+// JVM_ABI_K1_K2_DIFF: KT-63861
 
 // WITH_REFLECT
 

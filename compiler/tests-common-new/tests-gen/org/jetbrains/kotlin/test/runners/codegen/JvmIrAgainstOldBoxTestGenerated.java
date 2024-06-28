@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,1022 +20,994 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin")
 @TestDataPath("$PROJECT_ROOT")
 public class JvmIrAgainstOldBoxTestGenerated extends AbstractJvmIrAgainstOldBoxTest {
-    @Test
-    @TestMetadata("adaptedSuspendFunctionReference.kt")
-    public void testAdaptedSuspendFunctionReference() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/adaptedSuspendFunctionReference.kt");
-    }
-
-    @Test
-    public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-    }
-
-    @Test
-    @TestMetadata("annotationInInterface.kt")
-    public void testAnnotationInInterface() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationInInterface.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationOnTypeUseInTypeAlias.kt")
-    public void testAnnotationOnTypeUseInTypeAlias() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationOnTypeUseInTypeAlias.kt");
-    }
-
-    @Test
-    @TestMetadata("annotationsOnTypeAliases.kt")
-    public void testAnnotationsOnTypeAliases() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
-    }
-
-    @Test
-    @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
-    public void testCallsToMultifileClassFromOtherPackage() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
-    }
-
-    @Test
-    @TestMetadata("clashingFakeOverrideSignatures.kt")
-    public void testClashingFakeOverrideSignatures() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt");
-    }
-
-    @Test
-    @TestMetadata("classInObject.kt")
-    public void testClassInObject() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/classInObject.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectInEnum.kt")
-    public void testCompanionObjectInEnum() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectInEnum.kt");
-    }
-
-    @Test
-    @TestMetadata("companionObjectMember.kt")
-    public void testCompanionObjectMember() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectMember.kt");
-    }
-
-    @Test
-    @TestMetadata("constPropertyReferenceFromMultifileClass.kt")
-    public void testConstPropertyReferenceFromMultifileClass() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constPropertyReferenceFromMultifileClass.kt");
-    }
-
-    @Test
-    @TestMetadata("constructorVararg.kt")
-    public void testConstructorVararg() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constructorVararg.kt");
-    }
-
-    @Test
-    @TestMetadata("copySamOnInline.kt")
-    public void testCopySamOnInline() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline.kt");
-    }
-
-    @Test
-    @TestMetadata("copySamOnInline2.kt")
-    public void testCopySamOnInline2() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline2.kt");
-    }
-
-    @Test
-    @TestMetadata("coroutinesBinary.kt")
-    public void testCoroutinesBinary() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/coroutinesBinary.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultConstructor.kt")
-    public void testDefaultConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultConstructor.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultLambdaRegeneration.kt")
-    public void testDefaultLambdaRegeneration() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultLambdaRegeneration2.kt")
-    public void testDefaultLambdaRegeneration2() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
-    }
-
-    @Test
-    @TestMetadata("delegatedDefault.kt")
-    public void testDelegatedDefault() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegatedDefault.kt");
-    }
-
-    @Test
-    @TestMetadata("delegationAndAnnotations.kt")
-    public void testDelegationAndAnnotations() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegationAndAnnotations.kt");
-    }
-
-    @Test
-    @TestMetadata("doublyNestedClass.kt")
-    public void testDoublyNestedClass() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/doublyNestedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("enum.kt")
-    public void testEnum() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/enum.kt");
-    }
-
-    @Test
-    @TestMetadata("expectClassActualTypeAlias.kt")
-    public void testExpectClassActualTypeAlias() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
-    }
-
-    @Test
-    @TestMetadata("expectClassActualTypeAlias2.kt")
-    public void testExpectClassActualTypeAlias2() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias2.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverridesForIntersectionTypes.kt")
-    public void testFakeOverridesForIntersectionTypes() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("genericSetter.kt")
-    public void testGenericSetter() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");
-    }
-
-    @Test
-    @TestMetadata("importCompanion.kt")
-    public void testImportCompanion() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/importCompanion.kt");
-    }
-
-    @Test
-    @TestMetadata("inlinedConstants.kt")
-    public void testInlinedConstants() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlinedConstants.kt");
-    }
-
-    @Test
-    @TestMetadata("innerClassConstructor.kt")
-    public void testInnerClassConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/innerClassConstructor.kt");
-    }
-
-    @Test
-    @TestMetadata("interfaceDelegationAndBridgesProcessing.kt")
-    public void testInterfaceDelegationAndBridgesProcessing() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/interfaceDelegationAndBridgesProcessing.kt");
-    }
-
-    @Test
-    @TestMetadata("internalLeakBug.kt")
-    public void testInternalLeakBug() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
-    }
-
-    @Test
-    @TestMetadata("internalSetterOverridden.kt")
-    public void testInternalSetterOverridden() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
-    }
-
-    @Test
-    @TestMetadata("internalWithDefaultArgs.kt")
-    public void testInternalWithDefaultArgs() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
-    }
-
-    @Test
-    @TestMetadata("internalWithOtherModuleName.kt")
-    public void testInternalWithOtherModuleName() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
-    }
-
-    @Test
-    @TestMetadata("intersectionOverrideProperies.kt")
-    public void testIntersectionOverrideProperies() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/intersectionOverrideProperies.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmField.kt")
-    public void testJvmField() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmField.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFieldInAnnotationCompanion.kt")
-    public void testJvmFieldInAnnotationCompanion() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFieldInConstructor.kt")
-    public void testJvmFieldInConstructor() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFieldInConstructor2.kt")
-    public void testJvmFieldInConstructor2() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor2.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmFieldInInterfaceCompanion.kt")
-    public void testJvmFieldInInterfaceCompanion() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmNames.kt")
-    public void testJvmNames() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmNames.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmPackageName.kt")
-    public void testJvmPackageName() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageName.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmPackageNameInRootPackage.kt")
-    public void testJvmPackageNameInRootPackage() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmPackageNameMultifileClass.kt")
-    public void testJvmPackageNameMultifileClass() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameMultifileClass.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmPackageNameWithJvmName.kt")
-    public void testJvmPackageNameWithJvmName() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmStaticInObject.kt")
-    public void testJvmStaticInObject() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmStaticInObjectPropertyReference.kt")
-    public void testJvmStaticInObjectPropertyReference() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObjectPropertyReference.kt");
-    }
-
-    @Test
-    @TestMetadata("kotlinPropertyAsAnnotationParameter.kt")
-    public void testKotlinPropertyAsAnnotationParameter() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kotlinPropertyAsAnnotationParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("kt14012.kt")
-    public void testKt14012() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012.kt");
-    }
-
-    @Test
-    @TestMetadata("kt14012_multi.kt")
-    public void testKt14012_multi() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012_multi.kt");
-    }
-
-    @Test
-    @TestMetadata("kt21775.kt")
-    public void testKt21775() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt21775.kt");
-    }
-
-    @Test
-    @TestMetadata("metadataForMembersInLocalClassInInitializer.kt")
-    public void testMetadataForMembersInLocalClassInInitializer() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/metadataForMembersInLocalClassInInitializer.kt");
-    }
-
-    @Test
-    @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
-    public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
-    }
-
-    @Test
-    @TestMetadata("multifileClassWithTypealias.kt")
-    public void testMultifileClassWithTypealias() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClass.kt")
-    public void testNestedClass() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClassAsBound.kt")
-    public void testNestedClassAsBound() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassAsBound.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClassInAnnotationArgument.kt")
-    public void testNestedClassInAnnotationArgument() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassInAnnotationArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedEnum.kt")
-    public void testNestedEnum() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedEnum.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedFunctionTypeAliasExpansion.kt")
-    public void testNestedFunctionTypeAliasExpansion() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedFunctionTypeAliasExpansion.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedObject.kt")
-    public void testNestedObject() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedTypeAliasExpansion.kt")
-    public void testNestedTypeAliasExpansion() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
-    }
+  @Test
+  @TestMetadata("adaptedSuspendFunctionReference.kt")
+  public void testAdaptedSuspendFunctionReference() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/adaptedSuspendFunctionReference.kt");
+  }
+
+  @Test
+  public void testAllFilesPresentInCompileKotlinAgainstKotlin() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+  }
+
+  @Test
+  @TestMetadata("annotationInInterface.kt")
+  public void testAnnotationInInterface() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationInInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationOnTypeUseInTypeAlias.kt")
+  public void testAnnotationOnTypeUseInTypeAlias() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationOnTypeUseInTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationsOnTypeAliases.kt")
+  public void testAnnotationsOnTypeAliases() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
+  }
+
+  @Test
+  @TestMetadata("callsToMultifileClassFromOtherPackage.kt")
+  public void testCallsToMultifileClassFromOtherPackage() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
+  }
+
+  @Test
+  @TestMetadata("clashingFakeOverrideSignatures.kt")
+  public void testClashingFakeOverrideSignatures() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt");
+  }
+
+  @Test
+  @TestMetadata("classInObject.kt")
+  public void testClassInObject() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/classInObject.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectInEnum.kt")
+  public void testCompanionObjectInEnum() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectInEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("companionObjectMember.kt")
+  public void testCompanionObjectMember() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/companionObjectMember.kt");
+  }
+
+  @Test
+  @TestMetadata("constPropertyReferenceFromMultifileClass.kt")
+  public void testConstPropertyReferenceFromMultifileClass() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constPropertyReferenceFromMultifileClass.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorVararg.kt")
+  public void testConstructorVararg() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/constructorVararg.kt");
+  }
+
+  @Test
+  @TestMetadata("copySamOnInline.kt")
+  public void testCopySamOnInline() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline.kt");
+  }
+
+  @Test
+  @TestMetadata("copySamOnInline2.kt")
+  public void testCopySamOnInline2() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/copySamOnInline2.kt");
+  }
+
+  @Test
+  @TestMetadata("coroutinesBinary.kt")
+  public void testCoroutinesBinary() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/coroutinesBinary.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultConstructor.kt")
+  public void testDefaultConstructor() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultLambdaRegeneration.kt")
+  public void testDefaultLambdaRegeneration() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration.kt");
+  }
+
+  @Test
+  @TestMetadata("defaultLambdaRegeneration2.kt")
+  public void testDefaultLambdaRegeneration2() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedDefault.kt")
+  public void testDelegatedDefault() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegatedDefault.kt");
+  }
+
+  @Test
+  @TestMetadata("delegationAndAnnotations.kt")
+  public void testDelegationAndAnnotations() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/delegationAndAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("doublyNestedClass.kt")
+  public void testDoublyNestedClass() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/doublyNestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("enum.kt")
+  public void testEnum() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/enum.kt");
+  }
+
+  @Test
+  @TestMetadata("fakeOverridesForIntersectionTypes.kt")
+  public void testFakeOverridesForIntersectionTypes() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("genericSetter.kt")
+  public void testGenericSetter() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/genericSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("importCompanion.kt")
+  public void testImportCompanion() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/importCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("inlinedConstants.kt")
+  public void testInlinedConstants() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlinedConstants.kt");
+  }
+
+  @Test
+  @TestMetadata("innerClassConstructor.kt")
+  public void testInnerClassConstructor() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/innerClassConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceDelegationAndBridgesProcessing.kt")
+  public void testInterfaceDelegationAndBridgesProcessing() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/interfaceDelegationAndBridgesProcessing.kt");
+  }
+
+  @Test
+  @TestMetadata("internalLeakBug.kt")
+  public void testInternalLeakBug() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalLeakBug.kt");
+  }
+
+  @Test
+  @TestMetadata("internalOpenLateinit_defaultModule.kt")
+  public void testInternalOpenLateinit_defaultModule() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_defaultModule.kt");
+  }
+
+  @Test
+  @TestMetadata("internalOpenLateinit_nonDefaultModule.kt")
+  public void testInternalOpenLateinit_nonDefaultModule() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalOpenLateinit_nonDefaultModule.kt");
+  }
+
+  @Test
+  @TestMetadata("internalSetterOverridden.kt")
+  public void testInternalSetterOverridden() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
+  }
+
+  @Test
+  @TestMetadata("internalWithDefaultArgs.kt")
+  public void testInternalWithDefaultArgs() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
+  }
+
+  @Test
+  @TestMetadata("internalWithOtherModuleName.kt")
+  public void testInternalWithOtherModuleName() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/internalWithOtherModuleName.kt");
+  }
+
+  @Test
+  @TestMetadata("intersectionOverrideProperies.kt")
+  public void testIntersectionOverrideProperies() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/intersectionOverrideProperies.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmField.kt")
+  public void testJvmField() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmField.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmFieldInAnnotationCompanion.kt")
+  public void testJvmFieldInAnnotationCompanion() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInAnnotationCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmFieldInConstructor.kt")
+  public void testJvmFieldInConstructor() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmFieldInConstructor2.kt")
+  public void testJvmFieldInConstructor2() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInConstructor2.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmFieldInInterfaceCompanion.kt")
+  public void testJvmFieldInInterfaceCompanion() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmFieldInInterfaceCompanion.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmNames.kt")
+  public void testJvmNames() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmNames.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmPackageName.kt")
+  public void testJvmPackageName() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageName.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmPackageNameInRootPackage.kt")
+  public void testJvmPackageNameInRootPackage() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameInRootPackage.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmPackageNameMultifileClass.kt")
+  public void testJvmPackageNameMultifileClass() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameMultifileClass.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmPackageNameWithJvmName.kt")
+  public void testJvmPackageNameWithJvmName() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmPackageNameWithJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmStaticInObject.kt")
+  public void testJvmStaticInObject() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
+  }
+
+  @Test
+  @TestMetadata("jvmStaticInObjectPropertyReference.kt")
+  public void testJvmStaticInObjectPropertyReference() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvmStaticInObjectPropertyReference.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinPropertyAsAnnotationParameter.kt")
+  public void testKotlinPropertyAsAnnotationParameter() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kotlinPropertyAsAnnotationParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("kt14012.kt")
+  public void testKt14012() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012.kt");
+  }
+
+  @Test
+  @TestMetadata("kt14012_multi.kt")
+  public void testKt14012_multi() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt14012_multi.kt");
+  }
+
+  @Test
+  @TestMetadata("kt21775.kt")
+  public void testKt21775() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/kt21775.kt");
+  }
+
+  @Test
+  @TestMetadata("metadataForMembersInLocalClassInInitializer.kt")
+  public void testMetadataForMembersInLocalClassInInitializer() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/metadataForMembersInLocalClassInInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
+  public void testMultifileClassInlineFunctionAccessingProperty() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("multifileClassWithTypealias.kt")
+  public void testMultifileClassWithTypealias() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/multifileClassWithTypealias.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassAsBound.kt")
+  public void testNestedClassAsBound() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassAsBound.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassInAnnotationArgument.kt")
+  public void testNestedClassInAnnotationArgument() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedClassInAnnotationArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedEnum.kt")
+  public void testNestedEnum() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedFunctionTypeAliasExpansion.kt")
+  public void testNestedFunctionTypeAliasExpansion() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedFunctionTypeAliasExpansion.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedObject.kt")
+  public void testNestedObject() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedObject.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedTypeAliasExpansion.kt")
+  public void testNestedTypeAliasExpansion() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/nestedTypeAliasExpansion.kt");
+  }
+
+  @Test
+  @TestMetadata("noExplicitOverrideForDelegatedFromSupertype.kt")
+  public void testNoExplicitOverrideForDelegatedFromSupertype() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/noExplicitOverrideForDelegatedFromSupertype.kt");
+  }
+
+  @Test
+  @TestMetadata("optionalAnnotation.kt")
+  public void testOptionalAnnotation() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/optionalAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("platformTypes.kt")
+  public void testPlatformTypes() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/platformTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("privateSuperType.kt")
+  public void testPrivateSuperType() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/privateSuperType.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyReference.kt")
+  public void testPropertyReference() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/propertyReference.kt");
+  }
+
+  @Test
+  @TestMetadata("recursiveGeneric.kt")
+  public void testRecursiveGeneric() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/recursiveGeneric.kt");
+  }
+
+  @Test
+  @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
+  public void testReflectTopLevelFunctionOtherFile() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
+  }
+
+  @Test
+  @TestMetadata("repeatableAnnotation.kt")
+  public void testRepeatableAnnotation() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/repeatableAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("sealedClass.kt")
+  public void testSealedClass() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/sealedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructors.kt")
+  public void testSecondaryConstructors() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/secondaryConstructors.kt");
+  }
+
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simple.kt");
+  }
+
+  @Test
+  @TestMetadata("simpleValAnonymousObject.kt")
+  public void testSimpleValAnonymousObject() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simpleValAnonymousObject.kt");
+  }
+
+  @Test
+  @TestMetadata("specialBridgesInDependencies.kt")
+  public void testSpecialBridgesInDependencies() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
+  }
+
+  @Test
+  @TestMetadata("starImportEnum.kt")
+  public void testStarImportEnum() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/starImportEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("targetedJvmName.kt")
+  public void testTargetedJvmName() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/targetedJvmName.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasesKt13181.kt")
+  public void testTypeAliasesKt13181() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
+  }
+
+  @Test
+  @TestMetadata("unsignedTypesInAnnotations.kt")
+  public void testUnsignedTypesInAnnotations() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
+  }
+
+  @Test
+  @TestMetadata("useDeserializedFunInterface.kt")
+  public void testUseDeserializedFunInterface() {
+    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Fir {
+    @Test
+    public void testAllFilesPresentInFir() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+    }
+
+    @Test
+    @TestMetadata("AnonymousObjectInProperty.kt")
+    public void testAnonymousObjectInProperty() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("ExistingSymbolInFakeOverride.kt")
+    public void testExistingSymbolInFakeOverride() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("IncrementalCompilerRunner.kt")
+    public void testIncrementalCompilerRunner() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IncrementalCompilerRunner.kt");
+    }
+
+    @Test
+    @TestMetadata("IrConstAcceptMultiModule.kt")
+    public void testIrConstAcceptMultiModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IrConstAcceptMultiModule.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTypeParameterBy.kt")
+    public void testJavaTypeParameterBy() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/javaTypeParameterBy.kt");
+    }
 
     @Test
-    @TestMetadata("noExplicitOverrideForDelegatedFromSupertype.kt")
-    public void testNoExplicitOverrideForDelegatedFromSupertype() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/noExplicitOverrideForDelegatedFromSupertype.kt");
+    @TestMetadata("LibraryProperty.kt")
+    public void testLibraryProperty() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
     }
+  }
 
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
+  @TestDataPath("$PROJECT_ROOT")
+  public class InlineClasses {
     @Test
-    @TestMetadata("optionalAnnotation.kt")
-    public void testOptionalAnnotation() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/optionalAnnotation.kt");
+    public void testAllFilesPresentInInlineClasses() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
     @Test
-    @TestMetadata("platformTypes.kt")
-    public void testPlatformTypes() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/platformTypes.kt");
+    @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
+    public void testCallDeserializedPropertyOnInlineClassType() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/callDeserializedPropertyOnInlineClassType.kt");
     }
 
     @Test
-    @TestMetadata("privateSuperType.kt")
-    public void testPrivateSuperType() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/privateSuperType.kt");
+    @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
+    public void testConstructorWithInlineClassParametersInBinaryDependencies() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/constructorWithInlineClassParametersInBinaryDependencies.kt");
     }
 
     @Test
-    @TestMetadata("propertyReference.kt")
-    public void testPropertyReference() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/propertyReference.kt");
+    @TestMetadata("defaultWithInlineClassAndReceivers.kt")
+    public void testDefaultWithInlineClassAndReceivers() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/defaultWithInlineClassAndReceivers.kt");
     }
 
     @Test
-    @TestMetadata("recursiveGeneric.kt")
-    public void testRecursiveGeneric() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/recursiveGeneric.kt");
+    @TestMetadata("extensionPropertyWithSameName.kt")
+    public void testExtensionPropertyWithSameName() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/extensionPropertyWithSameName.kt");
     }
 
     @Test
-    @TestMetadata("reflectTopLevelFunctionOtherFile.kt")
-    public void testReflectTopLevelFunctionOtherFile() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/reflectTopLevelFunctionOtherFile.kt");
+    @TestMetadata("funInterface.kt")
+    public void testFunInterface() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/funInterface.kt");
     }
 
     @Test
-    @TestMetadata("repeatableAnnotation.kt")
-    public void testRepeatableAnnotation() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/repeatableAnnotation.kt");
+    @TestMetadata("inlineClassFakeOverrideMangling.kt")
+    public void testInlineClassFakeOverrideMangling() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFakeOverrideMangling.kt");
     }
 
     @Test
-    @TestMetadata("sealedClass.kt")
-    public void testSealedClass() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/sealedClass.kt");
+    @TestMetadata("inlineClassFromBinaryDependencies.kt")
+    public void testInlineClassFromBinaryDependencies() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFromBinaryDependencies.kt");
     }
 
     @Test
-    @TestMetadata("secondaryConstructors.kt")
-    public void testSecondaryConstructors() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/secondaryConstructors.kt");
+    @TestMetadata("inlineClassInlineFunctionCall.kt")
+    public void testInlineClassInlineFunctionCall() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineFunctionCall.kt");
     }
 
     @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simple.kt");
+    @TestMetadata("inlineClassInlineProperty.kt")
+    public void testInlineClassInlineProperty() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineProperty.kt");
     }
 
     @Test
-    @TestMetadata("simpleValAnonymousObject.kt")
-    public void testSimpleValAnonymousObject() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/simpleValAnonymousObject.kt");
+    @TestMetadata("internalWithInlineClass.kt")
+    public void testInternalWithInlineClass() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/internalWithInlineClass.kt");
     }
 
     @Test
-    @TestMetadata("specialBridgesInDependencies.kt")
-    public void testSpecialBridgesInDependencies() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
+    @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
+    public void testPrivateCompanionObjectValInDifferentModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateCompanionObjectValInDifferentModule.kt");
     }
 
     @Test
-    @TestMetadata("starImportEnum.kt")
-    public void testStarImportEnum() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/starImportEnum.kt");
+    @TestMetadata("privateConstructor.kt")
+    public void testPrivateConstructor() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructor.kt");
     }
 
     @Test
-    @TestMetadata("targetedJvmName.kt")
-    public void testTargetedJvmName() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/targetedJvmName.kt");
+    @TestMetadata("privateConstructorWithPrivateField.kt")
+    public void testPrivateConstructorWithPrivateField() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateField.kt");
     }
 
     @Test
-    @TestMetadata("typeAliasesKt13181.kt")
-    public void testTypeAliasesKt13181() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAliasesKt13181.kt");
+    @TestMetadata("privateConstructorWithPrivateFieldUsingTypeTable.kt")
+    public void testPrivateConstructorWithPrivateFieldUsingTypeTable() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateFieldUsingTypeTable.kt");
     }
 
     @Test
-    @TestMetadata("unsignedTypesInAnnotations.kt")
-    public void testUnsignedTypesInAnnotations() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/unsignedTypesInAnnotations.kt");
+    @TestMetadata("privateTopLevelValInDifferentModule.kt")
+    public void testPrivateTopLevelValInDifferentModule() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateTopLevelValInDifferentModule.kt");
     }
 
     @Test
-    @TestMetadata("useDeserializedFunInterface.kt")
-    public void testUseDeserializedFunInterface() throws Exception {
-        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
+    @TestMetadata("suspendFunWithDefaultMangling.kt")
+    public void testSuspendFunWithDefaultMangling() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/suspendFunWithDefaultMangling.kt");
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
+    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
     @TestDataPath("$PROJECT_ROOT")
-    public class Fir {
-        @Test
-        public void testAllFilesPresentInFir() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-        }
+    public class OldMangling {
+      @Test
+      public void testAllFilesPresentInOldMangling() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+      }
 
-        @Test
-        @TestMetadata("AnonymousObjectInProperty.kt")
-        public void testAnonymousObjectInProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
-        }
+      @Test
+      @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
+      public void testCallDeserializedPropertyOnInlineClassType() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/callDeserializedPropertyOnInlineClassType.kt");
+      }
 
-        @Test
-        @TestMetadata("ExistingSymbolInFakeOverride.kt")
-        public void testExistingSymbolInFakeOverride() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
-        }
+      @Test
+      @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
+      public void testConstructorWithInlineClassParametersInBinaryDependencies() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/constructorWithInlineClassParametersInBinaryDependencies.kt");
+      }
 
-        @Test
-        @TestMetadata("IncrementalCompilerRunner.kt")
-        public void testIncrementalCompilerRunner() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IncrementalCompilerRunner.kt");
-        }
+      @Test
+      @TestMetadata("defaultWithInlineClassAndReceivers.kt")
+      public void testDefaultWithInlineClassAndReceivers() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/defaultWithInlineClassAndReceivers.kt");
+      }
 
-        @Test
-        @TestMetadata("IrConstAcceptMultiModule.kt")
-        public void testIrConstAcceptMultiModule() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IrConstAcceptMultiModule.kt");
-        }
+      @Test
+      @TestMetadata("extensionPropertyWithSameName.kt")
+      public void testExtensionPropertyWithSameName() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/extensionPropertyWithSameName.kt");
+      }
 
-        @Test
-        @TestMetadata("javaTypeParameterBy.kt")
-        public void testJavaTypeParameterBy() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/javaTypeParameterBy.kt");
-        }
+      @Test
+      @TestMetadata("inlineClassFakeOverrideMangling.kt")
+      public void testInlineClassFakeOverrideMangling() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFakeOverrideMangling.kt");
+      }
 
-        @Test
-        @TestMetadata("LibraryProperty.kt")
-        public void testLibraryProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
-        }
+      @Test
+      @TestMetadata("inlineClassFromBinaryDependencies.kt")
+      public void testInlineClassFromBinaryDependencies() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFromBinaryDependencies.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineClassInlineFunctionCall.kt")
+      public void testInlineClassInlineFunctionCall() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineFunctionCall.kt");
+      }
+
+      @Test
+      @TestMetadata("inlineClassInlineProperty.kt")
+      public void testInlineClassInlineProperty() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineProperty.kt");
+      }
+
+      @Test
+      @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
+      public void testPrivateCompanionObjectValInDifferentModule() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateCompanionObjectValInDifferentModule.kt");
+      }
+
+      @Test
+      @TestMetadata("privateConstructor.kt")
+      public void testPrivateConstructor() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructor.kt");
+      }
+
+      @Test
+      @TestMetadata("privateConstructorWithPrivateField.kt")
+      public void testPrivateConstructorWithPrivateField() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructorWithPrivateField.kt");
+      }
+
+      @Test
+      @TestMetadata("privateTopLevelValInDifferentModule.kt")
+      public void testPrivateTopLevelValInDifferentModule() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateTopLevelValInDifferentModule.kt");
+      }
+
+      @Test
+      @TestMetadata("suspendFunWithDefaultOldMangling.kt")
+      public void testSuspendFunWithDefaultOldMangling() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/suspendFunWithDefaultOldMangling.kt");
+      }
+
+      @Test
+      @TestMetadata("useOldMangling.kt")
+      public void testUseOldMangling() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/useOldMangling.kt");
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Jvm8 {
+    @Test
+    public void testAllFilesPresentInJvm8() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
+    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
     @TestDataPath("$PROJECT_ROOT")
-    public class InlineClasses {
+    public class Defaults {
+      @Test
+      public void testAllFilesPresentInDefaults() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+      }
+
+      @Test
+      @TestMetadata("callStackTrace.kt")
+      public void testCallStackTrace() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/callStackTrace.kt");
+      }
+
+      @Test
+      @TestMetadata("superCall.kt")
+      public void testSuperCall() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
+      }
+
+      @Test
+      @TestMetadata("superCallFromInterface.kt")
+      public void testSuperCallFromInterface() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("superPropAccess.kt")
+      public void testSuperPropAccess() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
+      }
+
+      @Test
+      @TestMetadata("superPropAccessFromInterface.kt")
+      public void testSuperPropAccessFromInterface() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
+      @TestDataPath("$PROJECT_ROOT")
+      public class AllCompatibility {
         @Test
-        public void testAllFilesPresentInInlineClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        public void testAllFilesPresentInAllCompatibility() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
 
         @Test
-        @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
-        public void testCallDeserializedPropertyOnInlineClassType() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/callDeserializedPropertyOnInlineClassType.kt");
+        @TestMetadata("callStackTrace.kt")
+        public void testCallStackTrace() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
         }
 
         @Test
-        @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
-        public void testConstructorWithInlineClassParametersInBinaryDependencies() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/constructorWithInlineClassParametersInBinaryDependencies.kt");
+        @TestMetadata("superCall.kt")
+        public void testSuperCall() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
         }
 
         @Test
-        @TestMetadata("defaultWithInlineClassAndReceivers.kt")
-        public void testDefaultWithInlineClassAndReceivers() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/defaultWithInlineClassAndReceivers.kt");
+        @TestMetadata("superCallFromInterface.kt")
+        public void testSuperCallFromInterface() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
         }
 
         @Test
-        @TestMetadata("extensionPropertyWithSameName.kt")
-        public void testExtensionPropertyWithSameName() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/extensionPropertyWithSameName.kt");
+        @TestMetadata("superCallFromInterface2.kt")
+        public void testSuperCallFromInterface2() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
         }
 
         @Test
-        @TestMetadata("funInterface.kt")
-        public void testFunInterface() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/funInterface.kt");
+        @TestMetadata("superPropAccess.kt")
+        public void testSuperPropAccess() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
         }
 
         @Test
-        @TestMetadata("inlineClassFakeOverrideMangling.kt")
-        public void testInlineClassFakeOverrideMangling() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFakeOverrideMangling.kt");
+        @TestMetadata("superPropAccessFromInterface.kt")
+        public void testSuperPropAccessFromInterface() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
         }
 
         @Test
-        @TestMetadata("inlineClassFromBinaryDependencies.kt")
-        public void testInlineClassFromBinaryDependencies() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassFromBinaryDependencies.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineClassInlineFunctionCall.kt")
-        public void testInlineClassInlineFunctionCall() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineFunctionCall.kt");
-        }
-
-        @Test
-        @TestMetadata("inlineClassInlineProperty.kt")
-        public void testInlineClassInlineProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/inlineClassInlineProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("internalWithInlineClass.kt")
-        public void testInternalWithInlineClass() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/internalWithInlineClass.kt");
-        }
-
-        @Test
-        @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
-        public void testPrivateCompanionObjectValInDifferentModule() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateCompanionObjectValInDifferentModule.kt");
-        }
-
-        @Test
-        @TestMetadata("privateConstructor.kt")
-        public void testPrivateConstructor() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructor.kt");
-        }
-
-        @Test
-        @TestMetadata("privateConstructorWithPrivateField.kt")
-        public void testPrivateConstructorWithPrivateField() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateField.kt");
-        }
-
-        @Test
-        @TestMetadata("privateConstructorWithPrivateFieldUsingTypeTable.kt")
-        public void testPrivateConstructorWithPrivateFieldUsingTypeTable() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateFieldUsingTypeTable.kt");
-        }
-
-        @Test
-        @TestMetadata("privateTopLevelValInDifferentModule.kt")
-        public void testPrivateTopLevelValInDifferentModule() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateTopLevelValInDifferentModule.kt");
-        }
-
-        @Test
-        @TestMetadata("suspendFunWithDefaultMangling.kt")
-        public void testSuspendFunWithDefaultMangling() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/suspendFunWithDefaultMangling.kt");
+        @TestMetadata("superPropAccessFromInterface2.kt")
+        public void testSuperPropAccessFromInterface2() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
         }
 
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
+        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
         @TestDataPath("$PROJECT_ROOT")
-        public class OldMangling {
-            @Test
-            public void testAllFilesPresentInOldMangling() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-            }
+        public class DelegationBy {
+          @Test
+          public void testAllFilesPresentInDelegationBy() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+          }
 
-            @Test
-            @TestMetadata("callDeserializedPropertyOnInlineClassType.kt")
-            public void testCallDeserializedPropertyOnInlineClassType() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/callDeserializedPropertyOnInlineClassType.kt");
-            }
+          @Test
+          @TestMetadata("simple.kt")
+          public void testSimple() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
+          }
 
-            @Test
-            @TestMetadata("constructorWithInlineClassParametersInBinaryDependencies.kt")
-            public void testConstructorWithInlineClassParametersInBinaryDependencies() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/constructorWithInlineClassParametersInBinaryDependencies.kt");
-            }
-
-            @Test
-            @TestMetadata("defaultWithInlineClassAndReceivers.kt")
-            public void testDefaultWithInlineClassAndReceivers() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/defaultWithInlineClassAndReceivers.kt");
-            }
-
-            @Test
-            @TestMetadata("extensionPropertyWithSameName.kt")
-            public void testExtensionPropertyWithSameName() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/extensionPropertyWithSameName.kt");
-            }
-
-            @Test
-            @TestMetadata("inlineClassFakeOverrideMangling.kt")
-            public void testInlineClassFakeOverrideMangling() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFakeOverrideMangling.kt");
-            }
-
-            @Test
-            @TestMetadata("inlineClassFromBinaryDependencies.kt")
-            public void testInlineClassFromBinaryDependencies() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassFromBinaryDependencies.kt");
-            }
-
-            @Test
-            @TestMetadata("inlineClassInlineFunctionCall.kt")
-            public void testInlineClassInlineFunctionCall() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineFunctionCall.kt");
-            }
-
-            @Test
-            @TestMetadata("inlineClassInlineProperty.kt")
-            public void testInlineClassInlineProperty() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/inlineClassInlineProperty.kt");
-            }
-
-            @Test
-            @TestMetadata("privateCompanionObjectValInDifferentModule.kt")
-            public void testPrivateCompanionObjectValInDifferentModule() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateCompanionObjectValInDifferentModule.kt");
-            }
-
-            @Test
-            @TestMetadata("privateConstructor.kt")
-            public void testPrivateConstructor() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructor.kt");
-            }
-
-            @Test
-            @TestMetadata("privateConstructorWithPrivateField.kt")
-            public void testPrivateConstructorWithPrivateField() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructorWithPrivateField.kt");
-            }
-
-            @Test
-            @TestMetadata("privateTopLevelValInDifferentModule.kt")
-            public void testPrivateTopLevelValInDifferentModule() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateTopLevelValInDifferentModule.kt");
-            }
-
-            @Test
-            @TestMetadata("suspendFunWithDefaultOldMangling.kt")
-            public void testSuspendFunWithDefaultOldMangling() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/suspendFunWithDefaultOldMangling.kt");
-            }
-
-            @Test
-            @TestMetadata("useOldMangling.kt")
-            public void testUseOldMangling() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/useOldMangling.kt");
-            }
+          @Test
+          @TestMetadata("simpleProperty.kt")
+          public void testSimpleProperty() {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
+          }
         }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Interop {
+        @Test
+        @TestMetadata("allAgainsAllCompatibility.kt")
+        public void testAllAgainsAllCompatibility() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
+        }
+
+        @Test
+        @TestMetadata("allCompatibilityAgainsAll.kt")
+        public void testAllCompatibilityAgainsAll() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInInterop() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("likeMemberClash.kt")
+        public void testLikeMemberClash() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeMemberClash.kt");
+        }
+
+        @Test
+        @TestMetadata("likeSpecialization.kt")
+        public void testLikeSpecialization() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeSpecialization.kt");
+        }
+
+        @Test
+        @TestMetadata("newAndOldSchemes.kt")
+        public void testNewAndOldSchemes() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
+        }
+
+        @Test
+        @TestMetadata("newAndOldSchemes2.kt")
+        public void testNewAndOldSchemes2() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
+        }
+
+        @Test
+        @TestMetadata("newAndOldSchemes2Compatibility.kt")
+        public void testNewAndOldSchemes2Compatibility() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
+        }
+
+        @Test
+        @TestMetadata("newAndOldSchemes3.kt")
+        public void testNewAndOldSchemes3() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
+        }
+      }
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
+    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
     @TestDataPath("$PROJECT_ROOT")
-    public class Jvm8 {
+    public class Jvm8against6 {
+      @Test
+      public void testAllFilesPresentInJvm8against6() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+      }
+
+      @Test
+      @TestMetadata("jdk8Against6.kt")
+      public void testJdk8Against6() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/jdk8Against6.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleCall.kt")
+      public void testSimpleCall() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCall.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleCallWithBigHierarchy.kt")
+      public void testSimpleCallWithBigHierarchy() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithBigHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleCallWithHierarchy.kt")
+      public void testSimpleCallWithHierarchy() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithHierarchy.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleProp.kt")
+      public void testSimpleProp() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleProp.kt");
+      }
+
+      @Test
+      @TestMetadata("simplePropWithHierarchy.kt")
+      public void testSimplePropWithHierarchy() {
+        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simplePropWithHierarchy.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Delegation {
         @Test
-        public void testAllFilesPresentInJvm8() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        public void testAllFilesPresentInDelegation() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
         }
 
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Defaults {
-            @Test
-            public void testAllFilesPresentInDefaults() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-            }
-
-            @Test
-            @TestMetadata("superCall.kt")
-            public void testSuperCall() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
-            }
-
-            @Test
-            @TestMetadata("superCallFromInterface.kt")
-            public void testSuperCallFromInterface() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
-            }
-
-            @Test
-            @TestMetadata("superCallFromInterface2.kt")
-            public void testSuperCallFromInterface2() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface2.kt");
-            }
-
-            @Test
-            @TestMetadata("superPropAccess.kt")
-            public void testSuperPropAccess() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
-            }
-
-            @Test
-            @TestMetadata("superPropAccessFromInterface.kt")
-            public void testSuperPropAccessFromInterface() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
-            }
-
-            @Test
-            @TestMetadata("superPropAccessFromInterface2.kt")
-            public void testSuperPropAccessFromInterface2() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
-            @TestDataPath("$PROJECT_ROOT")
-            public class AllCompatibility {
-                @Test
-                public void testAllFilesPresentInAllCompatibility() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                }
-
-                @Test
-                @TestMetadata("callStackTrace.kt")
-                public void testCallStackTrace() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/callStackTrace.kt");
-                }
-
-                @Test
-                @TestMetadata("superCall.kt")
-                public void testSuperCall() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCall.kt");
-                }
-
-                @Test
-                @TestMetadata("superCallFromInterface.kt")
-                public void testSuperCallFromInterface() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface.kt");
-                }
-
-                @Test
-                @TestMetadata("superCallFromInterface2.kt")
-                public void testSuperCallFromInterface2() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superCallFromInterface2.kt");
-                }
-
-                @Test
-                @TestMetadata("superPropAccess.kt")
-                public void testSuperPropAccess() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccess.kt");
-                }
-
-                @Test
-                @TestMetadata("superPropAccessFromInterface.kt")
-                public void testSuperPropAccessFromInterface() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface.kt");
-                }
-
-                @Test
-                @TestMetadata("superPropAccessFromInterface2.kt")
-                public void testSuperPropAccessFromInterface2() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/superPropAccessFromInterface2.kt");
-                }
-
-                @Nested
-                @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
-                @TestDataPath("$PROJECT_ROOT")
-                public class DelegationBy {
-                    @Test
-                    public void testAllFilesPresentInDelegationBy() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                    }
-
-                    @Test
-                    @TestMetadata("simple.kt")
-                    public void testSimple() throws Exception {
-                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simple.kt");
-                    }
-
-                    @Test
-                    @TestMetadata("simpleProperty.kt")
-                    public void testSimpleProperty() throws Exception {
-                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy/simpleProperty.kt");
-                    }
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Interop {
-                @Test
-                @TestMetadata("allAgainsAllCompatibility.kt")
-                public void testAllAgainsAllCompatibility() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
-                }
-
-                @Test
-                @TestMetadata("allCompatibilityAgainsAll.kt")
-                public void testAllCompatibilityAgainsAll() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
-                }
-
-                @Test
-                public void testAllFilesPresentInInterop() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                }
-
-                @Test
-                @TestMetadata("likeMemberClash.kt")
-                public void testLikeMemberClash() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeMemberClash.kt");
-                }
-
-                @Test
-                @TestMetadata("likeSpecialization.kt")
-                public void testLikeSpecialization() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeSpecialization.kt");
-                }
-
-                @Test
-                @TestMetadata("newAndOldSchemes.kt")
-                public void testNewAndOldSchemes() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
-                }
-
-                @Test
-                @TestMetadata("newAndOldSchemes2.kt")
-                public void testNewAndOldSchemes2() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
-                }
-
-                @Test
-                @TestMetadata("newAndOldSchemes2Compatibility.kt")
-                public void testNewAndOldSchemes2Compatibility() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
-                }
-
-                @Test
-                @TestMetadata("newAndOldSchemes3.kt")
-                public void testNewAndOldSchemes3() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
-                }
-
-                @Test
-                @TestMetadata("newSchemeWithJvmDefault.kt")
-                public void testNewSchemeWithJvmDefault() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
-            @TestDataPath("$PROJECT_ROOT")
-            public class NoDefaultImpls {
-                @Test
-                public void testAllFilesPresentInNoDefaultImpls() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                }
-
-                @Test
-                @TestMetadata("superPropAccessFromInterface.kt")
-                public void testSuperPropAccessFromInterface() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
-                }
-            }
+        @Test
+        @TestMetadata("diamond.kt")
+        public void testDiamond() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond.kt");
         }
 
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Jvm8against6 {
-            @Test
-            public void testAllFilesPresentInJvm8against6() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-            }
-
-            @Test
-            @TestMetadata("jdk8Against6.kt")
-            public void testJdk8Against6() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/jdk8Against6.kt");
-            }
-
-            @Test
-            @TestMetadata("simpleCall.kt")
-            public void testSimpleCall() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCall.kt");
-            }
-
-            @Test
-            @TestMetadata("simpleCallWithBigHierarchy.kt")
-            public void testSimpleCallWithBigHierarchy() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithBigHierarchy.kt");
-            }
-
-            @Test
-            @TestMetadata("simpleCallWithHierarchy.kt")
-            public void testSimpleCallWithHierarchy() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithHierarchy.kt");
-            }
-
-            @Test
-            @TestMetadata("simpleProp.kt")
-            public void testSimpleProp() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleProp.kt");
-            }
-
-            @Test
-            @TestMetadata("simplePropWithHierarchy.kt")
-            public void testSimplePropWithHierarchy() throws Exception {
-                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/simplePropWithHierarchy.kt");
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Delegation {
-                @Test
-                public void testAllFilesPresentInDelegation() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-                }
-
-                @Test
-                @TestMetadata("diamond.kt")
-                public void testDiamond() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond.kt");
-                }
-
-                @Test
-                @TestMetadata("diamond2.kt")
-                public void testDiamond2() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond2.kt");
-                }
-
-                @Test
-                @TestMetadata("diamond3.kt")
-                public void testDiamond3() throws Exception {
-                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond3.kt");
-                }
-            }
+        @Test
+        @TestMetadata("diamond2.kt")
+        public void testDiamond2() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond2.kt");
         }
+
+        @Test
+        @TestMetadata("diamond3.kt")
+        public void testDiamond3() {
+          runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond3.kt");
+        }
+      }
+    }
+  }
+
+  @Nested
+  @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAnnotations {
+    @Test
+    public void testAllFilesPresentInTypeAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
     }
 
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
-    @TestDataPath("$PROJECT_ROOT")
-    public class TypeAnnotations {
-        @Test
-        public void testAllFilesPresentInTypeAnnotations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
-        }
-
-        @Test
-        @TestMetadata("implicitReturn.kt")
-        public void testImplicitReturn() throws Exception {
-            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
-        }
+    @Test
+    @TestMetadata("implicitReturn.kt")
+    public void testImplicitReturn() {
+      runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations/implicitReturn.kt");
     }
+  }
 }

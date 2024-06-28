@@ -6,19 +6,18 @@
 package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.ide.highlighter.JavaClassFileType
-import com.intellij.model.ModelBranch
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
-import com.intellij.reference.SoftReference
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import java.lang.ref.SoftReference
 
 class ClsKotlinBinaryClassCache {
     class KotlinBinaryClassHeaderData(
@@ -42,10 +41,11 @@ class ClsKotlinBinaryClassCache {
             return false
         }
 
-        getKotlinBinaryFromCache(file)?.let {
+        val binaryFromCache = getKotlinBinaryFromCache(file)
+        binaryFromCache?.let {
             return it.isKotlinBinary
         }
-        return kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE) != null
+        return kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE, binaryFromCache?.isKotlinBinary) != null
     }
 
     fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
@@ -54,15 +54,20 @@ class ClsKotlinBinaryClassCache {
             return null
         }
 
-        return kotlinJvmBinaryClass(file, fileContent, cached?.headerData?.metadataVersion ?: JvmMetadataVersion.INSTANCE)
+        return kotlinJvmBinaryClass(
+            file,
+            fileContent,
+            cached?.headerData?.metadataVersion ?: JvmMetadataVersion.INSTANCE,
+            cached?.isKotlinBinary
+        )
     }
 
     private fun kotlinJvmBinaryClass(
         file: VirtualFile,
         fileContent: ByteArray?,
-        jvmMetadataVersion: JvmMetadataVersion
+        jvmMetadataVersion: JvmMetadataVersion,
+        isKotlinBinary: Boolean?
     ): KotlinJvmBinaryClass? {
-        if (ModelBranch.getFileBranch(file) != null) return null
         val classFileContent = try {
             KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(
                 file, jvmMetadataVersion, fileContent = fileContent
@@ -75,7 +80,7 @@ class ClsKotlinBinaryClassCache {
         val kotlinBinaryClass = classFileContent?.toKotlinJvmBinaryClass()
 
         val isKotlinBinaryClass = kotlinBinaryClass != null
-        if (file is VirtualFileWithId) {
+        if (file is VirtualFileWithId && isKotlinBinaryClass != isKotlinBinary) {
             attributeService.writeBooleanAttribute(KOTLIN_IS_COMPILED_FILE_ATTRIBUTE, file, isKotlinBinaryClass)
         }
 
@@ -88,7 +93,8 @@ class ClsKotlinBinaryClassCache {
     }
 
     fun getKotlinBinaryClassHeaderData(file: VirtualFile, fileContent: ByteArray? = null): KotlinBinaryClassHeaderData? {
-        getKotlinBinaryFromCache(file)?.let { cached ->
+        val kotlinBinaryData = getKotlinBinaryFromCache(file)
+        kotlinBinaryData?.let { cached ->
             if (!cached.isKotlinBinary) {
                 return null
             }
@@ -97,7 +103,8 @@ class ClsKotlinBinaryClassCache {
             }
         }
 
-        val kotlinBinaryClass = kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE) ?: return null
+        val kotlinBinaryClass =
+            kotlinJvmBinaryClass(file, fileContent, JvmMetadataVersion.INSTANCE, kotlinBinaryData?.isKotlinBinary) ?: return null
         return createHeaderInfo(kotlinBinaryClass)
     }
 

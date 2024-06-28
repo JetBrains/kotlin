@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 internal class ConsistencyCheck<T, S>(
@@ -21,44 +21,67 @@ internal class FragmentConsistencyChecks<T>(
     unitName: String, // "fragment" or "source set"
     private val languageSettings: T.() -> LanguageSettings
 ) {
-    private val defaultLanguageVersion = LanguageVersion.LATEST_STABLE
+    private val defaultLanguageVersion = KotlinVersion.DEFAULT
 
     private val languageVersionCheckHint =
         "The language version of the dependent $unitName must be greater than or equal to that of its dependency."
 
-    val languageVersionCheck = ConsistencyCheck<T, LanguageVersion>(
+    private val languageVersionCheck = ConsistencyCheck<T, KotlinVersion?>(
         name = "language version",
         getValue = { unit ->
-            unit.languageSettings().languageVersion?.let { parseLanguageVersionSetting(it) } ?: defaultLanguageVersion
+            unit.languageSettings().getValueIfExists {
+                languageVersion?.let { KotlinVersion.fromVersion(it) } ?: defaultLanguageVersion
+            }
         },
-        leftExtendsRightConsistently = { left, right -> left >= right },
+        leftExtendsRightConsistently = { left, right ->
+            if (left == null || right == null) true else left >= right
+        },
         consistencyConditionHint = languageVersionCheckHint
     )
 
     private val unstableFeaturesHint = "The dependent $unitName must enable all unstable language features that its dependency has."
 
-    val unstableFeaturesCheck = ConsistencyCheck<T, Set<LanguageFeature>>(
+    private val unstableFeaturesCheck = ConsistencyCheck<T, Set<LanguageFeature>?>(
         name = "unstable language feature set",
         getValue = { unit ->
-            unit.languageSettings().enabledLanguageFeatures
-                .map { parseLanguageFeature(it)!! }
-                .filterTo(mutableSetOf()) { it.kind == LanguageFeature.Kind.UNSTABLE_FEATURE }
+            unit.languageSettings().getValueIfExists {
+                enabledLanguageFeatures
+                    .mapNotNull { parseLanguageFeature(it) }
+                    .filterTo(mutableSetOf()) { it.kind == LanguageFeature.Kind.UNSTABLE_FEATURE }
+            }
         },
-        leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
+        leftExtendsRightConsistently = { left, right ->
+            if (left == null || right == null) true else left.containsAll(right)
+        },
         consistencyConditionHint = unstableFeaturesHint
     )
 
     private val optInAnnotationsInUseHint = "The dependent $unitName must use all opt-in annotations that its dependency uses."
 
-    val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>>(
+    private val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>?>(
         name = "set of opt-in annotations in use",
-        getValue = { unit -> unit.languageSettings().optInAnnotationsInUse },
-        leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
+        getValue = { unit -> unit.languageSettings().getValueIfExists { optInAnnotationsInUse } },
+        leftExtendsRightConsistently = { left, right ->
+            if (left == null || right == null) true else left.containsAll(right)
+        },
         consistencyConditionHint = optInAnnotationsInUseHint
     )
 
     val allChecks = listOf(languageVersionCheck, unstableFeaturesCheck, optInAnnotationsCheck)
+
+    private fun <T> LanguageSettings.getValueIfExists(
+        getValue: LanguageSettings.() -> T?
+    ): T? {
+        val defaultLanguageSettingsBuilder = this as DefaultLanguageSettingsBuilder
+        return if (defaultLanguageSettingsBuilder.compilationCompilerOptions.isCompleted) {
+            getValue(defaultLanguageSettingsBuilder)
+        } else {
+            null
+        }
+    }
 }
+
+internal fun parseLanguageFeature(featureName: String) = LanguageFeature.fromString(featureName)
 
 internal class FragmentConsistencyChecker<T>(
     private val unitsName: String,

@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
-import org.jetbrains.kotlin.scripting.compiler.plugin.assertHasMessage
-import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
+import org.jetbrains.kotlin.scripting.compiler.plugin.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -233,7 +233,8 @@ class ScriptTemplateTest : TestCase() {
         }
     }
 
-    fun testScriptWithParamConversion() {
+    // Fails on K2, see KT-62413
+    fun testScriptWithParamConversion() = expectTestToFailOnK2 {
         val messageCollector = TestMessageCollector()
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         Assert.assertNotNull("Compilation failed:\n$messageCollector", aClass)
@@ -360,7 +361,7 @@ class ScriptTemplateTest : TestCase() {
         messageCollector: MessageCollector,
         includeKotlinRuntime: Boolean
     ): Class<*>? {
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTemplateTest::class.simpleName}")
         try {
             val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
                 ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty().toTypedArray()
@@ -370,7 +371,7 @@ class ScriptTemplateTest : TestCase() {
                 *additionalClasspath
             )
             configuration.updateWithBaseCompilerArguments()
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromLegacy(
@@ -380,6 +381,13 @@ class ScriptTemplateTest : TestCase() {
             )
             configuration.put(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION, true)
             configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+            val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+                    System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+
+            if (isK2) {
+                configuration.put(CommonConfigurationKeys.USE_FIR, true)
+            }
 
             loadScriptingPlugin(configuration)
 

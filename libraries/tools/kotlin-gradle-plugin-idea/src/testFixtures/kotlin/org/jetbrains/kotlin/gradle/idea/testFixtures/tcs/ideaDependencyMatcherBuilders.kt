@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.gradle.idea.testFixtures.tcs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.build.BuildState
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
+import kotlin.test.fail
 
 fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependencyMatcher> {
     return when (notation) {
@@ -25,7 +28,7 @@ fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependency
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, project: Project, sourceSetName: String): IdeaKotlinDependencyMatcher {
-    return IdeaKotlinSourceDependencyMatcher(type, project.currentBuildId().name, project.path, sourceSetName)
+    return IdeaKotlinSourceDependencyMatcher(type, project.currentBuildId().buildPath, project.path, sourceSetName)
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, path: String): IdeaKotlinDependencyMatcher {
@@ -51,12 +54,12 @@ fun projectArtifactDependency(
     buildIdAndProjectPath: String, artifactFilePath: FilePathRegex
 ): IdeaKotlinDependencyMatcher {
     val slicedProjectPath = buildIdAndProjectPath.split("::", limit = 2)
-    val buildId = if (slicedProjectPath.size == 2) slicedProjectPath.first() else ":"
+    val buildPath = if (slicedProjectPath.size == 2) slicedProjectPath.first() else ":"
     val projectPath = if (slicedProjectPath.size == 2) ":" + slicedProjectPath.last() else slicedProjectPath.last()
 
     return IdeaKotlinProjectArtifactDependencyMatcher(
         type = type,
-        buildId = buildId,
+        buildPath = buildPath,
         projectPath = projectPath,
         artifactFilePath = artifactFilePath
     )
@@ -78,3 +81,40 @@ fun anyDependency(): IdeaKotlinDependencyMatcher = object : IdeaKotlinDependency
 /* Duplicated: Aks Gradle for public API? */
 private fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
+
+
+class IdeaKotlinDependencyMatcherWithSourcesFile(
+    private val upstreamMatcher: IdeaKotlinDependencyMatcher,
+    private val filePattern: Regex,
+) : IdeaKotlinDependencyMatcher {
+    override val description: String
+        get() = upstreamMatcher.description + " with resolved sources file '$filePattern'"
+
+    override fun matches(dependency: IdeaKotlinDependency): Boolean {
+        if (!upstreamMatcher.matches(dependency)) return false
+
+        // only binary dependencies can have resolved sources file attached
+        if (dependency !is IdeaKotlinBinaryDependency) return false
+
+        // at the moment we expect only 1 source file be associated with dependency
+        val sourcesFile = dependency.sourcesClasspath.singleOrNull() ?: return false
+
+        // require that *ALL* files in sourcesClasspath matches the file pattern
+        return sourcesFile.toString().matches(filePattern)
+    }
+
+    override fun toString(): String = "$upstreamMatcher with resolved sources file '$filePattern'"
+}
+
+fun IdeaKotlinDependencyMatcher.withResolvedSourcesFile(endsWith: String) =
+    IdeaKotlinDependencyMatcherWithSourcesFile(
+        upstreamMatcher = this,
+        filePattern = Regex(".*$endsWith")
+    )
+
+fun IdeaKotlinDependency.assertNoSourcesResolved(): IdeaKotlinDependency {
+    if (this !is IdeaKotlinBinaryDependency) fail("Dependency $this is not a binary dependency")
+    if (sourcesClasspath.isNotEmpty()) fail("Expected that $this has no resolved sources")
+
+    return this
+}

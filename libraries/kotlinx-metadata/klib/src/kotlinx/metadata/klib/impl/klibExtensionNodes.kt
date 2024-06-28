@@ -1,44 +1,43 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
-
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.*
-import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.klib.*
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
+import kotlin.metadata.internal.extensions.*
 
 internal val KmFunction.klibExtensions: KlibFunctionExtension
-    get() = visitExtensions(KlibFunctionExtensionVisitor.TYPE) as KlibFunctionExtension
+    get() = getExtension(KlibFunctionExtensionVisitor.TYPE) as KlibFunctionExtension
 
 internal val KmClass.klibExtensions: KlibClassExtension
-    get() = visitExtensions(KlibClassExtensionVisitor.TYPE) as KlibClassExtension
+    get() = getExtension(KlibClassExtensionVisitor.TYPE) as KlibClassExtension
 
 internal val KmType.klibExtensions: KlibTypeExtension
-    get() = visitExtensions(KlibTypeExtensionVisitor.TYPE) as KlibTypeExtension
+    get() = getExtension(KlibTypeExtensionVisitor.TYPE) as KlibTypeExtension
 
 internal val KmProperty.klibExtensions: KlibPropertyExtension
-    get() = visitExtensions(KlibPropertyExtensionVisitor.TYPE) as KlibPropertyExtension
+    get() = getExtension(KlibPropertyExtensionVisitor.TYPE) as KlibPropertyExtension
 
 internal val KmConstructor.klibExtensions: KlibConstructorExtension
-    get() = visitExtensions(KlibConstructorExtensionVisitor.TYPE) as KlibConstructorExtension
+    get() = getExtension(KlibConstructorExtensionVisitor.TYPE) as KlibConstructorExtension
 
 internal val KmTypeParameter.klibExtensions: KlibTypeParameterExtension
-    get() = visitExtensions(KlibTypeParameterExtensionVisitor.TYPE) as KlibTypeParameterExtension
+    get() = getExtension(KlibTypeParameterExtensionVisitor.TYPE) as KlibTypeParameterExtension
 
 internal val KmPackage.klibExtensions: KlibPackageExtension
-    get() = visitExtensions(KlibPackageExtensionVisitor.TYPE) as KlibPackageExtension
+    get() = getExtension(KlibPackageExtensionVisitor.TYPE) as KlibPackageExtension
 
 internal val KmModuleFragment.klibExtensions: KlibModuleFragmentExtension
-    get() = visitExtensions(KlibModuleFragmentExtensionVisitor.TYPE) as KlibModuleFragmentExtension
+    get() = getExtension(KlibModuleFragmentExtensionVisitor.TYPE) as KlibModuleFragmentExtension
 
 internal val KmTypeAlias.klibExtensions: KlibTypeAliasExtension
-    get() = visitExtensions(KlibTypeAliasExtensionVisitor.TYPE) as KlibTypeAliasExtension
+    get() = getExtension(KlibTypeAliasExtensionVisitor.TYPE) as KlibTypeAliasExtension
 
 internal val KmValueParameter.klibExtensions: KlibValueParameterExtension
-    get() = visitExtensions(KlibValueParameterExtensionVisitor.TYPE) as KlibValueParameterExtension
+    get() = getExtension(KlibValueParameterExtensionVisitor.TYPE) as KlibValueParameterExtension
 
 internal class KlibFunctionExtension : KlibFunctionExtensionVisitor(), KmFunctionExtension {
 
@@ -58,7 +57,7 @@ internal class KlibFunctionExtension : KlibFunctionExtensionVisitor(), KmFunctio
         this.file = file
     }
 
-    override fun accept(visitor: KmFunctionExtensionVisitor) {
+    fun accept(visitor: KmFunctionExtension) {
         require(visitor is KlibFunctionExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
         uniqId?.let(visitor::visitUniqId)
@@ -89,7 +88,7 @@ internal class KlibClassExtension : KlibClassExtensionVisitor(), KmClassExtensio
         enumEntries += entry
     }
 
-    override fun accept(visitor: KmClassExtensionVisitor) {
+    fun accept(visitor: KmClassExtension) {
         require(visitor is KlibClassExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
         enumEntries.forEach(visitor::visitEnumEntry)
@@ -106,9 +105,22 @@ internal class KlibTypeExtension : KlibTypeExtensionVisitor(), KmTypeExtension {
         annotations += annotation
     }
 
-    override fun accept(visitor: KmTypeExtensionVisitor) {
+    fun accept(visitor: KmTypeExtension) {
         require(visitor is KlibTypeExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
+    }
+
+    override fun hashCode(): Int {
+        return annotations.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KlibTypeExtension
+
+        return annotations == other.annotations
     }
 }
 
@@ -145,7 +157,7 @@ internal class KlibPropertyExtension : KlibPropertyExtensionVisitor(), KmPropert
         this.compileTimeValue = value
     }
 
-    override fun accept(visitor: KmPropertyExtensionVisitor) {
+    fun accept(visitor: KmPropertyExtension) {
         require(visitor is KlibPropertyExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
         getterAnnotations.forEach(visitor::visitGetterAnnotation)
@@ -169,7 +181,7 @@ internal class KlibConstructorExtension : KlibConstructorExtensionVisitor(), KmC
         this.uniqId = uniqId
     }
 
-    override fun accept(visitor: KmConstructorExtensionVisitor) {
+    fun accept(visitor: KmConstructorExtension) {
         require(visitor is KlibConstructorExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
         uniqId?.let(visitor::visitUniqId)
@@ -189,7 +201,7 @@ internal class KlibTypeParameterExtension : KlibTypeParameterExtensionVisitor(),
         this.uniqId = uniqId
     }
 
-    override fun accept(visitor: KmTypeParameterExtensionVisitor) {
+    fun accept(visitor: KmTypeParameterExtension) {
         require(visitor is KlibTypeParameterExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
         uniqId?.let(visitor::visitUniqId)
@@ -204,7 +216,7 @@ internal class KlibPackageExtension : KlibPackageExtensionVisitor(), KmPackageEx
         fqName = name
     }
 
-    override fun accept(visitor: KmPackageExtensionVisitor) {
+    fun accept(visitor: KmPackageExtension) {
         require(visitor is KlibPackageExtensionVisitor)
         fqName?.let(visitor::visitFqName)
     }
@@ -228,7 +240,7 @@ internal class KlibModuleFragmentExtension : KlibModuleFragmentExtensionVisitor(
         this.className += className
     }
 
-    override fun accept(visitor: KmModuleFragmentExtensionVisitor) {
+    fun accept(visitor: KmModuleFragmentExtension) {
         require(visitor is KlibModuleFragmentExtensionVisitor)
         moduleFragmentFiles.forEach(visitor::visitFile)
         fqName?.let(visitor::visitFqName)
@@ -243,7 +255,7 @@ internal class KlibTypeAliasExtension : KlibTypeAliasExtensionVisitor(), KmTypeA
         this.uniqId = uniqId
     }
 
-    override fun accept(visitor: KmTypeAliasExtensionVisitor) {
+    fun accept(visitor: KmTypeAliasExtension) {
         require(visitor is KlibTypeAliasExtensionVisitor)
         uniqId?.let(visitor::visitUniqId)
     }
@@ -256,7 +268,7 @@ internal class KlibValueParameterExtension : KlibValueParameterExtensionVisitor(
         annotations += annotation
     }
 
-    override fun accept(visitor: KmValueParameterExtensionVisitor) {
+    fun accept(visitor: KmValueParameterExtension) {
         require(visitor is KlibValueParameterExtensionVisitor)
         annotations.forEach(visitor::visitAnnotation)
     }

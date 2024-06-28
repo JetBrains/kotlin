@@ -1,5 +1,5 @@
-// !LANGUAGE: +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
 
@@ -16,14 +16,14 @@ fun <T> bar(s: T) {}
 fun <T> complex(t: T, f: (T) -> Unit) {}
 
 fun test1() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, A::<!UNRESOLVED_REFERENCE!>invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
+    foo(1, A::<!INAPPLICABLE_CANDIDATE!>invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
     foo(1, ::bar)
 
     complex(1, ::bar)
 }
 
 fun <R> test2(x: R) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(x, A::<!UNRESOLVED_REFERENCE!>invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
+    foo(x, A::<!INAPPLICABLE_CANDIDATE!>invokeLater<!>) // KT-24507 SAM conversion accidentally applied to callable reference and incorrectly handled via BE
     foo(x, ::bar)
 
     complex(x, ::bar)

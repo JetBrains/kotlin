@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !MARK_DYNAMIC_CALLS
+// MARK_DYNAMIC_CALLS
 
 fun foo(d: dynamic) {
     if (d is Foo) {

@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
+
 // FILE: kt43217.kt
 class A {
     private val b =

@@ -2,7 +2,6 @@ public final class foo/Kotlin$foo$1 : java/lang/Object {
     void <init>()
 
     public final foo.Kotlin foo()
-      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 }
 
 public final class foo/Kotlin : java/lang/Object {

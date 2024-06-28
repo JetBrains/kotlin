@@ -1,7 +1,7 @@
-// !RENDER_DIAGNOSTICS_FULL_TEXT
-// TARGET_BACKEND: JVM_IR
+// RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
 // KT-19423 variation
+
 val used = "abc"
 
 object Outer {

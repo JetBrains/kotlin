@@ -34,8 +34,8 @@ private constructor(
     private val shouldInlineConstVals: Boolean,
     private val codegen: ExpressionCodegen?
 ) {
-    constructor(state: GenerationState) : this(state.bindingContext, state.shouldInlineConstVals, null)
-    constructor(codegen: ExpressionCodegen) : this(codegen.bindingContext, codegen.state.shouldInlineConstVals, codegen)
+    constructor(state: GenerationState) : this(state.bindingContext, state.config.shouldInlineConstVals, null)
+    constructor(codegen: ExpressionCodegen) : this(codegen.bindingContext, codegen.state.config.shouldInlineConstVals, codegen)
 
     fun checkAllItemsAreConstantsSatisfying(expression: KtWhenExpression, predicate: Function1<ConstantValue<*>, Boolean>): Boolean =
         expression.entries.all { entry ->

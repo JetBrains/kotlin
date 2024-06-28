@@ -12,7 +12,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMEN
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.DecoratedKotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 
 
@@ -22,8 +22,12 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         defaultSourceSet = kotlin.sourceSets.maybeCreate(camelCase("prototype", targetName, name)).apply {
             android = AndroidKotlinSourceSet()
         }
-        decoratedKotlinCompilationFactory = DecoratedKotlinCompilationFactory(::PrototypeAndroidCompilation)
+        compilationFactory = CompilationFactory(::PrototypeAndroidCompilation)
         compileTaskName = camelCase("prototype", "compile", targetName, name)
+
+        friendArtifactResolver = ExternalKotlinCompilationDescriptor.FriendArtifactResolver { compilation ->
+            compilation.extraFriendPaths
+        }
 
         /*
         Replace Kotlin's compilation association (main <-> test) with noop,
@@ -41,14 +45,26 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         configure { compilation ->
             /* Setup attributes for the compile dependencies */
             compilation.configurations.compileDependencyConfiguration.apply {
-                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attributeProvider(
+                    ARTIFACT_TYPE,
+                    project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+                )
+                attributes.attributeProvider(
+                    TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                )
             }
 
             /* Setup attributes for the runtime dependencies */
             compilation.configurations.runtimeDependencyConfiguration?.apply {
-                attributes.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
-                attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+                attributes.attributeProvider(
+                    ARTIFACT_TYPE,
+                    project.provider { AndroidArtifacts.ArtifactType.CLASSES_JAR.type }
+                )
+                attributes.attributeProvider(
+                    TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                    project.provider { project.objects.named(TargetJvmEnvironment.ANDROID) }
+                )
             }
         }
     }

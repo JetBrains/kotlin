@@ -1,0 +1,40 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a1: R|A|
+                FirValueParameterSymbol a2: R|A|
+    Element 7
+        Scope: FirLocalScope
+    Element 8
+        Implicit receiver:
+            FirNamedFunctionSymbol public final fun test_1(a1: R|A|, a2: R|A|): R|kotlin/Unit|
+                Type: Algebra<A>
+
+FILE: [ResolvedTo(IMPORTS)] receiverInjection.kt
+    public abstract [ResolvedTo(STATUS)] interface Algebra<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun R|T|.plus([ResolvedTo(CONTRACTS)] other: R|T|): R|T|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface B : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> injectAlgebra(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test_1([ResolvedTo(BODY_RESOLVE)] a1: R|A|, [ResolvedTo(BODY_RESOLVE)] a2: R|A|): R|kotlin/Unit| {
+        R|/injectAlgebra|<R|A|>()
+        (this@R|/test_1|, R|<local>/a1|).R|SubstitutionOverride</Algebra.plus: R|A|>|(R|<local>/a2|)
+    }

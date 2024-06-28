@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,106 +22,201 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInCompare() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
-    }
+  public void testAllFilesPresentInCompare() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compare"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+  }
 
-    @TestMetadata("anonymousObjects")
-    public void testAnonymousObjects() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/anonymousObjects/");
-    }
+  @TestMetadata("anonymousObjects")
+  public void testAnonymousObjects() {
+    runTest("plugins/jvm-abi-gen/testData/compare/anonymousObjects/");
+  }
 
-    @TestMetadata("classFlags")
-    public void testClassFlags() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/classFlags/");
-    }
+  @TestMetadata("classFlags")
+  public void testClassFlags() {
+    runTest("plugins/jvm-abi-gen/testData/compare/classFlags/");
+  }
 
-    @TestMetadata("classPrivateMemebers")
-    public void testClassPrivateMemebers() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/classPrivateMemebers/");
-    }
+  @TestMetadata("classPrivateMemebers")
+  public void testClassPrivateMemebers() {
+    runTest("plugins/jvm-abi-gen/testData/compare/classPrivateMemebers/");
+  }
 
-    @TestMetadata("clinit")
-    public void testClinit() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/clinit/");
-    }
+  @TestMetadata("clinit")
+  public void testClinit() {
+    runTest("plugins/jvm-abi-gen/testData/compare/clinit/");
+  }
 
-    @TestMetadata("constant")
-    public void testConstant() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/constant/");
-    }
+  @TestMetadata("constant")
+  public void testConstant() {
+    runTest("plugins/jvm-abi-gen/testData/compare/constant/");
+  }
 
-    @TestMetadata("declarationOrderInline")
-    public void testDeclarationOrderInline() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
-    }
+  @TestMetadata("dataClassWithPrivateConstructor")
+  public void testDataClassWithPrivateConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/compare/dataClassWithPrivateConstructor/");
+  }
 
-    @TestMetadata("declarationOrderInlineCall")
-    public void testDeclarationOrderInlineCall() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineCall/");
-    }
+  @TestMetadata("dataClassWithPrivateConstructorWithoutOption")
+  public void testDataClassWithPrivateConstructorWithoutOption() {
+    runTest("plugins/jvm-abi-gen/testData/compare/dataClassWithPrivateConstructorWithoutOption/");
+  }
 
-    @TestMetadata("declarationOrderPrivateInline")
-    public void testDeclarationOrderPrivateInline() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
-    }
+  @TestMetadata("debugInfoLineNumberTable")
+  public void testDebugInfoLineNumberTable() {
+    runTest("plugins/jvm-abi-gen/testData/compare/debugInfoLineNumberTable/");
+  }
 
-    @TestMetadata("functionBody")
-    public void testFunctionBody() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
-    }
+  @TestMetadata("debugInfoLocalVariableTable")
+  public void testDebugInfoLocalVariableTable() {
+    runTest("plugins/jvm-abi-gen/testData/compare/debugInfoLocalVariableTable/");
+  }
 
-    @TestMetadata("inlineFunInPrivateClass")
-    public void testInlineFunInPrivateClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateClass/");
-    }
+  @TestMetadata("debugInfoSourceDebugExtension")
+  public void testDebugInfoSourceDebugExtension() {
+    runTest("plugins/jvm-abi-gen/testData/compare/debugInfoSourceDebugExtension/");
+  }
 
-    @TestMetadata("inlineFunInPrivateNestedClass")
-    public void testInlineFunInPrivateNestedClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
-    }
+  @TestMetadata("debugInfoSourceFile")
+  public void testDebugInfoSourceFile() {
+    runTest("plugins/jvm-abi-gen/testData/compare/debugInfoSourceFile/");
+  }
 
-    @TestMetadata("inlineFunctionBody")
-    public void testInlineFunctionBody() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
-    }
+  @TestMetadata("declarationOrderInline")
+  public void testDeclarationOrderInline() {
+    runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInline/");
+  }
 
-    @TestMetadata("lambdas")
-    public void testLambdas() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");
-    }
+  @TestMetadata("declarationOrderInlineCall")
+  public void testDeclarationOrderInlineCall() {
+    runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderInlineCall/");
+  }
 
-    @TestMetadata("parameterName")
-    public void testParameterName() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
-    }
+  @TestMetadata("declarationOrderPrivateInline")
+  public void testDeclarationOrderPrivateInline() {
+    runTest("plugins/jvm-abi-gen/testData/compare/declarationOrderPrivateInline/");
+  }
 
-    @TestMetadata("privateTypealias")
-    public void testPrivateTypealias() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/privateTypealias/");
-    }
+  @TestMetadata("fieldOrder")
+  public void testFieldOrder() {
+    runTest("plugins/jvm-abi-gen/testData/compare/fieldOrder/");
+  }
 
-    @TestMetadata("returnType")
-    public void testReturnType() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/returnType/");
-    }
+  @TestMetadata("funOrder")
+  public void testFunOrder() {
+    runTest("plugins/jvm-abi-gen/testData/compare/funOrder/");
+  }
 
-    @TestMetadata("superClass")
-    public void testSuperClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/superClass/");
-    }
+  @TestMetadata("functionBody")
+  public void testFunctionBody() {
+    runTest("plugins/jvm-abi-gen/testData/compare/functionBody/");
+  }
 
-    @TestMetadata("syntheticAccessors")
-    public void testSyntheticAccessors() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/syntheticAccessors/");
-    }
+  @TestMetadata("inlineFunInPrivateClass")
+  public void testInlineFunInPrivateClass() {
+    runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateClass/");
+  }
 
-    @TestMetadata("topLevelPrivateMembers")
-    public void testTopLevelPrivateMembers() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/compare/topLevelPrivateMembers/");
-    }
+  @TestMetadata("inlineFunInPrivateNestedClass")
+  public void testInlineFunInPrivateNestedClass() {
+    runTest("plugins/jvm-abi-gen/testData/compare/inlineFunInPrivateNestedClass/");
+  }
+
+  @TestMetadata("inlineFunUsageMakesAbiUnstable")
+  public void testInlineFunUsageMakesAbiUnstable() {
+    runTest("plugins/jvm-abi-gen/testData/compare/inlineFunUsageMakesAbiUnstable/");
+  }
+
+  @TestMetadata("inlineFunctionBody")
+  public void testInlineFunctionBody() {
+    runTest("plugins/jvm-abi-gen/testData/compare/inlineFunctionBody/");
+  }
+
+  @TestMetadata("internalDeclarationsStrict")
+  public void testInternalDeclarationsStrict() {
+    runTest("plugins/jvm-abi-gen/testData/compare/internalDeclarationsStrict/");
+  }
+
+  @TestMetadata("internalFields")
+  public void testInternalFields() {
+    runTest("plugins/jvm-abi-gen/testData/compare/internalFields/");
+  }
+
+  @TestMetadata("lambdas")
+  public void testLambdas() {
+    runTest("plugins/jvm-abi-gen/testData/compare/lambdas/");
+  }
+
+  @TestMetadata("multifileClass")
+  public void testMultifileClass() {
+    runTest("plugins/jvm-abi-gen/testData/compare/multifileClass/");
+  }
+
+  @TestMetadata("nestedPrivateClasses")
+  public void testNestedPrivateClasses() {
+    runTest("plugins/jvm-abi-gen/testData/compare/nestedPrivateClasses/");
+  }
+
+  @TestMetadata("parameterName")
+  public void testParameterName() {
+    runTest("plugins/jvm-abi-gen/testData/compare/parameterName/");
+  }
+
+  @TestMetadata("preserveDeclarationOrder")
+  public void testPreserveDeclarationOrder() {
+    runTest("plugins/jvm-abi-gen/testData/compare/preserveDeclarationOrder/");
+  }
+
+  @TestMetadata("privateInterfaceDefaultImplementation")
+  public void testPrivateInterfaceDefaultImplementation() {
+    runTest("plugins/jvm-abi-gen/testData/compare/privateInterfaceDefaultImplementation/");
+  }
+
+  @TestMetadata("privateOuterClassForEffectivelyVisibleInterface")
+  public void testPrivateOuterClassForEffectivelyVisibleInterface() {
+    runTest("plugins/jvm-abi-gen/testData/compare/privateOuterClassForEffectivelyVisibleInterface/");
+  }
+
+  @TestMetadata("privateTopLevelClasses")
+  public void testPrivateTopLevelClasses() {
+    runTest("plugins/jvm-abi-gen/testData/compare/privateTopLevelClasses/");
+  }
+
+  @TestMetadata("privateTopLevelClassesWithoutOption")
+  public void testPrivateTopLevelClassesWithoutOption() {
+    runTest("plugins/jvm-abi-gen/testData/compare/privateTopLevelClassesWithoutOption/");
+  }
+
+  @TestMetadata("privateTypealias")
+  public void testPrivateTypealias() {
+    runTest("plugins/jvm-abi-gen/testData/compare/privateTypealias/");
+  }
+
+  @TestMetadata("removeDebugInfo")
+  public void testRemoveDebugInfo() {
+    runTest("plugins/jvm-abi-gen/testData/compare/removeDebugInfo/");
+  }
+
+  @TestMetadata("returnType")
+  public void testReturnType() {
+    runTest("plugins/jvm-abi-gen/testData/compare/returnType/");
+  }
+
+  @TestMetadata("superClass")
+  public void testSuperClass() {
+    runTest("plugins/jvm-abi-gen/testData/compare/superClass/");
+  }
+
+  @TestMetadata("syntheticAccessors")
+  public void testSyntheticAccessors() {
+    runTest("plugins/jvm-abi-gen/testData/compare/syntheticAccessors/");
+  }
+
+  @TestMetadata("topLevelPrivateMembers")
+  public void testTopLevelPrivateMembers() {
+    runTest("plugins/jvm-abi-gen/testData/compare/topLevelPrivateMembers/");
+  }
 }

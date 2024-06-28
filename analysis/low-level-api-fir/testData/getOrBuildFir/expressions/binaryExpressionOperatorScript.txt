@@ -1,0 +1,15 @@
+KT element: KtOperationReferenceExpression
+FIR element: FirResolvedNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int.plus|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] binaryExpressionOperatorScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-binaryExpressionOperatorScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.kapt3
 import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.base.KaptContext
+import org.jetbrains.kotlin.kapt3.base.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.resolve.BindingContext

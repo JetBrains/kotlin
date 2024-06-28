@@ -1,7 +1,0 @@
-/exceptionFromInterpreter_ir.kt:6:26: error: Cannot evaluate constant expression: / by zero
-
-/exceptionFromInterpreter_ir.kt:7:26: warning: Constant expression will throw an exception at runtime: / by zero
-
-/exceptionFromInterpreter_ir.kt:8:39: error: Cannot evaluate constant expression: marginPrefix must be non-blank string.
-
-/exceptionFromInterpreter_ir.kt:12:4: error: Cannot evaluate constant expression: / by zero

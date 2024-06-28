@@ -9,7 +9,7 @@ annotation class SamWithReceiver
 
 fun test() {
     Sam <!ARGUMENT_TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>a<!> ->
-        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(a)
+        System.out.println(a)
     }<!>
 
     Sam {

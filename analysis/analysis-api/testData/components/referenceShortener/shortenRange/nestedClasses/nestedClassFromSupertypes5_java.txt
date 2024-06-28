@@ -1,0 +1,10 @@
+Before shortening: val prop: JavaInterface.Nested = JavaInterface.Nested()
+with default settings:
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] JavaInterface.Nested
+[qualifier] JavaInterface.Nested()
+with SHORTEN_AND_STAR_IMPORT:
+[type] JavaInterface.Nested
+[qualifier] JavaInterface.Nested()

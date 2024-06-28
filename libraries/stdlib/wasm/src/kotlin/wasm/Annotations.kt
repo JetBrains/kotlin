@@ -11,11 +11,23 @@ package kotlin.wasm
  *
  * Can only be used on top-level external functions.
  *
- * In JavaScript environment,
- * function will be imported from ES module without type adapters.
+ * The annotated function will be imported into Wasm module without type adapters.
  */
 @Target(AnnotationTarget.FUNCTION)
 public annotation class WasmImport(
     val module: String,
+    val name: String = ""
+)
+
+/**
+ * Exports a function with the given optional [name].
+ * The declaration name will be used if the [name] argument is not provided.
+ *
+ * Can only be used on top-level non-external functions.
+ *
+ * The annotated function will be exported from Wasm module without type adapters.
+ */
+@Target(AnnotationTarget.FUNCTION)
+public annotation class WasmExport(
     val name: String = ""
 )

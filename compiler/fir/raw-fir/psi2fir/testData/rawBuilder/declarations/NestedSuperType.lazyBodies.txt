@@ -1,15 +1,15 @@
 FILE: NestedSuperType.kt
-    public? abstract class My : R|kotlin/Any| {
+    public abstract class My : R|kotlin/Any| {
         public? constructor(): R|p/My| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? abstract class NestedOne : My {
+        public abstract class NestedOne : My {
             public? constructor(): R|p/My.NestedOne| {
                 LAZY_super<My>
             }
 
-            public? abstract class NestedTwo : NestedOne {
+            public abstract class NestedTwo : NestedOne {
                 public? constructor(): R|p/My.NestedOne.NestedTwo| {
                     LAZY_super<NestedOne>
                 }
@@ -19,12 +19,12 @@ FILE: NestedSuperType.kt
         }
 
     }
-    public? final? class Your : My {
+    public final? class Your : My {
         public? constructor(): R|p/Your| {
             LAZY_super<My>
         }
 
-        public? final? class NestedThree : NestedOne {
+        public final? class NestedThree : NestedOne {
             public? constructor(): R|p/Your.NestedThree| {
                 LAZY_super<NestedOne>
             }

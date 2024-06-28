@@ -1,0 +1,226 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] usage.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun usage(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun usage(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun usage(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun usage(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public? final? [ResolvedTo(TYPES)] fun usage(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(STATUS)] fun usage(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun usage(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] annotation.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitTypeFromAnotherModule(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] dependency.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(CONTRACTS)] fun usage(): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        ^implicitType Int(1)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] annotation.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitTypeFromAnotherModule(): R|kotlin/Int| {
+        ^implicitTypeFromAnotherModule R|usage/implicitType|()
+    }
+
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/String| {
+        ^implicitType String(str)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|usage/implicitType|()
+            ^ R|usage/implicitTypeFromAnotherModule|()
+        }
+        )
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        ^implicitType Int(1)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] annotation.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitTypeFromAnotherModule(): R|kotlin/Int| {
+        ^implicitTypeFromAnotherModule R|usage/implicitType|()
+    }
+
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/String| {
+        ^implicitType String(str)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun usage(): R|kotlin/Int| {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|usage/implicitType|()
+            ^ R|usage/implicitTypeFromAnotherModule|()
+        }
+        )
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        ^implicitType Int(1)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] annotation.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitTypeFromAnotherModule(): R|kotlin/Int| {
+        ^implicitTypeFromAnotherModule R|usage/implicitType|()
+    }
+
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/String| {
+        ^implicitType String(str)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun usage(): R|kotlin/Int| {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|usage/implicitType|()
+            ^ R|usage/implicitTypeFromAnotherModule|()
+        }
+        )
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+        ^implicitType Int(1)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] annotation.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitTypeFromAnotherModule(): R|kotlin/Int| {
+        ^implicitTypeFromAnotherModule R|usage/implicitType|()
+    }
+
+FILE: [ResolvedTo(IMPORTS)] dependency.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/String| {
+        ^implicitType String(str)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|usage/implicitType|()
+            ^ R|usage/implicitTypeFromAnotherModule|()
+        }
+        )
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] usage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Int| {
+        ^usage R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|usage/implicitType|()
+            ^ R|usage/implicitTypeFromAnotherModule|()
+        }
+        )
+    }

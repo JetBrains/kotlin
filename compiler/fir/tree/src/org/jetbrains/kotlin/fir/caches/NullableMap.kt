@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.caches
 
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
  * [Map] which allows store null values

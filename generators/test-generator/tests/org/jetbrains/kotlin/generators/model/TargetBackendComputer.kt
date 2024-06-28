@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.generators.model
 
 import org.jetbrains.kotlin.test.TargetBackend
-import kotlin.reflect.KClass
 
 fun interface TargetBackendComputer {
-    fun compute(definedTargetBackend: TargetBackend?, testKClass: KClass<*>): TargetBackend
+    fun compute(definedTargetBackend: TargetBackend?, testKClass: Class<*>): TargetBackend
 }
 
 object DefaultTargetBackendComputer : TargetBackendComputer {
-    override fun compute(definedTargetBackend: TargetBackend?, testKClass: KClass<*>): TargetBackend {
+    override fun compute(definedTargetBackend: TargetBackend?, testKClass: Class<*>): TargetBackend {
         return definedTargetBackend ?: TargetBackend.ANY
     }
 }

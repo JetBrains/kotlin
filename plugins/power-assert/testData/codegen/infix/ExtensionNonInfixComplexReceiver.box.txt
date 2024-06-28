@@ -1,0 +1,7 @@
+---
+"hello".substring(1, 4).length.mustEqual("world".length)
+        |               |                        |
+        |               |                        5
+        |               3
+        ell
+---

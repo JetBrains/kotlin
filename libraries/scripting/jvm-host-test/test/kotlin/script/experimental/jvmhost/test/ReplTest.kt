@@ -264,13 +264,13 @@ class ReplTest : TestCase() {
                     errorMessage.asErrorDiagnostics(
                         location = SourceCode.Location(
                             SourceCode.Position(2, 1),
-                            SourceCode.Position(2, 6)
+                            SourceCode.Position(2, 10)
                         )
                     ),
                     errorMessage.asErrorDiagnostics(
                         location = SourceCode.Location(
                             SourceCode.Position(3, 1),
-                            SourceCode.Position(3, 6)
+                            SourceCode.Position(3, 20)
                         )
                     )
                 ),

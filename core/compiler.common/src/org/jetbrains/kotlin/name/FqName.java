@@ -102,6 +102,10 @@ public final class FqName {
         return fqName.startsWith(segment);
     }
 
+    public boolean startsWith(@NotNull FqName other) {
+        return fqName.startsWith(other.fqName);
+    }
+
     @NotNull
     public static FqName topLevel(@NotNull Name shortName) {
         return new FqName(FqNameUnsafe.topLevel(shortName));

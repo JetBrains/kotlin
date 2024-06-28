@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import gnu.trove.THashMap
-import kotlinx.metadata.*
+import kotlin.metadata.*
+import kotlin.metadata.Modality as KmModality
+import kotlin.metadata.Visibility as KmVisibility
+import kotlin.metadata.ClassKind as KmClassKind
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
 import kotlinx.metadata.klib.getterAnnotations
@@ -17,8 +19,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.Variance
 
 object CirDeserializers {
-    private fun annotations(flags: Flags, typeResolver: CirTypeResolver, annotations: () -> List<KmAnnotation>): List<CirAnnotation> {
-        return if (!Flag.Common.HAS_ANNOTATIONS(flags))
+    private fun annotations(
+        hasAnnotations: Boolean,
+        typeResolver: CirTypeResolver,
+        annotations: () -> List<KmAnnotation>,
+    ): List<CirAnnotation> {
+        return if (!hasAnnotations)
             emptyList()
         else
             annotations().compactMap { annotation(it, typeResolver) }
@@ -47,8 +53,8 @@ object CirDeserializers {
         if (allValueArguments.isEmpty())
             return CirAnnotation.createInterned(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
-        val constantValueArguments: MutableMap<CirName, CirConstantValue> = THashMap(allValueArguments.size)
-        val annotationValueArguments: MutableMap<CirName, CirAnnotation> = THashMap(allValueArguments.size)
+        val constantValueArguments: MutableMap<CirName, CirConstantValue> = CommonizerMap(allValueArguments.size)
+        val annotationValueArguments: MutableMap<CirName, CirAnnotation> = CommonizerMap(allValueArguments.size)
 
         allValueArguments.forEach { (name, constantValue) ->
             val cirName = CirName.create(name)
@@ -69,12 +75,10 @@ object CirDeserializers {
         )
     }
 
-    private val ALWAYS_HAS_ANNOTATIONS: Flags = flagsOf(Flag.Common.HAS_ANNOTATIONS)
-
     private fun typeParameter(source: KmTypeParameter, typeResolver: CirTypeResolver): CirTypeParameter = CirTypeParameter(
-        annotations = annotations(ALWAYS_HAS_ANNOTATIONS, typeResolver, source::annotations),
+        annotations = annotations(true, typeResolver, source::annotations),
         name = CirName.create(source.name),
-        isReified = Flag.TypeParameter.IS_REIFIED(source.flags),
+        isReified = source.isReified,
         variance = variance(source.variance),
         upperBounds = source.filteredUpperBounds.compactMap { type(it, typeResolver) }
     )
@@ -88,7 +92,7 @@ object CirDeserializers {
     )
 
     fun property(name: CirName, source: KmProperty, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirProperty {
-        val compileTimeInitializer = if (Flag.Property.HAS_CONSTANT(source.flags)) {
+        val compileTimeInitializer = if (source.hasConstant) {
             constantValue(
                 constantValue = source.compileTimeValue,
                 owner = source,
@@ -96,20 +100,19 @@ object CirDeserializers {
         } else CirConstantValue.NullValue
 
         return CirProperty(
-            annotations = annotations(source.flags, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
-            visibility = visibility(source.flags),
-            modality = modality(source.flags),
+            visibility = visibility(source.visibility),
+            modality = modality(source.modality),
             containingClass = containingClass,
-            isExternal = Flag.Property.IS_EXTERNAL(source.flags),
             extensionReceiver = source.receiverParameterType?.let { extensionReceiver(it, typeResolver) },
             returnType = type(source.returnType, typeResolver),
-            kind = callableKind(source.flags),
-            isVar = Flag.Property.IS_VAR(source.flags),
-            isLateInit = Flag.Property.IS_LATEINIT(source.flags),
-            isConst = Flag.Property.IS_CONST(source.flags),
-            isDelegate = Flag.Property.IS_DELEGATED(source.flags),
+            kind = callableKind(source.kind),
+            isVar = source.isVar,
+            isLateInit = source.isLateinit,
+            isConst = source.isConst,
+            isDelegate = source.isDelegated,
             getter = propertyGetter(source, typeResolver),
             setter = propertySetter(source, typeResolver),
             backingFieldAnnotations = emptyList(), // TODO unclear where to read backing/delegate field annotations from, see KT-44625
@@ -119,13 +122,8 @@ object CirDeserializers {
     }
 
     private fun propertyGetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
-        if (!Flag.Property.HAS_GETTER(source.flags))
-            return null
-
-        val getterFlags = source.getterFlags
-
-        val isDefault = !Flag.PropertyAccessor.IS_NOT_DEFAULT(getterFlags)
-        val annotations = annotations(getterFlags, typeResolver, source::getterAnnotations)
+        val isDefault = !source.getter.isNotDefault
+        val annotations = annotations(source.getter.hasAnnotations, typeResolver, source::getterAnnotations)
 
         if (isDefault && annotations.isEmpty())
             return CirPropertyGetter.DEFAULT_NO_ANNOTATIONS
@@ -133,73 +131,65 @@ object CirDeserializers {
         return CirPropertyGetter.createInterned(
             annotations = annotations,
             isDefault = isDefault,
-            isExternal = Flag.PropertyAccessor.IS_EXTERNAL(getterFlags),
-            isInline = Flag.PropertyAccessor.IS_INLINE(getterFlags)
+            isInline = source.getter.isInline
         )
     }
 
     private fun propertySetter(source: KmProperty, typeResolver: CirTypeResolver): CirPropertySetter? {
-        if (!Flag.Property.HAS_SETTER(source.flags))
-            return null
-
-        val setterFlags = source.setterFlags
+        val setter = source.setter ?: return null
 
         return CirPropertySetter.createInterned(
-            annotations = annotations(setterFlags, typeResolver, source::setterAnnotations),
+            annotations = annotations(source.setter?.hasAnnotations == true, typeResolver, source::setterAnnotations),
             parameterAnnotations = source.setterParameter?.let { setterParameter ->
-                annotations(setterParameter.flags, typeResolver, setterParameter::annotations)
+                annotations(setterParameter.hasAnnotations, typeResolver, setterParameter::annotations)
             }.orEmpty(),
-            visibility = visibility(setterFlags),
-            isDefault = !Flag.PropertyAccessor.IS_NOT_DEFAULT(setterFlags),
-            isExternal = Flag.PropertyAccessor.IS_EXTERNAL(setterFlags),
-            isInline = Flag.PropertyAccessor.IS_INLINE(setterFlags)
+            visibility = visibility(setter.visibility),
+            isDefault = !setter.isNotDefault,
+            isInline = setter.isInline
         )
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun callableKind(flags: Flags): CallableMemberDescriptor.Kind =
-        when {
-            Flag.Property.IS_DECLARATION(flags) /*|| Flag.Function.IS_DECLARATION(flags)*/ -> CallableMemberDescriptor.Kind.DECLARATION
-            Flag.Property.IS_FAKE_OVERRIDE(flags) /*|| Flag.Function.IS_FAKE_OVERRIDE(flags)*/ -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-            Flag.Property.IS_DELEGATION(flags) /*|| Flag.Function.IS_DELEGATION(flags)*/ -> CallableMemberDescriptor.Kind.DELEGATION
-            Flag.Property.IS_SYNTHESIZED(flags) /*|| Flag.Function.IS_SYNTHESIZED(flags)*/ -> CallableMemberDescriptor.Kind.SYNTHESIZED
-            else -> error("Can't decode callable kind from flags: $flags")
+    private inline fun callableKind(memberKind: MemberKind): CallableMemberDescriptor.Kind =
+        when (memberKind) {
+            MemberKind.DECLARATION -> CallableMemberDescriptor.Kind.DECLARATION
+            MemberKind.FAKE_OVERRIDE -> CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+            MemberKind.DELEGATION -> CallableMemberDescriptor.Kind.DELEGATION
+            MemberKind.SYNTHESIZED -> CallableMemberDescriptor.Kind.SYNTHESIZED
         }
 
     fun function(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
         CirFunction(
-            annotations = annotations(source.flags, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
-            visibility = visibility(source.flags),
-            modality = modality(source.flags),
+            visibility = visibility(source.visibility),
+            modality = modality(source.modality),
             containingClass = containingClass,
             valueParameters = source.valueParameters.compactMap { valueParameter(it, typeResolver) },
-            hasStableParameterNames = !Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES(source.flags),
+            hasStableParameterNames = !source.hasNonStableParameterNames,
             extensionReceiver = source.receiverParameterType?.let { extensionReceiver(it, typeResolver) },
             returnType = type(source.returnType, typeResolver),
-            kind = callableKind(source.flags),
+            kind = callableKind(source.kind),
             modifiers = functionModifiers(source),
         )
 
     private fun functionModifiers(source: KmFunction): CirFunctionModifiers = CirFunctionModifiers.createInterned(
-        isOperator = Flag.Function.IS_OPERATOR(source.flags),
-        isInfix = Flag.Function.IS_INFIX(source.flags),
-        isInline = Flag.Function.IS_INLINE(source.flags),
-        isTailrec = Flag.Function.IS_TAILREC(source.flags),
-        isSuspend = Flag.Function.IS_SUSPEND(source.flags),
-        isExternal = Flag.Function.IS_EXTERNAL(source.flags)
+        isOperator = source.isOperator,
+        isInfix = source.isInfix,
+        isInline = source.isInline,
+        isSuspend = source.isSuspend,
     )
 
     private fun valueParameter(source: KmValueParameter, typeResolver: CirTypeResolver): CirValueParameter =
         CirValueParameter.createInterned(
-            annotations = annotations(source.flags, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
             name = CirName.create(source.name),
             returnType = type(source.type, typeResolver),
             varargElementType = source.varargElementType?.let { type(it, typeResolver) },
-            declaresDefaultValue = Flag.ValueParameter.DECLARES_DEFAULT_VALUE(source.flags),
-            isCrossinline = Flag.ValueParameter.IS_CROSSINLINE(source.flags),
-            isNoinline = Flag.ValueParameter.IS_NOINLINE(source.flags)
+            declaresDefaultValue = source.declaresDefaultValue,
+            isCrossinline = source.isCrossinline,
+            isNoinline = source.isNoinline
         )
 
     private fun constantValue(
@@ -253,20 +243,19 @@ object CirDeserializers {
     }
 
     fun clazz(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = CirClass.create(
-        annotations = annotations(source.flags, typeResolver, source::annotations),
+        annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
         name = name,
         typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
         supertypes = source.filteredSupertypes.compactMap { type(it, typeResolver) },
-        visibility = visibility(source.flags),
-        modality = modality(source.flags),
-        kind = classKind(source.flags),
+        visibility = visibility(source.visibility),
+        modality = modality(source.modality),
+        kind = classKind(source.kind),
         companion = source.companionObject?.let(CirName::create),
-        isCompanion = Flag.Class.IS_COMPANION_OBJECT(source.flags),
-        isData = Flag.Class.IS_DATA(source.flags),
-        isValue = Flag.Class.IS_VALUE(source.flags),
-        isInner = Flag.Class.IS_INNER(source.flags),
-        isExternal = Flag.Class.IS_EXTERNAL(source.flags),
-        hasEnumEntries = Flag.Class.HAS_ENUM_ENTRIES(source.flags)
+        isCompanion = source.kind == KmClassKind.COMPANION_OBJECT,
+        isData = source.isData,
+        isValue = source.isValue,
+        isInner = source.isInner,
+        hasEnumEntries = source.hasEnumEntries
     )
 
     fun defaultEnumEntry(
@@ -295,31 +284,29 @@ object CirDeserializers {
         isData = false,
         isValue = false,
         isInner = false,
-        isExternal = false,
         hasEnumEntries = hasEnumEntries
     )
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun classKind(flags: Flags): ClassKind =
-        when {
-            Flag.Class.IS_CLASS(flags) -> ClassKind.CLASS
-            Flag.Class.IS_INTERFACE(flags) -> ClassKind.INTERFACE
-            Flag.Class.IS_ENUM_CLASS(flags) -> ClassKind.ENUM_CLASS
-            Flag.Class.IS_ENUM_ENTRY(flags) -> ClassKind.ENUM_ENTRY
-            Flag.Class.IS_ANNOTATION_CLASS(flags) -> ClassKind.ANNOTATION_CLASS
-            Flag.Class.IS_OBJECT(flags) || Flag.Class.IS_COMPANION_OBJECT(flags) -> ClassKind.OBJECT
-            else -> error("Can't decode class kind from flags: $flags")
+    private inline fun classKind(kmClassKind: KmClassKind): ClassKind =
+        when (kmClassKind) {
+            KmClassKind.CLASS -> ClassKind.CLASS
+            KmClassKind.INTERFACE -> ClassKind.INTERFACE
+            KmClassKind.ENUM_CLASS -> ClassKind.ENUM_CLASS
+            KmClassKind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
+            KmClassKind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS
+            KmClassKind.OBJECT, KmClassKind.COMPANION_OBJECT -> ClassKind.OBJECT
         }
 
     fun constructor(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor =
         CirClassConstructor.create(
-            annotations = annotations(source.flags, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
             typeParameters = emptyList(), // TODO: nowhere to read constructor type parameters from
-            visibility = visibility(source.flags),
+            visibility = visibility(source.visibility),
             containingClass = containingClass,
             valueParameters = source.valueParameters.compactMap { valueParameter(it, typeResolver) },
-            hasStableParameterNames = !Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES(source.flags),
-            isPrimary = !Flag.Constructor.IS_SECONDARY(source.flags)
+            hasStableParameterNames = !source.hasNonStableParameterNames,
+            isPrimary = !source.isSecondary
         )
 
     fun typeAlias(name: CirName, source: KmTypeAlias, typeResolver: CirTypeResolver): CirTypeAlias {
@@ -327,10 +314,10 @@ object CirDeserializers {
         val expandedType = underlyingType.unabbreviate()
 
         return CirTypeAlias.create(
-            annotations = annotations(source.flags, typeResolver, source::annotations),
+            annotations = annotations(source.hasAnnotations, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { typeParameter(it, typeResolver) },
-            visibility = visibility(source.flags),
+            visibility = visibility(source.visibility),
             underlyingType = underlyingType,
             expandedType = expandedType
         )
@@ -339,7 +326,7 @@ object CirDeserializers {
     private fun type(source: KmType, typeResolver: CirTypeResolver): CirType {
         @Suppress("NAME_SHADOWING")
         val source = source.abbreviatedType ?: source
-        val isMarkedNullable = Flag.Type.IS_NULLABLE(source.flags)
+        val isMarkedNullable = source.isNullable
 
         return when (val classifier = source.classifier) {
             is KmClassifier.Class -> {
@@ -407,23 +394,22 @@ object CirDeserializers {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun modality(flags: Flags): Modality =
-        when {
-            Flag.Common.IS_FINAL(flags) -> Modality.FINAL
-            Flag.Common.IS_ABSTRACT(flags) -> Modality.ABSTRACT
-            Flag.Common.IS_OPEN(flags) -> Modality.OPEN
-            Flag.Common.IS_SEALED(flags) -> Modality.SEALED
-            else -> error("Can't decode modality from flags: $flags")
+    private inline fun modality(kmModality: KmModality): Modality =
+        when (kmModality) {
+            KmModality.FINAL -> Modality.FINAL
+            KmModality.ABSTRACT -> Modality.ABSTRACT
+            KmModality.OPEN -> Modality.OPEN
+            KmModality.SEALED -> Modality.SEALED
         }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun visibility(flags: Flags): Visibility =
-        when {
-            Flag.Common.IS_PUBLIC(flags) -> Visibilities.Public
-            Flag.Common.IS_PROTECTED(flags) -> Visibilities.Protected
-            Flag.Common.IS_INTERNAL(flags) -> Visibilities.Internal
-            Flag.Common.IS_PRIVATE(flags) -> Visibilities.Private
-            else -> error("Can't decode visibility from flags: $flags")
+    private inline fun visibility(kmVisibility: KmVisibility): Visibility =
+        when (kmVisibility) {
+            KmVisibility.PUBLIC -> Visibilities.Public
+            KmVisibility.PROTECTED -> Visibilities.Protected
+            KmVisibility.INTERNAL -> Visibilities.Internal
+            KmVisibility.PRIVATE -> Visibilities.Private
+            else -> error("Can't decode visibility $kmVisibility")
         }
 }
 

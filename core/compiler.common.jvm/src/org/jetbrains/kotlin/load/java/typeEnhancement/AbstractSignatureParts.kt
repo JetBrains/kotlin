@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.load.java.typeEnhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.AbstractAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
+import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -112,14 +113,14 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         //         happens if T is bounded by @NotNull (technically !! is redundant) or context says unannotated
         //         type parameters are non-null;
         //   T   - NOT_NULL, isNotNullTypeParameter = false
-        //         happens if T is bounded by @Nullable (should it?) or context says unannotated types in general are non-null;
+        //         happens if T is bounded by @Nullable (should it? see *) or context says unannotated types in general are non-null;
         //   T?  - NULLABLE, isNotNullTypeParameter = false
         //         happens if context says unannotated types in general are nullable.
+        //   (*)   in this questionable case K1 counts parameter use-sites as not null, and K2 as flexible if has no other context
+        //         see getDefaultNullability implementations
         // For other types, this is more straightforward (just take nullability from the context).
         // TODO: clean up the representation of those cases in JavaTypeQualifiers
-        val defaultNullability =
-            referencedParameterBoundsNullability?.copy(qualifier = NullabilityQualifier.NOT_NULL)
-                ?: defaultTypeQualifier?.nullabilityQualifier
+        val defaultNullability = getDefaultNullability(referencedParameterBoundsNullability, defaultTypeQualifier)
         val definitelyNotNull =
             referencedParameterBoundsNullability?.qualifier == NullabilityQualifier.NOT_NULL ||
                     (typeParameterUse != null && defaultTypeQualifier?.definitelyNotNull == true)
@@ -131,6 +132,11 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         val result = mostSpecific(substitutedParameterBoundsNullability, defaultNullability)
         return JavaTypeQualifiers(result?.qualifier, annotationsMutability, definitelyNotNull, result?.isForWarningOnly == true)
     }
+
+    protected abstract fun getDefaultNullability(
+        referencedParameterBoundsNullability: NullabilityQualifierWithMigrationStatus?,
+        defaultTypeQualifiers: JavaDefaultQualifiers?
+    ): NullabilityQualifierWithMigrationStatus?
 
     private fun mostSpecific(
         a: NullabilityQualifierWithMigrationStatus?,

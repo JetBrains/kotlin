@@ -1,0 +1,38 @@
+KaNamedFunctionSymbol:
+  callableId: test/Base.noGeneric
+  name: noGeneric
+  origin: SOURCE
+
+KaNamedFunctionSymbol:
+  callableId: test/ClassWithGenericBase.withOuterGeneric
+  name: withOuterGeneric
+  origin: SOURCE
+
+KaNamedFunctionSymbol:
+  callableId: test/Base.withOwnGeneric
+  name: withOwnGeneric
+  origin: SOURCE
+
+KaNamedFunctionSymbol:
+  callableId: test/ClassWithGenericBase.withOuterAndOwnGeneric
+  name: withOuterAndOwnGeneric
+  origin: SOURCE
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.equals
+  name: equals
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.hashCode
+  name: hashCode
+  origin: LIBRARY
+
+KaNamedFunctionSymbol:
+  callableId: kotlin/Any.toString
+  name: toString
+  origin: LIBRARY
+
+KaConstructorSymbol:
+  callableId: null
+  origin: SOURCE

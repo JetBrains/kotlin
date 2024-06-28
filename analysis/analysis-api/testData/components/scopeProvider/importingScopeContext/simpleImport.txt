@@ -1,0 +1,48 @@
+implicit receivers:
+scopes:
+  DefaultStarImportingScope, index = 0
+
+  ExplicitStarImportingScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  PackageMemberScope, index = 4
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 1
+      KaNamedClassSymbol:
+        annotations: []
+        classId: other/A
+        classKind: CLASS
+        companionObject: null
+        compilerVisibility: Public
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        location: TOP_LEVEL
+        modality: FINAL
+        name: A
+        origin: SOURCE
+        superTypes: [
+          KaUsualClassType:
+            annotations: []
+            typeArguments: []
+            type: kotlin/Any
+        ]
+        typeParameters: []
+        visibility: PUBLIC
+    callables: 0
+    constructors: 0
+

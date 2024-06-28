@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class DeepCopyTypeRemapper(
-    private val symbolRemapper: SymbolRemapper
+    private val symbolRemapper: ReferencedSymbolRemapper
 ) : TypeRemapper {
 
     lateinit var deepCopy: DeepCopyIrTreeWithSymbols
@@ -29,11 +30,10 @@ class DeepCopyTypeRemapper(
     override fun remapType(type: IrType): IrType {
         return when (type) {
             is IrSimpleType -> IrSimpleTypeImpl(
-                null,
                 symbolRemapper.getReferencedClassifier(type.classifier),
                 type.nullability,
-                type.arguments.map { remapTypeArgument(it) },
-                type.annotations.map { it.transform(deepCopy, null) as IrConstructorCall },
+                type.arguments.memoryOptimizedMap { remapTypeArgument(it) },
+                type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
                 type.abbreviation?.remapTypeAbbreviation()
             )
             else -> type
@@ -50,7 +50,7 @@ class DeepCopyTypeRemapper(
         IrTypeAbbreviationImpl(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
+            arguments.memoryOptimizedMap { remapTypeArgument(it) },
             annotations
         )
 }

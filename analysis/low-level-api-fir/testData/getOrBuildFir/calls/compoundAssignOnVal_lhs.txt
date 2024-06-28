@@ -1,0 +1,16 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: DesugaredPlusAssign
+
+FIR element rendered:
+R|<local>/l|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVal_lhs.kt
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(CONTRACTS)] fun plusAssign([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] l: R|A|): R|kotlin/Unit| {
+        R|<local>/l|.R|/A.plusAssign|(Int(1))
+    }

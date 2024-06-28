@@ -1,0 +1,15 @@
+@FILE:FileAnnotation(String(file annotation))
+owner -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+context -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+
+@FILE:Annotation1(String(foo))
+owner -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+context -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+
+@FILE:Annotation2()
+owner -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+context -> FirFileSymbol fileAnnotationsWithoutPackage.kt
+
+@WithouTarget(String(argument))
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirFileSymbol fileAnnotationsWithoutPackage.kt

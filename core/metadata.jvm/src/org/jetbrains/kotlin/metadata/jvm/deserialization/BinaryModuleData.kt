@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 
 /**
  * @param annotations list of module annotations, in the format: "org/foo/bar/Baz.Inner" (see [ClassId.fromString])
@@ -16,5 +16,5 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 class BinaryModuleData(
     val annotations: List<String>,
     val optionalAnnotations: List<ProtoBuf.Class>,
-    val nameResolver: NameResolver,
+    val nameResolver: NameResolverImpl,
 )

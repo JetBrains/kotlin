@@ -5,11 +5,6 @@ plugins {
     `maven-publish`
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 kotlin {
     jvm()
     js().browser()
@@ -52,8 +47,6 @@ version = "1.0.0"
 
 publishing {
     repositories {
-        maven(buildDir.resolve("repository")) {
-            name = "build"
-        }
+        maven("<localRepo>")
     }
 }

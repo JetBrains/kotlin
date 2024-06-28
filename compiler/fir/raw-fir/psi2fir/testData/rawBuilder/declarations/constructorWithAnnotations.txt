@@ -1,0 +1,9 @@
+FILE: constructorWithAnnotations.kt
+    public final? class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(param: @Anno(<strcat>(String(parameter type ), prop#)) List<@Anno(<strcat>(String(nested parameter type ), prop#)) Collection<@Anno(<strcat>(String(nested nested parameter type ), prop#)) String>> = @Anno(<strcat>(String(defaultValue ), prop#)) fun <anonymous>(i: @Anno(<strcat>(String(anonymousFunction parameter type ), prop#)) Int): @Anno(<strcat>(String(anonymousFunction return type ), prop#)) Int <inline=Unknown>  {
+        }
+        ): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-4827 UOE at PackageType.throwException()
 // EA-53605
 

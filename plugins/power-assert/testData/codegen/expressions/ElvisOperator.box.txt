@@ -1,0 +1,44 @@
+---
+assert((str?.lowercase()?.length ?: default) == 5)
+        |    |            |                  |
+        |    |            |                  false
+        |    |            4
+        |    test
+        TEST
+---
+---
+assert((str?.lowercase()?.length ?: default) == 5)
+        |    |            |         |        |
+        |    |            |         |        false
+        |    |            |         0
+        |    |            null
+        |    null
+        null
+---
+---
+assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
+         |    |                         |                  |
+         |    |                         |                  false
+         |    |                         4
+         |    test
+         TEST
+---
+---
+assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
+         |    |              |          |                  |
+         |    |              |          |                  false
+         |    |              |          4
+         |    |              test
+         |    null
+         null
+---
+---
+assert(((str?.lowercase() ?: fallback)?.length ?: default) == 5)
+         |    |              |          |         |        |
+         |    |              |          |         |        false
+         |    |              |          |         0
+         |    |              |          null
+         |    |              null
+         |    null
+         null
+---

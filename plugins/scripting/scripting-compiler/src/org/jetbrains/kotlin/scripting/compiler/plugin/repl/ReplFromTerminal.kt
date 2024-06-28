@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl
 
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
@@ -26,7 +26,7 @@ import java.util.concurrent.Future
 
 class ReplFromTerminal(
     projectEnvironment: JavaCoreProjectEnvironment,
-    compilerConfiguration: CompilerConfiguration,
+    private val compilerConfiguration: CompilerConfiguration,
     private val replConfiguration: ReplConfiguration
 ) {
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
@@ -38,7 +38,7 @@ class ReplFromTerminal(
 
     private val writer get() = replConfiguration.writer
 
-    private val messageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    private val messageCollector = compilerConfiguration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun doRun() {
         try {
@@ -47,6 +47,9 @@ class ReplFromTerminal(
                     "Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
                             "(JRE ${System.getProperty("java.runtime.version")})"
                 )
+                if (compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+                    printlnWelcomeMessage("Warning: REPL is not yet compatible with the Kotlin version ${KotlinCompilerVersion.VERSION}, using '-language-version 1.9'.")
+                }
                 printlnWelcomeMessage("Type :help for help, :quit for quit")
             }
 

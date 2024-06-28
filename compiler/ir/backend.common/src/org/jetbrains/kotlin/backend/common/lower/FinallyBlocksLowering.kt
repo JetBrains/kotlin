@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -23,9 +22,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.setDeclarationsParent
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+
+val FINALLY_EXPRESSION by IrStatementOriginImpl
 
 class FinallyBlocksLowering(val context: CommonBackendContext, private val throwableType: IrType): FileLoweringPass, IrElementTransformerVoidWithContext() {
 
@@ -271,20 +272,24 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 +irReturnableBlock(symbol, type) {
                     +value
                 }
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
             }
             else -> irBlock(value, null, type) {
                 val tmp = createTmpVariable(irReturnableBlock(symbol, type) {
                     +irReturn(symbol, value)
                 })
-                +copy(finallyExpression)
+                +irComposite(resultType = context.irBuiltIns.unitType, origin = FINALLY_EXPRESSION) {
+                    +copy(finallyExpression)
+                }
                 +irGet(tmp)
             }
         }
     }
 
     private inline fun <reified T : IrElement> IrBuilderWithScope.copy(element: T) =
-        element.deepCopyWithVariables().setDeclarationsParent(parent)
+        element.deepCopyWithSymbols(parent)
 
     fun IrBuilderWithScope.irReturn(target: IrReturnTargetSymbol, value: IrExpression) =
         IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, target, value)

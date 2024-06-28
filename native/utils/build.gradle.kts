@@ -11,10 +11,12 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(platform(project(":kotlin-gradle-plugins-bom")))
 
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(kotlinStdlib())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -22,15 +24,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
-            freeCompilerArgs += "-Xsuppress-version-warnings"
-        }
-    }
+configureKotlinCompileTasksGradleCompatibility()
 
+tasks {
     withType<Test>().configureEach {
         useJUnitPlatform()
     }

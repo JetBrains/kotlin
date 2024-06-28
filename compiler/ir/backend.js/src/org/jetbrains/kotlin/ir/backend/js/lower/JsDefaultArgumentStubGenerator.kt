@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
+import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -24,13 +27,15 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
-    DefaultArgumentStubGenerator(
-        context,
+class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
+    DefaultArgumentStubGenerator<JsIrBackendContext>(
+        context = context,
+        factory = JsDefaultArgumentFunctionFactory(context),
         skipExternalMethods = true,
-        forceSetOverrideSymbols = false,
-        factory = JsDefaultArgumentFunctionFactory(context)
+        forceSetOverrideSymbols = false
     ) {
 
     private fun IrBuilderWithScope.createDefaultResolutionExpression(
@@ -60,11 +65,12 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     }
 
     private fun IrFunction.introduceDefaultResolution(): IrFunction {
+        this.defaultArgumentsDispatchFunction?.let { return it }
         val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
-        val variables = mutableMapOf<IrValueParameter, IrValueParameter>()
+        val variables = hashMapOf<IrValueParameter, IrValueParameter>()
 
-        valueParameters = valueParameters.map { param ->
+        valueParameters = valueParameters.memoryOptimizedMap { param ->
             param.takeIf { it.defaultValue != null }
                 ?.copyTo(this, isAssignable = true, origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER)
                 ?.also { new -> variables[param] = new } ?: param
@@ -80,7 +86,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
         }
 
         return also {
-            context.mapping.defaultArgumentsDispatchFunction[it] = it
+            it.defaultArgumentsDispatchFunction = it
         }
     }
 
@@ -112,7 +118,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
                     context.additionalExportedDeclarations.add(defaultFunStub)
 
                     if (!originalFun.hasAnnotation(JsAnnotations.jsNameFqn)) {
-                        annotations += originalFun.generateJsNameAnnotationCall()
+                        originalFun.annotations = originalFun.annotations memoryOptimizedPlus originalFun.generateJsNameAnnotationCall()
                     }
                 }
             }
@@ -125,7 +131,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
             }
 
         originalFun.annotations = irrelevantAnnotations
-        defaultFunStub.annotations += exportAnnotations
+        defaultFunStub.annotations = exportAnnotations
         originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 
         return listOf(originalFun, defaultFunStub)
@@ -135,7 +141,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
         val ctx = context
         val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
-        val variables = mutableMapOf<IrValueParameter, IrValueDeclaration>().apply {
+        val variables = hashMapOf<IrValueParameter, IrValueDeclaration>().apply {
             originalDeclaration.dispatchReceiverParameter?.let {
                 set(it, dispatchReceiverParameter!!)
             }

@@ -144,6 +144,7 @@ public annotation class OptIn(
 @Target(CLASS)
 @Retention(BINARY)
 @SinceKotlin("1.8")
+@RequiresOptIn
 public annotation class ExperimentalSubclassOptIn
 
 /**

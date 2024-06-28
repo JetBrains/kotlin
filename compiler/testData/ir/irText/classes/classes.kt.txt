@@ -1,4 +1,4 @@
-class TestClass {
+open annotation class TestAnnotationClass : Annotation {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -7,20 +7,7 @@ class TestClass {
 
 }
 
-interface TestInterface {
-
-}
-
-object TestObject {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-open annotation class TestAnnotationClass : Annotation {
+class TestClass {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -36,11 +23,24 @@ enum class TestEnumClass : Enum<TestEnumClass> {
 
   }
 
-  fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
-
   fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<TestEnumClass>
     get(): EnumEntries<TestEnumClass> /* Synthetic body for ENUM_ENTRIES */
 
 }
+
+interface TestInterface {
+}
+
+object TestObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+

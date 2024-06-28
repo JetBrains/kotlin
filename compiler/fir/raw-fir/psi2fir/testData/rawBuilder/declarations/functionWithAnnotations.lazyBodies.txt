@@ -1,0 +1,2 @@
+FILE: functionWithAnnotations.kt
+    public? final? fun foo(@ParameterAnnotation(LAZY_EXPRESSION) param1: @ParameterTypeAnnotation(LAZY_EXPRESSION) List<@NestedParameterTypeAnnotation(LAZY_EXPRESSION) Collection<@NestedNestedParameterTypeAnnotation(LAZY_EXPRESSION) String>> = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }

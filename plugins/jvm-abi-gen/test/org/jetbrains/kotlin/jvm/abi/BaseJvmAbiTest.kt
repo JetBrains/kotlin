@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.jvm.abi
 
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
-import kotlinx.metadata.jvm.KotlinClassMetadata
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
@@ -78,21 +77,32 @@ abstract class BaseJvmAbiTest : TestCase() {
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
             pluginOptions = listOfNotNull(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
-                if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DEBUG_INFO") != null
+                },
+                abiOption(
+                    JvmAbiCommandLineProcessor.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION.optionName, true.toString()
+                ).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.PRESERVE_DECLARATION_ORDER_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// PRESERVE_DECLARATION_ORDER") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.REMOVE_PRIVATE_CLASSES_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// REMOVE_PRIVATE_CLASSES") != null
+                },
+                abiOption(JvmAbiCommandLineProcessor.TREAT_INTERNAL_AS_PRIVATE_OPTION.optionName, true.toString()).takeIf {
+                    InTextDirectivesUtils.findStringWithPrefixes(directives, "// TREAT_INTERNAL_AS_PRIVATE") != null
+                },
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
             noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
 
             if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// USE_K2") != null) {
                 useK2 = true
-
-                // Force metadata version 1.9 to circumvent the fact that kotlinx-metadata-jvm 0.6.0 has default metadata version 1.8,
-                // so it can read/write metadata with versions up to and including 1.9, yet K2 has metadata version 2.0+.
-                // This hack can be removed once jvm-abi-gen depends on kotlinx-metadata-jvm that can read/write metadata version 2.0.
-                // Without this hack, CompileAgainstJvmAbiTestGenerated.testInlineClassWithPrivateConstructorK2 currently fails.
-                if (KotlinClassMetadata.COMPATIBLE_METADATA_VERSION.take(2) == listOf(1, 8)) {
-                    metadataVersion = "1.9"
-                }
+            }
+            if (InTextDirectivesUtils.findStringWithPrefixes(directives, "// INHERIT_MULTIFILE_PARTS") != null) {
+                inheritMultifileParts = true
             }
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
@@ -118,9 +128,6 @@ abstract class BaseJvmAbiTest : TestCase() {
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)
         }
     }
-
-    protected open val useLegacyAbiGen: Boolean
-        get() = false
 
     protected val kotlinJvmStdlib = File("dist/kotlinc/lib/kotlin-stdlib.jar").also {
         check(it.exists()) { "Stdlib file '$it' does not exist" }

@@ -7,63 +7,33 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-internal val TEMP_CLASS_FOR_INTERPRETER = object : IrDeclarationOriginImpl("TEMP_CLASS_FOR_INTERPRETER") {}
-internal val TEMP_FUNCTION_FOR_INTERPRETER = object : IrDeclarationOriginImpl("TEMP_FUNCTION_FOR_INTERPRETER") {}
+internal val TEMP_CLASS_FOR_INTERPRETER = IrDeclarationOriginImpl("TEMP_CLASS_FOR_INTERPRETER")
+internal val TEMP_FUNCTION_FOR_INTERPRETER = IrDeclarationOriginImpl("TEMP_FUNCTION_FOR_INTERPRETER")
 
-fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*>? {
-    if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
-
-    val constType = irType.makeNotNull().removeAnnotations()
-    return when (irType.getPrimitiveType()) {
-        PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
-        PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
-        PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-        PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-        PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-        PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
-        PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
-        null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-            null -> when {
-                constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
-                else -> null
-            }
-        }
-    }
-}
-
+@Deprecated("Please migrate to `org.jetbrains.kotlin.ir.util.toIrConst`", level = DeprecationLevel.HIDDEN)
 fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*> =
-    toIrConstOrNull(irType, startOffset, endOffset)
-        ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
+    toIrConst(irType, startOffset, endOffset)
 
 internal fun IrFunction.createCall(origin: IrStatementOrigin? = null): IrCall {
     this as IrSimpleFunction
@@ -99,27 +69,50 @@ internal fun createTempFunction(
     origin: IrDeclarationOrigin = TEMP_FUNCTION_FOR_INTERPRETER,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC
 ): IrSimpleFunction {
-    return IrFactoryImpl.createFunction(
-        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrSimpleFunctionSymbolImpl(), name, visibility, Modality.FINAL, type,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = true, isInfix = false, isExpect = false
+    return IrFactoryImpl.createSimpleFunction(
+        startOffset = SYNTHETIC_OFFSET,
+        endOffset = SYNTHETIC_OFFSET,
+        origin = origin,
+        name = name,
+        visibility = visibility,
+        isInline = false,
+        isExpect = false,
+        returnType = type,
+        modality = Modality.FINAL,
+        symbol = IrSimpleFunctionSymbolImpl(),
+        isTailrec = false,
+        isSuspend = false,
+        isOperator = true,
+        isInfix = false,
+        isExternal = false,
     )
 }
 
 internal fun createTempClass(name: Name, origin: IrDeclarationOrigin = TEMP_CLASS_FOR_INTERPRETER): IrClass {
     return IrFactoryImpl.createClass(
-        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, origin, IrClassSymbolImpl(), name,
-        ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL
+        startOffset = SYNTHETIC_OFFSET,
+        endOffset = SYNTHETIC_OFFSET,
+        origin = origin,
+        name = name,
+        visibility = DescriptorVisibilities.PRIVATE,
+        symbol = IrClassSymbolImpl(),
+        kind = ClassKind.CLASS,
+        modality = Modality.FINAL,
     )
 }
 
 internal fun IrFunction.createGetField(): IrExpression {
-    val backingField = (this as IrSimpleFunction).correspondingPropertySymbol?.owner?.backingField!!
+    val backingField = this.property!!.backingField!!
     val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
-    return IrGetFieldImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, backingField.symbol, backingField.type, receiver?.createGetValue())
+    return backingField.createGetField(receiver)
+}
+
+internal fun IrField.createGetField(receiver: IrValueParameter? = null): IrGetField {
+    return IrGetFieldImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.symbol, this.type, receiver?.createGetValue())
 }
 
 internal fun List<IrStatement>.wrapWithBlockBody(): IrBlockBody {
-    return IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
+    return IrFactoryImpl.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this)
 }
 
 internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean = true): IrFunctionAccessExpression {
@@ -177,4 +170,76 @@ internal fun IrBuiltIns.emptyArrayConstructor(arrayType: IrType): IrConstructorC
         constructorCall.putTypeArgument(0, (arrayType as IrSimpleType).arguments.singleOrNull()?.typeOrNull)
     }
     return constructorCall
+}
+
+internal fun IrConst<*>.toConstantValue(): ConstantValue<*> {
+    if (value == null) return NullValue
+
+    val constType = this.type.makeNotNull().removeAnnotations()
+    return when (this.type.getPrimitiveType()) {
+        PrimitiveType.BOOLEAN -> BooleanValue(this.value as Boolean)
+        PrimitiveType.CHAR -> CharValue(this.value as Char)
+        PrimitiveType.BYTE -> ByteValue((this.value as Number).toByte())
+        PrimitiveType.SHORT -> ShortValue((this.value as Number).toShort())
+        PrimitiveType.INT -> IntValue((this.value as Number).toInt())
+        PrimitiveType.FLOAT -> FloatValue((this.value as Number).toFloat())
+        PrimitiveType.LONG -> LongValue((this.value as Number).toLong())
+        PrimitiveType.DOUBLE -> DoubleValue((this.value as Number).toDouble())
+        null -> when (constType.getUnsignedType()) {
+            UnsignedType.UBYTE -> UByteValue((this.value as Number).toByte())
+            UnsignedType.USHORT -> UShortValue((this.value as Number).toShort())
+            UnsignedType.UINT -> UIntValue((this.value as Number).toInt())
+            UnsignedType.ULONG -> ULongValue((this.value as Number).toLong())
+            null -> when {
+                constType.isString() -> StringValue(this.value as String)
+                else -> error("Cannot convert IrConst ${this.render()} to ConstantValue")
+            }
+        }
+    }
+}
+
+internal fun IrElement.toConstantValue(): ConstantValue<*> {
+    return this.toConstantValueOrNull() ?: errorWithAttachment("Cannot convert IrExpression to ConstantValue") {
+        withEntry("IrExpression", this@toConstantValue.render())
+    }
+}
+
+internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
+    fun createKClassValue(argumentType: IrType): KClassValue? {
+        if (argumentType is IrErrorType) return null
+        if (argumentType !is IrSimpleType) return null
+
+        var type = argumentType
+        var arrayDimensions = 0
+        while (type.isArray()) {
+            if (type.isPrimitiveArray()) break
+            val argument = (type as? IrSimpleType)?.arguments?.singleOrNull()
+            type = argument?.typeOrNull ?: break
+            arrayDimensions++
+        }
+
+        if (type.getClass()?.isLocal == true) return KClassValue()
+        val classId = type.getClass()?.classId ?: return null
+        return KClassValue(classId, arrayDimensions)
+    }
+
+    return when (this) {
+        is IrConst<*> -> this.toConstantValue()
+        is IrConstructorCall -> {
+            if (!this.type.isAnnotation()) return null
+            val classId = this.symbol.owner.constructedClass.classId ?: return null
+            val rawArguments = this.getAllArgumentsWithIr()
+            val argumentMapping = rawArguments
+                .filter { it.second != null || it.first.type.isArray() }
+                .associate { (parameter, expression) -> parameter.name to (expression?.toConstantValue() ?: ArrayValue(emptyList())) }
+            AnnotationValue.create(classId, argumentMapping)
+        }
+        is IrGetEnumValue -> {
+            val classId = this.type.getClass()?.classId ?: return null
+            EnumValue(classId, this.symbol.owner.name)
+        }
+        is IrClassReference -> createKClassValue(this.classType)
+        is IrVararg -> ArrayValue(this.elements.map { it.toConstantValue() })
+        else -> null
+    }
 }

@@ -1,0 +1,72 @@
+digraph ComplexScript_kts {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file ComplexScript.kts [1]" style="filled" fillcolor=red];
+        1 [label="Exit file ComplexScript.kts [1]" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class <script-ComplexScript.kts> [2]" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter property [3]" style="filled" fillcolor=red];
+            4 [label="Const: Int(2) [3]"];
+            5 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_3 {
+            color=blue
+            6 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_4 {
+                color=blue
+                7 [label="Function call arguments enter [3]"];
+                8 [label="Access variable R|/y| [3]"];
+                9 [label="Function call arguments exit [3]"];
+            }
+            10 [label="Function call enter: R|/foo|(...) [3]"];
+            11 [label="Function call exit: R|/foo|(...) [3]" style="filled" fillcolor=yellow];
+            12 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        13 [label="Exit class <script-ComplexScript.kts> [2]" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {13} [style=dotted];
+    2 -> {3 6} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6} [color=green];
+    6 -> {7};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13} [color=green];
+
+    subgraph cluster_5 {
+        color=red
+        14 [label="Enter function foo [3]" style="filled" fillcolor=red];
+        subgraph cluster_6 {
+            color=blue
+            15 [label="Enter block [3]"];
+            16 [label="Const: Int(1) [3]"];
+            17 [label="Jump: ^foo Int(1) [3]"];
+            18 [label="Stub [3]" style="filled" fillcolor=gray];
+            19 [label="Exit block [3]" style="filled" fillcolor=gray];
+        }
+        20 [label="Exit function foo [3]" style="filled" fillcolor=red];
+    }
+    14 -> {15};
+    15 -> {16};
+    16 -> {17};
+    17 -> {20};
+    17 -> {18} [style=dotted];
+    18 -> {19} [style=dotted];
+    19 -> {20} [style=dotted];
+
+}

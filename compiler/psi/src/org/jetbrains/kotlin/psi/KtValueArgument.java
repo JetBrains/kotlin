@@ -46,23 +46,6 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
         return visitor.visitArgument(this, data);
     }
 
-    public static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
-            KtStubElementTypes.NULL,
-            KtStubElementTypes.BOOLEAN_CONSTANT,
-            KtStubElementTypes.FLOAT_CONSTANT,
-            KtStubElementTypes.CHARACTER_CONSTANT,
-            KtStubElementTypes.INTEGER_CONSTANT,
-
-            KtStubElementTypes.REFERENCE_EXPRESSION,
-            KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
-
-            KtStubElementTypes.STRING_TEMPLATE,
-
-            KtStubElementTypes.CLASS_LITERAL_EXPRESSION,
-
-            KtStubElementTypes.COLLECTION_LITERAL_EXPRESSION
-    );
-
     private static final TokenSet STRING_TEMPLATE_EXPRESSIONS_TYPES = TokenSet.create(
             KtStubElementTypes.STRING_TEMPLATE
     );
@@ -72,7 +55,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<?
     public KtExpression getArgumentExpression() {
         KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
         if (stub != null) {
-            KtExpression[] constantExpressions = stub.getChildrenByType(CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            KtExpression[] constantExpressions = stub.getChildrenByType(KtStubElementTypes.CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
             if (constantExpressions.length != 0) {
                 return constantExpressions[0];
             }

@@ -1,0 +1,6 @@
+Local[name: a; isMutated: false; displayText: a]
+    a: R|kotlin/Int|
+    R|kotlin/Int|
+Local[name: b; isMutated: false; displayText: b]
+    b: R|kotlin/String|
+    R|kotlin/String|

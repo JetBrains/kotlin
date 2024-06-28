@@ -24,11 +24,13 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KtAssert;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -72,7 +74,7 @@ public class KtTestUtil {
         shortName = shortName.substring(shortName.lastIndexOf('\\') + 1);
         LightVirtualFile virtualFile = new LightVirtualFile(shortName, KotlinLanguage.INSTANCE, StringUtilRt.convertLineSeparators(text));
 
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
+        virtualFile.setCharset(StandardCharsets.UTF_8);
         PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         //noinspection ConstantConditions
         return (KtFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
@@ -83,7 +85,7 @@ public class KtTestUtil {
         return doLoadFile(new File(fullName));
     }
 
-    public static String doLoadFile(@NotNull File file) throws IOException {
+    public static String doLoadFile(@NotNull File file) {
         try {
             return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
         }
@@ -93,11 +95,16 @@ public class KtTestUtil {
              * This clarifies the exception by showing the full path.
              */
             String messageWithFullPath = file.getAbsolutePath() + " (No such file or directory)";
-            throw new IOException(
+            throw ExceptionUtilsKt.rethrow(
+                new IOException(
                     "Ensure you have your 'Working Directory' configured correctly as the root " +
                     "Kotlin project directory in your test configuration\n\t" +
                     messageWithFullPath,
-                    fileNotFoundException);
+                    fileNotFoundException
+                )
+            );
+        } catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -144,11 +151,6 @@ public class KtTestUtil {
     }
 
     @NotNull
-    public static File getJdk6Home() {
-        return getJdkHome("JDK_1_6", "JDK_6", "JDK_16");
-    }
-
-    @NotNull
     public static File getJdk8Home() {
         return getJdkHome("JDK_1_8", "JDK_8", "JDK_18");
     }
@@ -161,6 +163,11 @@ public class KtTestUtil {
     @NotNull
     public static File getJdk17Home() {
         return getJdkHome("JDK_17_0", "JDK_17");
+    }
+
+    @NotNull
+    public static File getJdk21Home() {
+        return getJdkHome("JDK_21_0", "JDK_21");
     }
 
     @NotNull

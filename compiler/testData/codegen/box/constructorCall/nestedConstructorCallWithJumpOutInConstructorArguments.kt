@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
+
 // FILE: test.kt
 fun box(): String {
     for (count in 0..3) {

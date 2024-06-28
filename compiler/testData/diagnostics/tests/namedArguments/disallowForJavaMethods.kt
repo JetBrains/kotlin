@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JavaSuperClass.java
 
 public class JavaSuperClass {

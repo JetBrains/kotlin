@@ -28,9 +28,9 @@ class SimpleTest {
         val res = evalFile(File("testData/error.simplescript.kts"))
 
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"Unresolved reference: abracadabra\" but received " +
+            "test failed - expecting a failure with the message \"Unresolved reference 'abracadabra'.\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference: abracadabra") })
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unresolved reference 'abracadabra'.") })
     }
 }

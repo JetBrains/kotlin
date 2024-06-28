@@ -1,0 +1,24 @@
+// CHECK:
+//   Mangled name: #f(){}
+//   Public signature: /f|5316533450599009716[0]
+//   Public signature debug description: f(){}
+fun f(): Unit
+
+// CHECK:
+//   Mangled name: #test1@J(){}
+//   Public signature: /test1|6869262091258899204[0]
+//   Public signature debug description: test1@J(){}
+fun J.test1(): Unit
+
+// CHECK:
+//   Mangled name: #test2@J(){}
+//   Public signature: /test2|-509977306549568233[0]
+//   Public signature debug description: test2@J(){}
+fun J.test2(): Unit
+
+// CHECK:
+//   Mangled name: #test3@J(){}
+//   Public signature: /test3|-2284942743287682332[0]
+//   Public signature debug description: test3@J(){}
+fun J.test3(): Unit
+

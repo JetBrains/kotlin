@@ -1,0 +1,8 @@
+KT element: KtNamedFunction
+KT element text:
+public final fun <T> functionWithTAndAnyValue(otherVal: T & Any): kotlin.Unit { /* compiled code */ }
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> functionWithTAndAnyValue([ResolvedTo(BODY_RESOLVE)] otherVal: R|T & Any|): R|kotlin/Unit|

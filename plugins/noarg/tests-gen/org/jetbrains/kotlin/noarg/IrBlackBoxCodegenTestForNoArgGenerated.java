@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,80 +19,80 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class IrBlackBoxCodegenTestForNoArgGenerated extends AbstractIrBlackBoxCodegenTestForNoArg {
-    @Test
-    public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInBox() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("initializers.kt")
-    public void testInitializers() throws Exception {
-        runTest("plugins/noarg/testData/box/initializers.kt");
-    }
+  @Test
+  @TestMetadata("initializers.kt")
+  public void testInitializers() {
+    runTest("plugins/noarg/testData/box/initializers.kt");
+  }
 
-    @Test
-    @TestMetadata("initializersWithoutInvokeInitializers.kt")
-    public void testInitializersWithoutInvokeInitializers() throws Exception {
-        runTest("plugins/noarg/testData/box/initializersWithoutInvokeInitializers.kt");
-    }
+  @Test
+  @TestMetadata("initializersWithoutInvokeInitializers.kt")
+  public void testInitializersWithoutInvokeInitializers() {
+    runTest("plugins/noarg/testData/box/initializersWithoutInvokeInitializers.kt");
+  }
 
-    @Test
-    @TestMetadata("javaAnnotationWithInnerEnum.kt")
-    public void testJavaAnnotationWithInnerEnum() throws Exception {
-        runTest("plugins/noarg/testData/box/javaAnnotationWithInnerEnum.kt");
-    }
+  @Test
+  @TestMetadata("javaAnnotationWithInnerEnum.kt")
+  public void testJavaAnnotationWithInnerEnum() {
+    runTest("plugins/noarg/testData/box/javaAnnotationWithInnerEnum.kt");
+  }
 
-    @Test
-    @TestMetadata("kt18245.kt")
-    public void testKt18245() throws Exception {
-        runTest("plugins/noarg/testData/box/kt18245.kt");
-    }
+  @Test
+  @TestMetadata("kt18245.kt")
+  public void testKt18245() {
+    runTest("plugins/noarg/testData/box/kt18245.kt");
+  }
 
-    @Test
-    @TestMetadata("kt18667.kt")
-    public void testKt18667() throws Exception {
-        runTest("plugins/noarg/testData/box/kt18667.kt");
-    }
+  @Test
+  @TestMetadata("kt18667.kt")
+  public void testKt18667() {
+    runTest("plugins/noarg/testData/box/kt18667.kt");
+  }
 
-    @Test
-    @TestMetadata("kt18668.kt")
-    public void testKt18668() throws Exception {
-        runTest("plugins/noarg/testData/box/kt18668.kt");
-    }
+  @Test
+  @TestMetadata("kt18668.kt")
+  public void testKt18668() {
+    runTest("plugins/noarg/testData/box/kt18668.kt");
+  }
 
-    @Test
-    @TestMetadata("kt53122.kt")
-    public void testKt53122() throws Exception {
-        runTest("plugins/noarg/testData/box/kt53122.kt");
-    }
+  @Test
+  @TestMetadata("kt53122.kt")
+  public void testKt53122() {
+    runTest("plugins/noarg/testData/box/kt53122.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassInInitiailzer.kt")
-    public void testLocalClassInInitiailzer() throws Exception {
-        runTest("plugins/noarg/testData/box/localClassInInitiailzer.kt");
-    }
+  @Test
+  @TestMetadata("localClassInInitiailzer.kt")
+  public void testLocalClassInInitiailzer() {
+    runTest("plugins/noarg/testData/box/localClassInInitiailzer.kt");
+  }
 
-    @Test
-    @TestMetadata("nestedClass.kt")
-    public void testNestedClass() throws Exception {
-        runTest("plugins/noarg/testData/box/nestedClass.kt");
-    }
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("plugins/noarg/testData/box/nestedClass.kt");
+  }
 
-    @Test
-    @TestMetadata("sealedClassWithExistingNoargCtor.kt")
-    public void testSealedClassWithExistingNoargCtor() throws Exception {
-        runTest("plugins/noarg/testData/box/sealedClassWithExistingNoargCtor.kt");
-    }
+  @Test
+  @TestMetadata("sealedClassWithExistingNoargCtor.kt")
+  public void testSealedClassWithExistingNoargCtor() {
+    runTest("plugins/noarg/testData/box/sealedClassWithExistingNoargCtor.kt");
+  }
 
-    @Test
-    @TestMetadata("simple.kt")
-    public void testSimple() throws Exception {
-        runTest("plugins/noarg/testData/box/simple.kt");
-    }
+  @Test
+  @TestMetadata("simple.kt")
+  public void testSimple() {
+    runTest("plugins/noarg/testData/box/simple.kt");
+  }
 
-    @Test
-    @TestMetadata("subclass.kt")
-    public void testSubclass() throws Exception {
-        runTest("plugins/noarg/testData/box/subclass.kt");
-    }
+  @Test
+  @TestMetadata("subclass.kt")
+  public void testSubclass() {
+    runTest("plugins/noarg/testData/box/subclass.kt");
+  }
 }

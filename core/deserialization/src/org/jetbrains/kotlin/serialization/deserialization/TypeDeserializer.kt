@@ -137,11 +137,6 @@ class TypeDeserializer(
             simpleType.withAbbreviation(simpleType(it, expandTypeAliases = false))
         } ?: simpleType
 
-        if (proto.hasClassName()) {
-            val classId = c.nameResolver.getClassId(proto.className)
-            return c.components.platformDependentTypeTransformer.transformPlatformType(classId, computedType)
-        }
-
         return computedType
     }
 
@@ -149,7 +144,7 @@ class TypeDeserializer(
         fun notFoundClass(classIdIndex: Int): ClassDescriptor {
             val classId = c.nameResolver.getClassId(classIdIndex)
             val typeParametersCount = generateSequence(proto) { it.outerType(c.typeTable) }.map { it.argumentCount }.toMutableList()
-            val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
+            val classNestingLevel = generateSequence(classId, ClassId::outerClassId).count()
             while (typeParametersCount.size < classNestingLevel) {
                 typeParametersCount.add(0)
             }

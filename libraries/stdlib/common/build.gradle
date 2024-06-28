@@ -1,8 +1,9 @@
+plugins {
+    id("kotlin-platform-common")
+    id("maven-publish")
+}
+
 description = 'Kotlin Common Standard Library'
-
-apply plugin: 'kotlin-platform-common'
-
-configurePublishing(project)
 
 JvmToolchain.updateJvmTarget(project, "1.8")
 
@@ -11,6 +12,7 @@ def commonTestSrcDir = "../test"
 
 sourceSets {
     main {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir 'src'
             srcDir commonSrcDir
@@ -21,16 +23,10 @@ sourceSets {
         }
     }
     test {
-        kotlin {
-            srcDir commonTestSrcDir
-            srcDir 'test'
-        }
     }
 }
 
 dependencies {
-    testApi project(":kotlin-test:kotlin-test-common")
-    testApi project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 compileKotlinCommon {
@@ -41,13 +37,16 @@ compileKotlinCommon {
 
 compileKotlinCommon {
     kotlinOptions {
+        languageVersion = "1.9"
+        apiVersion = "2.0"
         freeCompilerArgs = [
                 "-module-name", project.name,
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xallow-kotlin-package",
-                "-XXLanguage:+RangeUntilOperator",
+                "-Xexpect-actual-classes",
+                "-Xsuppress-api-version-greater-than-language-version-error",
         ]
     }
 }
@@ -59,18 +58,59 @@ compileTestKotlinCommon {
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
-                "-XXLanguage:+RangeUntilOperator",
         ]
     }
 }
 
-jar {
-    manifestAttributes(manifest, project, 'Main')
+tasks.named("jar", Jar) {
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main')
 }
 
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
 
-sourcesJar.dependsOn(":prepare:build.version:writeStdlibVersion")
+tasks.named("sourcesJar").configure { it.dependsOn(":prepare:build.version:writeStdlibVersion") }
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
+
+def stdlibCommonElements = configurations.create("stdlibCommonElements") {
+    canBeResolved = false
+    canBeConsumed = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+    }
+}
+dependencies {
+    add(stdlibCommonElements.name, project(":kotlin-stdlib"))
+}
+
+class ComponentsFactoryAccess {
+    SoftwareComponentFactory factory
+
+    @javax.inject.Inject
+    ComponentsFactoryAccess(SoftwareComponentFactory factory) {
+        this.factory = factory
+    }
+}
+
+SoftwareComponentFactory componentFactory = objects.newInstance(ComponentsFactoryAccess).factory
+
+def rootComponent = componentFactory.adhoc("root")
+rootComponent.addVariantsFromConfiguration(stdlibCommonElements) {
+    mapToOptional()
+}
+
+plugins.KotlinBuildPublishingPluginKt.configureDefaultPublishing(project)
+
+publishing {
+    publications {
+        def mainPublication = register("main", MavenPublication) {
+            from(rootComponent)
+            artifact(jar)
+            artifact(sourcesJar)
+            artifact(javadocJar)
+            plugins.KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(it, project, "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)", "jar", null)
+        }
+        SbomKt.configureSbom(project, "Main", "kotlin-stdlib-common", ["compileClasspath"], mainPublication)
+    }
+}

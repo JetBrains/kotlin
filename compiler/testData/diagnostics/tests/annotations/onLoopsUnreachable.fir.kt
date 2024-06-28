@@ -1,12 +1,12 @@
 // LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun test() {
-    @ann
+    <!WRONG_ANNOTATION_TARGET!>@ann<!>
     while (2 > 1) {}
 
-    @ann
+    <!WRONG_ANNOTATION_TARGET!>@ann<!>
     do {} while (2 > 1)
 
-    @ann
+    <!WRONG_ANNOTATION_TARGET!>@ann<!>
     for (i in 1..2) {}
 }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.idea.serialize
 import kotlin.reflect.KClass
 
 
-interface IdeaKotlinExtrasSerializer<T : Any> {
+interface IdeaKotlinExtrasSerializer<T> {
     fun serialize(context: IdeaKotlinSerializationContext, value: T): ByteArray?
     fun deserialize(context: IdeaKotlinSerializationContext, data: ByteArray): T?
 

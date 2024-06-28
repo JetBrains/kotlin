@@ -1,0 +1,23 @@
+[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jsMain' without the registering the js target:
+  kotlin {
+      js() /* <- register the 'js' target */
+
+      sourceSets.jsMain.dependencies {
+
+      }
+  }
+----
+[PlatformSourceSetConventionUsedWithoutCorrespondingTarget | WARNING] Accessed 'source set jsTest' without the registering the js target:
+  kotlin {
+      js() /* <- register the 'js' target */
+
+      sourceSets.jsTest.dependencies {
+
+      }
+  }
+----
+[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+ * jsMain
+ * jsTest
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets

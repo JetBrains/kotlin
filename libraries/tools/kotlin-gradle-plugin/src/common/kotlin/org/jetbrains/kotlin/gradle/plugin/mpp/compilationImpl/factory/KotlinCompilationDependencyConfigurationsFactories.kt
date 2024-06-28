@@ -5,26 +5,37 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Bundling
 import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.configureResourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_PATH
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    object WithRuntime : DefaultKotlinCompilationDependencyConfigurationsFactory() {
+    class WithRuntime(
+        private val withResourcesConfigurationExtending: (runtimeDependencyConfiguration: Configuration?, compileDependencyConfiguration: Configuration) -> (Configuration?) = { _, _ -> null },
+    ) : DefaultKotlinCompilationDependencyConfigurationsFactory() {
         override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
-            return KotlinCompilationDependencyConfigurationsContainer(target, compilationName, withRuntime = true)
+            return KotlinCompilationDependencyConfigurationsContainer(
+                target,
+                compilationName,
+                withRuntime = true,
+                withResourcesConfigurationExtending = withResourcesConfigurationExtending,
+            )
         }
     }
 
@@ -46,21 +57,8 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
             naming = naming,
             withRuntime = false,
             withHostSpecificMetadata = true,
+            withResourcesConfigurationExtending = { _, compileDependencyConfiguration -> compileDependencyConfiguration },
             compileClasspathConfigurationName = naming.name("compileKlibraries")
-        )
-    }
-}
-
-internal object JsKotlinCompilationDependencyConfigurationsFactory :
-    KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
-
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
-        val defaultNaming = ConfigurationNaming.Default(target, compilationName)
-        return KotlinCompilationDependencyConfigurationsContainer(
-            target, compilationName, withRuntime = true,
-            naming = ConfigurationNaming.Js(target, compilationName),
-            compileClasspathConfigurationName = defaultNaming.name(compileClasspath),
-            runtimeClasspathConfigurationName = defaultNaming.name(runtimeClasspath)
         )
     }
 }
@@ -92,22 +90,6 @@ private fun interface ConfigurationNaming {
             target.disambiguationClassifier, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }, *parts
         )
     }
-
-    class Js(
-        private val target: KotlinTarget,
-        private val compilationName: String
-    ) : ConfigurationNaming {
-        override fun name(vararg parts: String): String = lowerCamelCaseName(
-            target.disambiguationClassifierInPlatform, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }, *parts
-        )
-
-        private val KotlinTarget.disambiguationClassifierInPlatform: String?
-            get() = when (this) {
-                is KotlinJsTarget -> disambiguationClassifierInPlatform
-                is KotlinJsIrTarget -> disambiguationClassifierInPlatform
-                else -> error("Unexpected target type of $this")
-            }
-    }
 }
 
 private const val compilation = "compilation"
@@ -116,6 +98,7 @@ private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
     target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false,
+    withResourcesConfigurationExtending: (runtimeDependencyConfiguration: Configuration?, compileDependencyConfiguration: Configuration) -> (Configuration?) = { _, _ -> null },
     naming: ConfigurationNaming = ConfigurationNaming.Default(target, compilationName),
     apiConfigurationName: String = naming.name(compilation, API),
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
@@ -128,109 +111,98 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         PLUGIN_CLASSPATH_CONFIGURATION_NAME,
         target.disambiguationClassifier,
         compilationName
-    )
+    ),
+    resourcesPathConfigurationName: String = naming.name(RESOURCES_PATH),
 ): KotlinCompilationConfigurationsContainer {
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
     /* Support deprecated configurations */
-    val deprecatedCompileConfiguration = target.project.configurations.findByName(
+    val deprecatedCompileConfiguration = target.project.configurations.findDependencyScope(
         ConfigurationNaming.Default(target, compilationName).name(COMPILE)
     )?.apply {
-        isCanBeConsumed = false
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         isVisible = false
-        isCanBeResolved = false
         description = "Dependencies for $compilation (deprecated, use '${implementationConfigurationName} ' instead)."
     }
 
-    val deprecatedRuntimeConfiguration = if (withRuntime) target.project.configurations.findByName(
+    val deprecatedRuntimeConfiguration = if (withRuntime) target.project.configurations.findDependencyScope(
         ConfigurationNaming.Default(target, compilationName).name(RUNTIME)
     )?.apply {
-        isCanBeConsumed = false
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
         isVisible = false
-        isCanBeResolved = false
         description =
             "Runtime dependencies for $compilation (deprecated, use '${runtimeOnlyConfigurationName} ' instead)."
     } else null
 
     /* Actual configurations */
 
-    val apiConfiguration = target.project.configurations.maybeCreate(apiConfigurationName).apply {
+    val apiConfiguration = target.project.configurations.maybeCreateDependencyScope(apiConfigurationName).apply {
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
 
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
         description = "API dependencies for $compilationCoordinates"
     }
 
-    val implementationConfiguration = target.project.configurations.maybeCreate(implementationConfigurationName).apply {
-        extendsFrom(apiConfiguration)
-        deprecatedCompileConfiguration?.let { extendsFrom(it) }
-        isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
-        description = "Implementation only dependencies for $compilationCoordinates."
-    }
+    val implementationConfiguration = target.project.configurations
+        .maybeCreateDependencyScope(implementationConfigurationName).apply {
+            extendsFrom(apiConfiguration)
+            deprecatedCompileConfiguration?.let { extendsFrom(it) }
+            isVisible = false
+            description = "Implementation only dependencies for $compilationCoordinates."
+        }
 
-    val compileOnlyConfiguration = target.project.configurations.maybeCreate(compileOnlyConfigurationName).apply {
-        isCanBeConsumed = false
-        setupAsLocalTargetSpecificConfigurationIfSupported(target)
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
-        isVisible = false
-        isCanBeResolved = false
-        description = "Compile only dependencies for $compilationCoordinates."
-    }
+    val compileOnlyConfiguration = target.project.configurations
+        .maybeCreateDependencyScope(compileOnlyConfigurationName).apply {
+            setupAsLocalTargetSpecificConfigurationIfSupported(target)
+            attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            isVisible = false
+            description = "Compile only dependencies for $compilationCoordinates."
+        }
 
-    val runtimeOnlyConfiguration = target.project.configurations.maybeCreate(runtimeOnlyConfigurationName).apply {
+    val runtimeOnlyConfiguration = target.project.configurations.maybeCreateDependencyScope(runtimeOnlyConfigurationName).apply {
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
         description = "Runtime only dependencies for $compilationCoordinates."
     }
 
-    val compileDependencyConfiguration = target.project.configurations.maybeCreate(compileClasspathConfigurationName).apply {
-        extendsFrom(compileOnlyConfiguration, implementationConfiguration)
-        usesPlatformOf(target)
-        isVisible = false
-        isCanBeConsumed = false
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-        if (target.platformType != KotlinPlatformType.androidJvm) {
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+    val compileDependencyConfiguration = target.project.configurations
+        .maybeCreateResolvable(compileClasspathConfigurationName).apply {
+            extendsFrom(compileOnlyConfiguration, implementationConfiguration)
+            usesPlatformOf(target)
+            isVisible = false
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            if (target.platformType != KotlinPlatformType.androidJvm) {
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            }
+            description = "Compile classpath for $compilationCoordinates."
         }
-        description = "Compile classpath for $compilationCoordinates."
-    }
 
     val runtimeDependencyConfiguration =
-        if (withRuntime) target.project.configurations.maybeCreate(runtimeClasspathConfigurationName).apply {
+        if (withRuntime) target.project.configurations.maybeCreateResolvable(runtimeClasspathConfigurationName).apply {
             extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
             isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+            attributes.setAttribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+                attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             description = "Runtime classpath of $compilationCoordinates."
         } else null
 
     val hostSpecificMetadataConfiguration =
-        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(hostSpecificMetadataConfigurationName).apply {
-            markResolvable()
+        if (withHostSpecificMetadata) target.project.configurations.maybeCreateResolvable(hostSpecificMetadataConfigurationName).apply {
             isVisible = false
             description = "Host-specific Metadata dependencies for $compilationCoordinates"
             extendsFrom(compileDependencyConfiguration)
-            copyAttributes(from = compileDependencyConfiguration.attributes, to = attributes)
-            attributes {
-                it.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            }
+            compileDependencyConfiguration.copyAttributesTo(
+                target.project,
+                dest = this
+            )
+            setAttribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
         } else null
 
-    val pluginConfiguration = target.project.configurations.maybeCreate(pluginConfigurationName).apply {
+    val pluginConfiguration = target.project.configurations.maybeCreateResolvable(pluginConfigurationName).apply {
         addGradlePluginMetadataAttributes(target.project)
 
         if (target.platformType == KotlinPlatformType.native) {
@@ -240,8 +212,24 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(target.project.commonKotlinPluginClasspath)
         }
         isVisible = false
-        isCanBeConsumed = false
         description = "Kotlin compiler plugins for $compilation"
+    }
+
+    val resourcesConfiguration = when (target.project.kotlinPropertiesProvider.mppResourcesResolutionStrategy) {
+        KotlinTargetResourcesResolutionStrategy.ResourcesConfiguration -> withResourcesConfigurationExtending(
+            runtimeDependencyConfiguration,
+            compileDependencyConfiguration,
+        )?.let { configurationToExtend ->
+            target.project.configurations.maybeCreateResolvable(resourcesPathConfigurationName).apply {
+                extendsFrom(configurationToExtend)
+                isVisible = false
+
+                configureResourcesPublicationAttributes(target)
+
+                description = "Kotlin resources for $compilation"
+            }
+        }
+        KotlinTargetResourcesResolutionStrategy.VariantReselection -> null
     }
 
     return DefaultKotlinCompilationConfigurationsContainer(
@@ -254,6 +242,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
         hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
-        pluginConfiguration = pluginConfiguration
+        pluginConfiguration = pluginConfiguration,
+        resourcesConfiguration = resourcesConfiguration,
     )
 }

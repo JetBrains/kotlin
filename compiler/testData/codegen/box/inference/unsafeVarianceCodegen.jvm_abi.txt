@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			FUNCTION foo(Ljava/lang/Object;)Ljava/lang/Object;
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: T#0)
+					K2
+						(x: @kotlin/UnsafeVariance T#0)

@@ -1,4 +1,5 @@
-// !OPT_IN: kotlin.js.ExperimentalJsExport
+// FIR_IDENTICAL
+// OPT_IN: kotlin.js.ExperimentalJsExport
 
 @JsExport
 fun foo1() {
@@ -23,3 +24,9 @@ class C2
 
 <!WRONG_ANNOTATION_TARGET!>@JsExport<!>
 var p2: Int = 1
+
+@JsExport
+fun fooUnsigned1(): UInt = 42u
+
+@JsExport
+fun fooUnsigned2(): UByte = 42u

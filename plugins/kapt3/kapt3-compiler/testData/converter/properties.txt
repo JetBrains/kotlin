@@ -1,3 +1,53 @@
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: constClassValue:Lkotlin/reflect/KClass;
+ *   // getter: getConstClassValue()Lkotlin/reflect/KClass;
+ *   public final val constClassValue: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // field: constJavaClassValue:Ljava/lang/Class;
+ *   // getter: getConstJavaClassValue()Ljava/lang/Class;
+ *   public final val constJavaClassValue: java/lang/Class<*>
+ *     public final get
+ *
+ *   // field: getter:Ljava/lang/String;
+ *   // getter: getGetter()Ljava/lang/String;
+ *   public final val getter: kotlin/String (* = ... *)
+ *     public final (* non-default *) get
+ *
+ *   // field: inferType:Ljava/lang/String;
+ *   // getter: getInferType()Ljava/lang/String;
+ *   public final val inferType: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: simple:Ljava/lang/String;
+ *   // getter: getSimple()Ljava/lang/String;
+ *   public final val simple: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: unit:Lkotlin/Unit;
+ *   // getter: getUnit()Lkotlin/Unit;
+ *   // setter: setUnit(Lkotlin/Unit;)V
+ *   // synthetic method for annotations: getUnit$annotations()V
+ *   public final var unit: kotlin/Unit
+ *     public final get
+ *     public final set
+ *
+ *   // field: isBoolean:Z
+ *   // getter: isBoolean()Z
+ *   // setter: setBoolean(Z)V
+ *   // synthetic method for annotations: isBoolean$annotations()V
+ *   public final var isBoolean: kotlin/Boolean
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
@@ -10,6 +60,11 @@ public final class Test {
     private final java.lang.Class<?> constJavaClassValue = null;
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<?> constClassValue = null;
+    @java.lang.Deprecated()
+    private boolean isBoolean = false;
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    private kotlin.Unit unit;
 
     public Test() {
         super();
@@ -38,5 +93,33 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     public final kotlin.reflect.KClass<?> getConstClassValue() {
         return null;
+    }
+
+    @java.lang.Deprecated()
+    public final boolean isBoolean() {
+        return false;
+    }
+
+    @java.lang.Deprecated()
+    public static void isBoolean$annotations() {
+    }
+
+    @java.lang.Deprecated()
+    public final void setBoolean(boolean p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Deprecated()
+    public final kotlin.Unit getUnit() {
+        return null;
+    }
+
+    @java.lang.Deprecated()
+    public static void getUnit$annotations() {
+    }
+
+    @java.lang.Deprecated()
+    public final void setUnit(@org.jetbrains.annotations.NotNull()
+    kotlin.Unit p0) {
     }
 }

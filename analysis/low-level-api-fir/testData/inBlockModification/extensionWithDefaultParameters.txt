@@ -1,0 +1,7 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun R|MyProducer|.testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int| = this@R|/testFun|.R|/MyProducer.produce|()): R|kotlin/Unit| {
+    Int(42)
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|MyProducer|.testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int| = this@R|/testFun|.R|/MyProducer.produce|()): R|kotlin/Unit| { LAZY_BLOCK }

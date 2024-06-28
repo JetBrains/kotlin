@@ -1,5 +1,5 @@
-// !LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated, -TypeEnhancementImprovementsInStrictMode
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated, -TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
@@ -17,7 +17,7 @@ fun main(x: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<
     val x2 = ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<!>>()
     val y2 = ClassTypeParameterBoundWithWarnings<String>()
 
-    val x3 = ClassTypeParameterBoundWithWarnings(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    val x3 = <!CANNOT_INFER_PARAMETER_TYPE!>ClassTypeParameterBoundWithWarnings<!>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
     val y3 = ClassTypeParameterBoundWithWarnings(b)
 
     val x4: ClassTypeParameterBoundWithWarnings<<!UPPER_BOUND_VIOLATED!>String?<!>> = <!TYPE_MISMATCH!>ClassTypeParameterBoundWithWarnings()<!>

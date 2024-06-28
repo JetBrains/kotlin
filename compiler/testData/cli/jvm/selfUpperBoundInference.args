@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/selfUpperBoundInference.kt
 -d
 $TEMP_DIR$
+-language-version
+1.5
 -Xself-upper-bound-inference

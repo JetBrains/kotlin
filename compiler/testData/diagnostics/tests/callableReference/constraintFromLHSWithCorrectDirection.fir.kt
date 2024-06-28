@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KProperty1
 
@@ -18,6 +18,6 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(A::<!UNRESOLVED_REFERENCE!>bla<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>baz<!>(A::<!INAPPLICABLE_CANDIDATE!>bla<!>)
     star(A::bla)
 }

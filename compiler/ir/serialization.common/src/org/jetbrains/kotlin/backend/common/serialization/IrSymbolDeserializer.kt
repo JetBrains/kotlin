@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -22,21 +21,17 @@ class IrSymbolDeserializer(
     val symbolTable: ReferenceSymbolTable,
     val libraryFile: IrLibraryFile,
     val fileSymbol: IrFileSymbol,
-    val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
-    val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
+    irInterner: IrInterningService,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
-    private val fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
+    fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
-
-    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf()
+    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
-            val symbol = referenceDeserializedSymbol(symbolKind, idSig)
-
-            handleExpectActualMapping(idSig, symbol)
+            referenceDeserializedSymbol(symbolKind, idSig)
         }
     }
 
@@ -85,7 +80,7 @@ class IrSymbolDeserializer(
         }
     }
 
-    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)
+    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature, irInterner)
 
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureDeserializer.deserializeIdSignature(index)
@@ -100,20 +95,19 @@ internal fun referenceDeserializedSymbol(
 ): IrSymbol = symbolTable.run {
     when (symbolKind) {
         BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl()
-        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig, false)
-        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig, false)
-        BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig, false)
-        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig, false)
-        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceField(idSig, false)
-        BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceField(idSig, false)
-        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig, false)
-        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig, false)
-        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig, false)
+        BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClass(idSig)
+        BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructor(idSig)
+        BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameter(idSig)
+        BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntry(idSig)
+        BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceField(idSig)
+        BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceField(idSig)
+        BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunction(idSig)
+        BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAlias(idSig)
+        BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referenceProperty(idSig)
         BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl()
         BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
         BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
-        BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
-            IrLocalDelegatedPropertySymbolImpl()
+        BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL -> IrLocalDelegatedPropertySymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
         else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
     }

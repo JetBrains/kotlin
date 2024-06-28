@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
 // WITH_EXTENDED_CHECKERS
 
@@ -19,10 +19,10 @@ private object PO {}
 //+JDK
 package b
 
-import a.A
-import a.foo
+import a.<!INVISIBLE_REFERENCE!>A<!>
+import a.<!INVISIBLE_REFERENCE!>foo<!>
 import a.makeA
-import a.PO
+import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
     val y = makeA()
@@ -30,7 +30,7 @@ fun test() {
     <!INVISIBLE_REFERENCE!>foo<!>()
 
     val u : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_REFERENCE!>A<!>()
-    val a : <!INVISIBLE_REFERENCE!>java.util.Arrays.ArrayList<Int><!>;
+    val a : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
 
     val po = <!INVISIBLE_REFERENCE!>PO<!>
 }

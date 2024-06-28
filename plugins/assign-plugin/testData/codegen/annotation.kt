@@ -45,6 +45,16 @@ data class KotlinStringProperty(private var v: String): KotlinProperty<String> {
     override fun get() = this.v
 }
 
+abstract class KotlinAbstractStringProperty: KotlinProperty<String>
+
+data class KotlinStringProperty2(private var v: String): KotlinAbstractStringProperty() {
+    override fun assign(v: String) {
+        this.v = v
+    }
+    override fun get() = this.v
+}
+
+
 @ValueContainer
 data class KotlinClassStringProperty(private var v: String) {
     fun assign(v: String) {
@@ -82,6 +92,18 @@ fun `should work with annotation on Java class`(): String {
 fun `should work with annotation on Kotlin interface`(): String {
     data class Task(val input: KotlinStringProperty)
     val task = Task(KotlinStringProperty("Fail"))
+    task.input = "OK"
+
+    return if (task.input.get() != "OK") {
+        "Fail: ${task.input.get()}"
+    } else {
+        "OK"
+    }
+}
+
+fun `should work with annotation on Kotlin interface via intermediate supertype`(): String {
+    data class Task(val input: KotlinStringProperty2)
+    val task = Task(KotlinStringProperty2("Fail"))
     task.input = "OK"
 
     return if (task.input.get() != "OK") {

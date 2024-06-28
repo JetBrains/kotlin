@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
@@ -14,12 +15,42 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.DOCUMENTATION_BINARY_TYPE
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.SOURCES_BINARY_TYPE
 
-
+/**
+ * Resolver for attaching additional artifacts to already resolved dependencies.
+ * #### Example
+ * ```
+ * val sourcesJarResolver = IdeAdditionalArtifactResolver { sourceSet, dependencies ->
+ *     dependencies.forEach { dependency ->
+ *         dependency.sourcesClasspath.add(findMySourcesJarFile(dependency))
+ *     }
+ * }
+ * ```
+ */
+@ExternalKotlinTargetApi
 fun interface IdeAdditionalArtifactResolver {
+    /**
+     * This function is intended to resolve 'additional' artifacts:
+     * This means 'artifacts' that can be attached to some existing/already resolved dependency.
+     * One good example of such an 'additional artifact' would be a -sources.jar file:
+     * It is not a dependency on its own: It shares the coordinates with some [IdeaKotlinBinaryDependency] and can be
+     * attached to this dependency to provide extra functionality.
+     *
+     * Contract:
+     * - This function is allowed to attach data to a given [IdeaKotlinDependency]
+     * - This function is not allowed to remove data from a given [IdeaKotlinBinaryDependency]
+     * - This function is not supposed to modify the [sourceSet]
+     *
+     * @param sourceSet: The current SourceSet which shall resolve additional dependencies
+     * @param dependencies: The already resolved dependencies from prior stages
+     */
     fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>)
 
-    object Empty : IdeAdditionalArtifactResolver {
-        override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) = Unit
+    @ExternalKotlinTargetApi
+    companion object {
+        /**
+         * Empty [IdeAdditionalArtifactResolver] that will not resolve any artifact (noop)
+         */
+        val empty = IdeAdditionalArtifactResolver { _, _ -> }
     }
 }
 
@@ -41,7 +72,7 @@ internal fun IdeAdditionalArtifactResolver(resolvers: Iterable<IdeAdditionalArti
  * Dependencies from the [IdeDependencyResolver] need to resolve sources and javadoc using
  * the [SOURCES_BINARY_TYPE] or [DOCUMENTATION_BINARY_TYPE]
  */
-fun IdeAdditionalArtifactResolver(resolver: IdeDependencyResolver) = IdeAdditionalArtifactResolver { sourceSet, dependencies ->
+internal fun IdeAdditionalArtifactResolver(resolver: IdeDependencyResolver) = IdeAdditionalArtifactResolver { sourceSet, dependencies ->
     /*
     Group already resolved dependencies by their coordinates (ignoring sourceSetName, since -sources.jar are not published
     on a "per source set" level.)
@@ -71,4 +102,4 @@ fun IdeAdditionalArtifactResolver(resolver: IdeDependencyResolver) = IdeAddition
 }
 
 
-fun IdeDependencyResolver.asAdditionalArtifactResolver() = IdeAdditionalArtifactResolver(this)
+internal fun IdeDependencyResolver.asAdditionalArtifactResolver() = IdeAdditionalArtifactResolver(this)

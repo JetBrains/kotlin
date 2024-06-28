@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.base.kapt3.KaptOptions
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
@@ -58,7 +54,12 @@ class JavaKaptContextTest {
         )
     }
 
-    private fun doAnnotationProcessing(javaSourceFile: File, processor: IncrementalProcessor, outputDir: File) {
+    private fun doAnnotationProcessing(
+        javaSourceFile: File,
+        processor: IncrementalProcessor,
+        outputDir: File,
+        fileReadOutput: File? = null
+    ) {
         val options = KaptOptions.Builder().apply {
             projectBaseDir = javaSourceFile.parentFile
 
@@ -66,6 +67,8 @@ class JavaKaptContextTest {
             classesOutputDir = outputDir
             stubsOutputDir = outputDir
             incrementalDataOutputDir = outputDir
+
+            fileReadHistoryReportFile = fileReadOutput
 
             flags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
@@ -83,6 +86,26 @@ class JavaKaptContextTest {
             assertTrue(myMethodFile.exists())
         } finally {
             sourceOutputDir.deleteRecursively()
+        }
+    }
+
+    @Test
+    fun testDumpFileReadHistory() {
+        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+        val fileReadOutputFile = File.createTempFile("kapt_read_history", ".txt")
+        try {
+            doAnnotationProcessing(
+                File(TEST_DATA_DIR, "Simple.java"),
+                simpleProcessor(),
+                sourceOutputDir,
+                fileReadOutput = fileReadOutputFile
+            )
+            assertTrue(fileReadOutputFile.exists())
+            assertTrue(fileReadOutputFile.readText().contains("generated/MyMethodMyAnnotation.java"))
+            assertTrue(fileReadOutputFile.readText().contains("java/lang/Enum.class"))
+        } finally {
+            sourceOutputDir.deleteRecursively()
+            fileReadOutputFile.delete()
         }
     }
 
@@ -108,6 +131,9 @@ class JavaKaptContextTest {
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
+            triggered = true
+        } catch (e: Throwable) { // AnnotationProcessorError
+            assertTrue(e.cause!!.message!!.contains("Here we are!"))
             triggered = true
         }
 

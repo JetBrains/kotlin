@@ -1,0 +1,461 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: Int): R|util/Pair| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevel.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.position] position: R|kotlin/String|): R|util/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final data [ResolvedTo(BODY_RESOLVE)] class Pair : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.a] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.b] b: R|kotlin/Int|): R|util/Pair| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/Pair.component1, IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=util/Pair.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] get(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|
+
+        public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun copy([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = this@R|util/Pair|.R|util/Pair.a|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Int| = this@R|util/Pair|.R|util/Pair.b|): R|util/Pair|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>

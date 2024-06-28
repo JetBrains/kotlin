@@ -1,0 +1,82 @@
+package
+
+public val bar: kotlin.collections.HashMap<kotlin.String, kotlin.String>? /* = java.util.HashMap<kotlin.String, kotlin.String>? */ = null
+public val baz: kotlin.Boolean
+public fun foo(): kotlin.Any?
+@kotlin.Suppress(names = {"UNCHECKED_CAST"}) public fun test(): kotlin.collections.HashMap<kotlin.String, kotlin.String> /* = java.util.HashMap<kotlin.String, kotlin.String> */
+
+package some {
+
+    public open class HashMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : java.util.HashMap<K!, V!> {
+        public constructor HashMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>>
+        invisible_fake final override /*1*/ /*fake_override*/ var entrySet: kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<K!, V!>!>!
+        invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<K!>!
+        public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<K!>
+        invisible_fake final override /*1*/ /*fake_override*/ val loadFactor: kotlin.Float
+        invisible_fake final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
+        invisible_fake final override /*1*/ /*fake_override*/ var size: kotlin.Int
+        public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+        invisible_fake final override /*1*/ /*fake_override*/ var table: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+        invisible_fake final override /*1*/ /*fake_override*/ var threshold: kotlin.Int
+        invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<V!>!
+        public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<V!>
+        invisible_fake open override /*1*/ /*fake_override*/ fun afterNodeAccess(/*0*/ p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
+        invisible_fake open override /*1*/ /*fake_override*/ fun afterNodeInsertion(/*0*/ p0: kotlin.Boolean): kotlin.Unit
+        invisible_fake open override /*1*/ /*fake_override*/ fun afterNodeRemoval(/*0*/ p0: java.util.HashMap.Node<K!, V!>!): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun capacity(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+        public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: K!, /*1*/ p1: java.util.function.BiFunction<in K!, in V?, out V?>): V?
+        public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: K!, /*1*/ p1: java.util.function.Function<in K!, out V!>): V!
+        public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: K!, /*1*/ p1: java.util.function.BiFunction<in K!, in V & Any, out V?>): V?
+        public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K!): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in K!, in V!>): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
+        invisible_fake final override /*1*/ /*fake_override*/ fun getNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Any!): java.util.HashMap.Node<K!, V!>!
+        public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: K!, /*1*/ defaultValue: V!): V!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        invisible_fake open override /*1*/ /*fake_override*/ fun internalWriteEntries(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+        invisible_fake final override /*1*/ /*fake_override*/ fun loadFactor(): kotlin.Float
+        public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K!, /*1*/ p1: V & Any, /*2*/ p2: java.util.function.BiFunction<in V & Any, in V & Any, out V?>): V?
+        invisible_fake open override /*1*/ /*fake_override*/ fun newNode(/*0*/ p0: kotlin.Int, /*1*/ p1: K!, /*2*/ p2: V!, /*3*/ p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
+        invisible_fake open override /*1*/ /*fake_override*/ fun newTreeNode(/*0*/ p0: kotlin.Int, /*1*/ p1: K!, /*2*/ p2: V!, /*3*/ p3: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
+        public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
+        public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K!, V!>): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: K!, /*1*/ p1: V!): V?
+        invisible_fake final override /*1*/ /*fake_override*/ fun putMapEntries(/*0*/ p0: (kotlin.collections.MutableMap<out K!, out V!>..kotlin.collections.Map<out K!, V!>?), /*1*/ p1: kotlin.Boolean): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun putVal(/*0*/ p0: kotlin.Int, /*1*/ p1: K!, /*2*/ p2: V!, /*3*/ p3: kotlin.Boolean, /*4*/ p4: kotlin.Boolean): V!
+        invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+        invisible_fake open override /*1*/ /*fake_override*/ fun reinitialize(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
+        public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!, /*1*/ value: V!): kotlin.Boolean
+        invisible_fake final override /*1*/ /*fake_override*/ fun removeNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Boolean, /*4*/ p4: kotlin.Boolean): java.util.HashMap.Node<K!, V!>!
+        public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: K!, /*1*/ p1: V!): V?
+        public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: K!, /*1*/ p1: V!, /*2*/ p2: V!): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in K!, in V!, out V!>): kotlin.Unit
+        invisible_fake open override /*1*/ /*fake_override*/ fun replacementNode(/*0*/ p0: java.util.HashMap.Node<K!, V!>!, /*1*/ p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.Node<K!, V!>!
+        invisible_fake open override /*1*/ /*fake_override*/ fun replacementTreeNode(/*0*/ p0: java.util.HashMap.Node<K!, V!>!, /*1*/ p1: java.util.HashMap.Node<K!, V!>!): java.util.HashMap.TreeNode<K!, V!>!
+        invisible_fake final override /*1*/ /*fake_override*/ fun resize(): kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        invisible_fake final override /*1*/ /*fake_override*/ fun treeifyBin(/*0*/ p0: kotlin.Array<(out) java.util.HashMap.Node<K!, V!>!>!, /*1*/ p1: kotlin.Int): kotlin.Unit
+        invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+
+        // Static members
+        invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
+        invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
+        invisible_fake const final override /*1*/ /*fake_override*/ val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
+        invisible_fake const final override /*1*/ /*fake_override*/ val MIN_TREEIFY_CAPACITY: kotlin.Int = 64
+        invisible_fake const final override /*1*/ /*fake_override*/ val TREEIFY_THRESHOLD: kotlin.Int = 8
+        invisible_fake const final override /*1*/ /*fake_override*/ val UNTREEIFY_THRESHOLD: kotlin.Int = 6
+        invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long = 362498820763181265.toLong()
+        invisible_fake open override /*1*/ /*fake_override*/ fun comparableClassFor(/*0*/ p0: kotlin.Any!): java.lang.Class<*>!
+        invisible_fake open override /*1*/ /*fake_override*/ fun compareComparables(/*0*/ p0: java.lang.Class<*>!, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!): kotlin.Int
+        invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
+        invisible_fake final override /*1*/ /*fake_override*/ fun hash(/*0*/ p0: kotlin.Any!): kotlin.Int
+        invisible_fake final override /*1*/ /*fake_override*/ fun tableSizeFor(/*0*/ p0: kotlin.Int): kotlin.Int
+    }
+}
+

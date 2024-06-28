@@ -1,0 +1,23 @@
+KT element: KtClass
+KT element text:
+public final enum class Enum private constructor() : kotlin.Enum<Enum> {
+    @Y ENTRY;
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] enum class Enum : R|kotlin/Enum<Enum>| {
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|Enum| {
+    }
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] fun values(): R|kotlin/Array<Enum>| {
+    }
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] val entries: R|kotlin/enums/EnumEntries<Enum>|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<Enum>|
+
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] constructor(): R|Enum|
+
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Enum] enum entry ENTRY: R|Enum|
+}

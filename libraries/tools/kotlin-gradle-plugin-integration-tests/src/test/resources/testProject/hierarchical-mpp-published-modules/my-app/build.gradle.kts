@@ -2,12 +2,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    mavenLocal()
-    maven("<localRepo>")
-    mavenCentral()
-}
-
 group = "com.example.app"
 version = "1.0"
 
@@ -21,7 +15,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.example.bar:my-lib-bar:1.0")
-                implementation(kotlin("stdlib-common"))
             }
         }
 

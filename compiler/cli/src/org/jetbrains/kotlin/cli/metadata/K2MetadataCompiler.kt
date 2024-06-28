@@ -31,13 +31,20 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.getModuleNameForSource
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
+/**
+ * This class is the entry-point for compiling Kotlin code into a metadata KLib.
+ *
+ * **Note: `2` in the name stands for Kotlin `TO` metadata compiler.
+ * This entry-point used by both K1 and K2.**
+ *
+ * Please see `/docs/fir/k2_kmp.md` for more info on the K2/FIR implementation.
+ */
 class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
     override val defaultPerformanceManager: CommonCompilerPerformanceManager = K2MetadataCompilerPerformanceManager()
@@ -58,7 +65,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         rootDisposable: Disposable,
         paths: KotlinPaths?
     ): ExitCode {
-        val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val collector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
@@ -66,8 +73,12 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
         val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
+        if (hmppCliModuleStructure != null) {
+            collector.report(ERROR, "HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags")
+            return ExitCode.COMPILATION_ERROR
+        }
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources, hmppCliModuleStructure?.getModuleNameForSource(arg))
+            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources, hmppModuleName = null)
         }
         if (arguments.classpath != null) {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))
@@ -98,7 +109,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         val environment =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.METADATA_CONFIG_FILES)
 
-        val mode = if(arguments.expectActualLinker) "KLib" else "metadata"
+        val mode = if (arguments.metadataKlib) "KLib" else "metadata"
 
         val sourceFiles = environment.getSourceFiles()
         performanceManager.notifyCompilerInitialized(sourceFiles.size, environment.countLinesOfCode(sourceFiles), "$mode mode for $moduleName module")
@@ -111,13 +122,13 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             return ExitCode.COMPILATION_ERROR
         }
 
-        checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())
+        checkKotlinPackageUsageForPsi(environment.configuration, environment.getSourceFiles())
 
         try {
             val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
             val metadataSerializer = when {
                 useFir -> FirMetadataSerializer(configuration, environment)
-                arguments.expectActualLinker -> K2MetadataKlibSerializer(configuration, environment)
+                arguments.metadataKlib -> K2MetadataKlibSerializer(configuration, environment)
                 else -> MetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
             metadataSerializer.analyzeAndSerialize()

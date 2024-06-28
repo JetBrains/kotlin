@@ -9,3 +9,58 @@ fun foo(): Int {
 fun test(a: IntArray): Int {
   return a.get(index = 0).plus(other = a.get(index = <get-p>())).plus(other = a.get(index = foo()))
 }
+
+fun test1(a: IntArray) {
+  { // BLOCK
+    val tmp_0: IntArray = a
+    val tmp_1: Int = 0
+    tmp_0.set(index = tmp_1, value = tmp_0.get(index = tmp_1).plus(other = 1))
+  }
+  { // BLOCK
+    val tmp_2: IntArray = a
+    val tmp_3: Int = 1
+    tmp_2.set(index = tmp_3, value = tmp_2.get(index = tmp_3).minus(other = 2))
+  }
+  { // BLOCK
+    val tmp_4: IntArray = a
+    val tmp_5: Int = 2
+    tmp_4.set(index = tmp_5, value = tmp_4.get(index = tmp_5).times(other = 3))
+  }
+  { // BLOCK
+    val tmp_6: IntArray = a
+    val tmp_7: Int = 3
+    tmp_6.set(index = tmp_7, value = tmp_6.get(index = tmp_7).div(other = 4))
+  }
+  { // BLOCK
+    val tmp_8: IntArray = a
+    val tmp_9: Int = 4
+    tmp_8.set(index = tmp_9, value = tmp_8.get(index = tmp_9).rem(other = 5))
+  }
+  a.set(index = 5, value = 6)
+  { // BLOCK
+    val tmp_10: IntArray = a
+    val tmp_11: Int = 6
+    val tmp_12: Int = tmp_10.get(index = tmp_11)
+    tmp_10.set(index = tmp_11, value = tmp_12.inc())
+    tmp_12
+  } /*~> Unit */
+  { // BLOCK
+    val tmp_13: IntArray = a
+    val tmp_14: Int = 7
+    tmp_13.set(index = tmp_14, value = tmp_13.get(index = tmp_14).inc())
+    tmp_13.get(index = tmp_14)
+  } /*~> Unit */
+  { // BLOCK
+    val tmp_15: IntArray = a
+    val tmp_16: Int = 8
+    val tmp_17: Int = tmp_15.get(index = tmp_16)
+    tmp_15.set(index = tmp_16, value = tmp_17.dec())
+    tmp_17
+  } /*~> Unit */
+  { // BLOCK
+    val tmp_18: IntArray = a
+    val tmp_19: Int = 9
+    tmp_18.set(index = tmp_19, value = tmp_18.get(index = tmp_19).dec())
+    tmp_18.get(index = tmp_19)
+  } /*~> Unit */
+}

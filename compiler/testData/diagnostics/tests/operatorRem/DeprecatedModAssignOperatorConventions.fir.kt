@@ -1,5 +1,5 @@
-// !LANGUAGE: -ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
     <!DEPRECATED_BINARY_MOD!>operator<!> fun modAssign(x: Int) {}
@@ -29,7 +29,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOld %= 1<!>
+    onlyOld <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>%=<!> 1
 
     val onlyNew = OnlyNew()
     onlyNew %= 1

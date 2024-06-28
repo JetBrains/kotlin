@@ -1,0 +1,373 @@
+package
+
+package pkg {
+    public val defaultArgument: pkg.UserKlass
+    public val defaultArgumentA: pkg.UserKlass
+    public val defaultArgumentB: pkg.UserKlass
+    public val sameDefaultArgument: pkg.UserKlass
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testBasic(): kotlin.Unit
+    public fun testBasic(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun testDifferencesInInlineModifierPresence(): kotlin.Unit
+    public fun testDifferencesInInlineModifierPresence(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInInlineModifierPresenceReverse(): kotlin.Unit
+    public inline fun testDifferencesInInlineModifierPresenceReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal fun testDifferencesInInternalAndPublicVisibilities(): kotlin.Unit
+    public fun testDifferencesInInternalAndPublicVisibilities(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInInternalAndPublicVisibilitiesReverse(): kotlin.Unit
+    internal fun testDifferencesInInternalAndPublicVisibilitiesReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private fun testDifferencesInPrivateAndInternalVisibilities(): kotlin.Unit
+    internal fun testDifferencesInPrivateAndInternalVisibilities(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal fun testDifferencesInPrivateAndInternalVisibilitiesReverse(): kotlin.Unit
+    private fun testDifferencesInPrivateAndInternalVisibilitiesReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private fun testDifferencesInPrivateAndPublicVisibilities(): kotlin.Unit
+    public fun testDifferencesInPrivateAndPublicVisibilities(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInPrivateAndPublicVisibilitiesReverse(): kotlin.Unit
+    private fun testDifferencesInPrivateAndPublicVisibilitiesReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterA(): kotlin.Unit
+    public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterAReverse(): kotlin.Unit
+    public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterAReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterB(/*0*/ arg: T): kotlin.Unit
+    public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterBReverse(/*0*/ arg: T): kotlin.Unit
+    public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterBReverse(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ T> testDifferencesInReifiedBehaviorOfTypeParameterCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public inline fun </*0*/ reified T> testDifferencesInReifiedBehaviorOfTypeParameterCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInReturnTypePresence(): kotlin.Unit
+    public fun testDifferencesInReturnTypePresence(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInReturnTypePresenceReverse(): kotlin.Unit
+    public fun testDifferencesInReturnTypePresenceReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public tailrec fun testDifferencesInTailrecModifierPresence(): kotlin.Unit
+    public fun testDifferencesInTailrecModifierPresence(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInTailrecModifierPresenceReverse(): kotlin.Unit
+    public tailrec fun testDifferencesInTailrecModifierPresenceReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterfaceA> testDifferencesInTypeParameterMultipleUpperBoundsPresenceB(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T> testDifferencesInTypeParameterUpperBoundsPresence(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testDifferencesInTypeParameterUpperBoundsPresence(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T> testDifferencesInTypeParameterUpperBoundsPresenceReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testDifferencesInTypeParameterUpperBoundsPresenceReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInValueParameterDefaultArgumentsPresence(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    public fun testDifferencesInValueParameterDefaultArgumentsPresence(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public fun testDifferencesInValueParameterDefaultArgumentsPresenceReverse(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferentReturnTypes(): pkg.UserKlassA
+    public fun testDifferentReturnTypes(): pkg.UserKlassB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ TA> testDifferentlyNamedTypeParametersA(): kotlin.Unit
+    public fun </*0*/ TB> testDifferentlyNamedTypeParametersA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ TA> testDifferentlyNamedTypeParametersB(/*0*/ arg: TA): kotlin.Unit
+    public fun </*0*/ TB> testDifferentlyNamedTypeParametersB(/*0*/ arg: TB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ TA> testDifferentlyNamedTypeParametersC(/*0*/ arg: pkg.Invariant<TA>): kotlin.Unit
+    public fun </*0*/ TB> testDifferentlyNamedTypeParametersC(/*0*/ arg: pkg.Invariant<TB>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testDifferentlyNamedValueParameters(/*0*/ argA: pkg.UserKlass): kotlin.Unit
+    public fun testDifferentlyNamedValueParameters(/*0*/ argB: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") internal fun testIdenticalInternalVisibility(): kotlin.Unit
+    internal fun testIdenticalInternalVisibility(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun testIdenticalPresenceOfInlineModifier(): kotlin.Unit
+    public inline fun testIdenticalPresenceOfInlineModifier(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public tailrec fun testIdenticalPresenceOfTailrecModifier(): kotlin.Unit
+    public tailrec fun testIdenticalPresenceOfTailrecModifier(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") private fun testIdenticalPrivateVisibility(): kotlin.Unit
+    private fun testIdenticalPrivateVisibility(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterA(): kotlin.Unit
+    public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterB(/*0*/ arg: T): kotlin.Unit
+    public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public inline fun </*0*/ reified T> testIdenticalReifiedTypeParameterC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testIdenticalReturnTypes(): pkg.UserKlass
+    public fun testIdenticalReturnTypes(): pkg.UserKlass
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T> testIdenticalTypeParametersA(): kotlin.Unit
+    public fun </*0*/ T> testIdenticalTypeParametersA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T> testIdenticalTypeParametersB(/*0*/ arg: T): kotlin.Unit
+    public fun </*0*/ T> testIdenticalTypeParametersB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T> testIdenticalTypeParametersC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public fun </*0*/ T> testIdenticalTypeParametersC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testIdenticalValueParameters(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public fun testIdenticalValueParameters(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T1, /*1*/ T2A> testMultipleDifferentlyNamedTypeParametersA(): kotlin.Unit
+    public fun </*0*/ T1, /*1*/ T2B> testMultipleDifferentlyNamedTypeParametersA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T1A, /*1*/ T2A> testMultipleDifferentlyNamedTypeParametersB(): kotlin.Unit
+    public fun </*0*/ T1B, /*1*/ T2B> testMultipleDifferentlyNamedTypeParametersB(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleDifferentlyNamedValueParametersA(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2A: pkg.UserKlassB): kotlin.Unit
+    public fun testMultipleDifferentlyNamedValueParametersA(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2B: pkg.UserKlassB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleDifferentlyNamedValueParametersB(/*0*/ arg1A: pkg.UserKlassA, /*1*/ arg2A: pkg.UserKlassB): kotlin.Unit
+    public fun testMultipleDifferentlyNamedValueParametersB(/*0*/ arg1B: pkg.UserKlassA, /*1*/ arg2B: pkg.UserKlassB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T1, /*1*/ T2> testMultipleIdenticalTypeParameters(): kotlin.Unit
+    public fun </*0*/ T1, /*1*/ T2> testMultipleIdenticalTypeParameters(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleIdenticalValueParameters(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    public fun testMultipleIdenticalValueParameters(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    public fun testMultipleTypeAliasedValueParameterTypesA(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.SameUserKlassB /* = pkg.UserKlassB */): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleTypeAliasedValueParameterTypesA(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleTypeAliasedValueParameterTypesAReverse(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.SameUserKlassB /* = pkg.UserKlassB */): kotlin.Unit
+    public fun testMultipleTypeAliasedValueParameterTypesAReverse(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    public fun testMultipleTypeAliasedValueParameterTypesB(/*0*/ arg1: pkg.SameUserKlassA /* = pkg.UserKlassA */, /*1*/ arg2: pkg.SameUserKlassB /* = pkg.UserKlassB */): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleTypeAliasedValueParameterTypesB(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testMultipleTypeAliasedValueParameterTypesBReverse(/*0*/ arg1: pkg.SameUserKlassA /* = pkg.UserKlassA */, /*1*/ arg2: pkg.SameUserKlassB /* = pkg.UserKlassB */): kotlin.Unit
+    public fun testMultipleTypeAliasedValueParameterTypesBReverse(/*0*/ arg1: pkg.UserKlassA, /*1*/ arg2: pkg.UserKlassB): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testTypeAliasedReturnTypes(): pkg.UserKlass
+    public fun testTypeAliasedReturnTypes(): pkg.SameUserKlass /* = pkg.UserKlass */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testTypeAliasedReturnTypesReverse(): pkg.SameUserKlass /* = pkg.UserKlass */
+    public fun testTypeAliasedReturnTypesReverse(): pkg.UserKlass
+    public fun testTypeAliasedValueParameterTypes(/*0*/ arg: pkg.SameUserKlass /* = pkg.UserKlass */): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testTypeAliasedValueParameterTypes(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testTypeAliasedValueParameterTypesReverse(/*0*/ arg: pkg.SameUserKlass /* = pkg.UserKlass */): kotlin.Unit
+    public fun testTypeAliasedValueParameterTypesReverse(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithDifferentUpperBounds(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithDifferentUpperBounds(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsA(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsB(/*0*/ arg: T): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithIdenticalUpperBoundsC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceC
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsAB(): kotlin.Unit where T : pkg.UserInterfaceC
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleDifferentUpperBoundsAC(): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsAC(): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceD
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleDifferentUpperBoundsBB(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceC> testTypeParameterWithMultipleDifferentUpperBoundsBB(): kotlin.Unit where T : pkg.UserInterfaceD
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleIdenticalUpperBoundsBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsAA(): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBA(): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleShuffledUpperBoundsBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleShuffledUpperBoundsBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAAReverse(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAABReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsAACReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABAReverse(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsABCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA(): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACA(): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse(): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACAReverse(): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.UserInterfaceB> testTypeParameterWithMultipleTypeAliasedUpperBoundsACCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceA
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAAReverse(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBABReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBAC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBACReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBA(): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse(): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBAReverse(): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBB(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBBReverse(/*0*/ arg: T): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterfaceA /* = pkg.UserInterfaceA */> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.SameUserInterfaceB /* = pkg.UserInterfaceB */
+    public fun </*0*/ T : pkg.UserInterfaceA> testTypeParameterWithMultipleTypeAliasedUpperBoundsBBCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit where T : pkg.UserInterfaceB
+    public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsAReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsAReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsB(/*0*/ arg: T): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsBReverse(/*0*/ arg: T): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsBReverse(/*0*/ arg: T): kotlin.Unit
+    public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsC(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.SameUserInterface /* = pkg.UserInterface */> testTypeParameterWithTypeAliasedUpperBoundsCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public fun </*0*/ T : pkg.UserInterface> testTypeParameterWithTypeAliasedUpperBoundsCReverse(/*0*/ arg: pkg.Invariant<T>): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsA(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsAReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsB(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsBReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsC(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsC(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsCReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsD(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsD(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsDReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsE(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsE(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<*>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsEReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsF(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun </*0*/ T : pkg.Invariant<in pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse(): kotlin.Unit
+    public fun </*0*/ T : pkg.Invariant<out pkg.UserInterface>> testTypeParameterWithVarianceDifferentUpperBoundsFReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testValueParameterWithAliasedDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    public fun testValueParameterWithAliasedDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testValueParameterWithAliasedDefaultArgumentsReverse(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    public fun testValueParameterWithAliasedDefaultArgumentsReverse(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testValueParameterWithDifferentDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    public fun testValueParameterWithDifferentDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testValueParameterWithIdenticalDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    public fun testValueParameterWithIdenticalDefaultArguments(/*0*/ arg: pkg.UserKlass = ...): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesA(): pkg.Invariant<pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesA(): pkg.Invariant<out pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesAReverse(): pkg.Invariant<out pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesAReverse(): pkg.Invariant<pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesB(): pkg.Invariant<pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesB(): pkg.Invariant<in pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesBReverse(): pkg.Invariant<in pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesBReverse(): pkg.Invariant<pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesC(): pkg.Invariant<pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesC(): pkg.Invariant<*>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesCReverse(): pkg.Invariant<*>
+    public fun testVarianceDifferentReturnTypesCReverse(): pkg.Invariant<pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesD(): pkg.Invariant<out pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesD(): pkg.Invariant<*>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesDReverse(): pkg.Invariant<*>
+    public fun testVarianceDifferentReturnTypesDReverse(): pkg.Invariant<out pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesE(): pkg.Invariant<in pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesE(): pkg.Invariant<*>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesEReverse(): pkg.Invariant<*>
+    public fun testVarianceDifferentReturnTypesEReverse(): pkg.Invariant<in pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesF(): pkg.Invariant<out pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesF(): pkg.Invariant<in pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun testVarianceDifferentReturnTypesFReverse(): pkg.Invariant<in pkg.UserKlass>
+    public fun testVarianceDifferentReturnTypesFReverse(): pkg.Invariant<out pkg.UserKlass>
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public infix fun pkg.UserKlass.testDifferencesInInfixModifierPresence(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public fun pkg.UserKlass.testDifferencesInInfixModifierPresence(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun pkg.UserKlass.testDifferencesInInfixModifierPresenceReverse(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public infix fun pkg.UserKlass.testDifferencesInInfixModifierPresenceReverse(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun pkg.UserKlass.testIdenticalExtensionReceivers(): kotlin.Unit
+    public fun pkg.UserKlass.testIdenticalExtensionReceivers(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public infix fun pkg.UserKlass.testIdenticalPresenceOfInfixModifier(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public infix fun pkg.UserKlass.testIdenticalPresenceOfInfixModifier(/*0*/ arg: pkg.UserKlass): kotlin.Unit
+    public fun pkg.SameUserKlass /* = pkg.UserKlass */.testTypeAliasedExtensionReceivers(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun pkg.UserKlass.testTypeAliasedExtensionReceivers(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun pkg.SameUserKlass /* = pkg.UserKlass */.testTypeAliasedExtensionReceiversReverse(): kotlin.Unit
+    public fun pkg.UserKlass.testTypeAliasedExtensionReceiversReverse(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public fun pkg.UserKlassB.unaryMinus(): kotlin.Unit
+    public operator fun pkg.UserKlassB.unaryMinus(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public operator fun pkg.UserKlassA.unaryPlus(): kotlin.Unit
+    public operator fun pkg.UserKlassA.unaryPlus(): kotlin.Unit
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public operator fun pkg.UserKlassB.unaryPlus(): kotlin.Unit
+    public fun pkg.UserKlassB.unaryPlus(): kotlin.Unit
+
+    public open class Invariant</*0*/ T> {
+        public constructor Invariant</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface UserInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface UserInterfaceA {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface UserInterfaceB {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface UserInterfaceC {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface UserInterfaceD {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class UserKlass {
+        public constructor UserKlass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class UserKlassA {
+        public constructor UserKlassA()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class UserKlassB {
+        public constructor UserKlassB()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    public typealias SameUserInterface = pkg.UserInterface
+    public typealias SameUserInterfaceA = pkg.UserInterfaceA
+    public typealias SameUserInterfaceB = pkg.UserInterfaceB
+    public typealias SameUserKlass = pkg.UserKlass
+    public typealias SameUserKlassA = pkg.UserKlassA
+    public typealias SameUserKlassB = pkg.UserKlassB
+}
+

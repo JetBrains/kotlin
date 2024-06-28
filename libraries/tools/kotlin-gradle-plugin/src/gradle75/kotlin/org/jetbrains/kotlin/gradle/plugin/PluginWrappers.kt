@@ -12,8 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelperG75
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle75"
@@ -87,18 +86,6 @@ open class KotlinJsPluginWrapper : AbstractKotlinJsPluginWrapper() {
     }
 }
 
-open class KotlinPm20PluginWrapper @Inject constructor(
-    objectFactory: ObjectFactory
-) : AbstractKotlinPm20PluginWrapper(objectFactory) {
-
-    override val pluginVariant: String = PLUGIN_VARIANT_NAME
-
-    override fun apply(project: Project) {
-        project.registerVariantImplementations()
-        super.apply(project)
-    }
-}
-
 open class KotlinPlatformJvmPlugin : KotlinPlatformImplementationPluginBase("jvm") {
     override fun apply(project: Project) {
         project.applyPlugin<KotlinPluginWrapper>()
@@ -134,8 +121,15 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
 
 open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     override fun apply(project: Project) {
-        warnAboutKotlin12xMppDeprecation(project)
         project.applyPlugin<KotlinCommonPluginWrapper>()
+        warnAboutKotlin12xMppDeprecation(project)
+    }
+}
+
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
     }
 }
 
@@ -143,4 +137,9 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[MppTestReportHelper.MppTestReportHelperVariantFactory::class] =
         MppTestReportHelperG75.MppTestReportHelperVariantFactoryG75()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG75.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG75.Factory()
+    factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG75.Factory()
 }

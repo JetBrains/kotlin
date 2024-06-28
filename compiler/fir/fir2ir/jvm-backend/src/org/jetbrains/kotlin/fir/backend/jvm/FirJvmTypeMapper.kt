@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -33,7 +32,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -47,8 +48,8 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
     companion object {
-        val NON_EXISTENT_ID = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
-        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(emptyArray(), isNullable = false)
+        val NON_EXISTENT_ID: ClassId = ClassId.topLevel(StandardNames.NON_EXISTENT_CLASS)
+        private val typeForNonExistentClass = NON_EXISTENT_ID.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
     }
 
     fun mapType(
@@ -81,7 +82,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
 
         override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String {
             require(typeConstructor is ConeClassLikeLookupTag)
-            return typeConstructor.classId.asString().replace(".", "$").replace("/", ".")
+            val classId = typeConstructor.classId
+            val name = if (classId.isLocal) safeShortClassName(classId) else classId.asString()
+            return name.replace(".", "$")
         }
 
         override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
@@ -133,8 +136,8 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             return when (val symbol = lookupTag.toSymbol(session)) {
                 is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
                 is FirTypeAliasSymbol -> {
-                    val expandedType = fullyExpandedType(session) as? ConeClassLikeType
-                    val classSymbol = expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+                    val expandedType = fullyExpandedType(session)
+                    val classSymbol = expandedType.lookupTag.toSymbol(session) as? FirRegularClassSymbol
                     classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
                 }
                 else -> null
@@ -175,8 +178,9 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             val parameters = classifier?.typeParameters.orEmpty().map { it.symbol }
             val arguments = type.arguments
 
-            if ((defaultType.isBasicFunctionType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-                || defaultType.isReflectFunctionType(session)
+            if ((defaultType.functionTypeKind(session).let { it == FunctionTypeKind.Function || it == FunctionTypeKind.SuspendFunction } &&
+                        (arguments.size > BuiltInFunctionArity.BIG_ARITY)) ||
+                defaultType.isReflectFunctionType(session)
             ) {
                 writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
                 return
@@ -220,15 +224,15 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
         fun segments(): List<PossiblyInnerConeType> = outerType?.segments().orEmpty() + this
     }
 
-    fun getJvmShortName(klass: FirRegularClass): String {
-        return getJvmShortName(klass.classId)
-    }
-
     internal fun getJvmShortName(classId: ClassId): String {
         val result = runUnless(classId.isLocal) {
             classId.asSingleFqName().toUnsafe().let { JavaToKotlinClassMap.mapKotlinToJava(it)?.shortClassName?.asString() }
         }
-        return result ?: SpecialNames.safeIdentifier(classId.shortClassName).identifier
+        return result ?: safeShortClassName(classId)
+    }
+
+    private fun safeShortClassName(classId: ClassId): String {
+        return SpecialNames.safeIdentifier(classId.shortClassName).identifier
     }
 }
 

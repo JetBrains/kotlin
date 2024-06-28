@@ -5,10 +5,12 @@ plugins {
 }
 
 dependencies {
-    api(kotlinStdlib())
+    implementation(kotlinStdlib("jdk8"))
     implementation(project(":compiler:tests-mutes"))
-    implementation("khttp:khttp:1.0.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.jackson)
+    implementation(libs.jackson.module.kotlin)
 }
 
 sourceSets {

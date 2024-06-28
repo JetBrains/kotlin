@@ -84,8 +84,6 @@ class KotlinBuildProperties(
 
     val useFir: Boolean = getBoolean("kotlin.build.useFir")
 
-    val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
-
     val useFirIdeaPlugin: Boolean = getBoolean("idea.fir.plugin")
 
     val teamCityBootstrapVersion: String? = getOrNull("bootstrap.teamcity.kotlin.version") as String?
@@ -103,6 +101,8 @@ class KotlinBuildProperties(
     val renderDiagnosticNames: Boolean = getBoolean("kotlin.build.render.diagnostic.names")
 
     val isCacheRedirectorEnabled: Boolean = getBoolean("cacheRedirectorEnabled")
+
+    val useKotlinNativeLocalDistributionForTests: Boolean = getBoolean("kotlin.native.local.distribution.for.tests.enabled", true)
 }
 
 private const val extensionName = "kotlinBuildProperties"
@@ -113,7 +113,7 @@ class ProjectProperties(val project: Project) : PropertiesProvider {
 
     override fun getProperty(key: String): Any? = project.findProperty(key)
 
-    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).orNull
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
@@ -131,7 +131,7 @@ class SettingsProperties(val settings: Settings) : PropertiesProvider {
         return if (obj.hasProperty(key)) obj.getProperty(key) else null
     }
 
-    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).orNull
 }
 
 fun getKotlinBuildPropertiesForSettings(settings: Any) = (settings as Settings).kotlinBuildProperties

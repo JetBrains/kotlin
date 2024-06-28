@@ -1,0 +1,47 @@
+public? open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit| {
+    ^foo Q|kotlin/Unit|
+}
+
+public? open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|): R|kotlin/Unit|
+
+public? open override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|kotlin/Unit|
+
+public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|kotlin/Unit|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|kotlin/Unit| {
+}
+
+public open override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/D.foo] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|T|): R|kotlin/Unit|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|F|): R|kotlin/Unit| {
+}
+
+public abstract override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: R|@R|second/Anno|(str = <strcat>(String(super ), R|second/constant|))  kotlin/String|
+
+
+
+public abstract override [ResolvedTo(BODY_RESOLVE)] [IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
+
+
+
+public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/C.bar] var bar: R|T|
+
+
+
+public abstract [ResolvedTo(BODY_RESOLVE)] var bar: R|T|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|T|
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
+
+@R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public abstract override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/D.bar] var bar: R|T|
+    @PROPERTY_GETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] get(): R|T|
+    @PROPERTY_SETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] set([ResolvedTo(BODY_RESOLVE)] value: R|T|): R|kotlin/Unit|
+
+@R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public abstract [ResolvedTo(BODY_RESOLVE)] var bar: R|F|
+    @PROPERTY_GETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] get(): R|F|
+    @PROPERTY_SETTER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=D] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](str = <strcat>(String(property ), R|second/constant|)) value: R|F|): R|kotlin/Unit|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

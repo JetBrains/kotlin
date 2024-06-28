@@ -1,0 +1,36 @@
+@0:0..5:0 FILE fqName:<root> fileName:/annotations.kt
+  @0:0..1:63 CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]
+    annotations:
+      @0:0..102 CONSTRUCTOR_CALL 'public constructor <init> (vararg allowedTargets: kotlin.annotation.AnnotationTarget) [primary] declared in kotlin.annotation.Target' type=kotlin.annotation.Target origin=null
+        @0:8..101 VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
+          @0:25..33 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FUNCTION' type=kotlin.annotation.AnnotationTarget
+          @0:52..67 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_GETTER' type=kotlin.annotation.AnnotationTarget
+          @0:86..101 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_SETTER' type=kotlin.annotation.AnnotationTarget
+    @1:38..63 CONSTRUCTOR visibility:public <> (description:kotlin.String) returnType:<root>.MyAnnotation [primary]
+      @1:39..62 VALUE_PARAMETER name:description index:0 type:kotlin.String
+      @1:38..63 BLOCK_BODY
+        @1:38..63 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @1:38..63 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]'
+    @1:39..62 PROPERTY name:description visibility:public modality:FINAL [val]
+      @1:39..62 FIELD PROPERTY_BACKING_FIELD name:description type:kotlin.String visibility:private [final]
+        @1:39..62 EXPRESSION_BODY
+          @1:39..62 GET_VAR 'description: kotlin.String declared in <root>.MyAnnotation.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      @1:39..62 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-description> visibility:public modality:FINAL <> ($this:<root>.MyAnnotation) returnType:kotlin.String
+        @1:39..62 VALUE_PARAMETER name:<this> type:<root>.MyAnnotation
+        @1:39..62 BLOCK_BODY
+          @1:39..62 RETURN type=kotlin.Nothing from='public final fun <get-description> (): kotlin.String declared in <root>.MyAnnotation'
+            @1:39..62 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:description type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              @1:39..62 GET_VAR '<this>: <root>.MyAnnotation declared in <root>.MyAnnotation.<get-description>' type=<root>.MyAnnotation origin=null
+    @0:0..1:63 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @0:0..1:63 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @0:0..1:63 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @0:0..1:63 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @0:0..1:63 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @0:0..1:63 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @0:0..1:63 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @0:0..1:63 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyAnnotation
+  @3:0..4:12 FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      @3:0..29 CONSTRUCTOR_CALL 'public constructor <init> (description: kotlin.String) [primary] declared in <root>.MyAnnotation' type=<root>.MyAnnotation origin=null
+        @3:14..28 CONST String type=kotlin.String value="fooAnotation"
+    @4:10..12 BLOCK_BODY

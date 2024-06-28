@@ -1,0 +1,1073 @@
+public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension : org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension, org/jetbrains/kotlin/gradle/dsl/HasConfigurableKotlinCompilerOptions, org/jetbrains/kotlin/gradle/dsl/KotlinHierarchyDsl, org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformSourceSetConventions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions {
+	public fun android ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun android (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun android (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun android (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun android (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun androidNativeArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidNativeX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun androidTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun androidTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun androidTarget (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun androidTarget (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public fun androidTarget (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public final fun applyDefaultHierarchyTemplate ()V
+	public final fun applyDefaultHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
+	public fun applyHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
+	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;)V
+	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
+	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
+	public fun compilerOptions (Lorg/gradle/api/Action;)V
+	public fun dependencies (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
+	public fun getAndroidInstrumentedTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeArm32Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeArm32Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeX86Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidNativeX86Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAndroidUnitTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAppleMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getAppleTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public synthetic fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getCommonMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getCommonTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
+	public fun getCompilerTypeFromProperties ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getIosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosSimulatorArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosSimulatorArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getIosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getJsMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getJvmMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getJvmTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public synthetic fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getLinuxArm32HfpMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxArm32HfpTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getLinuxX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMacosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMingwMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMingwTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMingwX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getMingwX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getNativeTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
+	public final fun getTargetHierarchy ()Lorg/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarchyDsl;
+	public final fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
+	public final fun getTestableTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
+	public fun getTvosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosSimulatorArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosSimulatorArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getTvosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWasmJsMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWasmJsTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWasmWasiMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWasmWasiTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm32Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm32Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosDeviceArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosDeviceArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosSimulatorArm64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosSimulatorArm64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosX64Main (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun getWatchosX64Test (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
+	public fun invoke (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
+	public fun ios ()V
+	public fun ios (Ljava/lang/String;)V
+	public fun ios (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public fun ios (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public fun ios (Lorg/gradle/api/Action;)V
+	public fun iosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun iosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun iosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun js ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public fun jvm ()Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public fun jvm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public fun jvm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public fun jvm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public fun jvm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public fun languageSettings (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
+	public fun linuxArm32Hfp ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm32Hfp (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm32Hfp (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm32Hfp (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm32Hfp (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMips32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMips32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMips32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMips32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMips32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMipsel32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMipsel32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMipsel32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMipsel32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxMipsel32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun linuxX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun linuxX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun linuxX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun linuxX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun linuxX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun macosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public final fun metadata (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
+	public final fun metadata (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
+	public static synthetic fun metadata$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinOnlyTarget;
+	public fun mingwX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun mingwX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun mingwX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun mingwX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun mingwX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public fun mingwX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun mingwX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun mingwX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun mingwX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun mingwX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun targetFromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public static synthetic fun targetFromPreset$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public final fun targets (Lkotlin/jvm/functions/Function1;)V
+	public final fun targets (Lorg/gradle/api/Action;)V
+	public fun tvos ()V
+	public fun tvos (Ljava/lang/String;)V
+	public fun tvos (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public fun tvos (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public fun tvos (Lorg/gradle/api/Action;)V
+	public fun tvosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun tvosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun tvosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun tvosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun tvosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun tvosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun tvosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun wasm ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun wasm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun wasm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun wasm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun wasm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun wasmJs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasmJs (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasmJs (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasmJs (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasmJs (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public fun wasmWasi ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun wasmWasi (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun wasmWasi (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun wasmWasi (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun wasmWasi (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public fun watchos ()V
+	public fun watchos (Ljava/lang/String;)V
+	public fun watchos (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public fun watchos (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public fun watchos (Lorg/gradle/api/Action;)V
+	public fun watchosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosDeviceArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosDeviceArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosDeviceArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosDeviceArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosDeviceArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public fun watchosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public fun watchosX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public final fun withSourcesJar (Z)V
+	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;ZILjava/lang/Object;)V
+}
+
+public class org/jetbrains/kotlin/gradle/dsl/KotlinProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer, org/jetbrains/kotlin/tooling/core/HasMutableExtras {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+	public final fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithJsPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {
+	public abstract fun js ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public abstract fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithNativeShortcuts : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions, org/jetbrains/kotlin/gradle/plugin/KotlinSourceSetContainer {
+	public abstract fun ios ()V
+	public abstract fun ios (Ljava/lang/String;)V
+	public abstract fun ios (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun ios (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun ios (Lorg/gradle/api/Action;)V
+	public abstract fun tvos ()V
+	public abstract fun tvos (Ljava/lang/String;)V
+	public abstract fun tvos (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun tvos (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun tvos (Lorg/gradle/api/Action;)V
+	public abstract fun watchos ()V
+	public abstract fun watchos (Ljava/lang/String;)V
+	public abstract fun watchos (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun watchos (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun watchos (Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions : org/jetbrains/kotlin/gradle/plugin/KotlinTargetsContainerWithPresets {
+	public abstract fun android ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun android (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun android (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun android (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun android (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun androidNativeArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidNativeX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun androidTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun androidTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun androidTarget (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun androidTarget (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun androidTarget (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
+	public abstract fun iosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun iosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun iosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun jvm ()Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public abstract fun jvm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public abstract fun jvm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public abstract fun jvm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public abstract fun jvm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/jvm/KotlinJvmTarget;
+	public abstract fun linuxArm32Hfp ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm32Hfp (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm32Hfp (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm32Hfp (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm32Hfp (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMips32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMips32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMips32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMips32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMips32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMipsel32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMipsel32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMipsel32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMipsel32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxMipsel32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun linuxX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun linuxX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun linuxX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun linuxX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun linuxX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun macosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithHostTests;
+	public abstract fun mingwX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun mingwX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun mingwX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun mingwX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun mingwX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun tvosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun tvosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun wasm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun wasm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun wasm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun wasm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun wasm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm32 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosDeviceArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosDeviceArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosDeviceArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosDeviceArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosDeviceArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public abstract fun watchosSimulatorArm64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosSimulatorArm64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosSimulatorArm64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosSimulatorArm64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosSimulatorArm64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX64 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX64 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX86 ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX86 (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX86 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX86 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+	public abstract fun watchosX86 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions {
+	public abstract fun wasm ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmJs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmJs (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmJs (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmJs (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmJs (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
+	public abstract fun wasmWasi ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public abstract fun wasmWasi (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public abstract fun wasmWasi (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public abstract fun wasmWasi (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+	public abstract fun wasmWasi (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/TargetsFromPresetExtension : org/gradle/api/NamedDomainObjectCollection {
+	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public abstract fun fromPreset (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Default : org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Default;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Name : org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Name;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Name;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Name;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$None : org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$None;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Property : org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+	public fun <init> (Lorg/gradle/api/provider/Property;)V
+	public final fun getProperty ()Lorg/gradle/api/provider/Property;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Value : org/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
+	public final fun copy (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;)Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Value;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Value;Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTree ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSetTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Companion;
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Companion {
+	public final fun getEmpty ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect {
+	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffectKt {
+	public static final fun withEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion;
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion {
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public final fun getEmpty ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public final fun getGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;
+	public final fun getResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public final fun setGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;)V
+	public final fun setResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$WithBuildDependencies {
+	public abstract fun dependencies (Lorg/gradle/api/Project;)Ljava/lang/Iterable;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolverKt {
+	public static final fun IdeDependencyResolver (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public static final fun IdeDependencyResolver ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer {
+	public abstract fun transform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformerKt {
+	public static final fun IdeDependencyTransformer (Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun IdeDependencyTransformer ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun withTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion;
+	public static fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
+	public abstract fun registerAdditionalArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)V
+	public abstract fun registerDependencyEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)V
+	public abstract fun registerDependencyResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)V
+	public abstract fun registerDependencyTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;)V
+	public abstract fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;)V
+	public abstract fun registerImportAction (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction;)V
+	public abstract fun resolveDependencies (Ljava/lang/String;)Ljava/util/Set;
+	public abstract fun resolveDependencies (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+	public abstract fun resolveDependenciesSerialized (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun resolveExtrasSerialized (Ljava/lang/Object;)[B
+	public abstract fun serialize (Ljava/lang/Iterable;)Ljava/util/List;
+	public abstract fun serialize (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)[B
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase : java/lang/Enum {
+	public static final field PostAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static final field PreAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion {
+	public final fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase : java/lang/Enum {
+	public static final field BinaryDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field PostDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field PreDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field SourceDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase : java/lang/Enum {
+	public static final field DependencyFilteringPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field FreeDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field PostDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field PreDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority : java/lang/Comparable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority$Companion;
+	public fun <init> (I)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()I
+	public fun hashCode ()I
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority$Companion {
+	public final fun getHigh ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getLow ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getNormal ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getVeryHigh ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint$Companion;
+	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Z
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint$Companion {
+	public final fun getUnconstrained ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isJvmAndAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isLeaf ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSharedNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSingleKotlinTarget ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSinglePlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportAction$Companion;
+	public abstract fun prepareIdeImport (Lorg/gradle/api/Project;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportKt {
+	public static final fun and (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun not (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun or (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$Compilation : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$PlatformLikeSourceSet : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> (Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$ResolvableConfiguration : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable : org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun export (Ljava/lang/Object;)V
+	public final fun export (Ljava/lang/Object;Lgroovy/lang/Closure;)V
+	public final fun export (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+	public final fun getExportConfigurationName ()Ljava/lang/String;
+	public final fun getTransitiveExport ()Z
+	public final fun setTransitiveExport (Z)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/Executable : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun entryPoint (Ljava/lang/String;)V
+	public fun getBaseName ()Ljava/lang/String;
+	public final fun getEntryPoint ()Ljava/lang/String;
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun getRunTask ()Lorg/gradle/api/tasks/AbstractExecTask;
+	public final fun getRunTaskName ()Ljava/lang/String;
+	public final fun getRunTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public fun setBaseName (Ljava/lang/String;)V
+	public final fun setEntryPoint (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/Framework : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary, org/gradle/api/attributes/HasAttributes {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun embedBitcode (Ljava/lang/String;)V
+	public final fun embedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
+	public synthetic fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
+	public fun getAttributes ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/HierarchyAttributeContainer;
+	public final fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
+	public final fun getEmbedBitcodeMode ()Lorg/gradle/api/provider/Property;
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun isStatic ()Z
+	public final fun setEmbedBitcode (Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;)V
+	public final fun setStatic (Z)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/NativeBinary : org/gradle/api/Named {
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun binaryOption (Ljava/lang/String;Ljava/lang/String;)V
+	public fun getBaseName ()Ljava/lang/String;
+	public final fun getBinaryOptions ()Ljava/util/Map;
+	public final fun getBuildType ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
+	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;
+	public final fun getDebuggable ()Z
+	public final fun getFreeCompilerArgs ()Ljava/util/List;
+	public final fun getLinkTask ()Lorg/jetbrains/kotlin/gradle/tasks/KotlinNativeLink;
+	public final fun getLinkTaskName ()Ljava/lang/String;
+	public final fun getLinkTaskProvider ()Lorg/gradle/api/tasks/TaskProvider;
+	public final fun getLinkerOpts ()Ljava/util/List;
+	public fun getName ()Ljava/lang/String;
+	public final fun getOptimized ()Z
+	public final fun getOutputDirectory ()Ljava/io/File;
+	public final fun getOutputDirectoryProperty ()Lorg/gradle/api/file/DirectoryProperty;
+	public final fun getOutputFile ()Ljava/io/File;
+	public abstract fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun getProject ()Lorg/gradle/api/Project;
+	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
+	public final fun linkerOpts (Ljava/lang/Iterable;)V
+	public final fun linkerOpts ([Ljava/lang/String;)V
+	public fun setBaseName (Ljava/lang/String;)V
+	public final fun setBinaryOptions (Ljava/util/Map;)V
+	public final fun setCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public final fun setDebuggable (Z)V
+	public final fun setFreeCompilerArgs (Ljava/util/List;)V
+	public final fun setLinkerOpts (Ljava/util/List;)V
+	public final fun setOptimized (Z)V
+	public final fun setOutputDirectory (Ljava/io/File;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/SharedLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/StaticLibrary : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractNativeLibrary {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/TestExecutable : org/jetbrains/kotlin/gradle/plugin/mpp/AbstractExecutable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation;)V
+	public fun getOutputKind ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;)V
+	public fun <init> (Lorg/gradle/api/Project;Ljava/lang/String;Ljava/util/Set;)V
+	public final fun add (Lorg/jetbrains/kotlin/gradle/plugin/mpp/Framework;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkTaskKt {
+	public static final fun XCFramework (Lorg/gradle/api/Project;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig;
+	public static synthetic fun XCFramework$default (Lorg/gradle/api/Project;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/apple/XCFrameworkConfig;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinCompilationKt {
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinTargetKt {
+	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)V
+	public fun attributes (Lkotlin/jvm/functions/Function1;)V
+	public fun attributes (Lorg/gradle/api/Action;)V
+	public final fun getApiElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getApiElementsConfigurationName ()Ljava/lang/String;
+	public final fun getApiElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getArtifactsTaskName ()Ljava/lang/String;
+	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
+	public fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
+	public fun getComponents ()Ljava/util/Set;
+	public fun getDisambiguationClassifier ()Ljava/lang/String;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public fun getKotlinComponents ()Ljava/util/Set;
+	public fun getName ()Ljava/lang/String;
+	public fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
+	public fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public fun getProject ()Lorg/gradle/api/Project;
+	public fun getPublishable ()Z
+	public fun getResourcesElementsConfigurationName ()Ljava/lang/String;
+	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
+	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getSourceSets ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public final fun getSourcesElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
+	public final fun getSourcesElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getTargetName ()Ljava/lang/String;
+	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
+	public fun isSourcesPublishable ()Z
+	public fun jvmToolchain (I)V
+	public fun jvmToolchain (Lorg/gradle/api/Action;)V
+	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
+	public fun mavenPublication (Lorg/gradle/api/Action;)V
+	public fun onPublicationCreated (Lorg/gradle/api/publish/maven/MavenPublication;)V
+	public fun setSourcesPublishable (Z)V
+	public fun withSourcesJar (Z)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor {
+	public abstract fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
+	public abstract fun getCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;
+	public abstract fun getCompilationName ()Ljava/lang/String;
+	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
+	public abstract fun getCompileTaskName ()Ljava/lang/String;
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
+	public abstract fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+	public abstract fun getSourceSetTreeClassifier ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;
+	public abstract fun getSourceSetTreeClassifierV2 ()Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator$Companion;
+	public abstract fun associate (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator$Companion {
+	public final fun getDefault ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver {
+	public abstract fun resolveFriendPaths (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/file/FileCollection;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder;
+	public final fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
+	public final fun getCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;
+	public final fun getCompilationName ()Ljava/lang/String;
+	public final fun getCompileAllTaskName ()Ljava/lang/String;
+	public final fun getCompileTaskName ()Ljava/lang/String;
+	public final fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
+	public final fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+	public final fun getSourceSetTreeClassifier ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;
+	public final fun getSourceSetTreeClassifierV2 ()Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier;
+	public final fun setCompilationAssociator (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;)V
+	public final fun setCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;)V
+	public final fun setCompilationName (Ljava/lang/String;)V
+	public final fun setCompileAllTaskName (Ljava/lang/String;)V
+	public final fun setCompileTaskName (Ljava/lang/String;)V
+	public final fun setDefaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
+	public final fun setFriendArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;)V
+	public final fun setSourceSetTreeClassifier (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier;)V
+	public final fun setSourceSetTreeClassifierV2 (Lorg/jetbrains/kotlin/gradle/plugin/hierarchy/KotlinSourceSetTreeClassifier;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorKt {
+	public static final fun ExternalKotlinCompilationDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiExtensionsKt {
+	public static final fun getProject (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension;)Lorg/gradle/api/Project;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils {
+	public abstract fun enableKgpBasedDependencyResolution (Z)V
+	public abstract fun publishJvmEnvironmentAttribute (Z)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtilsKt {
+	public static final fun getExternalKotlinTargetApiUtils (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetApiUtils;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor {
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor {
+	public abstract fun getApiElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getApiElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getConfigureIdeImport ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public abstract fun getRuntimeElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getRuntimeElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getSourcesElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getSourcesElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getTargetFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;
+	public abstract fun getTargetName ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function1;)V
+	public final fun configureIdeImport (Lkotlin/jvm/functions/Function1;)V
+	public final fun getApiElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getApiElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public final fun getRuntimeElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getRuntimeElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getSourcesElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getSourcesElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getTargetFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;
+	public final fun getTargetName ()Ljava/lang/String;
+	public final fun setPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;)V
+	public final fun setTargetFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;)V
+	public final fun setTargetName (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorKt {
+	public static final fun ExternalKotlinTargetDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetSourcesJarUtilsKt {
+	public static final fun includeSources (Lorg/gradle/jvm/tasks/Jar;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/gradle/api/tasks/TaskProvider;)V
+	public static final fun publishSources (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+	public static final fun sourcesJarTask (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/tasks/TaskProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/mpp/resources/KotlinTargetResourcesPublication$Companion;
+	public static final field EXTENSION_NAME Ljava/lang/String;
+	public abstract fun canPublishResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Z
+	public abstract fun canResolveResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Z
+	public abstract fun publishInAndroidAssets (Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun publishResourcesAsKotlinComponent (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;Lorg/gradle/api/provider/Provider;)V
+	public abstract fun resolveResources (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Default : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Default;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Name;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$None : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$None;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Property : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Lorg/gradle/api/provider/Property;)V
+	public final fun getProperty ()Lorg/gradle/api/provider/Property;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value : org/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun copy (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/targetHierarchy/SourceSetTreeClassifier$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTree ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+

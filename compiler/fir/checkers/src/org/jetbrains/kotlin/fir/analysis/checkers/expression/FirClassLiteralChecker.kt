@@ -6,25 +6,27 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-object FirClassLiteralChecker : FirGetClassCallChecker() {
+object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
@@ -46,10 +48,11 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
+        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType(context.session)
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
-                argument.typeRef.coneType.isMarkedNullable ||
-                argument.typeRef.coneType.isNullableTypeParameter(context.session.typeContext)
+                resolvedFullyExpandedType.isMarkedNullable ||
+                resolvedFullyExpandedType.isNullableTypeParameter(context.session.typeContext)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
@@ -57,7 +60,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
                 reporter.reportOn(
                     argument.source,
                     FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
-                    argument.typeRef.coneType,
+                    argument.resolvedType,
                     context
                 )
             }
@@ -72,16 +75,15 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         }
 
         if (argument !is FirResolvedQualifier) return
-        // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
-        if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
-            @OptIn(SymbolInternals::class)
-            val typeParameters = (symbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
             // Among type parameter references, only count actual type parameter while discarding [FirOuterClassTypeParameterRef]
-            val expectedTypeArgumentSize = typeParameters?.count { it is FirTypeParameter } ?: 0
+            val expectedTypeArgumentSize = symbol?.ownTypeParameterSymbols?.size ?: 0
             if (expectedTypeArgumentSize != argument.typeArguments.size) {
-                // Will be reported as WRONG_NUMBER_OF_TYPE_ARGUMENTS
+                if (symbol != null) {
+                    reporter.reportOn(argument.source, FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS, expectedTypeArgumentSize, symbol, context)
+                }
                 return
             }
             reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS, context)
@@ -113,7 +115,10 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
         when (this) {
             is ConeClassLikeType -> {
-                if (isNonPrimitiveArray) {
+                val isPlatformThatAllowsNonPrimitiveArrays = context.session.firGenericArrayClassLiteralSupport.isEnabled
+                val isOldVersionThatAllowsNonPrimitiveArrays =
+                    !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitGenericArrayClassLiteral)
+                if (isNonPrimitiveArray && (isPlatformThatAllowsNonPrimitiveArrays || isOldVersionThatAllowsNonPrimitiveArrays)) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true
@@ -127,3 +132,17 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             else -> false
         }
 }
+
+interface FirGenericArrayClassLiteralSupport : FirSessionComponent {
+    val isEnabled: Boolean
+
+    object Enabled : FirGenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = true
+    }
+
+    object Disabled : FirGenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = false
+    }
+}
+
+val FirSession.firGenericArrayClassLiteralSupport: FirGenericArrayClassLiteralSupport by FirSession.sessionComponentAccessor()

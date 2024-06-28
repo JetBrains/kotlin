@@ -1,5 +1,30 @@
 MODULES: main
 
-STEP 0..13:
+STEP 0:
     libs: main
-    dirty js: main
+    dirty js modules: main
+    dirty js files:   main/f, main/m, main/m.export, main
+STEP 1..2:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f
+STEP 3..8:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f, main/m
+STEP 9:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f
+STEP 10:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f, main/m
+STEP 11:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f
+STEP 12..13:
+    libs: main
+    dirty js modules: main
+    dirty js files:   main/f, main/m

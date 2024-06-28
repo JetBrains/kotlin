@@ -16,7 +16,8 @@ dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
-    compileOnly("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
+    compileOnly(libs.shadow.gradlePlugin)
+    compileOnly(libs.jdom2)
 }
 
 sourceSets {
@@ -25,36 +26,30 @@ sourceSets {
 }
 
 fun runPillTask(taskName: String) {
-    val jarFile = configurations.archives.artifacts.single { it.type == "jar" }.file
+    val jarFile = configurations.archives.get().artifacts.single { it.type == "jar" }.file
     val cl = URLClassLoader(arrayOf(jarFile.toURI().toURL()), (object {}).javaClass.classLoader)
 
     val pillImporterClass = Class.forName("org.jetbrains.kotlin.pill.PillImporter", true, cl)
     val runMethod = pillImporterClass.declaredMethods.single { it.name == "run" }
     require(Modifier.isStatic(runMethod.modifiers))
 
-    val platformDir = rootProject.ideaHomePathForTests()
+    val platformDir = rootProject.ideaHomePathForTests().get().asFile
     val resourcesDir = File(project.projectDir, "resources")
-    val isIdePluginAttached = project.rootProject.intellijSdkVersionForIde() != null
 
-    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir, isIdePluginAttached)
+    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir)
 }
 
 val jar: Jar by tasks
 
 val pill by tasks.creating {
+    notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)
     dependsOn(":createIdeaHomeForTests")
     doLast { runPillTask("pill") }
 }
 
 val unpill by tasks.creating {
+    notCompatibleWithConfigurationCache("The task requires the complete Gradle project model")
     dependsOn(jar)
     doLast { runPillTask("unpill") }
 }
-
-// 1.9 level breaks Kotlin Gradle plugins via changes in enums (KT-48872)
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-}
-

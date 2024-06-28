@@ -1,0 +1,41 @@
+//
+// Source
+// ------------------------------------------
+
+fun interface A {
+    @Composable fun compute(value: Int): Unit
+}
+fun Example(a: A) {
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public abstract interface A {
+  public abstract compute(ILandroidx/compose/runtime/Composer;I)V
+}
+public final class TestKt {
+  public final static Example(LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+}
+final class TestKt%Example%1 implements A {
+  <init>(LA;)V
+  public final compute(ILandroidx/compose/runtime/Composer;I)V
+  final synthetic LA; %a
+  OUTERCLASS TestKt Example (LA;)V
+  final static INNERCLASS TestKt%Example%1 null null
+  final static INNERCLASS TestKt%Example%1%compute%1 null null
+}
+final class TestKt%Example%1%compute%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(LTestKt%Example%1;II)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic LTestKt%Example%1; %tmp0_rcvr
+  final synthetic I %it
+  final synthetic I %%changed
+  OUTERCLASS TestKt%Example%1 compute (ILandroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Example%1 null null
+  final static INNERCLASS TestKt%Example%1%compute%1 null null
+}

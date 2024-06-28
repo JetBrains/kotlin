@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Int) {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> +

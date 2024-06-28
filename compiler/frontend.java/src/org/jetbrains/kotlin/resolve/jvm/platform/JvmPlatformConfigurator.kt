@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JvmNameAnnotationChecker(),
-        VolatileAnnotationChecker(),
         SynchronizedAnnotationChecker(),
         LocalFunInlineChecker(),
         ExternalFunChecker(),

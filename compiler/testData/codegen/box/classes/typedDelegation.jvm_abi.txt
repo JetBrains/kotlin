@@ -1,0 +1,11 @@
+MODULE main
+	CLASS X.class
+		CLASS METADATA
+			K1
+				getZzzValue()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				zzzValue

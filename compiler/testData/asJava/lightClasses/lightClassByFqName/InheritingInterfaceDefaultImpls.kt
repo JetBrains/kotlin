@@ -22,5 +22,3 @@ interface I1 {
 interface I2 {
     fun bar() = "bar"
 }
-
-// FIR_COMPARISON

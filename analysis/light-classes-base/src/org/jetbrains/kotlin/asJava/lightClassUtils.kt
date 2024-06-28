@@ -194,7 +194,8 @@ fun demangleInternalName(name: String): String? {
     return if (indexOfDollar >= 0) name.substring(0, indexOfDollar) else null
 }
 
-fun mangleInternalName(name: String, moduleName: String): String {
+fun mangleInternalName(name: String, stableModuleName: String): String {
+    val moduleName = stableModuleName.removeSurrounding("<", ">")
     return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 

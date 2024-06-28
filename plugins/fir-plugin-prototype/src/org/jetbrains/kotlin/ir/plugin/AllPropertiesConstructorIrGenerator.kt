@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.plugin.generators.AllPropertiesConstructorMetadataProvider
+import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.JvmNames
 import java.util.Comparator
 
 /*
@@ -30,6 +29,10 @@ import java.util.Comparator
  * Parent class should be Any or class, annotated with @AllPropertiesConstructor
  */
 class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElementVisitorVoid {
+    companion object {
+        private val ANNOTATION_FQN = "AllPropertiesConstructor".fqn()
+    }
+
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -85,12 +88,11 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrElem
                     }
                 )
             )
+            context.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
         }
     }
 
     private fun IrClass.hasAnnotation(): Boolean {
-        return annotations.findAnnotation(AllPropertiesConstructorMetadataProvider.ANNOTATION_FQN) != null
+        return annotations.hasAnnotation(ANNOTATION_FQN)
     }
-
-
 }

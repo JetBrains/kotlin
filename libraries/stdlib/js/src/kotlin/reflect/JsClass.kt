@@ -12,21 +12,21 @@ import kotlin.reflect.js.internal.KClassImpl
 /**
  * Represents the constructor of a class. Instances of `JsClass` can be passed to JavaScript APIs that expect a constructor reference.
  */
-external interface JsClass<T : Any> {
+public external interface JsClass<T : Any> {
     /**
      * Returns the unqualified name of the class represented by this instance.
      */
-    val name: String
+    public val name: String
 }
 
 /**
  * Obtains a constructor reference for the given `KClass`.
  */
-val <T : Any> KClass<T>.js: JsClass<T>
+public val <T : Any> KClass<T>.js: JsClass<T>
     get() = (this as KClassImpl<T>).jClass
 
 /**
  * Obtains a `KClass` instance for the given constructor reference.
  */
-val <T : Any> JsClass<T>.kotlin: KClass<T>
+public val <T : Any> JsClass<T>.kotlin: KClass<T>
     get() = getKClass(this)

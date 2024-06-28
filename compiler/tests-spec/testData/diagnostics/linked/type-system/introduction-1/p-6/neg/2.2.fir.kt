@@ -1,30 +1,39 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: type-system, introduction-1 -> paragraph 6 -> sentence 2
+ * NUMBER: 2
+ * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
+ */
+
 // TESTCASE NUMBER: 1
-fun case_1(x: Int = null) {
+fun case_1(x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     println(x)
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(x: Any = null) {
+fun case_2(x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     println(x)
 }
 
 // TESTCASE NUMBER: 3
-fun case_3(x: Nothing = null) {
+fun case_3(x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>) {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x)
 }
 
 // TESTCASE NUMBER: 4
-class Case4(x: Int = null)
+class Case4(x: Int = <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
 // TESTCASE NUMBER: 5
-class Case5 constructor(x: Any = null)
+class Case5 constructor(x: Any = <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
 // TESTCASE NUMBER: 6
 class Case6 {
-    fun foo(x: Nothing = null) {}
+    fun foo(x: Nothing = <!NULL_FOR_NONNULL_TYPE!>null<!>) {}
 }
 
 // TESTCASE NUMBER: 7

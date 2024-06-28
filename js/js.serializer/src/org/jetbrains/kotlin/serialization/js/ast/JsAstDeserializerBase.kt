@@ -426,6 +426,7 @@ abstract class JsAstDeserializerBase {
         JsAstProtoBuf.Function.Modifier.STATIC -> JsFunction.Modifier.STATIC
         JsAstProtoBuf.Function.Modifier.SET -> JsFunction.Modifier.SET
         JsAstProtoBuf.Function.Modifier.GET -> JsFunction.Modifier.GET
+        JsAstProtoBuf.Function.Modifier.GENERATOR -> JsFunction.Modifier.GENERATOR
     }
 
     protected fun map(op: JsAstProtoBuf.BinaryOperation.Type) = when (op) {

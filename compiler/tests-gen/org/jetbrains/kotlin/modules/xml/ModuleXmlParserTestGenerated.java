@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,51 +21,51 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ModuleXmlParserTestGenerated extends AbstractModuleXmlParserTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInModules_xml() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), null, true);
-    }
+  public void testAllFilesPresentInModules_xml() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/modules.xml"), Pattern.compile("^(.+)\\.xml$"), null, true);
+  }
 
-    @TestMetadata("allOnce.xml")
-    public void testAllOnce() throws Exception {
-        runTest("compiler/testData/modules.xml/allOnce.xml");
-    }
+  @TestMetadata("allOnce.xml")
+  public void testAllOnce() {
+    runTest("compiler/testData/modules.xml/allOnce.xml");
+  }
 
-    @TestMetadata("comments.xml")
-    public void testComments() throws Exception {
-        runTest("compiler/testData/modules.xml/comments.xml");
-    }
+  @TestMetadata("comments.xml")
+  public void testComments() {
+    runTest("compiler/testData/modules.xml/comments.xml");
+  }
 
-    @TestMetadata("empty.xml")
-    public void testEmpty() throws Exception {
-        runTest("compiler/testData/modules.xml/empty.xml");
-    }
+  @TestMetadata("empty.xml")
+  public void testEmpty() {
+    runTest("compiler/testData/modules.xml/empty.xml");
+  }
 
-    @TestMetadata("emptyModule.xml")
-    public void testEmptyModule() throws Exception {
-        runTest("compiler/testData/modules.xml/emptyModule.xml");
-    }
+  @TestMetadata("emptyModule.xml")
+  public void testEmptyModule() {
+    runTest("compiler/testData/modules.xml/emptyModule.xml");
+  }
 
-    @TestMetadata("manyTimes.xml")
-    public void testManyTimes() throws Exception {
-        runTest("compiler/testData/modules.xml/manyTimes.xml");
-    }
+  @TestMetadata("manyTimes.xml")
+  public void testManyTimes() {
+    runTest("compiler/testData/modules.xml/manyTimes.xml");
+  }
 
-    @TestMetadata("onlySources.xml")
-    public void testOnlySources() throws Exception {
-        runTest("compiler/testData/modules.xml/onlySources.xml");
-    }
+  @TestMetadata("onlySources.xml")
+  public void testOnlySources() {
+    runTest("compiler/testData/modules.xml/onlySources.xml");
+  }
 
-    @TestMetadata("twoModules.xml")
-    public void testTwoModules() throws Exception {
-        runTest("compiler/testData/modules.xml/twoModules.xml");
-    }
+  @TestMetadata("twoModules.xml")
+  public void testTwoModules() {
+    runTest("compiler/testData/modules.xml/twoModules.xml");
+  }
 
-    @TestMetadata("typeTestModule.xml")
-    public void testTypeTestModule() throws Exception {
-        runTest("compiler/testData/modules.xml/typeTestModule.xml");
-    }
+  @TestMetadata("typeTestModule.xml")
+  public void testTypeTestModule() {
+    runTest("compiler/testData/modules.xml/typeTestModule.xml");
+  }
 }

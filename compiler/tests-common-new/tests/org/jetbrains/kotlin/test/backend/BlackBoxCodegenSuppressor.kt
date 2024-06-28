@@ -7,18 +7,18 @@ package org.jetbrains.kotlin.test.backend
 
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
-import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.extractIgnoredDirectivesForTargetBackend
+import org.jetbrains.kotlin.test.directives.extractIgnoredDirectiveForTargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.utils.bind
 
 class BlackBoxCodegenSuppressor(
     testServices: TestServices,
-    val customIgnoreDirective: ValueDirective<TargetBackend>? = null
+    private val customIgnoreDirective: ValueDirective<TargetBackend>? = null
 ) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
@@ -29,55 +29,30 @@ class BlackBoxCodegenSuppressor(
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
-        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.first()) ?: return failedAssertions
-        for (ignoreDirective in ignoreDirectives) {
-            val suppressionResult = moduleStructure.modules
-                .map { suppressionChecker.failuresInModuleAreIgnored(it, ignoreDirective) }
-                .firstOrNull { it.testMuted }
-                ?: continue
-            val additionalMessage = suppressionResult.matchedBackend?.let { "for $it" } ?: ""
-            return processAssertions(failedAssertions, ignoreDirective, additionalMessage)
-        }
-        return failedAssertions
+        val ignoreDirective = suppressionChecker.extractIgnoreDirective(moduleStructure.modules.first()) ?: return failedAssertions
+        return suppressionChecker.processAllDirectives(listOf(ignoreDirective)) { directive, suppressionResult ->
+            listOfNotNull(
+                suppressionChecker.processMutedTest(
+                    failed = failedAssertions.isNotEmpty(),
+                    directive,
+                    suppressionResult,
+                )?.wrap()
+            )
+        } ?: failedAssertions
     }
 
-    private fun processAssertions(
-        failedAssertions: List<WrappedException>,
-        directive: ValueDirective<TargetBackend>,
-        additionalMessage: String = ""
-    ): List<WrappedException> {
-        return if (failedAssertions.isNotEmpty()) emptyList()
-        else {
-            val message = buildString {
-                val module = testServices.moduleStructure.modules.first()
-                val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: module.targetBackend
-                append("Looks like this test can be unmuted. Remove ${targetBackend?.name?.let { "$it from" } ?: "" } ${directive.name} directive for ${module.frontendKind}")
-                if (additionalMessage.isNotEmpty()) {
-                    append(" ")
-                    append(additionalMessage)
-                }
-            }
-            listOf(AssertionError(message).wrap())
-        }
-    }
-
-    class SuppressionChecker(val testServices: TestServices, val customIgnoreDirective: ValueDirective<TargetBackend>?) : TestService {
-        fun extractIgnoreDirectives(module: TestModule): List<ValueDirective<TargetBackend>>? {
+    class SuppressionChecker(
+        val testServices: TestServices,
+        private val customIgnoreDirective: ValueDirective<TargetBackend>?
+    ) : TestService {
+        fun extractIgnoreDirective(module: TestModule): ValueDirective<TargetBackend>? {
             val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: module.targetBackend ?: return null
-            return extractIgnoredDirectivesForTargetBackend(module, targetBackend, customIgnoreDirective)
+            return extractIgnoredDirectiveForTargetBackend(module, targetBackend, customIgnoreDirective)
         }
 
         fun failuresInModuleAreIgnored(module: TestModule): Boolean {
-            val ignoreDirective = extractIgnoreDirectives(module) ?: return false
+            val ignoreDirective = extractIgnoreDirective(module) ?: return false
             return failuresInModuleAreIgnored(module, ignoreDirective).testMuted
-        }
-
-        private fun failuresInModuleAreIgnored(module: TestModule, ignoreDirectives: List<ValueDirective<TargetBackend>>): SuppressionResult {
-            for (ignoreDirective in ignoreDirectives) {
-                val result = failuresInModuleAreIgnored(module, ignoreDirective)
-                if (result.testMuted) return result
-            }
-            return SuppressionResult.NO_MUTE
         }
 
         fun failuresInModuleAreIgnored(module: TestModule, ignoreDirective: ValueDirective<TargetBackend>): SuppressionResult {
@@ -90,6 +65,96 @@ class BlackBoxCodegenSuppressor(
                 TargetBackend.ANY in ignoredBackends -> SuppressionResult(true, null)
                 else -> SuppressionResult.NO_MUTE
             }
+        }
+
+        /**
+         * Finds the first directive from [ignoreDirectives] that mutes this test on the current backend, and
+         * runs [processDirective] for that directive.
+         *
+         * Returns whatever [processDirective] returns, or `null` if this test will not be muted.
+         */
+        @PublishedApi
+        internal inline fun <R> processAllDirectives(
+            ignoreDirectives: List<ValueDirective<TargetBackend>>,
+            processDirective: (ValueDirective<TargetBackend>, SuppressionResult) -> R,
+        ): R? {
+            val modules = testServices.moduleStructure.modules
+            for (ignoreDirective in ignoreDirectives) {
+                val suppressionResult = modules
+                    .map { failuresInModuleAreIgnored(it, ignoreDirective) }
+                    .firstOrNull { it.testMuted }
+                    ?: continue
+                return processDirective(ignoreDirective, suppressionResult)
+            }
+            return null
+        }
+
+        /**
+         * Returns `null` if [failed] is `true`, otherwise returns an [AssertionError] with a message reminding to remove [directive]
+         * from the test to unmute it.
+         */
+        @PublishedApi
+        internal fun processMutedTest(
+            failed: Boolean,
+            directive: ValueDirective<TargetBackend>,
+            suppressionResult: SuppressionResult,
+        ): AssertionError? {
+            if (failed) return null
+
+            val firstModule = testServices.moduleStructure.modules.first()
+            val targetBackend = testServices.defaultsProvider.defaultTargetBackend ?: firstModule.targetBackend
+            val message = buildString {
+                append("Looks like this test can be unmuted. Remove ")
+                targetBackend?.name?.let {
+                    append(it)
+                    append(" from the ")
+                }
+                append(directive.name)
+                append(" directive for ")
+                append(firstModule.frontendKind)
+
+                assert(suppressionResult.testMuted)
+
+                suppressionResult.matchedBackend?.let {
+                    append(" for ")
+                    append(it)
+                }
+            }
+            return AssertionError(message)
+        }
+
+        /**
+         * Runs [block]. If this test has been muted by one of [ignoreDirectives] **and** [block] returns without throwing an exception,
+         * throws an [AssertionError] reminding you to unmute the test.
+         *
+         * If this test has been muted by one of [ignoreDirectives] **and** [block] throws an exception of type [ExpectedError],
+         * catches that exception and returns normally.
+         *
+         * If [block] throws an exception of some other type, rethrows it.
+         *
+         * If this test hasn't been muted **and** [block] throws any exception, rethrows that exception as well.
+         */
+        inline fun <reified ExpectedError : Throwable> checkMuted(
+            ignoreDirectives: List<ValueDirective<TargetBackend>>,
+            block: () -> Unit,
+        ) {
+            val expectedError: ExpectedError? = try {
+                block()
+                null
+            } catch (e: Throwable) {
+                e as? ExpectedError ?: throw e
+            }
+
+            processAllDirectives<Unit>(ignoreDirectives) { ignoreDirective, suppressionResult ->
+                processMutedTest(
+                    failed = expectedError != null,
+                    ignoreDirective,
+                    suppressionResult
+                )?.let { throw it }
+                return
+            }
+
+            expectedError?.let { throw it }
         }
 
         data class SuppressionResult(val testMuted: Boolean, val matchedBackend: TargetBackend?) {

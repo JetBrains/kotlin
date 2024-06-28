@@ -23,14 +23,13 @@
 #include "Memory.h"
 #include "MemorySharedRefs.hpp"
 #include "Types.h"
-#include "std_support/New.hpp"
 
 using namespace kotlin;
 
 extern "C" {
 
 KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
-    KRefSharedHolder* holder = new (std_support::kalloc) KRefSharedHolder();
+    KRefSharedHolder* holder = new KRefSharedHolder();
     holder->init(any);
     return holder;
 }
@@ -38,7 +37,7 @@ KNativePtr Kotlin_Interop_createStablePointer(KRef any) {
 void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
   KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
   holder->dispose();
-  std_support::kdelete(holder);
+  delete holder;
 }
 
 OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {

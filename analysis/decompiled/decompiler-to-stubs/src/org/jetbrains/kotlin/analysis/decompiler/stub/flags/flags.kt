@@ -24,6 +24,16 @@ val MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
     }
 }
 
+/**
+ * For interfaces, we only need to remember a `sealed` modifier in the stub, as the interface will be abstract by default.
+ */
+val INTERFACE_MODALITY: FlagsToModifiers = object : FlagsToModifiers() {
+    override fun getModifiers(flags: Int): KtModifierKeywordToken? {
+        val modality = Flags.MODALITY.get(flags)
+        return KtTokens.SEALED_KEYWORD.takeIf { modality == ProtoBuf.Modality.SEALED }
+    }
+}
+
 val VISIBILITY: FlagsToModifiers = object : FlagsToModifiers() {
     override fun getModifiers(flags: Int): KtModifierKeywordToken? {
         val visibility = Flags.VISIBILITY.get(flags)
@@ -45,8 +55,10 @@ val INFIX = createBooleanFlagToModifier(Flags.IS_INFIX, KtTokens.INFIX_KEYWORD)
 val DATA = createBooleanFlagToModifier(Flags.IS_DATA, KtTokens.DATA_KEYWORD)
 val EXTERNAL_FUN = createBooleanFlagToModifier(Flags.IS_EXTERNAL_FUNCTION, KtTokens.EXTERNAL_KEYWORD)
 val EXTERNAL_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXTERNAL_PROPERTY, KtTokens.EXTERNAL_KEYWORD)
+val EXTERNAL_ACCESSOR = createBooleanFlagToModifier(Flags.IS_EXTERNAL_ACCESSOR, KtTokens.EXTERNAL_KEYWORD)
 val EXTERNAL_CLASS = createBooleanFlagToModifier(Flags.IS_EXTERNAL_CLASS, KtTokens.EXTERNAL_KEYWORD)
 val INLINE = createBooleanFlagToModifier(Flags.IS_INLINE, KtTokens.INLINE_KEYWORD)
+val INLINE_ACCESSOR = createBooleanFlagToModifier(Flags.IS_INLINE_ACCESSOR, KtTokens.INLINE_KEYWORD)
 val VALUE_CLASS = createBooleanFlagToModifier(Flags.IS_VALUE_CLASS, KtTokens.VALUE_KEYWORD)
 val FUN_INTERFACE = createBooleanFlagToModifier(Flags.IS_FUN_INTERFACE, KtTokens.FUN_KEYWORD)
 val TAILREC = createBooleanFlagToModifier(Flags.IS_TAILREC, KtTokens.TAILREC_KEYWORD)

@@ -1,2 +1,2 @@
-KtType: PointerKeyboardModifiers
-PsiType: PsiType:int
+KaType: PointerKeyboardModifiers
+PsiType: @org.jetbrains.annotations.NotNull() int

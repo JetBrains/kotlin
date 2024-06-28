@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,6 +14,7 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 import kotlin.ranges.contains
 import kotlin.ranges.reversed
@@ -323,7 +324,10 @@ public expect fun UShortArray.elementAt(index: Int): UShort
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -335,7 +339,10 @@ public inline fun UIntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -347,7 +354,10 @@ public inline fun ULongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -359,7 +369,10 @@ public inline fun UByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -689,7 +702,10 @@ public inline fun UShortArray.firstOrNull(predicate: (UShort) -> Boolean): UShor
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): UInt {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -699,7 +715,10 @@ public inline fun UIntArray.getOrElse(index: Int, defaultValue: (Int) -> UInt): 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong): ULong {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -709,7 +728,10 @@ public inline fun ULongArray.getOrElse(index: Int, defaultValue: (Int) -> ULong)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte): UByte {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -719,7 +741,10 @@ public inline fun UByteArray.getOrElse(index: Int, defaultValue: (Int) -> UByte)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShort): UShort {
-    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (index in indices) get(index) else defaultValue(index)
 }
 
 /**
@@ -730,7 +755,7 @@ public inline fun UShortArray.getOrElse(index: Int, defaultValue: (Int) -> UShor
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.getOrNull(index: Int): UInt? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -741,7 +766,7 @@ public fun UIntArray.getOrNull(index: Int): UInt? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.getOrNull(index: Int): ULong? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -752,7 +777,7 @@ public fun ULongArray.getOrNull(index: Int): ULong? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.getOrNull(index: Int): UByte? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -763,7 +788,7 @@ public fun UByteArray.getOrNull(index: Int): UByte? {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.getOrNull(index: Int): UShort? {
-    return if (index >= 0 && index <= lastIndex) get(index) else null
+    return if (index in indices) get(index) else null
 }
 
 /**
@@ -1267,7 +1292,6 @@ public fun UShortArray.random(random: Random): UShort {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.randomOrNull(): UInt? {
     return randomOrNull(Random)
@@ -1278,7 +1302,6 @@ public inline fun UIntArray.randomOrNull(): UInt? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.randomOrNull(): ULong? {
     return randomOrNull(Random)
@@ -1289,7 +1312,6 @@ public inline fun ULongArray.randomOrNull(): ULong? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.randomOrNull(): UByte? {
     return randomOrNull(Random)
@@ -1300,7 +1322,6 @@ public inline fun UByteArray.randomOrNull(): UByte? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.randomOrNull(): UShort? {
     return randomOrNull(Random)
@@ -1311,7 +1332,6 @@ public inline fun UShortArray.randomOrNull(): UShort? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UIntArray.randomOrNull(random: Random): UInt? {
     if (isEmpty())
         return null
@@ -1323,7 +1343,6 @@ public fun UIntArray.randomOrNull(random: Random): UInt? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ULongArray.randomOrNull(random: Random): ULong? {
     if (isEmpty())
         return null
@@ -1335,7 +1354,6 @@ public fun ULongArray.randomOrNull(random: Random): ULong? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UByteArray.randomOrNull(random: Random): UByte? {
     if (isEmpty())
         return null
@@ -1347,7 +1365,6 @@ public fun UByteArray.randomOrNull(random: Random): UByte? {
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun UShortArray.randomOrNull(random: Random): UShort? {
     if (isEmpty())
         return null
@@ -3291,56 +3308,16 @@ public inline fun ShortArray.asUShortArray(): UShortArray {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public infix fun UShortArray.contentEquals(other: UShortArray): Boolean {
-    return this.contentEquals(other)
-}
-
-/**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3349,8 +3326,16 @@ public infix fun UIntArray?.contentEquals(other: UIntArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3359,8 +3344,16 @@ public infix fun ULongArray?.contentEquals(other: ULongArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
@@ -3369,57 +3362,21 @@ public infix fun UByteArray?.contentEquals(other: UByteArray?): Boolean {
 }
 
 /**
- * Returns `true` if the two specified arrays are *structurally* equal to one another,
- * i.e. contain the same number of the same elements in the same order.
+ * Checks if the two specified arrays are *structurally* equal to one another.
+ * 
+ * Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+ * 
+ * The arrays are also considered structurally equal if both are `null`.
+ * 
+ * @param other the array to compare with this array.
+ * @return `true` if the two arrays are structurally equal, `false` otherwise.
+ * 
+ * @sample samples.collections.Arrays.ContentOperations.intArrayContentEquals
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
 public infix fun UShortArray?.contentEquals(other: UShortArray?): Boolean {
     return this?.storage.contentEquals(other?.storage)
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentHashCode(): Int {
-    return this.contentHashCode()
-}
-
-/**
- * Returns a hash code based on the contents of this array as if it is [List].
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentHashCode(): Int {
-    return this.contentHashCode()
 }
 
 /**
@@ -3456,58 +3413,6 @@ public fun UByteArray?.contentHashCode(): Int {
 @ExperimentalUnsignedTypes
 public fun UShortArray?.contentHashCode(): Int {
     return this?.storage.contentHashCode()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UIntArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun ULongArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UByteArray.contentToString(): String {
-    return this.contentToString()
-}
-
-/**
- * Returns a string representation of the contents of the specified array as if it is [List].
- * 
- * @sample samples.collections.Arrays.ContentOperations.contentToString
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@SinceKotlin("1.3")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@ExperimentalUnsignedTypes
-public fun UShortArray.contentToString(): String {
-    return this.contentToString()
 }
 
 /**
@@ -8847,7 +8752,6 @@ public inline fun UShortArray.reduceIndexedOrNull(operation: (index: Int, acc: U
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): UInt? {
     if (isEmpty())
@@ -8872,7 +8776,6 @@ public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULong): ULong? {
     if (isEmpty())
@@ -8897,7 +8800,6 @@ public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULon
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByte): UByte? {
     if (isEmpty())
@@ -8922,7 +8824,6 @@ public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByt
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceOrNull(operation: (acc: UShort, UShort) -> UShort): UShort? {
     if (isEmpty())
@@ -9251,7 +9152,6 @@ public inline fun UShortArray.reduceRightIndexedOrNull(operation: (index: Int, U
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UInt): UInt? {
     var index = lastIndex
@@ -9276,7 +9176,6 @@ public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UI
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) -> ULong): ULong? {
     var index = lastIndex
@@ -9301,7 +9200,6 @@ public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) ->
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) -> UByte): UByte? {
     var index = lastIndex
@@ -9326,7 +9224,6 @@ public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) ->
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceRightOrNull(operation: (UShort, acc: UShort) -> UShort): UShort? {
     var index = lastIndex
@@ -9759,7 +9656,6 @@ public inline fun UShortArray.runningReduceIndexed(operation: (index: Int, acc: 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9778,7 +9674,6 @@ public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R)
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9797,7 +9692,6 @@ public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9816,7 +9710,6 @@ public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9836,7 +9729,6 @@ public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UInt) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9856,7 +9748,6 @@ public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, 
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, ULong) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9876,7 +9767,6 @@ public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int,
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UByte) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9896,7 +9786,6 @@ public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int,
  */
 @SinceKotlin("1.4")
 @ExperimentalUnsignedTypes
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UShort) -> R): List<R> {
     return runningFoldIndexed(initial, operation)

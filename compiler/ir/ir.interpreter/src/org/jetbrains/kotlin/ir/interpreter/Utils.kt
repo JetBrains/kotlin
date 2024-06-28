@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -30,11 +33,11 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
+import kotlin.math.floor
 
 val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
 val evaluateIntrinsicAnnotation = FqName("kotlin.EvaluateIntrinsic")
-val contractsDslAnnotation = FqName("kotlin.internal.ContractsDsl")
 
 internal val IrElement.fqName: String
     get() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: ""
@@ -131,7 +134,9 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     }
 }
 
-internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
+internal fun IrFunction.getCapitalizedFileName(): String {
+    return this.fileOrNull?.name?.replace(".kt", "Kt")?.capitalizeAsciiOnly() ?: "<UNKNOWN>"
+}
 
 internal fun IrClass.isSubclassOfThrowable(): Boolean {
     return generateSequence(this) { irClass ->
@@ -156,7 +161,7 @@ internal fun IrClass.internalName(): String {
         .forEach {
             when (it) {
                 is IrClass -> internalName.insert(0, it.name.asString() + "$")
-                is IrPackageFragment -> it.fqName.asString().takeIf { it.isNotEmpty() }?.let { internalName.insert(0, "$it.") }
+                is IrPackageFragment -> it.packageFqName.asString().takeIf { it.isNotEmpty() }?.let { internalName.insert(0, "$it.") }
             }
         }
     return internalName.toString()
@@ -202,6 +207,14 @@ internal fun IrFunction.getArgsForMethodInvocation(
     return argsValues
 }
 
+internal fun IrType.fqNameWithNullability(): String {
+    val fqName = classFqName?.toString()
+        ?: (this.classifierOrNull?.owner as? IrDeclarationWithName)?.name?.asString()
+        ?: render()
+    val nullability = if (this is IrSimpleType && this.nullability == SimpleTypeNullability.MARKED_NULLABLE) "?" else ""
+    return fqName + nullability
+}
+
 internal fun IrType.getOnlyName(): String {
     if (this !is IrSimpleType) return this.render()
     return (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + when (nullability) {
@@ -217,7 +230,7 @@ internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
 
 internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
     val property = this.properties.single { it.name.asString() == name }
-    return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
+    return property.getter!!.getLastOverridden().property!!
 }
 
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
@@ -294,15 +307,21 @@ internal fun IrClass.getSingleAbstractMethod(): IrFunction {
     return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }
 
-internal fun IrGetValue.isAccessToNotNullableObject(): Boolean {
-    val owner = this.symbol.owner
-    val expectedClass = this.type.classOrNull?.owner
-    if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
-    return owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
+internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
+    return when (this) {
+        is IrGetObjectValue -> !this.type.isNullable()
+        is IrGetValue -> {
+            val owner = this.symbol.owner
+            val expectedClass = this.type.classOrNull?.owner
+            if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
+            owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
+        }
+        else -> false
+    }
 }
 
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
-    return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField?.initializer != null
+    return property?.backingField?.initializer != null
 }
 
 internal fun State.unsignedToString(): String {
@@ -331,3 +350,15 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
 
     return enumClassObject
 }
+
+internal val IrFunction.property: IrProperty?
+    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+
+internal val IrField.property: IrProperty?
+    get() = this.correspondingPropertySymbol?.owner
+
+internal val IrCall.correspondingProperty: IrProperty?
+    get() = this.symbol.owner.correspondingPropertySymbol?.owner
+
+internal val IrProperty?.isConst: Boolean
+    get() = this?.isConst == true

@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 
@@ -21,26 +20,32 @@ internal class InlineFunctionsSupport(mapping: NativeMapping) {
     private val partiallyLoweredInlineFunctions = mapping.partiallyLoweredInlineFunctions
 
     fun savePartiallyLoweredInlineFunction(function: IrFunction) =
-            function.deepCopyWithVariables().also {
-                it.patchDeclarationParents(function.parent)
-                partiallyLoweredInlineFunctions[function.symbol] = it
+            function.deepCopyWithSymbols(function.parent).also {
+                partiallyLoweredInlineFunctions[function] = it
             }
 
     fun getPartiallyLoweredInlineFunction(function: IrFunction) =
-            partiallyLoweredInlineFunctions[function.symbol]
+            partiallyLoweredInlineFunctions[function]
 }
 
 // TODO: This is a bit hacky. Think about adopting persistent IR ideas.
-internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : DefaultInlineFunctionResolver(context) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
-        val function = super.getFunctionDeclaration(symbol)
+internal class NativeInlineFunctionResolver(override val context: Context, val generationState: NativeGenerationState) : InlineFunctionResolverReplacingCoroutineIntrinsics(context) {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol) ?: return null
 
         generationState.inlineFunctionOrigins[function]?.let { return it.irFunction }
 
         val packageFragment = function.getPackageFragment()
-        val functionIsNotFromLazyIr = packageFragment !is IrExternalPackageFragment
+        val moduleDeserializer = context.irLinker.getCachedDeclarationModuleDeserializer(function)
         val irFile: IrFile
-        val (possiblyLoweredFunction, shouldLower) = if (functionIsNotFromLazyIr) {
+        val functionIsCached = moduleDeserializer != null && function.body == null
+        val (possiblyLoweredFunction, shouldLower) = if (functionIsCached) {
+            // The function is cached, get its body from the IR linker.
+            val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
+            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
+            irFile = deserializedInlineFunction.irFile
+            function to firstAccess
+        } else {
             irFile = packageFragment as IrFile
             val partiallyLoweredFunction = context.inlineFunctionsSupport.getPartiallyLoweredInlineFunction(function)
             if (partiallyLoweredFunction == null)
@@ -50,23 +55,11 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
                         InlineFunctionOriginInfo(partiallyLoweredFunction, irFile, function.startOffset, function.endOffset)
                 partiallyLoweredFunction to false
             }
-        } else {
-            // The function is from Lazy IR, get its body from the IR linker.
-            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
-            val moduleDeserializer = context.irLinker.moduleDeserializers[moduleDescriptor]
-                    ?: error("No module deserializer for ${function.render()}")
-            require(context.config.cachedLibraries.isLibraryCached(moduleDeserializer.klib)) {
-                "No IR and no cache for ${function.render()}"
-            }
-            val (firstAccess, deserializedInlineFunction) = moduleDeserializer.deserializeInlineFunction(function)
-            generationState.inlineFunctionOrigins[function] = deserializedInlineFunction
-            irFile = deserializedInlineFunction.irFile
-            function to firstAccess
         }
 
         if (shouldLower) {
-            lower(possiblyLoweredFunction, irFile, functionIsNotFromLazyIr)
-            if (functionIsNotFromLazyIr) {
+            lower(possiblyLoweredFunction, irFile, functionIsCached)
+            if (!functionIsCached) {
                 generationState.inlineFunctionOrigins[function] =
                         InlineFunctionOriginInfo(context.inlineFunctionsSupport.savePartiallyLoweredInlineFunction(possiblyLoweredFunction),
                                 irFile, function.startOffset, function.endOffset)
@@ -75,12 +68,10 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
         return possiblyLoweredFunction
     }
 
-    private fun lower(function: IrFunction, irFile: IrFile, functionIsNotFromLazyIr: Boolean) {
+    private fun lower(function: IrFunction, irFile: IrFile, functionIsCached: Boolean) {
         val body = function.body ?: return
 
-        PreInlineLowering(context).lower(body, function, irFile)
-
-        ArrayConstructorLowering(context).lower(body, function)
+        TypeOfLowering(context).lower(body, function, irFile)
 
         NullableFieldsForLateinitCreationLowering(context).lowerWithLocalDeclarations(function)
         NullableFieldsDeclarationLowering(context).lowerWithLocalDeclarations(function)
@@ -92,12 +83,14 @@ internal class NativeInlineFunctionResolver(override val context: Context, val g
 
         LocalClassesInInlineLambdasLowering(context).lower(body, function)
 
-        if (!context.config.produce.isCache && functionIsNotFromLazyIr) {
+        if (!(context.config.produce.isCache || functionIsCached)) {
             // Do not extract local classes off of inline functions from cached libraries.
             LocalClassesInInlineFunctionsLowering(context).lower(body, function)
             LocalClassesExtractionFromInlineFunctionsLowering(context).lower(body, function)
         }
 
+        NativeInlineCallableReferenceToLambdaPhase(generationState).lower(function)
+        ArrayConstructorLowering(context).lower(body, function)
         WrapInlineDeclarationsWithReifiedTypeParametersLowering(context).lower(body, function)
     }
 

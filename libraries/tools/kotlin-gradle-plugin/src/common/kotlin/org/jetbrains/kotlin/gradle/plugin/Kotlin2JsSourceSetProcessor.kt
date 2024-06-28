@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.Kotlin2JsCompileConfig
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import java.io.File
 
 internal class Kotlin2JsSourceSetProcessor(
@@ -39,13 +40,13 @@ internal class Kotlin2JsSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        compilationInfo.tcsOrNull?.compilation?.run { this as? KotlinWithJavaCompilation<*, *> }?.javaSourceSet?.clearJavaSrcDirs()
+        compilationInfo.tcs.compilation.run { this as? KotlinWithJavaCompilation<*, *> }?.javaSourceSet?.clearJavaSrcDirs()
 
         project.whenEvaluated {
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
 
             /* Not supported in KPM */
-            compilationInfo.tcsOrNull?.compilation?.let { compilation ->
+            compilationInfo.tcs.compilation.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
         }

@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun interface A {
+    fun compute(value: Int): Unit
+}
+
+@Composable
+fun Example(a: A) {
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface A {
+  abstract fun compute(value: Int)
+}
+@Composable
+fun Example(a: A, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<{>,<Exampl...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
+      %composer.changed(a)
+    } else {
+      %composer.changedInstance(a)
+    }
+    ) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Example(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(a)) {
+        A { it: Int ->
+          a.compute(it)
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(a, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

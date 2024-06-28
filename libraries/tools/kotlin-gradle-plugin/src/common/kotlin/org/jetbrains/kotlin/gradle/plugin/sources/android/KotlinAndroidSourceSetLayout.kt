@@ -28,7 +28,7 @@ internal val singleTargetAndroidSourceSetLayout = KotlinAndroidSourceSetLayout(
         GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
         Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
             .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
-
+        KotlinAndroidJavaSourceDirConfigurator,
         SingleTargetSourceDirConfigurator,
     ),
     checker = KotlinAndroidSourceSetLayoutChecker()
@@ -43,12 +43,13 @@ internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayou
         GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
         Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
             .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
+        KotlinAndroidJavaSourceDirConfigurator,
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV1DependsOnConfigurator,
         MultiplatformLayoutV1SourceDirConfigurator
     ),
     checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV1PromoteV2Checker
+        MultiplatformLayoutV1DeprecationChecker
     )
 )
 
@@ -60,7 +61,9 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         AndroidKaptSourceSetConfigurator,
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV2DependsOnConfigurator,
-        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator,
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
+            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
+        KotlinAndroidJavaSourceDirConfigurator,
         MultiplatformLayoutV2SourceDirConfigurator,
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
     ),

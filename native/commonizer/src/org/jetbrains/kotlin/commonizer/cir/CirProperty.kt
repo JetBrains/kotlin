@@ -16,7 +16,6 @@ data class CirProperty(
     override val visibility: Visibility,
     override val modality: Modality,
     override val containingClass: CirContainingClass?,
-    val isExternal: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: CirType,
     override val kind: CallableMemberDescriptor.Kind,

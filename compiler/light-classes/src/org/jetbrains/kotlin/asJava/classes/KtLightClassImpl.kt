@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 // light class for top level or (inner/nested of top level) source declarations
@@ -69,7 +73,7 @@ abstract class KtLightClassImpl(
     protected open fun computeIsFinal(): Boolean = when {
         classOrObject.hasModifier(KtTokens.FINAL_KEYWORD) -> true
         isAbstract() || isSealed() -> false
-        isEnum -> false
+        isEnum -> !hasEnumEntryWhichRequiresSubclass()
         !classOrObject.hasModifier(KtTokens.OPEN_KEYWORD) -> {
             val descriptor = lazy { getDescriptor() }
             var modifier = PsiModifier.FINAL
@@ -83,7 +87,21 @@ abstract class KtLightClassImpl(
         else -> false
     }
 
-    private fun isAbstract(): Boolean = classOrObject.hasModifier(KtTokens.ABSTRACT_KEYWORD) || isInterface
+    private fun hasEnumEntryWhichRequiresSubclass(): Boolean {
+        return classOrObject.declarations.any { declaration ->
+            declaration is KtEnumEntry && declaration.declarations.any { it !is KtConstructor<*> }
+        }
+    }
+
+    private fun isAbstract(): Boolean =
+        classOrObject.hasModifier(KtTokens.ABSTRACT_KEYWORD) || isInterface || (isEnum && hasAbstractMember())
+
+    private fun hasAbstractMember(): Boolean {
+        val descriptor = getDescriptor() ?: return false
+        return descriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
+            (it as? MemberDescriptor)?.modality == Modality.ABSTRACT
+        }
+    }
 
     private fun isSealed(): Boolean = classOrObject.hasModifier(KtTokens.SEALED_KEYWORD)
 
@@ -117,10 +135,8 @@ abstract class KtLightClassImpl(
     abstract override fun copy(): PsiElement
 
     private val _containingFile: PsiFile by lazyPub {
-        object : FakeFileForLightClass(
-            classOrObject.containingKtFile,
-            { if (classOrObject.isTopLevel()) this else getOutermostClassOrObject(classOrObject).toLightClass()!! },
-        ) {
+        val lightClass = if (classOrObject.isTopLevel()) this else getOutermostClassOrObject(classOrObject).toLightClass()!!
+        object : FakeFileForLightClass(classOrObject.containingKtFile, lightClass) {
             override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 
             override fun processDeclarations(
@@ -155,7 +171,7 @@ abstract class KtLightClassImpl(
             .filter { it.name != null }
             .mapNotNullTo(result, KtClassOrObject::toLightClass)
 
-        if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
+        if (classOrObject.hasInterfaceDefaultImpls && jvmDefaultMode != JvmDefaultMode.ALL) {
             result.add(createClassForInterfaceDefaultImpls())
         }
 

@@ -1,6 +1,5 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
   $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.Base
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.Base [primary]
   CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:BaseInner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.Base.BaseInner
     CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> ($this:<root>.Base) returnType:<root>.Base.BaseInner [primary]
@@ -34,6 +33,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:Base modality:OPEN visibility
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.Base [primary]
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
     overridden:
       public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

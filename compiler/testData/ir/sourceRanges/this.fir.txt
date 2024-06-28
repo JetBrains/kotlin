@@ -1,0 +1,32 @@
+@0:0..5:0 FILE fqName:<root> fileName:/this.kt
+  @2:0..4:1 CLASS CLASS name:Klass modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @2:0..4:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Klass [primary]
+      @2:0..4:1 BLOCK_BODY
+        @2:0..4:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @2:0..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Klass modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    @3:4..46 PROPERTY name:maybeThis visibility:public modality:FINAL [val]
+      @3:4..46 FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]
+        @3:20..46 EXPRESSION_BODY
+          @3:20..46 WHEN type=<root>.Klass? origin=IF
+            @3:24..36 BRANCH
+              @3:24..30 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                @3:24..25 CONST Int type=kotlin.Int value=1
+                @3:29..30 CONST Int type=kotlin.Int value=1
+              @3:32..36 GET_VAR '<this>: <root>.Klass declared in <root>.Klass' type=<root>.Klass origin=null
+            @3:42..46 BRANCH
+              @3:42..46 CONST Boolean type=kotlin.Boolean value=true
+              @3:42..46 CONST Null type=kotlin.Nothing? value=null
+      @3:4..46 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-maybeThis> visibility:public modality:FINAL <> ($this:<root>.Klass) returnType:<root>.Klass?
+        @3:4..46 VALUE_PARAMETER name:<this> type:<root>.Klass
+        @3:4..46 BLOCK_BODY
+          @3:4..46 RETURN type=kotlin.Nothing from='public final fun <get-maybeThis> (): <root>.Klass? declared in <root>.Klass'
+            @3:4..46 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]' type=<root>.Klass? origin=null
+              @3:4..46 GET_VAR '<this>: <root>.Klass declared in <root>.Klass.<get-maybeThis>' type=<root>.Klass origin=null
+    @2:0..4:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @2:0..4:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @2:0..4:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @2:0..4:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @2:0..4:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @2:0..4:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @2:0..4:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @2:0..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Klass

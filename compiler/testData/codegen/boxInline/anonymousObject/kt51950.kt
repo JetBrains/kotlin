@@ -1,3 +1,4 @@
+
 // FILE: 1.kt
 interface Service {
     fun send(message: String): String

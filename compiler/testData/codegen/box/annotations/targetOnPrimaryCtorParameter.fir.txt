@@ -11,19 +11,19 @@ FILE: targetOnPrimaryCtorParameter.kt
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(allowedTargets = <implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|))) public final annotation class PropertyOnly : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|))) public final annotation class PropertyOnly : R|kotlin/Annotation| {
         public constructor(): R|PropertyOnly| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(allowedTargets = <implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))) public final annotation class ParameterOnly : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|))) public final annotation class ParameterOnly : R|kotlin/Annotation| {
         public constructor(): R|ParameterOnly| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(allowedTargets = *<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final annotation class FieldOnly : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final annotation class FieldOnly : R|kotlin/Annotation| {
         public constructor(): R|FieldOnly| {
             super<R|kotlin/Any|>()
         }
@@ -40,7 +40,7 @@ FILE: targetOnPrimaryCtorParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|PropertyOnly|() @R|PropertyOnly2|() @R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
+        @R|PropertyOnly|() @R|PropertyOnly2|() field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

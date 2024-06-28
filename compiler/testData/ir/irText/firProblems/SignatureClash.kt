@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 typealias Some = (Any) -> String?
 
 object Factory {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,62 +19,146 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/fir-plugin-prototype/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirLightTreePluginBlackBoxCodegenTest {
-    @Test
-    public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInBox() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("classWithAllPropertiesConstructor.kt")
-    public void testClassWithAllPropertiesConstructor() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
-    }
+  @Test
+  @TestMetadata("annotationsGeneratedInBackend_mpp.kt")
+  public void testAnnotationsGeneratedInBackend_mpp() {
+    runTest("plugins/fir-plugin-prototype/testData/box/annotationsGeneratedInBackend_mpp.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithCompanionObject.kt")
-    public void testClassWithCompanionObject() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("builtins.kt")
+  public void testBuiltins() {
+    runTest("plugins/fir-plugin-prototype/testData/box/builtins.kt");
+  }
 
-    @Test
-    @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
-    public void testClassWithGeneratedMembersAndNestedClass() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
-    }
+  @Test
+  @TestMetadata("classWithAllPropertiesConstructor.kt")
+  public void testClassWithAllPropertiesConstructor() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
+  }
 
-    @Test
-    @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
-    public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
-    }
+  @Test
+  @TestMetadata("classWithCompanionObject.kt")
+  public void testClassWithCompanionObject() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
+  }
 
-    @Test
-    @TestMetadata("localClassWithCompanionObject.kt")
-    public void testLocalClassWithCompanionObject() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
-    }
+  @Test
+  @TestMetadata("classWithGeneratedMembersAndNestedClass.kt")
+  public void testClassWithGeneratedMembersAndNestedClass() {
+    runTest("plugins/fir-plugin-prototype/testData/box/classWithGeneratedMembersAndNestedClass.kt");
+  }
 
-    @Test
-    @TestMetadata("metaAnnotationFromLibrary.kt")
-    public void testMetaAnnotationFromLibrary() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
-    }
+  @Test
+  @TestMetadata("composableFunction.kt")
+  public void testComposableFunction() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("newSupertype.kt")
-    public void testNewSupertype() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");
-    }
+  @Test
+  @TestMetadata("composableFunctionMultiModules.kt")
+  public void testComposableFunctionMultiModules() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules.kt");
+  }
 
-    @Test
-    @TestMetadata("serializer.kt")
-    public void testSerializer() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
-    }
+  @Test
+  @TestMetadata("composableFunctionMultiModules2.kt")
+  public void testComposableFunctionMultiModules2() {
+    runTest("plugins/fir-plugin-prototype/testData/box/composableFunctionMultiModules2.kt");
+  }
 
-    @Test
-    @TestMetadata("topLevelCallables.kt")
-    public void testTopLevelCallables() throws Exception {
-        runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
-    }
+  @Test
+  @TestMetadata("expectComposableFunction.kt")
+  public void testExpectComposableFunction() {
+    runTest("plugins/fir-plugin-prototype/testData/box/expectComposableFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("extendsJava.kt")
+  public void testExtendsJava() {
+    runTest("plugins/fir-plugin-prototype/testData/box/extendsJava.kt");
+  }
+
+  @Test
+  @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
+  public void testGeneratedClassWithMembersAndNestedClasses() {
+    runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassWithCompanionObject.kt")
+  public void testLocalClassWithCompanionObject() {
+    runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("metaAnnotationFromLibrary.kt")
+  public void testMetaAnnotationFromLibrary() {
+    runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("mppDependencyWithActualTypealiasAnnotation.kt")
+  public void testMppDependencyWithActualTypealiasAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/mppDependencyWithActualTypealiasAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClassesWithSupertypesDependantOnAnnotationArgument.kt")
+  public void testNestedClassesWithSupertypesDependantOnAnnotationArgument() {
+    runTest("plugins/fir-plugin-prototype/testData/box/nestedClassesWithSupertypesDependantOnAnnotationArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("newSupertype.kt")
+  public void testNewSupertype() {
+    runTest("plugins/fir-plugin-prototype/testData/box/newSupertype.kt");
+  }
+
+  @Test
+  @TestMetadata("nullableComposableParameterAcrossModules.kt")
+  public void testNullableComposableParameterAcrossModules() {
+    runTest("plugins/fir-plugin-prototype/testData/box/nullableComposableParameterAcrossModules.kt");
+  }
+
+  @Test
+  @TestMetadata("replaceActualFunctionBodyWitExpectDefaultValue.kt")
+  public void testReplaceActualFunctionBodyWitExpectDefaultValue() {
+    runTest("plugins/fir-plugin-prototype/testData/box/replaceActualFunctionBodyWitExpectDefaultValue.kt");
+  }
+
+  @Test
+  @TestMetadata("serializer.kt")
+  public void testSerializer() {
+    runTest("plugins/fir-plugin-prototype/testData/box/serializer.kt");
+  }
+
+  @Test
+  @TestMetadata("superCompiledClassAnnotation.kt")
+  public void testSuperCompiledClassAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/superCompiledClassAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("superJavaClassAnnotation.kt")
+  public void testSuperJavaClassAnnotation() {
+    runTest("plugins/fir-plugin-prototype/testData/box/superJavaClassAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelCallables.kt")
+  public void testTopLevelCallables() {
+    runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPrivateSuspendFun.kt")
+  public void testTopLevelPrivateSuspendFun() {
+    runTest("plugins/fir-plugin-prototype/testData/box/topLevelPrivateSuspendFun.kt");
+  }
 }

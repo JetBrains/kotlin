@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
@@ -39,7 +38,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            symbolTable.declareGlobalTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            symbolTable.descriptorExtension.declareGlobalTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
 
@@ -48,7 +47,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            symbolTable.declareScopedTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            symbolTable.descriptorExtension.declareScopedTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
 
@@ -90,7 +89,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
                 it.toIrType()
             }
 
-            irClass.thisReceiver = context.symbolTable.declareValueParameter(
+            irClass.thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.INSTANCE_RECEIVER,
                 descriptor.thisAsReceiverParameter,
@@ -107,7 +106,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol
     ): IrEnumEntry {
         // TODO: corresponging class?
-        val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, symbol, descriptor.name)
+        val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, descriptor.name, symbol)
 
         return irEntry
     }
@@ -120,14 +119,21 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         symbol: IrTypeAliasSymbol
     ): IrTypeAlias = with(descriptor) {
         irFactory.createTypeAlias(
-            startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            symbol = symbol,
+            isActual = isActual,
+            expandedType = expandedType.toIrType()
         ).also {
             generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
         }
     }
 
     protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
-        return symbolTable.declareValueParameter(
+        return symbolTable.descriptorExtension.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
@@ -167,8 +173,17 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
     ): IrConstructor {
         val irConstructor = with(descriptor) {
             irFactory.createConstructor(
-                startOffset, endOffset, origin, symbol, name, visibility, IrUninitializedType, isInline,
-                isEffectivelyExternal(), isPrimary, isExpect
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = descriptor.returnType.toIrType(),
+                symbol = symbol,
+                isPrimary = isPrimary,
+                isExternal = isEffectivelyExternal(),
             )
         }
         irConstructor.metadata = DescriptorMetadataSource.Function(descriptor)
@@ -177,14 +192,13 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
             generateScopedTypeParameterDeclarations(irConstructor, ctorTypeParameters)
             generateValueParameterDeclarations(irConstructor, descriptor, defaultArgumentFactory)
-            irConstructor.returnType = descriptor.returnType.toIrType()
         }
 
         return irConstructor
     }
 
     protected fun generateOverridenSymbols(irFunction: IrSimpleFunction, overridens: Collection<FunctionDescriptor>) {
-        irFunction.overriddenSymbols = overridens.map { symbolTable.referenceSimpleFunction(it.original) }
+        irFunction.overriddenSymbols = overridens.map { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
     }
 
     fun generateSimpleFunction(
@@ -192,9 +206,22 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrSimpleFunction {
         val irFunction = with(descriptor) {
-            irFactory.createFunction(
-                startOffset, endOffset, origin, symbol, name, visibility, modality, IrUninitializedType,
-                isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
+            irFactory.createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = null,
+                modality = modality,
+                symbol = symbol,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isEffectivelyExternal(),
             )
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)
@@ -213,16 +240,19 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor, symbol: IrPropertySymbol
     ): IrProperty {
         val irProperty = irFactory.createProperty(
-            startOffset, endOffset, origin, symbol,
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
             name = descriptor.name,
             visibility = descriptor.visibility,
             modality = descriptor.modality,
+            symbol = symbol,
             isVar = descriptor.isVar,
             isConst = descriptor.isConst,
             isLateinit = descriptor.isLateInit,
             isDelegated = false,
             isExternal = descriptor.isEffectivelyExternal(),
-            isExpect = descriptor.isExpect
+            isExpect = descriptor.isExpect,
         )
 
         irProperty.metadata = DescriptorMetadataSource.Property(descriptor)

@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-interface KotlinSourceSet : Named, HasKotlinDependencies {
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
+interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 
     fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet
@@ -27,10 +31,13 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
 
     @Deprecated(message = "KT-55312")
     val apiMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55312")
     val implementationMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55312")
     val compileOnlyMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     val runtimeOnlyMetadataConfigurationName: String
 
@@ -40,9 +47,5 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     }
 
     val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
-
-    val requiresVisibilityOf: Set<KotlinSourceSet>
-    fun requiresVisibilityOf(other: KotlinSourceSet)
-
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
 }

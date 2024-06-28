@@ -6,16 +6,22 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
-    project: Project
-) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common) {
+    project: Project,
+) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common),
+    HasConfigurableKotlinCompilerOptions<KotlinCommonCompilerOptions> {
 
     override val artifactsTaskName: String
         // The IDE import looks at this task name to determine the artifact and register the path to the artifact;
@@ -30,7 +36,15 @@ abstract class KotlinMetadataTarget @Inject constructor(
         Metadata Target does not have a KotlinTargetComponent on it's own.
         Responsibility is shifted to the root KotlinSoftwareComponent
         */
-        emptySet<KotlinTargetComponent>()
+        emptySet()
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
+        .newInstance<KotlinCommonCompilerOptionsDefault>()
+
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
     }
 }
 

@@ -26,6 +26,14 @@ public object D {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public object W {
+    private constructor W()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ vararg va: kotlin.Int /*kotlin.IntArray*/, /*1*/ value: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public object Z {
     private constructor Z()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -33,3 +41,4 @@ public object Z {
     public final operator fun set(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

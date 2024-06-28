@@ -59,6 +59,7 @@ import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD;
+import static org.jetbrains.kotlin.name.NameUtils.contextReceiverName;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
@@ -317,7 +318,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                                 c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
                         Name label = contextReceiver.labelNameAsName() != null
                                     ? contextReceiver.labelNameAsName()
-                                    : Name.identifier("_context_receiver_" + index);
+                                    : contextReceiverName(index);
                         return DescriptorFactory.createContextReceiverParameterForClass(
                                 this,
                                 kotlinType,

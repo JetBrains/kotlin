@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.scripting.scriptFileName
 import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
 import java.net.URL
+import java.nio.charset.StandardCharsets
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
@@ -98,7 +99,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
     ) {
 
     init {
-        charset = CharsetToolkit.UTF8_CHARSET
+        charset = StandardCharsets.UTF_8
     }
 
     override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name

@@ -1,4 +1,7 @@
 // DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
+
+import java.lang.Deprecated
+
 annotation class PropertyAnnotation
 annotation class FieldAnnotation
 annotation class GetAnnotation
@@ -10,6 +13,7 @@ annotation class ExplicitSetparamAnnotation
 
 @property:PropertyAnnotation
 @field:FieldAnnotation
+@field:Deprecated
 @get:GetAnnotation
 @set:SetAnnotation
 @setparam:SetparamAnnotation

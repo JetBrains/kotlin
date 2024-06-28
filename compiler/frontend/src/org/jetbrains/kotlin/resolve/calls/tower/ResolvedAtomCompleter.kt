@@ -455,7 +455,6 @@ class ResolvedAtomCompleter(
         )
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun KotlinType.replaceFunctionTypeArgumentsByDescriptor(descriptor: CallableDescriptor) =
         when (descriptor) {
             is CallableMemberDescriptor -> {

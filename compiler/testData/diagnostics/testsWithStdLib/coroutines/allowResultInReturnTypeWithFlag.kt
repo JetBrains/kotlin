@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
-// !ALLOW_RESULT_RETURN_TYPE
-// !LANGUAGE: -AllowNullOperatorsForResult
+// LANGUAGE: -AllowNullOperatorsForResult
 
 fun result(): Result<Int> = TODO()
 val resultP: Result<Int> = result()

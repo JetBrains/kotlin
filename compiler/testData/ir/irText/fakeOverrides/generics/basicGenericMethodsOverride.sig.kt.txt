@@ -1,0 +1,53 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){0§<kotlin.Any?>}0:0?
+  //   Public signature: /A.bar|3413998560905296504[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any?>}0:0?
+  /* fake */ override fun <T : Any?> bar(): T?
+
+  // CHECK:
+  //   Mangled name: A#foo(0:0?){0§<kotlin.Any?>}
+  //   Public signature: /A.foo|-4923898216441019033[0]
+  //   Public signature debug description: foo(0:0?){0§<kotlin.Any?>}
+  /* fake */ override fun <T : Any?> foo(a: T?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){0§<kotlin.Any>}0:0?
+  //   Public signature: /B.bar|-6715045277140170414[0]
+  //   Public signature debug description: bar(){0§<kotlin.Any>}0:0?
+  override fun <T : Any> bar(): T?
+
+  // CHECK:
+  //   Mangled name: B#foo(0:0?){0§<kotlin.Any>}
+  //   Public signature: /B.foo|182402834467927776[0]
+  //   Public signature debug description: foo(0:0?){0§<kotlin.Any>}
+  override fun <T : Any> foo(a: T?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit

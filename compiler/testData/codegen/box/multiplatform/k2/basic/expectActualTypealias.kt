@@ -1,6 +1,4 @@
-// TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
-
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
@@ -13,9 +11,8 @@ expect fun foo(): S
 
 fun test(): S = foo()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual typealias S = String
 

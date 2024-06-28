@@ -1,0 +1,181 @@
+library {
+  // module name: <annotations_source_retention.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/AnnoBackingField
+    // class name: test/AnnoClass
+    // class name: test/AnnoConstructor
+    // class name: test/AnnoConstructorParameter
+    // class name: test/AnnoDelegatedField
+    // class name: test/AnnoFunction
+    // class name: test/AnnoFunctionExtensionReceiver
+    // class name: test/AnnoFunctionParam
+    // class name: test/AnnoGetter
+    // class name: test/AnnoProperty
+    // class name: test/AnnoPropertyExtensionReceiver
+    // class name: test/AnnoSetParam
+    // class name: test/AnnoSetParam2
+    // class name: test/AnnoSetter
+    // class name: test/AnnoSetter2
+    // class name: test/Foo
+
+    // signature: test/AnnoBackingField|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoBackingField : kotlin/Annotation {
+
+      // signature: test/AnnoBackingField.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoClass|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoClass : kotlin/Annotation {
+
+      // signature: test/AnnoClass.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoConstructor|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoConstructor : kotlin/Annotation {
+
+      // signature: test/AnnoConstructor.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoConstructorParameter|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoConstructorParameter : kotlin/Annotation {
+
+      // signature: test/AnnoConstructorParameter.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoDelegatedField|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoDelegatedField : kotlin/Annotation {
+
+      // signature: test/AnnoDelegatedField.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoFunction|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunction : kotlin/Annotation {
+
+      // signature: test/AnnoFunction.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoFunctionExtensionReceiver|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunctionExtensionReceiver : kotlin/Annotation {
+
+      // signature: test/AnnoFunctionExtensionReceiver.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoFunctionParam|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoFunctionParam : kotlin/Annotation {
+
+      // signature: test/AnnoFunctionParam.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoGetter|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoGetter : kotlin/Annotation {
+
+      // signature: test/AnnoGetter.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoProperty|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoProperty : kotlin/Annotation {
+
+      // signature: test/AnnoProperty.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoPropertyExtensionReceiver|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoPropertyExtensionReceiver : kotlin/Annotation {
+
+      // signature: test/AnnoPropertyExtensionReceiver.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoSetParam|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetParam : kotlin/Annotation {
+
+      // signature: test/AnnoSetParam.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoSetParam2|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetParam2 : kotlin/Annotation {
+
+      // signature: test/AnnoSetParam2.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoSetter|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetter : kotlin/Annotation {
+
+      // signature: test/AnnoSetter.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/AnnoSetter2|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    public final annotation class test/AnnoSetter2 : kotlin/Annotation {
+
+      // signature: test/AnnoSetter2.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Foo|null[0]
+    public final class test/Foo : kotlin/Any {
+
+      // signature: test/Foo.<init>|-5182794243525578284[0]
+      public constructor(i: kotlin/Int)
+
+      // signature: test/Foo.immutableProp|-821319779095389209[0]
+      public final /* delegated */ val immutableProp: kotlin/Int
+        // signature: test/Foo.immutableProp.<get-immutableProp>|325589445193220939[0]
+        public final /* non-default */ get
+
+      // signature: test/Foo.mutableProp|1472686943295008822[0]
+      public final var mutableProp: kotlin/Int
+        // signature: test/Foo.mutableProp.<get-mutableProp>|-557070840259409057[0]
+        public final get
+        // signature: test/Foo.mutableProp.<set-mutableProp>|-3965758569411010277[0]
+        public final /* non-default */ set(x: kotlin/Int)
+
+      // signature: test/Foo.prop|3598315380056892812[0]
+      public final var prop: kotlin/Int
+        // signature: test/Foo.prop.<get-prop>|-5734736374948136327[0]
+        public final /* non-default */ get
+        // signature: test/Foo.prop.<set-prop>|3724820243841906450[0]
+        public final /* non-default */ set(x: kotlin/Int)
+    }
+
+    package {
+
+      // signature: test/extfun|-4862331552047794615[0]
+      public final fun test/Foo.extfun(x: kotlin/Int): kotlin/Unit
+
+      // signature: test/extProp|-6867325556440293248[0]
+      public final val test/Foo.extProp: kotlin/Int
+        // signature: test/extProp.<get-extProp>|8446410089263600861[0]
+        public final /* non-default */ get
+    }
+  }
+}

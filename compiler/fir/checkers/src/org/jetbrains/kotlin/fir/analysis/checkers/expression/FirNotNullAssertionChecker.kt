@@ -6,18 +6,21 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.canBeNull
+import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
+object FirNotNullAssertionChecker : FirCheckNotNullCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirCheckNotNullCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val argument = expression.argumentList.arguments.singleOrNull() ?: return
         if (argument is FirAnonymousFunctionExpression && argument.anonymousFunction.isLambda) {
@@ -30,14 +33,14 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
         }
         // TODO: use of Unit is subject to change.
         //  See BodyResolveComponents.typeForQualifier in ResolveUtils.kt which returns Unit for no value type.
-        if (argument is FirResolvedQualifier && argument.typeRef.isUnit) {
+        if (argument is FirResolvedQualifier && argument.resolvedType.isUnit) {
             // Would be reported as NO_COMPANION_OBJECT
             return
         }
 
-        val type = argument.typeRef.coneType.fullyExpandedType(context.session)
+        val type = argument.resolvedType.fullyExpandedType(context.session)
 
-        if (!type.canBeNull && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+        if (!type.canBeNull(context.session) && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type, context)
         }
     }

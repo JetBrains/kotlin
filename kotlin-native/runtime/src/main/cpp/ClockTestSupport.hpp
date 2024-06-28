@@ -8,12 +8,12 @@
 #include "Clock.hpp"
 
 #include <optional>
+#include <set>
 
 #include "gtest/gtest.h"
 
 #include "KAssert.h"
 #include "Utils.hpp"
-#include "std_support/Set.hpp"
 
 namespace kotlin::test_support {
 
@@ -89,9 +89,9 @@ private:
     private:
         friend class manual_clock;
 
-        explicit PendingWaitRegistration(std_support::multiset<time_point>::iterator it) noexcept : it_(it) {}
+        explicit PendingWaitRegistration(std::multiset<time_point>::iterator it) noexcept : it_(it) {}
 
-        std_support::multiset<time_point>::iterator it_;
+        std::multiset<time_point>::iterator it_;
     };
 
     template <typename Rep, typename Period>
@@ -104,7 +104,7 @@ private:
 
     static std::atomic<time_point> now_;
     static std::mutex pendingWaitsMutex_;
-    static std_support::multiset<time_point> pendingWaits_;
+    static std::multiset<time_point> pendingWaits_;
 };
 
 } // namespace kotlin::test_support

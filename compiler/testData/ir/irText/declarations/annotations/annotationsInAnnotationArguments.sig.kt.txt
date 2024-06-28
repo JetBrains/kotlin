@@ -1,0 +1,89 @@
+// CHECK:
+//   Mangled name: A1
+//   Public signature: /A1|null[0]
+open annotation class A1 : Annotation {
+  // CHECK:
+  //   Mangled name: A1{}x
+  //   Public signature: /A1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A1#<get-x>(){}kotlin.Int
+    //   Public signature: /A1.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A1#<get-x>(){}
+    //   Public signature: /A1.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A1#<init>(kotlin.Int){}
+  //   Public signature: /A1.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: A2
+//   Public signature: /A2|null[0]
+open annotation class A2 : Annotation {
+  // CHECK:
+  //   Mangled name: A2{}a
+  //   Public signature: /A2.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: A1
+    // CHECK JVM_IR:
+    //   Mangled name: A2#<get-a>(){}A1
+    //   Public signature: /A2.a.<get-a>|7276890167111587032[0]
+    //   Public signature debug description: <get-a>(){}A1
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A2#<get-a>(){}
+    //   Public signature: /A2.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A2#<init>(A1){}
+  //   Public signature: /A2.<init>|1733910541133145704[0]
+  //   Public signature debug description: <init>(A1){}
+  constructor(a: A1) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: AA
+//   Public signature: /AA|null[0]
+open annotation class AA : Annotation {
+  // CHECK:
+  //   Mangled name: AA{}xs
+  //   Public signature: /AA.xs|1063330853857063704[0]
+  //   Public signature debug description: {}xs
+  val xs: Array<A1>
+    // CHECK JVM_IR:
+    //   Mangled name: AA#<get-xs>(){}kotlin.Array<A1>
+    //   Public signature: /AA.xs.<get-xs>|466319571514416331[0]
+    //   Public signature debug description: <get-xs>(){}kotlin.Array<A1>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: AA#<get-xs>(){}
+    //   Public signature: /AA.xs.<get-xs>|-6958094100501701183[0]
+    //   Public signature debug description: <get-xs>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: AA#<init>(kotlin.Array<A1>){}
+  //   Public signature: /AA.<init>|-748301654061855634[0]
+  //   Public signature debug description: <init>(kotlin.Array<A1>){}
+  constructor(xs: Array<A1>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+@A2(a = A1(x = 42))
+@AA(xs = [A1(x = 1), A1(x = 2)])
+fun test(): Unit
+

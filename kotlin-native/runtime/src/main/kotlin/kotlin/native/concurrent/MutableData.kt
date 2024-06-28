@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
@@ -32,6 +34,7 @@ public class MutableData constructor(capacity: Int = 16) {
 
     private var buffer_ = ByteArray(capacity).apply { share() }
     private var buffer: ByteArray
+        @OptIn(ExperimentalNativeApi::class)
         get() =
             when (kotlin.native.Platform.memoryModel) {
                 kotlin.native.MemoryModel.EXPERIMENTAL -> buffer_
@@ -42,6 +45,7 @@ public class MutableData constructor(capacity: Int = 16) {
     private val lock = Lock()
 
     private fun resizeDataLocked(newSize: Int): Int {
+        @OptIn(ExperimentalNativeApi::class)
         assert(newSize >= size)
         if (newSize > buffer.size) {
             val actualSize = maxOf(buffer.size * 3 / 2 + 1, newSize)
@@ -64,14 +68,14 @@ public class MutableData constructor(capacity: Int = 16) {
     /**
      * Reset the data buffer, makings its size 0.
      */
-    public fun reset() = locked(lock) {
+    public fun reset(): Unit = locked(lock) {
         size_ = 0
     }
 
     /**
      * Appends data to the buffer.
      */
-    public fun append(data: MutableData) = locked(lock) {
+    public fun append(data: MutableData): Unit = locked(lock) {
         val toCopy = data.size
         val where = resizeDataLocked(size + toCopy)
         data.copyInto(buffer, 0, toCopy, where)
@@ -122,7 +126,7 @@ public class MutableData constructor(capacity: Int = 16) {
      * Executes provided block under lock with raw pointer to the data stored in the buffer.
      * Block is executed under the spinlock, and must be short.
      */
-    public fun <R> withPointerLocked(block: (COpaquePointer, dataSize: Int) -> R) = locked(lock) {
+    public fun <R> withPointerLocked(block: (COpaquePointer, dataSize: Int) -> R): R = locked(lock) {
         buffer.usePinned {
             it -> block(it.addressOf(0), size)
         }
@@ -132,7 +136,7 @@ public class MutableData constructor(capacity: Int = 16) {
      * Executes provided block under lock with the raw data buffer.
      * Block is executed under the spinlock, and must be short.
      */
-    public fun <R> withBufferLocked(block: (array: ByteArray, dataSize: Int) -> R) = locked(lock) {
+    public fun <R> withBufferLocked(block: (array: ByteArray, dataSize: Int) -> R): R = locked(lock) {
         block(buffer, size)
     }
 }

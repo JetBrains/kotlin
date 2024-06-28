@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspend
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
@@ -49,16 +50,16 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.math.max
-import kotlin.math.min
 
 const val GENERATE_SMAP = true
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
+const val INLINE_SCOPE_NUMBER_SEPARATOR = '\\'
 
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
-internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
+const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
-internal const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
+const val INLINE_CALL_TRANSFORMATION_SUFFIX = "$$INLINE_TRANSFORMATION_SUFFIX"
 internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
@@ -102,28 +103,18 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 
-    return node?.let{
-        val (first, last) = listOfNotNull(it).lineNumberRange()
-        SMAPAndMethodNode(it, SMAPParser.parseOrCreateDefault(sourceMap, sourceFile, classType.internalName, first, last))
+    return node?.let {
+        val parsedSourceMap = sourceMap?.let(SMAPParser::parseOrNull)
+            ?: SMAP.identityMapping(sourceFile, classType.internalName, listOfNotNull(it))
+        SMAPAndMethodNode(it, parsedSourceMap)
     }
 }
 
 internal fun getMethodNode(classData: ByteArray, classType: Type, method: Method): SMAPAndMethodNode? =
     getMethodNode(classData, classType) { it == method }
 
-internal fun Collection<MethodNode>.lineNumberRange(): Pair<Int, Int> {
-    var minLine = Int.MAX_VALUE
-    var maxLine = Int.MIN_VALUE
-    for (node in this) {
-        for (insn in node.instructions.asSequence()) {
-            if (insn is LineNumberNode) {
-                minLine = min(minLine, insn.line)
-                maxLine = max(maxLine, insn.line)
-            }
-        }
-    }
-    return minLine to maxLine
-}
+fun argumentsSize(descriptor: String, isStatic: Boolean): Int =
+    (Type.getArgumentsAndReturnSizes(descriptor) shr 2) - (if (isStatic) 1 else 0)
 
 internal fun findVirtualFile(state: GenerationState, classId: ClassId): VirtualFile? {
     return VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
@@ -375,7 +366,7 @@ fun MethodNode.dumpBody(): String {
     }
 
     for ((i, insn) in this.instructions.toArray().withIndex()) {
-        when (insn.type) {
+        when (insn.nodeType) {
             AbstractInsnNode.INSN ->
                 pw.println("$i\t${Printer.OPCODES[insn.opcode]}")
             AbstractInsnNode.INT_INSN ->

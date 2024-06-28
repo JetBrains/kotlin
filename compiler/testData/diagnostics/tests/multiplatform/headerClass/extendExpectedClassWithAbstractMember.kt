@@ -59,3 +59,13 @@ expect interface BaseF {
     fun foo()
 }
 expect class BaseFImpl() : BaseF
+
+
+
+expect abstract class BaseG() {
+    abstract fun foo()
+}
+expect open class BaseGImpl() : BaseG {
+    override fun foo()
+}
+class DerivedG1 : BaseGImpl()

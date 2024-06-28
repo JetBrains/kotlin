@@ -5,7 +5,7 @@ final class User$Companion : java/lang/Object, kotlinx/parcelize/Parceler {
 
     public User create(android.os.Parcel parcel)
 
-    public java.lang.Object create(android.os.Parcel p0)
+    public java.lang.Object create(android.os.Parcel parcel)
 
     public User[] newArray(int size) {
         LABEL (L0)
@@ -18,42 +18,43 @@ final class User$Companion : java/lang/Object, kotlinx/parcelize/Parceler {
         LABEL (L1)
     }
 
-    public java.lang.Object[] newArray(int p0) {
+    public java.lang.Object[] newArray(int size) {
         LABEL (L0)
         LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
           ARETURN
+        LABEL (L1)
     }
 
     public void write(User $this$write, android.os.Parcel parcel, int flags)
 
-    public void write(java.lang.Object p0, android.os.Parcel p1, int p2)
+    public void write(java.lang.Object $this$write, android.os.Parcel parcel, int flags)
 }
 
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final User createFromParcel(android.os.Parcel in) {
+    public final User createFromParcel(android.os.Parcel parcel) {
         LABEL (L0)
           ALOAD (1)
-          LDC (in)
+          LDC (parcel)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
-          GETSTATIC (User, Companion, LUser$Companion;)
+          INVOKESTATIC (User, access$getCompanion$p, ()LUser$Companion;)
           ALOAD (1)
           INVOKEVIRTUAL (User$Companion, create, (Landroid/os/Parcel;)LUser;)
           ARETURN
         LABEL (L1)
     }
 
-    public java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public java.lang.Object createFromParcel(android.os.Parcel source) {
         LABEL (L0)
-        LINENUMBER (9)
           ALOAD (0)
           ALOAD (1)
           INVOKEVIRTUAL (User$Creator, createFromParcel, (Landroid/os/Parcel;)LUser;)
           ARETURN
+        LABEL (L1)
     }
 
     public final User[] newArray(int size) {
@@ -64,13 +65,13 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L1)
     }
 
-    public java.lang.Object[] newArray(int p0) {
+    public java.lang.Object[] newArray(int size) {
         LABEL (L0)
-        LINENUMBER (9)
           ALOAD (0)
           ILOAD (1)
           INVOKEVIRTUAL (User$Creator, newArray, (I)[LUser;)
           ARETURN
+        LABEL (L1)
     }
 }
 
@@ -89,6 +90,8 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public void <init>(java.lang.String firstName, java.lang.String lastName, int age)
 
+    public final static User$Companion access$getCompanion$p()
+
     public int describeContents()
 
     public final int getAge()
@@ -97,10 +100,10 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final java.lang.String getLastName()
 
-    public void writeToParcel(android.os.Parcel parcel, int flags) {
+    public void writeToParcel(android.os.Parcel out, int flags) {
         LABEL (L0)
           ALOAD (1)
-          LDC (parcel)
+          LDC (out)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           GETSTATIC (User, Companion, LUser$Companion;)
           ALOAD (0)

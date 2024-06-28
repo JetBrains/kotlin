@@ -1,4 +1,4 @@
 ALL:
-  foo.A.foo(): Unit
+  /foo.A.foo(): Unit
 DIRECT:
-  foo.A.foo(): Unit
+  /foo.A.foo(): Unit

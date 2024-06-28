@@ -34,7 +34,7 @@ class SamWithReceiverGradleSubplugin
     }
 
     companion object {
-        const val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver"
+        const val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver-compiler-plugin-embeddable"
 
         private const val ANNOTATION_ARG_NAME = "annotation"
         private const val PRESET_ARG_NAME = "preset"

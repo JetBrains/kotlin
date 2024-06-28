@@ -1,0 +1,9 @@
+MODULE main
+	CLASS test/_1Kt.class
+		PACKAGE METADATA
+			FUNCTION copyOfRange1([Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ltest/F;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* T */>
+					K2
+						<T#0 /* T */ : kotlin/Any?>

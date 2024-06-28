@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
+// LAMBDAS: CLASS
 // WITH_STDLIB
+
 package test
 
 class C {

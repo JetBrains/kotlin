@@ -31,7 +31,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     private val invalidBinaryVersion: () -> V,
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
-    private val metadataStubBuilder: KotlinMetadataStubBuilder =
+    protected open val metadataStubBuilder: KotlinMetadataStubBuilder =
         KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, ::readFileSafely)
 
     private val renderer: DescriptorRenderer by lazy {
@@ -61,7 +61,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     @TestOnly
     fun readFile(file: VirtualFile) = readFileSafely(file)
 
-    private fun readFileSafely(file: VirtualFile, content: ByteArray? = null): KotlinMetadataStubBuilder.FileWithMetadata? {
+    protected fun readFileSafely(file: VirtualFile, content: ByteArray? = null): KotlinMetadataStubBuilder.FileWithMetadata? {
         if (!file.isValid) return null
 
         return try {

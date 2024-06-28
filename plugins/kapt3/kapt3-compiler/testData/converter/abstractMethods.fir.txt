@@ -1,0 +1,60 @@
+/**
+ * public abstract class Base : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: doJob(Ljava/lang/String;I)V
+ *   protected abstract fun doJob(job: kotlin/String, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: doJobGeneric(Ljava/lang/CharSequence;I)V
+ *   protected abstract fun <T#0 (* T *) : kotlin/CharSequence> doJobGeneric(job: T#0, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class Base {
+
+    public Base() {
+        super();
+    }
+
+    protected abstract void doJob(@org.jetbrains.annotations.NotNull() java.lang.String job, int delay);
+
+    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull() T job, int delay);
+}
+
+
+////////////////////
+
+/**
+ * public final class Impl : Base {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: doJob(Ljava/lang/String;I)V
+ *   protected open fun doJob(job: kotlin/String, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // signature: doJobGeneric(Ljava/lang/CharSequence;I)V
+ *   protected open fun <T#0 (* T *) : kotlin/CharSequence> doJobGeneric(job: T#0, delay: kotlin/Int): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class Impl extends Base {
+
+    public Impl() {
+        super();
+    }
+
+    @java.lang.Override()
+    protected void doJob(@org.jetbrains.annotations.NotNull() java.lang.String job, int delay) {
+    }
+
+    @java.lang.Override()
+    protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull() T job, int delay) {
+    }
+}

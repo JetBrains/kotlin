@@ -1,0 +1,20 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> (p0:kotlin.Any?, p1:kotlin.Any?) returnType:kotlin.Int
+        VALUE_PARAMETER name:p0 index:0 type:kotlin.Any?
+        VALUE_PARAMETER name:p1 index:1 type:kotlin.Any?
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Int origin=null
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+              $this: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+                  GET_VAR 'p0: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=null
+              other: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                $this: CALL 'public final fun <get-foo> (): kotlin.String declared in <root>.Foo' type=kotlin.String origin=GET_PROPERTY
+                  $this: TYPE_OP type=<root>.Foo origin=IMPLICIT_CAST typeOperand=<root>.Foo
+                    GET_VAR 'p1: kotlin.Any? declared in <root>.CodeFragment.run' type=kotlin.Any? origin=null

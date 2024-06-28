@@ -1,6 +1,7 @@
 package
 
 public fun TODO(): kotlin.Nothing
+public fun </*0*/ K> select(/*0*/ vararg values: K /*kotlin.Array<out K>*/): K
 public fun kotlin.String.put(/*0*/ value: JsonObject?, /*1*/ node: ObjectNode): kotlin.Unit
 
 public open class JsonNode {

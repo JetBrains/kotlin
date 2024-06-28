@@ -1,5 +1,17 @@
 import kotlin.reflect.KClass;
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: a(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   public final fun a(a: error/NonExistentClass, b: error/NonExistentClass): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
 

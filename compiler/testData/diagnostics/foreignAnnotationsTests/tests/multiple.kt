@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // NULLABILITY_ANNOTATIONS: @io.reactivex.annotations:strict, @org.eclipse.jdt.annotation:warn, @androidx.annotation:strict, @com.android.annotations:ignore
 
 // FILE: A1.java

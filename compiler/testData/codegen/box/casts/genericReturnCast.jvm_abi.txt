@@ -1,0 +1,9 @@
+MODULE main
+	CLASS GenericReturnCastKt.class
+		PACKAGE METADATA
+			FUNCTION someFunc(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+				Property: class.metadata.function.typeParameters
+					K1
+						<T#0 /* T */>
+					K2
+						<T#0 /* T */ : kotlin/Any?>

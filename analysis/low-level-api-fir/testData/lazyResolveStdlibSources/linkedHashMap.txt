@@ -1,0 +1,685 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(RAW_FIR)] class LinkedHashMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : MutableMap<K, V> {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(RAW_FIR)] class LinkedHashMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : MutableMap<K, V> {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class LinkedHashMap<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V> : MutableMap<K, V> {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] K, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(COMPANION_GENERATION)] class LinkedHashMap<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V> : MutableMap<K, V> {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(COMPANION_GENERATION)] K, [ResolvedTo(COMPANION_GENERATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(SUPER_TYPES)] class LinkedHashMap<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(SUPER_TYPES)] K, [ResolvedTo(SUPER_TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final? expect [ResolvedTo(TYPES)] class LinkedHashMap<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(TYPES)] K, [ResolvedTo(TYPES)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(STATUS)] class LinkedHashMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class LinkedHashMap<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] K, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(CONTRACTS)] class LinkedHashMap<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONTRACTS)] K, [ResolvedTo(CONTRACTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(CONSTANT_EVALUATION)] class LinkedHashMap<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(CONSTANT_EVALUATION)] K, [ResolvedTo(CONSTANT_EVALUATION)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class LinkedHashMap<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] initialCapacity: Int, [ResolvedTo(RAW_FIR)] loadFactor: Float): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public expect [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] K, [ResolvedTo(ANNOTATION_ARGUMENTS)] V>([ResolvedTo(RAW_FIR)] original: Map<out K, V>): R|kotlin/collections/LinkedHashMap<K, V>| {
+            LAZY_super<<implicit>>
+        }
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val size: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): Int
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun isEmpty(): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsKey([ResolvedTo(RAW_FIR)] key: K): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun containsValue([ResolvedTo(RAW_FIR)] value: V): Boolean
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun put([ResolvedTo(RAW_FIR)] key: K, [ResolvedTo(RAW_FIR)] value: V): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun remove([ResolvedTo(RAW_FIR)] key: K): V?
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun putAll([ResolvedTo(RAW_FIR)] from: Map<out K, V>): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] fun clear(): R|kotlin/Unit|
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val keys: MutableSet<K>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<K>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val values: MutableCollection<V>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableCollection<V>
+
+        public? open? expect override [ResolvedTo(RAW_FIR)] val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LinkedHashMap] get(): MutableSet<MutableMap.MutableEntry<K, V>>
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] LinkedHashMap.kt
+    public final expect [ResolvedTo(BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open expect override [ResolvedTo(STATUS)] val size: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/Int|
+
+        public open expect override [ResolvedTo(STATUS)] fun isEmpty(): R|kotlin/Boolean|
+
+        public open expect override [ResolvedTo(STATUS)] fun containsKey([ResolvedTo(STATUS)] key: R|K|): R|kotlin/Boolean|
+
+        public open expect override [ResolvedTo(STATUS)] fun containsValue([ResolvedTo(STATUS)] value: R|V|): R|kotlin/Boolean|
+
+        public open expect override operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] key: R|K|): R|V?|
+
+        public open expect override [ResolvedTo(STATUS)] fun put([ResolvedTo(STATUS)] key: R|K|, [ResolvedTo(STATUS)] value: R|V|): R|V?|
+
+        public open expect override [ResolvedTo(STATUS)] fun remove([ResolvedTo(STATUS)] key: R|K|): R|V?|
+
+        public open expect override [ResolvedTo(STATUS)] fun putAll([ResolvedTo(STATUS)] from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
+
+        public open expect override [ResolvedTo(STATUS)] fun clear(): R|kotlin/Unit|
+
+        public open expect override [ResolvedTo(STATUS)] val keys: R|kotlin/collections/MutableSet<K>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableSet<K>|
+
+        public open expect override [ResolvedTo(STATUS)] val values: R|kotlin/collections/MutableCollection<V>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableCollection<V>|
+
+        public open expect override [ResolvedTo(STATUS)] val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] LinkedHashMap.kt
+    public final expect [ResolvedTo(BODY_RESOLVE)] class LinkedHashMap<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V> : R|kotlin/collections/MutableMap<K, V>| {
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>(): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] initialCapacity: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] loadFactor: R|kotlin/Float|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public expect [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] constructor<[ResolvedTo(BODY_RESOLVE)] K, [ResolvedTo(BODY_RESOLVE)] V>([ResolvedTo(BODY_RESOLVE)] original: R|kotlin/collections/Map<out K, V>|): R|kotlin/collections/LinkedHashMap<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] val size: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/Int|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun isEmpty(): R|kotlin/Boolean|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun containsKey([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|kotlin/Boolean|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun containsValue([ResolvedTo(BODY_RESOLVE)] value: R|V|): R|kotlin/Boolean|
+
+        public open expect override operator [ResolvedTo(BODY_RESOLVE)] fun get([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|V?|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun put([ResolvedTo(BODY_RESOLVE)] key: R|K|, [ResolvedTo(BODY_RESOLVE)] value: R|V|): R|V?|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun remove([ResolvedTo(BODY_RESOLVE)] key: R|K|): R|V?|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun putAll([ResolvedTo(BODY_RESOLVE)] from: R|kotlin/collections/Map<out K, V>|): R|kotlin/Unit|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] fun clear(): R|kotlin/Unit|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] val keys: R|kotlin/collections/MutableSet<K>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableSet<K>|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] val values: R|kotlin/collections/MutableCollection<V>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableCollection<V>|
+
+        public open expect override [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LinkedHashMap] get(): R|kotlin/collections/MutableSet<kotlin/collections/MutableMap.MutableEntry<K, V>>|
+
+    }

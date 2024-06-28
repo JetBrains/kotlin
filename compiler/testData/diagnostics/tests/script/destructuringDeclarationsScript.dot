@@ -1,0 +1,371 @@
+digraph destructuringDeclarationsScript_fir_kts {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter file destructuringDeclarationsScript.fir.kts [1]" style="filled" fillcolor=red];
+        1 [label="Exit file destructuringDeclarationsScript.fir.kts [1]" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter class <script-destructuringDeclarationsScript.fir.kts> [2]" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_3 {
+                color=blue
+                4 [label="Function call arguments enter [3]"];
+                5 [label="Function call arguments exit [3]"];
+            }
+            6 [label="Function call enter: R|/A.A|() [3]"];
+            7 [label="Function call exit: R|/A.A|() [3]" style="filled" fillcolor=yellow];
+            8 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_4 {
+            color=blue
+            9 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_5 {
+                color=blue
+                10 [label="Function call arguments enter [3]"];
+                11 [label="Access variable R|<local>/<destruct>| [3]"];
+                12 [label="Function call arguments exit [3]"];
+            }
+            13 [label="Function call enter: R|<local>/<destruct>|.R|/A.component1|() [3]"];
+            14 [label="Function call exit: R|<local>/<destruct>|.R|/A.component1|() [3]" style="filled" fillcolor=yellow];
+            15 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_6 {
+            color=blue
+            16 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_7 {
+                color=blue
+                17 [label="Function call arguments enter [3]"];
+                18 [label="Access variable R|<local>/<destruct>| [3]"];
+                19 [label="Function call arguments exit [3]"];
+            }
+            20 [label="Function call enter: R|<local>/<destruct>|.R|/A.component2|() [3]"];
+            21 [label="Function call exit: R|<local>/<destruct>|.R|/A.component2|() [3]" style="filled" fillcolor=yellow];
+            22 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_8 {
+            color=blue
+            23 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_9 {
+                color=blue
+                24 [label="Function call arguments enter [3]"];
+                25 [label="Function call arguments exit [3]"];
+            }
+            26 [label="Function call enter: R|/A.A|() [3]"];
+            27 [label="Function call exit: R|/A.A|() [3]" style="filled" fillcolor=yellow];
+            28 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_10 {
+            color=blue
+            29 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_11 {
+                color=blue
+                30 [label="Function call arguments enter [3]"];
+                31 [label="Access variable R|<local>/<destruct>| [3]"];
+                32 [label="Function call arguments exit [3]"];
+            }
+            33 [label="Function call enter: R|<local>/<destruct>|.R|/A.component1|() [3]"];
+            34 [label="Function call exit: R|<local>/<destruct>|.R|/A.component1|() [3]" style="filled" fillcolor=yellow];
+            35 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_12 {
+            color=blue
+            36 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_13 {
+                color=blue
+                37 [label="Function call arguments enter [3]"];
+                38 [label="Access variable R|<local>/<destruct>| [3]"];
+                39 [label="Function call arguments exit [3]"];
+            }
+            40 [label="Function call enter: R|<local>/<destruct>|.R|/A.component2<CS errors: /A.component2>#|() [3]"];
+            41 [label="Function call exit: R|<local>/<destruct>|.R|/A.component2<CS errors: /A.component2>#|() [3]" style="filled" fillcolor=yellow];
+            42 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_14 {
+            color=blue
+            43 [label="Enter property [3]" style="filled" fillcolor=red];
+            44 [label="Access variable <Unresolved name: unresolved># [3]"];
+            45 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_15 {
+            color=blue
+            46 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_16 {
+                color=blue
+                47 [label="Function call arguments enter [3]"];
+                48 [label="Access variable R|<local>/<destruct>| [3]"];
+                49 [label="Function call arguments exit [3]"];
+            }
+            50 [label="Function call enter: R|<local>/<destruct>|.<Unresolved name: component1>#() [3]"];
+            51 [label="Function call exit: R|<local>/<destruct>|.<Unresolved name: component1>#() [3]" style="filled" fillcolor=yellow];
+            52 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_17 {
+            color=blue
+            53 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_18 {
+                color=blue
+                54 [label="Function call arguments enter [3]"];
+                55 [label="Function call arguments exit [3]"];
+            }
+            56 [label="Function call enter: R|/A.A|() [3]"];
+            57 [label="Function call exit: R|/A.A|() [3]" style="filled" fillcolor=yellow];
+            58 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_19 {
+            color=blue
+            59 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_20 {
+                color=blue
+                60 [label="Function call arguments enter [3]"];
+                61 [label="Access variable R|<local>/<destruct>| [3]"];
+                62 [label="Function call arguments exit [3]"];
+            }
+            63 [label="Function call enter: R|<local>/<destruct>|.R|/A.component1|() [3]"];
+            64 [label="Function call exit: R|<local>/<destruct>|.R|/A.component1|() [3]" style="filled" fillcolor=yellow];
+            65 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_21 {
+            color=blue
+            66 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_22 {
+                color=blue
+                67 [label="Function call arguments enter [3]"];
+                68 [label="Function call arguments exit [3]"];
+            }
+            69 [label="Function call enter: R|/A.A|() [3]"];
+            70 [label="Function call exit: R|/A.A|() [3]" style="filled" fillcolor=yellow];
+            71 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_23 {
+            color=blue
+            72 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_24 {
+                color=blue
+                73 [label="Function call arguments enter [3]"];
+                74 [label="Access variable R|<local>/<destruct>| [3]"];
+                75 [label="Function call arguments exit [3]"];
+            }
+            76 [label="Function call enter: R|<local>/<destruct>|.R|/A.component1|() [3]"];
+            77 [label="Function call exit: R|<local>/<destruct>|.R|/A.component1|() [3]" style="filled" fillcolor=yellow];
+            78 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_25 {
+            color=blue
+            79 [label="Enter property [3]" style="filled" fillcolor=red];
+            subgraph cluster_26 {
+                color=blue
+                80 [label="Function call arguments enter [3]"];
+                81 [label="Access variable R|<local>/<destruct>| [3]"];
+                82 [label="Function call arguments exit [3]"];
+            }
+            83 [label="Function call enter: R|<local>/<destruct>|.R|/A.component2|() [3]"];
+            84 [label="Function call exit: R|<local>/<destruct>|.R|/A.component2|() [3]" style="filled" fillcolor=yellow];
+            85 [label="Exit property [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_27 {
+            color=blue
+            86 [label="Enter init block [3]" style="filled" fillcolor=red];
+            subgraph cluster_28 {
+                color=blue
+                87 [label="Enter block [3]"];
+                88 [label="Access variable R|/a1| [3]"];
+                89 [label="Exit block [3]"];
+            }
+            90 [label="Exit init block [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_29 {
+            color=blue
+            91 [label="Enter init block [3]" style="filled" fillcolor=red];
+            subgraph cluster_30 {
+                color=blue
+                92 [label="Enter block [3]"];
+                93 [label="Access variable R|/a2| [3]"];
+                94 [label="Exit block [3]"];
+            }
+            95 [label="Exit init block [3]" style="filled" fillcolor=red];
+        }
+        subgraph cluster_31 {
+            color=blue
+            96 [label="Enter init block [3]" style="filled" fillcolor=red];
+            subgraph cluster_32 {
+                color=blue
+                97 [label="Enter block [3]"];
+                98 [label="Access variable R|/e1| [3]"];
+                99 [label="Exit block [3]"];
+            }
+            100 [label="Exit init block [3]" style="filled" fillcolor=red];
+        }
+        101 [label="Exit class <script-destructuringDeclarationsScript.fir.kts> [2]" style="filled" fillcolor=red];
+    }
+    2 -> {3} [color=green];
+    2 -> {101} [style=dotted];
+    2 -> {3 9 16 23 29 36 43 46 53 59 66 72 79 86 91 96} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6};
+    6 -> {7};
+    7 -> {8};
+    8 -> {9} [color=green];
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+    15 -> {16} [color=green];
+    16 -> {17};
+    17 -> {18};
+    18 -> {19};
+    19 -> {20};
+    20 -> {21};
+    21 -> {22};
+    22 -> {23} [color=green];
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29} [color=green];
+    29 -> {30};
+    30 -> {31};
+    31 -> {32};
+    32 -> {33};
+    33 -> {34};
+    34 -> {35};
+    35 -> {36} [color=green];
+    36 -> {37};
+    37 -> {38};
+    38 -> {39};
+    39 -> {40};
+    40 -> {41};
+    41 -> {42};
+    42 -> {43} [color=green];
+    43 -> {44};
+    44 -> {45};
+    45 -> {46} [color=green];
+    46 -> {47};
+    47 -> {48};
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52};
+    52 -> {53} [color=green];
+    53 -> {54};
+    54 -> {55};
+    55 -> {56};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59} [color=green];
+    59 -> {60};
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65};
+    65 -> {66} [color=green];
+    66 -> {67};
+    67 -> {68};
+    68 -> {69};
+    69 -> {70};
+    70 -> {71};
+    71 -> {72} [color=green];
+    72 -> {73};
+    73 -> {74};
+    74 -> {75};
+    75 -> {76};
+    76 -> {77};
+    77 -> {78};
+    78 -> {79} [color=green];
+    79 -> {80};
+    80 -> {81};
+    81 -> {82};
+    82 -> {83};
+    83 -> {84};
+    84 -> {85};
+    85 -> {86} [color=green];
+    86 -> {87};
+    87 -> {88};
+    88 -> {89};
+    89 -> {90};
+    90 -> {91} [color=green];
+    91 -> {92};
+    92 -> {93};
+    93 -> {94};
+    94 -> {95};
+    95 -> {96} [color=green];
+    96 -> {97};
+    97 -> {98};
+    98 -> {99};
+    99 -> {100};
+    100 -> {101} [color=green];
+
+    subgraph cluster_33 {
+        color=red
+        102 [label="Enter class A [3]" style="filled" fillcolor=red];
+        subgraph cluster_34 {
+            color=blue
+            103 [label="Enter function <init> [4]" style="filled" fillcolor=red];
+            104 [label="Delegated constructor call: super<R|kotlin/Any|>() [4]" style="filled" fillcolor=yellow];
+            105 [label="Exit function <init> [4]" style="filled" fillcolor=red];
+        }
+        106 [label="Exit class A [3]" style="filled" fillcolor=red];
+    }
+    102 -> {103} [color=green];
+    102 -> {106} [style=dotted];
+    102 -> {103} [style=dashed];
+    103 -> {104};
+    104 -> {105};
+    105 -> {106} [color=green];
+
+    subgraph cluster_35 {
+        color=red
+        107 [label="Enter function component1 [4]" style="filled" fillcolor=red];
+        subgraph cluster_36 {
+            color=blue
+            108 [label="Enter block [4]"];
+            109 [label="Const: Int(1) [4]"];
+            110 [label="Jump: ^component1 Int(1) [4]"];
+            111 [label="Stub [4]" style="filled" fillcolor=gray];
+            112 [label="Exit block [4]" style="filled" fillcolor=gray];
+        }
+        113 [label="Exit function component1 [4]" style="filled" fillcolor=red];
+    }
+    107 -> {108};
+    108 -> {109};
+    109 -> {110};
+    110 -> {113};
+    110 -> {111} [style=dotted];
+    111 -> {112} [style=dotted];
+    112 -> {113} [style=dotted];
+
+    subgraph cluster_37 {
+        color=red
+        114 [label="Enter function component2 [4]" style="filled" fillcolor=red];
+        subgraph cluster_38 {
+            color=blue
+            115 [label="Enter block [4]"];
+            116 [label="Const: String() [4]"];
+            117 [label="Jump: ^component2 String() [4]"];
+            118 [label="Stub [4]" style="filled" fillcolor=gray];
+            119 [label="Exit block [4]" style="filled" fillcolor=gray];
+        }
+        120 [label="Exit function component2 [4]" style="filled" fillcolor=red];
+    }
+    114 -> {115};
+    115 -> {116};
+    116 -> {117};
+    117 -> {120};
+    117 -> {118} [style=dotted];
+    118 -> {119} [style=dotted];
+    119 -> {120} [style=dotted];
+
+}

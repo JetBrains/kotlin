@@ -1,0 +1,16 @@
+KT element: KtLambdaArgument
+FIR element: FirAnonymousFunctionExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+    ^ Int(1)
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] lambdaExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|kotlin/run|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<R>] run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^ Int(1)
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

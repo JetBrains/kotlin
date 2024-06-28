@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 
 fun test(lock: Any) {
     val x: Int

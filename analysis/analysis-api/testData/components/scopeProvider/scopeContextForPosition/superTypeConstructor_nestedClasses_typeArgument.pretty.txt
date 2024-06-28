@@ -1,0 +1,30 @@
+element: Base.NestedFromClass
+implicit receivers:
+scopes:
+  ExplicitSimpleImportingScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 1
+    packages: 0
+    classifiers: 3
+      interface BaseInterface
+      class Base<T> : test.BaseInterface
+      class Child : test.Base<test.Base.NestedFromClass>()
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 2
+
+  DefaultSimpleImportingScope, index = 3
+
+  ExplicitStarImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 5
+

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.asInlinable
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.buildAssertionsDisabledField
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -24,19 +24,16 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-internal val assertionPhase = makeIrFilePhase(
-    ::AssertionLowering,
+@PhaseDescription(
     name = "Assertion",
     description = "Lower assert calls depending on the assertions mode",
     // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
     // class that contains it.
-    prerequisite = setOf(functionReferencePhase)
+    prerequisite = [FunctionReferenceLowering::class]
 )
-
-private class AssertionLowering(private val context: JvmBackendContext) :
+internal class AssertionLowering(private val context: JvmBackendContext) :
     FileLoweringPass,
-    IrElementTransformer<AssertionLowering.ClassInfo?>
-{
+    IrElementTransformer<AssertionLowering.ClassInfo?> {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.
     class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)
@@ -45,7 +42,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
 
     override fun lower(irFile: IrFile) {
         // In legacy mode we treat assertions as inline function calls
-        if (context.state.assertionsMode != JVMAssertionsMode.LEGACY)
+        if (context.config.assertionsMode != JVMAssertionsMode.LEGACY)
             irFile.transformChildren(this, null)
     }
 
@@ -78,7 +75,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         if (!function.isAssert)
             return super.visitCall(expression, data)
 
-        val mode = context.state.assertionsMode
+        val mode = context.config.assertionsMode
         if (mode == JVMAssertionsMode.ALWAYS_DISABLE)
             return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
 
@@ -116,5 +113,5 @@ private class AssertionLowering(private val context: JvmBackendContext) :
     }
 
     private val IrFunction.isAssert: Boolean
-        get() = name.asString() == "assert" && getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+        get() = name.asString() == "assert" && getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 }

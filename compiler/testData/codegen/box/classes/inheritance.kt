@@ -1,5 +1,7 @@
 // Changed when traits were introduced. May not make sense any more
 
+// JVM_ABI_K1_K2_DIFF: KT-63828
+
 open class X(val x : Int) {}
 interface Y {
     abstract val y : Int

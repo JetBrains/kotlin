@@ -80,7 +80,7 @@ FILE: protectedVisibility.kt
         R|/Protected.Protected|().R|/Protected.baz|()
         R|/Protected.Protected|().R|/Protected.Inner.Inner|()
         R|/Protected.Protected|().R|/Protected.bar<HIDDEN: /Protected.bar is invisible>#|()
-        Q|Protected|.R|/Protected.Nested.Nested<HIDDEN: /Protected.Nested.Nested is invisible>#|()
+        Q|Protected|.R|/Protected.Nested.Nested<HIDDEN: Protected.Nested is invisible>#|()
     }
     public open class Generic<T> : R|kotlin/Any| {
         public constructor<T>(x: R|T|): R|Generic<T>| {

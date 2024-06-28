@@ -1,5 +1,5 @@
-// !LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +MixedNamedArgumentsInTheirOwnPosition +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // SKIP_TXT
 
 fun foo1(

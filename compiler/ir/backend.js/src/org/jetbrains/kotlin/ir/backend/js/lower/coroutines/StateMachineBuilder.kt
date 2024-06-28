@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.lower.FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -51,6 +53,9 @@ class IrDispatchPoint(val target: SuspendState) : IrExpression() {
         set(value) {
             target.entryBlock.type = value
         }
+    
+    override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 }
@@ -78,7 +83,7 @@ class StateMachineBuilder(
     private val setSuspendResultValue: (IrExpression) -> IrStatement
 ) : IrElementVisitorVoid {
 
-    private val loopMap = mutableMapOf<IrLoop, LoopBounds>()
+    private val loopMap = hashMapOf<IrLoop, LoopBounds>()
     private val unit = context.irBuiltIns.unitType
     private val anyN = context.irBuiltIns.anyNType
     private val nothing = context.irBuiltIns.nothingType
@@ -153,10 +158,8 @@ class StateMachineBuilder(
     private var currentState = entryState
     private var currentBlock = entryState.entryBlock
 
-    private val returnableBlockMap = mutableMapOf<IrReturnableBlockSymbol, Pair<SuspendState, IrVariableSymbol?>>()
-
     private val catchBlockStack = mutableListOf(rootExceptionTrap)
-    private val tryStateMap = mutableMapOf<IrExpression, TryState>()
+    private val tryStateMap = hashMapOf<IrExpression, TryState>()
     private val tryLoopStack = mutableListOf<IrExpression>()
 
     private fun buildExceptionTrapState(): SuspendState {
@@ -397,6 +400,13 @@ class StateMachineBuilder(
 
     private fun wrap(expression: IrExpression, variable: IrVariableSymbol) =
         JsIrBuilder.buildSetVariable(variable, expression, unit)
+
+    override fun visitComposite(expression: IrComposite) {
+        if (expression.origin == FINALLY_EXPRESSION) {
+            catchBlockStack.peek()?.let(::setupExceptionState)
+        }
+        super.visitComposite(expression)
+    }
 
     override fun visitWhen(expression: IrWhen) {
 
@@ -650,13 +660,7 @@ class StateMachineBuilder(
     override fun visitReturn(expression: IrReturn) {
         expression.acceptChildrenVoid(this)
         val returnTarget = expression.returnTargetSymbol
-        if (returnTarget is IrReturnableBlockSymbol) {
-            val (exitState, varSymbol) = returnableBlockMap[returnTarget]!!
-            if (varSymbol != null) {
-                transformLastExpression { JsIrBuilder.buildSetVariable(varSymbol, it, it.type) }
-            }
-            maybeDoDispatch(exitState)
-        } else {
+        if (returnTarget !is IrReturnableBlockSymbol) {
             transformLastExpression { expression.apply { value = it } }
         }
     }
@@ -717,7 +721,6 @@ class StateMachineBuilder(
         catchBlockStack.pop()
 
         updateState(tryState.catchState)
-
         setupExceptionState(enclosingCatch)
 
         var rethrowNeeded = true

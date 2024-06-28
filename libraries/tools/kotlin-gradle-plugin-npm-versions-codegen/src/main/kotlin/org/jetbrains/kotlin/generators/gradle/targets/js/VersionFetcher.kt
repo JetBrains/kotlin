@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 import com.google.gson.Gson
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.io.UnsupportedEncodingException
@@ -65,7 +66,7 @@ class VersionFetcher : AutoCloseable {
             else
                 encodeURIComponent(packageName)
 
-        return client.get("http://registry.npmjs.org/$packagePath")
+        return client.get("http://registry.npmjs.org/$packagePath").bodyAsText()
     }
 
     override fun close() {

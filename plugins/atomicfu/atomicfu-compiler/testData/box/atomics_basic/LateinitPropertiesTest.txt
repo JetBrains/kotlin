@@ -1,0 +1,42 @@
+@kotlin.Metadata
+final class LateinitPropertiesTest$Data {
+    // source: 'LateinitPropertiesTest.kt'
+    private final field n: int
+    public method <init>(p0: int): void
+    public final method getN(): int
+    private final inner class LateinitPropertiesTest$Data
+}
+
+@kotlin.Metadata
+public final class LateinitPropertiesTest {
+    // source: 'LateinitPropertiesTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field dataRef$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field dataRef$volatile: java.lang.Object
+    private synthetic final static field head$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field head$volatile: java.lang.Object
+    private synthetic final field lateIntArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final field lateRefArr: java.util.concurrent.atomic.AtomicReferenceArray
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getDataRef$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getDataRef$volatile(): java.lang.Object
+    private synthetic final static method getHead$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getHead$volatile(): java.lang.Object
+    private synthetic final method getLateIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final method getLateRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setDataRef$volatile(p0: java.lang.Object): void
+    private synthetic final method setHead$volatile(p0: java.lang.Object): void
+    public final method test(): void
+    private final inner class LateinitPropertiesTest$Data
+}
+
+@kotlin.Metadata
+public final class LateinitPropertiesTestKt {
+    // source: 'LateinitPropertiesTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

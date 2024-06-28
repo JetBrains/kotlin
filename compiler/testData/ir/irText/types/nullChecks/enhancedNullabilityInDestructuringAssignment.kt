@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
 // FILE: enhancedNullabilityInDestructuringAssignment.kt
 
 fun use(x: Any, y: Any) {}

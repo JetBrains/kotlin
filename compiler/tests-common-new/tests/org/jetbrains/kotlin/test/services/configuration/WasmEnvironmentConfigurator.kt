@@ -7,61 +7,65 @@ package org.jetbrains.kotlin.test.services.configuration
 
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
-import org.jetbrains.kotlin.config.AnalysisFlags.skipPrereleaseCheck
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPECT_ACTUAL_LINKER
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.INFER_MAIN_MODULE
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
-import java.io.File
+import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
-class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+class WasmEnvironmentConfiguratorJs(testServices: TestServices) : WasmEnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        super.configureCompilerConfiguration(configuration, module)
+        configuration.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+    }
+}
+
+class WasmEnvironmentConfiguratorWasi(testServices: TestServices) : WasmEnvironmentConfigurator(testServices) {
+    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        super.configureCompilerConfiguration(configuration, module)
+        configuration.put(WasmConfigurationKeys.WASM_TARGET, WasmTarget.WASI)
+    }
+}
+
+abstract class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JsEnvironmentConfigurationDirectives)
+        get() = listOf(WasmEnvironmentConfigurationDirectives)
 
-    companion object {
-        private fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
-            val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, relation: DependencyRelation) {
-                val dependencies = if (relation == DependencyRelation.FriendDependency) {
-                    module.friendDependencies
-                } else {
-                    module.regularDependencies
-                }
-                dependencies
-                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
-                    .filter { it.kind != DependencyKind.Source }
-                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                        if (it !in visited) {
-                            visited += it
-                            getRecursive(it, relation)
-                        }
-                    }
+    companion object : KlibBasedEnvironmentConfiguratorUtils {
+        fun getRuntimePathsForModule(target: WasmTarget): List<String> {
+            val suffix = when (target) {
+                WasmTarget.JS -> "-js"
+                WasmTarget.WASI -> "-wasi"
+                else -> error("Unexpected wasi target")
             }
-            getRecursive(module, kind)
-            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+            return listOf(System.getProperty("kotlin.wasm$suffix.stdlib.path")!!, System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!)
         }
 
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
-            return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
+        fun getMainModule(testServices: TestServices): TestModule {
+            val modules = testServices.moduleStructure.modules
+            val inferMainModule = INFER_MAIN_MODULE in testServices.moduleStructure.allDirectives
+            return when {
+                inferMainModule -> modules.last()
+                else -> modules.singleOrNull { it.name == ModuleStructureExtractor.DEFAULT_MODULE_NAME } ?: modules.last()
+            }
         }
 
+        fun isMainModule(module: TestModule, testServices: TestServices): Boolean {
+            return module == getMainModule(testServices)
+        }
     }
 
 
@@ -81,10 +85,10 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.ES)
-
-        val noInline = registeredDirectives.contains(NO_INLINE)
-        configuration.put(CommonConfigurationKeys.DISABLE_INLINE, noInline)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name)
+
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
+        configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
 
         val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
@@ -93,6 +97,7 @@ class WasmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfi
         val sourceMapSourceEmbedding = registeredDirectives[SOURCE_MAP_EMBED_SOURCES].singleOrNull() ?: SourceMapSourceEmbedding.NEVER
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, sourceMapSourceEmbedding)
 
-        configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, EXPECT_ACTUAL_LINKER in registeredDirectives)
+        configuration.put(WasmConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS, DISABLE_WASM_EXCEPTION_HANDLING in registeredDirectives)
+        configuration.put(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL, USE_NEW_EXCEPTION_HANDLING_PROPOSAL in registeredDirectives)
     }
 }

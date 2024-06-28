@@ -1,11 +1,9 @@
 FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
   CLASS INTERFACE name:IRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IRunnable
-    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.IRunnable) returnType:kotlin.Unit
-      $this: VALUE_PARAMETER name:<this> type:<root>.IRunnable
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
@@ -16,6 +14,8 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.IRunnable) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.IRunnable
   FUN name:foo1 visibility:public modality:FINAL <> (r:<root>.IRunnable, s:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:r index:0 type:<root>.IRunnable
     VALUE_PARAMETER name:s index:1 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           GET_VAR 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
       CALL 'public final fun foo1 (r: <root>.IRunnable, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           SPREAD_ELEMENT
             GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
@@ -76,13 +76,13 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         r2: TYPE_OP type=<root>.IRunnable origin=SAM_CONVERSION typeOperand=<root>.IRunnable
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           GET_VAR 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
       CALL 'public final fun foo2 (r1: <root>.IRunnable, r2: <root>.IRunnable, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -91,13 +91,13 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         r2: TYPE_OP type=<root>.IRunnable origin=SAM_CONVERSION typeOperand=<root>.IRunnable
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           SPREAD_ELEMENT
             GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           GET_VAR 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
       CALL 'public final fun foo2 (r1: <root>.IRunnable, r2: <root>.IRunnable, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -120,7 +120,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           SPREAD_ELEMENT
             GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           GET_VAR 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
       CALL 'public final fun foo2 (r1: <root>.IRunnable, r2: <root>.IRunnable, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -141,7 +141,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument_fi.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                  GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         s: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           SPREAD_ELEMENT
             GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null

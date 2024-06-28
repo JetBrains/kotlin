@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // FILE: implicitNotNullOnDelegatedImplementation.kt
 interface IFoo {
     fun foo(): String

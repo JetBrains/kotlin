@@ -1,2 +1,2 @@
-expression: Base<*>
-ktType: Base<*>
+KtTypeReference: Base<*>
+KaType: Base<*>

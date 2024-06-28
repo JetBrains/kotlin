@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
@@ -76,11 +79,12 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
 
+    protected open fun postprocessCreatedObjectProxy(klass: IrClass) {}
+
     override fun lower(irFile: IrFile) {
         cachedImplementations.clear()
         inlineCachedImplementations.clear()
-        enclosingContainer = irFile.declarations.filterIsInstance<IrClass>().find { it.isFileClass }
-            ?: irFile
+        enclosingContainer = irFile.declarations.findIsInstanceAnd<IrClass> { it.isFileClass } ?: irFile
         irFile.transformChildrenVoid()
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
@@ -177,7 +181,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             setSourceRange(createFor)
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            superTypes = listOf(superType) + getAdditionalSupertypes(superType)
+            superTypes = listOf(superType) memoryOptimizedPlus getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }
 
@@ -221,7 +225,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             overriddenSymbols = listOf(originalSuperMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             extensionReceiverParameter = originalSuperMethod.extensionReceiverParameter?.copyTo(this)
-            valueParameters = originalSuperMethod.valueParameters.map { it.copyTo(this) }
+            valueParameters = originalSuperMethod.valueParameters.memoryOptimizedMap { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(
@@ -245,6 +249,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             // Later lowerings will fix it and replace function with one overriding transformedSuperMethod.
             ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
         )
+
+        postprocessCreatedObjectProxy(subclass)
 
         return subclass
     }
@@ -293,7 +299,9 @@ class SamEqualsHashCodeMethodsGenerator(
         klass.addFunction(getFunctionDelegate.name.asString(), getFunctionDelegate.returnType).apply {
             overriddenSymbols = listOf(getFunctionDelegate.symbol)
             body = context.createIrBuilder(symbol).run {
-                irExprBody(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))
+                irBlockBody {
+                    +irReturn(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))
+                }
             }
         }
     }
@@ -302,26 +310,28 @@ class SamEqualsHashCodeMethodsGenerator(
         anyGenerator.createEqualsMethodDeclaration().apply {
             val other = valueParameters[0]
             body = context.createIrBuilder(symbol).run {
-                irExprBody(
-                    irIfThenElse(
-                        builtIns.booleanType,
-                        irIs(irGet(other), samSuperType),
+                irBlockBody {
+                    +irReturn(
                         irIfThenElse(
                             builtIns.booleanType,
-                            irIs(irGet(other), functionAdapterClass.typeWith()),
-                            irEquals(
-                                irCall(getFunctionDelegate).also {
-                                    it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
-                                },
-                                irCall(getFunctionDelegate).also {
-                                    it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
-                                }
+                            irIs(irGet(other), samSuperType),
+                            irIfThenElse(
+                                builtIns.booleanType,
+                                irIs(irGet(other), functionAdapterClass.typeWith()),
+                                irEquals(
+                                    irCall(getFunctionDelegate).also {
+                                        it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                                    },
+                                    irCall(getFunctionDelegate).also {
+                                        it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
+                                    }
+                                ),
+                                irFalse()
                             ),
                             irFalse()
-                        ),
-                        irFalse()
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -330,13 +340,15 @@ class SamEqualsHashCodeMethodsGenerator(
         anyGenerator.createHashCodeMethodDeclaration().apply {
             val hashCode = context.irBuiltIns.functionClass.owner.functions.single { it.isHashCode() }.symbol
             body = context.createIrBuilder(symbol).run {
-                irExprBody(
-                    irCall(hashCode).also {
-                        it.dispatchReceiver = irCall(getFunctionDelegate).also {
-                            it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                irBlockBody {
+                    +irReturn(
+                        irCall(hashCode).also {
+                            it.dispatchReceiver = irCall(getFunctionDelegate).also {
+                                it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

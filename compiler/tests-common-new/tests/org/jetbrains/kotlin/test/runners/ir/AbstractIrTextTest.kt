@@ -5,68 +5,66 @@
 
 package org.jetbrains.kotlin.test.runners.ir
 
-import org.jetbrains.kotlin.platform.js.JsPlatforms
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
 import org.jetbrains.kotlin.test.directives.configureFirParser
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
-import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
-    AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR)
-{
+abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+    private val targetPlatform: TargetPlatform,
+    targetBackend: TargetBackend
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontend: FrontendKind<*>
-    abstract val frontendFacade: Constructor<FrontendFacade<R>>
-    abstract val converter: Constructor<Frontend2BackendConverter<R, IrBackendInput>>
+    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
+    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
 
-    open fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JvmEnvironmentConfigurator
-        )
-    }
+    open fun TestConfigurationBuilder.applyConfigurators() {}
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
-            frontend = this@AbstractIrTextTestBase.frontend
-            targetPlatform = JvmPlatforms.defaultJvmPlatform
+            frontend = this@AbstractIrTextTest.frontend
+            targetPlatform = this@AbstractIrTextTest.targetPlatform
             artifactKind = BinaryKind.NoArtifact
-            targetBackend = TargetBackend.JVM_IR
+            targetBackend = this@AbstractIrTextTest.targetBackend
             dependencyKind = DependencyKind.Source
         }
 
         defaultDirectives {
             +DUMP_IR
             +DUMP_KT_IR
+            +DUMP_SIGNATURES
+            +LINK_VIA_SIGNATURES_K1
+            +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+            DIAGNOSTICS with "-warnings"
         }
 
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor
+        )
+
         applyConfigurators()
+        enableMetaInfoHandler()
 
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
@@ -77,13 +75,15 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
         facadeStep(frontendFacade)
         classicFrontendHandlersStep {
             useHandlers(
-                ::NoCompilationErrorsHandler
+                ::NoCompilationErrorsHandler,
+                ::ClassicDiagnosticsHandler
             )
         }
 
         firHandlersStep {
             useHandlers(
-                ::NoFirCompilationErrorsHandler
+                ::NoFirCompilationErrorsHandler,
+                ::FirDiagnosticsHandler
             )
         }
 
@@ -93,82 +93,31 @@ abstract class AbstractIrTextTestBase<R : ResultingArtifact.FrontendOutput<R>> :
             useHandlers(
                 ::IrTextDumpHandler,
                 ::IrTreeVerifierHandler,
-                ::IrPrettyKotlinDumpHandler
+                ::IrPrettyKotlinDumpHandler,
+                ::IrSourceRangesDumpHandler,
+                ::IrMangledNameAndSignatureDumpHandler,
             )
-        }
-    }
-}
-
-open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArtifact>() {
-    override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-    override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2IrConverter
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useAfterAnalysisCheckers(
-                ::BlackBoxCodegenSuppressor,
-            )
-        }
-    }
-}
-
-open class AbstractFirIrTextTestBase(val parser: FirParser) : AbstractIrTextTestBase<FirOutputArtifact>() {
-    override val frontend: FrontendKind<*>
-        get() = FrontendKinds.FIR
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            configureFirParser(parser)
             useAfterAnalysisCheckers(
                 ::FirIrDumpIdenticalChecker,
-                ::BlackBoxCodegenSuppressor
             )
+        }
+    }
 
-            forTestsMatching("compiler/fir/fir2ir/testData/ir/irText/properties/backingField/*") {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-                }
+    protected fun TestConfigurationBuilder.commonConfigurationForK2(parser: FirParser) {
+        configureFirParser(parser)
+
+        configureFirHandlersStep {
+            useHandlersAtFirst(
+                ::FirDumpHandler,
+                ::FirScopeDumpHandler,
+            )
+        }
+
+        forTestsMatching("compiler/testData/ir/irText/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
             }
         }
     }
 }
 
-open class AbstractFirLightTreeIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree)
-
-@FirPsiCodegenTest
-open class AbstractFirPsiIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi)
-
-open class AbstractFirIrJsTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser) {
-    override fun TestConfigurationBuilder.applyConfigurators() {
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
-        )
-
-        useAdditionalService(::JsLibraryProvider)
-    }
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            globalDefaults {
-                targetPlatform = JsPlatforms.defaultJsPlatform
-                artifactKind = BinaryKind.NoArtifact
-                targetBackend = TargetBackend.JS_IR
-                dependencyKind = DependencyKind.Source
-            }
-        }
-    }
-}
-
-open class AbstractFirLightTreeIrJsTextTest : AbstractFirIrJsTextTestBase(FirParser.LightTree)

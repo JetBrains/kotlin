@@ -1,0 +1,13 @@
+FILE: singleIntersectionOverride.kt
+    public abstract interface A<E1> : R|kotlin/Any| {
+        public abstract fun foo(): R|E1|
+
+    }
+    public abstract interface B<E2> : R|A<E2>| {
+        public abstract override fun foo(): R|E2|
+
+    }
+    public abstract interface C<E3> : R|A<E3>| {
+    }
+    public abstract interface D<E4> : R|B<E4>|, R|C<E4>| {
+    }

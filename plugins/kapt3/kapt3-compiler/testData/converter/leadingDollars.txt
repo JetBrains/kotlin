@@ -33,6 +33,18 @@ public class Test$ {
 
 package test;
 
+/**
+ * package {
+ *
+ *   // signature: test(L$Test$$Inner;)V
+ *   public final fun test(a: $Test.$Inner): kotlin/Unit
+ *
+ *   // signature: test(LTest$$Inner$;)V
+ *   public final fun test(a: Test$.Inner$): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TestKt {
 

@@ -1,0 +1,45 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol context(R|Foo|)
+            public final class Test : R|kotlin/Any|
+                Type: Test
+    Element 7
+        Context receivers:
+            FirRegularClassSymbol context(R|Foo|)
+            public final class Test : R|kotlin/Any|
+                Type: Foo
+                Label: Foo
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int
+
+    }
+    context(Foo)
+    public final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] constructor(): R|Test| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+            this@R|/Test|.R|/Foo.foo|()
+        }
+
+    }

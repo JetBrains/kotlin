@@ -9,7 +9,7 @@
 
 #include <functional>
 
-#import <UIKit/UIApplication.h>
+#import <UIKit/UIKit.h>
 
 #include "CompilerConstants.hpp"
 #include "objc_support/NSNotificationSubscription.hpp"
@@ -34,7 +34,7 @@ mm::AppStateTracking::AppStateTracking() noexcept {
         case compiler::AppStateTracking::kDisabled:
             break;
         case compiler::AppStateTracking::kEnabled:
-            impl_ = std_support::make_unique<Impl>([this](State state) noexcept { setState(state); });
+            impl_ = std::make_unique<Impl>([this](State state) noexcept { setState(state); });
             break;
     }
 }

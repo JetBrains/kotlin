@@ -22,8 +22,8 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.util.PropertiesCollection
 
 class ScriptCompilationConfigurationFromDefinition(
-    val hostConfiguration: ScriptingHostConfiguration,
-    val scriptDefinition: KotlinScriptDefinition
+    hostConfiguration: ScriptingHostConfiguration,
+    scriptDefinition: KotlinScriptDefinition
 ) : ScriptCompilationConfiguration(
     {
         hostConfiguration(hostConfiguration)

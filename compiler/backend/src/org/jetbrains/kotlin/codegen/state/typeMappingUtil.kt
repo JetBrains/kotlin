@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.suppressWildcardsMode
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.getEffectiveVariance
@@ -89,31 +91,6 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
     FqNames.mutableMap.child("putAll")
 )
 
-fun TypeMappingMode.updateArgumentModeFromAnnotations(
-    type: KotlinTypeMarker, typeSystem: TypeSystemCommonBackendContext
-): TypeMappingMode {
-    type.suppressWildcardsMode(typeSystem)?.let {
-        return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
-                skipDeclarationSiteWildcards = it,
-                isForAnnotationParameter = isForAnnotationParameter,
-                needInlineClassWrapping = needInlineClassWrapping,
-                mapTypeAliases = mapTypeAliases
-        )
-    }
-
-    if (with(typeSystem) { type.hasAnnotation(JVM_WILDCARD_ANNOTATION_FQ_NAME) }) {
-        return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
-            skipDeclarationSiteWildcards = false,
-            isForAnnotationParameter = isForAnnotationParameter,
-            fallbackMode = this,
-            needInlineClassWrapping = needInlineClassWrapping,
-            mapTypeAliases = mapTypeAliases
-        )
-    }
-
-    return this
-}
-
 internal fun extractTypeMappingModeFromAnnotation(
     callableDescriptor: CallableDescriptor?,
     outerType: KotlinType,
@@ -148,15 +125,6 @@ private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
         it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
     }.firstOrNull()?.suppressWildcardsMode()
 
-private fun KotlinTypeMarker.suppressWildcardsMode(typeSystem: TypeSystemCommonBackendContext): Boolean? =
-    with(typeSystem) {
-        if (hasAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME))
-            getAnnotationFirstArgumentValue(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME) as? Boolean ?: true
-        else null
-    }
 
 private fun AnnotationDescriptor.suppressWildcardsMode(): Boolean? =
     allValueArguments.values.firstOrNull()?.value as? Boolean ?: true
-
-val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
-val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")

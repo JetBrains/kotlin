@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 
 internal open class KotlinJsIrLinkConfig(
-    private val binary: JsIrBinary
+    private val binary: JsIrBinary,
 ) : BaseKotlin2JsCompileConfig<KotlinJsIrLink>(KotlinCompilationInfo(binary.compilation)) {
 
     private val compilation
@@ -27,29 +28,36 @@ internal open class KotlinJsIrLinkConfig(
 
             task.dependsOn(compilation.compileTaskProvider)
             task.dependsOn(compilation.output.classesDirs)
+            // We still support Gradle 6.8 in tests
+            // Gradle 6.8 has a bug with verifying of not getting provider before Task execution
             task.entryModule.fileProvider(
-                compilation.output.classesDirs.elements.flatMap {
-                    task.project.providers.provider {
-                        it.single().asFile
-                    }
+                task.project.providers.provider {
+                    val elements = compilation.output.classesDirs.elements.get()
+                    elements.singleOrNull()?.asFile
+                        ?: throw IllegalStateException(
+                            "Only one output fo compilation expected," +
+                                    "but actual: ${elements.joinToString(prefix = "[", postfix = "]") { it.toString() }}"
+                        )
                 }
             ).disallowChanges()
             task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/js/${binary.name}") })
             task.destinationDirectory.convention(
                 project.layout.buildDirectory
                     .dir(COMPILE_SYNC)
-                    .map { it.dir(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js") }
+                    .map { it.dir(compilation.target.targetName) }
                     .map { it.dir(compilation.name) }
                     .map { it.dir(binary.name) }
                     .map { it.dir(NpmProject.DIST_FOLDER) }
             )
-            task.compilerOptions.moduleName.convention(project.provider { compilation.npmProject.name })
+            task.compilerOptions.moduleName.set(project.provider { compilation.npmProject.name })
+
+            task._outputFileProperty.convention(binary.mainFile.map { it.asFile })
         }
     }
 
     override fun configureAdditionalFreeCompilerArguments(
         task: KotlinJsIrLink,
-        compilation: KotlinCompilationInfo
+        compilation: KotlinCompilationInfo,
     ) {
         task.enhancedFreeCompilerArgs.value(
             task.compilerOptions.freeCompilerArgs.zip(task.modeProperty) { freeArgs, mode ->
@@ -77,7 +85,9 @@ internal open class KotlinJsIrLinkConfig(
 
                     val alreadyDefinedOutputMode = any { it.startsWith(PER_MODULE) }
                     if (!alreadyDefinedOutputMode) {
-                        add(task.outputGranularity.toCompilerArgument())
+                        task.outputGranularity.toCompilerArgument()?.let {
+                            add(it)
+                        }
                     }
                 }
             }
@@ -86,16 +96,17 @@ internal open class KotlinJsIrLinkConfig(
 
     private fun MutableList<String>.configureOptions(
         compilation: KotlinCompilationInfo,
-        vararg additionalCompilerArgs: String
+        vararg additionalCompilerArgs: String,
     ) {
         additionalCompilerArgs.forEach { arg ->
             if (none { it.startsWith(arg) }) add(arg)
         }
 
-        add(PRODUCE_JS)
-
         if (compilation.platformType == KotlinPlatformType.wasm) {
             add(WASM_BACKEND)
+            val wasmTargetType = ((compilation.origin as KotlinJsIrCompilation).target as KotlinJsIrTarget).wasmTargetType!!
+            val targetValue = if (wasmTargetType == KotlinWasmTargetType.WASI) "wasm-wasi" else "wasm-js"
+            add("$WASM_TARGET=$targetValue")
         }
     }
 }

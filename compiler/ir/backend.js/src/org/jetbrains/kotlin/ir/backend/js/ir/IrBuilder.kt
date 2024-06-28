@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
-    object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
+    val SYNTHESIZED_DECLARATION by IrDeclarationOriginImpl
 
     fun buildCall(
         target: IrSimpleFunctionSymbol,
@@ -143,14 +143,22 @@ object JsIrBuilder {
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
 
-    fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
+    fun buildGetField(
+        symbol: IrFieldSymbol,
+        receiver: IrExpression? = null,
+        superQualifierSymbol: IrClassSymbol? = null,
+        type: IrType? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+        origin: IrStatementOrigin? = JsStatementOrigins.SYNTHESIZED_STATEMENT
+    ) =
         IrGetFieldImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             symbol,
             type ?: symbol.owner.type,
             receiver,
-            JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            origin,
             superQualifierSymbol
         )
 
@@ -181,12 +189,13 @@ object JsIrBuilder {
         isVar: Boolean = false,
         isConst: Boolean = false,
         isLateinit: Boolean = false,
-        initializer: IrExpression? = null
+        initializer: IrExpression? = null,
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrVariable = buildVariable(
         parent,
         UNDEFINED_OFFSET,
         UNDEFINED_OFFSET,
-        SYNTHESIZED_DECLARATION,
+        origin,
         Name.identifier(name),
         type,
         isVar,

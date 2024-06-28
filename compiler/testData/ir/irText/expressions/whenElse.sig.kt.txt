@@ -1,0 +1,10 @@
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.Int
+//   Public signature: /test|4216975235718029399[0]
+//   Public signature debug description: test(){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Int
+

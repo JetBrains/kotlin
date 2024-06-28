@@ -5,27 +5,30 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
 
+fun IrClassifierSymbol?.isArrayOrPrimitiveArray(builtins: IrBuiltIns): Boolean =
+    this == builtins.arrayClass || this in builtins.primitiveArraysToPrimitiveTypes
+
+// Constructors can't be marked as inline in metadata, hence this check.
+fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
+    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
+
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
-        is IrPackageFragment -> this.fqName
+        is IrPackageFragment -> this.packageFqName
         is IrDeclarationWithName -> this.parent.fqNameForIrSerialization.child(this.name)
         else -> error(this)
     }
@@ -35,7 +38,7 @@ val IrDeclarationParent.fqNameForIrSerialization: FqName
  */
 val IrDeclarationParent.kotlinFqName: FqName
     get() = when (this) {
-        is IrPackageFragment -> this.fqName
+        is IrPackageFragment -> this.packageFqName
         is IrClass -> {
             if (isFileClass) {
                 parent.kotlinFqName
@@ -48,10 +51,47 @@ val IrDeclarationParent.kotlinFqName: FqName
     }
 
 val IrClass.classId: ClassId?
+    get() = classIdImpl
+
+val IrTypeAlias.classId: ClassId?
+    get() = classIdImpl
+
+private val IrDeclarationWithName.classIdImpl: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
-        is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
+        is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
         else -> null
+    }
+
+val IrClass.classIdOrFail: ClassId
+    get() = classIdOrFailImpl
+
+val IrTypeAlias.classIdOrFail: ClassId
+    get() = classIdOrFailImpl
+
+private val IrDeclarationWithName.classIdOrFailImpl: ClassId
+    get() = classIdImpl ?: error("No classId for $this")
+
+val IrFunction.callableId: CallableId
+    get() = callableIdImpl
+
+val IrProperty.callableId: CallableId
+    get() = callableIdImpl
+
+val IrField.callableId: CallableId
+    get() = callableIdImpl
+
+val IrEnumEntry.callableId: CallableId
+    get() = callableIdImpl
+
+private val IrDeclarationWithName.callableIdImpl: CallableId
+    get() {
+        if (this.symbol is IrClassifierSymbol) error("Classifiers can not have callableId. Got $this")
+        return when (val parent = this.parent) {
+            is IrClass -> parent.classId?.let { CallableId(it, name) }
+            is IrPackageFragment -> CallableId(parent.packageFqName, name)
+            else -> null
+        } ?: error("$this has no callableId")
     }
 
 @Suppress("unused")
@@ -97,20 +137,40 @@ fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
     annotationClass.hasEqualFqName(fqName)
 
 val IrClass.packageFqName: FqName?
-    get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
+    get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
-    symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
-        is IrPackageFragment -> parent.fqName == fqName.parent()
+    name == fqName.shortName() && when (val parent = parent) {
+        is IrPackageFragment -> parent.packageFqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false
     }
 
+fun IrDeclarationWithName.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean =
+    symbol.hasTopLevelEqualFqName(packageName, declarationName) || name.asString() == declarationName && when (val parent = parent) {
+        is IrPackageFragment -> parent.packageFqName.asString() == packageName
+        else -> false
+    }
+
 fun IrSymbol.hasEqualFqName(fqName: FqName): Boolean {
-    return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
-        FqName("$packageFqName.$declarationFqName") == fqName
+    return this is IrClassSymbol && with(signature as? IdSignature.CommonSignature ?: return false) {
+        // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
+        val fqNameAsString = fqName.asString()
+        fqNameAsString.length == packageFqName.length + 1 + declarationFqName.length &&
+                fqNameAsString[packageFqName.length] == '.' &&
+                fqNameAsString.startsWith(packageFqName) &&
+                fqNameAsString.endsWith(declarationFqName)
     }
 }
+
+private fun IrSymbol.hasTopLevelEqualFqName(packageName: String, declarationName: String): Boolean {
+    return this is IrClassSymbol && with(signature as? IdSignature.CommonSignature ?: return false) {
+        // optimized version of FqName("$packageFqName.$declarationFqName") == fqName
+        packageFqName == packageName && declarationFqName == declarationName
+    }
+}
+
+fun List<IrConstructorCall>.hasAnnotation(classId: ClassId): Boolean = hasAnnotation(classId.asSingleFqName())
 
 fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
     any { it.annotationClass.hasEqualFqName(fqName) }
@@ -128,6 +188,8 @@ val IrDeclaration.fileEntry: IrFileEntry
         }
     }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.companionObject(): IrClass? =
     this.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?
 
@@ -203,55 +265,32 @@ val IrFileEntry.lineStartOffsets: IntArray
 
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
-    private val lineStartOffsets: IntArray = intArrayOf(),
+    override val lineStartOffsets: IntArray = intArrayOf(),
     override val maxOffset: Int = UNDEFINED_OFFSET
-) : IrFileEntry {
+) : AbstractIrFileEntry() {
     val lineStartOffsetsAreEmpty: Boolean
         get() = lineStartOffsets.isEmpty()
 
-    private val MAX_SAVED_LINE_NUMBERS = 50
-
-    // Map with several last calculated line numbers.
-    // Calculating for same offset is made many times during code and debug info generation.
-    // In the worst case at least getting column recalculates line because it is usually called after getting line.
-    private val calculatedBeforeLineNumbers = object : SLRUCache<Int, Int>(
-        MAX_SAVED_LINE_NUMBERS / 2, MAX_SAVED_LINE_NUMBERS / 2
-    ) {
-        override fun createValue(key: Int): Int {
-            val index = lineStartOffsets.binarySearch(key)
-            return if (index >= 0) index else -index - 2
-        }
-    }
-
-    private val lineNumberLock = Any()
-
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
-        return synchronized(lineNumberLock) { calculatedBeforeLineNumbers.get(offset) }
+        return super.getLineNumber(offset)
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
-        val lineNumber = getLineNumber(offset)
-        return if (lineNumber < 0) -1 else offset - lineStartOffsets[lineNumber]
+        return super.getColumnNumber(offset)
     }
 
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        SourceRangeInfo(
-            filePath = name,
-            startOffset = beginOffset,
-            startLineNumber = getLineNumber(beginOffset),
-            startColumnNumber = getColumnNumber(beginOffset),
-            endOffset = endOffset,
-            endLineNumber = getLineNumber(endOffset),
-            endColumnNumber = getColumnNumber(endOffset)
-        )
+    override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+        if (offset == SYNTHETIC_OFFSET) return LineAndColumn(0, 0)
+        return super.getLineAndColumnNumbers(offset)
+    }
 }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
-    val properties = declarations.filterIsInstance<IrProperty>().filter { it.name.asString() == name }
+    val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
         error(
             "More than one property with name $name in class $fqNameWhenAvailable:\n" +
@@ -264,18 +303,36 @@ private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
 fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.getter?.symbol
         ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.setter?.symbol
         ?: getSimpleFunction("<set-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? = owner.getSimpleFunction(name)
+
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertyGetter(name)
+
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
     return annotations.filterNot { it.annotationClass.hasEqualFqName(fqName) }
 }
+
+fun IrFunction.isBuiltInSuspendCoroutine(): Boolean =
+    isTopLevelInPackage("suspendCoroutine", StandardNames.COROUTINES_PACKAGE_FQ_NAME)
+
+fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
+    isTopLevelInPackage(
+        "suspendCoroutineUninterceptedOrReturn",
+        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
+    )

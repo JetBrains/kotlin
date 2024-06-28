@@ -1,0 +1,13 @@
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(55,83): warning: Cannot access class 'InaccessibleType' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(84,112): error: Cannot access class 'InaccessibleType'. Check your module classpath for missing or conflicting dependencies.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(84,114): error: Argument type mismatch: actual type is 'Box<CapturedType(out ERROR CLASS: Inconsistent type: InaccessibleType<kotlin/Any?> (parameters.size = 0, arguments.size = 1))>', but 'Box<InaccessibleType<kotlin.Any?>>' was expected.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(145,173): warning: Cannot access class 'InaccessibleType' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(180,208): warning: Cannot access class 'InaccessibleType' in the expression type. While it may work, this case indicates a configuration mistake and can lead to avoidable compilation errors, so it may be forbidden soon. Check your module classpath for missing or conflicting dependencies.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(209,210): error: Cannot access class 'InaccessibleType'. Check your module classpath for missing or conflicting dependencies.
+
+/module_main_BoxedInaccessibleGenericTypeUsedByDependencies.fir.kt:(209,210): error: Argument type mismatch: actual type is 'Box<CapturedType(out ERROR CLASS: Inconsistent type: InaccessibleType<kotlin/Any?> (parameters.size = 0, arguments.size = 1))>', but 'Box<InaccessibleType<kotlin.Any?>>' was expected.

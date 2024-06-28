@@ -9,6 +9,13 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.test1'
                   GET_VAR 'x: @[FlexibleNullability] kotlin.String? declared in <root>.test1.<anonymous>' type=@[FlexibleNullability] kotlin.String? origin=null
+  FUN name:test10 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
+    BLOCK_BODY
+      CALL 'public open fun bar2x <Y> (j2x: @[FlexibleNullability] <root>.J2X<@[FlexibleNullability] Y of <root>.H.bar2x?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+        <Y>: @[FlexibleNullability] kotlin.Int?
+        j2x: TYPE_OP type=<root>.J2X<@[FlexibleNullability] kotlin.Int?> origin=SAM_CONVERSION typeOperand=<root>.J2X<@[FlexibleNullability] kotlin.Int?>
+          GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:<root>.J<@[FlexibleNullability] kotlin.String?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (): <root>.J<@[FlexibleNullability] kotlin.String?> declared in <root>'
@@ -24,7 +31,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Unit declared in <root>'
         CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
           <X>: @[FlexibleNullability] kotlin.String?
-          j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>?
+          j: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.String?>
             FUN_EXPR type=kotlin.Function1<kotlin.String, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:@[FlexibleNullability] kotlin.String?
                 VALUE_PARAMETER name:x index:0 type:kotlin.String
@@ -49,7 +56,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
           GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] kotlin.String?
-        j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>?
+        j: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.String?>
           TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
   FUN name:test6 visibility:public modality:FINAL <T> (a:kotlin.Function1<T of <root>.test6, T of <root>.test6>) returnType:kotlin.Unit
@@ -58,7 +65,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] T of <root>.test6?
-        j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test6?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test6?>?
+        j: TYPE_OP type=<root>.J<@[FlexibleNullability] T of <root>.test6?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] T of <root>.test6?>
           GET_VAR 'a: kotlin.Function1<T of <root>.test6, T of <root>.test6> declared in <root>.test6' type=kotlin.Function1<T of <root>.test6, T of <root>.test6> origin=null
   FUN name:test7 visibility:public modality:FINAL <T> (a:kotlin.Any) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -69,7 +76,7 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
           GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] T of <root>.test7?
-        j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test7?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] T of <root>.test7?>?
+        j: TYPE_OP type=<root>.J<@[FlexibleNullability] T of <root>.test7?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] T of <root>.test7?>
           TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
             GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
   FUN name:test8 visibility:public modality:FINAL <> (efn:@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.J<@[FlexibleNullability] kotlin.String?>
@@ -83,12 +90,5 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     BLOCK_BODY
       CALL 'public open fun bar <X> (j: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: @[FlexibleNullability] kotlin.String?
-        j: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?>?
+        j: TYPE_OP type=<root>.J<@[FlexibleNullability] kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<@[FlexibleNullability] kotlin.String?>
           GET_VAR 'efn: @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test9' type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> origin=null
-  FUN name:test10 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
-    BLOCK_BODY
-      CALL 'public open fun bar2x <Y> (j2x: @[FlexibleNullability] <root>.J2X<@[FlexibleNullability] Y of <root>.H.bar2x?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
-        <Y>: @[FlexibleNullability] kotlin.Int?
-        j2x: TYPE_OP type=@[FlexibleNullability] <root>.J2X<@[FlexibleNullability] kotlin.Int?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J2X<@[FlexibleNullability] kotlin.Int?>?
-          GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null

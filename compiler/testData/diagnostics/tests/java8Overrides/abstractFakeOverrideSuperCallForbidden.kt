@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ForbidSuperDelegationToAbstractFakeOverride +ForbidSuperDelegationToAbstractAnyMethod
+// LANGUAGE: +ForbidSuperDelegationToAbstractFakeOverride +ForbidSuperDelegationToAbstractAnyMethod
 interface Foo {
     fun check(): String = "OK"
 }

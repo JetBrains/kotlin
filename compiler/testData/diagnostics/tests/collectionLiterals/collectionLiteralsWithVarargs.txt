@@ -7,6 +7,7 @@ package
 @Ann3(a = {0.0.toFloat(), Infinity.toFloat()}) public fun test3(): kotlin.Unit
 @Ann5(a = {Ann4(a = {"/"})}) public fun test5(): kotlin.Unit
 @Ann6(a = {}) public fun test6(): kotlin.Unit
+@Ann7(a = {1.toLong(), 2.toLong()}) public fun test7(): kotlin.Unit
 @AnnArray(a = {"/"}) public fun testArray(): kotlin.Unit
 @Ann1(a = {{""}}) public fun testVararg(): kotlin.Unit
 

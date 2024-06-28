@@ -66,5 +66,5 @@ FILE: const.kt
         private get(): R|kotlin/Int|
     private final const val PATCH_MASK: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(R|/PATCH_BITS|).R|kotlin/Int.minus|(Int(1))
         private get(): R|kotlin/Int|
-    private final const val stringFromJava: R|kotlin/String| = Q|Constants|.R|/Constants.FIRST|.R|kotlin/String.plus|(String(+)).R|kotlin/String.plus|(Q|Constants|.R|/Constants.SECOND|)
+    private final const val stringFromJava: R|kotlin/String| = Q|Constants|.R|/Constants.FIRST*s|.R|kotlin/String.plus|(String(+)).R|kotlin/String.plus|(Q|Constants|.R|/Constants.SECOND*s|)
         private get(): R|kotlin/String|

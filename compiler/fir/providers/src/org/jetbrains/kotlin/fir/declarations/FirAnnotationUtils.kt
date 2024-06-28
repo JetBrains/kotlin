@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirEvaluatorResult
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.PrivateForInline
+
+// --------------------------- annotation -> type/class ---------------------------
 
 fun FirAnnotation.toAnnotationClassLikeType(session: FirSession): ConeClassLikeType? =
     // this cast fails when we have generic-typed annotations @T
@@ -43,88 +47,25 @@ fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
 fun FirAnnotation.toAnnotationClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? =
     toAnnotationLookupTag(session)?.toSymbol(session)
 
-private fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
+fun FirAnnotation.toAnnotationClass(session: FirSession): FirRegularClass? =
     toAnnotationClassLikeSymbol(session)?.fir as? FirRegularClass
 
-// TODO: this is temporary solution, we need something better
-private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
-    get() =
-        (this as? FirQualifiedAccessExpression)?.let {
-            val callableSymbol = it.calleeReference.toResolvedCallableSymbol()
-            callableSymbol?.callableId?.callableName
-        }
+// --------------------------- annotations lookup/filtering ---------------------------
 
-private val sourceName = Name.identifier("SOURCE")
+private val sourceName: Name = Name.identifier("SOURCE")
 
 fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     this.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
-        firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
+        firAnnotationClass != null && firAnnotationClass.symbol.resolvedAnnotationsWithClassIds.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
                     meta.findArgumentByName(StandardClassIds.Annotations.ParameterNames.retentionValue)
-                        ?.callableNameOfMetaAnnotationArgument == sourceName
+                        ?.extractEnumValueArgumentInfo()?.enumEntryName == sourceName
         }
     }
 
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     annotations.nonSourceAnnotations(session)
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean = annotations.any { it.isJvmFieldAnnotation(session) }
-
-fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.JvmField
-
-fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
-    return toAnnotationClass(session)
-        ?.annotations
-        ?.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Target }
-        ?.findUseSiteTargets()
-        ?: DEFAULT_USE_SITE_TARGETS
-}
-
-private fun FirAnnotation.findUseSiteTargets(): Set<AnnotationUseSiteTarget> = buildSet {
-    fun addIfMatching(arg: FirExpression) {
-        if (arg !is FirQualifiedAccessExpression) return
-        val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.containingClassLookupTag()?.classId == StandardClassIds.AnnotationTarget) {
-            USE_SITE_TARGET_NAME_MAP[callableSymbol.callableId.callableName.identifier]?.let { addAll(it) }
-        }
-    }
-
-    if (this@findUseSiteTargets is FirAnnotationCall) {
-        for (arg in argumentList.arguments) {
-            arg.unwrapAndFlattenArgument().forEach(::addIfMatching)
-        }
-    } else {
-        argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]
-            ?.unwrapAndFlattenArgument()
-            ?.forEach(::addIfMatching)
-    }
-}
-
-
-// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.USE_SITE_MAPPING] (it's in reverse)
-private val USE_SITE_TARGET_NAME_MAP = mapOf(
-    "FIELD" to setOf(AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD),
-    "FILE" to setOf(AnnotationUseSiteTarget.FILE),
-    "PROPERTY" to setOf(AnnotationUseSiteTarget.PROPERTY),
-    "PROPERTY_GETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_GETTER),
-    "PROPERTY_SETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_SETTER),
-    "VALUE_PARAMETER" to setOf(
-        AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
-        AnnotationUseSiteTarget.RECEIVER,
-        AnnotationUseSiteTarget.SETTER_PARAMETER,
-    ),
-)
-
-// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget] (the second argument of each entry)
-private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
-    USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
-
-fun FirDeclaration.hasAnnotation(type: ConeClassLikeType, session: FirSession): Boolean {
-    return annotations.hasAnnotation(type, session)
-}
 
 fun FirDeclaration.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return annotations.hasAnnotation(classId, session)
@@ -142,10 +83,6 @@ fun FirAnnotationContainer.hasAnnotation(classId: ClassId, session: FirSession):
     return annotations.hasAnnotation(classId, session)
 }
 
-fun List<FirAnnotation>.hasAnnotation(type: ConeClassLikeType, session: FirSession): Boolean {
-    return this.any { it.toAnnotationClassLikeType(session) == type }
-}
-
 fun List<FirAnnotation>.hasAnnotation(classId: ClassId, session: FirSession): Boolean {
     return this.any { it.toAnnotationClassId(session) == classId }
 }
@@ -154,7 +91,7 @@ fun List<FirAnnotation>.hasAnnotationSafe(classId: ClassId, session: FirSession)
     return this.any { it.toAnnotationClassIdSafe(session) == classId }
 }
 
-fun <D> FirBasedSymbol<out D>.getAnnotationByClassId(
+fun <D> FirBasedSymbol<D>.getAnnotationByClassId(
     classId: ClassId,
     session: FirSession
 ): FirAnnotation? where D : FirAnnotationContainer, D : FirDeclaration {
@@ -174,31 +111,30 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
-        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+        it.doesMatchesClassId(classId, session)
     }
 }
 
-inline fun <T> List<FirAnnotation>.mapAnnotationsWithClassIdTo(
+private fun FirAnnotation.doesMatchesClassId(
     classId: ClassId,
-    destination: MutableCollection<T>,
-    func: (FirAnnotation) -> T
-) {
-    for (annotation in this) {
-        if (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId) {
-            destination.add(func(annotation))
-        }
+    session: FirSession,
+): Boolean = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+
+fun List<FirAnnotation>.filterOutAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
+    return filterNot {
+        it.doesMatchesClassId(classId, session)
     }
 }
 
-fun FirExpression.unwrapVarargValue(): List<FirExpression> {
-    return when (this) {
-        is FirVarargArgumentsExpression -> arguments
-        is FirArrayOfCall -> arguments
-        else -> listOf(this)
+fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
+    return firstOrNull {
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
     }
 }
 
-fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
+// --------------------------- evaluated arguments ---------------------------
+
+fun FirAnnotation.findArgumentByName(name: Name, returnFirstWhenNotFound: Boolean = true): FirExpression? {
     argumentMapping.mapping[name]?.let { return it }
     if (this !is FirAnnotationCall) return null
 
@@ -208,39 +144,76 @@ fun FirAnnotation.findArgumentByName(name: Name): FirExpression? {
             return argument.expression
         }
     }
-    // I'm lucky today!
-    // TODO: this line is still needed. However it should be replaced with 'return null'
-    return arguments.singleOrNull()
+
+    // The condition is required for annotation arguments that are not fully resolved. For example, CompilerRequiredAnnotations.
+    // When the annotation is resolved, and we did not find an argument with the given name,
+    // there is no argument and we should return null.
+    return if (!resolved && returnFirstWhenNotFound) arguments.firstOrNull() else null
 }
 
-fun FirAnnotation.getBooleanArgument(name: Name): Boolean? = getPrimitiveArgumentValue(name)
-fun FirAnnotation.getStringArgument(name: Name): String? = getPrimitiveArgumentValue(name)
-fun FirAnnotation.getIntArgument(name: Name): Int? = getPrimitiveArgumentValue(name)
-fun FirAnnotation.getStringArrayArgument(name: Name): List<String>? {
-    val argument = findArgumentByName(name) as? FirArrayOfCall ?: return null
-    return argument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String }
+fun FirAnnotation.getBooleanArgument(name: Name, session: FirSession): Boolean? = getPrimitiveArgumentValue(name, session)
+fun FirAnnotation.getStringArgument(name: Name, session: FirSession): String? = getPrimitiveArgumentValue(name, session)
+
+private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name, session: FirSession): T? {
+    val argument = findArgumentByName(name) ?: return null
+    val literal = argument.evaluateAs<FirLiteralExpression>(session) ?: return null
+    return literal.value as? T
 }
 
-private inline fun <reified T> FirAnnotation.getPrimitiveArgumentValue(name: Name): T? {
-    return findArgumentByName(name)?.let { expression ->
-        (expression as? FirConstExpression<*>)?.value as? T
-    }
+fun FirAnnotation.getStringArrayArgument(name: Name, session: FirSession): List<String>? {
+    val argument = findArgumentByName(name) ?: return null
+    val arrayLiteral = argument.evaluateAs<FirArrayLiteral>(session) ?: return null
+    return arrayLiteral.arguments.mapNotNull { (it as? FirLiteralExpression)?.value as? String }
 }
 
-fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
-    val argument = findArgumentByName(name) as? FirGetClassCall ?: return null
-    return argument.getTargetType()
+fun FirAnnotation.getKClassArgument(name: Name, session: FirSession): ConeKotlinType? {
+    val argument = findArgumentByName(name) ?: return null
+    val getClassCall = argument.evaluateAs<FirGetClassCall>(session) ?: return null
+    return getClassCall.getTargetType()
 }
 
 fun FirGetClassCall.getTargetType(): ConeKotlinType? {
-    return typeRef.coneType.typeArguments.getOrNull(0)?.type
+    return resolvedType.typeArguments.getOrNull(0)?.type
 }
 
-fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
-    val annotationCalls = getAnnotationsByClassId(StandardClassIds.Annotations.JvmName, session)
-    return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardClassIds.Annotations.ParameterNames.jvmNameName)
-            ?.takeIf { target == null || call.useSiteTarget == target }
+data class EnumValueArgumentInfo(val enumClassId: ClassId?, val enumEntryName: Name)
+
+fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
+    return when (this) {
+        is FirPropertyAccessExpression -> {
+            if (isResolved) {
+                val entrySymbol = calleeReference.toResolvedEnumEntrySymbol() ?: return null
+                EnumValueArgumentInfo(entrySymbol.callableId.classId!!, entrySymbol.callableId.callableName)
+            } else {
+                val enumEntryName = (calleeReference as? FirNamedReference)?.name ?: return null
+                EnumValueArgumentInfo(null, enumEntryName)
+            }
+        }
+        is FirEnumEntryDeserializedAccessExpression -> EnumValueArgumentInfo(enumClassId, enumEntryName)
+        else -> null
+    }
+}
+
+@PrivateForInline
+val FirEvaluatorResult.result: FirElement?
+    get() = (this as? FirEvaluatorResult.Evaluated)?.result
+
+@OptIn(PrivateForInline::class, PrivateConstantEvaluatorAPI::class)
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+inline fun <reified T : FirElement> FirExpression.evaluateAs(session: FirSession): @kotlin.internal.NoInfer T? {
+    return FirExpressionEvaluator.evaluateExpression(this, session)?.result as? T
+}
+
+// --------------------------- other utilities ---------------------------
+
+fun FirExpression.unwrapVarargValue(): List<FirExpression> {
+    return when (this) {
+        is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
+            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
+            else -> arguments
+        }
+        is FirArrayLiteral -> arguments
+        else -> listOf(this)
     }
 }
 
@@ -254,7 +227,7 @@ val FirAnnotation.resolved: Boolean
 private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
     ClassId(FqName("kotlin.internal"), Name.identifier("LowPriorityInOverloadResolution"))
 
-fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any {
+fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }

@@ -55,7 +55,6 @@ class CallableReferencesCandidateFactory(
             extensionReceiver = null,
             expectedType,
             callComponents.builtIns,
-            buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
         )
 
         return CallableReferenceResolutionCandidate(
@@ -82,8 +81,6 @@ class CallableReferencesCandidateFactory(
             extensionCallableReceiver,
             expectedType,
             callComponents.builtIns,
-            // conversions aren't needed for top-level callable references
-            buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
         )
 
         fun createCallableReferenceCallCandidate(diagnostics: List<KotlinCallDiagnostic>) = CallableReferenceResolutionCandidate(
@@ -179,6 +176,8 @@ class CallableReferencesCandidateFactory(
         val fakeArguments = createFakeArgumentsForReference(descriptor, expectedArgumentCount, inputOutputTypes, unboundReceiverCount)
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
+
+        @OptIn(ApplicabilityDetail::class)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
 
         /**
@@ -347,7 +346,6 @@ class CallableReferencesCandidateFactory(
         extensionReceiver: CallableReceiver?,
         expectedType: UnwrappedType?,
         builtins: KotlinBuiltIns,
-        buildTypeWithConversions: Boolean = true
     ): Pair<UnwrappedType, CallableReferenceAdaptation?> {
         val argumentsAndReceivers = ArrayList<KotlinType>(descriptor.valueParameters.size + 2 + descriptor.contextReceiverParameters.size)
 
@@ -387,6 +385,9 @@ class CallableReferencesCandidateFactory(
                     unboundReceiverCount = argumentsAndReceivers.size,
                     builtins = builtins
                 )
+
+                // conversions aren't needed for top-level callable references
+                val buildTypeWithConversions = kotlinCall is CallableReferenceKotlinCallArgument
 
                 val returnType = if (callableReferenceAdaptation == null || !buildTypeWithConversions) {
                     descriptor.valueParameters.mapTo(argumentsAndReceivers) { it.type }

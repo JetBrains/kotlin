@@ -43,9 +43,6 @@ sealed class ClangArgs(
                     "WINDOWS".takeIf { target.family == Family.MINGW },
                     "MACOSX".takeIf { target.family == Family.OSX },
 
-                    "NO_THREADS".takeUnless { target.supportsThreads() },
-                    "NO_EXCEPTIONS".takeUnless { target.supportsExceptions() },
-                    "NO_MEMMEM".takeUnless { target.suportsMemMem() },
                     "NO_64BIT_ATOMIC".takeUnless { target.supports64BitAtomics() },
                     "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
                     "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
@@ -55,8 +52,8 @@ sealed class ClangArgs(
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
                     "NEED_SMALL_BINARY".takeIf { target.needSmallBinary() },
-                    "TARGET_HAS_ADDRESS_DEPENDENCY".takeIf { target.hasAddressDependencyInMemoryModel() },
                     "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
+                    "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
             ).map { "KONAN_$it=1" }
             val otherOptions = listOfNotNull(
                     "USE_ELF_SYMBOLS=1".takeIf { target.binaryFormat() == BinaryFormat.ELF },
@@ -71,17 +68,10 @@ sealed class ClangArgs(
                     // so just undefine it.
                     "NS_FORMAT_ARGUMENT(A)=".takeIf { target.family.isAppleFamily },
             )
-            val customOptions = target.customArgsForKonanSources()
-            return (konanOptions + otherOptions + customOptions).map { "-D$it" }
+            return (konanOptions + otherOptions).map { "-D$it" }
         }
 
-    private val binDir = when (HostManager.host) {
-        KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MINGW_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MACOS_X64,
-        KonanTarget.MACOS_ARM64 -> "$absoluteTargetToolchain/usr/bin"
-        else -> throw TargetSupportException("Unexpected host platform")
-    }
+    private val binDir = "$absoluteTargetToolchain/bin"
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
         // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.
@@ -104,15 +94,8 @@ sealed class ClangArgs(
         val targetString: String = when {
             argsForWindowsJni -> "x86_64-pc-windows-msvc"
             configurables is AppleConfigurables -> {
-                val osVersionMin = when (target) {
-                    // Here we workaround Clang 8 limitation: macOS major version should be 10.
-                    // So we compile runtime with version 10.16 and then override version in BitcodeCompiler.
-                    // TODO: Fix with LLVM Update.
-                    KonanTarget.MACOS_ARM64 -> "10.16"
-                    else -> configurables.osVersionMin
-                }
                 targetTriple.copy(
-                        os = "${targetTriple.os}$osVersionMin"
+                        os = "${targetTriple.os}${configurables.osVersionMin}"
                 ).toString()
             }
             else -> configurables.targetTriple.toString()
@@ -136,6 +119,49 @@ sealed class ClangArgs(
             // See KT-43502.
             add(listOf("-fPIC"))
         }
+        // See https://github.com/apple/llvm-project/commit/dfa99c49306262eac46becbf1f7f5ba33ecc2fe3
+        // TL;DR: This commit adds an OS-agnostic __ENVIRONMENT_OS_VERSION_MIN_REQUIRED__ macro and now
+        // some of the Xcode headers use it instead of platform-specific ones. Workaround this problem
+        // by manually setting this macro.
+        // YouTrack ticket: KT-59167
+        val environmentOsVersionMinRequired = when (target.family) {
+            Family.OSX -> "__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__"
+            Family.IOS -> "__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__"
+            Family.TVOS -> "__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__"
+            Family.WATCHOS -> "__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__"
+            else -> null
+        }
+        if (environmentOsVersionMinRequired != null) {
+            add(listOf("-D__ENVIRONMENT_OS_VERSION_MIN_REQUIRED__=$environmentOsVersionMinRequired"))
+        }
+
+        // Workaround to make Xcode 15.3 SDK headers work with older Clang from K/N. This should be removed after LLVM update: KT-49279
+        // We don't handle simulator targets here, because they use different machinery for macro-expansion (see DYNAMIC_TARGETS_ENABLED)
+        // YouTrack ticket:  KT-65542
+        val targetConditionals = when (target) {
+            KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64 -> hashMapOf(
+                "TARGET_OS_OSX" to "1",
+            )
+            KonanTarget.IOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_IOS" to "1",
+            )
+            KonanTarget.TVOS_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_TV" to "1",
+            )
+            KonanTarget.WATCHOS_ARM64, KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_DEVICE_ARM64 -> hashMapOf(
+                "TARGET_OS_EMBEDDED" to "1",
+                "TARGET_OS_IPHONE" to "1",
+                "TARGET_OS_WATCH" to "1",
+            )
+            else -> null
+        }
+        if (targetConditionals != null) {
+            add(targetConditionals.map { "-D${it.key}=${it.value}" })
+        }
     }.flatten()
 
     private val specificClangArgs: List<String> = when (target) {
@@ -143,7 +169,7 @@ sealed class ClangArgs(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
 
-        KonanTarget.IOS_ARM32, KonanTarget.WATCHOS_ARM32 -> listOf(
+       KonanTarget.WATCHOS_ARM32 -> listOf(
                 // Force generation of ARM instruction set instead of Thumb-2.
                 // It allows LLVM ARM backend to encode bigger offsets in BL instruction,
                 // thus allowing to generate a slightly bigger binaries.
@@ -165,38 +191,6 @@ sealed class ClangArgs(
             )
         }
 
-        // By default WASM target forces `hidden` visibility which causes linkage problems.
-        KonanTarget.WASM32 -> listOf(
-                    "-fno-rtti",
-                    "-fno-exceptions",
-                    "-fvisibility=default",
-                    "-D_LIBCPP_ABI_VERSION=2",
-                    "-D_LIBCPP_NO_EXCEPTIONS=1",
-                    "-nostdinc",
-                    "-Xclang", "-nobuiltininc",
-                    "-Xclang", "-nostdsysteminc",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/libcxx",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/lib/libcxxabi/include",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/compat",
-                    "-Xclang", "-isystem$absoluteTargetSysRoot/include/libc"
-        )
-
-        is KonanTarget.ZEPHYR -> listOf(
-                "-fno-rtti",
-                "-fno-exceptions",
-                "-fno-asynchronous-unwind-tables",
-                "-fno-pie",
-                "-fno-pic",
-                "-fshort-enums",
-                "-nostdinc",
-                // TODO: make it a libGcc property?
-                // We need to get rid of wasm sysroot first.
-                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include",
-                "-isystem ${configurables.targetToolchain}/../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
-                "-isystem$absoluteTargetSysRoot/include/libcxx",
-                "-isystem$absoluteTargetSysRoot/include/libc"
-        ) + (configurables as ZephyrConfigurables).constructClangArgs()
-
         else -> emptyList()
     }
 
@@ -212,7 +206,9 @@ sealed class ClangArgs(
      */
     val clangXXArgs: Array<String> = clangArgs + when (configurables) {
         is AppleConfigurables -> arrayOf(
-                "-stdlib=libc++"
+                "-stdlib=libc++",
+                // KT-57848
+                "-Dat_quick_exit=atexit", "-Dquick_exit=exit",
         )
         else -> emptyArray()
     }
@@ -286,4 +282,3 @@ sealed class ClangArgs(
      */
     class Native(configurables: Configurables) : ClangArgs(configurables, forJni = false)
 }
-

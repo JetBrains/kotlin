@@ -1,28 +1,45 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
 /**
- * The common interface of [InternalStringMap] and [InternalHashCodeMap].
+ * The common interface of [InternalStringMap] and [InternalHashMap].
  */
-internal interface InternalMap<K, V> : MutableIterable<MutableMap.MutableEntry<K, V>> {
-    val equality: EqualityComparator
+internal interface InternalMap<K, V> {
     val size: Int
-    operator fun contains(key: K): Boolean
-    operator fun get(key: K): V?
 
     fun put(key: K, value: V): V?
-    fun remove(key: K): V?
-    fun clear(): Unit
+    fun putAll(from: Map<out K, V>)
 
-    fun createJsMap(): dynamic {
-        val result = js("Object.create(null)")
-        // force to switch object representation to dictionary mode
-        result["foo"] = 1
-        jsDeleteProperty(result, "foo")
-        return result
+    operator fun get(key: K): V?
+
+    operator fun contains(key: K): Boolean
+    fun containsValue(value: V): Boolean
+    fun containsEntry(entry: Map.Entry<K, V>): Boolean
+    fun containsOtherEntry(entry: Map.Entry<*, *>): Boolean
+
+    fun remove(key: K): V?
+    fun removeKey(key: K): Boolean
+    fun removeValue(value: V): Boolean
+    fun removeEntry(entry: Map.Entry<K, V>): Boolean
+
+    fun clear()
+
+    fun keysIterator(): MutableIterator<K>
+    fun valuesIterator(): MutableIterator<V>
+    fun entriesIterator(): MutableIterator<MutableMap.MutableEntry<K, V>>
+
+    fun checkIsMutable()
+    fun build()
+
+    fun containsAllEntries(m: Collection<Map.Entry<*, *>>): Boolean {
+        return m.all {
+            // entry can be null due to variance.
+            val entry = it.unsafeCast<Any?>()
+            (entry is Map.Entry<*, *>) && containsOtherEntry(entry)
+        }
     }
 }

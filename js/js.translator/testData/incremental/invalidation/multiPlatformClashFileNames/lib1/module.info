@@ -1,0 +1,14 @@
+STEP 0:
+    modifications:
+        U : js/l1.0.kt -> js/l1.kt
+        U : common/l1.0.kt -> common/l1.kt
+    added file: l1.kt, l1.kt.1
+STEP 1:
+    modifications:
+        U : js/l1.1.kt -> js/l1.kt
+    modified ir: l1.kt.1
+STEP 2:
+    modifications:
+        U : common/l1.2.kt -> common/l1.kt
+    modified ir: l1.kt
+

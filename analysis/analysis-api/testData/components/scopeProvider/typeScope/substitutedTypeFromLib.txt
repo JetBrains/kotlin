@@ -1,0 +1,484 @@
+Expression: el
+KaType: kotlin.Pair<kotlin.Int, kotlin.Int>
+
+KaTypeScope:
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
+  valueParameters = []
+  callableId = kotlin/Pair.component1
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
+  valueParameters = []
+  callableId = kotlin/Pair.component2
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
+  symbol = kotlin/Pair.copy(<dispatch receiver>: kotlin.Pair<A, B>, first: A, second: B): kotlin.Pair<A, B>
+  valueParameters = [
+    KaVariableSignature:
+      name = first
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = first: A
+      callableId = null,
+    KaVariableSignature:
+      name = second
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = second: B
+      callableId = null
+  ]
+  callableId = kotlin/Pair.copy
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/Pair.equals(<dispatch receiver>: kotlin.Pair<A, B>, other: kotlin.Any?): kotlin.Boolean
+  valueParameters = [
+    KaVariableSignature:
+      name = other
+      receiverType = null
+      returnType = kotlin.Any?
+      symbol = other: kotlin.Any?
+      callableId = null
+  ]
+  callableId = kotlin/Pair.equals
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.hashCode(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.Int
+  valueParameters = []
+  callableId = kotlin/Pair.hashCode
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = kotlin/Pair.toString(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.String
+  valueParameters = []
+  callableId = kotlin/Pair.toString
+KaVariableSignature:
+  name = first
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = val first: A
+  callableId = kotlin/Pair.first
+KaVariableSignature:
+  name = second
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = val second: B
+  callableId = kotlin/Pair.second
+
+
+Declaration Scope:
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.component1
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: component1
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: A
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.component2
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: component2
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: B
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.copy
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: copy
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: A
+      KaTypeParameterType:
+        annotations: []
+        type: B
+    ]
+    type: kotlin/Pair<A, B>
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: true
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: first
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: A
+      visibility: PUBLIC
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: true
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: second
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaTypeParameterType:
+        annotations: []
+        type: B
+      visibility: PUBLIC
+  ]
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.equals
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: other
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      visibility: PUBLIC
+  ]
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.hashCode
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Pair.toString
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(kotlin/Pair.first)
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: A
+    visibility: PUBLIC
+  callableId: kotlin/Pair.first
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: true
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: A
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: first
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: A
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(kotlin/Pair.second)
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: B
+    visibility: PUBLIC
+  callableId: kotlin/Pair.second
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: true
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaTypeParameterType:
+      annotations: []
+      type: B
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: second
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: B
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+

@@ -4,6 +4,22 @@ public fun foo(/*0*/ f: with.() -> kotlin.Unit): kotlin.Unit
 public fun kotlin.Int.bar(): kotlin.Unit
 public fun kotlin.Int.with(): kotlin.Unit
 
+public object OtherTests {
+    private constructor OtherTests()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun kotlin.Int.with(): kotlin.Unit
+}
+
+public object OtherTests2 {
+    private constructor OtherTests2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun kotlin.Int.with(): kotlin.Unit
+}
+
 public final class TypedThis {
     public constructor TypedThis()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,5 +1,5 @@
-// The local variables `y` and `i` are visible in finally blocks with old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -22,7 +22,7 @@ fun box(): String {
     return "FAIL3"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:7 box:
 // test.kt:8 box:
 // test.kt:9 box: i:int=0:int

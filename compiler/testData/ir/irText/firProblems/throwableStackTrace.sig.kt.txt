@@ -1,0 +1,6 @@
+// CHECK:
+//   Mangled name: #foo(kotlin.Throwable){}
+//   Public signature: /foo|6953541718424396763[0]
+//   Public signature debug description: foo(kotlin.Throwable){}
+fun foo(t: Throwable): Unit
+

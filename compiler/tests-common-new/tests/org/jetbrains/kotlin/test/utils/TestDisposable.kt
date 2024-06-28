@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test.utils
 
 import com.intellij.openapi.Disposable
 
-class TestDisposable : Disposable {
+class TestDisposable(val debugName: String) : Disposable {
     @Volatile
     var isDisposed = false
         private set
@@ -15,4 +15,6 @@ class TestDisposable : Disposable {
     override fun dispose() {
         isDisposed = true
     }
+
+    override fun toString(): String = debugName
 }

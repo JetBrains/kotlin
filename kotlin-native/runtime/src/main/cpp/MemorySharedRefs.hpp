@@ -8,7 +8,9 @@
 
 #include <type_traits>
 
+#include "ManuallyScoped.hpp"
 #include "Memory.h"
+#include "concurrent/Mutex.hpp"
 
 // TODO: Generalize for uses outside this file.
 enum class ErrorPolicy {
@@ -28,25 +30,28 @@ class KRefSharedHolder {
   template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
-  void dispose() const;
-
-  void disposeFromNative() const {
-    kotlin::CalledFromNativeGuard guard;
-    dispose();
-  }
+  void dispose();
 
   OBJ_GETTER0(describe) const;
 
  private:
   ObjHeader* obj_;
-  ForeignRefContext context_;
+  union {
+    ForeignRefContext context_; // Legacy MM.
+    kotlin::mm::RawSpecialRef* ref_; // New MM.
+  };
 };
 
 static_assert(std::is_trivially_destructible_v<KRefSharedHolder>, "KRefSharedHolder destructor is not guaranteed to be called.");
 
 class BackRefFromAssociatedObject {
  public:
+  void initForPermanentObject(ObjHeader* obj);
+
   void initAndAddRef(ObjHeader* obj);
+
+  // Returns true if initialized as permanent.
+  bool initWithExternalRCRef(void* ref) noexcept;
 
   // Error if refCount is zero and it's called from the wrong worker with non-frozen obj_.
   template <ErrorPolicy errorPolicy>
@@ -58,17 +63,33 @@ class BackRefFromAssociatedObject {
 
   void releaseRef();
 
+  // This does nothing with the new MM.
   void detach();
-  void assertDetached();
+
+  // This does nothing with legacy MM.
+  void dealloc();
 
   // Error if called from the wrong worker with non-frozen obj_.
   template <ErrorPolicy errorPolicy>
   ObjHeader* ref() const;
 
+  ObjHeader* refPermanent() const;
+
+  void* externalRCRef(bool permanent) const noexcept;
+
  private:
-  ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
-  ForeignRefContext context_;
-  volatile int refCount;
+  union {
+    struct {
+      ObjHeader* obj_; // May be null before [initAndAddRef] or after [detach].
+      ForeignRefContext context_;
+      volatile int refCount;
+    }; // Legacy MM
+    struct {
+      kotlin::mm::RawSpecialRef* ref_;
+      kotlin::ManuallyScoped<kotlin::RWSpinLock<kotlin::MutexThreadStateHandling::kIgnore>> deallocMutex_;
+    }; // New MM. Regular object.
+    ObjHeader* permanentObj_; // New MM. Permanent object.
+  };
 };
 
 static_assert(
@@ -78,7 +99,7 @@ static_assert(
 extern "C" {
 RUNTIME_NOTHROW void KRefSharedHolder_initLocal(KRefSharedHolder* holder, ObjHeader* obj);
 RUNTIME_NOTHROW void KRefSharedHolder_init(KRefSharedHolder* holder, ObjHeader* obj);
-RUNTIME_NOTHROW void KRefSharedHolder_dispose(const KRefSharedHolder* holder);
+RUNTIME_NOTHROW void KRefSharedHolder_dispose(KRefSharedHolder* holder);
 RUNTIME_NOTHROW ObjHeader* KRefSharedHolder_ref(const KRefSharedHolder* holder);
 } // extern "C"
 

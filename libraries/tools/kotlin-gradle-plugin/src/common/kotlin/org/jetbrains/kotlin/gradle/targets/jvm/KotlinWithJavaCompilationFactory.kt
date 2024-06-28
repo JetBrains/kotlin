@@ -3,13 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
+@file:Suppress("PackageDirectoryMismatch", "TYPEALIAS_EXPANSION_DEPRECATION") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationLanguageSettingsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
@@ -17,9 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinComp
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.plus
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
+@Suppress("DEPRECATION")
 class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, CO : KotlinCommonCompilerOptions> internal constructor(
     override val target: KotlinWithJavaTarget<KotlinOptionsType, CO>,
-    val compilerOptionsFactory: () -> HasCompilerOptions<CO>,
+    val compilerOptionsFactory: () -> DeprecatedHasCompilerOptions<CO>,
     val kotlinOptionsFactory: (CO) -> KotlinOptionsType
 ) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType, CO>> {
 
@@ -54,10 +54,10 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             compilationTaskNamesContainerFactory = JvmWithJavaCompilationTaskNamesContainerFactory(javaSourceSet),
 
             /* Use compile & runtime classpath from javaSourceSet by default */
-            preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
+            preConfigureAction = KotlinCompilationLanguageSettingsConfigurator + { compilation ->
                 compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
                 compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
-            }
+            },
         )
 
         return project.objects.newInstance(

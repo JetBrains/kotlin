@@ -1,0 +1,29 @@
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+abstract class Derived : JavaBase, KotlinInterface {
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Derived#bar(){}kotlin.collections.List<kotlin.Any?>
+  //   Public signature: /Derived.bar|7957968205035256403[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<kotlin.Any?>
+  /* fake */ override fun bar(): List<Any?>
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){}kotlin.collections.List<kotlin.Any?>
+  //   Public signature: /KotlinInterface.bar|7957968205035256403[0]
+  //   Public signature debug description: bar(){}kotlin.collections.List<kotlin.Any?>
+  abstract fun bar(): List<Any?>
+
+}

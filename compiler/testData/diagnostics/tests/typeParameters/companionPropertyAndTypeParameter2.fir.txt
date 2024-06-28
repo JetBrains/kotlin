@@ -1,0 +1,31 @@
+FILE: companionPropertyAndTypeParameter2.kt
+    public final class Owner<test> : R|kotlin/Any| {
+        public constructor<test>(): R|Owner<test>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Owner.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val test: R|kotlin/Int| = Int(12)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final inner class I<test, Outer(test)> : R|kotlin/Any| {
+            public Owner<test>.constructor<test>(): R|Owner.I<test, test>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val some: R|kotlin/Int| = this@R|/Owner.Companion|.R|/Owner.Companion.test|
+                public get(): R|kotlin/Int|
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval some: R|kotlin/Int| = this@R|/Owner.Companion|.R|/Owner.Companion.test|
+            }
+
+        }
+
+    }

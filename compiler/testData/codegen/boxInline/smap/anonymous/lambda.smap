@@ -1,14 +1,4 @@
 // FILE: 1.kt
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-builders/_1Kt$call$lambda$1
-*L
-1#1,13:1
-*E
 
 // FILE: 2.kt
 SMAP
@@ -41,7 +31,7 @@ builders/_1Kt$call$lambda$1
 + 2 2.kt
 _2Kt
 *L
-1#1,13:1
-21#2,2:14
+1#1,10:1
+21#2,2:11
 *E
 

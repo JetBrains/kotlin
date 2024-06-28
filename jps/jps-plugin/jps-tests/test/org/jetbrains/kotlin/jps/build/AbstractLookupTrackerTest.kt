@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
-import com.intellij.util.containers.Interner
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -20,18 +18,19 @@ import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.components.Position
-import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.incremental.isKotlinFile
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.makeModuleFile
-import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
-import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
-import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
+import org.jetbrains.kotlin.incremental.testingUtils.*
+import org.jetbrains.kotlin.incremental.utils.TestLookupTracker
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.jps.incremental.runJSCompiler
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.utils.JsMetadataVersion
@@ -45,6 +44,8 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
     override fun setUp() {
         super.setUp()
         sourceToOutputMapping.clear()
+        System.getProperties()
+            .setProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.") // for debugging tests with in-process compiler
     }
 
     override fun markDirty(removedAndModifiedSources: Iterable<File>) {
@@ -67,6 +68,10 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
         }
     }
 
+    open fun configureAdditionalArgs(args: K2JVMCompilerArguments) {
+        args.useFirLT = false
+    }
+
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
         val moduleFile = makeModuleFile(
             name = "test",
@@ -84,6 +89,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
         }
+        configureAdditionalArgs(args)
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
         try {
@@ -100,10 +106,25 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 }
 
-abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
-    override val jsStdlibFile: File
-        get() = File(System.getProperty("jps.testData.js-ir-runtime") ?: "build/js-ir-runtime/full-runtime.klib")
+abstract class AbstractK1JvmLookupTrackerTest : AbstractJvmLookupTrackerTest() {
 
+    override var filterBuiltins = true
+    override var distinguishPackageAndClassLookups = false
+
+    override fun setUp() {
+        super.setUp()
+        optionalVariantSuffix = OptionalVariantSuffix.K1
+    }
+
+    override fun configureAdditionalArgs(args: K2JVMCompilerArguments) {
+        args.languageVersion = "1.9"
+    }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isGradleEnabled = false, isFirEnabled = false)
+}
+
+abstract class AbstractJsKlibLookupTrackerTest : AbstractJsLookupTrackerTest() {
     override fun configureAdditionalArgs(args: K2JSCompilerArguments) {
         args.irProduceKlibDir = true
         args.irOnly = true
@@ -156,10 +177,9 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
     }
 
     protected open val jsStdlibFile: File
-        get() = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibJarPath
+        get() = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath
 
     protected open fun configureAdditionalArgs(args: K2JSCompilerArguments) {
-        args.outputFile = File(outDir, "out.js").canonicalPath
     }
 
     override fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any? {
@@ -168,9 +188,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
             libraries = libPaths.joinToString(File.pathSeparator)
             reportOutputFiles = true
             freeArgs = filesToCompile.map { it.canonicalPath }
-            useDeprecatedLegacyCompiler = true
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+            useFirLT = false
         }
         configureAdditionalArgs(args)
         return runJSCompiler(args, env)
@@ -187,6 +205,9 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     protected lateinit var srcDir: File
     protected lateinit var outDir: File
     private val enableICFixture = EnableICFixture()
+    protected var optionalVariantSuffix: OptionalVariantSuffix = OptionalVariantSuffix.K2
+    protected open var filterBuiltins = false
+    protected open var distinguishPackageAndClassLookups = true
 
     override fun setUp() {
         super.setUp()
@@ -205,6 +226,9 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
     protected abstract fun markDirty(removedAndModifiedSources: Iterable<File>)
     protected abstract fun processCompilationResults(outputItemsCollector: OutputItemsCollectorImpl, services: Services)
     protected abstract fun runCompiler(filesToCompile: Iterable<File>, env: JpsCompilerEnvironment): Any?
+
+    protected open val buildLogFinder: BuildLogFinder
+        get() = BuildLogFinder(isGradleEnabled = false)
 
     fun doTest(path: String) {
         val sb = StringBuilder()
@@ -234,13 +258,14 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
 
         val testDir = File(path)
-        val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
-        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile(listOf("kt", "kts")) }
+        val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = "", optionalVariantSuffix = optionalVariantSuffix))
+        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile(setOf("kt", "kts")) }
         val steps = getModificationsToPerform(
             testDir,
             moduleNames = null,
             allowNoFilesWithSuffixInTestData = true,
-            touchPolicy = TouchPolicy.CHECKSUM
+            touchPolicy = TouchPolicy.CHECKSUM,
+            optionalVariantSuffix = optionalVariantSuffix
         )
             .filter { it.isNotEmpty() }
 
@@ -261,8 +286,9 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
             }
         }
 
-        val expectedBuildLog = File(testDir, "build.log")
-        UsefulTestCase.assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
+        buildLogFinder.findBuildLog(testDir)?.let { expectedBuildLog ->
+            UsefulTestCase.assertSameLinesWithFile(expectedBuildLog.canonicalPath, sb.toString())
+        }
 
         assertEquals(steps.size + 1, filesToLookups.size)
         for ((i, lookupsAtStepI) in filesToLookups.withIndex()) {
@@ -277,7 +303,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         val exitCode: String,
         val errors: List<String>,
         val compiledFiles: Iterable<File>,
-        val lookups: Map<File, List<LookupInfo>>
+        val lookups: Map<File, List<LookupInfo>>,
     )
 
     private fun make(filesToCompile: Iterable<File>): CompilerOutput {
@@ -323,23 +349,33 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                 val end = column - 1
                 parts.add(lineContent.subSequence(start, end))
 
-                val lookups = lookupsFromColumn.mapTo(sortedSetOf()) { lookupInfo ->
-                    val rest = lineContent.substring(end)
+                lookupsFromColumn.mapNotNullTo(sortedSetOf()) { lookupInfo ->
+                    if (filterBuiltins &&
+                        ClassId(FqName(lookupInfo.scopeFqName), Name.identifier(lookupInfo.name)) in StandardClassIds.allBuiltinTypes
+                    ) {
+                        null
+                    } else {
+                        val rest = lineContent.substring(end)
 
-                    val name =
-                        when {
-                            rest.startsWith(lookupInfo.name) || // same name
-                                    rest.startsWith("$" + lookupInfo.name) || // backing field
-                                    DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
-                            -> ""
-                            else -> "(" + lookupInfo.name + ")"
-                        }
+                        val name =
+                            when {
+                                rest.startsWith(lookupInfo.name) || // same name
+                                        rest.startsWith("$" + lookupInfo.name) || // backing field
+                                        DECLARATION_STARTS_WITH.any { rest.startsWith(it) } // it's declaration
+                                -> ""
+                                else -> "(" + lookupInfo.name + ")"
+                            }
 
-                    lookupInfo.scopeKind.toString()[0].lowercaseChar()
-                        .toString() + ":" + lookupInfo.scopeFqName.let { it.ifEmpty { "<root>" } } + name
-                }.joinToString(separator = " ", prefix = "/*", postfix = "*/")
-
-                parts.add(lookups)
+                        val prefix =
+                            if (distinguishPackageAndClassLookups) lookupInfo.scopeKind.toString()[0].lowercaseChar().toString()
+                            else "p"
+                        prefix + ":" + lookupInfo.scopeFqName.let { it.ifEmpty { "<root>" } } + name
+                    }
+                }.takeIf { it.isNotEmpty() }
+                    ?.joinToString(separator = " ", prefix = "/*", postfix = "*/")
+                    ?.also {
+                        parts.add(it)
+                    }
 
                 start = end
             }
@@ -351,25 +387,3 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         KotlinTestUtils.assertEqualsToFile("Lookups do not match after $step", expectedFile, actual)
     }
 }
-
-class TestLookupTracker : LookupTracker {
-    val lookups = arrayListOf<LookupInfo>()
-    private val interner = Interner.createStringInterner<String>()
-
-    override val requiresPosition: Boolean
-        get() = true
-
-    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        val internedFilePath = interner.intern(filePath)
-        val internedScopeFqName = interner.intern(scopeFqName)
-        val internedName = interner.intern(name)
-
-        lookups.add(LookupInfo(internedFilePath, position, internedScopeFqName, scopeKind, internedName))
-    }
-
-    override fun clear() {
-        lookups.clear()
-    }
-}
-
-

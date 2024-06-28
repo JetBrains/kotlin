@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 fun bar(x: Int) = x + 1
 
 fun foo() {

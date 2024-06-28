@@ -1,17 +1,22 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR") // Char.toInt()
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
-import kotlin.native.concurrent.FreezableAtomicReference
-import kotlin.native.concurrent.freeze
+import kotlin.concurrent.AtomicReference
+import kotlinx.cinterop.*
+import kotlinx.cinterop.NativePtr
 
 @ExportForCppRuntime
-fun ThrowNullPointerException(): Nothing {
+@PublishedApi
+internal fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
 }
 
@@ -22,27 +27,32 @@ internal fun ThrowIndexOutOfBoundsException(): Nothing {
 
 @ExportForCppRuntime
 internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
+    @Suppress("DEPRECATION")
     throw ArrayIndexOutOfBoundsException()
 }
 
 @ExportForCppRuntime
-fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
+@PublishedApi
+internal fun ThrowClassCastException(instance: Any, typeInfo: NativePtr): Nothing {
     val clazz = KClassImpl<Any>(typeInfo)
     throw ClassCastException("${instance::class} cannot be cast to $clazz")
 }
 
 @ExportForCppRuntime
-fun ThrowTypeCastException(instance: Any, typeName: String): Nothing {
+@PublishedApi
+internal fun ThrowTypeCastException(instance: Any, typeName: String): Nothing {
     throw TypeCastException("${instance::class} cannot be cast to class $typeName")
 }
 
 @ExportForCppRuntime
-fun ThrowKotlinNothingValueException(): Nothing {
+@PublishedApi
+internal fun ThrowKotlinNothingValueException(): Nothing {
     throw KotlinNothingValueException()
 }
 
 @ExportForCppRuntime
-fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
+@PublishedApi
+internal fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
     throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }
 
@@ -61,11 +71,13 @@ internal fun ThrowOutOfMemoryError() : Nothing {
     throw OutOfMemoryError()
 }
 
-fun ThrowNoWhenBranchMatchedException(): Nothing {
+@PublishedApi
+internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
-fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
+@PublishedApi
+internal fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
     throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")
 }
 
@@ -107,10 +119,20 @@ internal fun ThrowIncorrectDereferenceException() {
             "Trying to access top level value not marked as @ThreadLocal or @SharedImmutable from non-main thread")
 }
 
+internal class FileFailedToInitializeException(message: String?, cause: Throwable?) : Error(message, cause)
+
 @ExportForCppRuntime
 @OptIn(ExperimentalStdlibApi::class)
-internal fun ThrowFileFailedToInitializeException() {
-    throw FileFailedToInitializeException("There was an error during file initialization")
+internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
+    if (reason is Error) {
+        throw reason
+    } else {
+        // https://youtrack.jetbrains.com/issue/KT-57134
+        // TODO: align exact exception hierarchy with jvm
+        // in jvm it's NoClassDefFound if reason is null, i.e. this is already failed class
+        // and ExceptionInInitializerError if it's non-null
+        throw FileFailedToInitializeException("There was an error during file or class initialization", reason)
+    }
 }
 
 internal class IrLinkageError(message: String?) : Error(message)
@@ -134,20 +156,15 @@ internal fun ReportUnhandledException(throwable: Throwable) {
 // Using object to make sure that `hook` is initialized when it's needed instead of
 // in a normal global initialization flow. This is important if some global happens
 // to throw an exception during it's initialization before this hook would've been initialized.
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal object UnhandledExceptionHookHolder {
-    internal val hook: FreezableAtomicReference<ReportUnhandledExceptionHook?> =
-        if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-            FreezableAtomicReference<ReportUnhandledExceptionHook?>(null)
-        } else {
-            FreezableAtomicReference<ReportUnhandledExceptionHook?>(null).freeze()
-        }
+    internal val hook: AtomicReference<ReportUnhandledExceptionHook?> = AtomicReference<ReportUnhandledExceptionHook?>(null)
 }
 
 // TODO: Can be removed only when native-mt coroutines stop using it.
 @PublishedApi
 @ExportForCppRuntime
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal fun OnUnhandledException(throwable: Throwable) {
     val handler = UnhandledExceptionHookHolder.hook.value
     if (handler == null) {
@@ -162,7 +179,7 @@ internal fun OnUnhandledException(throwable: Throwable) {
 }
 
 @ExportForCppRuntime("Kotlin_runUnhandledExceptionHook")
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal fun runUnhandledExceptionHook(throwable: Throwable) {
     val handler = UnhandledExceptionHookHolder.hook.value ?: throw throwable
     handler(throwable)
@@ -171,7 +188,8 @@ internal fun runUnhandledExceptionHook(throwable: Throwable) {
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
-public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
+@PublishedApi
+internal fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     var left = 0
     var right = values.size - 1
     while (left <= right) {
@@ -183,10 +201,11 @@ public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
             else -> return values[middle]
         }
     }
-    throw Exception("Invalid enum value name: $name")
+    throw IllegalArgumentException("Invalid enum value name: $name")
 }
 
-public fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
+@PublishedApi
+internal fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value
@@ -194,19 +213,23 @@ public fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     return result as Array<T>
 }
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.CREATE_UNINITIALIZED_INSTANCE)
-internal external fun <T> createUninitializedInstance(): T
+@InternalForKotlinNative
+public external fun <T> createUninitializedInstance(): T
 
-@PublishedApi
 @TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
-internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
+@InternalForKotlinNative
+public external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
 @PublishedApi
-internal fun checkProgressionStep(step: Int)  =
+@TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
+internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
+
+@PublishedApi
+internal fun checkProgressionStep(step: Int): Int =
         if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 @PublishedApi
-internal fun checkProgressionStep(step: Long) =
+internal fun checkProgressionStep(step: Long): Long =
         if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 
 @PublishedApi
@@ -242,3 +265,7 @@ internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     }
     return string.encodeToByteArray()
 }
+
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.IMMUTABLE_BLOB)
+internal external fun immutableBlobOfImpl(data: String): ImmutableBlob

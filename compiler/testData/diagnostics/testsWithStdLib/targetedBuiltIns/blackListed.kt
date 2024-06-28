@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FULL_JDK
 
 abstract class A : MutableList<String> {

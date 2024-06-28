@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/kt58139/common.kt
+$TESTDATA_DIR$/kt58139/platform.kt
+-Xcommon-sources=$TESTDATA_DIR$/kt58139/common.kt
+-language-version
+2.0
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.jar

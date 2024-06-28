@@ -1,0 +1,39 @@
+package app;
+
+/**
+ * public final class app/KBox : androidx/annotation/Box {
+ *
+ *   // signature: <init>(Landroidx/annotation/Box;)V
+ *   public constructor(delegate: androidx/annotation/Box)
+ *
+ *   // signature: foo()Ljava/lang/String;
+ *   public open (* delegation *) fun foo(): kotlin/String!
+ *
+ *   // field: delegate:Landroidx/annotation/Box;
+ *   // getter: getDelegate()Landroidx/annotation/Box;
+ *   public final val delegate: androidx/annotation/Box
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class KBox implements androidx.annotation.Box {
+    @org.jetbrains.annotations.NotNull()
+    private final androidx.annotation.Box delegate = null;
+
+    @androidx.annotation.RecentlyNullable()
+    @java.lang.Override()
+    public java.lang.String foo() {
+        return null;
+    }
+
+    public KBox(@org.jetbrains.annotations.NotNull() androidx.annotation.Box delegate) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final androidx.annotation.Box getDelegate() {
+        return null;
+    }
+}

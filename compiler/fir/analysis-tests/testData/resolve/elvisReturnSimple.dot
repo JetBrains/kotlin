@@ -5,96 +5,103 @@ digraph elvisReturnSimple_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function stringReturnInLeftLen" style="filled" fillcolor=red];
-        subgraph cluster_1 {
+        0 [label="Enter file elvisReturnSimple.kt" style="filled" fillcolor=red];
+        1 [label="Exit file elvisReturnSimple.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function stringReturnInLeftLen" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            1 [label="Enter block"];
-            subgraph cluster_2 {
+            3 [label="Enter block"];
+            subgraph cluster_3 {
                 color=blue
-                2 [label="Enter when"];
-                subgraph cluster_3 {
-                    color=blue
-                    3 [label="Enter when branch condition "];
-                    4 [label="Access variable R|<local>/s|"];
-                    5 [label="Const: Null(null)"];
-                    6 [label="Equality operator !="];
-                    7 [label="Exit when branch condition"];
-                }
+                4 [label="Enter when"];
                 subgraph cluster_4 {
                     color=blue
-                    8 [label="Enter when branch condition else"];
+                    5 [label="Enter when branch condition "];
+                    6 [label="Access variable R|<local>/s|"];
+                    7 [label="Const: Null(null)"];
+                    8 [label="Equality operator !="];
                     9 [label="Exit when branch condition"];
                 }
-                10 [label="Enter when branch result"];
                 subgraph cluster_5 {
                     color=blue
-                    11 [label="Enter block"];
-                    12 [label="Const: Null(null)"];
-                    13 [label="Exit block"];
+                    10 [label="Enter when branch condition else"];
+                    11 [label="Exit when branch condition"];
                 }
-                14 [label="Exit when branch result"];
-                15 [label="Enter when branch result"];
+                12 [label="Enter when branch result"];
                 subgraph cluster_6 {
                     color=blue
-                    16 [label="Enter block"];
-                    17 [label="Access variable R|<local>/s|"];
-                    18 [label="Smart cast: R|<local>/s|"];
-                    19 [label="Access variable R|kotlin/String.length|"];
-                    20 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
-                    21 [label="Stub" style="filled" fillcolor=gray];
-                    22 [label="Exit block" style="filled" fillcolor=gray];
+                    13 [label="Enter block"];
+                    14 [label="Const: Null(null)"];
+                    15 [label="Exit block"];
                 }
-                23 [label="Exit when branch result" style="filled" fillcolor=gray];
-                24 [label="Exit when"];
+                16 [label="Exit when branch result"];
+                17 [label="Enter when branch result"];
+                subgraph cluster_7 {
+                    color=blue
+                    18 [label="Enter block"];
+                    19 [label="Access variable R|<local>/s|"];
+                    20 [label="Smart cast: R|<local>/s|"];
+                    21 [label="Access variable R|kotlin/String.length|"];
+                    22 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
+                    23 [label="Stub" style="filled" fillcolor=gray];
+                    24 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                25 [label="Exit when branch result" style="filled" fillcolor=gray];
+                26 [label="Exit when"];
             }
-            25 [label="Exit lhs of ?:"];
-            26 [label="Enter rhs of ?:"];
-            27 [label="Const: Int(0)"];
-            28 [label="Jump: ^stringReturnInLeftLen Int(0)"];
-            29 [label="Stub" style="filled" fillcolor=gray];
-            30 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
-            31 [label="Exit ?:" style="filled" fillcolor=gray];
-            32 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
-            33 [label="Exit block" style="filled" fillcolor=gray];
+            27 [label="Exit lhs of ?:"];
+            28 [label="Enter rhs of ?:"];
+            29 [label="Const: Int(0)"];
+            30 [label="Jump: ^stringReturnInLeftLen Int(0)"];
+            31 [label="Stub" style="filled" fillcolor=gray];
+            32 [label="Lhs of ?: is not null" style="filled" fillcolor=gray];
+            33 [label="Exit ?:" style="filled" fillcolor=gray];
+            34 [label="Variable declaration: lval s1: R|kotlin/Nothing|" style="filled" fillcolor=gray];
+            35 [label="Exit block" style="filled" fillcolor=gray];
         }
-        34 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
+        36 [label="Exit function stringReturnInLeftLen" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
     2 -> {3};
     3 -> {4};
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {8 15};
+    7 -> {8};
     8 -> {9};
-    9 -> {10};
+    9 -> {10 17};
     10 -> {11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {24};
+    14 -> {15};
     15 -> {16};
-    16 -> {17};
+    16 -> {26};
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {34};
-    20 -> {21} [style=dotted];
-    21 -> {22} [style=dotted];
+    20 -> {21};
+    21 -> {22};
+    22 -> {36};
     22 -> {23} [style=dotted];
     23 -> {24} [style=dotted];
-    24 -> {25};
-    25 -> {26};
-    25 -> {30} [style=dotted];
+    24 -> {25} [style=dotted];
+    25 -> {26} [style=dotted];
     26 -> {27};
     27 -> {28};
-    28 -> {34};
-    28 -> {29} [style=dotted];
-    29 -> {31} [style=dotted];
+    27 -> {32} [style=dotted];
+    28 -> {29};
+    29 -> {30};
+    30 -> {36};
     30 -> {31} [style=dotted];
-    31 -> {32} [style=dotted];
+    31 -> {33} [style=dotted];
     32 -> {33} [style=dotted];
     33 -> {34} [style=dotted];
+    34 -> {35} [style=dotted];
+    35 -> {36} [style=dotted];
 
 }

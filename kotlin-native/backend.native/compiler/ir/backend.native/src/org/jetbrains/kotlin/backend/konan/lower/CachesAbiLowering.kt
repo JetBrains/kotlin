@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Allows to distinguish external declarations to internal ABI.
  */
-internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
+internal val INTERNAL_ABI_ORIGIN = IrDeclarationOriginImpl("INTERNAL_ABI")
 
 /**
  * Sometimes we need to reference symbols that are not declared in metadata.
@@ -38,6 +39,7 @@ internal object INTERNAL_ABI_ORIGIN : IrDeclarationOriginImpl("INTERNAL_ABI")
 internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: IrFactory) {
     private val outerThisAccessors = mapping.outerThisCacheAccessors
     private val lateinitPropertyAccessors = mapping.lateinitPropertyCacheAccessors
+    private val topLevelFieldAccessors = mapping.topLevelFieldCacheAccessors
     private val lateInitFieldToNullableField = mapping.lateInitFieldToNullableField
 
 
@@ -57,6 +59,20 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
                     origin = INTERNAL_ABI_ORIGIN
                     type = irClass.defaultType
                 }
+            }
+        }
+    }
+
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    fun getTopLevelFieldAccessor(irField: IrField): IrSimpleFunction {
+        require(irField.isTopLevel)
+        return topLevelFieldAccessors.getOrPut(irField) {
+            irFactory.buildFun {
+                name = getMangledNameFor("${irField.name}_get", irField.parent)
+                origin = INTERNAL_ABI_ORIGIN
+                returnType = irField.type
+            }.apply {
+                parent = irField.parent
             }
         }
     }
@@ -90,7 +106,7 @@ internal class CachesAbiSupport(mapping: NativeMapping, private val irFactory: I
      * Generate name for declaration that will be a part of internal ABI.
      */
     private fun getMangledNameFor(declarationName: String, parent: IrDeclarationParent): Name {
-        val prefix = parent.fqNameForIrSerialization
+        val prefix = (parent as? IrFile)?.path ?: parent.fqNameForIrSerialization
         return "$prefix.$declarationName".synthesizedName
     }
 }
@@ -145,6 +161,21 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass, 
         }
         data.add(function)
     }
+
+    // This is workaround for KT-68797, should be dropped in KT-68916
+    override fun visitField(declaration: IrField, data: MutableList<IrFunction>) {
+        declaration.acceptChildren(this, data)
+
+        if (!declaration.isTopLevel || DescriptorVisibilities.isPrivate(declaration.visibility)) return
+
+        val getter = cachesAbiSupport.getTopLevelFieldAccessor(declaration)
+        context.createIrBuilder(getter.symbol).apply {
+            getter.body = irBlockBody {
+                +irReturn(irGetField(null, declaration))
+            }
+        }
+        data.add(getter)
+    }
 }
 
 internal class ImportCachesAbiTransformer(val generationState: NativeGenerationState) : FileLoweringPass, IrElementTransformerVoid() {
@@ -164,24 +195,40 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
         val irClass = field.parentClassOrNull
         val property = field.correspondingPropertySymbol?.owner
 
+        // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
+        // but it will not affect the result because we are not creating any declarations here.
+        fun createIrBuilder() = generationState.context.irBuiltIns.createIrBuilder(
+                IrSimpleFunctionSymbolImpl(), expression.startOffset, expression.endOffset
+        )
+
         return when {
             generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
 
             irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
                 dependenciesTracker.add(irClass)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    putValueArgument(0, expression.receiver)
+                createIrBuilder().run {
+                    irCall(accessor).apply {
+                        putValueArgument(0, expression.receiver)
+                    }
                 }
             }
 
             property?.isLateinit == true -> {
                 val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
                 dependenciesTracker.add(property)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    if (irClass != null)
-                        putValueArgument(0, expression.receiver)
+                createIrBuilder().run {
+                    irCall(accessor).apply {
+                        if (irClass != null)
+                            putValueArgument(0, expression.receiver)
+                    }
                 }
+            }
+
+            field.isTopLevel -> {
+                val accessor = cachesAbiSupport.getTopLevelFieldAccessor(field)
+                dependenciesTracker.add(field)
+                createIrBuilder().irCall(accessor)
             }
 
             else -> expression

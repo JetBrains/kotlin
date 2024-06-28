@@ -1,4 +1,4 @@
-depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon PDFKit QuartzCore QuickLookThumbnailing Security UIKit UniformTypeIdentifiers UserNotifications darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon PDFKit QuartzCore QuickLookThumbnailing Security Symbols UIKit UniformTypeIdentifiers UserNotifications darwin posix
 language = Objective-C
 package = platform.QuickLook
 modules = QuickLook

@@ -1,8 +1,8 @@
-// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6, NATIVE
+// IGNORE_BACKEND: WASM, JS_IR, JS_IR_ES6
 // WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
-// IGNORE_BACKEND_K2: JVM, JVM_IR
+// IGNORE_BACKEND_K2: JVM, JVM_IR, NATIVE
 // FIR status: outdated code (expect and actual in the same module)
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // KT-41901
 

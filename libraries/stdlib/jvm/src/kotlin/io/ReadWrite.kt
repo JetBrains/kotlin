@@ -11,6 +11,8 @@ import java.io.*
 import java.nio.charset.Charset
 import java.net.URL
 import java.util.NoSuchElementException
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.internal.*
 
 
@@ -48,8 +50,12 @@ public fun Reader.readLines(): List<String> {
  * the processing is complete.
  * @return the value returned by [block].
  */
-public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
-    buffered().use { block(it.lineSequence()) }
+public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return buffered().use { block(it.lineSequence()) }
+}
 
 /** Creates a new reader for the string. */
 @kotlin.internal.InlineOnly

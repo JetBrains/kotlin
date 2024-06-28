@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
-import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Copy
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 
 open class BinaryenRootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -27,23 +26,13 @@ open class BinaryenRootPlugin : Plugin<Project> {
 
         val settings = project.extensions.create(EXTENSION_NAME, BinaryenRootExtension::class.java, project)
 
-        val downloadTask = project.registerTask<Download>("${TASKS_GROUP_NAME}Download") {
-            val env = settings.requireConfigured()
+        project.registerTask<BinaryenSetupTask>(BinaryenSetupTask.NAME) {
             it.group = TASKS_GROUP_NAME
-            it.src(env.downloadUrl)
-            it.dest(env.zipPath)
-            it.overwrite(false)
-            it.description = "Download local binaryen version"
-        }
-
-        project.registerTask<Copy>(INSTALL_TASK_NAME) {
-            val env = settings.requireConfigured()
-            it.onlyIf { env.zipPath.exists() && !env.executablePath.exists() }
-            it.group = TASKS_GROUP_NAME
-            it.from(project.tarTree(env.zipPath))
-            it.into(env.targetPath)
-            it.dependsOn(downloadTask)
-            it.description = "Install local binaryen version"
+            it.description = "Download and install a binaryen"
+            it.configuration = project.provider {
+                project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
+                    .also { conf -> conf.isTransitive = false }
+            }
         }
 
         project.registerTask<CleanDataTask>("binaryen" + CleanDataTask.NAME_SUFFIX) {
@@ -55,12 +44,14 @@ open class BinaryenRootPlugin : Plugin<Project> {
 
     companion object {
         const val TASKS_GROUP_NAME: String = "binaryen"
-        const val INSTALL_TASK_NAME: String = "${TASKS_GROUP_NAME}Install"
 
         fun apply(rootProject: Project): BinaryenRootExtension {
             check(rootProject == rootProject.rootProject)
             rootProject.plugins.apply(BinaryenRootPlugin::class.java)
             return rootProject.extensions.getByName(EXTENSION_NAME) as BinaryenRootExtension
         }
+
+        val Project.kotlinBinaryenExtension: BinaryenRootExtension
+            get() = extensions.getByName(EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
     }
 }

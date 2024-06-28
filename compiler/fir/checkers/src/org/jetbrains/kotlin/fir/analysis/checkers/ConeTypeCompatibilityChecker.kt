@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -90,9 +90,6 @@ object ConeTypeCompatibilityChecker {
 
         // Next can simply focus on the type hierarchy and don't need to worry about nullability.
         val compatibilityUpperBound = when {
-            all {
-                it.isPrimitive
-            } -> Compatibility.SOFT_INCOMPATIBLE // TODO: remove after KT-46383 is fixed
             all {
                 it.isConcreteType()
             } -> Compatibility.HARD_INCOMPATIBLE
@@ -239,51 +236,24 @@ object ConeTypeCompatibilityChecker {
         return null
     }
 
-    /**
-     * Collects the upper bounds as [ConeClassLikeType].
-     */
-    private fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
-        if (this == null) return emptySet()
-        return when (this) {
-            is ConeErrorType -> emptySet() // Ignore error types
-            is ConeLookupTagBasedType -> when (this) {
-                is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> {
-                    (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
-                }
-                is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
-            }
-            is ConeDefinitelyNotNullType -> original.collectUpperBounds()
-            is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
-            is ConeFlexibleType -> upperBound.collectUpperBounds()
-            is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
-            is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
-            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
-        }
-    }
-
-    private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
-        if (this == null) return emptySet()
-        return resolvedBounds.flatMap { it.coneType.collectUpperBounds() }.toSet()
-    }
-
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
             is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
-                is ConeTypeVariableType -> emptySet()
                 is ConeTypeParameterType -> emptySet()
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+                else -> error("missing branch for ${javaClass.name}")
             }
+            is ConeTypeVariableType -> emptySet()
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
             is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
-            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
+            is ConeStubType, is ConeIntegerLiteralConstantType -> {
+                error("$this should not reach here")
+            }
         }
     }
 

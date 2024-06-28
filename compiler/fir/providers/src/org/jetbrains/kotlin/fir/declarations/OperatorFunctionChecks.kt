@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
 import org.jetbrains.kotlin.fir.types.*
@@ -44,7 +46,7 @@ object OperatorFunctionChecks {
         checkFor(
             OperatorNameConventions.SET,
             Checks.memberOrExtension, Checks.ValueParametersCount.atLeast(2),
-            Checks.simple("last parameter should not have a default value or be a vararg") {
+            Checks.simple("last parameter should not have a default value or be a vararg") { it, _ ->
                 it.valueParameters.lastOrNull()?.let { param ->
                     param.defaultValue == null && !param.isVararg
                 } == true
@@ -54,19 +56,22 @@ object OperatorFunctionChecks {
             OperatorNameConventions.GET_VALUE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(2),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(
             OperatorNameConventions.SET_VALUE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.atLeast(3),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(
             OperatorNameConventions.PROVIDE_DELEGATE,
             Checks.memberOrExtension,
             Checks.noDefaultAndVarargs, Checks.ValueParametersCount.exactly(2),
-            Checks.isKProperty
+            Checks.isKProperty,
+            Checks.nonSuspend,
         )
         checkFor(OperatorNameConventions.INVOKE, Checks.memberOrExtension)
         checkFor(
@@ -95,15 +100,16 @@ object OperatorFunctionChecks {
                     if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)
                             .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
                         || (customEqualsSupported && function.isTypedEqualsInValueClass(session))
+                        || containingClassSymbol.classId == StandardClassIds.Any
                     ) {
                         return null
                     }
                     return buildString {
-                        append("must override ''equals()'' in Any")
+                        append("must override 'equals()' in Any")
                         if (customEqualsSupported && containingClassSymbol.isInline) {
                             val expectedParameterTypeRendered =
                                 containingClassSymbol.defaultType().replaceArgumentsWithStarProjections().renderReadable()
-                            append(" or define ''equals(other: ${expectedParameterTypeRendered}): Boolean''")
+                            append(" or define 'equals(other: ${expectedParameterTypeRendered}): Boolean'")
                         }
                     }
                 }
@@ -157,9 +163,9 @@ private abstract class Check {
 }
 
 private object Checks {
-    fun simple(message: String, predicate: (FirSimpleFunction) -> Boolean) = object : Check() {
+    fun simple(message: String, predicate: (FirSimpleFunction, FirSession) -> Boolean) = object : Check() {
         override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? =
-            message.takeIf { !predicate(function) }
+            message.takeIf { !predicate(function, session) }
     }
 
     fun full(message: String, predicate: (FirSession, FirSimpleFunction) -> Boolean) = object : Check() {
@@ -167,47 +173,51 @@ private object Checks {
             message.takeIf { !predicate(session, function) }
     }
 
-    val memberOrExtension = simple("must be a member or an extension function") {
+    val memberOrExtension = simple("must be a member or an extension function") { it, _ ->
         it.dispatchReceiverType != null || it.receiverParameter != null
     }
 
-    val member = simple("must be a member function") {
+    val member = simple("must be a member function") { it, _ ->
         it.dispatchReceiverType != null
     }
 
+    val nonSuspend = simple("must not be suspend") { it, _ ->
+        !it.isSuspend
+    }
+
     object ValueParametersCount {
-        fun atLeast(n: Int) = simple("must have at least $n value parameter" + (if (n > 1) "s" else "")) {
+        fun atLeast(n: Int) = simple("must have at least $n value parameter" + (if (n > 1) "s" else "")) { it, _ ->
             it.valueParameters.size >= n
         }
 
-        fun exactly(n: Int) = simple("must have exactly $n value parameters") {
+        fun exactly(n: Int) = simple("must have exactly $n value parameters") { it, _ ->
             it.valueParameters.size == n
         }
 
-        val single = simple("must have a single value parameter") {
+        val single = simple("must have a single value parameter") { it, _ ->
             it.valueParameters.size == 1
         }
 
-        val none = simple("must have no value parameters") {
+        val none = simple("must have no value parameters") { it, _ ->
             it.valueParameters.isEmpty()
         }
     }
 
     object Returns {
-        val boolean = simple("must return Boolean") {
-            it.returnTypeRef.isBoolean
+        val boolean = simple("must return 'Boolean'") { it, session ->
+            it.returnTypeRef.coneType.fullyExpandedType(session).isBoolean
         }
 
-        val int = simple("must return Int") {
-            it.returnTypeRef.isInt
+        val int = simple("must return 'Int'") { it, session ->
+            it.returnTypeRef.coneType.fullyExpandedType(session).isInt
         }
 
-        val unit = simple("must return Unit") {
-            it.returnTypeRef.isUnit
+        val unit = simple("must return 'Unit'") { it, session ->
+            it.returnTypeRef.coneType.fullyExpandedType(session).isUnit
         }
     }
 
-    val noDefaultAndVarargs = simple("should not have varargs or parameters with default values") {
+    val noDefaultAndVarargs = simple("should not have varargs or parameters with default values") { it, _ ->
         it.valueParameters.all { param ->
             param.defaultValue == null && !param.isVararg
         }

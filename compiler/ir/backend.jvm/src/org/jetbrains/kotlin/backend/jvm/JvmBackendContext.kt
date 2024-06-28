@@ -1,46 +1,48 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
+import org.jetbrains.kotlin.backend.jvm.extensions.JvmIrDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.concurrent.ConcurrentHashMap
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
@@ -49,6 +51,8 @@ class JvmBackendContext(
     val generatorExtensions: JvmGeneratorExtensions,
     val backendExtension: JvmBackendExtension,
     val irSerializer: JvmIrSerializer?,
+    val irDeserializer: JvmIrDeserializer,
+    val irProviders: List<IrProvider>,
     val irPluginContext: IrPluginContext?,
 ) : CommonBackendContext {
 
@@ -63,18 +67,23 @@ class JvmBackendContext(
         generatorExtensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         irSerializer: JvmIrSerializer?,
-    ) : this(state, irBuiltIns, symbolTable, phaseConfig, generatorExtensions, backendExtension, irSerializer, null)
+        irProviders: List<IrProvider>,
+        irDeserializer: JvmIrDeserializer,
+    ) : this(
+        state, irBuiltIns, symbolTable, phaseConfig, generatorExtensions,
+        backendExtension, irSerializer, irDeserializer, irProviders, irPluginContext = null
+    )
 
     data class LocalFunctionData(
         val localContext: LocalDeclarationsLowering.LocalFunctionContext,
         val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
-        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>
+        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
     )
 
-    // If not-null, this is populated by LocalDeclarationsLowering with the intermediate data
-    // allowing mapping from local function captures to parameters and accurate transformation
-    // of calls to local functions from code fragments (i.e. the expression evaluator).
-    var localDeclarationsLoweringData: MutableMap<IrFunction, LocalFunctionData>? = null
+    val config: JvmBackendConfig = state.config
+
+    // If this is not null, the JVM IR backend is invoked in the context of Evaluate Expression in the IDE.
+    var evaluatorData: JvmEvaluatorData? = null
 
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
@@ -90,14 +99,14 @@ class JvmBackendContext(
     val defaultTypeMapper = IrTypeMapper(this)
     val defaultMethodSignatureMapper = MethodSignatureMapper(this, defaultTypeMapper)
 
-    val innerClassesSupport = JvmInnerClassesSupport(irFactory)
+    override val innerClassesSupport: InnerClassesSupport = JvmInnerClassesSupport(irFactory)
     val cachedDeclarations = JvmCachedDeclarations(
         this, generatorExtensions.cachedFields
     )
 
-    override val mapping: Mapping = DefaultMapping()
+    override val mapping: Mapping = Mapping()
 
-    val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, state.languageVersionSettings)
+    val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(state.diagnosticReporter, config.languageVersionSettings)
 
     override val ir = JvmIr(this.symbolTable)
 
@@ -105,51 +114,22 @@ class JvmBackendContext(
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
-    private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
+    lateinit var enumEntriesIntrinsicMappingsCache: EnumEntriesIntrinsicMappingsCache
+
+    // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
+    val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
 
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
         Type.getObjectType("java/lang/invoke/LambdaMetafactory")
     ).isNotEmpty()
 
-    fun getLocalClassType(container: IrAttributeContainer): Type? =
-        localClassType[container.attributeOwnerId]
-
-    fun putLocalClassType(container: IrAttributeContainer, value: Type) {
-        localClassType[container.attributeOwnerId] = value
-    }
-
     val isEnclosedInConstructor = ConcurrentHashMap.newKeySet<IrAttributeContainer>()
-    val enclosingMethodOverride = ConcurrentHashMap<IrFunction, IrFunction>()
-
-    private val classCodegens = ConcurrentHashMap<IrClass, Any>()
-
-    @Suppress("UNCHECKED_CAST")
-    fun <ClassCodegen : Any> getOrCreateClassCodegen(klass: IrClass, create: (IrClass) -> ClassCodegen): ClassCodegen =
-        classCodegens.computeIfAbsent(klass, create) as ClassCodegen
-
-    val localDelegatedProperties = ConcurrentHashMap<IrAttributeContainer, List<IrLocalDelegatedPropertySymbol>>()
 
     val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
-    val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
-    val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
-    val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
-
-    val hiddenConstructorsWithMangledParams = ConcurrentHashMap<IrConstructor, IrConstructor>()
-    val hiddenConstructorsOfSealedClasses = ConcurrentHashMap<IrConstructor, IrConstructor>()
 
     val collectionStubComputer = CollectionStubComputer(this)
 
-    private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
-
-    fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
-        overridesWithoutStubs[function] = function.overriddenSymbols.toList()
-    }
-
-    fun getOverridesWithoutStubs(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
-        overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
-
     val bridgeLoweringCache = BridgeLoweringCache(this)
-    val functionsWithSpecialBridges: MutableSet<IrFunction> = ConcurrentHashMap.newKeySet()
 
     override var inVerbosePhase: Boolean = false // TODO: needs parallelizing
 
@@ -157,21 +137,17 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrFunctionReference, IrFunction>()
     val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
-    val multiFieldValueClassReplacements =
-        MemoizedMultiFieldValueClassReplacements(irFactory, this)
-
-    val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
+    val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)
 
     val inlineMethodGenerationLock = Any()
 
-    val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
+    val optionalAnnotations = mutableListOf<MetadataSource.Class>()
 
     init {
         state.mapInlineClass = { descriptor ->
@@ -179,31 +155,26 @@ class JvmBackendContext(
         }
 
         state.multiFieldValueClassUnboxInfo = lambda@{ descriptor ->
-            val irClass = symbolTable.lazyWrapper.referenceClass(descriptor).owner
+            val irClass = referenceClass(descriptor).owner
             val node = multiFieldValueClassReplacements.getRootMfvcNodeOrNull(irClass) ?: return@lambda null
             val leavesInfo =
                 node.leaves.map { Triple(defaultTypeMapper.mapType(it.type), it.fullMethodName.asString(), it.fullFieldName.asString()) }
             GenerationState.MultiFieldValueClassUnboxInfo(leavesInfo)
         }
-    }
 
-    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.lazyWrapper.referenceClass(descriptor)
-
-    internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.lazyWrapper.referenceTypeParameter(descriptor)
-
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) {
-            print(message())
+        state.reportDuplicateClassNameError = { origin, internalName, duplicateClasses ->
+            val declaration = (origin as JvmIrDeclarationOrigin).declaration
+            if (declaration != null) {
+                ktDiagnosticReporter.at(declaration).report(JvmBackendErrors.DUPLICATE_CLASS_NAMES, internalName, duplicateClasses)
+            }
         }
     }
 
-    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        /*TODO*/
-        print(message)
-    }
+    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
+        symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor)
+
+    internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
+        symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
     override fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
         builder.irBlock {
@@ -213,7 +184,7 @@ class JvmBackendContext(
     override fun handleDeepCopy(
         fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
         classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
-        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
+        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>,
     ) {
         val oldClassesWithNameOverride = classNameOverride.keys.toList()
         for (klass in oldClassesWithNameOverride) {
@@ -284,13 +255,9 @@ class JvmBackendContext(
         get() = false
 
     inner class JvmIr(
-        symbolTable: SymbolTable
+        symbolTable: SymbolTable,
     ) : Ir<JvmBackendContext>(this) {
         override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
-
-        override fun unfoldInlineClassType(irType: IrType): IrType? {
-            return InlineClassAbi.unboxType(irType)
-        }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
@@ -298,7 +265,7 @@ class JvmBackendContext(
     override fun remapMultiFieldValueClassStructure(
         oldFunction: IrFunction,
         newFunction: IrFunction,
-        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?
+        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?,
     ) {
         val parametersMapping = parametersMappingOrNull ?: run {
             require(oldFunction.explicitParametersCount == newFunction.explicitParametersCount) {

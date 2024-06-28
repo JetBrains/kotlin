@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-45243
 
 import kotlin.contracts.ExperimentalContracts

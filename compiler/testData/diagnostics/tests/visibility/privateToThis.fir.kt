@@ -1,5 +1,6 @@
 // FIR_DUMP
 
+// explicit types
 class A<in T>(t: T) {
     private val t: T = t  // PRIVATE_TO_THIS
 
@@ -22,5 +23,15 @@ class A<in T>(t: T) {
         fun baz(a: A<*>) {
             a.i
         }
+    }
+}
+
+// implicit types
+class C<in T>(t: T) {
+    private val t: T = t
+    private val tt = t
+
+    fun foo(a: C<String>) {
+        val x: String = a.<!INVISIBLE_REFERENCE!>tt<!>
     }
 }

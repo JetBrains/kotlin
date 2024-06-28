@@ -1,11 +1,25 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    const val __GNUC_VA_LIST: Int = 1
-    typealias __builtin_va_list = CPointer<ByteVar /* = ByteVarOf<Byte> */>
-    typealias __builtin_va_listVar = CPointerVarOf<__builtin_va_list /* = CPointer<ByteVar /* = ByteVarOf<Byte> */> */>
-    typealias __gnuc_va_list = __builtin_va_list
-    typealias __gnuc_va_listVar = CPointerVarOf<__gnuc_va_list /* = CPointer<ByteVar /* = ByteVarOf<Byte> */> */>
-    typealias va_list = __builtin_va_list
-    typealias va_listVar = CPointerVarOf<va_list /* = CPointer<ByteVar /* = ByteVarOf<Byte> */> */>
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final const val __GNUC_VA_LIST: kotlin/Int /* = 1 */
+        public final get
+
+      public typealias __builtin_va_list = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+
+      public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */> */
+
+      public typealias __gnuc_va_list = pod1/__builtin_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */ */
+
+      public typealias __gnuc_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__gnuc_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__gnuc_va_list^ */> */
+
+      public typealias va_list = pod1/__builtin_va_list^ /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */ */
+
+      public typealias va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/va_list^ */> */
+    }
+  }
 }
-

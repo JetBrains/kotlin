@@ -54,6 +54,3 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
 }
 
 val FirSession.extensionService: FirExtensionService by FirSession.sessionComponentAccessor()
-
-val FirExtensionService.hasExtensions: Boolean
-    get() = registeredExtensionsSize > 0

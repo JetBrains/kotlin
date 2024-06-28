@@ -21,11 +21,9 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.AstLoadingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -39,9 +37,10 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.KtNodeTypes.PROPERTY_DELEGATE;
 import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
+import static org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt.isKtFile;
 
 public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
-        implements KtVariableDeclaration, PsiModifiableCodeBlock {
+        implements KtVariableDeclaration {
 
     private static final Logger LOG = Logger.getInstance(KtProperty.class);
 
@@ -84,7 +83,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             return stub.isTopLevel();
         }
 
-        return getParent() instanceof KtFile;
+        return isKtFile(getParent());
     }
 
     @Nullable
@@ -268,13 +267,18 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Nullable
     public KtExpression getInitializer() {
         KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasInitializer()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasInitializer()) {
+                return null;
+            }
+
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class)
-        );
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
     }
 
     public boolean hasDelegateExpressionOrInitializer() {
@@ -340,7 +344,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return ItemPresentationProviders.getItemPresentation(this);
     }
 
-    @Override
+    @SuppressWarnings({"unused", "MethodMayBeStatic"}) //keep for compatibility with potential plugins
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
         return false;

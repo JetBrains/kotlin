@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.model.*
 
 interface PostponedArgumentsAnalyzerContext : TypeSystemInferenceExtensionContext {
-    fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>): TypeSubstitutorMarker
+    val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+
+    fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
     fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker
     fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker>
 

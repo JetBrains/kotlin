@@ -1,0 +1,9 @@
+FILE: test.kt
+    public final val entries: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+    public final val somethingElse: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final fun test(): R|kotlin/Unit| {
+        Q|pkg/JEnumStaticField|.R|pkg/JEnumStaticField.entries*s|.R|kotlin/String.length|
+        Q|pkg/JEnumStaticField|.R|pkg/JEnumStaticField.somethingElse*s|.R|kotlin/String.length|
+    }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * After moving an [org.jetbrains.kotlin.ir.IrElement], some type parameter references within it may become out of scope.
@@ -28,10 +29,9 @@ class IrTypeParameterRemapper(
             type
         else
             IrSimpleTypeImpl(
-                null,
                 type.classifier.remap(),
                 type.nullability,
-                type.arguments.map { it.remap() },
+                type.arguments.memoryOptimizedMap { it.remap() },
                 type.annotations,
                 type.abbreviation?.remap()
             ).apply {
@@ -52,7 +52,7 @@ class IrTypeParameterRemapper(
         IrTypeAbbreviationImpl(
             typeAlias,
             hasQuestionMark,
-            arguments.map { it.remap() },
+            arguments.memoryOptimizedMap { it.remap() },
             annotations
         ).apply {
             annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }

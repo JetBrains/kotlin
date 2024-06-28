@@ -3,15 +3,13 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.internal.kaptGenerateStubsTaskName
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 
 class SubpluginEnvironment(
     private val subplugins: List<KotlinCompilerPluginSupportPlugin>,
@@ -56,7 +54,7 @@ class SubpluginEnvironment(
                 options
             }
 
-            val configureKotlinTask: (KotlinCompile<*>) -> Unit = {
+            val configureKotlinTask: (KotlinCompilationTask<*>) -> Unit = {
                 when (it) {
                     is AbstractKotlinCompile<*> -> it.pluginOptions.add(compilerOptions)
                     is KotlinNativeCompile -> it.compilerPluginOptions.addPluginArgument(compilerOptions.get())
@@ -64,7 +62,8 @@ class SubpluginEnvironment(
                 }
             }
 
-            kotlinCompilation.compileKotlinTaskProvider.configure(configureKotlinTask)
+            kotlinCompilation.compileTaskProvider.configure(configureKotlinTask)
+            project.configurePluginOptionsForKapt(kotlinCompilation, configureKotlinTask)
 
             if (kotlinCompilation is KotlinJsIrCompilation) {
                 kotlinCompilation.binaries.all {
@@ -78,6 +77,27 @@ class SubpluginEnvironment(
         }
 
         return appliedSubplugins
+    }
+
+    private fun Project.configurePluginOptionsForKapt(
+        kotlinCompilation: KotlinCompilation<*>,
+        configureKotlinTask: (KotlinCompilationTask<*>) -> Unit,
+    ) {
+        if (kotlinCompilation is KotlinJvmCompilation ||
+            kotlinCompilation is KotlinWithJavaCompilation<*, *> ||
+            kotlinCompilation is KotlinJvmAndroidCompilation
+        ) {
+            whenKaptEnabled {
+                @Suppress("UNCHECKED_CAST")
+                val kaptGenerateStubsTaskName = (kotlinCompilation.compileTaskProvider as TaskProvider<KotlinJvmCompile>)
+                    .kaptGenerateStubsTaskName
+                tasks.withType<KaptGenerateStubs>().configureEach { task ->
+                    if (task.name == kaptGenerateStubsTaskName) {
+                        configureKotlinTask(task)
+                    }
+                }
+            }
+        }
     }
 
     private fun Project.addMavenDependency(configuration: String, artifact: SubpluginArtifact) {

@@ -31,11 +31,13 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     private val resolvedNicknames = ConcurrentHashMap<Any, TAnnotation>()
 
+    abstract val isK2: Boolean
+
     fun resolveTypeQualifierAnnotation(annotation: TAnnotation): TAnnotation? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
-        if (annotation.fqName in BUILT_IN_TYPE_QUALIFIER_FQ_NAMES || annotation.hasAnnotation(TYPE_QUALIFIER_FQNAME))
+        if (annotation.fqName in BUILT_IN_TYPE_QUALIFIER_ANNOTATIONS || annotation.hasAnnotation(JAVAX_TYPE_QUALIFIER_ANNOTATION_FQ_NAME))
             return annotation
-        if (!annotation.hasAnnotation(TYPE_QUALIFIER_NICKNAME_FQNAME))
+        if (!annotation.hasAnnotation(JAVAX_TYPE_QUALIFIER_NICKNAME_ANNOTATION_FQ_NAME))
             return null
         return resolvedNicknames.getOrPut(annotation.key) {
             // This won't store nulls (ConcurrentHashMap does not permit that), but presumably unless the code
@@ -75,7 +77,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     private fun resolveTypeQualifierDefaultAnnotation(annotation: TAnnotation): TypeQualifierWithApplicability<TAnnotation>? {
         if (javaTypeEnhancementState.jsr305.isDisabled) return null
-        val typeQualifierDefault = annotation.findAnnotation(TYPE_QUALIFIER_DEFAULT_FQNAME) ?: return null
+        val typeQualifierDefault = annotation.findAnnotation(JAVAX_TYPE_QUALIFIER_DEFAULT_ANNOTATION_FQ_NAME) ?: return null
         val typeQualifier = annotation.metaAnnotations.firstOrNull { resolveTypeQualifierAnnotation(it) != null } ?: return null
         val applicability = typeQualifierDefault.enumArguments(onlyValue = true)
             .mapNotNullTo(mutableSetOf()) { JAVA_APPLICABILITY_TYPES[it] }
@@ -95,7 +97,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     private fun resolveJsr305CustomState(annotation: TAnnotation): ReportLevel? {
         javaTypeEnhancementState.jsr305.userDefinedLevelForSpecificAnnotation[annotation.fqName]?.let { return it }
-        val enumValue = annotation.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.enumArguments(onlyValue = false)?.firstOrNull()
+        val enumValue = annotation.findAnnotation(UNDER_MIGRATION_ANNOTATION_FQ_NAME)?.enumArguments(onlyValue = false)?.firstOrNull()
             ?: return null
         return javaTypeEnhancementState.jsr305.migrationLevel ?: when (enumValue) {
             "STRICT" -> ReportLevel.STRICT
@@ -159,19 +161,43 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     ): JavaTypeQualifiersByElementType? {
         if (javaTypeEnhancementState.disabledDefaultAnnotations) return oldQualifiers
 
-        val defaultQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
-        if (defaultQualifiers.isEmpty()) return oldQualifiers
+        val extractedQualifiers = annotations.mapNotNull { extractDefaultQualifiers(it) }
+        if (extractedQualifiers.isEmpty()) return oldQualifiers
+
+        val newQualifiers = QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
+
+        // filter out inconsistencies in extracted qualifiers per applicability type
+        for (extractedQualifier in extractedQualifiers) {
+            for (applicabilityType in extractedQualifier.qualifierApplicabilityTypes) {
+                if (applicabilityType !in newQualifiers || !isK2) {
+                    // no qualifiers for applicabilityType were previously considered
+                    // Or, in K1 mode, we just use the last qualifier
+                    newQualifiers[applicabilityType] = extractedQualifier
+                } else {
+                    // one+ qualifiers for applicabilityType were already considered
+                    val preexistingQualifier = newQualifiers[applicabilityType]
+                        ?: continue // an inconsistency was already found when considering previous qualifiers
+                    val preexistingNullability = preexistingQualifier.nullabilityQualifier
+                    val extractedNullability = extractedQualifier.nullabilityQualifier
+                    newQualifiers[applicabilityType] = when {
+                        extractedNullability == preexistingNullability -> preexistingQualifier
+                        extractedNullability.isForWarningOnly && !preexistingNullability.isForWarningOnly -> preexistingQualifier
+                        !extractedNullability.isForWarningOnly && preexistingNullability.isForWarningOnly -> extractedQualifier
+                        else -> null // qualifiers are inconsistent
+                    }
+                }
+            }
+        }
 
         val defaultQualifiersByType =
             oldQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
                 ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
         var wasUpdate = false
-        for (qualifier in defaultQualifiers) {
-            for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
-                defaultQualifiersByType[applicabilityType] = qualifier
-                wasUpdate = true
-            }
+        for ((applicabilityType, newQualifier) in newQualifiers) {
+            if (newQualifier == null) continue // ignore inconsistent qualifiers
+            defaultQualifiersByType[applicabilityType] = newQualifier
+            wasUpdate = true
         }
 
         return if (!wasUpdate) oldQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
@@ -182,21 +208,16 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
         val reportLevel = javaTypeEnhancementState.getReportLevelForAnnotation(fqName)
         if (reportLevel.isIgnore) return null
         val nullability = when (fqName) {
-            in NULLABLE_ANNOTATIONS -> NullabilityQualifier.NULLABLE
             in NOT_NULL_ANNOTATIONS -> NullabilityQualifier.NOT_NULL
-            JSPECIFY_OLD_NULLABLE, JSPECIFY_NULLABLE -> NullabilityQualifier.NULLABLE
-            JSPECIFY_OLD_NULLNESS_UNKNOWN, JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifier.FORCE_FLEXIBILITY
-            JAVAX_NONNULL_ANNOTATION ->
+            in NULLABLE_ANNOTATIONS -> NullabilityQualifier.NULLABLE
+            in FORCE_FLEXIBILITY_ANNOTATIONS -> NullabilityQualifier.FORCE_FLEXIBILITY
+            JAVAX_NONNULL_ANNOTATION_FQ_NAME ->
                 when (annotation.enumArguments(onlyValue = false).firstOrNull()) {
                     "ALWAYS", null -> NullabilityQualifier.NOT_NULL
                     "MAYBE", "NEVER" -> NullabilityQualifier.NULLABLE
                     "UNKNOWN" -> NullabilityQualifier.FORCE_FLEXIBILITY
                     else -> return null
                 }
-            COMPATQUAL_NULLABLE_ANNOTATION -> NullabilityQualifier.NULLABLE
-            COMPATQUAL_NONNULL_ANNOTATION -> NullabilityQualifier.NOT_NULL
-            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifier.NOT_NULL
-            ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifier.NULLABLE
             else -> return null
         }
         return NullabilityQualifierWithMigrationStatus(nullability, reportLevel.isWarning || forceWarning)

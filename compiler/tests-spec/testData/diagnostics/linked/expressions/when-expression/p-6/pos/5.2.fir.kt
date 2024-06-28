@@ -1,5 +1,15 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 5
+ * NUMBER: 2
+ * DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
+ * HELPERS: typesProvider, classes, functions
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
@@ -72,7 +82,7 @@ fun case_9(value_1: Any) {
 // TESTCASE NUMBER: 10
 fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
-        value_2 as List<Int>, value_2 as? List<Int> -> {}
+        value_2 as List<Int>, value_2 <!USELESS_CAST!>as? List<Int><!> -> {}
         value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>, (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int> -> {}
     }
 }

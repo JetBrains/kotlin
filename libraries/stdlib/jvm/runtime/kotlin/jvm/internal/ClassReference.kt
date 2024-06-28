@@ -87,16 +87,16 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
 
     private fun error(): Nothing = throw KotlinReflectionNotSupportedError()
 
-    override fun equals(other: Any?) =
+    override fun equals(other: Any?): Boolean =
         other is ClassReference && javaObjectType == other.javaObjectType
 
-    override fun hashCode() =
+    override fun hashCode(): Int =
         javaObjectType.hashCode()
 
-    override fun toString() =
+    override fun toString(): String =
         jClass.toString() + Reflection.REFLECTION_NOT_AVAILABLE
 
-    companion object {
+    public companion object {
         private val FUNCTION_CLASSES =
             listOf(
                 Function0::class.java, Function1::class.java, Function2::class.java, Function3::class.java, Function4::class.java,

@@ -1,0 +1,9 @@
+$TESTDATA_DIR$/simple2js.kt
+-Xir-only
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
+-module-kind
+commonjs
+-Xir-per-file

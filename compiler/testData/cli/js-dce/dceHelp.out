@@ -1,15 +1,15 @@
 Usage: kotlin-dce-js <options> <source files>
 where possible options include:
   -keep <fully.qualified.name[,]>
-                             List of fully-qualified names of declarations that shouldn't be eliminated
-  -dev-mode                  Development mode: don't strip out any code, just copy dependencies
-  -output-dir <path>         Output directory
-  -Werror                    Report an error if there are any warnings
-  -X                         Print a synopsis of advanced options
-  -help (-h)                 Print a synopsis of standard options
-  -nowarn                    Generate no warnings
-  -verbose                   Enable verbose logging output
-  -version                   Display compiler version
-  -J<option>                 Pass an option directly to JVM
-  @<argfile>                 Read compiler arguments and file paths from the given file
+                             List of fully-qualified names of declarations that shouldn't be eliminated.
+  -dev-mode                  Development mode: don't strip out any code, just copy dependencies.
+  -output-dir <path>         Output directory.
+  -Werror                    Report an error if there are any warnings.
+  -X                         Print a synopsis of advanced options.
+  -help (-h)                 Print a synopsis of standard options.
+  -nowarn                    Don't generate any warnings.
+  -verbose                   Enable verbose logging output.
+  -version                   Display the compiler version.
+  -J<option>                 Pass an option directly to JVM.
+  @<argfile>                 Read compiler arguments and file paths from the given file.
 OK

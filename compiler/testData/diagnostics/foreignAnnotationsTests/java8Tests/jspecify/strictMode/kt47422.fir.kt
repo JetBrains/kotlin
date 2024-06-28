@@ -1,6 +1,6 @@
 // JSPECIFY_STATE: strict
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: Foo.java
@@ -100,7 +100,7 @@ fun test3() {
     isNotNullAndNullableStringInFoo(
         UtilNullMarkedGeneric.getFooOfK(),
         // jspecify_nullness_mismatch
-        <!ARGUMENT_TYPE_MISMATCH!>UtilNullMarkedGeneric.getFooOfK()<!>
+        <!ARGUMENT_TYPE_MISMATCH!>UtilNullMarkedGeneric.<!CANNOT_INFER_PARAMETER_TYPE!>getFooOfK<!>()<!>
     )
 }
 

@@ -11,10 +11,12 @@ import java.lang.StringBuilder
 object TestGeneratorUtil {
     @Language("RegExp") const val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
     @Language("RegExp") const val KT = """^(.+)\.(kt)$"""
+    @Language("RegExp") const val KTS = """^(.+)\.(kts)$"""
     @Language("RegExp") const val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
 
     @Language("RegExp") const val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
     @Language("RegExp") const val KT_WITHOUT_FIR_PREFIX = """^(.+)(?<!\.fir)\.kt$"""
+    @Language("RegExp") const val KT_OR_KTS_WITH_FIR_PREFIX = "^(.+)\\.fir\\.kts?\$"
 
     @JvmStatic
     fun escapeForJavaIdentifier(fileName: String): String {
@@ -35,6 +37,7 @@ object TestGeneratorUtil {
         return escapeForJavaIdentifier(file.name).replaceFirstChar(Char::uppercaseChar)
     }
 
+    /** Must be called on the main thread, otherwise returns the root class of the worker thread. */
     fun getMainClassName(): String? =
         Throwable().stackTrace.lastOrNull()?.className
 }

@@ -4,6 +4,8 @@ public val Test1: kotlin.Nothing? = null
 public val Test2: kotlin.Nothing? = null
 public val Test3: kotlin.Nothing? = null
 public val Test4: kotlin.Nothing? = null
+public val Test5: kotlin.Nothing? = null
+public val Test6: kotlin.Nothing? = null
 
 public final class Test1 {
     public constructor Test1()
@@ -44,3 +46,18 @@ public object Test4 {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class Test5 {
+    public constructor Test5()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test6 {
+    public constructor Test6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

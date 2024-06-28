@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] callInsideLambdaInsideSuperCallAndExplicitConstructor.kt
+    public open [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|() -> kotlin/Unit|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|B|>(Int(1), [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                R|/foo|()
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    }

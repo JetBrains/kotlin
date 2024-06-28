@@ -1,24 +1,3 @@
-class MyClass {
-  constructor(value: String) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val value: String
-    field = value
-    get
-
-}
-
-operator fun MyClass.provideDelegate(host: Any?, p: Any): String {
-  return <this>.<get-value>()
-}
-
-operator fun String.getValue(receiver: Any?, p: Any): String {
-  return <this>
-}
-
 val testO: String /* by */
   field = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
   get(): String {
@@ -34,3 +13,25 @@ val testK: String /* by */
 val testOK: String
   field = <get-testO>().plus(other = <get-testK>())
   get
+
+class MyClass {
+  val value: String
+    field = value
+    get
+
+  constructor(value: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+operator fun String.getValue(receiver: Any?, p: Any): String {
+  return <this>
+}
+
+operator fun MyClass.provideDelegate(host: Any?, p: Any): String {
+  return <this>.<get-value>()
+}
+

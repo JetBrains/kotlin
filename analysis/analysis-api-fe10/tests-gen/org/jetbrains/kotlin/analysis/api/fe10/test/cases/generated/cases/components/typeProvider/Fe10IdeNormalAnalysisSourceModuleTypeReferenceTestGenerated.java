@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,63 +27,135 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/components/typeProvider/typeReference")
 @TestDataPath("$PROJECT_ROOT")
 public class Fe10IdeNormalAnalysisSourceModuleTypeReferenceTestGenerated extends AbstractTypeReferenceTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fe10,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fe10,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInTypeReference() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInTypeReference() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/typeProvider/typeReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("starProjection.kt")
-    public void testStarProjection() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/starProjection.kt");
-    }
+  @Test
+  @TestMetadata("annotationEntry.kt")
+  public void testAnnotationEntry() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntry.kt");
+  }
 
-    @Test
-    @TestMetadata("superTypeEntry.kt")
-    public void testSuperTypeEntry() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry.kt");
-    }
+  @Test
+  @TestMetadata("annotationEntryBackingField.kt")
+  public void testAnnotationEntryBackingField() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryBackingField.kt");
+  }
 
-    @Test
-    @TestMetadata("superTypeEntry_withTypeArgument.kt")
-    public void testSuperTypeEntry_withTypeArgument() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry_withTypeArgument.kt");
-    }
+  @Test
+  @TestMetadata("annotationEntryGetter.kt")
+  public void testAnnotationEntryGetter() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryGetter.kt");
+  }
 
-    @Test
-    @TestMetadata("typeArgument_functionCall.kt")
-    public void testTypeArgument_functionCall() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_functionCall.kt");
-    }
+  @Test
+  @TestMetadata("annotationEntryOnParameter.kt")
+  public void testAnnotationEntryOnParameter() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntryOnParameter.kt");
+  }
 
-    @Test
-    @TestMetadata("typeArgument_superTypeEntry.kt")
-    public void testTypeArgument_superTypeEntry() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_superTypeEntry.kt");
-    }
+  @Test
+  @TestMetadata("annotationEntrySetter.kt")
+  public void testAnnotationEntrySetter() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationEntrySetter.kt");
+  }
 
-    @Test
-    @TestMetadata("underscoreTypeArgument_inferred.kt")
-    public void testUnderscoreTypeArgument_inferred() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_inferred.kt");
-    }
+  @Test
+  @TestMetadata("annotationOnFunction.kt")
+  public void testAnnotationOnFunction() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationOnFunction.kt");
+  }
 
-    @Test
-    @TestMetadata("underscoreTypeArgument_reified.kt")
-    public void testUnderscoreTypeArgument_reified() throws Exception {
-        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_reified.kt");
-    }
+  @Test
+  @TestMetadata("annotationParameterValue.kt")
+  public void testAnnotationParameterValue() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValue.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationParameterValueBackingField.kt")
+  public void testAnnotationParameterValueBackingField() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValueBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("functionReceiver.kt")
+  public void testFunctionReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("functionReturn.kt")
+  public void testFunctionReturn() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReturn.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyReceiver.kt")
+  public void testPropertyReceiver() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/propertyReceiver.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyReturn.kt")
+  public void testPropertyReturn() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/propertyReturn.kt");
+  }
+
+  @Test
+  @TestMetadata("starProjection.kt")
+  public void testStarProjection() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/starProjection.kt");
+  }
+
+  @Test
+  @TestMetadata("superTypeEntry.kt")
+  public void testSuperTypeEntry() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("superTypeEntry_withTypeArgument.kt")
+  public void testSuperTypeEntry_withTypeArgument() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/superTypeEntry_withTypeArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("typeArgument_functionCall.kt")
+  public void testTypeArgument_functionCall() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_functionCall.kt");
+  }
+
+  @Test
+  @TestMetadata("typeArgument_superTypeEntry.kt")
+  public void testTypeArgument_superTypeEntry() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/typeArgument_superTypeEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("underscoreTypeArgument_inferred.kt")
+  public void testUnderscoreTypeArgument_inferred() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_inferred.kt");
+  }
+
+  @Test
+  @TestMetadata("underscoreTypeArgument_reified.kt")
+  public void testUnderscoreTypeArgument_reified() {
+    runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/underscoreTypeArgument_reified.kt");
+  }
 }

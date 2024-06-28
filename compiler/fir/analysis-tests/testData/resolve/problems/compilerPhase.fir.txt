@@ -27,8 +27,8 @@ FILE: compilerPhase.kt
             super<R|kotlin/Any|>()
         }
 
-        private/*private to this*/ final val lower: R|CompilerPhase<Context, Data, Data>| = R|<local>/lower|
-            private/*private to this*/ get(): R|CompilerPhase<Context, Data, Data>|
+        private final val lower: R|CompilerPhase<Context, Data, Data>| = R|<local>/lower|
+            private get(): R|CompilerPhase<Context, Data, Data>|
 
         public open override fun invoke(phaseConfig: R|PhaseConfig|, phaserState: R|PhaserState<Data>|, context: R|Context|, input: R|Data|): R|Data| {
             lval output: R|Data| = when () {

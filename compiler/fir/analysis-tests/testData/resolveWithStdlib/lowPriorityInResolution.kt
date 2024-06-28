@@ -1,8 +1,8 @@
-<!CONFLICTING_OVERLOADS!>@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 @kotlin.internal.LowPriorityInOverloadResolution
-fun foo(): Int<!> = 1
+fun foo(): Int = 1
 
-<!CONFLICTING_OVERLOADS!>fun foo(): String<!> = ""
+fun foo(): String = ""
 
 fun test() {
     val s = foo()

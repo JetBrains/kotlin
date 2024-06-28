@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.types.AbstractTypePreparator
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class ConeTypePreparator(val session: FirSession) : AbstractTypePreparator() {
     private fun prepareType(type: ConeSimpleKotlinType): ConeSimpleKotlinType {

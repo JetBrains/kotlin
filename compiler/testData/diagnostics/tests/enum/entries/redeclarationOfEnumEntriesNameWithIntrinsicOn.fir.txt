@@ -1,0 +1,23 @@
+FILE: redeclarationOfEnumEntriesNameWithIntrinsicOn.kt
+    public final enum class E : R|kotlin/Enum<E>| {
+        private constructor(): R|E| {
+            super<R|kotlin/Enum<E>|>()
+        }
+
+        public final static enum entry entries: R|E|
+        public final static enum entry Entries: R|E|
+        public final fun foo(): R|kotlin/Unit| {
+            R|/E.entries|.R|SubstitutionOverride</E.ordinal: R|kotlin/Int|>|
+            Q|E|.R|/E.entries|.R|SubstitutionOverride</E.ordinal: R|kotlin/Int|>|
+        }
+
+        public final static fun values(): R|kotlin/Array<E>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|E| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<E>|
+            public get(): R|kotlin/enums/EnumEntries<E>|
+
+    }

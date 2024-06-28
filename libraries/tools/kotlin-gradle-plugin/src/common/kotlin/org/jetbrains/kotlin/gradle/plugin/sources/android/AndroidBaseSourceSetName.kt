@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.utils.*
 
-internal val NamedDomainObjectContainer<out AndroidSourceSet>.main: AndroidSourceSet
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal val NamedDomainObjectContainer<out DeprecatedAndroidSourceSet>.main: DeprecatedAndroidSourceSet
     get() = getByName(AndroidBaseSourceSetName.Main.name)
 
-internal val NamedDomainObjectContainer<out AndroidSourceSet>.test: AndroidSourceSet
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal val NamedDomainObjectContainer<out DeprecatedAndroidSourceSet>.test: DeprecatedAndroidSourceSet
     get() = getByName(AndroidBaseSourceSetName.Test.name)
 
-internal val NamedDomainObjectContainer<out AndroidSourceSet>.androidTest: AndroidSourceSet
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal val NamedDomainObjectContainer<out DeprecatedAndroidSourceSet>.androidTest: DeprecatedAndroidSourceSet
     get() = getByName(AndroidBaseSourceSetName.AndroidTest.name)
 
 /*

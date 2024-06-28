@@ -1,0 +1,4 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingStaticClass/source.kt:4:15: error: cannot access class 'test.C.D'. Check your module classpath for missing or conflicting dependencies.
+    val c = C.makeD()
+              ^^^^^
+COMPILATION_ERROR

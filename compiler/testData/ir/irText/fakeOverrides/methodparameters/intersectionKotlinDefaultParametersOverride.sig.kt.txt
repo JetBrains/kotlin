@@ -1,0 +1,101 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  //   Public signature: /A.foo|6201035694832034790[0]
+  //   Public signature debug description: foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  open fun foo(a: Int, b: Any?, c: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+abstract class B : A, Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Int?;kotlin.Any?;kotlin.Any?){}
+  //   Public signature: /B.foo|2458295513865718285[0]
+  //   Public signature debug description: foo(kotlin.Int?;kotlin.Any?;kotlin.Any?){}
+  abstract /* fake */ override fun foo(a: Int?, b: Any?, c: Any?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  //   Public signature: /B.foo|6201035694832034790[0]
+  //   Public signature debug description: foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  /* fake */ override fun foo(a: Int, b: Any?, c: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : A, Java1 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  //   Public signature: /C.foo|6201035694832034790[0]
+  //   Public signature debug description: foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  /* fake */ override fun foo(a: Int, b: Any?, c: Nothing?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Int?;kotlin.Any?;kotlin.Any?){}
+  //   Public signature: /C.foo|2458295513865718285[0]
+  //   Public signature debug description: foo(kotlin.Int?;kotlin.Any?;kotlin.Any?){}
+  override fun foo(a: Int?, b: Any?, c: Any?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : A, Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  //   Public signature: /D.foo|6201035694832034790[0]
+  //   Public signature debug description: foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  override fun foo(a: Int, b: Any?, c: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK:
+  //   Mangled name: KotlinInterface#foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  //   Public signature: /KotlinInterface.foo|6201035694832034790[0]
+  //   Public signature debug description: foo(kotlin.Int;kotlin.Any?;kotlin.Nothing?){}
+  fun foo(a: Int, b: Any?, c: Nothing?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(B;C;D){}
+//   Public signature: /test|-8823403443617116000[0]
+//   Public signature debug description: test(B;C;D){}
+fun test(b: B, c: C, d: D): Unit

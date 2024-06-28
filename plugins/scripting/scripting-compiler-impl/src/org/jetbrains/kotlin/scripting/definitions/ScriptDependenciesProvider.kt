@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -49,6 +48,6 @@ open class ScriptDependenciesProvider constructor(
 
     companion object {
         fun getInstance(project: Project): ScriptDependenciesProvider? =
-            ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
+            project.getService(ScriptDependenciesProvider::class.java)
     }
 }

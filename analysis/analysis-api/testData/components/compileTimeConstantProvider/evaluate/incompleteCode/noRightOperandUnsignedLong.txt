@@ -1,9 +1,3 @@
 expression: 4294967296u
-
-CONSTANT_EXPRESSION_EVALUATION
 constant: 4294967296uL
 constantValueKind: ULong
-
-CONSTANT_LIKE_EXPRESSION_EVALUATION
-constantLike: 4294967296uL
-constantLikeValueKind: ULong

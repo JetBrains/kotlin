@@ -39,7 +39,7 @@ public final class InlineList {
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public static method subList-impl(p0: java.util.List, p1: int, p2: int): java.util.List
     public method toArray(): java.lang.Object[]

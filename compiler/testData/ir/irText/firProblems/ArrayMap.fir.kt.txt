@@ -5,274 +5,29 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
 
   }
 
-  abstract val size: Int
-    abstract get
-
-  abstract operator fun set(index: Int, value: T)
-  abstract operator fun get(index: Int): T?
   abstract fun copy(): ArrayMap<T>
 
-}
+  abstract operator fun get(index: Int): T?
 
-fun ArrayMap<*>.isEmpty(): Boolean {
-  return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0)
-}
+  abstract operator fun set(index: Int, value: T)
 
-fun ArrayMap<*>.isNotEmpty(): Boolean {
-  return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
-}
-
-internal object EmptyArrayMap : ArrayMap<Nothing> {
-  private constructor() /* primary */ {
-    super/*ArrayMap*/<Nothing>()
-    /* <init>() */
-
-  }
-
-  override val size: Int
-    override get(): Int {
-      return 0
-    }
-
-  override operator fun set(index: Int, value: Nothing) {
-    throw IllegalStateException()
-  }
-
-  override operator fun get(index: Int): Nothing? {
-    return null
-  }
-
-  override fun copy(): ArrayMap<Nothing> {
-    return <this>
-  }
-
-  override operator fun iterator(): Iterator<Nothing> {
-    return { // BLOCK
-      local class <no name provided> : Iterator<Nothing> {
-        private constructor() /* primary */ {
-          super/*Any*/()
-          /* <init>() */
-
-        }
-
-        override operator fun hasNext(): Boolean {
-          return false
-        }
-
-        override operator fun next(): Nothing {
-          return throw NoSuchElementException()
-        }
-
-      }
-
-      <no name provided>()
-    }
-  }
-
-}
-
-internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
-  constructor(value: T, index: Int) /* primary */ {
-    super/*ArrayMap*/<T>()
-    /* <init>() */
-
-  }
-
-  val value: T
-    field = value
-    get
-
-  val index: Int
-    field = index
-    get
-
-  override val size: Int
-    override get(): Int {
-      return 1
-    }
-
-  override operator fun set(index: Int, value: T) {
-    throw IllegalStateException()
-  }
-
-  override operator fun get(index: Int): T? {
-    return when {
-      EQEQ(arg0 = index, arg1 = <this>.<get-index>()) -> <this>.<get-value>()
-      else -> null
-    }
-  }
-
-  override fun copy(): ArrayMap<T> {
-    return OneElementArrayMap<T>(value = <this>.<get-value>(), index = <this>.<get-index>())
-  }
-
-  override operator fun iterator(): Iterator<T> {
-    return { // BLOCK
-      local class <no name provided> : Iterator<T> {
-        private constructor() /* primary */ {
-          super/*Any*/()
-          /* <init>() */
-
-        }
-
-        private var notVisited: Boolean
-          field = true
-          private get
-          private set
-
-        override operator fun hasNext(): Boolean {
-          return <this>.<get-notVisited>()
-        }
-
-        override operator fun next(): T {
-          when {
-            <this>.<get-notVisited>() -> { // BLOCK
-              <this>.<set-notVisited>(<set-?> = false)
-              return <this>.<get-value>()
-            }
-            else -> throw NoSuchElementException()
-          }
-        }
-
-      }
-
-      <no name provided>()
-    }
-  }
+  abstract val size: Int
+    abstract get
 
 }
 
 internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
-  private constructor(data: Array<Any?>) /* primary */ {
-    super/*ArrayMap*/<T>()
-    /* <init>() */
-
-  }
-
   private var data: Array<Any?>
     field = data
     private get
     private set
-
-  companion object Companion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-    private const val DEFAULT_SIZE: Int
-      field = 20
-      private get
-
-    private const val INCREASE_K: Int
-      field = 2
-      private get
-
-  }
-
-  constructor() {
-    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
-  }
 
   override var size: Int
     field = 0
     override get
     private open set
 
-  private fun ensureCapacity(index: Int) {
-    when {
-      lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
-        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
-      }
-    }
-  }
-
-  override operator fun set(index: Int, value: T) {
-    <this>.ensureCapacity(index = index)
-    when {
-      EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
-        val <unary>: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = <unary>.inc())
-        <unary>
-      } /*~> Unit */
-    }
-    <this>.<get-data>().set(index = index, value = value)
-  }
-
-  override operator fun get(index: Int): T? {
-    return <this>.<get-data>().getOrNull<Any?>(index = index) as T?
-  }
-
-  override fun copy(): ArrayMap<T> {
-    return ArrayMapImpl<T>(data = <this>.<get-data>().copyOf<Any?>())
-  }
-
-  override operator fun iterator(): Iterator<T> {
-    return { // BLOCK
-      local class <no name provided> : AbstractIterator<T> {
-        private constructor() /* primary */ {
-          super/*AbstractIterator*/<T>()
-          /* <init>() */
-
-        }
-
-        private var index: Int
-          field = -1
-          private get
-          private set
-
-        protected override fun computeNext() {
-          { // BLOCK
-            do{ // BLOCK
-              val <unary>: Int = <this>.<get-index>()
-              <this>.<set-index>(<set-?> = <unary>.inc())
-              <unary>
-            }            while (when {
-              less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
-              else -> false
-            })
-          }
-          when {
-            greaterOrEqual(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> <this>.done()
-            else -> <this>.setNext(value = <this>.<get-data>().get(index = <this>.<get-index>()) as T)
-          }
-        }
-
-      }
-
-      <no name provided>()
-    }
-  }
-
-  fun remove(index: Int) {
-    when {
-      EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
-        val <unary>: Int = <this>.<get-size>()
-        <this>.<set-size>(<set-?> = <unary>.dec())
-        <unary>
-      } /*~> Unit */
-    }
-    <this>.<get-data>().set(index = index, value = null)
-  }
-
-  fun entries(): List<Entry<T>> {
-    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: @ParameterName(name = "index") Int, value: Any?): Entry<T>? {
-      return when {
-        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
-        else -> null
-      }
-    }
-)
-  }
-
   data class Entry<T : Any?> : Entry<Int, T> {
-    constructor(key: Int, value: T) /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
     override val key: Int
       field = key
       override get
@@ -280,6 +35,12 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     override val value: T
       field = value
       override get
+
+    constructor(key: Int, value: T) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
 
     operator fun component1(): Int {
       return <this>.#key
@@ -290,22 +51,22 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
 
     fun copy(key: Int = <this>.#key, value: T = <this>.#value): Entry<T> {
-      return Entry<Any>(key = key, value = value)
+      return Entry<T>(key = key, value = value)
     }
 
-    override fun equals(other: Any?): Boolean {
+    override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
       }
       when {
         other !is Entry<T> -> return false
       }
-      val tmp0_other_with_cast: Entry<T> = other as Entry<T>
+      val tmp_0: Entry<T> = other as Entry<T>
       when {
-        EQEQ(arg0 = <this>.#key, arg1 = tmp0_other_with_cast.#key).not() -> return false
+        EQEQ(arg0 = <this>.#key, arg1 = tmp_0.#key).not() -> return false
       }
       when {
-        EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
+        EQEQ(arg0 = <this>.#value, arg1 = tmp_0.#value).not() -> return false
       }
       return true
     }
@@ -325,4 +86,253 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
 
   }
 
+  companion object Companion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    private const val DEFAULT_SIZE: Int
+      field = 20
+      private get
+
+    private const val INCREASE_K: Int
+      field = 2
+      private get
+
+  }
+
+  private constructor(data: Array<Any?>) /* primary */ {
+    super/*ArrayMap*/<T>()
+    /* <init>() */
+
+  }
+
+  constructor() {
+    this/*ArrayMapImpl*/<T>(data = arrayOfNulls<Any>(size = 20))
+  }
+
+  override fun copy(): ArrayMap<T> {
+    return ArrayMapImpl<T>(data = <this>.<get-data>().copyOf<Any?>())
+  }
+
+  private fun ensureCapacity(index: Int) {
+    when {
+      lessOrEqual(arg0 = <this>.<get-data>().<get-size>(), arg1 = index) -> { // BLOCK
+        <this>.<set-data>(<set-?> = <this>.<get-data>().copyOf<Any?>(newSize = <this>.<get-data>().<get-size>().times(other = 2)))
+      }
+    }
+  }
+
+  fun entries(): List<Entry<T>> {
+    return <this>.<get-data>().mapIndexedNotNull<Any?, Entry<T>>(transform = local fun <anonymous>(index: Int, value: Any?): Entry<T>? {
+      return when {
+        EQEQ(arg0 = value, arg1 = null).not() -> Entry<T>(key = index, value = value as T)
+        else -> null
+      }
+    }
+)
+  }
+
+  override operator fun get(index: Int): T? {
+    return <this>.<get-data>().getOrNull<Any?>(index = index) as T?
+  }
+
+  override operator fun iterator(): Iterator<T> {
+    return { // BLOCK
+      local class <no name provided> : AbstractIterator<T> {
+        private var index: Int
+          field = -1
+          private get
+          private set
+
+        constructor() /* primary */ {
+          super/*AbstractIterator*/<T>()
+          /* <init>() */
+
+        }
+
+        protected override fun computeNext() {
+          { // BLOCK
+            do// COMPOSITE {
+            { // BLOCK
+              val tmp_1: Int = <this>.<get-index>()
+              <this>.<set-index>(<set-?> = tmp_1.inc())
+              tmp_1
+            } /*~> Unit */
+            // }            while (when {
+              less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
+              else -> false
+            })
+          }
+          when {
+            greaterOrEqual(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> { // BLOCK
+              <this>.done()
+            }
+            else -> { // BLOCK
+              <this>.setNext(value = <this>.<get-data>().get(index = <this>.<get-index>()) as T)
+            }
+          }
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+  fun remove(index: Int) {
+    when {
+      EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null).not() -> { // BLOCK
+        val tmp_2: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_2.dec())
+        tmp_2
+      } /*~> Unit */
+    }
+    <this>.<get-data>().set(index = index, value = null)
+  }
+
+  override operator fun set(index: Int, value: T) {
+    <this>.ensureCapacity(index = index)
+    when {
+      EQEQ(arg0 = <this>.<get-data>().get(index = index), arg1 = null) -> { // BLOCK
+        val tmp_3: Int = <this>.<get-size>()
+        <this>.<set-size>(<set-?> = tmp_3.inc())
+        tmp_3
+      } /*~> Unit */
+    }
+    <this>.<get-data>().set(index = index, value = value)
+  }
+
+}
+
+internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
+  val value: T
+    field = value
+    get
+
+  val index: Int
+    field = index
+    get
+
+  constructor(value: T, index: Int) /* primary */ {
+    super/*ArrayMap*/<T>()
+    /* <init>() */
+
+  }
+
+  override fun copy(): ArrayMap<T> {
+    return OneElementArrayMap<T>(value = <this>.<get-value>(), index = <this>.<get-index>())
+  }
+
+  override operator fun get(index: Int): T? {
+    return when {
+      EQEQ(arg0 = index, arg1 = <this>.<get-index>()) -> <this>.<get-value>()
+      else -> null
+    }
+  }
+
+  override operator fun iterator(): Iterator<T> {
+    return { // BLOCK
+      local class <no name provided> : Iterator<T> {
+        private var notVisited: Boolean
+          field = true
+          private get
+          private set
+
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        override operator fun hasNext(): Boolean {
+          return <this>.<get-notVisited>()
+        }
+
+        override operator fun next(): T {
+          when {
+            <this>.<get-notVisited>() -> { // BLOCK
+              <this>.<set-notVisited>(<set-?> = false)
+              return <this>.<get-value>()
+            }
+            else -> { // BLOCK
+              throw NoSuchElementException()
+            }
+          }
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+  override operator fun set(index: Int, value: T) {
+    throw IllegalStateException()
+  }
+
+  override val size: Int
+    override get(): Int {
+      return 1
+    }
+
+}
+
+internal object EmptyArrayMap : ArrayMap<Nothing> {
+  private constructor() /* primary */ {
+    super/*ArrayMap*/<Nothing>()
+    /* <init>() */
+
+  }
+
+  override fun copy(): ArrayMap<Nothing> {
+    return <this>
+  }
+
+  override operator fun get(index: Int): Nothing? {
+    return null
+  }
+
+  override operator fun iterator(): Iterator<Nothing> {
+    return { // BLOCK
+      local class <no name provided> : Iterator<Nothing> {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        override operator fun hasNext(): Boolean {
+          return false
+        }
+
+        override operator fun next(): Nothing {
+          throw NoSuchElementException()
+        }
+
+      }
+
+      <no name provided>()
+    }
+  }
+
+  override operator fun set(index: Int, value: Nothing) {
+    throw IllegalStateException()
+  }
+
+  override val size: Int
+    override get(): Int {
+      return 0
+    }
+
+}
+
+fun ArrayMap<*>.isEmpty(): Boolean {
+  return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0)
+}
+
+fun ArrayMap<*>.isNotEmpty(): Boolean {
+  return EQEQ(arg0 = <this>.<get-size>(), arg1 = 0).not()
 }

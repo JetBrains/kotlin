@@ -5,6 +5,7 @@
 #include <CAPIExtensions.h>
 #include <llvm/ProfileData/Coverage/CoverageMapping.h>
 #include <llvm/ADT/Triple.h>
+#include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -70,4 +71,9 @@ void LLVMPrintAllTimersToStdOut() {
 
 void LLVMClearAllTimers() {
     llvm::TimerGroup::clearAll();
+}
+
+void LLVMKotlinAddTargetLibraryInfoWrapperPass(LLVMPassManagerRef passManagerRef, const char* targetTriple) {
+  legacy::PassManagerBase *passManager = unwrap(passManagerRef);
+  passManager->add(new TargetLibraryInfoWrapperPass(Triple(targetTriple)));
 }

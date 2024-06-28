@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun test_1(x: Any) {
     if (x is String) {
         x.length
@@ -17,7 +17,7 @@ fun test_2(x: Any) {
 fun test_3(x: Any) {
     when {
         x !is String -> {}
-        x !is Int -> {}
+        <!USELESS_IS_CHECK!>x !is Int<!> -> {}
         else -> {
             x.length
             x.inc()

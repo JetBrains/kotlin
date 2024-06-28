@@ -24,7 +24,7 @@ val <!EXPOSED_PROPERTY_TYPE!>z<!> = MyJavaClass.NestedClass()
 //FILE: b.kt
 package b
 
-import a.MyJavaClass
+import a.<!INVISIBLE_REFERENCE!>MyJavaClass<!>
 
 val <!EXPOSED_PROPERTY_TYPE!>mc1<!> = <!INVISIBLE_REFERENCE!>MyJavaClass<!>()
 
@@ -35,7 +35,7 @@ val <!EXPOSED_PROPERTY_TYPE!>z<!> = <!INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>
 //FILE: c.kt
 package a.c
 
-import a.MyJavaClass
+import a.<!INVISIBLE_REFERENCE!>MyJavaClass<!>
 
 val <!EXPOSED_PROPERTY_TYPE!>mc1<!> = <!INVISIBLE_REFERENCE!>MyJavaClass<!>()
 

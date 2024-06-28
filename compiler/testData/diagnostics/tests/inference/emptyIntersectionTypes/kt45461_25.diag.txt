@@ -1,10 +1,10 @@
 /kt45461_25.kt:11:20: error: type mismatch: inferred type is {K & String} but Float was expected
     val x: Float = Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
-                   ^
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
 /kt45461_25.kt:11:34: error: type argument for a type parameter S can't be inferred because it has incompatible upper bounds: String, K (multiple incompatible classes: String, Int)
     val x: Float = Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
-                                 ^
+                                 ^^^^^^^
 /kt45461_25.kt:11:34: error: type mismatch: inferred type is {K & String} but Float was expected
     val x: Float = Bar<String>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
-                                 ^
+                                 ^^^^^^^
 

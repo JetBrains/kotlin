@@ -104,6 +104,9 @@ val KotlinType.isNonExtensionFunctionType: Boolean
 val KotlinType.isExtensionFunctionType: Boolean
     get() = isFunctionType && isTypeAnnotatedWithExtensionFunctionType
 
+val KotlinType.isSuspendExtensionFunctionType: Boolean
+    get() = isSuspendFunctionType && isTypeAnnotatedWithExtensionFunctionType
+
 val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
 
@@ -225,7 +228,7 @@ fun getFunctionTypeArgumentProjections(
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
                 builtIns,
                 StandardNames.FqNames.parameterName,
-                mapOf(Name.identifier("name") to StringValue(name.asString()))
+                mapOf(StandardNames.NAME to StringValue(name.asString()))
             )
             type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }

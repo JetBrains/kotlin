@@ -1,0 +1,14 @@
+KtNameReferenceExpression(97,99): 'it'
+  KaSuccessCallInfo:
+    call = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = it
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = it: kotlin.Int
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}

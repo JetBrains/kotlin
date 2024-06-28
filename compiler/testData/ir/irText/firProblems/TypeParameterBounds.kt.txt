@@ -1,14 +1,14 @@
 @Target(allowedTargets = [AnnotationTarget.TYPE])
 open annotation class TypeAnn : Annotation {
+  val name: String
+    field = name
+    get
+
   constructor(name: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val name: String
-    field = name
-    get
 
 }
 
@@ -33,60 +33,7 @@ open annotation class TypeParameterAnnBinary : Annotation {
 
 }
 
-interface Simple {
-
-}
-
-class SimpleClass {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-interface Generic<G : Any?> {
-
-}
-
-class GenericClass<G : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-class SimpleParameter<@TypeParameterAnn @TypeParameterAnnBinary T : Any?> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-class InterfaceBound<@TypeParameterAnn T : @TypeAnn(name = "Simple") Simple> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
 class ClassBound<@TypeParameterAnn T : @TypeAnn(name = "Simple") SimpleClass> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-class InterfaceBoundGeneric<T : @TypeAnn(name = "Generic") Generic<@TypeAnn(name = "Simple") Simple>> {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -104,6 +51,51 @@ class ClassBoundGeneric<T : @TypeAnn(name = "GenericClass") GenericClass<@TypeAn
 
 }
 
+class GenericClass<G : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class InterfaceBound<@TypeParameterAnn T : @TypeAnn(name = "Simple") Simple> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class InterfaceBoundGeneric<T : @TypeAnn(name = "Generic") Generic<@TypeAnn(name = "Simple") Simple>> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class SimpleClass {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class SimpleParameter<@TypeParameterAnn @TypeParameterAnnBinary T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 class TypeParameterAsBound<Y : Any?, @TypeParameterAnn T : @TypeAnn(name = "Y as Bound") Y> {
   constructor() /* primary */ {
     super/*Any*/()
@@ -112,3 +104,10 @@ class TypeParameterAsBound<Y : Any?, @TypeParameterAnn T : @TypeAnn(name = "Y as
   }
 
 }
+
+interface Generic<G : Any?> {
+}
+
+interface Simple {
+}
+

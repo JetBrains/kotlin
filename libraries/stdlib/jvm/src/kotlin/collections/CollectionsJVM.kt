@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,13 @@ import kotlin.internal.InlineOnly
 import kotlin.internal.apiVersionIsAtLeast
 
 /**
- * Returns an immutable list containing only the specified object [element].
+ * Returns a new read-only list containing only the specified object [element].
+ *
  * The returned list is serializable.
+ *
  * @sample samples.collections.Collections.Lists.singletonReadOnlyList
  */
-public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
+public actual fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
 @PublishedApi
 @SinceKotlin("1.3")
@@ -61,7 +63,7 @@ public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Col
 
 
 /**
- * Returns a new list with the elements of this list randomly shuffled.
+ * Returns a new list with the elements of this collection randomly shuffled.
  */
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
@@ -74,14 +76,23 @@ public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { 
 public fun <T> Iterable<T>.shuffled(random: java.util.Random): List<T> = toMutableList().apply { shuffle(random) }
 
 
+@Suppress("DEPRECATION")
 @kotlin.internal.InlineOnly
-internal actual inline fun copyToArrayImpl(collection: Collection<*>): Array<Any?> =
+internal actual inline fun collectionToArray(collection: Collection<*>): Array<Any?> =
     kotlin.jvm.internal.collectionToArray(collection)
 
 @kotlin.internal.InlineOnly
-@Suppress("UNCHECKED_CAST")
-internal actual inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
+internal actual inline fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T> =
     kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
+
+internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> {
+    if (collectionSize < array.size) {
+        @Suppress("UNCHECKED_CAST")
+        array[collectionSize] = null as T // null-terminate
+    }
+    return array
+}
 
 // copies typed varargs array to array of objects
 internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array<out Any?> =

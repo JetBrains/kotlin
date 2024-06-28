@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.BOTH as BOTH_TYPE
-
 plugins {
     kotlin("multiplatform")
 }

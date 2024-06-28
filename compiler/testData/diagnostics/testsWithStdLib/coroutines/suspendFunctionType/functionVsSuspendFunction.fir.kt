@@ -1,5 +1,5 @@
-// !LANGUAGE: -SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun useSuspendFn(sfn: suspend () -> Unit) = sfn
 fun useFn(fn: () -> Unit) = fn

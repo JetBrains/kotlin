@@ -1,0 +1,177 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] fun topLevelFunction([ResolvedTo(RAW_FIR)] firstParam: Int, [ResolvedTo(RAW_FIR)] secondParam: String = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] fun topLevelFunction([ResolvedTo(RAW_FIR)] firstParam: Int, [ResolvedTo(RAW_FIR)] secondParam: String = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun topLevelFunction([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] firstParam: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] secondParam: String = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun topLevelFunction([ResolvedTo(COMPANION_GENERATION)] firstParam: Int, [ResolvedTo(COMPANION_GENERATION)] secondParam: String = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun topLevelFunction([ResolvedTo(SUPER_TYPES)] firstParam: Int, [ResolvedTo(SUPER_TYPES)] secondParam: String = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(TYPES)] fun topLevelFunction([ResolvedTo(TYPES)] firstParam: R|kotlin/Int|, [ResolvedTo(TYPES)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(STATUS)] fun topLevelFunction([ResolvedTo(STATUS)] firstParam: R|kotlin/Int|, [ResolvedTo(STATUS)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun topLevelFunction([ResolvedTo(EXPECT_ACTUAL_MATCHING)] firstParam: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(CONTRACTS)] fun topLevelFunction([ResolvedTo(CONTRACTS)] firstParam: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun topLevelFunction([ResolvedTo(CONSTANT_EVALUATION)] firstParam: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun topLevelFunction([ResolvedTo(ANNOTATION_ARGUMENTS)] firstParam: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] secondParam: R|kotlin/String| = <strcat>(String(My str ), firstParam#.plus#(myNumber#).toString#())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val myNumber: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), R|<local>/firstParam|.R|kotlin/Int.plus|(R|myPack/myNumber|).R|kotlin/Int.toString|())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-functionWithImplicitTypeAndStringTemplateAsDefaultValueScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1)] val myNumber: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun topLevelFunction([ResolvedTo(BODY_RESOLVE)] firstParam: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] secondParam: R|kotlin/String| = <strcat>(String(My str ), R|<local>/firstParam|.R|kotlin/Int.plus|(R|myPack/myNumber|).R|kotlin/Int.toString|())): R|kotlin/Int| {
+            ^topLevelFunction Int(42)
+        }
+

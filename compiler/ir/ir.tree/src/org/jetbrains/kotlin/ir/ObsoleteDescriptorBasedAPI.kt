@@ -13,5 +13,12 @@ package org.jetbrains.kotlin.ir
  * However, more correct and universal way is to store all necessary information inside IR elements themselves
  * and do not use descriptors as some intermediate storage. It's planned to remove all descriptor usages from IR in future.
  */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS
+)
 @RequiresOptIn(message = "Please use IR declaration properties and not its descriptor properties", level = RequiresOptIn.Level.ERROR)
 annotation class ObsoleteDescriptorBasedAPI

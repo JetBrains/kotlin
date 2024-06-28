@@ -3,6 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+// TODO: remove this plugin via https://youtrack.jetbrains.com/issue/KT-65692/Remove-Kotlin-Native-Performance-plugin
+@file:Suppress("DEPRECATION", "PackageDirectoryMismatch")
+
 package org.jetbrains.kotlin.gradle.plugin.performance
 
 import org.gradle.api.Plugin
@@ -13,10 +16,10 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.NativePerformanceReport
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.ConcurrentHashMap
 
@@ -66,7 +69,7 @@ open class KotlinPerformancePlugin : Plugin<Project> {
 
     private fun configureTasks(project: Project, performanceExtension: PerformanceExtension) {
         // Add time listener.
-        if (!isConfigurationCacheAvailable(project.gradle)) {
+        if (!project.isConfigurationCacheEnabled) {
             val timeListener = TaskTimerListener(project)
             project.gradle.addListener(timeListener)
             performanceExtension.trackedBinaries.forEach { binary ->

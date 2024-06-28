@@ -1,0 +1,74 @@
+@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String
+  context -> FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol /OriginalInterface.explicitType
+  anchor -> [FirNamedFunctionSymbol /OriginalInterface.explicitType]
+
+FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
+        @R|Anno|[Types](position = <strcat>(String(explicitType ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](position = <strcat>(String(receiver annotation: ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) R|@R|Anno|(position = <strcat>(String(receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/Collection<@R|Anno|(position = <strcat>(String(nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested receiver type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|.explicitType([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|Anno|[Types](position = <strcat>(String(parameter annotation ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) param: R|@R|Anno|(position = <strcat>(String(parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/ListIterator<@R|Anno|(position = <strcat>(String(nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(nested nested parameter type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/String>>|): R|@R|Anno|(position = <strcat>(String(explicitType return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/collections/List<@R|Anno|(position = <strcat>(String(explicitType nested nested return type ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int>>| {
+            ^explicitType IntegerLiteral(0)
+        }
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|OriginalInterface.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int| = Int(0)
+                private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+    }

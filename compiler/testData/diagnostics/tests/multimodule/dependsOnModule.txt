@@ -1,0 +1,44 @@
+// -- Module: <m1> --
+package
+
+package p {
+    internal val a: p.A
+    internal var v: p.A
+    internal fun a(): p.A
+
+    public final class A {
+        public constructor A()
+        internal final val a: p.A
+        internal final var v: p.A
+        internal final fun a(): p.A
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal final inner class B {
+            public constructor B()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+// -- Module: <m2> --
+package
+
+public fun test2(): kotlin.Unit
+
+// -- Module: <m3> --
+package
+
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit
+

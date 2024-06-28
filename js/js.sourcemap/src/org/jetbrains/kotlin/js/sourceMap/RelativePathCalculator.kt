@@ -8,20 +8,22 @@ package org.jetbrains.kotlin.js.sourceMap
 import java.io.File
 
 class RelativePathCalculator(baseDir: File) {
-    private val baseDirPath = generateSequence(baseDir.canonicalFile) { it.parentFile }.toList().asReversed()
+    private fun File.getAllParents() = generateSequence(absoluteFile.normalize()) { it.parentFile }.toList().asReversed()
+
+    private val baseDirPath = baseDir.getAllParents()
 
     fun calculateRelativePathTo(file: File): String? {
-        val path = generateSequence(file.canonicalFile) { it.parentFile }.toList().asReversed()
-        if (baseDirPath[0] != path[0]) return null
+        val parents = file.getAllParents()
+        if (baseDirPath[0] != parents[0]) return null
 
-        val commonLength = baseDirPath.zip(path).takeWhile { (first, second) -> first == second }.size
+        val commonLength = baseDirPath.zip(parents).count { (first, second) -> first == second }
 
         val sb = StringBuilder()
         for (i in commonLength until baseDirPath.size) {
             sb.append("../")
         }
-        for (i in commonLength until path.size) {
-            sb.append(path[i].name).append('/')
+        for (i in commonLength until parents.size) {
+            sb.append(parents[i].name).append('/')
         }
         sb.setLength(sb.lastIndex)
 

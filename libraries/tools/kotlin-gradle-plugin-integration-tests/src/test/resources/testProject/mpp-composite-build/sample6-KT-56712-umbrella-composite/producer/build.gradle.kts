@@ -13,6 +13,7 @@ repositories {
 
 android {
     compileSdk = 33
+    namespace = "com.example.producer"
 }
 
 kotlin {
@@ -20,7 +21,7 @@ kotlin {
     jvm()
     linuxX64()
     linuxArm64()
-    targetHierarchy.default()
+    applyDefaultHierarchyTemplate()
 }
 
 group = "org.jetbrains.sample"

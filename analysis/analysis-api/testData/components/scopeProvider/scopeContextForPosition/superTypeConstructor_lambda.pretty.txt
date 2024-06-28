@@ -1,0 +1,62 @@
+element: this
+implicit receivers:
+  type: test.Receiver
+  owner symbol: KaFirAnonymousFunctionSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 4
+      fun fromReceiver()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 5
+    packages: 0
+    classifiers: 3
+      class Receiver
+      class Base(value: test.Receiver.() -> kotlin.Unit)
+      class Child : test.Base()
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 6
+
+  DefaultSimpleImportingScope, index = 7
+
+  ExplicitStarImportingScope, index = 8
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 9
+

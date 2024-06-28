@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -8,24 +10,34 @@ dependencies {
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-barebone"))
     api(project(":analysis:kt-references"))
+    api(project(":compiler:resolution.common.jvm"))
+    implementation(project(":analysis:decompiled:decompiler-to-psi"))
+    implementation(project(":compiler:backend-common"))
+    implementation(kotlinxCollectionsImmutable())
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 
-    testApiJUnit5()
-    testApi(project(":kotlin-test:kotlin-test-junit"))
-    testApi(project(":analysis:analysis-api"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(kotlinTest("junit"))
+    testImplementation(project(":analysis:analysis-api"))
+    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":analysis:analysis-api-impl-barebone"))
-    testApi(project(":analysis:symbol-light-classes"))
-    testApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testApi(project(":analysis:decompiled:decompiler-to-psi"))
-    testApi(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(projectTests(":plugins:fir-plugin-prototype"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
+    testImplementation(project(":analysis:symbol-light-classes"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    testImplementation(project(":analysis:decompiled:decompiler-native"))
+    testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(toolsJar())
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
 }
 
 sourceSets {
@@ -33,8 +45,17 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
+    compilerOptions.optIn.addAll(
+        listOf(
+            "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+            "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+            "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+            "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+            "org.jetbrains.kotlin.analysis.api.KaIdeApi"
+        )
+    )
 }
 
 testsJar()

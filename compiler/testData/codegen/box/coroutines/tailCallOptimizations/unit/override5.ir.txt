@@ -11,7 +11,7 @@ public final class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1 {
     inner (anonymous) class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$2
     public method <init>(): void
-    public @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public method generic(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -22,10 +22,10 @@ final class Override5Kt$box$1 {
     field label: int
     inner (anonymous) class Override5Kt$box$1
     method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.Nullable p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -39,7 +39,7 @@ public final class Override5Kt$inlineMe$1$generic$1 {
     inner (anonymous) class Override5Kt$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$1
     public method <init>(p0: Override5Kt$inlineMe$1, p1: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -64,8 +64,8 @@ public final class Override5Kt$inlineMe$1 {
     inner (anonymous) class Override5Kt$inlineMe$1$generic$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$2
     public method <init>(p0: kotlin.jvm.functions.Function1): void
-    public @org.jetbrains.annotations.Nullable method generic$$forInline(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    public @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public method generic$$forInline(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public method generic(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata

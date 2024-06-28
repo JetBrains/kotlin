@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 fun f(): Metadata = Metadata(
     kind = 0,

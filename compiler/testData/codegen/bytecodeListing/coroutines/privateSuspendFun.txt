@@ -2,11 +2,13 @@
 public final class A {
     // source: 'privateSuspendFun.kt'
     public method <init>(): void
-    private final method foo(p0: java.lang.Object): java.lang.Object
+    public synthetic final static method access$foo(p0: A, p1: kotlin.coroutines.Continuation): java.lang.Object
+    private final method foo(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class PrivateSuspendFunKt {
     // source: 'privateSuspendFun.kt'
-    private final static method foo(p0: java.lang.Object): java.lang.Object
+    public synthetic final static method access$foo(p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method foo(p0: kotlin.coroutines.Continuation): java.lang.Object
 }

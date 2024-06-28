@@ -1,0 +1,4 @@
+ContextReceiver[name: Foo; isMutated: false; displayText: this@Foo]
+    context(R|Foo|)
+    fun call(): R|kotlin/Unit|
+    R|Foo|

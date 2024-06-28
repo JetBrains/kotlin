@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
@@ -24,32 +25,31 @@ import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
+internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
-internal fun customizeKotlinDependencies(project: Project) {
-    val topLevelExtension = project.topLevelExtension
+internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
+    val kotlinExtension = project.kotlinExtension
     val propertiesProvider = PropertiesProvider(project)
     val coreLibrariesVersion = project.objects.providerWithLazyConvention {
-        topLevelExtension.coreLibrariesVersion
+        kotlinExtension.coreLibrariesVersion
     }
 
     if (propertiesProvider.stdlibDefaultDependency)
-        project.configureStdlibDefaultDependency(topLevelExtension, coreLibrariesVersion)
+        project.configureStdlibDefaultDependency(kotlinExtension, coreLibrariesVersion)
 
     if (propertiesProvider.kotlinTestInferJvmVariant) { // TODO: extend this logic to PM20
         project.configureKotlinTestDependency(
-            topLevelExtension,
+            kotlinExtension,
             coreLibrariesVersion,
         )
     }
 
     if (propertiesProvider.stdlibDomApiIncluded) {
-        project.configureKotlinDomApiDefaultDependency(topLevelExtension, coreLibrariesVersion)
+        project.configureKotlinDomApiDefaultDependency(kotlinExtension, coreLibrariesVersion)
     }
 
-    project.configurations.configureDefaultVersionsResolutionStrategy(
-        coreLibrariesVersion
-    )
+    project.configurations.configureDefaultVersionsResolutionStrategy(coreLibrariesVersion)
 
     if (propertiesProvider.stdlibJdkVariantsVersionAlignment) {
         project.configurations.configureStdlibVersionAlignment()
@@ -59,7 +59,7 @@ internal fun customizeKotlinDependencies(project: Project) {
 }
 
 private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
-    coreLibrariesVersion: Provider<String>
+    coreLibrariesVersion: Provider<String>,
 ) = all { configuration ->
     configuration.withDependencies { dependencySet ->
         dependencySet
@@ -86,7 +86,7 @@ private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Pr
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION") // KT-58227, KT-64273
 private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(
@@ -94,7 +94,7 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
             it.defaultSourceSet.apiMetadataConfigurationName,
             it.defaultSourceSet.implementationMetadataConfigurationName,
             it.defaultSourceSet.compileOnlyMetadataConfigurationName,
-            (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
+            (it as? org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
 
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
             (it as? KotlinWithJavaCompilation<*, *>)?.apiConfigurationName
@@ -112,3 +112,4 @@ internal fun DependencyHandler.kotlinDependency(moduleName: String, versionOrNul
     create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 internal fun Configuration.allNonProjectDependencies() = allDependencies.matching { it !is ProjectDependency }
+internal fun DependencySet.allNonProjectDependencies() = matching { it !is ProjectDependency }

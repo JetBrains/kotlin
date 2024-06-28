@@ -10,6 +10,7 @@ import kotlin.concurrent.*
 var y = -1
 
 fun box() : String {
+    @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
     if (Platform.memoryModel != MemoryModel.EXPERIMENTAL) {
         // The test doesn't make sense for legacy mm, you can't have anything non-atomic to protect with @Volatile var
         return "OK"

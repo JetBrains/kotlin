@@ -14,9 +14,9 @@ expect class C {
     <!WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
-expect class D {
-    class N
-}
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class D {
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>class N<!>
+}<!>
 
 expect class E {
     class N
@@ -41,5 +41,5 @@ actual class C {
 actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>D<!>
 
 actual class E {
-    class N
+    class <!ACTUAL_MISSING!>N<!>
 }

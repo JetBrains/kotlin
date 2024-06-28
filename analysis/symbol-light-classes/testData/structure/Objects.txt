@@ -1,198 +1,3 @@
-KtClass:
-  line: 5
-  name: BaseInterface
-  qualifier: two.BaseInterface
-  light: SymbolLightClassForInterface
-    name: BaseInterface
-    qualifier: two.BaseInterface
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
-  line: 6
-  name: NonBaseInterface
-  qualifier: two.NonBaseInterface
-  light: SymbolLightClassForInterface
-    name: NonBaseInterface
-    qualifier: two.NonBaseInterface
-    superTypes: [
-      PsiType:BaseInterface
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: [
-      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
-    ]
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
-    ]
-
-KtClass:
-  line: 7
-  name: AnotherInterface
-  qualifier: two.AnotherInterface
-  light: SymbolLightClassForInterface
-    name: AnotherInterface
-    qualifier: two.AnotherInterface
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
-  line: 9
-  name: BaseClass
-  qualifier: two.BaseClass
-  light: SymbolLightClassForClassOrObject
-    name: BaseClass
-    qualifier: two.BaseClass
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtClass:
-  line: 10
-  name: NonBaseClass
-  qualifier: two.NonBaseClass
-  light: SymbolLightClassForClassOrObject
-    name: NonBaseClass
-    qualifier: two.NonBaseClass
-    superTypes: [
-      PsiType:BaseClass
-    ]
-    superClass: SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
-    ]
-
-KtObjectDeclaration:
-  line: 12
-  name: Object
-  qualifier: two.Object
-  light: SymbolLightClassForClassOrObject
-    name: Object
-    qualifier: two.Object
-    superTypes: [
-      PsiType:Object
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: []
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-    ]
-
-KtObjectDeclaration:
-  line: 14
-  name: ObjectWithInterface
-  qualifier: two.ObjectWithInterface
-  light: SymbolLightClassForClassOrObject
-    name: ObjectWithInterface
-    qualifier: two.ObjectWithInterface
-    superTypes: [
-      PsiType:Object
-      PsiType:BaseInterface
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: [
-      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
-    ]
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
-    ]
-
-KtObjectDeclaration:
-  line: 16
-  name: ObjectWithNonBaseInterface
-  qualifier: two.ObjectWithNonBaseInterface
-  light: SymbolLightClassForClassOrObject
-    name: ObjectWithNonBaseInterface
-    qualifier: two.ObjectWithNonBaseInterface
-    superTypes: [
-      PsiType:Object
-      PsiType:NonBaseInterface
-    ]
-    superClass: ClsClassImpl: Object (java.lang.Object)
-    interfaces: [
-      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
-    ]
-    supers: [
-      ClsClassImpl: Object (java.lang.Object)
-      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
-    ]
-
-KtObjectDeclaration:
-  line: 18
-  name: ObjectWithClass
-  qualifier: two.ObjectWithClass
-  light: SymbolLightClassForClassOrObject
-    name: ObjectWithClass
-    qualifier: two.ObjectWithClass
-    superTypes: [
-      PsiType:BaseClass
-    ]
-    superClass: SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
-    ]
-
-KtObjectDeclaration:
-  line: 20
-  name: ObjectWithClassAndInterface
-  qualifier: two.ObjectWithClassAndInterface
-  light: SymbolLightClassForClassOrObject
-    name: ObjectWithClassAndInterface
-    qualifier: two.ObjectWithClassAndInterface
-    superTypes: [
-      PsiType:NonBaseClass
-      PsiType:NonBaseInterface
-    ]
-    superClass: SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
-    interfaces: [
-      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
-    ]
-    supers: [
-      SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
-      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
-    ]
-
-KtObjectDeclaration:
-  line: 21
-  name: ObjectWithClassAndJavaInterface
-  qualifier: two.ObjectWithClassAndJavaInterface
-  light: SymbolLightClassForClassOrObject
-    name: ObjectWithClassAndJavaInterface
-    qualifier: two.ObjectWithClassAndJavaInterface
-    superTypes: [
-      PsiType:NonBaseClass
-      PsiType:Runnable
-    ]
-    superClass: SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
-    interfaces: [
-      ClsClassImpl: Runnable (java.lang.Runnable)
-    ]
-    supers: [
-      SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
-      ClsClassImpl: Runnable (java.lang.Runnable)
-    ]
-
 KtObjectDeclaration:
   line: 25
   name: null
@@ -299,5 +104,200 @@ KtObjectDeclaration:
     supers: [
       ClsClassImpl: Object (java.lang.Object)
       SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
+    ]
+
+KtClass:
+  line: 7
+  name: AnotherInterface
+  qualifier: two.AnotherInterface
+  light: SymbolLightClassForInterface
+    name: AnotherInterface
+    qualifier: two.AnotherInterface
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 9
+  name: BaseClass
+  qualifier: two.BaseClass
+  light: SymbolLightClassForClassOrObject
+    name: BaseClass
+    qualifier: two.BaseClass
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 5
+  name: BaseInterface
+  qualifier: two.BaseInterface
+  light: SymbolLightClassForInterface
+    name: BaseInterface
+    qualifier: two.BaseInterface
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtClass:
+  line: 10
+  name: NonBaseClass
+  qualifier: two.NonBaseClass
+  light: SymbolLightClassForClassOrObject
+    name: NonBaseClass
+    qualifier: two.NonBaseClass
+    superTypes: [
+      PsiType:BaseClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
+    ]
+
+KtClass:
+  line: 6
+  name: NonBaseInterface
+  qualifier: two.NonBaseInterface
+  light: SymbolLightClassForInterface
+    name: NonBaseInterface
+    qualifier: two.NonBaseInterface
+    superTypes: [
+      PsiType:BaseInterface
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: [
+      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
+    ]
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
+    ]
+
+KtObjectDeclaration:
+  line: 12
+  name: Object
+  qualifier: two.Object
+  light: SymbolLightClassForClassOrObject
+    name: Object
+    qualifier: two.Object
+    superTypes: [
+      PsiType:Object
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: []
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+    ]
+
+KtObjectDeclaration:
+  line: 18
+  name: ObjectWithClass
+  qualifier: two.ObjectWithClass
+  light: SymbolLightClassForClassOrObject
+    name: ObjectWithClass
+    qualifier: two.ObjectWithClass
+    superTypes: [
+      PsiType:BaseClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: BaseClass (two.BaseClass)
+    ]
+
+KtObjectDeclaration:
+  line: 20
+  name: ObjectWithClassAndInterface
+  qualifier: two.ObjectWithClassAndInterface
+  light: SymbolLightClassForClassOrObject
+    name: ObjectWithClassAndInterface
+    qualifier: two.ObjectWithClassAndInterface
+    superTypes: [
+      PsiType:NonBaseClass
+      PsiType:NonBaseInterface
+    ]
+    superClass: SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
+    interfaces: [
+      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
+    ]
+    supers: [
+      SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
+      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
+    ]
+
+KtObjectDeclaration:
+  line: 21
+  name: ObjectWithClassAndJavaInterface
+  qualifier: two.ObjectWithClassAndJavaInterface
+  light: SymbolLightClassForClassOrObject
+    name: ObjectWithClassAndJavaInterface
+    qualifier: two.ObjectWithClassAndJavaInterface
+    superTypes: [
+      PsiType:NonBaseClass
+      PsiType:Runnable
+    ]
+    superClass: SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
+    interfaces: [
+      ClsClassImpl: Runnable (java.lang.Runnable)
+    ]
+    supers: [
+      SymbolLightClassForClassOrObject: NonBaseClass (two.NonBaseClass)
+      ClsClassImpl: Runnable (java.lang.Runnable)
+    ]
+
+KtObjectDeclaration:
+  line: 14
+  name: ObjectWithInterface
+  qualifier: two.ObjectWithInterface
+  light: SymbolLightClassForClassOrObject
+    name: ObjectWithInterface
+    qualifier: two.ObjectWithInterface
+    superTypes: [
+      PsiType:Object
+      PsiType:BaseInterface
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: [
+      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
+    ]
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: BaseInterface (two.BaseInterface)
+    ]
+
+KtObjectDeclaration:
+  line: 16
+  name: ObjectWithNonBaseInterface
+  qualifier: two.ObjectWithNonBaseInterface
+  light: SymbolLightClassForClassOrObject
+    name: ObjectWithNonBaseInterface
+    qualifier: two.ObjectWithNonBaseInterface
+    superTypes: [
+      PsiType:Object
+      PsiType:NonBaseInterface
+    ]
+    superClass: ClsClassImpl: Object (java.lang.Object)
+    interfaces: [
+      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
+    ]
+    supers: [
+      ClsClassImpl: Object (java.lang.Object)
+      SymbolLightClassForInterface: NonBaseInterface (two.NonBaseInterface)
     ]
 

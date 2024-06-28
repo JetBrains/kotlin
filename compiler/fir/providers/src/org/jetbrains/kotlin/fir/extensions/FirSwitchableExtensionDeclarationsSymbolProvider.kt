@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,12 +28,34 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     private val delegate: FirExtensionDeclarationsSymbolProvider
 ) : FirSymbolProvider(delegate.session) {
     companion object {
-        fun create(session: FirSession): FirSwitchableExtensionDeclarationsSymbolProvider? {
-            return FirExtensionDeclarationsSymbolProvider.create(session)?.let { FirSwitchableExtensionDeclarationsSymbolProvider(it) }
-        }
+        fun createIfNeeded(session: FirSession): FirSwitchableExtensionDeclarationsSymbolProvider? =
+            FirExtensionDeclarationsSymbolProvider.createIfNeeded(session)?.let { FirSwitchableExtensionDeclarationsSymbolProvider(it) }
     }
 
     private var disabled: Boolean = false
+
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override fun getPackageNames(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNames()
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean
+            get() = delegate.symbolNamesProvider.hasSpecificClassifierPackageNamesComputation
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelClassifiers()
+
+        override val hasSpecificCallablePackageNamesComputation: Boolean
+            get() = delegate.symbolNamesProvider.hasSpecificCallablePackageNamesComputation
+
+        override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelCallables()
+
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
+            if (disabled) null else delegate.symbolNamesProvider.getTopLevelClassifierNamesInPackage(packageFqName)
+
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+            if (disabled) null else delegate.symbolNamesProvider.getTopLevelCallableNamesInPackage(packageFqName)
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (disabled) return null
@@ -68,16 +94,6 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     fun enable() {
         disabled = false
     }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
-        if (disabled) null else delegate.computePackageSetWithTopLevelCallables()
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        if (disabled) null else delegate.knownTopLevelClassifiersInPackage(packageFqName)
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        if (disabled) null else delegate.computeCallableNamesInPackage(packageFqName)
-
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()

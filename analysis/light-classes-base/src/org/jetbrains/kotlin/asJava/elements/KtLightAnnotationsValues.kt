@@ -28,26 +28,26 @@ class KtLightPsiArrayInitializerMemberValue(
 fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false): PsiType {
     if (!boxPrimitiveType) {
         when (kotlinFqName) {
-            "kotlin.Int" -> return PsiType.INT
-            "kotlin.Long" -> return PsiType.LONG
-            "kotlin.Short" -> return PsiType.SHORT
-            "kotlin.Boolean" -> return PsiType.BOOLEAN
-            "kotlin.Byte" -> return PsiType.BYTE
-            "kotlin.Char" -> return PsiType.CHAR
-            "kotlin.Double" -> return PsiType.DOUBLE
-            "kotlin.Float" -> return PsiType.FLOAT
+            "kotlin.Int" -> return PsiTypes.intType()
+            "kotlin.Long" -> return PsiTypes.longType()
+            "kotlin.Short" -> return PsiTypes.shortType()
+            "kotlin.Boolean" -> return PsiTypes.booleanType()
+            "kotlin.Byte" -> return PsiTypes.byteType()
+            "kotlin.Char" -> return PsiTypes.charType()
+            "kotlin.Double" -> return PsiTypes.doubleType()
+            "kotlin.Float" -> return PsiTypes.floatType()
         }
     }
 
     when (kotlinFqName) {
-        "kotlin.IntArray" -> return PsiType.INT.createArrayType()
-        "kotlin.LongArray" -> return PsiType.LONG.createArrayType()
-        "kotlin.ShortArray" -> return PsiType.SHORT.createArrayType()
-        "kotlin.BooleanArray" -> return PsiType.BOOLEAN.createArrayType()
-        "kotlin.ByteArray" -> return PsiType.BYTE.createArrayType()
-        "kotlin.CharArray" -> return PsiType.CHAR.createArrayType()
-        "kotlin.DoubleArray" -> return PsiType.DOUBLE.createArrayType()
-        "kotlin.FloatArray" -> return PsiType.FLOAT.createArrayType()
+        "kotlin.IntArray" -> return PsiTypes.intType().createArrayType()
+        "kotlin.LongArray" -> return PsiTypes.longType().createArrayType()
+        "kotlin.ShortArray" -> return PsiTypes.shortType().createArrayType()
+        "kotlin.BooleanArray" -> return PsiTypes.booleanType().createArrayType()
+        "kotlin.ByteArray" -> return PsiTypes.byteType().createArrayType()
+        "kotlin.CharArray" -> return PsiTypes.charType().createArrayType()
+        "kotlin.DoubleArray" -> return PsiTypes.doubleType().createArrayType()
+        "kotlin.FloatArray" -> return PsiTypes.floatType().createArrayType()
     }
 
     val javaFqName = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(kotlinFqName))?.asSingleFqName()?.asString() ?: kotlinFqName

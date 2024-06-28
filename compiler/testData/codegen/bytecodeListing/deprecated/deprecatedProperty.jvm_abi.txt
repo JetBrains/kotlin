@@ -1,0 +1,42 @@
+MODULE main
+	CLASS DeprecatedPropertyKt.class
+		PACKAGE METADATA
+			PROPERTY getTestValWithExplicitDefaultGet()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+			PROPERTY getTestVarWithExplicitDefaultGet()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+			PROPERTY getTestVarWithExplicitDefaultGetSet()I
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+				Property: class.metadata.property.setterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						---
+			PROPERTY getTestVarWithExplicitDefaultSet()I
+				Property: class.metadata.property.setterModifiers
+					K1
+						public final /* non-default */
+					K2
+						public final
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/Int
+					K2
+						---

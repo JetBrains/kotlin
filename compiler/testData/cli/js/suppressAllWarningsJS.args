@@ -1,6 +1,10 @@
 $TESTDATA_DIR$/../warnings.kt
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
+-Xir-produce-klib-dir
+-Xir-only
+-libraries
+$STDLIB_JS$
 -nowarn
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

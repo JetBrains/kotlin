@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 // ALLOW_KOTLIN_PACKAGE
 
 // FILE: annotation.kt
@@ -35,6 +35,7 @@ fun takeUShort(@ImplicitIntegerCoercion u: UShort) {}
 fun takeUInt(@ImplicitIntegerCoercion u: UInt) {}
 fun takeULong(@ImplicitIntegerCoercion u: ULong) {}
 
+@ExperimentalUnsignedTypes
 fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {}
 
 fun takeLong(@ImplicitIntegerCoercion l: Long) {}

@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
-import com.intellij.openapi.util.io.JarUtil
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import java.io.File
 import java.util.jar.Attributes
+import java.util.jar.JarFile
+
 
 data class RuntimeVersions(val implementationVersion: ApiVersion?, val requireKotlinVersion: ApiVersion?) {
     companion object {
@@ -43,8 +44,8 @@ object CommonVersionReader {
     }
 
     fun getVersionsFromManifest(runtimeLibraryPath: File): RuntimeVersions {
-        val version = JarUtil.getJarAttribute(runtimeLibraryPath, Attributes.Name.IMPLEMENTATION_VERSION)?.let(ApiVersion.Companion::parse)
-        val kotlinVersion = JarUtil.getJarAttribute(runtimeLibraryPath, REQUIRE_KOTLIN_VERSION)?.let(ApiVersion.Companion::parse)
+        val version = getJarAttribute(runtimeLibraryPath, Attributes.Name.IMPLEMENTATION_VERSION)?.let(ApiVersion.Companion::parse)
+        val kotlinVersion = getJarAttribute(runtimeLibraryPath, REQUIRE_KOTLIN_VERSION)?.let(ApiVersion.Companion::parse)
         return RuntimeVersions(version, kotlinVersion)
     }
 
@@ -52,5 +53,14 @@ object CommonVersionReader {
         if (currentVersion == null) return true
         val implVersion = currentVersion.implementationVersion ?: return false
         return implVersion >= RuntimeVersions.MINIMAL_VERSION_FOR_INLINE_CLASSES
+    }
+
+    private fun getJarAttribute(file: File, attribute: Attributes.Name): String? {
+        if (file.canRead()) {
+            JarFile(file).use { jarFile ->
+                return jarFile.manifest?.mainAttributes?.getValue(attribute)
+            }
+        }
+        return null
     }
 }

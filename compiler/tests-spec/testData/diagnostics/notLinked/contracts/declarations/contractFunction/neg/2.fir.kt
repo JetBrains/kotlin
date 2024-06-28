@@ -1,5 +1,15 @@
-// !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 2
+ * DESCRIPTION: Check report about use contracts in literal functions, lambdas or not top-level functions.
+ * ISSUES: KT-26149
+ * HELPERS: classes
+ */
 
 import kotlin.contracts.*
 
@@ -43,7 +53,7 @@ class case_4 : ClassLevel3() {
 
     fun <T>T.case_4_3_wrap() {
         fun case_4_3_contract() {
-            <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@case_4_3_wrap is ClassLevel1)<!> }
+            <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (this@case_4_3_wrap is ClassLevel1) }
             if (this@case_4_3_wrap !is ClassLevel1) throw Exception()
         }
         case_4_3_contract()
@@ -60,13 +70,13 @@ class case_4 : ClassLevel3() {
 class case_5<T> : ClassLevel5() {
     inner class case_5_1 {
         fun <K : Number?>K.case_5_1_1() {
-            contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@case_5_1 !is ClassLevel1 && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> && this@case_5_1_1 is Float)<!> }
-            if (!(this@case_5_1 !is ClassLevel1 && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> && this is Float)) throw Exception()
+            contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!USELESS_IS_CHECK!>this@case_5_1 !is ClassLevel1<!> && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> && this@case_5_1_1 is Float)<!> }
+            if (!(<!USELESS_IS_CHECK!>this@case_5_1 !is ClassLevel1<!> && <!SENSELESS_COMPARISON!>this@case_5_1 != null<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> && this is Float)) throw Exception()
         }
 
         fun case_5_1_2() {
-            contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@case_5_1 !is ClassLevel1 || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> || <!SENSELESS_COMPARISON!>this@case_5_1 == null<!>)<!> }
-            if (!(this@case_5_1 !is ClassLevel1 || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> || <!SENSELESS_COMPARISON!>this@case_5_1 == null<!>)) throw Exception()
+            contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!USELESS_IS_CHECK!>this@case_5_1 !is ClassLevel1<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> || <!SENSELESS_COMPARISON!>this@case_5_1 == null<!>)<!> }
+            if (!(<!USELESS_IS_CHECK!>this@case_5_1 !is ClassLevel1<!> || <!USELESS_IS_CHECK!>this@case_5 is ClassLevel1<!> || <!SENSELESS_COMPARISON!>this@case_5_1 == null<!>)) throw Exception()
         }
     }
 }

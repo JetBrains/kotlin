@@ -1,0 +1,53 @@
+KtConstructorDelegationCall(115,132): 'this(i, j, i * j)'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaDelegatedConstructorCall:
+        kind = THIS_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = Sub
+            symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
+            valueParameters = [
+              KaVariableSignature:
+                name = i
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = i: kotlin.Int
+                callableId = null,
+              KaVariableSignature:
+                name = j
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = j: kotlin.Int
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {},
+      KaDelegatedConstructorCall:
+        kind = THIS_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = Sub
+            symbol = <constructor>(p: kotlin.Int): Sub
+            valueParameters = [
+              KaVariableSignature:
+                name = p
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = p: kotlin.Int
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
+    constructor(p: Int): Sub
+    constructor(i: Int, j: Int): Sub>

@@ -41,6 +41,13 @@ public open class Derived2 : Derived {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public interface DerivedI1 : I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.native.ObjCName(exact = true, name = "ObjCEnumExactChecks") public final enum class EnumExactChecks : kotlin.Enum<EnumExactChecks> {
     @kotlin.native.ObjCName(exact = true, name = "objCEntryOne") enum entry ENTRY_ONE
 
@@ -49,13 +56,13 @@ public open class Derived2 : Derived {
     private constructor EnumExactChecks()
     @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: EnumExactChecks): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumExactChecks>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumExactChecks
     public final /*synthesized*/ fun values(): kotlin.Array<EnumExactChecks>
 }
@@ -74,6 +81,21 @@ public interface I {
     @kotlin.native.ObjCName(name = "foo2") public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.native.ObjCName(name = "foo1") public abstract fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KT64276 : Base, DerivedI1 {
+    public constructor KT64276()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @kotlin.native.ObjCName(name = "foo1") public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 @kotlin.native.ObjCName(name = "ObjCClass", swiftName = "SwiftClass") public open class KotlinClass {
@@ -168,3 +190,4 @@ package kotlin {
         }
     }
 }
+

@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirContractResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.CONTRACTS
 ) {
-    override val transformer = FirContractResolveTransformerAdapter(session, scopeSession)
+    override val transformer: FirContractResolveTransformerAdapter = FirContractResolveTransformerAdapter(session, scopeSession)
 }
 
 @AdapterForResolveProcessor
@@ -35,7 +36,9 @@ class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: Sc
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }
 
@@ -46,7 +49,7 @@ fun <F : FirClassLikeDeclaration> F.runContractResolveForLocalClass(
     targetedClasses: Set<FirClassLikeDeclaration>
 ): F {
     val newContext = outerBodyResolveContext.createSnapshotForLocalClasses(
-        ReturnTypeCalculatorForFullBodyResolve,
+        ReturnTypeCalculatorForFullBodyResolve.Contract,
         targetedClasses
     )
     val transformer = FirContractResolveTransformer(session, scopeSession, newContext)

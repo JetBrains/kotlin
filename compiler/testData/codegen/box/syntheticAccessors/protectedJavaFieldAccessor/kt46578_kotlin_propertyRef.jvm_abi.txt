@@ -1,0 +1,29 @@
+MODULE main
+	CLASS Derived.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				getRef()Lkotlin/reflect/KMutableProperty0;
+			K1
+				getRef()Lkotlin/reflect/KProperty0;
+			K2
+				---
+		K1
+			---
+		K2
+			getRef()Lkotlin/reflect/KMutableProperty0; [public, final]
+		K1
+			getRef()Lkotlin/reflect/KProperty0; [public, final]
+		K2
+			---
+	CLASS Derived$ref$1.class
+		Property: class.superClassInternalName
+			K1
+				kotlin/jvm/internal/PropertyReference0Impl
+			K2
+				kotlin/jvm/internal/MutablePropertyReference0Impl
+		K1
+			---
+		K2
+			set(Ljava/lang/Object;)V [public]

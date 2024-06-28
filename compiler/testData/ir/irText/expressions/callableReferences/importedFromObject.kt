@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 package test
 
 import test.Foo.a

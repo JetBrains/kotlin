@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,14 +16,11 @@ class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
         session: FirSession,
         scopeSession: ScopeSession,
-        valueParameter: FirValueParameter,
         function: FirFunction,
         originScope: FirScope?,
         index: Int,
     ): Boolean {
-        if (valueParameter.defaultValue != null || function.symbol.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)) {
-            return true
-        }
+        if (function.itOrExpectHasDefaultParameterValue(index)) return true
         if (function !is FirSimpleFunction) return false
         val symbol = function.symbol
         val typeScope = when (originScope) {
@@ -35,7 +32,8 @@ class FirDefaultParametersResolver : FirSessionComponent {
                     ConeSubstitutor.Empty,
                     session,
                     scopeSession,
-                    containingClass.symbol.toLookupTag()
+                    containingClass.symbol.toLookupTag(),
+                    memberRequiredPhase = null,
                 )
             }
             else -> return false
@@ -43,9 +41,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
         var result = false
 
         typeScope.processOverriddenFunctions(symbol) { overridden ->
-            if (overridden.containsDefaultValue(index) ||
-                overridden.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)
-            ) {
+            if (overridden.fir.itOrExpectHasDefaultParameterValue(index)) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP
             }

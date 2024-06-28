@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 public object SomeObject {
     private val workerThread = object : Thread() {
         override fun run() {

@@ -1,0 +1,518 @@
+Module: separate
+Module: main
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? [fake_override]
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:bar2 visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? [fake_override]
+      overridden:
+        public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:bar3 visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:bar4 visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] kotlin.IntArray? [fake_override]
+      overridden:
+        public open fun bar4 (): @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:bar5 visibility:public modality:OPEN <> ($this:<root>.Java1) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? [fake_override]
+      overridden:
+        public open fun bar5 (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java1, a:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?
+    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN <> ($this:<root>.Java1, b:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:b index:0 type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?
+    FUN FAKE_OVERRIDE name:foo3 visibility:public modality:OPEN <> ($this:<root>.Java1, c:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:c index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?
+    FUN FAKE_OVERRIDE name:foo4 visibility:public modality:OPEN <> ($this:<root>.Java1, d:@[FlexibleNullability] kotlin.IntArray?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:d index:0 type:@[FlexibleNullability] kotlin.IntArray?
+    FUN FAKE_OVERRIDE name:foo5 visibility:public modality:OPEN <> ($this:<root>.Java1, e:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java1
+      VALUE_PARAMETER name:e index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java2]'
+    FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? [fake_override]
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    FUN FAKE_OVERRIDE name:bar2 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? [fake_override]
+      overridden:
+        public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    FUN FAKE_OVERRIDE name:bar3 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    FUN FAKE_OVERRIDE name:bar4 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[FlexibleNullability] kotlin.IntArray? [fake_override]
+      overridden:
+        public open fun bar4 (): @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    FUN FAKE_OVERRIDE name:bar5 visibility:public modality:OPEN <> ($this:<root>.Java2) returnType:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? [fake_override]
+      overridden:
+        public open fun bar5 (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java2, a:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?
+    FUN FAKE_OVERRIDE name:foo2 visibility:public modality:OPEN <> ($this:<root>.Java2, b:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:b index:0 type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?
+    FUN FAKE_OVERRIDE name:foo3 visibility:public modality:OPEN <> ($this:<root>.Java2, c:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:c index:0 type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?
+    FUN FAKE_OVERRIDE name:foo4 visibility:public modality:OPEN <> ($this:<root>.Java2, d:@[FlexibleNullability] kotlin.IntArray?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:d index:0 type:@[FlexibleNullability] kotlin.IntArray?
+    FUN FAKE_OVERRIDE name:foo5 visibility:public modality:OPEN <> ($this:<root>.Java2, e:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java2
+      VALUE_PARAMETER name:e index:0 type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java2
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java2
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:bar visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.MutableList<kotlin.Int>
+      overridden:
+        public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.collections.MutableList<kotlin.Int> declared in <root>.C'
+          CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+            <T>: kotlin.Int
+    FUN name:bar2 visibility:public modality:OPEN <> ($this:<root>.C) returnType:java.util.Queue<kotlin.String>
+      overridden:
+        public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar2 (): java.util.Queue<kotlin.String> declared in <root>.C'
+          CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+            <class: E>: @[FlexibleNullability] kotlin.String?
+    FUN name:bar3 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.collections.MutableSet<kotlin.Any>
+      overridden:
+        public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar3 (): kotlin.collections.MutableSet<kotlin.Any> declared in <root>.C'
+          CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.mutableSetOf> declared in kotlin.collections' type=kotlin.collections.MutableSet<kotlin.Any> origin=null
+            <T>: kotlin.Any
+    FUN name:bar4 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.IntArray
+      overridden:
+        public open fun bar4 (): @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar4 (): kotlin.IntArray declared in <root>.C'
+          CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+    FUN name:bar5 visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Array<kotlin.String>
+      overridden:
+        public open fun bar5 (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun bar5 (): kotlin.Array<kotlin.String> declared in <root>.C'
+          CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+            <T>: kotlin.String
+            elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+              CONST String type=kotlin.String value=""
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.C, a:kotlin.collections.MutableList<kotlin.Int>) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:a index:0 type:kotlin.collections.MutableList<kotlin.Int>
+      BLOCK_BODY
+    FUN name:foo2 visibility:public modality:OPEN <> ($this:<root>.C, b:java.util.Queue<kotlin.String>) returnType:kotlin.Unit
+      overridden:
+        public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:b index:0 type:java.util.Queue<kotlin.String>
+      BLOCK_BODY
+    FUN name:foo3 visibility:public modality:OPEN <> ($this:<root>.C, c:kotlin.collections.MutableSet<kotlin.Any>) returnType:kotlin.Unit
+      overridden:
+        public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:c index:0 type:kotlin.collections.MutableSet<kotlin.Any>
+      BLOCK_BODY
+    FUN name:foo4 visibility:public modality:OPEN <> ($this:<root>.C, d:kotlin.IntArray) returnType:kotlin.Unit
+      overridden:
+        public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:d index:0 type:kotlin.IntArray
+      BLOCK_BODY
+    FUN name:foo5 visibility:public modality:OPEN <> ($this:<root>.C, e:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+      overridden:
+        public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:e index:0 type:kotlin.Array<out kotlin.String>
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:c visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:d visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final d: @[FlexibleNullability] kotlin.IntArray? declared in <root>.Java1
+    PROPERTY FAKE_OVERRIDE name:e visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.Java1
+  FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, c:<root>.C) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    VALUE_PARAMETER name:b index:1 type:<root>.B
+    VALUE_PARAMETER name:c index:2 type:<root>.C
+    BLOCK_BODY
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        value: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          element: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        value: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        value: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Int?> origin=null
+          <T>: kotlin.Int?
+          elements: VARARG type=kotlin.Array<out kotlin.Int?> varargElementType=kotlin.Int?
+            CONST Null type=kotlin.Nothing? value=null
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:@[FlexibleNullability] kotlin.IntArray? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        value: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:e type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.A origin=EQ
+        receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        value: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<@[FlexibleNullability] kotlin.String?> origin=null
+          <T>: @[FlexibleNullability] kotlin.String?
+          elements: VARARG type=kotlin.Array<out @[FlexibleNullability] kotlin.String?> varargElementType=@[FlexibleNullability] kotlin.String?
+            CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        a: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        a: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+      CALL 'public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        b: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        b: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      CALL 'public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        c: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        c: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Any> origin=null
+          <T>: kotlin.Any
+          elements: VARARG type=kotlin.Array<out kotlin.Any> varargElementType=kotlin.Any
+            CONST String type=kotlin.String value=""
+            CONST Int type=kotlin.Int value=1
+      CALL 'public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        d: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        d: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      CALL 'public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        e: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+        e: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            CONST String type=kotlin.String value=""
+      VAR name:k type:kotlin.collections.List<kotlin.Int> [val]
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>
+          CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR name:k2 type:java.util.Queue<kotlin.String> [val]
+        TYPE_OP type=java.util.Queue<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<@[FlexibleNullability] kotlin.String?>
+          CALL 'public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.A' type=@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR name:k3 type:kotlin.collections.Set<kotlin.Any> [val]
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+          CALL 'public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR name:k4 type:kotlin.IntArray [val]
+        TYPE_OP type=kotlin.IntArray origin=IMPLICIT_NOTNULL typeOperand=kotlin.IntArray
+          CALL 'public open fun bar4 (): @[FlexibleNullability] kotlin.IntArray? declared in <root>.A' type=@[FlexibleNullability] kotlin.IntArray? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      VAR name:k5 type:kotlin.Array<kotlin.String> [val]
+        TYPE_OP type=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>
+          CALL 'public open fun bar5 (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.A' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? origin=null
+            $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? visibility:public declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
+        receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        value: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          element: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
+        receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        value: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? visibility:public declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
+        receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        value: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Int?> origin=null
+          <T>: kotlin.Int?
+          elements: VARARG type=kotlin.Array<out kotlin.Int?> varargElementType=kotlin.Int?
+            CONST Null type=kotlin.Nothing? value=null
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:@[FlexibleNullability] kotlin.IntArray? visibility:public declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
+        receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        value: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:e type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java2' type=kotlin.Unit superQualifierSymbol=<root>.B origin=EQ
+        receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        value: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            CONST String type=kotlin.String value=""
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        a: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo (a: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        a: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+            CONST Int type=kotlin.Int value=2
+      CALL 'public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        b: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo2 (b: @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        b: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      CALL 'public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        c: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo3 (c: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        c: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Any> origin=null
+          <T>: kotlin.Any
+          elements: VARARG type=kotlin.Array<out kotlin.Any> varargElementType=kotlin.Any
+            CONST String type=kotlin.String value=""
+            CONST Int type=kotlin.Int value=1
+      CALL 'public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        d: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo4 (d: @[FlexibleNullability] kotlin.IntArray?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        d: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      CALL 'public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        e: CONST Null type=kotlin.Nothing? value=null
+      CALL 'public open fun foo5 (e: @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+        e: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            CONST String type=kotlin.String value=""
+      VAR name:k6 type:kotlin.collections.List<kotlin.Int> [val]
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>
+          CALL 'public open fun bar (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? origin=null
+            $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      VAR name:k7 type:java.util.Queue<kotlin.String> [val]
+        TYPE_OP type=java.util.Queue<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=java.util.Queue<@[FlexibleNullability] kotlin.String?>
+          CALL 'public open fun bar2 (): @[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? origin=null
+            $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      VAR name:k8 type:kotlin.collections.Set<kotlin.Any> [val]
+        TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+          CALL 'public open fun bar3 (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? origin=null
+            $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      VAR name:k9 type:kotlin.IntArray [val]
+        TYPE_OP type=kotlin.IntArray origin=IMPLICIT_NOTNULL typeOperand=kotlin.IntArray
+          CALL 'public open fun bar4 (): @[FlexibleNullability] kotlin.IntArray? declared in <root>.B' type=@[FlexibleNullability] kotlin.IntArray? origin=null
+            $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      VAR name:k10 type:kotlin.Array<kotlin.String> [val]
+        TYPE_OP type=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>
+          CALL 'public open fun bar5 (): @[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? declared in <root>.B' type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? origin=null
+            $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.Int?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
+        receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        value: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
+          <T>: kotlin.Int
+          element: CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:b type:@[FlexibleNullability] java.util.Queue<@[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
+        receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        value: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:c type:@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
+        receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        value: CALL 'public final fun setOf <T> (vararg elements: T of kotlin.collections.setOf): kotlin.collections.Set<T of kotlin.collections.setOf> declared in kotlin.collections' type=kotlin.collections.Set<kotlin.Int?> origin=null
+          <T>: kotlin.Int?
+          elements: VARARG type=kotlin.Array<out kotlin.Int?> varargElementType=kotlin.Int?
+            CONST Null type=kotlin.Nothing? value=null
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:d type:@[FlexibleNullability] kotlin.IntArray? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
+        receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        value: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:e type:@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? visibility:public declared in <root>.Java1' type=kotlin.Unit superQualifierSymbol=<root>.C origin=EQ
+        receiver: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        value: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            CONST String type=kotlin.String value=""
+      CALL 'public open fun foo (a: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        a: CALL 'public final fun mutableListOf <T> (): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+          <T>: kotlin.Int
+      CALL 'public open fun foo2 (b: java.util.Queue<kotlin.String>): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        b: CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.LinkedList' type=java.util.LinkedList<@[FlexibleNullability] kotlin.String?> origin=null
+          <class: E>: @[FlexibleNullability] kotlin.String?
+      CALL 'public open fun foo3 (c: kotlin.collections.MutableSet<kotlin.Any>): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        c: CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.mutableSetOf> declared in kotlin.collections' type=kotlin.collections.MutableSet<kotlin.Any> origin=null
+          <T>: kotlin.Any
+      CALL 'public open fun foo4 (d: kotlin.IntArray): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        d: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+            CONST Int type=kotlin.Int value=1
+      CALL 'public open fun foo5 (e: kotlin.Array<out kotlin.String>): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+        e: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
+          <T>: kotlin.String
+          elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            CONST String type=kotlin.String value=""
+      VAR name:k11 type:kotlin.collections.List<kotlin.Int> [val]
+        CALL 'public open fun bar (): kotlin.collections.MutableList<kotlin.Int> declared in <root>.C' type=kotlin.collections.MutableList<kotlin.Int> origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+      VAR name:k12 type:java.util.Queue<kotlin.String> [val]
+        CALL 'public open fun bar2 (): java.util.Queue<kotlin.String> declared in <root>.C' type=java.util.Queue<kotlin.String> origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+      VAR name:k13 type:kotlin.collections.Set<kotlin.Any> [val]
+        CALL 'public open fun bar3 (): kotlin.collections.MutableSet<kotlin.Any> declared in <root>.C' type=kotlin.collections.MutableSet<kotlin.Any> origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+      VAR name:k14 type:kotlin.IntArray [val]
+        CALL 'public open fun bar4 (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
+      VAR name:k15 type:kotlin.Array<kotlin.String> [val]
+        CALL 'public open fun bar5 (): kotlin.Array<kotlin.String> declared in <root>.C' type=kotlin.Array<kotlin.String> origin=null
+          $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null

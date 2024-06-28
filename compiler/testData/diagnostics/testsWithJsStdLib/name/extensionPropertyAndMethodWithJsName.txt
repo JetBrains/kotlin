@@ -1,0 +1,14 @@
+package
+
+package foo {
+    @get:kotlin.js.JsName(name = "get_bar") public val foo.A.bar: kotlin.Int
+    @kotlin.js.JsName(name = "get_bar") public fun foo.A.get_bar(): kotlin.Int
+
+    public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

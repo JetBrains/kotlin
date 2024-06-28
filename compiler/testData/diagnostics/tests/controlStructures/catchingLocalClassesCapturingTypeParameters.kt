@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ProhibitInnerClassesOfGenericClassExtendingThrowable
+// LANGUAGE: +ProhibitInnerClassesOfGenericClassExtendingThrowable
 package test
 
 var global: Throwable? = null

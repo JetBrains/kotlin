@@ -3,7 +3,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
-// MODULE: overriden_external_method_with_same_name_method
+// MODULE: lib
 // FILE: lib.kt
 external abstract class Foo {
     abstract fun o(): String
@@ -31,7 +31,7 @@ Foo.prototype.k = function() {
 }
 
 function box() {
-    return test(new this["overriden_external_method_with_same_name_method"].Baz());
+    return test(new this["lib"].Baz());
 }
 
 function test(foo) {

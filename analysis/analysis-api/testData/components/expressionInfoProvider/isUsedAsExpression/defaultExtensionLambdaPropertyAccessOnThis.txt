@@ -1,4 +1,3 @@
 expression: DOT_QUALIFIED_EXPRESSION
 text: this.length
 isUsedAsExpression: true
-

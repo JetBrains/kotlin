@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
-object ES6_THROWABLE_CONSTRUCTOR_SLOT : IrDeclarationOriginImpl("ES6_THROWABLE_CONSTRUCTOR_SLOT")
+val ES6_THROWABLE_CONSTRUCTOR_SLOT by IrDeclarationOriginImpl
 /**
  * Capture stack trace in primary constructors of Throwable
  */

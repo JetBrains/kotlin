@@ -5,19 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <serialization.common.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.common/src</serialization.common.src>
-        <serialization.k1.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k1/src</serialization.k1.src>
-        <serialization.k2.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k2/src</serialization.k2.src>
-        <serialization.backend.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.backend/src</serialization.backend.src>
-        <serialization.cli.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.cli/src</serialization.cli.src>
-        <serialization.resources>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.cli/resources</serialization.resources>
         <serialization.maven.plugin.src>${basedir}/src/main/kotlin</serialization.maven.plugin.src>
     </properties>
 
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>2.0.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -45,13 +39,15 @@
             <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-serialization-compiler-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <resources>
-            <resource><directory>${serialization.resources}</directory></resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -62,11 +58,6 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${serialization.common.src}</source>
-                                <source>${serialization.k1.src}</source>
-                                <source>${serialization.k2.src}</source>
-                                <source>${serialization.backend.src}</source>
-                                <source>${serialization.cli.src}</source>
                                 <source>${serialization.maven.plugin.src}</source>
                             </sources>
                         </configuration>
@@ -88,29 +79,9 @@
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
                     <args>
-                        <arg>-Xjvm-default=enable</arg>
-                        <arg>-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI</arg>
-                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
-                        <arg>-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction</arg>
-                        <arg>-Xcontext-receivers</arg>
+                        <arg>-Xjvm-default=all</arg>
                     </args>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>java-compile</id>
-                        <phase>compile</phase>
-                        <goals> <goal>compile</goal> </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
@@ -127,6 +98,27 @@
                         <id>process-test-classes</id>
                         <goals>
                             <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Shadowing kotlin-serialization-compiler-plugin into maven plugin without removing the dependency -->
+            <!-- Required for backward compatibility for Kotlin/IDEA plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>

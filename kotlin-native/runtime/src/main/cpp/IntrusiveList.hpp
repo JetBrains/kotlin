@@ -8,10 +8,10 @@
 #include <cstddef>
 #include <iterator>
 #include <limits>
+#include <optional>
 
 #include "KAssert.h"
 #include "Utils.hpp"
-#include "std_support/Optional.hpp"
 
 namespace kotlin {
 
@@ -22,6 +22,8 @@ struct DefaultIntrusiveForwardListTraits {
     static void setNext(T& value, T* next) noexcept { value.setNext(next); }
 
     static bool trySetNext(T& value, T* next) noexcept { return value.trySetNext(next); }
+
+    static T createFakeNode() noexcept { return T(); }
 };
 
 // Intrusive variant of `std::forward_list`.
@@ -140,8 +142,8 @@ public:
 
     // Complexity: O(1)
     intrusive_forward_list(intrusive_forward_list&& rhs) noexcept {
-        // Since tail() is shared, there's no need to update the last node's next_.
-        setNext(head(), next(rhs.head()));
+        // Since tail_ is shared, there's no need to update the last node's next_.
+        setNext(&head_, next(&rhs.head_));
         rhs.clear();
     }
 
@@ -165,13 +167,13 @@ public:
 
     // Complexity: O(1)
     void swap(intrusive_forward_list& rhs) noexcept {
-        // Since tail() is shared, there's no need to swap the last nodes' next_.
+        // Since tail_ is shared, there's no need to swap the last nodes' next_.
         using std::swap;
-        auto thisNext = next(head());
-        auto rhsNext = next(rhs.head());
+        auto thisNext = next(&head_);
+        auto rhsNext = next(&rhs.head_);
         swap(thisNext, rhsNext);
-        setNext(head(), thisNext);
-        setNext(rhs.head(), rhsNext);
+        setNext(&head_, thisNext);
+        setNext(&rhs.head_, rhsNext);
     }
 
     // Rewrite the contents of `this` with nodes from range `[first, last)`.
@@ -184,42 +186,42 @@ public:
     }
 
     // Complexity: O(1)
-    reference front() noexcept { return *next(head()); }
+    reference front() noexcept { return *next(&head_); }
     // Complexity: O(1)
-    const_reference front() const noexcept { return *next(head()); }
+    const_reference front() const noexcept { return *next(&head_); }
 
     // Iterator before the first node. Cannot be dereferenced.
     // Complexity: O(1)
-    iterator before_begin() noexcept { return iterator(head()); }
+    iterator before_begin() noexcept { return iterator(&head_); }
     // Iterator before the first node. Cannot be dereferenced.
     // Complexity: O(1)
-    const_iterator before_begin() const noexcept { return const_iterator(head()); }
+    const_iterator before_begin() const noexcept { return const_iterator(&head_); }
     // Iterator before the first node. Cannot be dereferenced.
     // Complexity: O(1)
-    const_iterator cbefore_begin() const noexcept { return const_iterator(head()); }
+    const_iterator cbefore_begin() const noexcept { return const_iterator(&head_); }
 
     // Complexity: O(1)
-    iterator begin() noexcept { return iterator(next(head())); }
+    iterator begin() noexcept { return iterator(next(&head_)); }
     // Complexity: O(1)
-    const_iterator begin() const noexcept { return const_iterator(next(head())); }
+    const_iterator begin() const noexcept { return const_iterator(next(&head_)); }
     // Complexity: O(1)
-    const_iterator cbegin() const noexcept { return const_iterator(next(head())); }
+    const_iterator cbegin() const noexcept { return const_iterator(next(&head_)); }
 
     // Complexity: O(1)
-    iterator end() noexcept { return iterator(tail()); }
+    iterator end() noexcept { return iterator(&tail_); }
     // Complexity: O(1)
-    const_iterator end() const noexcept { return const_iterator(tail()); }
+    const_iterator end() const noexcept { return const_iterator(&tail_); }
     // Complexity: O(1)
-    const_iterator cend() const noexcept { return const_iterator(tail()); }
+    const_iterator cend() const noexcept { return const_iterator(&tail_); }
 
     // Complexity: O(1)
-    bool empty() const noexcept { return next(head()) == tail(); }
+    bool empty() const noexcept { return next(&head_) == &tail_; }
 
     // Complexity: O(1)
     size_type max_size() const noexcept { return std::numeric_limits<size_type>::max(); }
 
     // Complexity: O(1)
-    void clear() noexcept { setNext(head(), tail()); }
+    void clear() noexcept { setNext(&head_, &tail_); }
 
     // Insert `value` after `pos`. `pos` can be in range `[before_begin(), end())`.
     // Returns iterator to the newly inserted element
@@ -258,7 +260,7 @@ public:
     iterator erase_after(iterator pos) noexcept {
         RuntimeAssert(pos != end(), "Attempted to erase_after end()");
         RuntimeAssert(pos != iterator(), "Attempted to erase_after empty iterator");
-        RuntimeAssert(next(pos.node_) != tail(), "Attempted to erase_after the last node");
+        RuntimeAssert(next(pos.node_) != &tail_, "Attempted to erase_after the last node");
         pointer nextNode = next(next(pos.node_));
         setNext(pos.node_, nextNode);
         return iterator(nextNode);
@@ -273,7 +275,7 @@ public:
     iterator erase_after(iterator first, iterator last) noexcept {
         RuntimeAssert(first != end(), "Attempted to erase_after starting at end()");
         RuntimeAssert(first != iterator(), "Attempted to erase_after starting at empty iterator");
-        RuntimeAssert(next(first.node_) != tail(), "Attempted to erase_after starting at the last node");
+        RuntimeAssert(next(first.node_) != &tail_, "Attempted to erase_after starting at the last node");
         RuntimeAssert(last != iterator(), "Attempted to erase_after ending at empty iterator");
         setNext(first.node_, last.node_);
         return last;
@@ -302,11 +304,11 @@ public:
     // This does not destroy the erased node and does not change its next pointer.
     // Complexity: O(1)
     pointer try_pop_front() noexcept {
-        pointer top = next(head());
-        if (top == tail()) {
+        pointer top = next(&head_);
+        if (top == &tail_) {
             return nullptr;
         }
-        setNext(head(), next(top));
+        setNext(&head_, next(top));
         return top;
     }
 
@@ -324,9 +326,9 @@ public:
     // Complexity: O(n)
     template <typename P>
     void remove_if(P p) noexcept(noexcept(p(std::declval<const_reference>()))) {
-        pointer prev = head();
+        pointer prev = &head_;
         pointer node = next(prev);
-        while (node != tail()) {
+        while (node != &tail_) {
             if (p(*node)) {
                 // The node is being removed.
                 node = next(node);
@@ -339,7 +341,26 @@ public:
         }
     }
 
-    // TODO: Implement splice_after.
+    // Moves at most `maxCount` first elements from the range `(firstExcl, lastExcl)` after the element pointed by `insertAfter`.
+    // No elements are copied or moved, only the internal pointers of the list nodes are re-pointed.
+    // The behavior is undefined if `insertAfter` is an iterator in the range `[firstExcl, lastExcl)`.
+    // Complexity: O(min(maxCount, std::distance(first, last)))
+    size_type splice_after(iterator insertAfter, iterator firstExcl, iterator lastExcl, size_type maxCount) {
+        auto firstIncl = std::next(firstExcl);
+        if (firstIncl == lastExcl) return 0;
+        auto lastIncl = firstExcl;
+        size_type count = 0;
+        while (std::next(lastIncl) != lastExcl && count < maxCount) {
+            RuntimeAssert(lastIncl != insertAfter, "Position to splice after must not be in the spliced range");
+            ++lastIncl;
+            ++count;
+        }
+        lastExcl = std::next(lastIncl);
+        setNext(firstExcl.node_, lastExcl.node_);
+        setNext(lastIncl.node_, next(insertAfter.node_));
+        setNext(insertAfter.node_, firstIncl.node_);
+        return count;
+    }
 
 private:
     static pointer next(const_pointer node) noexcept { return Traits::next(*node); }
@@ -347,11 +368,6 @@ private:
     static void setNext(pointer node, pointer next) noexcept { return Traits::setNext(*node, next); }
 
     static bool trySetNext(pointer node, pointer next) noexcept { return Traits::trySetNext(*node, next); }
-
-    pointer head() noexcept { return reinterpret_cast<pointer>(headStorage_); }
-    const_pointer head() const noexcept { return reinterpret_cast<const_pointer>(headStorage_); }
-
-    static pointer tail() noexcept { return reinterpret_cast<pointer>(tailStorage_); }
 
     // TODO: Consider making public.
     std::optional<iterator> try_insert_after(iterator pos, reference value) noexcept {
@@ -364,8 +380,8 @@ private:
         return iterator(&value);
     }
 
-    alignas(value_type) char headStorage_[sizeof(value_type)] = {0};
-    alignas(value_type) static inline char tailStorage_[sizeof(value_type)] = {0};
+    value_type head_ = Traits::createFakeNode();
+    static inline value_type tail_ = Traits::createFakeNode();
 };
 
 template <typename InputIt>

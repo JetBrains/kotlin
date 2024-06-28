@@ -1806,7 +1806,7 @@ public abstract class StackValue {
                 return inlineConstant(type, kotlinType, v);
             }
 
-            if (descriptor.isConst() && codegen.getState().getShouldInlineConstVals()) {
+            if (descriptor.isConst() && codegen.getState().getConfig().getShouldInlineConstVals()) {
                 return inlineConstant(type, kotlinType, v);
             }
 

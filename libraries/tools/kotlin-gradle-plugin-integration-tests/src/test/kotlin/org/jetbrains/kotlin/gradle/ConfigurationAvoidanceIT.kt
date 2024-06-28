@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
+import kotlin.io.path.exists
 
 @DisplayName("Tasks configuration avoidance")
 class ConfigurationAvoidanceIT : KGPBaseTest() {
@@ -27,8 +27,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_7_5,
-        additionalVersions = [TestVersions.Gradle.G_7_3, TestVersions.Gradle.G_7_4]
+        additionalVersions = [TestVersions.Gradle.G_7_3],
     )
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
@@ -49,9 +48,31 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         }
     }
 
+    @OtherGradlePluginTests
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_3]
+    )
+    @DisplayName("KGP/Kapt does not eagerly configure any tasks")
+    @GradleTest
+    fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {
+        project("kapt2/simple", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.configureEach {
+                |    if (name != "help" && name != "clean") {
+                |        throw new GradleException("Configuration avoidance failure for ${'$'}name!")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("--dry-run")
+        }
+    }
+
     @AndroidGradlePluginTests
     @DisplayName("Android unrelated tasks are not configured")
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
     @GradleAndroidTest
     fun testAndroidUnrelatedTaskNotConfigured(
         gradleVersion: GradleVersion,
@@ -65,6 +86,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
             buildJdk = providedJdk.location
         ) {
 
+            gradleProperties.appendText("android.defaults.buildfeatures.aidl=true")
             listOf("Android", "Test").forEach { subproject ->
                 subProject(subproject)
                     .buildGradle
@@ -107,7 +129,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
     @DisplayName("JS unrelated tasks are not configured")
     @GradleTest
     fun jsNoTasksConfigured(gradleVersion: GradleVersion) {
-        project("kotlin2JsNoOutputFileProject", gradleVersion) {
+        project("kotlin-js-plugin-project", gradleVersion) {
             createTaskWithExpensiveConfiguration()
 
             build("help")
@@ -129,15 +151,27 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
         expensivelyConfiguredTaskName: String = "expensivelyConfiguredTask"
     ): String {
         @Suppress("GroovyAssignabilityCheck")
-        buildGradle.append(
-            //language=Groovy
-            """
+        if (buildGradle.exists()) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
                     
                 tasks.register("$expensivelyConfiguredTaskName") {
                     throw new GradleException("Should not configure expensive task!")
                 }
                 """.trimIndent()
-        )
+            )
+        } else {
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                |
+                |tasks.register("$expensivelyConfiguredTaskName") {
+                |   throw GradleException("Should not configure expensive task!")
+                |}
+                """.trimMargin()
+            )
+        }
 
         return expensivelyConfiguredTaskName
     }

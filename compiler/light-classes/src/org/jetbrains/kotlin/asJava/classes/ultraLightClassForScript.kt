@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtScript
 class KtUltraLightClassForScript(
     script: KtScript,
     private val support: KtUltraLightSupport,
-) : KtLightClassForScript(script) {
+) : KtLightClassForScriptBase(script) {
     private val membersBuilder by lazyPub {
         UltraLightMembersCreator(
             containingClass = this,
@@ -70,7 +71,7 @@ class KtUltraLightClassForScript(
         val methodBuilder = LightMethodBuilder(manager, language, "main").apply {
             isConstructor = false
             addModifiers(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
-            setMethodReturnType(PsiType.VOID)
+            setMethodReturnType(PsiTypes.voidType())
         }
 
         val mainMethod = KtUltraLightMethodForSourceDeclaration(
@@ -129,7 +130,7 @@ class KtUltraLightClassForScript(
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
-    override fun copy(): KtLightClassForScript = KtUltraLightClassForScript(script, support)
+    override fun copy(): KtUltraLightClassForScript = KtUltraLightClassForScript(script, support)
 
     override fun getOwnInnerClasses(): List<PsiClass> {
         return script.declarations.filterIsInstance<KtClassOrObject>()

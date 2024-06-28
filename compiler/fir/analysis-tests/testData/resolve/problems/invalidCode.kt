@@ -12,7 +12,7 @@ package b
 interface I {
     fun <T
             > f<!SYNTAX!><!> = "".
-    (<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>C().<!FUNCTION_CALL_EXPECTED!>f<!><!><!SYNTAX!><!>
+    (<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>C().<!CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>f<!><!><!SYNTAX!><!>
     class C : I<!SYNTAX!><!>
 
 // FILE: c.kt
@@ -35,7 +35,7 @@ package d
 interface I {
     fun <T
             > f<!SYNTAX!><!> = <!TOO_MANY_ARGUMENTS!>C<!>(
-        <!SYNTAX!><!SYNTAX!><!>.<!><!TOO_MANY_ARGUMENTS!>f<!><!SYNTAX!><!>
+        <!SYNTAX!><!SYNTAX!><!>.<!><!CANNOT_INFER_PARAMETER_TYPE, INFIX_MODIFIER_REQUIRED, TOO_MANY_ARGUMENTS!>f<!><!SYNTAX!><!>
     class C : I<!SYNTAX!><!>
 
 // FILE: e.kt

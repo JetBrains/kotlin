@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -ProhibitOperatorMod
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -ProhibitOperatorMod
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
     <!DEPRECATED_BINARY_MOD!>operator<!> fun Int.mod(s: String) = 4

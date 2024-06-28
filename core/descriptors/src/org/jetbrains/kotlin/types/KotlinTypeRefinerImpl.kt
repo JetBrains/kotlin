@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.CacheWithNotNullValues
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -23,14 +24,20 @@ import org.jetbrains.kotlin.utils.DFS
 @OptIn(TypeRefinement::class)
 class KotlinTypeRefinerImpl(
     private val moduleDescriptor: ModuleDescriptor,
-    storageManager: StorageManager
+    storageManager: StorageManager,
 ) : KotlinTypeRefiner() {
+    private val refinedTypeCache: CacheWithNotNullValues<TypeConstructor, KotlinType> =
+        storageManager.createCacheWithNotNullValues()
+    private val isRefinementNeededForTypeConstructorCache: CacheWithNotNullValues<ClassifierDescriptor, Boolean> =
+        storageManager.createCacheWithNotNullValues()
+    private val scopes: CacheWithNotNullValues<ClassDescriptor, MemberScope> =
+        storageManager.createCacheWithNotNullValues()
     private var isStandalone: Boolean = false
 
     private constructor(
         moduleDescriptor: ModuleDescriptor,
         storageManager: StorageManager,
-        isStandalone: Boolean
+        isStandalone: Boolean,
     ) : this(moduleDescriptor, storageManager) {
         this.isStandalone = isStandalone
     }
@@ -40,10 +47,6 @@ class KotlinTypeRefinerImpl(
             moduleDescriptor.getCapability(REFINER_CAPABILITY)?.value = TypeRefinementSupport.Enabled(this)
         }
     }
-
-    private val refinedTypeCache = storageManager.createCacheWithNotNullValues<TypeConstructor, KotlinType>()
-    private val isRefinementNeededForTypeConstructorCache = storageManager.createCacheWithNotNullValues<ClassifierDescriptor, Boolean>()
-    private val scopes = storageManager.createCacheWithNotNullValues<ClassDescriptor, MemberScope>()
 
     /**
      * IMPORTANT: that function has not obvious contract: it refines only supertypes,
@@ -78,17 +81,24 @@ class KotlinTypeRefinerImpl(
         require(type is KotlinType)
         if (type.constructor.declarationDescriptor?.module == moduleDescriptor) return type
         return when {
-            !type.needsRefinement() -> type
+            // See comment on [needsRefinementHackForKtij24195]
+            type.needsRefinementHackForKtij24195() -> doRefineType((type as AbbreviatedType).abbreviation)
 
-            type.canBeCached() -> {
-                val cached = refinedTypeCache.computeIfAbsent(type.constructor) {
-                    type.constructor.declarationDescriptor!!.defaultType.refineWithRespectToAbbreviatedTypes(this)
-                }
+            type.needsRefinement() -> doRefineType(type)
 
-                cached.restoreAdditionalTypeInformation(type)
+            else -> type
+        }
+    }
+
+    private fun doRefineType(type: KotlinType): KotlinType {
+        return if (type.canBeCached()) {
+            val cached = refinedTypeCache.computeIfAbsent(type.constructor) {
+                type.constructor.declarationDescriptor!!.defaultType.refineWithRespectToAbbreviatedTypes(this)
             }
 
-            else -> type.refineWithRespectToAbbreviatedTypes(this)
+            cached.restoreAdditionalTypeInformation(type)
+        } else {
+            type.refineWithRespectToAbbreviatedTypes(this)
         }
     }
 
@@ -107,6 +117,40 @@ class KotlinTypeRefinerImpl(
     private fun KotlinType.needsRefinement(): Boolean = isRefinementNeededForTypeConstructor(constructor)
 
     private fun KotlinType.canBeCached(): Boolean = hasNotTrivialRefinementFactory && constructor.declarationDescriptor != null
+
+    /**
+     *  This is a hack for https://youtrack.jetbrains.com/issue/KTIJ-24195
+     *
+     *  The rough idea is that if:
+     *  - we see a typealias pointing to a classifier
+     *    - ideally, we'd consider only `actual typealias`es, but we don't write `actual`-flag in metadata :(
+     *  - and that classifier isn't visible from our module
+     *  - then we should re-refine the abbreviation
+     *
+     *  Read KTIJ-24195 comments for detailed explanation and reasoning why this hack is sufficient.
+     *
+     *  Performance note: this hack amounts to running an additional `findClassAcrossModuleDependencies` on all `typealias`
+     *  abbreviations. In most cases, the resolution of abbreviation should've happened before, so this call will just hit the cache.
+     *  It is possible to construct a case where this call will actually have to do some non-trivial work, but:
+     *  a) it's quite hard to write such case even knowing how our caches work, so the probability of a real-life user' code hitting that
+     *     case is minuscule
+     *  b) even if we somehow manage to hit that case in real code, this is just one more `getContributedClassifier` per used
+     *     `typealias`, as all subsequent calls will be cached.
+     */
+    private fun KotlinType.needsRefinementHackForKtij24195(): Boolean {
+        if (this !is AbbreviatedType) return false
+        if (abbreviation.constructor.declarationDescriptor !is TypeAliasDescriptor) return false
+
+        // Would be nice to have the following line uncommented (nice optimization), but unfortunately, serialized binaries do not
+        // preserve `isActual`-flags
+        // if (!abbreviation.constructor.declarationDescriptor.isActual) return false
+
+        val expansionDescriptorClassId = expandedType.constructor.declarationDescriptor.classId ?: return false
+        // Expansion invisible - need refinement hack
+        // NB: important to use 'findClassifier' and not 'findClass', because normally this call is expected to resolve
+        // a typealias descriptor, which is a Classifier but not a ClassDescriptor
+        return moduleDescriptor.findClassifierAcrossModuleDependencies(expansionDescriptorClassId) == null
+    }
 
     @TypeRefinement
     override fun refineSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> {

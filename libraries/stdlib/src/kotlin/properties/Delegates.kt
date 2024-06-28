@@ -65,5 +65,8 @@ private class NotNullVar<T : Any>() : ReadWriteProperty<Any?, T> {
     public override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         this.value = value
     }
+
+    public override fun toString(): String =
+        "NotNullProperty(${if (value != null) "value=$value" else "value not initialized yet"})"
 }
 

@@ -22,7 +22,7 @@ class KT57023CompileTaskDescriptionsTest {
         kotlin.linuxArm64()
         kotlin.jvm()
         kotlin.js(KotlinJsCompilerType.IR)
-        kotlin.targetHierarchy.default()
+        kotlin.applyDefaultHierarchyTemplate()
 
         project.evaluate()
 

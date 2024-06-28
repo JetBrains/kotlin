@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 
-class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter) :
-    ICReporter by buildReporter, BuildMetricsReporter by buildReporter {
+class ClasspathSnapshotBuildReporter(private val buildReporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>) :
+    ICReporter by buildReporter, BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> by buildReporter {
 
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
         buildReporter.report({ "[ClasspathSnapshot] ${message()}" }, severity)

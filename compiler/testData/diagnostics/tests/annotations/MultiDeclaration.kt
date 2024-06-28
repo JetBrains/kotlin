@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class Ann
 
 data class Pair(val x: Int, val y: Int)

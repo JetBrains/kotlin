@@ -1,0 +1,29 @@
+KtCallExpression(108,119): 'processB(a)'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = /processB(b: B): kotlin.Int
+          valueParameters = [
+            KaVariableSignature:
+              name = b
+              receiverType = null
+              returnType = B
+              symbol = b: B
+              callableId = null
+          ]
+          callableId = /processB
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        a -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = B
+          symbol = b: B
+          callableId = null)
+      }

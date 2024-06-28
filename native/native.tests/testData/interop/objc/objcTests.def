@@ -1,0 +1,8 @@
+language = Objective-C
+headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h Foundation/NSBundle.h \
+    objc/runtime.h
+headerFilter = tests/**.h \
+    Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h \
+    objc/objc.h Foundation/NSBundle.h \
+    objc/runtime.h
+linkerOpts = -lobjctests

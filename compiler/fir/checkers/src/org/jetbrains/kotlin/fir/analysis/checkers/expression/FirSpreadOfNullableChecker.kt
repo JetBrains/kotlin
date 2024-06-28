@@ -6,23 +6,24 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.canBeNull
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 
-object FirSpreadOfNullableChecker : FirFunctionCallChecker() {
+object FirSpreadOfNullableChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         fun checkAndReport(argument: FirExpression, source: KtSourceElement?) {
-            val argumentTypeRef = argument.typeRef
-            if (argument is FirSpreadArgumentExpression && argumentTypeRef.coneType !is ConeFlexibleType && argumentTypeRef.canBeNull) {
+            val coneType = argument.resolvedType
+            if (argument is FirSpreadArgumentExpression && !argument.isFakeSpread && coneType !is ConeFlexibleType && coneType.canBeNull(context.session)) {
                 reporter.reportOn(source, FirErrors.SPREAD_OF_NULLABLE, context)
             }
         }

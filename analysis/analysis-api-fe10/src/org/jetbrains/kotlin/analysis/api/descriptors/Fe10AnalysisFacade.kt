@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtElement
@@ -25,22 +25,24 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 interface Fe10AnalysisFacade {
     companion object {
         fun getInstance(project: Project): Fe10AnalysisFacade {
-            return ServiceManager.getService(project, Fe10AnalysisFacade::class.java)
+            return project.getService(Fe10AnalysisFacade::class.java)
         }
     }
 
-    fun getResolveSession(element: KtElement): ResolveSession
-    fun getDeprecationResolver(element: KtElement): DeprecationResolver
-    fun getCallResolver(element: KtElement): CallResolver
-    fun getKotlinToResolvedCallTransformer(element: KtElement): KotlinToResolvedCallTransformer
-    fun getOverloadingConflictResolver(element: KtElement): OverloadingConflictResolver<ResolvedCall<*>>
-    fun getKotlinTypeRefiner(element: KtElement): KotlinTypeRefiner
+    fun getAnalysisContext(element: KtElement, token: KaLifetimeToken): Fe10AnalysisContext
 
-    fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
+    fun getAnalysisContext(ktModule: KaModule, token: KaLifetimeToken): Fe10AnalysisContext
 
-    fun getOrigin(file: VirtualFile): KtSymbolOrigin
+    fun analyze(elements: List<KtElement>, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
+
+    fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext {
+        return analyze(listOf(element), mode)
+    }
+
+    fun getOrigin(file: VirtualFile): KaSymbolOrigin
 
     enum class AnalysisMode {
+        ALL_COMPILER_CHECKS,
         FULL,
         PARTIAL_WITH_DIAGNOSTICS,
         PARTIAL
@@ -49,16 +51,14 @@ interface Fe10AnalysisFacade {
 
 class Fe10AnalysisContext(
     facade: Fe10AnalysisFacade,
-    val contextElement: KtElement,
-    val token: KtLifetimeToken
+    val resolveSession: ResolveSession,
+    val deprecationResolver: DeprecationResolver,
+    val callResolver: CallResolver,
+    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
+    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>>,
+    val kotlinTypeRefiner: KotlinTypeRefiner,
+    val token: KaLifetimeToken,
 ) : Fe10AnalysisFacade by facade {
-    val resolveSession: ResolveSession = getResolveSession(contextElement)
-    val deprecationResolver: DeprecationResolver = getDeprecationResolver(contextElement)
-    val callResolver: CallResolver = getCallResolver(contextElement)
-    val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer = getKotlinToResolvedCallTransformer(contextElement)
-    val overloadingConflictResolver: OverloadingConflictResolver<ResolvedCall<*>> = getOverloadingConflictResolver(contextElement)
-    val kotlinTypeRefiner: KotlinTypeRefiner = getKotlinTypeRefiner(contextElement)
-
     val builtIns: KotlinBuiltIns
         get() = resolveSession.moduleDescriptor.builtIns
 

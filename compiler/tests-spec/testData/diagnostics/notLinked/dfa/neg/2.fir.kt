@@ -1,11 +1,19 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 2
+ * DESCRIPTION: Raw data flow analysis test
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x is Nothing) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -13,7 +21,7 @@ fun case_1(x: Any?) {
 fun case_2(x: Any) {
     if (x is Nothing) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -21,7 +29,7 @@ fun case_2(x: Any) {
 fun case_3(x: Any?) {
     if (x !is Nothing) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -29,7 +37,7 @@ fun case_3(x: Any?) {
 fun case_4(x: Any) {
     if (x !is Nothing) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -45,7 +53,7 @@ fun case_5(x: Any?) {
 fun case_6(x: Any?) {
     if (!(x !is Nothing)) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -53,7 +61,7 @@ fun case_6(x: Any?) {
 fun case_7(x: Any) {
     if (!(x is Nothing)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -77,7 +85,7 @@ fun case_9(x: Any?) {
 fun case_10(x: Any?) {
     if (!!(x !is Nothing)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 

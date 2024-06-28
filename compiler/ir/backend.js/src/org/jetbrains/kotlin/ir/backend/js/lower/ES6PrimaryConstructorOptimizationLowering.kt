@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
-import org.jetbrains.kotlin.ir.backend.js.utils.MutableReference
-import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
-import org.jetbrains.kotlin.ir.backend.js.utils.mutableReferenceOf
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -23,7 +20,8 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 const val CREATE_EXTERNAL_THIS_CONSTRUCTOR_PARAMETERS = 2
 
@@ -34,12 +32,19 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
         }
 
         val irClass = declaration.parentAsClass
+        val defaultConstructor = context.findDefaultConstructorFor(irClass)
 
         if (irClass.isExported(context)) {
             irClass.removeConstructorForExport()
         }
 
-        return listOf(declaration.convertToRegularConstructor(irClass))
+        val constructorReplacement = declaration.convertToRegularConstructor(irClass)
+
+        if (declaration == defaultConstructor) {
+            context.mapping.classToItsDefaultConstructor[irClass] = constructorReplacement
+        }
+
+        return listOf(constructorReplacement)
     }
 
     private fun IrFunction.convertToRegularConstructor(irClass: IrClass): IrConstructor {
@@ -67,8 +72,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
 
             body.transformChildrenVoid(object : ValueRemapper(emptyMap()) {
                 override val map = original.valueParameters.zip(constructor.valueParameters)
-                    .associate { it.first.symbol to it.second.symbol }
-                    .toMutableMap<IrValueSymbol, IrValueSymbol>()
+                    .associateTo(newHashMapWithExpectedSize<IrValueSymbol, IrValueSymbol>(original.valueParameters.size)) { it.first.symbol to it.second.symbol }
 
                 override fun visitReturn(expression: IrReturn): IrExpression {
                     return if (expression.returnTargetSymbol == original.symbol) {
@@ -177,8 +181,8 @@ class ES6PrimaryConstructorUsageOptimizationLowering(private val context: JsIrBa
  * Otherwise, we can generate a simple ES-class constructor in each class of the hierarchy
  */
 class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
-    private val esClassToPossibilityForOptimization = context.mapping.esClassToPossibilityForOptimization
+    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
+    private var IrClass.possibilityToOptimizeForEsClass by context.mapping.esClassToPossibilityForOptimization
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (
@@ -186,7 +190,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
             declaration is IrClass &&
             !declaration.isExternal &&
             !context.inlineClassesUtils.isClassInlineLike(declaration) &&
-            !esClassToPossibilityForOptimization.contains(declaration)
+            declaration.possibilityToOptimizeForEsClass == null
         ) {
             declaration.checkIfCanBeOptimized()
         }
@@ -199,7 +203,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
         var nearestOptimizationDecision: MutableReference<Boolean>? = null
 
         while (currentClass != null && !currentClass.isExternal) {
-            val currentClassOptimizationDecision = esClassToPossibilityForOptimization[currentClass]
+            val currentClassOptimizationDecision = currentClass.possibilityToOptimizeForEsClass
 
             if (currentClassOptimizationDecision != null) {
                 nearestOptimizationDecision = currentClassOptimizationDecision
@@ -214,8 +218,8 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
         }
 
         currentClass = this
-        while (currentClass != null && !currentClass.isExternal && !esClassToPossibilityForOptimization.contains(currentClass)) {
-            esClassToPossibilityForOptimization[currentClass] = nearestOptimizationDecision
+        while (currentClass != null && !currentClass.isExternal && currentClass.possibilityToOptimizeForEsClass == null) {
+            currentClass.possibilityToOptimizeForEsClass = nearestOptimizationDecision
 
             if (nearestOptimizationDecision.value && !currentClass.canBeOptimized()) {
                 nearestOptimizationDecision.value = false
@@ -226,7 +230,9 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
     }
 
     private fun IrClass.canBeOptimized(): Boolean {
-        return superClass?.symbol != context.throwableClass && !isSubclassOfExternalClassWithRequiredBoxParameter() && !hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary()
+        return superClass?.symbol != context.throwableClass &&
+                !isSubclassOfExternalClassWithRequiredBoxParameter() &&
+                !hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary()
     }
 
     private fun IrClass.hasPrimaryDelegatedToSecondaryOrSecondaryToPrimary(): Boolean {
@@ -249,7 +255,7 @@ class ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering(private val con
     }
 
     private fun IrClass.isSubclassOfExternalClassWithRequiredBoxParameter(): Boolean {
-        return superClass?.isExternal == true && esClassWhichNeedBoxParameters.contains(this)
+        return superClass?.isExternal == true && needsOfBoxParameter == true
     }
 }
 

@@ -1,40 +1,58 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>() {
+abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
     abstract val callableId: CallableId
 
     val resolvedReturnTypeRef: FirResolvedTypeRef
         get() {
-            ensureType(fir.returnTypeRef)
+            calculateReturnType()
             return fir.returnTypeRef as FirResolvedTypeRef
         }
+
+    fun calculateReturnType() {
+        ensureType(fir.returnTypeRef)
+        val returnTypeRef = fir.returnTypeRef
+        if (returnTypeRef !is FirResolvedTypeRef) {
+            errorInLazyResolve("returnTypeRef", returnTypeRef::class, FirResolvedTypeRef::class)
+        }
+    }
 
     val resolvedReturnType: ConeKotlinType
         get() = resolvedReturnTypeRef.coneType
 
-
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
-        get() {
-            ensureType(fir.receiverParameter?.typeRef)
-            return fir.receiverParameter?.typeRef as FirResolvedTypeRef?
+        get() = calculateReceiverTypeRef()
+
+    private fun calculateReceiverTypeRef(): FirResolvedTypeRef? {
+        val receiverParameter = fir.receiverParameter ?: return null
+        ensureType(receiverParameter.typeRef)
+        val receiverTypeRef = receiverParameter.typeRef
+        if (receiverTypeRef !is FirResolvedTypeRef) {
+            errorInLazyResolve("receiverTypeRef", receiverTypeRef::class, FirResolvedTypeRef::class)
         }
+
+        return receiverTypeRef
+    }
 
     val receiverParameter: FirReceiverParameter?
         get() {
-            ensureType(fir.receiverParameter?.typeRef)
+            calculateReceiverTypeRef()
             return fir.receiverParameter
         }
 
@@ -46,19 +64,13 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
         }
 
     val resolvedStatus: FirResolvedDeclarationStatus
-        get() {
-            lazyResolveToPhase(FirResolvePhase.STATUS)
-            return fir.status as FirResolvedDeclarationStatus
-        }
+        get() = fir.resolvedStatus()
 
     val rawStatus: FirDeclarationStatus
         get() = fir.status
 
-
     val typeParameterSymbols: List<FirTypeParameterSymbol>
-        get() {
-            return fir.typeParameters.map { it.symbol }
-        }
+        get() = fir.typeParameters.map { it.symbol }
 
     val dispatchReceiverType: ConeSimpleKotlinType?
         get() = fir.dispatchReceiverType
@@ -66,17 +78,14 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
     val name: Name
         get() = callableId.callableName
 
-    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
-        if (!canBeDeprecated()) return null
-        lazyResolveToPhase(FirResolvePhase.STATUS)
-        return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
-    }
+    val containerSource: DeserializedContainerSource?
+        // This is ok, because containerSource should be set during fir creation
+        get() = fir.containerSource
 
-    /**
-     * Checks if symbol can be deprecated by syntax
-     * @return `true` if symbol might have some deprecation status, or `false` if it's definitely not deprecated
-     */
-    internal open fun canBeDeprecated(): Boolean = true
+    fun getDeprecation(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
+        lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
+        return fir.deprecationsProvider.getDeprecationsInfo(languageVersionSettings)
+    }
 
     private fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {
@@ -85,10 +94,9 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             else -> lazyResolveToPhase(FirResolvePhase.TYPES)
         }
     }
+
     override fun toString(): String = "${this::class.simpleName} $callableId"
 }
-
-val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration)?.status?.isStatic == true
 
 val FirCallableSymbol<*>.isExtension: Boolean
     get() = when (fir) {

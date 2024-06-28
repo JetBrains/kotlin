@@ -1,25 +1,25 @@
 FILE: destructuring.kt
-    public? final? data class Some : R|kotlin/Any| {
+    public final? data class Some : R|kotlin/Any| {
         public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.first] first: Int, [CorrespondingProperty=/Some.second] second: Double, [CorrespondingProperty=/Some.third] third: String): R|Some| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+        public? final? [ComponentFunctionSymbolKey=/Some.component1, IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
             public? [ContainingClassKey=Some] get(): Int
 
-        public? final? [IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
+        public? final? [ComponentFunctionSymbolKey=/Some.component2, IsFromPrimaryConstructor=true] val second: Double = R|<local>/second|
             public? [ContainingClassKey=Some] get(): Double
 
-        public? final? [IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
+        public? final? [ComponentFunctionSymbolKey=/Some.component3, IsFromPrimaryConstructor=true] val third: String = R|<local>/third|
             public? [ContainingClassKey=Some] get(): String
 
-        public final operator fun component1(): Int
+        public? final operator fun component1(): Int
 
-        public final operator fun component2(): Double
+        public? final operator fun component2(): Double
 
-        public final operator fun component3(): String
+        public? final operator fun component3(): String
 
-        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
+        public? final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
 
     }
     public? final? fun foo(some: Some): R|kotlin/Unit| {
@@ -34,5 +34,6 @@ FILE: destructuring.kt
     public? final? fun bar(some: Some): R|kotlin/Unit| {
         lval <destruct>: <implicit> = some#
         lval a: <implicit> = R|<local>/<destruct>|.component1#()
+        lval <unused var>: <implicit> = R|<local>/<destruct>|.component2#()
         lval _: <implicit> = R|<local>/<destruct>|.component3#()
     }

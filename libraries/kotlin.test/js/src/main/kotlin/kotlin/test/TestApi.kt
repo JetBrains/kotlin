@@ -66,10 +66,10 @@ internal fun adapter(): FrameworkAdapter {
 }
 
 @JsName("kotlinTest")
-external val kotlinTestNamespace: KotlinTestNamespace
+public external val kotlinTestNamespace: KotlinTestNamespace
 
-external interface KotlinTestNamespace {
-    val adapterTransformer: ((FrameworkAdapter) -> FrameworkAdapter)?
+public external interface KotlinTestNamespace {
+    public val adapterTransformer: ((FrameworkAdapter) -> FrameworkAdapter)?
 }
 
 internal fun detectAdapter(): FrameworkAdapter {

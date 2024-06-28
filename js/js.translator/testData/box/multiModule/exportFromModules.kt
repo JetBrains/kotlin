@@ -1,9 +1,7 @@
-// IGNORE_BACKEND_K2: JS_IR
 // DONT_TARGET_EXACT_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME
 
 // MODULE: ModuleA1
-// NO_COMMON_FILES
 // FILE: modulea1.kt
 package demoPackage.a1
 
@@ -13,7 +11,6 @@ data class ModuleA1Class(private val string: String = "A1") {
 }
 
 // MODULE: ModuleA2(ModuleA1)
-// NO_COMMON_FILES
 // FILE: modulea2.kt
 package demoPackage.a2
 

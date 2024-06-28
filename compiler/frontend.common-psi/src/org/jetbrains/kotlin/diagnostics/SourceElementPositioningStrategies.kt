@@ -9,9 +9,7 @@ object SourceElementPositioningStrategies {
     val DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEFAULT,
         PositioningStrategies.DEFAULT
-    ).also {
-        AbstractSourceElementPositioningStrategy.setDefault(it)
-    }
+    )
 
     val VAL_OR_VAR_NODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VAL_OR_VAR_NODE,
@@ -38,9 +36,19 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DECLARATION_RETURN_TYPE
     )
 
+    val CONTEXT_KEYWORD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONTEXT_KEYWORD,
+        PositioningStrategies.CONTEXT_KEYWORD
+    )
+
     val DECLARATION_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DECLARATION_NAME,
         PositioningStrategies.DECLARATION_NAME
+    )
+
+    val DECLARATION_NAME_ONLY = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DECLARATION_NAME_ONLY,
+        PositioningStrategies.DECLARATION_NAME_ONLY
     )
 
     val DECLARATION_SIGNATURE = SourceElementPositioningStrategy(
@@ -123,6 +131,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DATA_MODIFIER
     )
 
+    val EXPECT_ACTUAL_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.EXPECT_ACTUAL_MODIFIER,
+        PositioningStrategies.EXPECT_ACTUAL_MODIFIER
+    )
+
     val OBJECT_KEYWORD = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OBJECT_KEYWORD,
         PositioningStrategies.OBJECT_KEYWORD
@@ -138,6 +151,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.PARAMETER_DEFAULT_VALUE
     )
 
+    val PARAMETERS_WITH_DEFAULT_VALUE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE,
+        PositioningStrategies.PARAMETERS_WITH_DEFAULT_VALUE
+    )
+
     val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
         PositioningStrategies.PARAMETER_VARARG_MODIFIER
@@ -151,6 +169,11 @@ object SourceElementPositioningStrategies {
     val VALUE_ARGUMENTS = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VALUE_ARGUMENTS,
         PositioningStrategies.VALUE_ARGUMENTS
+    )
+
+    val VALUE_ARGUMENTS_LIST = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VALUE_ARGUMENTS_LIST,
+        PositioningStrategies.VALUE_ARGUMENTS_LIST
     )
 
     val SUPERTYPES_LIST = SourceElementPositioningStrategy(
@@ -181,6 +204,11 @@ object SourceElementPositioningStrategies {
     val WHEN_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.WHEN_EXPRESSION,
         PositioningStrategies.WHEN_EXPRESSION
+    )
+
+    val WHEN_GUARD = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.WHEN_GUARD,
+        PositioningStrategies.WHEN_GUARD
     )
 
     val IF_EXPRESSION = SourceElementPositioningStrategy(
@@ -268,6 +296,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.IMPORT_LAST_NAME
     )
 
+    val IMPORT_LAST_BUT_ONE_NAME = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.IMPORT_LAST_BUT_ONE_NAME,
+        PositioningStrategies.IMPORT_LAST_BUT_ONE_NAME,
+    )
+
     val SPREAD_OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.SPREAD_OPERATOR,
         PositioningStrategies.SPREAD_OPERATOR
@@ -320,6 +353,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.OPERATOR_MODIFIER
     )
 
+    val INFIX_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INFIX_MODIFIER,
+        PositioningStrategies.INFIX_MODIFIER
+    )
+
     val NON_FINAL_MODIFIER_OR_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.NON_FINAL_MODIFIER_OR_NAME,
         PositioningStrategies.NON_FINAL_MODIFIER_OR_NAME
@@ -338,6 +376,11 @@ object SourceElementPositioningStrategies {
     val TAILREC_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.TAILREC_MODIFIER,
         PositioningStrategies.TAILREC_MODIFIER
+    )
+
+    val EXTERNAL_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.EXTERNAL_MODIFIER,
+        PositioningStrategies.EXTERNAL_MODIFIER
     )
 
     val PROPERTY_DELEGATE = SourceElementPositioningStrategy(
@@ -363,5 +406,25 @@ object SourceElementPositioningStrategies {
     val CALL_ELEMENT_WITH_DOT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.CALL_ELEMENT_WITH_DOT,
         PositioningStrategies.CALL_ELEMENT_WITH_DOT
+    )
+
+    val TYPEALIAS_TYPE_REFERENCE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
+        PositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
+    )
+
+    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+        PositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+    )
+
+    val TYPE_ARGUMENT_LIST_OR_SELF = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+        PositioningStrategies.TYPE_ARGUMENT_LIST_OR_SELF,
+    )
+
+    val PACKAGE_DIRECTIVE_NAME_EXPRESSION = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
+        PositioningStrategies.PACKAGE_DIRECTIVE_NAME_EXPRESSION,
     )
 }

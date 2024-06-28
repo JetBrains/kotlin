@@ -11,12 +11,12 @@ import b.<!UNRESOLVED_IMPORT!>constant<!>.fff     //function from val
 import b.<!UNRESOLVED_IMPORT!>constant<!>.dValue  //property from val
 import b.constant
 import b.E.Companion.f      //val from companion object
-import smth.illegal
+import <!UNRESOLVED_IMPORT!>smth<!>.illegal
 import b.C.<!UNRESOLVED_IMPORT!>smth<!>.illegal
 import b.<!UNRESOLVED_IMPORT!>bar<!>.smth
 import b.<!UNRESOLVED_IMPORT!>bar<!>.*
 import b.<!UNRESOLVED_IMPORT!>unr<!>.unr.unr
-import unr.unr.unr
+import <!UNRESOLVED_IMPORT!>unr<!>.unr.unr
 
 fun test(arg: B) {
     foo(value)
@@ -81,7 +81,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> == 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (i == 3) f()
 }
 
 //FILE:d.kt

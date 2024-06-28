@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal object MultiplatformAndroidResourceDirConfigurator : KotlinAndroidSourceSetConfigurator {
     override fun configure(
         target: KotlinAndroidTarget,
         kotlinSourceSet: KotlinSourceSet,
-        androidSourceSet: AndroidSourceSet
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
     ) {
 
         /*
@@ -49,6 +49,7 @@ internal object MultiplatformAndroidResourceDirConfigurator : KotlinAndroidSourc
             androidSourceSet.renderscript.srcDir(KotlinSourceSetFactory.defaultSourceFolder(project, kotlinSourceSet.name, "rs"))
         }
 
+        @Suppress("DEPRECATION")
         if (androidSourceSet.jni.srcDirs.isNotEmpty()) {
             androidSourceSet.jni.srcDir(KotlinSourceSetFactory.defaultSourceFolder(project, kotlinSourceSet.name, "jni"))
         }

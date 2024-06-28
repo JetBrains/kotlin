@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Z {
     var counter = 0
     fun foo() {}
@@ -18,6 +19,15 @@ object Z {
         }
 
         fun test() {
+            counter = 1
+            foo()
+            Z.counter = 1
+            Z.foo()
+        }
+    }
+
+    fun aFun() {
+        withLambda {
             counter = 1
             foo()
             Z.counter = 1
@@ -55,3 +65,5 @@ fun Z.test() {
     Z.counter = 1
     Z.foo()
 }
+
+fun withLambda(f: () -> Unit) {}

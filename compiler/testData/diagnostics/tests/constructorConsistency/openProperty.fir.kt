@@ -1,7 +1,7 @@
-open class Base {
-    open var x: Int
+abstract class Base {
+    abstract var x: Int
 
-    open var y: Int
+    abstract var y: Int
 
     constructor() {
         x = 42
@@ -9,6 +9,5 @@ open class Base {
         val temp = this.x
         this.x = y
         y = temp
-
     }
 }

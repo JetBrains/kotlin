@@ -1,0 +1,167 @@
+MODULE main
+	CLASS Regular.class
+		CLASS METADATA
+			PROPERTY getX4()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getX5$main()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getX6()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getY4()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getY5$main()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getY6()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getZ4()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getZ5$main()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getZ6()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+	CLASS Regular$Companion.class
+		CLASS METADATA
+			PROPERTY getJvmStaticX4()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getJvmStaticX5$main()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getJvmStaticX6()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getJvmStaticY4()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getJvmStaticY5$main()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getJvmStaticY6()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getJvmStaticZ4()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getJvmStaticZ5$main()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getJvmStaticZ6()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getStaticX4()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getStaticX5$main()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getStaticX6()LPublic;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Public
+					K2
+						value: Public
+			PROPERTY getStaticY4()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getStaticY5$main()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getStaticY6()LInternal;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Internal
+					K2
+						value: Internal
+			PROPERTY getStaticZ4()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getStaticZ5$main()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private
+			PROPERTY getStaticZ6()LPrivate;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: Private
+					K2
+						value: Private

@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object StringGetChar : IntrinsicMethod() {
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, classCodegen) {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+    ): IntrinsicFunction {
+        return IntrinsicFunction.create(expression, signature, classCodegen) {
             it.invokevirtual("java/lang/String", "charAt", "(I)C", false)
         }
     }

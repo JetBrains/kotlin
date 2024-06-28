@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 annotation class ann(val name: String)
 const val ok = "OK"

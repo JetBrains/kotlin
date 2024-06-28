@@ -9,7 +9,7 @@ public abstract class Mine</*0*/ P1, /*1*/ P2> : java.util.Map<P2, P1> {
     public abstract /*fake_override*/ fun clear(): kotlin.Unit
     public open /*fake_override*/ fun compute(/*0*/ P2, /*1*/ java.util.function.BiFunction<in P2, in P1?, out P1?>): P1?
     public open /*fake_override*/ fun computeIfAbsent(/*0*/ P2, /*1*/ java.util.function.Function<in P2, out P1>): P1
-    public open /*fake_override*/ fun computeIfPresent(/*0*/ P2, /*1*/ java.util.function.BiFunction<in P2, in P1, out P1?>): P1?
+    public open /*fake_override*/ fun computeIfPresent(/*0*/ P2, /*1*/ java.util.function.BiFunction<in P2, in P1 & Any, out P1?>): P1?
     public abstract /*fake_override*/ fun containsKey(/*0*/ kotlin.Any!): kotlin.Boolean
     public abstract /*fake_override*/ fun containsValue(/*0*/ kotlin.Any!): kotlin.Boolean
     public abstract /*fake_override*/ fun entrySet(): kotlin.collections.(Mutable)Set<kotlin.collections.(Mutable)Map.(Mutable)Entry<P2!, P1!>!>!
@@ -18,7 +18,7 @@ public abstract class Mine</*0*/ P1, /*1*/ P2> : java.util.Map<P2, P1> {
     public open /*fake_override*/ fun getOrDefault(/*0*/ kotlin.Any!, /*1*/ P1!): P1!
     public abstract /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public abstract /*fake_override*/ fun keySet(): kotlin.collections.(Mutable)Set<P2!>!
-    public open /*fake_override*/ fun merge(/*0*/ P2, /*1*/ P1, /*2*/ java.util.function.BiFunction<in P1, in P1, out P1?>): P1?
+    public open /*fake_override*/ fun merge(/*0*/ P2, /*1*/ P1 & Any, /*2*/ java.util.function.BiFunction<in P1 & Any, in P1 & Any, out P1?>): P1?
     public abstract /*fake_override*/ fun put(/*0*/ P2!, /*1*/ P1!): P1!
     public abstract /*fake_override*/ fun putAll(/*0*/ (kotlin.collections.MutableMap<out P2!, out P1!>..kotlin.collections.Map<out P2!, P1!>?)): kotlin.Unit
     public open /*fake_override*/ fun putIfAbsent(/*0*/ P2, /*1*/ P1): P1?

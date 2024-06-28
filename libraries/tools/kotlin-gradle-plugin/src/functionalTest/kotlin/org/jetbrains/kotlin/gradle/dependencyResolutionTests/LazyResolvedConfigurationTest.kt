@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
+import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -71,16 +73,16 @@ class LazyResolvedConfigurationTest {
 
         /* Check stdlib-common dependency on commonMainCompileDependencies */
         run {
-            val resolvedStdlibCommon = lazyCommonMainCompileDependencies.allResolvedDependencies.filter { dependencyResult ->
-                dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib-common" }
+            val resolvedStdlib = lazyCommonMainCompileDependencies.allResolvedDependencies.filter { dependencyResult ->
+                dependencyResult.resolvedVariant.owner.let { id -> id is ModuleComponentIdentifier && id.module == "kotlin-stdlib" }
             }
 
-            if (resolvedStdlibCommon.isEmpty()) fail("Expected kotlin-stdlib-common in resolved dependencies")
-            resolvedStdlibCommon.forEach { dependencyResult ->
+            if (resolvedStdlib.isEmpty()) fail("Expected kotlin-stdlib in resolved dependencies")
+            resolvedStdlib.forEach { dependencyResult ->
                 val artifacts = lazyCommonMainCompileDependencies.getArtifacts(dependencyResult)
                 if (artifacts.isEmpty()) fail("Expected some artifacts resolved for $dependencyResult")
                 artifacts.forEach { artifact ->
-                    assertEquals(artifact.file.name, "kotlin-stdlib-common-${project.kotlinToolingVersion}.jar")
+                    assertEquals(artifact.file.name, "kotlin-stdlib-${project.kotlinToolingVersion}-all.jar")
                 }
             }
         }
@@ -145,5 +147,29 @@ class LazyResolvedConfigurationTest {
         assertEquals("dependency", moduleIdentifier.name)
 
         if (lazyConfiguration.allResolvedDependencies.isNotEmpty()) fail("Expected no resolved dependencies")
+    }
+
+    @Test
+    fun `test - circular dependency handling`() {
+        val project = buildProject()
+        val configuration = project.configurations.create("forTest")
+        configuration.isCanBeConsumed = true
+        // add dependency to itself
+        project.dependencies.add(configuration.name, project.dependencies.project(":", configuration = configuration.name))
+        project.artifacts.add(configuration.name, project.file("artifact.tmp"))
+
+        val lazyConfiguration = LazyResolvedConfiguration(configuration)
+
+        val dependency = lazyConfiguration.allResolvedDependencies.singleOrNull() ?: fail("Expected to have single dependency")
+        val id = dependency.resolvedVariant.owner
+        if (id !is ProjectComponentIdentifier || id.projectPath != ":") fail("Expected project(:) dependency")
+
+        val artifactName = lazyConfiguration
+            .resolvedArtifacts
+            .map { it.file.name }
+            .singleOrNull()
+            ?: fail("Expected to have single artifact")
+
+        assertEquals("artifact.tmp", artifactName)
     }
 }

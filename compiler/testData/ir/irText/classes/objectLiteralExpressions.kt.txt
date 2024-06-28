@@ -1,8 +1,3 @@
-interface IFoo {
-  abstract fun foo()
-
-}
-
 val test1: Any
   field = { // BLOCK
     local class <no name provided> {
@@ -38,18 +33,18 @@ val test2: IFoo
   get
 
 class Outer {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   abstract inner class Inner : IFoo {
     constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
 
   }
 
@@ -74,6 +69,11 @@ class Outer {
 
 }
 
+interface IFoo {
+  abstract fun foo()
+
+}
+
 fun Outer.test4(): Inner {
   return { // BLOCK
     local class <no name provided> : Inner {
@@ -92,3 +92,4 @@ fun Outer.test4(): Inner {
     <no name provided>()
   }
 }
+

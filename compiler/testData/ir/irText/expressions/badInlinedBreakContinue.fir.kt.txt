@@ -1,0 +1,244 @@
+inline fun bar(block1: Function0<Unit>, noinline block2: Function0<Unit>) {
+  block1.invoke()
+  block2.invoke()
+}
+
+inline fun baz(crossinline block: Function0<Unit>) {
+  block.invoke()
+}
+
+inline fun foo(block: Function0<Unit>) {
+  block.invoke()
+}
+
+inline fun <T : Any?> Iterable<T>.myForEach(action: Function1<T, Unit>) {
+  { // BLOCK
+    val tmp_0: Iterator<T> = <this>.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val element: T = tmp_0.next()
+      action.invoke(p1 = element)
+    }
+  }
+}
+
+fun test1() {
+  error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+    error("") /* ErrorExpression */
+  }
+; .invoke<ErrorType, ErrorType>() /*~> Unit */
+  local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()
+  local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()
+  foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)
+  foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)
+}
+
+fun test2() {
+  L1@ while (true) { // BLOCK
+    error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+      error("") /* ErrorExpression */
+    }
+; .invoke<ErrorType, ErrorType>() /*~> Unit */
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+.invoke()
+    local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+.invoke()
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <anonymous>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+)
+    foo(block = local fun <no name provided>() {
+      error("") /* ErrorExpression */
+    }
+)
+  }
+}
+
+fun test3() {
+  L1@ while (true) { // BLOCK
+    val lambda: Function0<Unit> = local fun <anonymous>() {
+      error("") /* ErrorCallExpression */local fun <anonymous>(): Nothing {
+        continue@L1
+      }
+; .invoke<ErrorType, ErrorType>() /*~> Unit */
+      local fun <no name provided>() {
+        break@L1
+      }
+.invoke()
+      local fun <no name provided>() {
+        continue@L1
+      }
+.invoke()
+      foo(block = local fun <anonymous>() {
+        break@L1
+      }
+)
+      foo(block = local fun <anonymous>() {
+        continue@L1
+      }
+)
+      foo(block = local fun <no name provided>() {
+        break@L1
+      }
+)
+      foo(block = local fun <no name provided>() {
+        continue@L1
+      }
+)
+    }
+
+  }
+}
+
+fun test4() {
+  while (local fun <anonymous>(): Nothing {
+    error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (local fun <anonymous>(): Nothing {
+    error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+.invoke()) { // BLOCK
+  }
+  while (foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)) { // BLOCK
+  }
+  while (foo(block = local fun <anonymous>() {
+    error("") /* ErrorExpression */
+  }
+)) { // BLOCK
+  }
+  while (foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)) { // BLOCK
+  }
+  while (foo(block = local fun <no name provided>() {
+    error("") /* ErrorExpression */
+  }
+)) { // BLOCK
+  }
+}
+
+fun test5() {
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+    when {
+      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+    }
+  }
+)
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <anonymous>(i: Int) {
+    when {
+      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+    }
+  }
+)
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+    when {
+      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+    }
+  }
+)
+  listOf<Int>(elements = [1, 2, 3]).forEach<Int>(action = local fun <no name provided>(i: Int) {
+    when {
+      EQEQ(arg0 = i, arg1 = 2) -> error("") /* ErrorExpression */
+    }
+  }
+)
+}
+
+fun test6() {
+  while (true) { // BLOCK
+    bar(block1 = local fun <anonymous>() {
+      return Unit
+    }
+, block2 = local fun <anonymous>() {
+      break
+    }
+)
+    bar(block1 = local fun <anonymous>() {
+      return Unit
+    }
+, block2 = local fun <anonymous>() {
+      continue
+    }
+)
+    bar(block1 = local fun <no name provided>() {
+    }
+, block2 = local fun <no name provided>() {
+      break
+    }
+)
+    bar(block1 = local fun <no name provided>() {
+    }
+, block2 = local fun <no name provided>() {
+      continue
+    }
+)
+  }
+}
+
+fun test7() {
+  1.rangeTo(other = 3).myForEach<Int>(action = local fun <anonymous>(i: Int) {
+    when {
+      EQEQ(arg0 = i, arg1 = 2) -> { // BLOCK
+        error("") /* ErrorExpression */
+      }
+    }
+  }
+)
+}
+
+fun test8() {
+  while (true) { // BLOCK
+    baz(block = local fun <anonymous>() {
+      break
+    }
+)
+  }
+}
+

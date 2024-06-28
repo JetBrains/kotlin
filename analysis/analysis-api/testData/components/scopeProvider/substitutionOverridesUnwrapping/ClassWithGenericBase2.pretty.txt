@@ -1,0 +1,16 @@
+val noGeneric: test.Foo?
+
+override val withOuterGeneric: test.Foo?
+
+val <TT> TT.withOwnGeneric: TT?
+  get()
+
+override val <TT> TT.withOuterAndOwnGeneric: test.Foo?
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor()

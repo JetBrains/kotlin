@@ -26,7 +26,14 @@ class JsImportedModule @JvmOverloads constructor(
     val key = JsImportedModuleKey(externalName, plainReference?.toString())
 }
 
-val JsImportedModule.requireName: String
-    get() = relativeRequirePath?.let { "$it.js" } ?: externalName
+const val REGULAR_EXTENSION = ".js"
+const val ESM_EXTENSION = ".mjs"
+
+fun JsImportedModule.getRequireName(isEsm: Boolean = false): String {
+    return relativeRequirePath?.let {
+        val extension = if (isEsm) ESM_EXTENSION else REGULAR_EXTENSION
+        "$it$extension"
+    } ?: externalName
+}
 
 data class JsImportedModuleKey(val baseName: String, val plainName: String?)

@@ -1,9 +1,7 @@
 interface I1 {
-
 }
 
 interface I2 {
-
 }
 
 operator fun I1.component1(): Int {
@@ -19,8 +17,8 @@ fun test(x: I1) {
     x !is I2 -> return Unit
   }
   // COMPOSITE {
-  val tmp0_container: I2 = x /*as I2 */
-  val c1: Int = tmp0_container /*as I1 */.component1()
-  val c2: String = tmp0_container.component2()
+  val tmp_0: I2 = x /*as I2 */
+  val c1: Int = tmp_0 /*as I1 */.component1()
+  val c2: String = tmp_0.component2()
   // }
 }

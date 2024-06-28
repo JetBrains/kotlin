@@ -1,23 +1,25 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // ISSUE: KT-54978
+// LANGUAGE: +ContextReceivers
 
 // Case 1: Parameters and local variables
 fun f1(x: Int) {
     val y = 5
     val s = "hello"
 
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>x<!><Int>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>x<!><String, String>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>y<!><Int>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>y<!><String, Int>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>s<!><String>
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>s<!><Int, String>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>x<!><Int>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>x<!><String, String>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>y<!><Int>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>y<!><String, Int>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>s<!><String>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>s<!><Int, String>
 }
 
 // Case 2: Simple property
 val property: Int = 10
 
 fun f2() {
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>property<!><String>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>property<!><String>
 }
 
 // Case 3: Simple property with getter
@@ -25,7 +27,7 @@ val property2: Int
     get() = 10
 
 fun f3() {
-    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>property2<!><String>
+    <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>property2<!><String>
 }
 
 // Case 4: Property with extension and/or context receiver
@@ -50,26 +52,26 @@ fun f4() {
     val receiver = Receiver<Int>()
 
     receiver.hello1
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int>
-    receiver.hello1<Int, String>() // legal `String.invoke` call
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><String>
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int, String>
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello1<!><Int, String, String>
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int>
+    receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello1<!><Int, String>()
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><String>
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int, String>
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello1<!><Int, String, String>
 
     with (ContextImpl<String>()) {
         hello2
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String>
-        hello2<String, Int>() // legal `String.invoke` call
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><Int>
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String, Int>
-        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello2<!><String, Int, Int>
+        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String>
+        <!TYPE_ARGUMENTS_NOT_ALLOWED!>hello2<!><String, Int>()
+        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><Int>
+        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String, Int>
+        <!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello2<!><String, Int, Int>
 
         receiver.hello3
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int, String>
-        receiver.hello3<Int, String>() // legal `String.invoke` call
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><String, Int>
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int>
-        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>hello3<!><Int, String, String>
+        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int, String>
+        receiver.<!TYPE_ARGUMENTS_NOT_ALLOWED!>hello3<!><Int, String>()
+        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><String, Int>
+        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int>
+        receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>hello3<!><Int, String, String>
     }
 }
 
@@ -80,6 +82,6 @@ inline val <reified A> Receiver<A>.helloReified: String
 fun f5() {
     val receiver = Receiver<Int>()
     receiver.helloReified
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>helloReified<!><Int>
-    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS!>helloReified<!><String>
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><Int>
+    receiver.<!EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS("Property")!>helloReified<!><String>
 }

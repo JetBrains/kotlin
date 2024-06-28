@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -15,32 +17,43 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:entrypoint"))
     api(project(":analysis:low-level-api-fir"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
     api(project(":analysis:light-classes-base"))
     api(project(":compiler:backend.common.jvm"))
+    implementation(project(":compiler:cli-base"))
+    implementation(project(":compiler:backend"))
+    implementation(project(":compiler:backend.jvm.entrypoint"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.serialization.jvm"))
     api(intellijCore())
-    implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:kt-references"))
+    implementation(project(":analysis:symbol-light-classes"))
 
-    testApi(projectTests(":analysis:low-level-api-fir"))
-    testApi(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(projectTests(":analysis:analysis-api-impl-base"))
-    testApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testApi(project(":analysis:decompiled:decompiler-to-psi"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(kotlinTest("junit"))
+    testApi(projectTests(":analysis:analysis-test-framework"))
 
-    testApi(toolsJar())
-    testApiJUnit5()
-    testApi(project(":analysis:symbol-light-classes"))
+    testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
@@ -51,6 +64,8 @@ sourceSets {
     }
 }
 
+optInToUnsafeDuringIrConstructionAPI()
+
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
@@ -60,16 +75,27 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 testsJar()
 
 allprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
-        }
+    tasks.withType<KotlinJvmCompile>().configureEach {
+        compilerOptions.optIn.addAll(
+            listOf(
+                "org.jetbrains.kotlin.fir.symbols.SymbolInternals",
+                "org.jetbrains.kotlin.analysis.api.KaAnalysisApiInternals",
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface",
+                "org.jetbrains.kotlin.analysis.api.permissions.KaAllowProhibitedAnalyzeFromWriteAction"
+            )
+        )
     }
 }
 
 val generatorClasspath by configurations.creating
 
 dependencies {
+    implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:backend"))
     generatorClasspath(project(":analysis:analysis-api-fir:analysis-api-fir-generator"))
 }
 
@@ -84,7 +110,7 @@ val generateCode by tasks.registering(NoDebugJavaExec::class) {
 
     workingDir = rootDir
     classpath = generatorClasspath
-    main = "org.jetbrains.kotlin.analysis.api.fir.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.analysis.api.fir.generator.MainKt")
     systemProperties["line.separator"] = "\n"
 }
 
@@ -92,6 +118,6 @@ val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateCode)
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-Xcontext-receivers"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xcontext-receivers")
 }

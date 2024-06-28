@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 
 fun foo() {
@@ -34,62 +35,66 @@ fun box() {
     foo()
 }
 
-// The JVM backend steps back to line 11 when leaving the
-// `mightThrow2` call. The JVM_IR backend does not. The
-// JVM_IR behavior is consistent with what happens for the
-// try-finally where the value is discarded which seems good.
-
-// EXPECTATIONS JVM JVM_IR
-// test.kt:29 box
-// test.kt:4 foo
-// test.kt:5 foo
-// test.kt:21 mightThrow
-// test.kt:22 mightThrow
-// test.kt:7 foo
-// test.kt:8 foo
-// test.kt:10 foo
-// test.kt:11 foo
-// test.kt:25 mightThrow2
-// test.kt:26 mightThrow2
-// EXPECTATIONS JVM
-// test.kt:11 foo
-// EXPECTATIONS JVM JVM_IR
-// test.kt:13 foo
-// test.kt:14 foo
-// test.kt:10 foo
-// test.kt:15 foo
-// test.kt:30 box
-// test.kt:31 box
-// test.kt:4 foo
-// test.kt:5 foo
-// test.kt:21 mightThrow
-// test.kt:22 mightThrow
-// test.kt:7 foo
-// test.kt:8 foo
-// test.kt:10 foo
-// test.kt:11 foo
-// test.kt:25 mightThrow2
-// EXPECTATIONS JVM
-// test.kt:14 foo
-// test.kt:10 foo
 // EXPECTATIONS JVM_IR
-// test.kt:13 foo
+// test.kt:30 box
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:22 mightThrow
+// test.kt:23 mightThrow
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:26 mightThrow2
+// test.kt:27 mightThrow2
+// test.kt:14 foo
+// test.kt:15 foo
+// test.kt:11 foo
+// test.kt:16 foo
+// test.kt:31 box
+// test.kt:32 box
+// test.kt:5 foo
+// test.kt:6 foo
+// test.kt:22 mightThrow
+// test.kt:23 mightThrow
+// test.kt:8 foo
+// test.kt:9 foo
+// test.kt:11 foo
+// test.kt:12 foo
+// test.kt:26 mightThrow2
+// test.kt:14 foo
 
 // EXPECTATIONS JS_IR
-// test.kt:29 box
-// test.kt:5 foo
-// test.kt:21 mightThrow
-// test.kt:22 mightThrow
-// test.kt:11 foo
-// test.kt:25 mightThrow2
-// test.kt:26 mightThrow2
-// test.kt:10 foo
-// test.kt:15 foo
 // test.kt:30 box
-// test.kt:31 box
-// test.kt:5 foo
-// test.kt:21 mightThrow
+// test.kt:6 foo
 // test.kt:22 mightThrow
+// test.kt:23 mightThrow
+// test.kt:12 foo
+// test.kt:26 mightThrow2
+// test.kt:27 mightThrow2
 // test.kt:11 foo
-// test.kt:25 mightThrow2
-// test.kt:25 mightThrow2
+// test.kt:16 foo
+// test.kt:31 box
+// test.kt:32 box
+// test.kt:6 foo
+// test.kt:22 mightThrow
+// test.kt:23 mightThrow
+// test.kt:12 foo
+// test.kt:26 mightThrow2
+// test.kt:26 mightThrow2
+
+// EXPECTATIONS WASM
+// test.kt:30 $box
+// test.kt:6 $foo (8, 8)
+// test.kt:22 $mightThrow (8, 8)
+// test.kt:23 $mightThrow (1, 1)
+// test.kt:5 $foo (4, 4)
+// test.kt:8 $foo (8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:12 $foo (8, 8)
+// test.kt:26 $mightThrow2 (8, 8, 22, 22, 16)
+// test.kt:27 $mightThrow2
+// test.kt:11 $foo (12, 4, 12)
+// test.kt:14 $foo (8, 8, 8, 8, 8, 8, 8, 8)
+// test.kt:16 $foo
+// test.kt:31 $box (13, 4)
+// test.kt:32 $box

@@ -1,0 +1,50 @@
+package test
+
+public val a: kotlin.Int
+public val arrayConst: kotlin.Any
+public val b: kotlin.Int
+public val booleanConst: kotlin.Boolean
+public val byteConst: kotlin.Byte
+public val charConst: kotlin.Char
+public val doubleConst: kotlin.Double
+public val enumConst: test.Weapon?
+public val floatConst: kotlin.Float
+public val intConst: kotlin.Int
+public val longConst: kotlin.Long
+public val shortConst: kotlin.Short
+public val stringConst: kotlin.String
+
+public final class Class {
+    public constructor Class()
+    public final val a: kotlin.Int
+    public final val arrayConst: kotlin.Any
+    public final val b: kotlin.Int
+    public final val booleanConst: kotlin.Boolean
+    public final val byteConst: kotlin.Byte
+    public final val charConst: kotlin.Char
+    public final val doubleConst: kotlin.Double
+    public final val enumConst: test.Weapon?
+    public final val floatConst: kotlin.Float
+    public final val intConst: kotlin.Int
+    public final val longConst: kotlin.Long
+    public final val shortConst: kotlin.Short
+    public final val stringConst: kotlin.String
+}
+
+public final enum class Weapon : kotlin.Enum<test.Weapon> {
+    enum entry ROCK
+
+    enum entry PAPER
+
+    enum entry SCISSORS
+
+    private constructor Weapon()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Weapon): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Weapon
+    public final /*synthesized*/ fun values(): kotlin.Array<test.Weapon>
+}

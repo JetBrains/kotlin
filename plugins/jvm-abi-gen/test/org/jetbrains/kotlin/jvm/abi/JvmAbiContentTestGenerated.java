@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,51 +22,76 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInContent() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
-    }
+  public void testAllFilesPresentInContent() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/content"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
+  }
 
-    @TestMetadata("annotation")
-    public void testAnnotation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/annotation/");
-    }
+  @TestMetadata("annotation")
+  public void testAnnotation() {
+    runTest("plugins/jvm-abi-gen/testData/content/annotation/");
+  }
 
-    @TestMetadata("annotationInstantiation")
-    public void testAnnotationInstantiation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
-    }
+  @TestMetadata("annotationInstantiation")
+  public void testAnnotationInstantiation() {
+    runTest("plugins/jvm-abi-gen/testData/content/annotationInstantiation/");
+  }
 
-    @TestMetadata("anonymousAnnotationInstantiation")
-    public void testAnonymousAnnotationInstantiation() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
-    }
+  @TestMetadata("anonymousAnnotationInstantiation")
+  public void testAnonymousAnnotationInstantiation() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousAnnotationInstantiation/");
+  }
 
-    @TestMetadata("anonymousWhenMapping")
-    public void testAnonymousWhenMapping() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
-    }
+  @TestMetadata("anonymousWhenMapping")
+  public void testAnonymousWhenMapping() {
+    runTest("plugins/jvm-abi-gen/testData/content/anonymousWhenMapping/");
+  }
 
-    @TestMetadata("class")
-    public void testClass() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/class/");
-    }
+  @TestMetadata("class")
+  public void testClass() {
+    runTest("plugins/jvm-abi-gen/testData/content/class/");
+  }
 
-    @TestMetadata("innerClasses")
-    public void testInnerClasses() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
-    }
+  @TestMetadata("dataClassNonPublicConstructor")
+  public void testDataClassNonPublicConstructor() {
+    runTest("plugins/jvm-abi-gen/testData/content/dataClassNonPublicConstructor/");
+  }
 
-    @TestMetadata("kt50005")
-    public void testKt50005() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
-    }
+  @TestMetadata("effectivelyPrivateAnnotation")
+  public void testEffectivelyPrivateAnnotation() {
+    runTest("plugins/jvm-abi-gen/testData/content/effectivelyPrivateAnnotation/");
+  }
 
-    @TestMetadata("whenMapping")
-    public void testWhenMapping() throws Exception {
-        runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
-    }
+  @TestMetadata("innerClasses")
+  public void testInnerClasses() {
+    runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
+  }
+
+  @TestMetadata("internalClassAndCopyMethod")
+  public void testInternalClassAndCopyMethod() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethod/");
+  }
+
+  @TestMetadata("internalClassAndCopyMethodStrict")
+  public void testInternalClassAndCopyMethodStrict() {
+    runTest("plugins/jvm-abi-gen/testData/content/internalClassAndCopyMethodStrict/");
+  }
+
+  @TestMetadata("kt50005")
+  public void testKt50005() {
+    runTest("plugins/jvm-abi-gen/testData/content/kt50005/");
+  }
+
+  @TestMetadata("preserveDeclarationOrderKeepsClassIntact")
+  public void testPreserveDeclarationOrderKeepsClassIntact() {
+    runTest("plugins/jvm-abi-gen/testData/content/preserveDeclarationOrderKeepsClassIntact/");
+  }
+
+  @TestMetadata("whenMapping")
+  public void testWhenMapping() {
+    runTest("plugins/jvm-abi-gen/testData/content/whenMapping/");
+  }
 }

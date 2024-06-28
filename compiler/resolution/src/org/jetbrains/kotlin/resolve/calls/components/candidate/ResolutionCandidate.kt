@@ -78,6 +78,8 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
 
     override fun toString(): String {
         val descriptor = DescriptorRenderer.COMPACT.render(resolvedCall.candidateDescriptor)
+
+        @OptIn(ApplicabilityDetail::class)
         val okOrFail = if (resultingApplicabilities.minOrNull()?.isSuccess != false) "OK" else "FAIL"
         val step = "$step/$stepCount"
         return "$okOrFail($step): $descriptor"
@@ -128,6 +130,7 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     // true if part was interrupted
     private fun processPart(part: ResolutionPart, stopOnFirstError: Boolean, startWorkIndex: Int = 0): Boolean {
         for (workIndex in startWorkIndex until (part.run { workCount() })) {
+            @OptIn(ApplicabilityDetail::class)
             if (stopOnFirstError && !currentApplicability.isSuccess) return true
 
             part.run { process(workIndex) }

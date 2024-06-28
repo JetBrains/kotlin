@@ -74,7 +74,6 @@ import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
@@ -133,7 +132,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
+                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(project),
                 languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {
@@ -184,7 +183,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val diagnosticsFullTextCollector =
             GroupingMessageCollector(
                 PrintingMessageCollector(diagnosticsFullTextPrintStream, MessageRenderer.SYSTEM_INDEPENDENT_RELATIVE_PATHS, true),
-                false
+                false,
+                false,
             )
 
         val actualText = StringBuilder()
@@ -206,7 +206,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleBindingContext,
                 implementingModulesBindings,
                 actualText,
-                shouldSkipJvmSignatureDiagnostics(groupedByModule) || isCommonModule,
                 languageVersionSettingsByModule[module]!!,
                 moduleDescriptor
             )
@@ -352,9 +351,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             KotlinTestUtils.assertEqualsToFile(expectedFile, actualText.toString())
         }
     }
-
-    protected open fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean =
-        groupedByModule.size > 1
 
     private fun checkLazyResolveLog(lazyOperationsLog: LazyOperationsLog, testDataFile: File): Throwable? =
         try {

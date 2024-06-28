@@ -1,4 +1,12 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 3
+ * DESCRIPTION: Smartcasts using Returns effects with complex (conjunction/disjunction) type checking and not-null conditions inside contract.
+ */
 
 // FILE: contracts.kt
 
@@ -93,7 +101,7 @@ fun case_1(value_1: Any?, value_2: Any?) {
 fun case_2(value_1: Any?, value_2: Any?) {
     contracts.case_2(value_1, value_2)
     println(value_1.length)
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -132,19 +140,19 @@ fun case_4(value_1: Any?, value_2: Any?) {
 fun case_5(value_1: Any?, value_2: Any?) {
     if (contracts.case_5_1(value_1, value_2)) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!contracts.case_5_2(value_1, value_2)) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_3(value_1, value_2) != null) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_4(value_1, value_2) == null) {
         println(value_1.length)
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 

@@ -13,17 +13,17 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
-import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
-import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.ByteBuffer
+import java.nio.file.Path
 import java.util.*
 import java.util.zip.CRC32
 import kotlin.test.assertEquals
@@ -62,7 +62,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     }
 
                     val nativeMainTarget = CommonizerTarget(
-                        LINUX_X64, LINUX_ARM64, MACOS_X64, MACOS_ARM64, IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MINGW_X64, MINGW_X86
+                        LINUX_X64, LINUX_ARM64, MACOS_X64, MACOS_ARM64, IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MINGW_X64
                     )
 
                     nativeMainDependencies.forEach { dependency ->
@@ -93,18 +93,28 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun testCinterops(gradleVersion: GradleVersion) {
-        project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
+        project(
+            projectName = "cinteropImport",
+            gradleVersion = gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["commonTest"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["linuxX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 dependencies["linuxArm64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
                 dependencies["linuxX64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_x64")))
                 dependencies["linuxArm64Test"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*linux_arm64")))
+
+                if (HostManager.hostIsMac) {
+                    dependencies["iosX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
+                }
             }
 
             resolveIdeDependencies("client-for-binary-dep") { dependencies ->
@@ -138,10 +148,12 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
 
             resolveIdeDependencies("client-for-project-to-project-dep") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
                 dependencies["commonTest"].cinteropDependencies()
-                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(linux_arm64, linux_x64\\)")))
+                    .assertMatches(binaryCoordinates(Regex("a:dep.*\\(ios_x64, linux_arm64, linux_x64\\)")))
 
                 dependencies["linuxX64Main"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_x64")))
@@ -151,9 +163,15 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
                 dependencies["linuxArm64Test"].cinteropDependencies()
                     .assertMatches(binaryCoordinates(Regex("a:dep-with-cinterop-cinterop-dep.*linux_arm64")))
+
+                if (HostManager.hostIsMac) {
+                    dependencies["iosX64Main"].cinteropDependencies().assertMatches(binaryCoordinates(Regex("a:dep.*ios_x64")))
+                }
             }
 
             resolveIdeDependencies("client-with-complex-hierarchy") { dependencies ->
+                dependencies.assertResolvedDependenciesOnly()
+
                 dependencies["commonMain"].cinteropDependencies().assertMatches()
                 dependencies["commonTest"].cinteropDependencies().assertMatches()
                 dependencies["nativeMain"].cinteropDependencies().assertMatches(
@@ -189,8 +207,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `test cinterops - are stored in root gradle folder`(gradleVersion: GradleVersion) {
-        project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
+    fun `test cinterops - are stored in root gradle folder`(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            projectName = "cinteropImport",
+            gradleVersion = gradleVersion,
+        ) {
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
 
                 /* Check behaviour of platform cinterops on linuxX64Main */
@@ -198,12 +221,12 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .filter { !it.isNativeDistribution && it.klibExtra?.isInterop == true }
                     .ifEmpty { fail("Expected at least one cinterop on linuxX64Main") }
 
+                val persistentCInteropsCache = projectPersistentCache.resolve("metadata").resolve("kotlinCInteropLibraries")
                 cinterops.forEach { cinterop ->
                     if (cinterop.classpath.isEmpty()) fail("Missing classpath for $cinterop")
                     cinterop.classpath.forEach { cinteropFile ->
                         /* Check file was copied into root .gradle folder */
-                        val expectedParent = projectPath.toFile().resolve(".gradle/kotlin/kotlinCInteropLibraries").canonicalFile
-                        assertEquals(expectedParent, cinteropFile.parentFile.canonicalFile)
+                        assertEquals(persistentCInteropsCache.toFile().canonicalFile, cinteropFile.parentFile.canonicalFile)
 
                         /* Check crc in file name */
                         val crc = CRC32()
@@ -232,7 +255,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
-                    binaryCoordinates(Regex("com.example:cinterop-.*-dummy:.*:linux_x64")),
+                    binaryCoordinates(Regex("com.example:cinterop-.*-dummy:linux_x64")),
                     IdeaKotlinDependencyMatcher("Unresolved 'failing' cinterop") { dependency ->
                         dependency is IdeaKotlinUnresolvedBinaryDependency && dependency.cause.orEmpty().contains(
                             "cinterop-withFailingCInteropProcess-cinterop-failing.klib"
@@ -258,8 +281,220 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun `test cinterops - transitive project dependencies`(gradleVersion: GradleVersion) {
+        project(
+            "cinterop-MetadataDependencyTransformation",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "-PdependencyMode=project")
+        ) {
+            resolveIdeDependencies(":p3") { dependencies ->
+                /* Check that no compile-tasks are executed */
+                run {
+                    val compileTaskRegex = Regex(".*[cC]ompile.*")
+                    val compileTasks = tasks.filter { task -> task.path.matches(compileTaskRegex) }
+                    if (compileTasks.isNotEmpty()) {
+                        fail("Expected no compile tasks to be executed. Found $compileTasks")
+                    }
+                }
+
+                dependencies["nativeMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test cinterops - transitive project dependencies - disabled cinterop commonization`(gradleVersion: GradleVersion) {
+        project(
+            "cinterop-MetadataDependencyTransformation",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                freeArgs = defaultBuildOptions.freeArgs + "-PdependencyMode=project" + "-Pkotlin.mpp.enableCInteropCommonization=false"
+            )
+        ) {
+            resolveIdeDependencies(":p3") { dependencies ->
+                dependencies["nativeMain"].cinteropDependencies().assertMatches()
+                dependencies["linuxX64Main"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex(".*p1-cinterop-simple.*")),
+                    binaryCoordinates(Regex(".*p1-cinterop-withPosix.*"))
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test dependency on composite build with commonized cinterops`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val includedLib = project("composite-build-with-cinterop-commonization/includedLib", gradleVersion, localRepoDir = tempDir)
+        project("composite-build-with-cinterop-commonization", gradleVersion, localRepoDir = tempDir) {
+            settingsGradleKts.replaceText("<includedLib_path>", includedLib.projectPath.toUri().toString())
+            // Quick fix for: KT-58815
+            build(":lib:copyCommonizeCInteropForIde")
+            resolveIdeDependencies { dependencies ->
+                dependencies["linuxMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates("org.example:included-lib-cinterop-a:(linux_arm64, linux_x64)"),
+                    binaryCoordinates("org.example:lib-cinterop-a:(linux_arm64, linux_x64)"),
+                )
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
+    @GradleTest
+    fun `test dependency on java testFixtures and feature source sets`(gradleVersion: GradleVersion) {
+        project(
+            "kt-60053-dependencyOn-testFixtures",
+            gradleVersion,
+            localRepoDir = defaultLocalRepo(gradleVersion)
+        ) {
+            build("publish")
+
+            resolveIdeDependencies(":consumer") { dependencies ->
+                val jvmMainDependencies = dependencies["jvmMain"].filterIsInstance<IdeaKotlinBinaryDependency>().assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+                    binaryCoordinates("org.jetbrains.sample:producer:1.0.0"),
+                    binaryCoordinates("org.jetbrains.sample:producer-foo:1.0.0"),
+                )
+
+                val jvmTestDependencies = dependencies["jvmTest"].filterIsInstance<IdeaKotlinBinaryDependency>().assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+                    binaryCoordinates("org.jetbrains.sample:producer:1.0.0"),
+                    binaryCoordinates("org.jetbrains.sample:producer-foo:1.0.0"),
+                    binaryCoordinates("org.jetbrains.sample:producer-test-fixtures:1.0.0"),
+                )
+
+                jvmMainDependencies.getOrFail(binaryCoordinates("org.jetbrains.sample:producer:1.0.0")).assertSingleSourcesJar()
+                jvmTestDependencies.getOrFail(binaryCoordinates("org.jetbrains.sample:producer:1.0.0")).assertSingleSourcesJar()
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test native project dependencies resolve leniently`(gradleVersion: GradleVersion) {
+        project("kt-61466-lenient-dependency-resolution", gradleVersion) {
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    kotlinNativeDistributionDependencies,
+                )
+
+                dependencies["linuxMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    kotlinNativeDistributionDependencies,
+                    dependsOnDependency(":consumer/commonMain"),
+                    dependsOnDependency(":consumer/nativeMain")
+                )
+
+                dependencies["linuxX64Main"].assertMatches(
+                    kotlinNativeDistributionDependencies,
+                    dependsOnDependency(":consumer/commonMain"),
+                    dependsOnDependency(":consumer/nativeMain"),
+                    dependsOnDependency(":consumer/linuxMain"),
+                    binaryCoordinates("this:does:not-exist"),
+                    IdeaKotlinDependencyMatcher("Project Dependency: producer") { dependency ->
+                        dependency is IdeaKotlinUnresolvedBinaryDependency && ":producer" in dependency.cause.orEmpty()
+                    }
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `kt-61652 test no CME when jupiter plugin is applied to independet project`(gradleVersion: GradleVersion) {
+        project("kt-61652-CME-when-jupiter-is-applied-to-independet-project", gradleVersion) {
+            resolveIdeDependencies(":app") {
+                assertOutputDoesNotContain("ConcurrentModificationException")
+            }
+        }
+    }
+
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
+    @GradleTest
+    fun `test resolve sources for dependency with multiple capabilities`(gradleVersion: GradleVersion) {
+        project(
+            "kt-63226-multiple-capabilities",
+            gradleVersion,
+            localRepoDir = workingDir.resolve(gradleVersion.version),
+        ) {
+            build(":producer:publish")
+
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-sources.jar")
+                )
+
+                // according to build.gradle.kts of test project jvmTest should have both artifacts from :producer
+                // one with regular capabilities
+                dependencies["jvmTest"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-sources.jar")
+                )
+
+                // and another with foo capability
+                dependencies["jvmTest"].getOrFail(
+                    binaryCoordinates("test:producer:1.0")
+                        .withResolvedSourcesFile("producer-1.0-foo-sources.jar")
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test resolve sources for transitive dependencies through dependency without sources variant`(gradleVersion: GradleVersion) {
+        project(
+            "transitive-sources-dependencies",
+            gradleVersion,
+            localRepoDir = workingDir.resolve(gradleVersion.version),
+        ) {
+            // lib_without_sources dependsOn lib_with_sources
+            build(":lib_with_sources:publish", ":lib_without_sources:publish")
+
+            settingsGradleKts.replaceText("val isConsumer = false", "val isConsumer = true")
+
+            resolveIdeDependencies(":consumer") { dependencies ->
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:lib_with_sources-jvm:1.0")
+                        .withResolvedSourcesFile("lib_with_sources-jvm-1.0-sources.jar"),
+                )
+
+                dependencies["jvmMain"].getOrFail(
+                    binaryCoordinates("test:lib_without_sources-jvm:1.0")
+                ).assertNoSourcesResolved()
+
+                dependencies["linuxX64Main"].getOrFail(
+                    binaryCoordinates("test:lib_with_sources-linuxx64:1.0")
+                        .withResolvedSourcesFile("lib_with_sources-linuxx64-1.0-sources.jar"),
+                )
+
+                dependencies["linuxX64Main"].getOrFail(
+                    binaryCoordinates("test:lib_without_sources-linuxx64:1.0")
+                ).assertNoSourcesResolved()
+            }
+        }
+    }
+
     private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
         this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
             it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
         }
+
+    private fun IdeaKotlinBinaryDependency.assertSingleSourcesJar(): File {
+        val sources = sourcesClasspath.toList()
+        if (sources.isEmpty()) fail("Missing -sources.jar")
+        if (sources.size > 1) fail("Multiple -sources.jar: $sources")
+
+        return sources.single().also { sourcesFile ->
+            if (!sourcesFile.name.endsWith("-sources.jar")) fail("-sources.jar suffix expected. Found: ${sourcesFile.name}")
+        }
+    }
 }

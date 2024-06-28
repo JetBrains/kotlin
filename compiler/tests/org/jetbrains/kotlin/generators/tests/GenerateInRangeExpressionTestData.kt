@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,7 +46,7 @@ object GenerateInRangeExpressionTestData {
         println("// WITH_STDLIB")
         if (rangeExpressions.any { "..<" in it }) {
             println("// DONT_TARGET_EXACT_BACKEND: JVM")
-            println("// !LANGUAGE: +RangeUntilOperator")
+            println("// LANGUAGE: +RangeUntilOperator")
             println("@file:OptIn(ExperimentalStdlibApi::class)")
         }
         println()
@@ -147,7 +147,7 @@ object GenerateInRangeExpressionTestData {
 
         val unsignedNumbers = numbers.drop(1).map { it + "u" }
 
-        val allFunctions = Function.values().toList()
+        val allFunctions = Function.entries
         val rangeFunctions = allFunctions - DOWN_TO
 
         generateRangeOperatorTestCases("char", allFunctions, "'1'" to "'3'", charLiterals)

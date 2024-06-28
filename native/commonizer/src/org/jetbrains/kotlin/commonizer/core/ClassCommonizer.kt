@@ -23,10 +23,11 @@ class ClassCommonizer internal constructor(
     private val typeParameterListCommonizer: TypeParameterListCommonizer = TypeParameterListCommonizer(typeCommonizer)
     private val modalityCommonizer: ModalityCommonizer = ModalityCommonizer()
     private val visibilityCommonizer: VisibilityCommonizer = VisibilityCommonizer.equalizing()
+    private val annotationCommonizer = AnnotationsCommonizer.asCommonizer()
 
     override fun commonizationResult(): CirClass? {
         return CirClass.create(
-            annotations = emptyList(),
+            annotations = annotationCommonizer.result,
             name = name,
             typeParameters = typeParameterListCommonizer.result ?: return null,
             supertypes = supertypesCommonizer.result,
@@ -38,7 +39,6 @@ class ClassCommonizer internal constructor(
             isData = false,
             isValue = isValue,
             isInner = isInner,
-            isExternal = false,
             hasEnumEntries = hasEnumEntries
         )
     }
@@ -63,5 +63,6 @@ class ClassCommonizer internal constructor(
                 && visibilityCommonizer.commonizeWith(next)
                 && typeParameterListCommonizer.commonizeWith(next.typeParameters)
                 && supertypesCommonizer.commonizeWith(next.supertypes)
+                && annotationCommonizer.commonizeWith(next.annotations)
     }
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // FILE: A.java
 public interface A {
     class A_S {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,6 @@ const val OPT_IN_DIRECTIVE = "OPT_IN"
 const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
 const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
 const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
-const val ALLOW_RESULT_RETURN_TYPE = "ALLOW_RESULT_RETURN_TYPE"
 const val INHERIT_MULTIFILE_PARTS = "INHERIT_MULTIFILE_PARTS"
 const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 const val ENABLE_JVM_PREVIEW = "ENABLE_JVM_PREVIEW"
@@ -37,7 +36,7 @@ data class CompilerTestLanguageVersionSettings(
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
         extraLanguageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
-    override fun isPreRelease(): Boolean = false
+    override fun isPreRelease(): Boolean = KotlinCompilerVersion.isPreRelease()
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getFlag(flag: AnalysisFlag<T>): T = analysisFlags[flag] as T? ?: flag.defaultValue
@@ -66,7 +65,6 @@ fun parseLanguageVersionSettings(
         analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives[JVM_DEFAULT_MODE]?.let { JvmDefaultMode.fromStringOrNull(it) }),
         analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, if (IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE in directives) true else null),
         analysisFlag(AnalysisFlags.skipMetadataVersionCheck, if (SKIP_METADATA_VERSION_CHECK in directives) true else null),
-        analysisFlag(AnalysisFlags.allowResultReturnType, if (ALLOW_RESULT_RETURN_TYPE in directives) true else null),
         analysisFlag(JvmAnalysisFlags.inheritMultifileParts, if (INHERIT_MULTIFILE_PARTS in directives) true else null),
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
         analysisFlag(JvmAnalysisFlags.enableJvmPreview, if (ENABLE_JVM_PREVIEW in directives) true else null),
@@ -119,7 +117,7 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
     val matcher = LANGUAGE_FEATURE_PATTERN.matcher(directives)
     if (!matcher.find()) {
         Assert.fail(
-                "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
+                "Wrong syntax in the '// $LANGUAGE_DIRECTIVE: ...' directive:\n" +
                 "found: '$directives'\n" +
                 "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
                 "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
@@ -138,7 +136,7 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
         val name = matcher.group(2)
         val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
                 "Language feature not found, please check spelling: $name\n" +
-                "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
+                "Known features:\n    ${LanguageFeature.entries.joinToString("\n    ")}"
         )
         if (values.put(feature, mode) != null) {
             Assert.fail("Duplicate entry for the language feature: $name")

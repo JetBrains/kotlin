@@ -34,6 +34,8 @@ set(value) {
 	if (value >= 0) field = value
 }
 
+lateinit var lateInit: String
+
 lateinit var subject: Unresolved
 internal lateinit var internalVarPrivateSet: String
 private set

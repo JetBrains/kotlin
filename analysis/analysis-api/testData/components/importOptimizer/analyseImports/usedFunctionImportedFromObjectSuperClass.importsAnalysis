@@ -1,0 +1,30 @@
+USED DECLARATIONS:
+
+Declaration: kotlin.Int
+By names: [Int]
+
+Declaration: kotlin.String
+By names: [String]
+
+Declaration: test.Base
+By names: [Base]
+
+Declaration: test.Foo.callableReference
+By names: [callableReference]
+
+Declaration: test.Foo.extFuncFromBase
+By names: [extFuncFromBase]
+
+Declaration: test.Foo.extPropFromBase
+By names: [extPropFromBase]
+
+Declaration: test.Foo.funcFromBase
+By names: [funcFromBase]
+
+Declaration: test.Foo.invoke
+By names: [invoke]
+
+Declaration: test.Foo.propFromBase
+By names: [propFromBase]
+
+UNRESOLVED NAMES:

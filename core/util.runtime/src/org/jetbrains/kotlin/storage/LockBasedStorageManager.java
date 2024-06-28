@@ -591,11 +591,24 @@ public class LockBasedStorageManager implements StorageManager {
                 }
                 catch (Throwable throwable) {
                     if (ExceptionUtilsKt.isProcessCanceledException(throwable)) {
-                        cache.remove(input);
+                        Object remove;
+                        try {
+                            remove = cache.remove(input);
+                        } catch (Throwable e) {
+                            throw unableToRemoveKey(input, e);
+                        }
+                        if (remove != NotValue.COMPUTING) {
+                            throw inconsistentComputingKey(input, remove);
+                        }
                         //noinspection ConstantConditions
                         throw (RuntimeException)throwable;
                     }
                     if (throwable == error) {
+                        try {
+                            cache.remove(input);
+                        } catch (Throwable e) {
+                            throw unableToRemoveKey(input, e);
+                        }
                         throw storageManager.exceptionHandlingStrategy.handleException(throwable);
                     }
 
@@ -622,6 +635,23 @@ public class LockBasedStorageManager implements StorageManager {
             return sanitizeStackTrace(
                     new AssertionError("Race condition detected on input " + input + ". Old value is " + oldValue +
                                        " under " + storageManager)
+            );
+        }
+
+        private AssertionError inconsistentComputingKey(K input, Object oldValue) {
+            return sanitizeStackTrace(
+                    new AssertionError("Inconsistent key detected. "
+                                       + NotValue.COMPUTING + " is expected, was: " + oldValue
+                                       + ", most probably race condition detected on input " + input
+                                       + " under " + storageManager)
+            );
+        }
+
+        @org.jetbrains.kotlin.SuppressJdk6SignatureCheck
+        private AssertionError unableToRemoveKey(K input, Throwable throwable) {
+            return sanitizeStackTrace(
+                    new AssertionError("Unable to remove "
+                                       + input + " under " + storageManager, throwable)
             );
         }
 

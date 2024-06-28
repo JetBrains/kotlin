@@ -8,7 +8,7 @@ package kotlin
 import kotlin.contracts.*
 
 
-@DeprecatedSinceKotlin(warningSince = "1.6")
+@DeprecatedSinceKotlin(warningSince = "1.6", errorSince = "1.9")
 @Deprecated("Synchronization on any object is not supported in Kotlin/JS", ReplaceWith("run(block)"))
 @kotlin.internal.InlineOnly
 @Suppress("UNUSED_PARAMETER")

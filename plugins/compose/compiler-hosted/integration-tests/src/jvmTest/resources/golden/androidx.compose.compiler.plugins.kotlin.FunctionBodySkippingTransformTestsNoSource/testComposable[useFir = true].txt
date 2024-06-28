@@ -1,0 +1,32 @@
+//
+// Source
+// ------------------------------------------
+
+interface NewProfileOBViewModel {
+    fun overrideMe(): @Type () -> Unit
+}
+
+class ReturningProfileObViewModel : NewProfileOBViewModel {
+    override fun overrideMe(): @Type () -> Unit = {}
+}
+
+@Target(AnnotationTarget.TYPE)
+annotation class Type
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface NewProfileOBViewModel {
+  abstract fun overrideMe(): @[Type] Function0<Unit>
+}
+@StabilityInferred(parameters = 1)
+class ReturningProfileObViewModel : NewProfileOBViewModel {
+  override fun overrideMe(): @[Type] Function0<Unit> {
+    return {
+    }
+  }
+  static val %stable: Int = 0
+}
+@Target(allowedTargets = AnnotationTarget.TYPE)
+open annotation class Type : Annotation

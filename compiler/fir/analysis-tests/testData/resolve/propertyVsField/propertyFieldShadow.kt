@@ -16,5 +16,5 @@ class Test2 : Test() {
     fun check() = text // Should be resolved to Test2.text, not to Test.text
 }
 
-fun check() = Test2().publicPrivateText // Should be resolved to Test.publicPrivateText (Test2 member is private)
+fun check() = Test2().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>publicPrivateText<!> // Should be resolved to Test.publicPrivateText (Test2 member is private)
 

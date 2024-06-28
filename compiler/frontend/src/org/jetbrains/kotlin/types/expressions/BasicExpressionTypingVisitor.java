@@ -376,7 +376,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return;
         }
 
-        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper)) {
+        if (!TypeUtilsKt.isStubType(actualType) && !CastDiagnosticsUtil.isCastPossible(actualType, targetType, components.platformToKotlinClassMapper, components.platformSpecificCastChecker)) {
             context.trace.report(CAST_NEVER_SUCCEEDS.on(expression.getOperationReference()));
             return;
         }
@@ -1576,6 +1576,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 .replaceContextDependency(INDEPENDENT);
 
         checkLiteralPrefixAndSuffix(expression, context);
+
+        PsiElement interpolationPrefix = expression.getInterpolationPrefix();
+        if (interpolationPrefix != null && !interpolationPrefix.getText().isEmpty()) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression, new Pair<>(LanguageFeature.MultiDollarInterpolation, context.languageVersionSettings)));
+        }
 
         class StringTemplateVisitor extends KtVisitorVoid {
             private KotlinTypeInfo typeInfo = TypeInfoFactoryKt.noTypeInfo(context);

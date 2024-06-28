@@ -1,0 +1,14 @@
+public abstract interface InheritProjectionKind : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/collections/MutableCollection<out kotlin/Number>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/InheritProjectionKind.Super| {
+        public abstract fun foo(): R|kotlin/collections/MutableList<out kotlin/Number>|
+
+    }
+
+}

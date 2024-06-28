@@ -1,8 +1,8 @@
 FILE: genericFunctions.kt
-    public? final? interface Any : R|kotlin/Any| {
+    public final? interface Any : R|kotlin/Any| {
     }
     public? final? inline fun <reified T : Any> Any.safeAs(): T? { LAZY_BLOCK }
-    public? abstract class Summator : R|kotlin/Any| {
+    public abstract class Summator : R|kotlin/Any| {
         public? constructor(): R|Summator| {
             LAZY_super<R|kotlin/Any|>
         }

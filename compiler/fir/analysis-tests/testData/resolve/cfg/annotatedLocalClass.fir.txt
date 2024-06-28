@@ -13,7 +13,7 @@ FILE: annotatedLocalClass.kt
         }
 
         @R|Ann|() local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 

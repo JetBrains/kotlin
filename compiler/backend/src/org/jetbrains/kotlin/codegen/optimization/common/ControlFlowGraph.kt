@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import gnu.trove.TIntHashSet
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
-
 
 class ControlFlowGraph private constructor(private val insns: InsnList) {
     private val successors: Array<MutableList<Int>> = Array(insns.size()) { ArrayList(2) }
@@ -32,7 +31,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
         private val queue = IntArray(nInsns)
         private var top = 0
 
-        private val predecessors = Array(nInsns) { TIntHashSet() }
+        private val predecessors = Array(nInsns) { IntOpenHashSet() }
 
         private val AbstractInsnNode.indexOf get() = instructions.indexOf(this)
 
@@ -46,7 +45,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
             traverseCfg()
 
             for ((i, preds) in predecessors.withIndex()) {
-                for (pred in preds.toArray()) {
+                for (pred in preds.toIntArray()) {
                     graph.predecessors[i].add(pred)
                     graph.successors[pred].add(i)
                 }
@@ -60,7 +59,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
                 val insnNode = method.instructions[insn]
                 val insnOpcode = insnNode.opcode
 
-                when (insnNode.type) {
+                when (insnNode.nodeType) {
                     AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME ->
                         visitOpInsn(insn)
                     AbstractInsnNode.JUMP_INSN ->

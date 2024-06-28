@@ -21,9 +21,9 @@ public final class UInt {
 @kotlin.Metadata
 public final class UIntArray {
     // source: 'UIntArrayWithFullJdk.kt'
-    private final field storage: int[]
+    private final @org.jetbrains.annotations.NotNull field storage: int[]
     private synthetic method <init>(p0: int[]): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add-fLmw4x8(p0: int): boolean
     public method addAll(p0: java.util.Collection): boolean
     public synthetic final static method box-impl(p0: int[]): UIntArray
@@ -50,7 +50,7 @@ public final class UIntArray {
     public method removeAll(p0: java.util.Collection): boolean
     public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public method toString(): java.lang.String

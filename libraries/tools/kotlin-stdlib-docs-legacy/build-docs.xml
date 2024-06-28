@@ -216,15 +216,17 @@
                   sincekotlin="1.1">
 
         <sourceroot path="${kotlin_stdlib_dir}/js/src"/>
-        <sourceroot path="${kotlin_stdlib_dir}/js-v1/src"/>
+        <sourceroot path="${kotlin_stdlib_dir}/js/builtins"/>
 
-        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Comparable.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Enum.kt"/>
-
-        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Iterator.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Collections.kt"/>
-        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/CharSequence.kt"/>
+        <!-- builtin sources that are copied from common builtins during JS stdlib build -->
         <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Annotation.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Any.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Array.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/CharSequence.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Comparable.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Iterator.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Nothing.kt"/>
+        <sourceroot path="${kotlin_builtins_dir}/native/kotlin/Number.kt"/>
 
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/annotation/Annotations.kt"/>
         <sourceroot path="${kotlin_builtins_dir}/src/kotlin/Function.kt"/>

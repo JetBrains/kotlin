@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,116 +21,116 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ResolvedConstructorDelegationCallsTestsGenerated extends AbstractResolvedConstructorDelegationCallsTests {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInResolveConstructorDelegationCalls() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolveConstructorDelegationCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  public void testAllFilesPresentInResolveConstructorDelegationCalls() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/resolveConstructorDelegationCalls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @TestMetadata("classWithGenerics.kt")
-    public void testClassWithGenerics() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/classWithGenerics.kt");
-    }
+  @TestMetadata("classWithGenerics.kt")
+  public void testClassWithGenerics() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/classWithGenerics.kt");
+  }
 
-    @TestMetadata("generics2.kt")
-    public void testGenerics2() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/generics2.kt");
-    }
+  @TestMetadata("generics2.kt")
+  public void testGenerics2() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/generics2.kt");
+  }
 
-    @TestMetadata("generics3.kt")
-    public void testGenerics3() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/generics3.kt");
-    }
+  @TestMetadata("generics3.kt")
+  public void testGenerics3() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/generics3.kt");
+  }
 
-    @TestMetadata("generics4.kt")
-    public void testGenerics4() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/generics4.kt");
-    }
+  @TestMetadata("generics4.kt")
+  public void testGenerics4() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/generics4.kt");
+  }
 
-    @TestMetadata("generics5.kt")
-    public void testGenerics5() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/generics5.kt");
-    }
+  @TestMetadata("generics5.kt")
+  public void testGenerics5() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/generics5.kt");
+  }
 
-    @TestMetadata("inheritanceWithGeneric.kt")
-    public void testInheritanceWithGeneric() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/inheritanceWithGeneric.kt");
-    }
+  @TestMetadata("inheritanceWithGeneric.kt")
+  public void testInheritanceWithGeneric() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/inheritanceWithGeneric.kt");
+  }
 
-    @TestMetadata("innerClassDelegatingPrimary.kt")
-    public void testInnerClassDelegatingPrimary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingPrimary.kt");
-    }
+  @TestMetadata("innerClassDelegatingPrimary.kt")
+  public void testInnerClassDelegatingPrimary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingPrimary.kt");
+  }
 
-    @TestMetadata("innerClassDelegatingSecondary.kt")
-    public void testInnerClassDelegatingSecondary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingSecondary.kt");
-    }
+  @TestMetadata("innerClassDelegatingSecondary.kt")
+  public void testInnerClassDelegatingSecondary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/innerClassDelegatingSecondary.kt");
+  }
 
-    @TestMetadata("superAnyEmpty.kt")
-    public void testSuperAnyEmpty() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superAnyEmpty.kt");
-    }
+  @TestMetadata("superAnyEmpty.kt")
+  public void testSuperAnyEmpty() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superAnyEmpty.kt");
+  }
 
-    @TestMetadata("superAnyImplicit.kt")
-    public void testSuperAnyImplicit() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superAnyImplicit.kt");
-    }
+  @TestMetadata("superAnyImplicit.kt")
+  public void testSuperAnyImplicit() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superAnyImplicit.kt");
+  }
 
-    @TestMetadata("superPrimary.kt")
-    public void testSuperPrimary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimary.kt");
-    }
+  @TestMetadata("superPrimary.kt")
+  public void testSuperPrimary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimary.kt");
+  }
 
-    @TestMetadata("superPrimaryEmpty.kt")
-    public void testSuperPrimaryEmpty() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimaryEmpty.kt");
-    }
+  @TestMetadata("superPrimaryEmpty.kt")
+  public void testSuperPrimaryEmpty() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimaryEmpty.kt");
+  }
 
-    @TestMetadata("superPrimaryImplicit.kt")
-    public void testSuperPrimaryImplicit() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimaryImplicit.kt");
-    }
+  @TestMetadata("superPrimaryImplicit.kt")
+  public void testSuperPrimaryImplicit() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superPrimaryImplicit.kt");
+  }
 
-    @TestMetadata("superSecondary.kt")
-    public void testSuperSecondary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondary.kt");
-    }
+  @TestMetadata("superSecondary.kt")
+  public void testSuperSecondary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondary.kt");
+  }
 
-    @TestMetadata("superSecondaryImplicit.kt")
-    public void testSuperSecondaryImplicit() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondaryImplicit.kt");
-    }
+  @TestMetadata("superSecondaryImplicit.kt")
+  public void testSuperSecondaryImplicit() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondaryImplicit.kt");
+  }
 
-    @TestMetadata("superSecondaryOverload.kt")
-    public void testSuperSecondaryOverload() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondaryOverload.kt");
-    }
+  @TestMetadata("superSecondaryOverload.kt")
+  public void testSuperSecondaryOverload() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/superSecondaryOverload.kt");
+  }
 
-    @TestMetadata("thisPrimary.kt")
-    public void testThisPrimary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/thisPrimary.kt");
-    }
+  @TestMetadata("thisPrimary.kt")
+  public void testThisPrimary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/thisPrimary.kt");
+  }
 
-    @TestMetadata("thisPrimaryEmpty.kt")
-    public void testThisPrimaryEmpty() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/thisPrimaryEmpty.kt");
-    }
+  @TestMetadata("thisPrimaryEmpty.kt")
+  public void testThisPrimaryEmpty() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/thisPrimaryEmpty.kt");
+  }
 
-    @TestMetadata("thisSecondary.kt")
-    public void testThisSecondary() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/thisSecondary.kt");
-    }
+  @TestMetadata("thisSecondary.kt")
+  public void testThisSecondary() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/thisSecondary.kt");
+  }
 
-    @TestMetadata("thisSecondaryOverload.kt")
-    public void testThisSecondaryOverload() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/thisSecondaryOverload.kt");
-    }
+  @TestMetadata("thisSecondaryOverload.kt")
+  public void testThisSecondaryOverload() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/thisSecondaryOverload.kt");
+  }
 
-    @TestMetadata("varargs.kt")
-    public void testVarargs() throws Exception {
-        runTest("compiler/testData/resolveConstructorDelegationCalls/varargs.kt");
-    }
+  @TestMetadata("varargs.kt")
+  public void testVarargs() {
+    runTest("compiler/testData/resolveConstructorDelegationCalls/varargs.kt");
+  }
 }

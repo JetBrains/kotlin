@@ -1,2 +1,0 @@
-Resolved to:
-0: (in java.lang.Math) open fun sin(a: kotlin.Double): kotlin.Double

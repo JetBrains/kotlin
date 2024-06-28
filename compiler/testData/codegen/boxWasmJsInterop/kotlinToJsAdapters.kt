@@ -40,27 +40,6 @@ fun testExterRef() {
     null2ExternRef(null)
 }
 
-class DataRef
-
-fun notNullDataRef(x: DataRef) {
-    js("if (x === null) throw 'error'")
-}
-
-fun nullDataRef(x: DataRef?) {
-    js("if (x === null) throw 'error'")
-}
-
-fun null2DataRef(x: DataRef?) {
-    js("if (x !== null) throw 'error'")
-}
-
-fun testDataRef() {
-    val dataRef = DataRef()
-    notNullDataRef(dataRef)
-    nullDataRef(dataRef)
-    null2DataRef(null)
-}
-
 fun notNullInt(x: Int) {
     js("if (x !== 123) throw 'error'")
 }
@@ -133,47 +112,12 @@ fun testFloat() {
     null2Float(null)
 }
 
-fun notNullNumber(x: Number) {
-    js("if (x !== 123.5) throw 'error'")
-}
-
-fun nullNumber(x: Number?) {
-    js("if (x !== 123.5) throw 'error'")
-}
-
-fun null2Number(x: Number?) {
-    js("if (x !== null) throw 'error'")
-}
-
-fun byte2Number(x: Number) {
-    js("if (x !== 123) throw 'error'")
-}
-
-fun notNullByte2Number(x: Number?) {
-    js("if (x !== 123) throw 'error'")
-}
-
-fun nullByte2Number(x: Number?) {
-    js("if (x !== null) throw 'error'")
-}
-
-fun testNumber() {
-    notNullNumber(123.5)
-    nullNumber(123.5)
-    null2Number(null)
-    byte2Number(123)
-    notNullByte2Number(123)
-    nullByte2Number(null)
-}
-
 fun box(): String {
     testString()
     testExterRef()
-    testDataRef()
     testInt()
     testBoolean()
     testShort()
     testFloat()
-    testNumber()
     return "OK"
 }

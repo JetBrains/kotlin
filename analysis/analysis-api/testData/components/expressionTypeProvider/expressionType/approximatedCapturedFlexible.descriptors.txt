@@ -1,0 +1,2 @@
+expression: classloader?.loadClass("hi")?.kotlin
+type: kotlin.reflect.KClass<out kotlin.Any?>?

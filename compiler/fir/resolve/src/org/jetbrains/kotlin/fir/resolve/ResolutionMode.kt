@@ -11,21 +11,16 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
-sealed class ResolutionMode(val forceFullCompletion: Boolean) {
-    object ContextDependent : ResolutionMode(forceFullCompletion = false) {
-        override fun toString(): String = "ContextDependent"
-    }
+sealed class ResolutionMode(
+    val forceFullCompletion: Boolean,
+) {
+    data object ContextDependent : ResolutionMode(forceFullCompletion = false)
+    data object Delegate : ResolutionMode(forceFullCompletion = false)
+    data object ContextIndependent : ResolutionMode(forceFullCompletion = true)
 
-    object ContextDependentDelegate : ResolutionMode(forceFullCompletion = false) {
-        override fun toString(): String = "ContextDependentDelegate"
-    }
-
-    object ContextIndependent : ResolutionMode(forceFullCompletion = true) {
-        override fun toString(): String = "ContextIndependent"
-    }
-
-    object ReceiverResolution : ResolutionMode(forceFullCompletion = true) {
-        override fun toString(): String = "ReceiverResolution"
+    sealed class ReceiverResolution(val forCallableReference: Boolean) : ResolutionMode(forceFullCompletion = true) {
+        data object ForCallableReference : ReceiverResolution(forCallableReference = true)
+        companion object : ReceiverResolution(forCallableReference = false)
     }
 
     class WithExpectedType(
@@ -58,7 +53,8 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
                     "mayBeCoercionToUnitApplied=${mayBeCoercionToUnitApplied}, " +
                     "expectedTypeMismatchIsReportedInChecker=${expectedTypeMismatchIsReportedInChecker}, " +
                     "fromCast=${fromCast}, " +
-                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, "
+                    "shouldBeStrictlyEnforced=${shouldBeStrictlyEnforced}, " +
+                    "forceFullCompletion=${forceFullCompletion}, "
         }
     }
 

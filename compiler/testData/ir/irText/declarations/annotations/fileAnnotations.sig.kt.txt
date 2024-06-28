@@ -1,0 +1,31 @@
+@file:A(x = "File annotation")
+package test
+
+// CHECK:
+//   Mangled name: test.A
+//   Public signature: test/A|null[0]
+@Target(allowedTargets = [AnnotationTarget.FILE])
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: test.A{}x
+  //   Public signature: test/A.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: String
+    // CHECK JVM_IR:
+    //   Mangled name: test.A#<get-x>(){}kotlin.String
+    //   Public signature: test/A.x.<get-x>|316111172223894646[0]
+    //   Public signature debug description: <get-x>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: test.A#<get-x>(){}
+    //   Public signature: test/A.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: test.A#<init>(kotlin.String){}
+  //   Public signature: test/A.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(x: String) /* primary */
+
+}
+

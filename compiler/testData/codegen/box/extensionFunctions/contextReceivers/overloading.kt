@@ -1,4 +1,4 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
 context(Int, String)

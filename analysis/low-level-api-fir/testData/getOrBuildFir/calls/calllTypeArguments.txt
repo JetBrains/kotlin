@@ -1,0 +1,14 @@
+KT element: KtTypeProjection
+FIR element: FirTypeProjectionWithVarianceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] calllTypeArguments.kt
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> y(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        R|/y|<R|kotlin/Int|>()
+    }

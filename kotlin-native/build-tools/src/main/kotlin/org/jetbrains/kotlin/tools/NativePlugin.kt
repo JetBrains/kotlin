@@ -11,12 +11,15 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.dependencies.NativeDependenciesPlugin
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMingw
 import java.io.File
+import javax.inject.Inject
 import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.addAll
@@ -35,11 +38,12 @@ import kotlin.collections.toTypedArray
 open class NativePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.apply<BasePlugin>()
+        project.apply<NativeDependenciesPlugin>()
         project.extensions.create("native", NativeToolsExtension::class.java, project)
     }
 }
 
-abstract class ToolExecutionTask : DefaultTask() {
+abstract class ToolExecutionTask @Inject constructor(private val execOperations: ExecOperations): DefaultTask() {
     @get:OutputFile
     abstract var output: File
 
@@ -55,7 +59,7 @@ abstract class ToolExecutionTask : DefaultTask() {
     @TaskAction
     fun action() {
         if (output.exists()) output.delete()
-        project.exec {
+        execOperations.exec {
             executable(cmd)
             args(*this@ToolExecutionTask.args.toTypedArray())
         }
@@ -84,7 +88,9 @@ class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, va
         task.input = input.map {
             extension.project.file(it)
         }
-        task.dependsOn(":kotlin-native:dependencies:update")
+        val nativeDependenciesExtension = extension.project.extensions.getByType<NativeDependenciesExtension>()
+        task.dependsOn(nativeDependenciesExtension.hostPlatformDependency)
+        task.dependsOn(nativeDependenciesExtension.llvmDependency)
         if (configureDepencies)
             task.input.forEach { task.dependsOn(it.name) }
         val file = extension.project.file(output)
@@ -117,7 +123,7 @@ open class SourceSet(
         return SourceSet(
             sourceSets,
             name,
-            sourceSets.project.file("${sourceSets.project.buildDir}/$name/${suffixes.first}_${suffixes.second}/"),
+            sourceSets.project.file(sourceSets.project.layout.buildDirectory.dir("$name/${suffixes.first}_${suffixes.second}/")),
             this,
             suffixes
         )
@@ -183,6 +189,11 @@ class ToolConfigurationPatterns(
 
 
 open class NativeToolsExtension(val project: Project) {
+    private val nativeDependenciesExtension = project.extensions.getByType<NativeDependenciesExtension>()
+
+    val llvmDir by nativeDependenciesExtension::llvmPath
+    val hostPlatform by nativeDependenciesExtension::hostPlatform
+
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
     val cleanupFiles = mutableListOf<String>()
@@ -199,9 +210,7 @@ open class NativeToolsExtension(val project: Project) {
 
     fun target(name: String, vararg objSet: SourceSet, configuration: ToolPatternConfiguration) {
         project.tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME, Delete::class.java).configure {
-            doLast {
-                delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
-            }
+            delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
         }
 
         sourceSets.project.tasks.create(name, ToolExecutionTask::class.java) {
@@ -209,7 +218,7 @@ open class NativeToolsExtension(val project: Project) {
                 dependsOn(it.implicitTasks())
             }
             val deps = objSet.flatMap { it.collection.files }.map { it.path }
-            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.buildDir.path}/$name", *deps.toTypedArray())
+            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.layout.buildDirectory.get().asFile.path}/$name", *deps.toTypedArray())
             toolConfiguration.configuration()
             toolConfiguration.configure(this, false )
         }

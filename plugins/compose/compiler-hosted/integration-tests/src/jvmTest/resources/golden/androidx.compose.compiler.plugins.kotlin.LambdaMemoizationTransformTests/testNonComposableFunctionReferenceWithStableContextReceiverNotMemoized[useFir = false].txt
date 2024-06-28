@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+class StableReceiver
+class Stable {
+    context(StableReceiver)
+    fun qux() {}
+}
+
+@Composable
+fun Something() {
+    val x = remember { Stable() }
+    val shouldNotMemoize = x::qux
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class StableReceiver {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 1)
+class Stable {
+  fun qux(%context_receiver_0: StableReceiver) { }
+  static val %stable: Int = 0
+}
+@Composable
+fun Something(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val x = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        Stable()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val shouldNotMemoize = x::qux
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Something(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

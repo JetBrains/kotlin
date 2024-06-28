@@ -1,0 +1,12 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedImportImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+import a.b.c
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] firstImportNamePartScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-firstImportNamePartScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|

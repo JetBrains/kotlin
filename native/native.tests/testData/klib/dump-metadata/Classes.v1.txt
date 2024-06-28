@@ -1,0 +1,238 @@
+library {
+  // module name: <Classes.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: A.B.C
+    // class name: A.B.D
+    // class name: A.E
+    // class name: F
+    // class name: FinalImpl
+    // class name: Interface
+    // class name: OpenImpl
+
+    // signature: /A|null[0]
+    public final class A : kotlin/Any {
+
+      // signature: /A.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /A.aFun|-596272525427331003[0]
+      public final fun aFun(): kotlin/Unit
+
+      // signature: /A.aVal|-4026160909590410018[0]
+      public final val aVal: kotlin/Int /* = 0 */
+        // signature: /A.aVal.<get-aVal>|1133261762939420636[0]
+        public final get
+
+      // signature: /A.aVar|3814694652979924453[0]
+      public final var aVar: kotlin/String
+        // signature: /A.aVar.<get-aVar>|643049459261948719[0]
+        public final get
+        // signature: /A.aVar.<set-aVar>|-3684581426018096880[0]
+        public final set
+
+      // nested class: B
+
+      // nested class: E
+    }
+
+    // signature: /A.B|null[0]
+    public final inner class A.B : kotlin/Any {
+
+      // signature: /A.B.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /A.B.bFun|4199274722730592230[0]
+      public final fun bFun(): kotlin/Unit
+
+      // signature: /A.B.bVal|47661200932476778[0]
+      public final val bVal: kotlin/Int /* = 0 */
+        // signature: /A.B.bVal.<get-bVal>|4280762573327915998[0]
+        public final get
+
+      // signature: /A.B.bVar|1733087153451115465[0]
+      public final var bVar: kotlin/String
+        // signature: /A.B.bVar.<get-bVar>|-3999248274667876256[0]
+        public final get
+        // signature: /A.B.bVar.<set-bVar>|-4825376880140249283[0]
+        public final set
+
+      // nested class: C
+
+      // nested class: D
+    }
+
+    // signature: /A.B.C|null[0]
+    public final inner class A.B.C : kotlin/Any {
+
+      // signature: /A.B.C.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /A.B.C.cFun|5963622644484500428[0]
+      public final fun cFun(): kotlin/Unit
+
+      // signature: /A.B.C.cVal|5776604707001436517[0]
+      public final val cVal: kotlin/Int /* = 0 */
+        // signature: /A.B.C.cVal.<get-cVal>|3075094094508885184[0]
+        public final get
+
+      // signature: /A.B.C.cVar|-6552073779725328843[0]
+      public final var cVar: kotlin/String
+        // signature: /A.B.C.cVar.<get-cVar>|1091296143631960810[0]
+        public final get
+        // signature: /A.B.C.cVar.<set-cVar>|6166431973776537982[0]
+        public final set
+    }
+
+    // signature: /A.B.D|null[0]
+    private final inner class A.B.D : kotlin/Any {
+
+      // signature: /A.B.D.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /A.B.D.dFun|-875776255063369523[0]
+      public final fun dFun(): kotlin/Unit
+
+      // signature: /A.B.D.dVal|-4657921206489813306[0]
+      public final val dVal: kotlin/Int /* = 0 */
+        // signature: /A.B.D.dVal.<get-dVal>|8462599572645632105[0]
+        public final get
+
+      // signature: /A.B.D.dVar|-4302662149706586937[0]
+      public final var dVar: kotlin/String
+        // signature: /A.B.D.dVar.<get-dVar>|5843434698909708981[0]
+        public final get
+        // signature: /A.B.D.dVar.<set-dVar>|-8291764058292932666[0]
+        public final set
+    }
+
+    // signature: /A.E|null[0]
+    public final class A.E : kotlin/Any {
+
+      // signature: /A.E.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /A.E.eFun|3495051381223408264[0]
+      public final fun eFun(): kotlin/Unit
+
+      // signature: /A.E.eVal|3045358633348092364[0]
+      public final val eVal: kotlin/Int /* = 0 */
+        // signature: /A.E.eVal.<get-eVal>|5614868761266169748[0]
+        public final get
+
+      // signature: /A.E.eVar|3111249734155596017[0]
+      public final var eVar: kotlin/String
+        // signature: /A.E.eVar.<get-eVar>|-6537729739637652536[0]
+        public final get
+        // signature: /A.E.eVar.<set-eVar>|-1170683713879761253[0]
+        public final set
+    }
+
+    // signature: /F|null[0]
+    public final data class F : kotlin/Any {
+
+      // signature: /F.<init>|-6994814679185246063[0]
+      public constructor(fVal: kotlin/Int, fVar: kotlin/String)
+
+      // signature: /F.component1|162597135895221648[0]
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      // signature: /F.component2|3796717572321500973[0]
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      // signature: /F.copy|5893098757611139585[0]
+      public final /* synthesized */ fun copy(fVal: kotlin/Int /* = ... */, fVar: kotlin/String /* = ... */): F
+
+      // signature: /F.equals|4638265728071529943[0]
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      // signature: /F.fFun|2647324645836040292[0]
+      public final fun fFun(): kotlin/Unit
+
+      // signature: /F.hashCode|3409210261493131192[0]
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      // signature: /F.toString|-1522858123163872138[0]
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      // signature: /F.fVal|6893318909478774212[0]
+      public final val fVal: kotlin/Int
+        // signature: /F.fVal.<get-fVal>|4437215135741003892[0]
+        public final get
+
+      // signature: /F.fVar|-2983039959624530436[0]
+      public final var fVar: kotlin/String
+        // signature: /F.fVar.<get-fVar>|3603103252422838880[0]
+        public final get
+        // signature: /F.fVar.<set-fVar>|2951263171025328798[0]
+        public final set
+    }
+
+    // signature: /FinalImpl|null[0]
+    public final class FinalImpl : OpenImpl {
+
+      // signature: /FinalImpl.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /FinalImpl.iFun|-7944844664160120593[0]
+      public open fun iFun(): kotlin/Unit
+
+      // signature: /FinalImpl.iVal|-7454916029695635493[0]
+      public open val iVal: kotlin/Int /* = 0 */
+        // signature: /FinalImpl.iVal.<get-iVal>|3700448028516726757[0]
+        public open get
+
+      // signature: /FinalImpl.iVar|5660235026806079480[0]
+      public open var iVar: kotlin/String
+        // signature: /FinalImpl.iVar.<get-iVar>|-2407059627731632582[0]
+        public open get
+        // signature: /FinalImpl.iVar.<set-iVar>|1731789752263997975[0]
+        public open set
+    }
+
+    // signature: /Interface|null[0]
+    public abstract interface Interface : kotlin/Any {
+
+      // signature: /Interface.iFun|-7944844664160120593[0]
+      public abstract fun iFun(): kotlin/Unit
+
+      // signature: /Interface.iVal|-7454916029695635493[0]
+      public abstract val iVal: kotlin/Int
+        // signature: /Interface.iVal.<get-iVal>|3700448028516726757[0]
+        public abstract get
+
+      // signature: /Interface.iVar|5660235026806079480[0]
+      public abstract var iVar: kotlin/String
+        // signature: /Interface.iVar.<get-iVar>|-2407059627731632582[0]
+        public abstract get
+        // signature: /Interface.iVar.<set-iVar>|1731789752263997975[0]
+        public abstract set
+    }
+
+    // signature: /OpenImpl|null[0]
+    public open class OpenImpl : Interface {
+
+      // signature: /OpenImpl.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: /OpenImpl.iFun|-7944844664160120593[0]
+      public open fun iFun(): kotlin/Unit
+
+      // signature: /OpenImpl.iVal|-7454916029695635493[0]
+      public open val iVal: kotlin/Int /* = 0 */
+        // signature: /OpenImpl.iVal.<get-iVal>|3700448028516726757[0]
+        public open get
+
+      // signature: /OpenImpl.iVar|5660235026806079480[0]
+      public open var iVar: kotlin/String
+        // signature: /OpenImpl.iVar.<get-iVar>|-2407059627731632582[0]
+        public open get
+        // signature: /OpenImpl.iVar.<set-iVar>|1731789752263997975[0]
+        public open set
+    }
+  }
+}

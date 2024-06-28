@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -RestrictionOfValReassignmentViaBackingField
+// LANGUAGE: -RestrictionOfValReassignmentViaBackingField
 
 package a
 

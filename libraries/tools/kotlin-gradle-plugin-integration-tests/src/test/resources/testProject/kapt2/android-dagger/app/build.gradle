@@ -3,7 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    namespace "com.example.dagger.kotlin"
     compileSdkVersion 23
+
+    kotlin {
+        jvmToolchain(8)
+    }
 
     defaultConfig {
         applicationId "com.example.dagger.kotlin"
@@ -11,11 +16,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-    }
-
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
     }
 
     buildTypes {

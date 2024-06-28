@@ -29,7 +29,7 @@ class ExceptionTest {
     @Test fun noWhenBranchMatchedException() = @Suppress("DEPRECATION_ERROR") testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
     @Test fun uninitializedPropertyAccessException() = @Suppress("DEPRECATION_ERROR") testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
 
-    @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError)
+    @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError, ::AssertionError)
 
 
     private fun <T : Throwable> testCreateException(

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -150,19 +149,19 @@ class ComposeLikeDefaultArgumentRewriter(
         declaration.valueParameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
-                    val result = IrValueParameterImpl(
-                        param.startOffset,
-                        param.endOffset,
-                        param.origin,
-                        IrValueParameterSymbolImpl(),
-                        param.name,
-                        index = param.index,
+                    val result = context.irFactory.createValueParameter(
+                        startOffset = param.startOffset,
+                        endOffset = param.endOffset,
+                        origin = param.origin,
+                        name = param.name,
                         type = defaultParameterType(param),
+                        isAssignable = param.defaultValue != null,
+                        symbol = IrValueParameterSymbolImpl(),
+                        index = param.index,
                         varargElementType = param.varargElementType,
                         isCrossinline = param.isCrossinline,
                         isNoinline = param.isNoinline,
                         isHidden = false,
-                        isAssignable = param.defaultValue != null
                     ).also {
                         it.defaultValue = param.defaultValue
                         it.parent = declaration
@@ -194,7 +193,7 @@ class ComposeLikeDefaultArgumentRewriter(
             }
         }
 
-        declaration.body = IrBlockBodyImpl(
+        declaration.body = context.irFactory.createBlockBody(
             body.startOffset,
             body.endOffset,
             listOf(

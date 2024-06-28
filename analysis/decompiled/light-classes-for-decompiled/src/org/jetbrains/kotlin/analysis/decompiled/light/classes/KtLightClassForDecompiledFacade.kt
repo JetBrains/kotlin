@@ -25,4 +25,6 @@ internal class KtLightClassForDecompiledFacade(
     override fun getName(): String = super<KtLightClassForFacade>.getName()
     override val facadeClassFqName: FqName get() = file.javaFileFacadeFqName
     override val originKind: LightClassOriginKind get() = LightClassOriginKind.BINARY
+
+    override val multiFileClass: Boolean = false
 }

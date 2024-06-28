@@ -63,6 +63,20 @@ internal fun nullableDoubleIeee754Equals(lhs: Double?, rhs: Double?): Boolean {
     return wasm_f64_eq(lhs, rhs)
 }
 
+private var TRUE: Boolean? = null
+private var FALSE: Boolean? = null
+
+internal fun getBoxedBoolean(x: Boolean): Boolean? =
+    if (x) {
+        TRUE ?: boxBoolean(true).also { TRUE = it }
+    } else {
+        FALSE ?: boxBoolean(false).also { FALSE = it }
+    }
+
+@ExcludedFromCodegen
+internal fun boxBoolean(x: Boolean): Boolean? =
+    implementedAsIntrinsic
+
 @ExcludedFromCodegen
 internal fun <T, R> boxIntrinsic(x: T): R =
     implementedAsIntrinsic
@@ -118,5 +132,6 @@ internal fun stringGetPoolSize(): Int =
 
 // This initializer is a special case in FieldInitializersLowering
 @Suppress("DEPRECATION")
+@OptIn(ExperimentalStdlibApi::class)
 @EagerInitialization
-internal val stringPool: Array<String?> = arrayOfNulls(stringGetPoolSize())
+internal val stringPool: Array<String?> = Array(stringGetPoolSize())

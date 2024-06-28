@@ -22,7 +22,7 @@ class FirScriptDeclarationsScope(
 
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
-        loop@ for (statement in script.statements) {
+        loop@ for (statement in script.declarations) {
             if (statement is FirCallableDeclaration) {
                 val name = when (statement) {
                     is FirVariable -> if (statement.isSynthetic) continue@loop else statement.name
@@ -38,7 +38,7 @@ class FirScriptDeclarationsScope(
 
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
-        for (declaration in script.statements) {
+        for (declaration in script.declarations) {
             if (declaration is FirRegularClass) {
                 result[declaration.name] = declaration.symbol
             }
@@ -77,7 +77,7 @@ class FirScriptDeclarationsScope(
     ) {
         val matchedClass = classIndex[name] ?: return
         val substitution = matchedClass.typeParameterSymbols.associateWith { it.toConeType() }
-        processor(matchedClass, ConeSubstitutorByMap(substitution, useSiteSession))
+        processor(matchedClass, ConeSubstitutorByMap.create(substitution, useSiteSession))
     }
 
     override fun getClassifierNames(): Set<Name> = classIndex.keys

@@ -1,10 +1,10 @@
 public abstract interface LoadIterableWithNullability<T : R|kotlin/Any!|> : R|kotlin/Any| {
-    @R|org/jetbrains/annotations/NotNull|() @R|kotlin/annotations/jvm/Mutable|() public abstract fun getIterable(): R|@EnhancedNullability kotlin/collections/MutableIterable<ft<T & Any, T?>>|
+    @R|org/jetbrains/annotations/NotNull|() @R|kotlin/annotations/jvm/Mutable|() public abstract fun getIterable(): R|@EnhancedNullability kotlin/collections/MutableIterable<T!>|
 
-    public abstract fun setIterable(@R|kotlin/annotations/jvm/Mutable|() @R|org/jetbrains/annotations/NotNull|() Iterable: R|@EnhancedNullability kotlin/collections/MutableIterable<ft<T & Any, T?>>|): R|kotlin/Unit|
+    public abstract fun setIterable(@R|kotlin/annotations/jvm/Mutable|() @R|org/jetbrains/annotations/NotNull|() Iterable: R|@EnhancedNullability kotlin/collections/MutableIterable<T!>|): R|kotlin/Unit|
 
-    @R|org/jetbrains/annotations/NotNull|() @R|kotlin/annotations/jvm/ReadOnly|() public abstract fun getReadOnlyIterable(): R|@EnhancedNullability kotlin/collections/Iterable<ft<T & Any, T?>>|
+    @R|org/jetbrains/annotations/NotNull|() @R|kotlin/annotations/jvm/ReadOnly|() public abstract fun getReadOnlyIterable(): R|@EnhancedNullability kotlin/collections/Iterable<T!>|
 
-    public abstract fun setReadOnlyIterable(@R|kotlin/annotations/jvm/ReadOnly|() @R|org/jetbrains/annotations/NotNull|() Iterable: R|@EnhancedNullability kotlin/collections/Iterable<ft<T & Any, T?>>|): R|kotlin/Unit|
+    public abstract fun setReadOnlyIterable(@R|kotlin/annotations/jvm/ReadOnly|() @R|org/jetbrains/annotations/NotNull|() Iterable: R|@EnhancedNullability kotlin/collections/Iterable<T!>|): R|kotlin/Unit|
 
 }

@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !RENDER_DIAGNOSTICS_MESSAGES
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A
@@ -13,5 +13,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!ARGUMENT_TYPE_MISMATCH!>y<!>
+    a + <!ARGUMENT_TYPE_MISMATCH("Out<@A() CapturedType(out kotlin.CharSequence)>; Out<kotlin.CharSequence>")!>y<!>
 }

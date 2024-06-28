@@ -1,10 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A(
         n: Nested = foo(),
         n2: Nested = Nested(),
         inn: Inner = null!!,
-        inn2: Inner = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
+        inn2: Inner = <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>(),
         i: Interface = null!!,
         c: Int = CONST,
         cc: Int = Companion.CONST,
@@ -19,26 +19,26 @@ class A(
             n: Nested = foo(),
             n2: Nested = Nested(),
             inn: Inner = null!!,
-            inn2: Inner = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
+            inn2: Inner = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
             i: Interface = null!!,
             c: Int = CONST,
             cc: Int = Companion.CONST,
             cn: Int = Nested.CONST,
             ci: Int = Interface.CONST,
-            t1: Int = <!UNRESOLVED_REFERENCE!>a<!>,
-            t2: Int = <!UNRESOLVED_REFERENCE!>b<!>()
+            t1: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+            t2: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
     ) : this(
         foo(),
         Nested(),
         inn,
-        <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>Inner<!>(),
         i,
         CONST,
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!UNRESOLVED_REFERENCE!>a<!>,
-        <!UNRESOLVED_REFERENCE!>b<!>()
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>a<!>,
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>b<!>()
     )
 
     class Nested {

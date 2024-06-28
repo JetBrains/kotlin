@@ -7,22 +7,8 @@ package org.jetbrains.kotlin.cpp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.AttributeDisambiguationRule
-import org.gradle.api.attributes.MultipleCandidatesDetails
 import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
-import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
-
-private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetWithSanitizer> {
-    override fun execute(details: MultipleCandidatesDetails<TargetWithSanitizer>) = details.run {
-        if (consumerValue == null) {
-            // If the consumer didn't want a specific target, provide host target if it's available.
-            val default = TargetWithSanitizer.host
-            if (candidateValues.contains(default)) {
-                closestMatch(default)
-            }
-        }
-    }
-}
+import org.jetbrains.kotlin.konan.target.registerTargetWithSanitizerAttribute
 
 /**
  * Plugin for projects that depend upon C++-built projects.
@@ -36,9 +22,7 @@ private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetWithS
 class CppConsumerPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.dependencies.attributesSchema {
-            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE) {
-                disambiguationRules.add(TargetDisambiguationRule::class.java)
-            }
+            registerTargetWithSanitizerAttribute()
         }
     }
 

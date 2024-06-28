@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun main() {
     val a : Int? = null
@@ -33,6 +33,6 @@ fun main() {
         }
     }
 
-    val f : String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
+    val f : String = <!INITIALIZER_TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
     checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>)
 }

@@ -1,0 +1,30 @@
+@0:0..24:0 FILE fqName:test fileName:/classFuns.kt
+  @3:0..23:1 CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @3:0..23:1 CONSTRUCTOR visibility:public <> () returnType:test.Test [primary]
+      @3:0..23:1 BLOCK_BODY
+        @3:0..23:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @3:0..23:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    @5:4..18 FUN name:test0 visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
+      @5:4..18 VALUE_PARAMETER name:<this> type:test.Test
+      @5:16..18 BLOCK_BODY
+    @11:4..18 FUN name:test1 visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
+      @11:4..18 VALUE_PARAMETER name:<this> type:test.Test
+      @11:16..18 BLOCK_BODY
+    @14:4..17:18 FUN name:test2 visibility:public modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
+      annotations:
+        @14:4..16:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
+          @15:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
+            @15:8..25 CONST String type=kotlin.String value="UNUSED_VARIABLE"
+      @14:4..17:18 VALUE_PARAMETER name:<this> type:test.Test
+      @17:16..18 BLOCK_BODY
+    @20:4..21:18 FUN name:test3 visibility:private modality:FINAL <> ($this:test.Test) returnType:kotlin.Unit
+      @20:4..21:18 VALUE_PARAMETER name:<this> type:test.Test
+      @21:16..18 BLOCK_BODY
+    @3:0..23:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @3:0..23:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @3:0..23:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @3:0..23:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @3:0..23:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @3:0..23:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @3:0..23:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @3:0..23:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test.Test

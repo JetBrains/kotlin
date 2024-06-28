@@ -1,5 +1,0 @@
-$TESTDATA_DIR$/useMixedNamedArgumentsFlag.kt
--Xuse-mixed-named-arguments
--Xnew-inference
--d
-$TEMP_DIR$

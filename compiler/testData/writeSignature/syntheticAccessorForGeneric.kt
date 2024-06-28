@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 class MyList<T> {
 
     private fun noSignature(): T? = null

@@ -1,0 +1,34 @@
+// CHECK:
+//   Mangled name: TestAnn
+//   Public signature: /TestAnn|null[0]
+open annotation class TestAnn : Annotation {
+  // CHECK:
+  //   Mangled name: TestAnn{}x
+  //   Public signature: /TestAnn.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: TestAnn#<get-x>(){}kotlin.Int
+    //   Public signature: /TestAnn.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: TestAnn#<get-x>(){}
+    //   Public signature: /TestAnn.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: TestAnn#<init>(kotlin.Int){}
+  //   Public signature: /TestAnn.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #testSimpleFunction(){}
+//   Public signature: /testSimpleFunction|-5790063669455148045[0]
+//   Public signature debug description: testSimpleFunction(){}
+@TestAnn(x = 42)
+fun testSimpleFunction(): Unit
+

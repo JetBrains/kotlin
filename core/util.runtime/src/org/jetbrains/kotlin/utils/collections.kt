@@ -22,6 +22,9 @@ fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return associateBy({ it }, value)
 }
 
+infix fun <A, B> Collection<A>.zipIfSizesAreEqual(other: Collection<B>): List<Pair<A, B>>? =
+    if (size == other.size) zip(other) else null
+
 fun <K, V : Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
@@ -84,6 +87,21 @@ fun <T> ArrayList<T>.compact(): List<T> =
         0 -> emptyList()
         1 -> listOf(first())
         else -> apply { trimToSize() }
+    }
+
+
+/**
+ * The same as [org.jetbrains.kotlin.utils.compact] extension function, but it could be used with the
+ * immutable list type (without [java.util.ArrayList.trimToSize] for the collections with more than 1 element)
+ * @see org.jetbrains.kotlin.utils.compact
+ */
+fun <T> List<T>.compactIfPossible(): List<T> =
+    when (size) {
+        0 -> emptyList()
+        1 -> listOf(first())
+        else -> apply {
+            if (this is ArrayList<*>) trimToSize()
+        }
     }
 
 fun <T> List<T>.indexOfFirst(startFrom: Int, predicate: (T) -> Boolean): Int {

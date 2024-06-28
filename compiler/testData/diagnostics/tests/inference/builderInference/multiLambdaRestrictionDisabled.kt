@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // WITH_STDLIB
 // LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
 // SKIP_TXT
@@ -9,7 +8,7 @@ fun <T> List<T>.myGenericExt() {}
 fun <R> a(first: R, second: (List<R>) -> Unit) {}
 
 fun test1() {
-    a(
+    <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>a<!>(
         buildList { add("") },
         second = {
             it.myGenericExt()

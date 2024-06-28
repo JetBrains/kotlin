@@ -1,0 +1,42 @@
+FILE: callShapeBasedInjector.kt
+    public abstract interface DataFrame<out T> : R|kotlin/Any| {
+    }
+    public final annotation class Refine : R|kotlin/Annotation| {
+        public constructor(): R|Refine| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|Refine|() public final fun <T, R> R|DataFrame<T>|.add(columnName: R|kotlin/String|, expression: R|() -> R|): R|DataFrame<kotlin/Any?>| {
+        ^add R|kotlin/TODO|()
+    }
+    public final fun test_1(df: R|DataFrame<*>|): R|kotlin/Unit| {
+        lval df1: R|DataFrame<<local>/DataFrameType>| = R|<local>/df|.R|kotlin/let|<R|DataFrame<*>|, R|DataFrame<<local>/DataFrameType>|>(<L> = fun <anonymous>(it: R|DataFrame<*>|): R|DataFrame<<local>/DataFrameType>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local abstract class Schema1 : R|kotlin/Any| {
+                local final val column: R|kotlin/Int|
+                    local get(): R|kotlin/Int|
+
+                local constructor(): R|<local>/Schema1|
+
+            }
+
+            local abstract class Scope1 : R|kotlin/Any| {
+                local final val R|DataFrame<<local>/Schema1>|.column: R|kotlin/Int|
+                    local get(): R|kotlin/Int|
+
+                local constructor(): R|<local>/Scope1|
+
+            }
+
+            local abstract class DataFrameType : R|<local>/Schema1| {
+                local final val scope1: R|<local>/Scope1|
+                    local get(): R|<local>/Scope1|
+
+                local constructor(): R|<local>/DataFrameType|
+
+            }
+
+        }
+        )
+        lval col: R|kotlin/Int| = (this@R|/test_1|, R|<local>/df1|).R|<local>/Scope1.column|
+    }

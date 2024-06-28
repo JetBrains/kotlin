@@ -1,5 +1,6 @@
 public final class C /* C*/ implements Base {
-  public  C();//  .ctor()
-
+  @java.lang.Override()
   public void foo();//  foo()
+
+  public  C();//  .ctor()
 }

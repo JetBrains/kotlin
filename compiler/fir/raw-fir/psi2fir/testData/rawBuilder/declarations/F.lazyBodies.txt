@@ -1,11 +1,11 @@
 FILE: F.kt
-    public? open class A : R|kotlin/Any| {
+    public open class A : R|kotlin/Any| {
         public? constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? class B : A {
+    public final? class B : A {
         public? constructor(): R|B| {
             LAZY_super<<implicit>>
         }

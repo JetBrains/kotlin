@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,15 +9,18 @@ import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
-import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirLightTreeDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.fir.AbstractFirPsiDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.defaultConstructor.ir.AbstractIrDefaultArgumentsReflectionTest
+import org.jetbrains.kotlin.codegen.fir.*
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
-import org.jetbrains.kotlin.fir.AbstractLazyBodyIsNotTouchedTilContractsPhaseTest
-import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
+import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
@@ -25,19 +28,16 @@ import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.lightTree.AbstractLightTree2FirConverterTestCase
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
-import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
-import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
-import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
-import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
+import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirLightTreeCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.fir.AbstractFirPsiCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.klib.AbstractKlibJsTextTestCase
-import org.jetbrains.kotlin.klib.AbstractKlibTextTestCase
+import org.jetbrains.kotlin.klib.AbstractKlibIrTextTestCase
+import org.jetbrains.kotlin.klib.AbstractKlibJsIrTextTestCase
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
 import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
@@ -48,15 +48,14 @@ import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 
-fun generateJUnit3CompilerTests(args: Array<String>) {
-    generateTestGroupSuite(args) {
-        testGroup("compiler/tests-gen", "compiler/testData") {
-            testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {
-                model("diagnostics/testsWithJsStdLibAndBackendCompilation")
-            }
+fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
+    val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
+    generateTestGroupSuite(args, mainClassName) {
+        testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractMultiPlatformIntegrationTest> {
                 model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
             }
@@ -84,14 +83,15 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 // There isn't much to be gained from running light analysis tests on them.
                 model(
                     "codegen/box",
-                    targetBackend = TargetBackend.JVM,
+                    targetBackend = TargetBackend.JVM_IR,
                     skipIgnored = true,
                     excludeDirs = listOf(
                         "ranges/stepped",
                         "compileKotlinAgainstKotlin",
                         "testsWithJava9",
                         "testsWithJava15",
-                        "testsWithJava17"
+                        "testsWithJava17",
+                        "multiplatform/k2",
                     )
                 )
             }
@@ -100,36 +100,20 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/kapt", targetBackend = TargetBackend.JVM)
             }
 
+            testClass<AbstractIrKapt3BuilderModeBytecodeShapeTest> {
+                model("codegen/kapt", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractScriptCodegenTest> {
-                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM)
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM, excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$")
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractIrCustomScriptCodegenTest> {
-                model("codegen/customScript", pattern = "^(.*)$")
-            }
-
-            testClass<AbstractIrJsTextTestCase> {
-                model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
-            }
-
-            testClass<AbstractKlibJsTextTestCase> {
-                model("ir/irJsText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractKlibTextTestCase> {
-                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
-            }
-
-            testClass<AbstractIrCfgTestCase> {
-                model("ir/irCfg")
-            }
-
-            testClass<AbstractIrSourceRangesTestCase> {
-                model("ir/sourceRanges")
+                model("codegen/customScript", pattern = "^(.*)$", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
@@ -146,10 +130,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
 
             testClass<AbstractDefaultArgumentsReflectionTest> {
                 model("codegen/defaultArguments/reflection")
-            }
-
-            testClass<AbstractDumpDeclarationsTest> {
-                model("codegen/dumpDeclarations")
             }
 
             testClass<AbstractLoadJavaTest> {
@@ -224,6 +204,8 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 )
             }
 
+
+
             testClass<AbstractCompileKotlinAgainstJavaTest> {
                 model(
                     "compileKotlinAgainstJava",
@@ -251,6 +233,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/sourceFilesAndDirectories", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
@@ -325,6 +308,37 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractFirLightTreeCompileJavaAgainstKotlinTest> {
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithoutJavac",
+                    testMethod = "doTestWithoutJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
+            testClass<AbstractFirPsiCompileJavaAgainstKotlinTest> {
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithoutJavac",
+                    testMethod = "doTestWithoutJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
+
             testClass<AbstractIrCompileKotlinAgainstJavaTest> {
                 model(
                     "compileKotlinAgainstJava",
@@ -348,7 +362,43 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("writeFlags", targetBackend = TargetBackend.JVM_IR)
             }
 
+            testClass<AbstractIrDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractIrWriteSignatureTest> {
+                model("writeSignature", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiCheckLocalVariablesTableTest> {
+                model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiWriteFlagsTest> {
+                model("writeFlags", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirPsiWriteSignatureTest> {
+                model("writeSignature", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeWriteFlagsTest> {
+                model("writeFlags", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeDefaultArgumentsReflectionTest> {
+                model("codegen/defaultArguments/reflection", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeCheckLocalVariablesTableTest> {
+                model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractFirLightTreeWriteSignatureTest> {
                 model("writeSignature", targetBackend = TargetBackend.JVM_IR)
             }
 
@@ -389,17 +439,36 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractIrScriptCodegenTest> {
-                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR, excludedPattern = excludedCustomTestdataPattern)
+            }
+        }
+
+        testGroup(
+            testsRoot = "compiler/tests-gen",
+            testDataRoot = "compiler/testData",
+            testRunnerMethodName = "runTestWithCustomIgnoreDirective", // FIXME: This is a temporary hack to smooth the transition to the new test infrastructure
+            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_KLIB: \"")
+        ) {
+            testClass<AbstractKlibJsIrTextTestCase> {
+                model("ir/irText/js", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
+            }
+
+            testClass<AbstractKlibIrTextTestCase> {
+                model("ir/irText", pattern = "^(.+)\\.kt\$", targetBackend = TargetBackend.JS_IR)
             }
         }
 
         testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest")
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
-            testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
-                model("rawBuilder", testMethod = "doRawFirTest")
+            testClass<AbstractRawFirBuilderLazyBodiesByAstTest> {
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
+
+            testClass<AbstractRawFirBuilderLazyBodiesByStubTest> {
+                model("rawBuilder", testMethod = "doRawFirTest", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
 
             testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
@@ -410,18 +479,6 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
         testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
                 model("rawBuilder")
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
-            testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
-                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
-            }
-        }
-
-        testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/testData") {
-            testClass<AbstractFirLoadCompiledKotlin> {
-                model("loadJava/compiledKotlin", extension = "kt")
             }
         }
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
+// LANGUAGE: +ApproximateAnonymousReturnTypesInPrivateInlineFunctions
 
 private inline fun foo1(crossinline f: () -> Int) = object {
     fun bar(): Int = f()

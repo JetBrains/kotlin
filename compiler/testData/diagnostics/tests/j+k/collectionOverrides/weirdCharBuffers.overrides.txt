@@ -1,0 +1,32 @@
+CharBuffer:
+  [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBuffer [id: 0]
+  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| [initial: public final fun charAt(index: R|kotlin/Int|): R|kotlin/Char|] from Java enhancement scope for /CharBuffer [id: 0]
+    [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]
+
+CharBufferX:
+  [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferX [id: 0]
+    [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /X [id: 1]
+  [Enhancement]: /* hidden due to clash */ public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char| [initial: public final fun charAt(index: R|kotlin/Int|): R|kotlin/Char|] from Java enhancement scope for /CharBufferX [id: 0]
+    [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]
+
+NonCharSequenceBuffer:
+  [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /NonCharSequenceBuffer [id: 0]
+    [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /X [id: 1]
+  [Enhancement]: public final fun charAt(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /NonCharSequenceBuffer [id: 0]
+
+NonCharBuffer:
+  [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /NonCharBuffer [id: 0]
+    [Library]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Use site scope of kotlin/CharSequence [id: 1]
+
+CharBufferXAllInherited:
+  [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferXAllInherited [id: 0]
+
+CharBufferXYAllInherited:
+  [IntersectionOverride]: public abstract override operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferXYAllInherited [id: 0]
+    [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /X [id: 1]
+    [Enhancement]: protected/*protected and package*/ abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /Y [id: 2]
+
+CharBufferXYCharAt:
+  [IntersectionOverride]: public abstract override operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /CharBufferXYCharAt [id: 0]
+    [Enhancement]: public abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /X [id: 1]
+    [Enhancement]: protected/*protected and package*/ abstract operator fun get(index: R|kotlin/Int|): R|kotlin/Char| from Java enhancement scope for /Y [id: 2]

@@ -1,0 +1,36 @@
+// -- Module: <m1-common> --
+
+// -- Module: <m1-jvm> --
+/jvm.kt:48:14: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `class OnClass defined in root package in file common.kt` must be present with the same arguments on actual `class OnClass defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual class OnClass
+             ^^^^^^^
+/jvm.kt:51:16: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `fun onMember(): Unit defined in OnMember` must be present with the same arguments on actual `fun onMember(): Unit defined in OnMember`, otherwise they might behave incorrectly.
+    actual fun onMember() {}
+               ^^^^^^^^
+/jvm.kt:56:18: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `class ViaTypealias defined in root package in file common.kt` must be present with the same arguments on actual `class ViaTypealiasImpl defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual typealias ViaTypealias = ViaTypealiasImpl
+                 ^^^^^^^^^^^^
+/jvm.kt:61:18: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `fun foo(): Unit defined in MemberScopeViaTypealias` must be present with the same arguments on actual `fun foo(): Unit defined in MemberScopeViaTypealiasImpl`, otherwise they might behave incorrectly.
+actual typealias MemberScopeViaTypealias = MemberScopeViaTypealiasImpl
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+/jvm.kt:64:12: warning: annotation `@WithArg(s = "str")` has different arguments on actual declaration: `@WithArg(s = "other str")`.
+All annotations from expect `fun withDifferentArg(): Unit defined in root package in file common.kt` must be present with the same arguments on actual `fun withDifferentArg(): Unit defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual fun withDifferentArg() {}
+           ^^^^^^^^^^^^^^^^
+/jvm.kt:66:12: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `fun inValueParam(arg: String): Unit defined in root package in file common.kt` must be present with the same arguments on actual `fun inValueParam(arg: String): Unit defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual fun inValueParam(arg: String) {}
+           ^^^^^^^^^^^^
+/jvm.kt:68:16: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `fun <T> inTypeParam(): Unit defined in root package in file common.kt` must be present with the same arguments on actual `fun <T> inTypeParam(): Unit defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual fun <T> inTypeParam() {}
+               ^^^^^^^^^^^
+/jvm.kt:70:12: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `val onGetter: String defined in root package in file common.kt` must be present with the same arguments on actual `val onGetter: String defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual val onGetter: String = ""
+           ^^^^^^^^
+

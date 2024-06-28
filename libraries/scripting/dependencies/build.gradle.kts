@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -8,8 +10,8 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    testApi(commonDependency("junit"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(libs.junit4)
+    testImplementation(libs.kotlinx.coroutines.core)
 }
 
 sourceSets {
@@ -17,10 +19,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-Xallow-kotlin-package"
-    )
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 publish()

@@ -7,15 +7,22 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.SmartSet
 
 class TypeVariableDependencyInformationProvider(
     private val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>,
     private val postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
     private val topLevelType: KotlinTypeMarker?,
-    private val typeSystemContext: TypeSystemInferenceExtensionContext
+    private val typeSystemContext: VariableFixationFinder.Context
 ) {
+
+    private val outerTypeVariables: Set<TypeConstructorMarker>? =
+        typeSystemContext.outerTypeVariables
+
     /*
      * Not oriented edges
      * TypeVariable(A) has UPPER(Function1<TypeVariable(B), R>) => A and B are related deeply
@@ -41,7 +48,16 @@ class TypeVariableDependencyInformationProvider(
         computeRelatedToTopLevelType()
     }
 
-    fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) = relatedToTopLevelType.contains(variable)
+    fun isVariableRelatedToTopLevelType(variable: TypeConstructorMarker) =
+        relatedToTopLevelType.contains(variable)
+
+
+    fun isRelatedToOuterTypeVariable(variable: TypeConstructorMarker): Boolean {
+        val outerTypeVariables = outerTypeVariables ?: return false
+        val myDependent = getDeeplyDependentVariables(variable) ?: return false
+        return myDependent.any { it in outerTypeVariables }
+    }
+
     fun isVariableRelatedToAnyOutputType(variable: TypeConstructorMarker) = relatedToAllOutputTypes.contains(variable)
 
     fun getDeeplyDependentVariables(variable: TypeConstructorMarker) = deepTypeVariableDependencies[variable]

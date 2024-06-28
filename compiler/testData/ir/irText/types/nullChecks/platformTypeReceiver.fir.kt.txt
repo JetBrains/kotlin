@@ -1,5 +1,5 @@
 fun test1(): Boolean {
-  return #BOOL_NULL.equals(other = null)
+  return super<J>.#BOOL_NULL.equals(other = null)
 }
 
 fun test2(): Boolean {

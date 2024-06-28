@@ -1,0 +1,103 @@
+// CHECK:
+//   Mangled name: MyMap
+//   Public signature: /MyMap|null[0]
+class MyMap : AbstractMap<Int, Int> {
+  // CHECK:
+  //   Mangled name: MyMap{}entries
+  //   Public signature: /MyMap.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  override val entries: Set<Entry<Int, Int>>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-entries>(){}kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int,kotlin.Int>>
+    //   Public signature: /MyMap.entries.<get-entries>|-4597126143979775364[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.Set<kotlin.collections.Map.Entry<kotlin.Int,kotlin.Int>>
+    override get
+
+  // CHECK:
+  //   Mangled name: MyMap#<init>(){}
+  //   Public signature: /MyMap.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#containsKey(kotlin.Int){}kotlin.Boolean
+  //   Public signature: /MyMap.containsKey|4717472714078263338[0]
+  //   Public signature debug description: containsKey(kotlin.Int){}kotlin.Boolean
+  /* fake */ override fun containsKey(key: Int): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#containsValue(kotlin.Int){}kotlin.Boolean
+  //   Public signature: /MyMap.containsValue|-5922461699477978175[0]
+  //   Public signature debug description: containsValue(kotlin.Int){}kotlin.Boolean
+  /* fake */ override fun containsValue(value: Int): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyMap.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#get(kotlin.Int){}kotlin.Int?
+  //   Public signature: /MyMap.get|3354880903083512916[0]
+  //   Public signature debug description: get(kotlin.Int){}kotlin.Int?
+  /* fake */ override operator fun get(key: Int): Int?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#hashCode(){}kotlin.Int
+  //   Public signature: /MyMap.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#isEmpty(){}kotlin.Boolean
+  //   Public signature: /MyMap.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#toString(){}kotlin.String
+  //   Public signature: /MyMap.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  /* fake */ override fun toString(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#containsEntry(kotlin.collections.Map.Entry<*,*>?){}kotlin.Boolean
+  //   Public signature: /MyMap.containsEntry|1332030881581204061[0]
+  //   Public signature debug description: containsEntry(kotlin.collections.Map.Entry<*,*>?){}kotlin.Boolean
+  fun containsEntry(entry: Entry<*, *>?): Boolean
+
+  // CHECK:
+  //   Mangled name: MyMap{}keys
+  //   Public signature: /MyMap.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  /* fake */ override val keys: Set<Int>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-keys>(){}kotlin.collections.Set<kotlin.Int>
+    //   Public signature: /MyMap.keys.<get-keys>|7233616665140484941[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.Set<kotlin.Int>
+    /* fake */ override get(): Set<Int>
+
+  // CHECK:
+  //   Mangled name: MyMap{}size
+  //   Public signature: /MyMap.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-size>(){}kotlin.Int
+    //   Public signature: /MyMap.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: MyMap{}values
+  //   Public signature: /MyMap.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  /* fake */ override val values: Collection<Int>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-values>(){}kotlin.collections.Collection<kotlin.Int>
+    //   Public signature: /MyMap.values.<get-values>|-4796126854434898814[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.Collection<kotlin.Int>
+    /* fake */ override get(): Collection<Int>
+
+}

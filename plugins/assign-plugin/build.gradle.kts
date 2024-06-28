@@ -14,18 +14,19 @@ dependencies {
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
     testApi(project(":kotlin-assignment-compiler-plugin.cli"))
-    testCompileOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
     testApi(projectTests(":compiler:tests-common-new"))
 
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit.jupiter.api)
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(toolsJar())
 
     testApi(intellijCore())
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,40 +7,22 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.isValidTypeParameterFromOuterDeclaration
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjections
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
+object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-        val oldResolvePhase = declaration.resolvePhase
-        val oldList = declaration.superTypeRefs.toList()
-
-        try {
-            for (superTypeRef in declaration.superTypeRefs) {
-                checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
-            }
-        } catch (e: ConcurrentModificationException) {
-            val newResolvePhase = declaration.resolvePhase
-            val newList = declaration.superTypeRefs.toList()
-
-            throw IllegalStateException(
-                """
-                CME while traversing superTypeRefs of declaration=${declaration.render()}:
-                classId: ${declaration.classId},
-                oldPhase: $oldResolvePhase, oldList: ${oldList.joinToString { it.render() }},
-                newPhase: $newResolvePhase, newList: ${newList.joinToString { it.render() }}
-                """.trimIndent(), e
-            )
+        for (superTypeRef in declaration.superTypeRefs) {
+            checkOuterClassArgumentsRequired(superTypeRef, declaration, context, reporter)
         }
     }
 
@@ -54,7 +36,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
             return
         }
 
-        val type: ConeKotlinType = typeRef.type
+        val type: ConeKotlinType = typeRef.type.abbreviatedTypeOrSelf
         val delegatedTypeRef = typeRef.delegatedTypeRef
 
         if (delegatedTypeRef is FirUserTypeRef && type is ConeClassLikeType) {

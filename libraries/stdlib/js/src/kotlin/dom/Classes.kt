@@ -18,7 +18,8 @@ import kotlinx.dom.removeClass as newRemoveClass
     replaceWith = ReplaceWith("this.hasClass(cssClass)", "kotlinx.dom.hasClass")
 )
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
-inline fun Element.hasClass(cssClass: String): Boolean = this.newHasClass(cssClass)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Element.hasClass(cssClass: String): Boolean = this.newHasClass(cssClass)
 
 /**
  * Adds CSS class to element. Has no effect if all specified classes are already in class attribute of the element
@@ -31,7 +32,8 @@ inline fun Element.hasClass(cssClass: String): Boolean = this.newHasClass(cssCla
     replaceWith = ReplaceWith("this.addClass(cssClasses)", "kotlinx.dom.addClass")
 )
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
-inline fun Element.addClass(vararg cssClasses: String): Boolean = this.newAddClass(*cssClasses)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Element.addClass(vararg cssClasses: String): Boolean = this.newAddClass(*cssClasses)
 
 /**
  * Removes all [cssClasses] from element. Has no effect if all specified classes are missing in class attribute of the element
@@ -44,4 +46,5 @@ inline fun Element.addClass(vararg cssClasses: String): Boolean = this.newAddCla
     replaceWith = ReplaceWith("this.removeClass(cssClasses)", "kotlinx.dom.removeClass")
 )
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.6")
-inline fun Element.removeClass(vararg cssClasses: String): Boolean = this.newRemoveClass(*cssClasses)
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Element.removeClass(vararg cssClasses: String): Boolean = this.newRemoveClass(*cssClasses)

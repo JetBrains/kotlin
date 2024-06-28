@@ -254,6 +254,9 @@ public class TokenStream {
         LAST_TOKEN  = 147,
         NUMBER_INT  = 148,
 
+        GENERATOR  = 149,
+        YIELD  = 150,
+
         // This value is only used as a return value for getTokenHelper,
         // which is only called from getToken and exists to avoid an excessive
         // recursion problem if a number of lines in a row are comments.
@@ -390,6 +393,7 @@ public class TokenStream {
                 case FOR:             return "for";
                 case BREAK:           return "break";
                 case CONTINUE:        return "continue";
+                case YIELD:           return "yield";
                 case VAR:             return "var";
                 case WITH:            return "with";
                 case CATCH:           return "catch";
@@ -456,6 +460,7 @@ public class TokenStream {
         KEYWORDS.put("break", BREAK);
         KEYWORDS.put("case", CASE);
         KEYWORDS.put("continue", CONTINUE);
+        KEYWORDS.put("yield", YIELD);
         KEYWORDS.put("default", DEFAULT);
         KEYWORDS.put("delete", DELPROP);
         KEYWORDS.put("do", DO);

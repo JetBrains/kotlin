@@ -1,27 +1,35 @@
-object A {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
+val test1: Int
+  field = A.invoke(i = 42)
+  get
 
-  }
-
-}
+val test2: Int
+  field = En.X.invoke(i = 42)
+  get
 
 enum class En : Enum<En> {
+  X = En()
+
   private constructor() /* primary */ {
     super/*Enum*/<En>()
     /* <init>() */
 
   }
 
-  X = En()
+  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
-  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
-
   val entries: EnumEntries<En>
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -33,10 +41,3 @@ operator fun En.invoke(i: Int): Int {
   return i
 }
 
-val test1: Int
-  field = A.invoke(i = 42)
-  get
-
-val test2: Int
-  field = En.X.invoke(i = 42)
-  get

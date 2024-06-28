@@ -91,6 +91,7 @@ interface KotlinConstructorStub<T : KtConstructor<T>> :
     KotlinCallableStubBase<T> {
     fun hasBody(): Boolean
     fun isDelegatedCallToThis(): Boolean
+    fun isExplicitDelegationCall(): Boolean
 }
 
 interface KotlinImportAliasStub : StubElement<KtImportAlias> {

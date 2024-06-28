@@ -5,6 +5,6 @@
 
 package kotlin.jvm.internal
 
-interface FunctionBase<out R> : Function<R> {
-    val arity: Int
+public interface FunctionBase<out R> : Function<R> {
+    public val arity: Int
 }

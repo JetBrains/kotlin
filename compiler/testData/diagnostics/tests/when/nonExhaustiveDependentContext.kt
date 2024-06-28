@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 fun bar(a: String): String {
     return when {

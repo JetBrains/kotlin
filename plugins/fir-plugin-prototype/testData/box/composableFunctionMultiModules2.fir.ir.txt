@@ -1,0 +1,39 @@
+Module: lib
+FILE fqName:p3 fileName:/foo.kt
+  FUN name:setContent visibility:public modality:FINAL <> (content:@[MyComposable] kotlin.Function0<kotlin.Unit>) returnType:kotlin.Int
+    VALUE_PARAMETER name:content index:0 type:@[MyComposable] kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY
+      CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+        $this: GET_VAR 'content: @[MyComposable] kotlin.Function0<kotlin.Unit> declared in p3.setContent' type=@[MyComposable] kotlin.Function0<kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+      RETURN type=kotlin.Nothing from='public final fun setContent (content: @[MyComposable] kotlin.Function0<kotlin.Unit>): kotlin.Int declared in p3'
+        CONST Int type=kotlin.Int value=3
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:Greeting visibility:public modality:FINAL <> (name:kotlin.String) returnType:kotlin.Unit
+    annotations:
+      MyComposable
+    VALUE_PARAMETER name:name index:0 type:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun show (str: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        str: STRING_CONCATENATION type=kotlin.String
+          CONST String type=kotlin.String value="hi "
+          GET_VAR 'name: kotlin.String declared in <root>.Greeting' type=kotlin.String origin=null
+          CONST String type=kotlin.String value="!"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:show visibility:public modality:FINAL <> (str:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:str index:0 type:kotlin.String
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
+        CALL 'public final fun setContent (content: @[MyComposable] some.MyComposableFunction0<kotlin.Unit>): kotlin.Int declared in p3' type=kotlin.Int origin=null
+          content: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              annotations:
+                MyComposable
+              BLOCK_BODY
+                CALL 'public final fun Greeting (name: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                  name: CONST String type=kotlin.String value="test"

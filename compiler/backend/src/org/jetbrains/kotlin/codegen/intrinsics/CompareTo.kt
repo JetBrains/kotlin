@@ -19,23 +19,17 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class CompareTo(private val jvmTarget: JvmTarget) : IntrinsicMethod() {
+class CompareTo : IntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
             Type.INT_TYPE, Type.CHAR_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
             Type.LONG_TYPE -> v.lcmp()
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)
-            Type.BOOLEAN_TYPE -> {
-                check(jvmTarget >= JvmTarget.JVM_1_8) {
-                    "Cannot generate boolean comparison for JVM target 1.6"
-                }
-                v.invokestatic("java/lang/Boolean", "compare", "(ZZ)I", false)
-            }
+            Type.BOOLEAN_TYPE -> v.invokestatic("java/lang/Boolean", "compare", "(ZZ)I", false)
             else -> throw UnsupportedOperationException()
         }
     }

@@ -11,7 +11,7 @@ public interface B {
 @kotlin.Metadata
 final class E$lambda$1 {
     // source: 'lambdaInInitBlockNoPrimaryConstructor.kt'
-    enclosing method E.<init>(LB;)V
+    enclosing method E.<init>(LA;)V
     public final static field INSTANCE: E$lambda$1
     inner (anonymous) class E$lambda$1
     static method <clinit>(): void

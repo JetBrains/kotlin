@@ -16,8 +16,7 @@ dependencies {
     api(project(":js:js.parser"))
     compileOnly(project(":js:js.sourcemap"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

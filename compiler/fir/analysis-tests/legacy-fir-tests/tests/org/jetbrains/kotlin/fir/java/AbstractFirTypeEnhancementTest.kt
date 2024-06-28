@@ -60,8 +60,18 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         super.tearDown()
     }
 
-    private fun createJarWithForeignAnnotations(): File =
-        MockLibraryUtilExt.compileJavaFilesLibraryToJar(FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+    private fun createJarWithForeignAnnotations(): List<File> {
+        val jsr305Jar =
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(JSR_305_SOURCES_PATH, "jsr305")
+
+        return listOf(
+            MockLibraryUtilExt.compileJavaFilesLibraryToJar(
+                FOREIGN_ANNOTATIONS_SOURCES_PATH, "foreign-annotations",
+                extraClasspath = listOf(jsr305Jar.absolutePath),
+            ),
+            jsr305Jar,
+        )
+    }
 
     private fun createEnvironment(content: String): KotlinCoreEnvironment {
         val classpath = mutableListOf(getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests())
@@ -69,7 +79,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests())
         }
         if (InTextDirectivesUtils.isDirectiveDefined(content, "FOREIGN_ANNOTATIONS")) {
-            classpath.add(createJarWithForeignAnnotations())
+            classpath.addAll(createJarWithForeignAnnotations())
         }
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
@@ -171,11 +181,12 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
         val packageName = packageStatement?.packageName
         val fqName = parentFqName.child(Name.identifier(this.name!!))
-        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
+        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, isLocal = false)
     }
 
     companion object {
         private const val FOREIGN_ANNOTATIONS_SOURCES_PATH = "third-party/annotations"
+        private const val JSR_305_SOURCES_PATH = "third-party/jsr305"
     }
 }
 

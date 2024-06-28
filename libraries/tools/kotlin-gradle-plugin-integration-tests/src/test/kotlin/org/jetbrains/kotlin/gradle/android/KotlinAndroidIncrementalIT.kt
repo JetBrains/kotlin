@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -163,7 +164,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             )
 
             build("assembleDebug") {
-                assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path.kotlin_module")
+                assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path_debug.kotlin_module")
             }
 
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")
@@ -179,6 +180,15 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
     }
 }
 
-class KotlinAndroidIncrementalWithPreciseBackupIT : KotlinAndroidIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("Android incremental compilation with disabled precise compilation outputs backup")
+class KotlinAndroidIncrementalWithoutPreciseBackupIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
+}
+
+class KotlinAndroidIncrementalBuildToolsApiDaemonIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+}
+
+class KotlinAndroidIncrementalBuildToolsApiInProcessIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 }

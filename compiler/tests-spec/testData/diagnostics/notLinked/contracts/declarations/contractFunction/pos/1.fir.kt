@@ -1,4 +1,12 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 1
+ * DESCRIPTION: Use a contract function before the declaration it.
+ */
 
 import kotlin.contracts.*
 

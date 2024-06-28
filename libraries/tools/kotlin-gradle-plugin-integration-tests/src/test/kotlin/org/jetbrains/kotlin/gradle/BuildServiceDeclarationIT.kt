@@ -24,7 +24,11 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testJvmProject(gradleVersion: GradleVersion) {
-        project("kotlinJavaProject", gradleVersion) {
+        project(
+            "kotlinJavaProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+        ) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
@@ -72,10 +76,15 @@ class BuildServiceDeclarationIT : KGPBaseTest() {
     @GradleTest
     @OtherGradlePluginTests
     fun testKaptProject(gradleVersion: GradleVersion) {
-        project("kapt2/simple", gradleVersion) {
+        project(
+            "kapt2/simple",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+        ) {
             enableStableConfigurationCachePreview()
             build("build") {
                 assertOutputDoesNotContainBuildServiceDeclarationWarnings()
+                assertNoBuildWarnings(expectedK2KaptWarnings)
             }
         }
     }

@@ -1,0 +1,49 @@
+MODULE main
+	CLASS _2Kt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				2.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 2.kt
+				_2Kt
+				+ 2 1.kt
+				test/_1Kt
+				*L
+				1#1,30:1
+				11#2,4:31
+				11#2,4:35
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				_2Kt
+				*L
+				23#1:31,4
+				24#1:35,4
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				2.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 2.kt
+				_2Kt
+				+ 2 1.kt
+				test/_1Kt
+				*L
+				1#1,30:1
+				14#2:31
+				14#2:32
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				_2Kt
+				*L
+				23#1:31
+				24#1:32
+				*E
+				 } )

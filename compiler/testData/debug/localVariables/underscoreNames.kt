@@ -23,49 +23,45 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:12 box:
 // test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
 // test.kt:12 box:
 // test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$box$1
-// EXPECTATIONS JVM_IR
 // test.kt:13 invoke: w:int=1:int
 // test.kt:15 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char
-// EXPECTATIONS JVM
-// test.kt:15 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int
-// EXPECTATIONS JVM JVM_IR
 // test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
-// EXPECTATIONS JVM
-// test.kt:15 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char
-// test.kt:16 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
-// EXPECTATIONS JVM_IR
 // test.kt:15 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char
 // test.kt:16 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
-// EXPECTATIONS JVM JVM_IR
 // test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
-// EXPECTATIONS JVM
-// test.kt:16 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
-// test.kt:18 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
-// EXPECTATIONS JVM_IR
 // test.kt:16 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
 // test.kt:18 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
-// EXPECTATIONS JVM JVM_IR
 // test.kt:8 getArrayOfA:
-// EXPECTATIONS JVM
-// test.kt:18 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
-// test.kt:22 invoke: $dstr$x$_u24__u24$y:A=A, $noName_1:java.lang.String="":java.lang.String, w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
-// EXPECTATIONS JVM_IR
 // test.kt:18 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
 // test.kt:22 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
-// EXPECTATIONS JVM JVM_IR
 // test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$box$1
 // test.kt:12 box:
 // test.kt:24 box:
 
+// EXPECTATIONS FIR JVM_IR
+// test.kt:12 box:
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:12 box:
+// test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$<lambda>
+// test.kt:13 box$lambda$0: w:int=1:int
+// test.kt:15 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:15 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char
+// test.kt:16 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:16 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
+// test.kt:18 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
+// test.kt:22 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
+// test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$<lambda>
+// test.kt:12 box:
+// test.kt:24 box:
+
 // EXPECTATIONS JS_IR
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
-// test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
@@ -75,7 +71,6 @@ fun box() {
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
-// test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:

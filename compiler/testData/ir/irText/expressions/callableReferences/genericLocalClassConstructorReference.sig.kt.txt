@@ -1,0 +1,89 @@
+// CHECK:
+//   Mangled name: L
+//   Public signature: /L|null[0]
+open class L<LL : Any?> {
+  // CHECK:
+  //   Mangled name: L{}ll
+  //   Public signature: /L.ll|-6205844342928411776[0]
+  //   Public signature debug description: {}ll
+  val ll: LL
+    // CHECK JVM_IR:
+    //   Mangled name: L#<get-ll>(){}1:0
+    //   Public signature: /L.ll.<get-ll>|3292228176841932804[0]
+    //   Public signature debug description: <get-ll>(){}1:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: L#<get-ll>(){}
+    //   Public signature: /L.ll.<get-ll>|-3038615916069329440[0]
+    //   Public signature debug description: <get-ll>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: L#<init>(1:0){}
+  //   Public signature: /L.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(ll: LL) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Rec
+//   Public signature: /Rec|null[0]
+class Rec<T : Any?> {
+  // CHECK:
+  //   Mangled name: Rec{}rt
+  //   Public signature: /Rec.rt|-2445570895924930609[0]
+  //   Public signature debug description: {}rt
+  val rt: T
+    // CHECK JVM_IR:
+    //   Mangled name: Rec#<get-rt>(){}1:0
+    //   Public signature: /Rec.rt.<get-rt>|4833941673195700440[0]
+    //   Public signature debug description: <get-rt>(){}1:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Rec#<get-rt>(){}
+    //   Public signature: /Rec.rt.<get-rt>|2938093614484966158[0]
+    //   Public signature debug description: <get-rt>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Rec#<init>(1:0){}
+  //   Public signature: /Rec.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(rt: T) /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #fn@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+//   Public signature: /fn|458419256100465624[0]
+//   Public signature debug description: fn@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+// CHECK JS_IR NATIVE:
+//   Mangled name: #fn@Rec<0:0>(){0§<kotlin.Any?>}
+//   Public signature: /fn|-2196095281162048366[0]
+//   Public signature debug description: fn@Rec<0:0>(){0§<kotlin.Any?>}
+fun <FT : Any?> Rec<FT>.fn(): L<FT>
+
+// CHECK JVM_IR:
+//   Mangled name: #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}0:2
+//   Public signature: /foo2|-6186734139379933811[0]
+//   Public signature debug description: foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}0:2
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}
+//   Public signature: /foo2|6240807387010061447[0]
+//   Public signature debug description: foo2(0:0;0:1;kotlin.Function2<0:0,0:1,0:2>){0§<kotlin.Any?>;1§<kotlin.Any?>;2§<kotlin.Any?>}
+fun <T1 : Any?, T2 : Any?, R : Any?> foo2(t1: T1, t2: T2, bb: Function2<T1, T2, R>): R
+
+// CHECK:
+//   Mangled name: @Rec<0:0>{0§<kotlin.Any?>}p
+//   Public signature: /p|1337333823224750046[0]
+//   Public signature debug description: @Rec<0:0>{0§<kotlin.Any?>}p
+val <PT : Any?> Rec<PT>.p: L<PT>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+  //   Public signature: /p.<get-p>|-439714386562020387[0]
+  //   Public signature debug description: <get-p>@Rec<0:0>(){0§<kotlin.Any?>}L<0:0>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-p>@Rec<0:0>(){0§<kotlin.Any?>}
+  //   Public signature: /p.<get-p>|-3789410829860408186[0]
+  //   Public signature debug description: <get-p>@Rec<0:0>(){0§<kotlin.Any?>}
+  get(): L<PT>
+

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import org.jetbrains.kotlin.cfg.getDeclarationDescriptorIncludingConstructors
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
-import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -26,21 +26,29 @@ internal fun PropertyDescriptor.propertyKind(
     if (isVar) return DataFlowValue.Kind.MUTABLE_PROPERTY
     if (isOverridable) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
-    if (!isInvisibleFromOtherModules()) {
-        val declarationModule = DescriptorUtils.getContainingModule(this)
-        if (!areCompiledTogether(usageModule, declarationModule)) {
-            return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
-        }
-        if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
-                return if (!languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnPropertyFromAlienBaseClass)) {
+    val originalDescriptor = DescriptorUtils.unwrapFakeOverride(this)
+    val isInvisibleFromOtherModuleUnwrappedFakeOverride = originalDescriptor.isInvisibleFromOtherModules()
+    if (isInvisibleFromOtherModuleUnwrappedFakeOverride) return DataFlowValue.Kind.STABLE_VALUE
+
+    if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        if (overriddenDescriptors.any { isDeclaredInAnotherModule(usageModule) }) {
+            val deprecationForInvisibleFakeOverride =
+                isInvisibleFromOtherModules() != isInvisibleFromOtherModuleUnwrappedFakeOverride &&
+                        !languageVersionSettings.supportsFeature(ProhibitSmartcastsOnPropertyFromAlienBaseClassInheritedInInvisibleClass)
+            return when {
+                deprecationForInvisibleFakeOverride ->
+                    DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS
+                !languageVersionSettings.supportsFeature(ProhibitSmartcastsOnPropertyFromAlienBaseClass) ->
                     DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY
-                } else {
+                else ->
                     DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
-                }
             }
         }
     }
+
+    val declarationModule = DescriptorUtils.getContainingModule(originalDescriptor)
+    if (!areCompiledTogether(usageModule, declarationModule)) return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
+
     return DataFlowValue.Kind.STABLE_VALUE
 }
 
@@ -76,7 +84,7 @@ internal fun VariableDescriptor.variableKind(
 
     if (this is LocalVariableDescriptor && this.isDelegated) {
         // Local delegated property: normally unstable, but can be treated as stable in legacy mode
-        return if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSmartcastsOnLocalDelegatedProperty))
+        return if (languageVersionSettings.supportsFeature(ProhibitSmartcastsOnLocalDelegatedProperty))
             DataFlowValue.Kind.PROPERTY_WITH_GETTER
         else
             DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
@@ -101,7 +109,7 @@ internal fun VariableDescriptor.variableKind(
     val variableContainingDeclaration = this.containingDeclaration
     if (isAccessedInsideClosure(variableContainingDeclaration, bindingContext, accessElement)) {
         // stable iff we have no writers in closures AND this closure is AFTER all writers
-        return if (preliminaryVisitor.languageVersionSettings.supportsFeature(LanguageFeature.CapturedInClosureSmartCasts) &&
+        return if (preliminaryVisitor.languageVersionSettings.supportsFeature(CapturedInClosureSmartCasts) &&
             hasNoWritersInClosures(variableContainingDeclaration, writers, bindingContext) &&
             isAccessedInsideClosureAfterAllWriters(writers, accessElement)
         ) {
@@ -156,7 +164,6 @@ private fun isAccessedBeforeAllClosureWriters(
     // Access is before all writers
     return true
 }
-
 
 private fun DeclarationDescriptorWithVisibility.isInvisibleFromOtherModules(): Boolean {
     if (DescriptorVisibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true

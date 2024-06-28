@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,24 +7,29 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.DelegatedWrapperData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class FirDelegatedMemberScope(
     private val session: FirSession,
@@ -34,7 +39,8 @@ class FirDelegatedMemberScope(
     private val delegateFields: List<FirField>,
 ) : FirContainingNamesAwareScope() {
     private val dispatchReceiverType = containingClass.defaultType()
-    private val overrideChecker = FirStandardOverrideChecker(session)
+    private val overrideChecker = session.firOverrideChecker
+    private val delegatedMembersFilter = session.delegatedMembersFilter
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         declaredMemberScope.processFunctionsByName(name, processor)
@@ -47,10 +53,12 @@ class FirDelegatedMemberScope(
         result.forEach(processor)
     }
 
-    private fun buildScope(delegateField: FirField): FirTypeScope? {
-        return delegateField.returnTypeRef.coneType
-            .scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
-    }
+    private fun buildScope(delegateField: FirField): FirTypeScope? = delegateField.symbol.resolvedReturnType.scope(
+        session,
+        scopeSession,
+        CallableCopyTypeCalculator.Forced,
+        requiredMembersPhase = null,
+    )
 
     private fun collectFunctionsFromSpecificField(
         delegateField: FirField,
@@ -74,6 +82,10 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
+            if (delegatedMembersFilter.shouldNotGenerateDelegatedMember(original.symbol)) {
+                return@processor
+            }
+
             if (declaredMemberScope.getFunctions(name).any { overrideChecker.isOverriddenFunction(it.fir, original) }) {
                 return@processor
             }
@@ -87,9 +99,7 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirFunction(
-                    FirNamedFunctionSymbol(
-                        functionSymbol.callableId,
-                    ),
+                    FirNamedFunctionSymbol(CallableId(containingClass.classId, functionSymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
                     session,
@@ -135,18 +145,25 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
+            if (propertySymbol.modality == Modality.FINAL || propertySymbol.visibility == Visibilities.Private) {
+                return@processor
+            }
+
+            if (delegatedMembersFilter.shouldNotGenerateDelegatedMember(propertySymbol)) {
+                return@processor
+            }
+
             val original = propertySymbol.fir
-
-            if (original.modality == Modality.FINAL || original.visibility == Visibilities.Private) {
-                return@processor
+            var isOverriddenProperty = false
+            declaredMemberScope.processPropertiesByName(name) {
+                if (it is FirPropertySymbol && overrideChecker.isOverriddenProperty(it.fir, original)) {
+                    isOverriddenProperty = true
+                }
             }
 
-            if (declaredMemberScope.getProperties(name)
-                    .any { it is FirPropertySymbol && overrideChecker.isOverriddenProperty(it.fir, original) }
-            ) {
+            if (isOverriddenProperty) {
                 return@processor
             }
-
 
             result.firstOrNull {
                 overrideChecker.isOverriddenProperty(it.fir, original)
@@ -157,9 +174,7 @@ class FirDelegatedMemberScope(
 
             val delegatedSymbol =
                 FirFakeOverrideGenerator.createCopyForFirProperty(
-                    FirPropertySymbol(
-                        propertySymbol.callableId
-                    ),
+                    FirPropertySymbol(CallableId(containingClass.classId, propertySymbol.name)),
                     original,
                     derivedClassLookupTag = dispatchReceiverType.lookupTag,
                     session,
@@ -206,18 +221,6 @@ var FirCallableDeclaration.multipleDelegatesWithTheSameSignature: Boolean? by Fi
 val FirCallableSymbol<*>.multipleDelegatesWithTheSameSignature: Boolean?
     get() = fir.multipleDelegatesWithTheSameSignature
 
-private object DelegatedWrapperDataKey : FirDeclarationDataKey()
-class DelegatedWrapperData<D : FirCallableDeclaration>(
-    val wrapped: D,
-    val containingClass: ConeClassLikeLookupTag,
-    val delegateField: FirField,
-)
-var <D : FirCallableDeclaration>
-        D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
-
-val <D : FirCallableDeclaration> FirCallableSymbol<out D>.delegatedWrapperData: DelegatedWrapperData<D>?
-    get() = fir.delegatedWrapperData
-
 
 // From the definition of function interfaces in the Java specification (pt. 9.8):
 // "methods that are members of I that do not have the same signature as any public instance method of the class Object"
@@ -229,7 +232,9 @@ fun FirSimpleFunction.isPublicInAny(): Boolean {
     return when (name.asString()) {
         "hashCode", "toString" -> valueParameters.isEmpty()
         "equals" -> valueParameters.singleOrNull()?.hasTypeOf(StandardClassIds.Any, allowNullable = true) == true
-        else -> error("Unexpected method name: $name")
+        else -> errorWithAttachment("Unexpected method name") {
+            withEntry("methodName", name) { name.asString() }
+        }
     }
 }
 
@@ -245,3 +250,15 @@ fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boole
 }
 
 private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
+
+abstract class FirDelegatedMembersFilter : FirSessionComponent {
+    abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean
+
+    object Default : FirDelegatedMembersFilter() {
+        override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {
+            return false
+        }
+    }
+}
+
+private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter by FirSession.sessionComponentAccessor()

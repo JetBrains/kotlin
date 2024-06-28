@@ -1,0 +1,6 @@
+ExtensionReceiver[name: dumbWith; isMutated: false; displayText: this@dumbWith]
+    dumbWith@fun R|kotlin/Any?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>
+    R|kotlin/Any?|
+ExtensionReceiver[name: dumbWith; isMutated: false; displayText: this@dumbWith]
+    dumbWith@fun R|kotlin/Any?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>
+    R|kotlin/Any?|

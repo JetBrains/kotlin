@@ -1,0 +1,17 @@
+KtNameReferenceExpression(87,100): 'mutableListOf'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.collections.MutableList<kotlin.String>
+          symbol = kotlin/collections/mutableListOf(): kotlin.collections.MutableList<T>
+          valueParameters = []
+          callableId = kotlin/collections/mutableListOf
+      typeArgumentsMapping = {
+        T -> (kotlin.String)
+      }
+      argumentMapping = {}

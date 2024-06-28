@@ -9,13 +9,14 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+import java.io.Serializable
 
 /**
  * Provides unified safe way to read environmental properties via [Provider] at configuration time in terms of Gradle configuration cache feature
  * Gradle 6.5 - 7.3 was requiring to explicitly mark such reads to be able to invalidate configuration cache entries on the value change.
  * Gradle 7.4+ is able to automatically detect such reads without explicit declaration, thus method to declare a read was deprecated
  */
-internal interface ConfigurationTimePropertiesAccessor {
+internal interface ConfigurationTimePropertiesAccessor : Serializable {
     fun <T> Provider<T>.usedAtConfigurationTime(): Provider<T>
 
     interface ConfigurationTimePropertiesAccessorVariantFactory : VariantImplementationFactories.VariantImplementationFactory {
@@ -33,6 +34,11 @@ internal class DefaultConfigurationTimePropertiesAccessorVariantFactory :
  */
 internal class DefaultConfigurationTimePropertiesAccessor : ConfigurationTimePropertiesAccessor {
     override fun <T> Provider<T>.usedAtConfigurationTime(): Provider<T> = this
+
+    companion object {
+        @JvmStatic
+        private val serialVersionUID = 1L
+    }
 }
 
 internal val Project.configurationTimePropertiesAccessor

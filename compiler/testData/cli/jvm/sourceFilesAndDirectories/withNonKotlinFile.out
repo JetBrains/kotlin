@@ -1,0 +1,2 @@
+error: source entry is not a Kotlin file: $TESTDATA_DIR$/nonKotlinFile.txt
+COMPILATION_ERROR

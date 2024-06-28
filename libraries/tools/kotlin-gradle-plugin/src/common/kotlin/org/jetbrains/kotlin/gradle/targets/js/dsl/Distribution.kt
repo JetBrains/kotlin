@@ -19,4 +19,8 @@ interface Distribution {
     var directory: File
 
     val outputDirectory: DirectoryProperty
+
+    companion object {
+        const val DIST = "dist"
+    }
 }

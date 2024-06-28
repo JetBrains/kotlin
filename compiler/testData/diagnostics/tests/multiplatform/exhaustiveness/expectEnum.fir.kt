@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-20306
 
 // MODULE: m1-common
@@ -8,7 +8,7 @@ expect enum class Base {
 }
 
 fun testCommon(base: Base) {
-    val x = when (base) { // must be an error
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
         Base.A -> 1
         Base.B -> 2
     }

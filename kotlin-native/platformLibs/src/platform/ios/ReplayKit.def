@@ -1,4 +1,4 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UIKit UniformTypeIdentifiers UserNotifications darwin posix
+depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreMIDI CoreMedia CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security Symbols UIKit UniformTypeIdentifiers UserNotifications darwin posix
 language = Objective-C
 package = platform.ReplayKit
 modules = ReplayKit

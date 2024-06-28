@@ -7,204 +7,338 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.incremental.AbstractJsIrES6InvalidationTest
-import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
-import org.jetbrains.kotlin.incremental.AbstractJsFirInvalidationTest
-import org.jetbrains.kotlin.js.test.*
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
-import org.jetbrains.kotlin.js.testOld.AbstractDceTest
-import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeIrJsTextTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
+import org.jetbrains.kotlin.js.test.ir.AbstractMultiModuleOrderTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val jvmOnlyBoxTests = listOf(
-        "compileKotlinAgainstKotlin",
-    )
-
-    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val k2BoxTestDir = "multiplatform/k2"
+    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     // TODO: repair these tests
     //generateTestDataForReservedWords()
 
     generateTestGroupSuite(args) {
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractDceTest> {
-                model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
+        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/evolution", testRunnerMethodName = "runTest0") {
+            testClass<AbstractClassicJsKlibEvolutionTest> {
+                model(targetBackend = TargetBackend.JS_IR)
             }
-        }
-
-        testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABIWithICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
-            }
-        }
-        testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABINoICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
-            }
-        }
-
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData") {
-            testClass<AbstractJsIrInvalidationTest> {
-                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-
-            testClass<AbstractJsIrES6InvalidationTest> {
-                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-
-            testClass<AbstractJsFirInvalidationTest> {
-                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
-            }
-        }
-
-        testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsKlibBinaryCompatibilityTest> {
-                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            testClass<AbstractFirJsKlibEvolutionTest> {
+                model(targetBackend = TargetBackend.JS_IR)
             }
         }
     }
 
     generateTestGroupSuiteWithJUnit5(args) {
-        testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("closure/inlineAnonymousFunctions", "es6classes"))
+        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/partial-linkage") {
+            testClass<AbstractJsPartialLinkageWithICTestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+            testClass<AbstractJsPartialLinkageNoICTestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+            testClass<AbstractJsPartialLinkageNoICES6TestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+            testClass<AbstractFirJsPartialLinkageNoICTestCase> {
+                model(pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/klib/syntheticAccessors") {
+            testClass<AbstractClassicJsKlibSyntheticAccessorTest> {
+                model()
+            }
+            testClass<AbstractFirJsKlibSyntheticAccessorTest> {
+                model()
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/incremental") {
+            testClass<AbstractJsIrInvalidationPerFileTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
 
+            testClass<AbstractJsIrInvalidationPerModuleTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsIrES6InvalidationPerFileTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsIrES6InvalidationPerModuleTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsFirInvalidationPerFileTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsFirInvalidationPerModuleTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsFirES6InvalidationPerFileTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsFirES6InvalidationPerModuleTest> {
+                model("invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+            }
+
+            testClass<AbstractJsIrInvalidationPerFileWithPLTest> {
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsIrInvalidationPerModuleWithPLTest> {
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsFirInvalidationPerFileWithPLTest> {
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+
+            testClass<AbstractJsFirInvalidationPerModuleWithPLTest> {
+                model("invalidationWithPL/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/sourcemap", testRunnerMethodName = "runTest0") {
             testClass<AbstractSourceMapGenerationSmokeTest> {
-                model("sourcemap/")
+                model()
             }
-
-            testClass<AbstractOutputPrefixPostfixTest> {
-                model("outputPrefixPostfix/")
+            testClass<AbstractFirSourceMapGenerationSmokeTest> {
+                model()
             }
+        }
 
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/multiModuleOrder/", testRunnerMethodName = "runTest0") {
             testClass<AbstractMultiModuleOrderTest> {
-                model("multiModuleOrder/")
+                model()
             }
-
-            testClass<AbstractWebDemoExamplesTest> {
-                model("webDemoExamples/")
+            testClass<AbstractFirMultiModuleOrderTest> {
+                model()
             }
+        }
 
-            testClass<AbstractJsLineNumberTest> {
-                model("lineNumbers/")
-            }
-
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrBoxJsTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
             testClass<AbstractIrBoxJsES6Test> {
-                model("box/", pattern = "^([^_](.+))\\.kt$")
+                model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractIrJsTypeScriptExportTest> {
-                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+            testClass<AbstractFirPsiJsBoxTest> {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractJsIrLineNumberTest> {
-                model("lineNumbers/")
+            testClass<AbstractFirLightTreeJsBoxTest> {
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
-            testClass<AbstractFirJsBoxTest> {
-                model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+            testClass<AbstractFirJsES6BoxTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
             }
-
-            // see todo on defining class
-//            testClass<AbstractFirJsTypeScriptExportTest> {
-//                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
-//            }
-
-            // see todo on defining class
-//            testClass<AbstractJsFirLineNumberTest> {
-//                model("lineNumbers/")
-//            }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/typescript-export/js", testRunnerMethodName = "runTest0") {
+            testClass<AbstractIrJsTypeScriptExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsCodegenInlineTest> {
-                model("codegen/boxInline")
+            testClass<AbstractIrJsES6TypeScriptExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
             }
 
-            testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
-                model("codegen/box/arrays")
+            testClass<AbstractFirJsTypeScriptExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
             }
 
+            testClass<AbstractFirJsES6TypeScriptExportTest> {
+                model(pattern = "^([^_](.+))\\.kt$")
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/webDemoExamples", testRunnerMethodName = "runTest0") {
+            testClass<AbstractWebDemoExamplesTest> {
+                model()
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData/lineNumbers", testRunnerMethodName = "runTest0") {
+            testClass<AbstractJsIrLineNumberTest> {
+                model()
+            }
+
+            testClass<AbstractFirJsLineNumberTest> {
+                model()
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractIrJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractIrJsCodegenInlineTest> {
-                model("codegen/boxInline")
+                model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractIrJsES6CodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractIrJsES6CodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
-            }
-
-            testClass<AbstractIrJsES6CodegenInlineTest> {
-                model("codegen/boxInline")
-            }
-
-            testClass<AbstractIrCodegenWasmJsInteropJsTest> {
-                model("codegen/boxWasmJsInterop")
-            }
-
-            testClass<AbstractIrJsSteppingTest> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractIrJsLocalVariableTest> {
-                model("debug/localVariables")
-            }
-
-            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
-                model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractFirLightTreeIrJsTextTest>(
-                suiteTestClassName = "FirLightTreeJsIrTextTestGenerated"
-            ) {
-                model("ir/irJsText")
+                model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {
-                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+                model("box", excludeDirs = jvmOnlyBoxTests)
             }
 
-            testClass<AbstractFirJsCodegenBoxErrorTest> {
-                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+            testClass<AbstractFirJsES6CodegenBoxTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractIrJsCodegenInlineTest> {
+                model("boxInline")
+            }
+
+            testClass<AbstractIrJsES6CodegenInlineTest> {
+                model("boxInline")
             }
 
             testClass<AbstractFirJsCodegenInlineTest> {
-                model("codegen/boxInline")
+                model("boxInline")
+            }
+
+            testClass<AbstractFirJsES6CodegenInlineTest> {
+                model("boxInline")
+            }
+
+            testClass<AbstractIrCodegenWasmJsInteropJsTest> {
+                model("boxWasmJsInterop")
             }
 
             testClass<AbstractFirJsCodegenWasmJsInteropTest> {
-                model("codegen/boxWasmJsInterop")
+                model("boxWasmJsInterop")
             }
 
-            // see todo on AbstractFirJsSteppingTest
-//            testClass<AbstractFirJsSteppingTest> {
-//                model("debug/stepping")
-//            }
+            testClass<AbstractFirJsES6CodegenWasmJsInteropTest> {
+                model("boxWasmJsInterop")
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/debug", testRunnerMethodName = "runTest0") {
+            testClass<AbstractIrJsSteppingTest> {
+                model("stepping")
+            }
+
+            testClass<AbstractFirJsSteppingTest> {
+                model("stepping")
+            }
+
+            testClass<AbstractIrJsLocalVariableTest> {
+                // The tests in the 'inlineScopes' directory are meant to test a JVM backend
+                // specific feature, so there is no reason to enable them for JS.
+                model("localVariables", excludeDirs = listOf("inlineScopes"))
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/diagnostics", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsKlibDiagnosticsTestGenerated") {
+                model(
+                    relativeRootPath = "klibSerializationTests",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractFirPsiJsDiagnosticTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLib",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractFirLightTreeJsDiagnosticTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLib",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractFirPsiJsDiagnosticWithBackendTest>(suiteTestClassName = "FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractFirLightTreeJsDiagnosticWithBackendTest>(suiteTestClassName = "FirLightTreeJsOldFrontendDiagnosticsWithBackendTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractDiagnosticsTestWithJsStdLib>(suiteTestClassName = "DiagnosticsWithJsStdLibTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLib",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+
+            testClass<AbstractDiagnosticsTestWithJsStdLibWithBackend>(suiteTestClassName = "DiagnosticsWithJsStdLibAndBackendTestGenerated") {
+                model(
+                    relativeRootPath = "testsWithJsStdLibAndBackendCompilation",
+                    pattern = "^([^_](.+))\\.kt$",
+                    excludedPattern = excludedFirTestdataPattern,
+                    targetBackend = TargetBackend.JS_IR
+                )
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
+            testClass<AbstractClassicJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k2")
+                )
+            }
+
+            testClass<AbstractFirLightTreeJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+
+            testClass<AbstractFirPsiJsIrTextTest> {
+                model(
+                    excludeDirs = listOf("declarations/multiplatform/k1")
+                )
+            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData/loadJava", testRunnerMethodName = "runTest0") {
+            testClass<AbstractFirLoadK2CompiledJsKotlinTest> {
+                model("compiledKotlin", extension = "kt")
+                model("compiledKotlinWithStdlib", extension = "kt")
+            }
         }
     }
 }

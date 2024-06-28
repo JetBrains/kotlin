@@ -1,4 +1,3 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54708
 // WITH_STDLIB
 
 import kotlin.experimental.ExperimentalTypeInference

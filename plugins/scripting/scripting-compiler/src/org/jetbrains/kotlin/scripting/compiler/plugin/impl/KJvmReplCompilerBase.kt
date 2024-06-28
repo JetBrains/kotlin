@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -95,7 +95,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                 if (firstFailure != null)
                     return firstFailure
 
-                checkKotlinPackageUsage(context.environment.configuration, sourceFiles, messageCollector)
+                checkKotlinPackageUsageForPsi(context.environment.configuration, sourceFiles, messageCollector)
 
                 if (messageCollector.hasErrors()) return failure(messageCollector)
 
@@ -204,7 +204,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
         prebuiltState: GenerationState.Builder,
     ): GenerationState {
         val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
-            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.referenceScript(it.item) }
+            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
         }
         val codegenFactory = JvmIrCodegenFactory(
             compilationState.environment.configuration,

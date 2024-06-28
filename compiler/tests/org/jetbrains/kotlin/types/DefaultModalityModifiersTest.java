@@ -115,7 +115,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             StorageComponentContainer container = createContainerForLazyResolve(
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), files),
-                    new BindingTraceContext(),
+                    new BindingTraceContext(getProject()),
                     CommonPlatforms.INSTANCE.getDefaultCommonPlatform(),
                     CommonPlatformAnalyzerServices.INSTANCE,
                     CompilerEnvironment.INSTANCE,

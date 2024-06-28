@@ -46,6 +46,15 @@ TEST(SaturatingSanityTest, SaturatingMul) {
     EXPECT_THAT(saturating_mul(int8_t(-127), int16_t(-1000)), 32767);
 }
 
+TEST(SaturatingSanityTest, SaturatingDiv) {
+    EXPECT_THAT(saturating_div(14, 4), 3);
+    EXPECT_THAT(saturating_div(-14, 4), -3);
+    EXPECT_THAT(saturating_div(int8_t(-128), int8_t(-1)), 127);
+    EXPECT_THAT(saturating_div(int8_t(-128), int16_t(-1)), 128);
+    EXPECT_THAT(saturating_div(int16_t(-128), int8_t(-1)), 128);
+    EXPECT_THAT(saturating_div(int16_t(-128), int16_t(-1)), 128);
+}
+
 TEST(SaturatingSanityTest, SaturatingComparison) {
     EXPECT_TRUE(saturating(1) == saturating(1));
     EXPECT_FALSE(saturating(1) == saturating(2));
@@ -515,6 +524,48 @@ TEST(SaturatingTest, Multiplication) {
     static_assert(std::is_same_v<decltype(uint_sat64_t(0) * uint_sat64_t(0)), uint_sat64_t>);
 }
 
+TEST(SaturatingTest, Division) {
+    static_assert(std::is_same_v<decltype(int_sat8_t(0) / int_sat8_t(0)), int_sat8_t>);
+    static_assert(std::is_same_v<decltype(int_sat8_t(0) / int_sat16_t(0)), int_sat16_t>);
+    static_assert(std::is_same_v<decltype(int_sat8_t(0) / int_sat32_t(0)), int_sat32_t>);
+    static_assert(std::is_same_v<decltype(int_sat8_t(0) / int_sat64_t(0)), int_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(int_sat16_t(0) / int_sat8_t(0)), int_sat16_t>);
+    static_assert(std::is_same_v<decltype(int_sat16_t(0) / int_sat16_t(0)), int_sat16_t>);
+    static_assert(std::is_same_v<decltype(int_sat16_t(0) / int_sat32_t(0)), int_sat32_t>);
+    static_assert(std::is_same_v<decltype(int_sat16_t(0) / int_sat64_t(0)), int_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(int_sat32_t(0) / int_sat8_t(0)), int_sat32_t>);
+    static_assert(std::is_same_v<decltype(int_sat32_t(0) / int_sat16_t(0)), int_sat32_t>);
+    static_assert(std::is_same_v<decltype(int_sat32_t(0) / int_sat32_t(0)), int_sat32_t>);
+    static_assert(std::is_same_v<decltype(int_sat32_t(0) / int_sat64_t(0)), int_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(int_sat64_t(0) / int_sat8_t(0)), int_sat64_t>);
+    static_assert(std::is_same_v<decltype(int_sat64_t(0) / int_sat16_t(0)), int_sat64_t>);
+    static_assert(std::is_same_v<decltype(int_sat64_t(0) / int_sat32_t(0)), int_sat64_t>);
+    static_assert(std::is_same_v<decltype(int_sat64_t(0) / int_sat64_t(0)), int_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(uint_sat8_t(0) / uint_sat8_t(0)), uint_sat8_t>);
+    static_assert(std::is_same_v<decltype(uint_sat8_t(0) / uint_sat16_t(0)), uint_sat16_t>);
+    static_assert(std::is_same_v<decltype(uint_sat8_t(0) / uint_sat32_t(0)), uint_sat32_t>);
+    static_assert(std::is_same_v<decltype(uint_sat8_t(0) / uint_sat64_t(0)), uint_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(uint_sat16_t(0) / uint_sat8_t(0)), uint_sat16_t>);
+    static_assert(std::is_same_v<decltype(uint_sat16_t(0) / uint_sat16_t(0)), uint_sat16_t>);
+    static_assert(std::is_same_v<decltype(uint_sat16_t(0) / uint_sat32_t(0)), uint_sat32_t>);
+    static_assert(std::is_same_v<decltype(uint_sat16_t(0) / uint_sat64_t(0)), uint_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(uint_sat32_t(0) / uint_sat8_t(0)), uint_sat32_t>);
+    static_assert(std::is_same_v<decltype(uint_sat32_t(0) / uint_sat16_t(0)), uint_sat32_t>);
+    static_assert(std::is_same_v<decltype(uint_sat32_t(0) / uint_sat32_t(0)), uint_sat32_t>);
+    static_assert(std::is_same_v<decltype(uint_sat32_t(0) / uint_sat64_t(0)), uint_sat64_t>);
+
+    static_assert(std::is_same_v<decltype(uint_sat64_t(0) / uint_sat8_t(0)), uint_sat64_t>);
+    static_assert(std::is_same_v<decltype(uint_sat64_t(0) / uint_sat16_t(0)), uint_sat64_t>);
+    static_assert(std::is_same_v<decltype(uint_sat64_t(0) / uint_sat32_t(0)), uint_sat64_t>);
+    static_assert(std::is_same_v<decltype(uint_sat64_t(0) / uint_sat64_t(0)), uint_sat64_t>);
+}
+
 TEST(SaturatingTest, CommonType) {
     static_assert(std::is_same_v<std::common_type_t<int_sat8_t, int_sat8_t>, int_sat8_t>);
     static_assert(std::is_same_v<std::common_type_t<int_sat8_t, int_sat16_t>, int_sat16_t>);
@@ -627,16 +678,10 @@ template <typename T>
 constexpr inline T minr_v = min_v<T> + T(1);
 
 template <typename T>
-constexpr inline T minrr_v = min_v<T> + T(2);
-
-template <typename T>
 constexpr inline T max_v = std::numeric_limits<T>::max();
 
 template <typename T>
 constexpr inline T maxl_v = max_v<T> - T(1);
-
-template <typename T>
-constexpr inline T maxll_v = max_v<T> - T(2);
 
 template <typename T>
 constexpr inline T zero_v = T(0);
@@ -645,18 +690,9 @@ template <typename T>
 constexpr inline T zeror_v = T(1);
 
 template <typename T>
-constexpr inline T zerorr_v = T(2);
-
-template <typename T>
 constexpr inline T zerol_v = [] {
     static_assert(std::is_signed_v<T>, "Only available for signed types");
     return T(-1);
-}();
-
-template <typename T>
-constexpr inline T zeroll_v = [] {
-    static_assert(std::is_signed_v<T>, "Only available for signed types");
-    return T(-2);
 }();
 
 #define EXPECT_SATURATING_CAST(IntoType, FromValue, IntoValue) EXPECT_THAT(saturating_cast<IntoType>(FromValue), IntoType(IntoValue))
@@ -1087,3746 +1123,569 @@ TEST(SaturatingCastTest, Into_64) {
     EXPECT_SATURATING_CAST(uint64_t, maxl_v<uint64_t>, maxl_v<uint64_t>);
 }
 
-TEST(SaturatingAddTest, Test_8_8) {
-    EXPECT_THAT(saturating_add(min_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, minr_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, max_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, maxl_v<int8_t>), int8_t(zeroll_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zero_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zeror_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zerol_v<int8_t>), int8_t(min_v<int8_t>));
+namespace {
 
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, minr_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, max_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, maxl_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zero_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zeror_v<int8_t>), int8_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zerol_v<int8_t>), int8_t(min_v<int8_t>));
+class SaturatingBinOpTestNames {
+public:
+    template <typename T>
+    static std::string GetName(int) noexcept {
+        std::string result;
+        result += typeName<std::tuple_element_t<0, T>>();
+        result += "_";
+        result += typeName<std::tuple_element_t<1, T>>();
+        return result;
+    }
 
-    EXPECT_THAT(saturating_add(max_v<int8_t>, min_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, minr_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, maxl_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zero_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zeror_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zerol_v<int8_t>), int8_t(maxl_v<int8_t>));
+private:
+    template <typename T>
+    static const char* typeName() noexcept {
+        if constexpr (std::is_same_v<T, int8_t>) {
+            return "i8";
+        } else if constexpr (std::is_same_v<T, int16_t>) {
+            return "i16";
+        } else if constexpr (std::is_same_v<T, int32_t>) {
+            return "i32";
+        } else if constexpr (std::is_same_v<T, int64_t>) {
+            return "i64";
+        } else if constexpr (std::is_same_v<T, uint8_t>) {
+            return "u8";
+        } else if constexpr (std::is_same_v<T, uint16_t>) {
+            return "u16";
+        } else if constexpr (std::is_same_v<T, uint32_t>) {
+            return "u32";
+        } else if constexpr (std::is_same_v<T, uint64_t>) {
+            return "u64";
+        } else {
+            return "unknown";
+        }
+    }
+};
 
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, min_v<int8_t>), int8_t(zeroll_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, minr_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, maxl_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zero_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zeror_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zerol_v<int8_t>), int8_t(maxll_v<int8_t>));
+using SaturatingBinOpSignedTestTypes = testing::Types<
+        std::tuple<int8_t, int8_t>,
+        std::tuple<int8_t, int16_t>,
+        std::tuple<int8_t, int32_t>,
+        std::tuple<int8_t, int64_t>,
+        std::tuple<int16_t, int8_t>,
+        std::tuple<int16_t, int16_t>,
+        std::tuple<int16_t, int32_t>,
+        std::tuple<int16_t, int64_t>,
+        std::tuple<int32_t, int8_t>,
+        std::tuple<int32_t, int16_t>,
+        std::tuple<int32_t, int32_t>,
+        std::tuple<int32_t, int64_t>,
+        std::tuple<int64_t, int8_t>,
+        std::tuple<int64_t, int16_t>,
+        std::tuple<int64_t, int32_t>,
+        std::tuple<int64_t, int64_t>>;
 
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, minr_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, maxl_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zeror_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zerol_v<int8_t>), int8_t(zerol_v<int8_t>));
+using SaturatingBinOpUnsignedTestTypes = testing::Types<
+        std::tuple<uint8_t, uint8_t>,
+        std::tuple<uint8_t, uint16_t>,
+        std::tuple<uint8_t, uint32_t>,
+        std::tuple<uint8_t, uint64_t>,
+        std::tuple<uint16_t, uint8_t>,
+        std::tuple<uint16_t, uint16_t>,
+        std::tuple<uint16_t, uint32_t>,
+        std::tuple<uint16_t, uint64_t>,
+        std::tuple<uint32_t, uint8_t>,
+        std::tuple<uint32_t, uint16_t>,
+        std::tuple<uint32_t, uint32_t>,
+        std::tuple<uint32_t, uint64_t>,
+        std::tuple<uint64_t, uint8_t>,
+        std::tuple<uint64_t, uint16_t>,
+        std::tuple<uint64_t, uint32_t>,
+        std::tuple<uint64_t, uint64_t>>;
 
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, min_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, minr_v<int8_t>), int8_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, maxl_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zero_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zeror_v<int8_t>), int8_t(zerorr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zerol_v<int8_t>), int8_t(zero_v<int8_t>));
+} // namespace
 
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, minr_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, max_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, maxl_v<int8_t>), int8_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zero_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zeror_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zerol_v<int8_t>), int8_t(zeroll_v<int8_t>));
+template <typename T>
+class SaturatingBinOpTest : public testing::Test {
+public:
+    using Lhs = std::tuple_element_t<0, T>;
+    using Rhs = std::tuple_element_t<1, T>;
+    using Result = internal::wider_t<Lhs, Rhs>;
+};
 
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, minr_v<uint8_t>), uint8_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, maxl_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
+template <typename T>
+class SaturatingBinOpSignedTest : public SaturatingBinOpTest<T> {};
 
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, min_v<uint8_t>), uint8_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, minr_v<uint8_t>), uint8_t(minrr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, maxl_v<uint8_t>), uint8_t(max_v<uint8_t>));
+TYPED_TEST_SUITE(SaturatingBinOpSignedTest, SaturatingBinOpSignedTestTypes, SaturatingBinOpTestNames);
 
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, min_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, minr_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, maxl_v<uint8_t>), uint8_t(max_v<uint8_t>));
+template <typename T>
+class SaturatingBinOpUnsignedTest : public SaturatingBinOpTest<T> {};
 
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, min_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, minr_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, maxl_v<uint8_t>), uint8_t(max_v<uint8_t>));
+TYPED_TEST_SUITE(SaturatingBinOpUnsignedTest, SaturatingBinOpUnsignedTestTypes, SaturatingBinOpTestNames);
+
+#define EXPECT_REG_BIN_OP(name, op, lhs, rhs, Result) \
+    EXPECT_THAT(saturating_##name((lhs), (rhs)), static_cast<Result>((lhs)) op static_cast<Result>((rhs)))
+
+#define EXPECT_SAT_BIN_OP(name, lhs, rhs, actual) EXPECT_THAT(saturating_##name((lhs), (rhs)), (actual))
+
+TYPED_TEST(SaturatingBinOpSignedTest, SaturatingAdd) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
+
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(add, +, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(add, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(add, lhs, rhs, min_v<Result>)
+
+    EXPECT_MIN(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zeror_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(min_v<Lhs>, zerol_v<Rhs>);
+    } else {
+        EXPECT_MIN(min_v<Lhs>, zerol_v<Rhs>);
+    }
+
+    EXPECT_MIN(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zerol_v<Rhs>);
+
+    EXPECT_REG(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zero_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(max_v<Lhs>, zeror_v<Rhs>);
+    } else {
+        EXPECT_MAX(max_v<Lhs>, zeror_v<Rhs>);
+    }
+    EXPECT_REG(max_v<Lhs>, zerol_v<Rhs>);
+
+    EXPECT_REG(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zerol_v<Rhs>);
+
+    EXPECT_REG(zero_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zerol_v<Rhs>);
+
+    EXPECT_REG(zeror_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, minr_v<Rhs>);
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(zeror_v<Lhs>, max_v<Rhs>);
+    } else {
+        EXPECT_MAX(zeror_v<Lhs>, max_v<Rhs>);
+    }
+    EXPECT_REG(zeror_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zerol_v<Rhs>);
+
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(zerol_v<Lhs>, min_v<Rhs>);
+    } else {
+        EXPECT_MIN(zerol_v<Lhs>, min_v<Rhs>);
+    }
+    EXPECT_REG(zerol_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zerol_v<Rhs>);
+
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_8_16) {
-    EXPECT_THAT(saturating_add(min_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, max_v<int16_t>), int16_t(min_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, maxl_v<int16_t>), int16_t(min_v<int8_t>) + maxl_v<int16_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zero_v<int16_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zeror_v<int16_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zerol_v<int16_t>), int16_t(min_v<int8_t>) + zerol_v<int16_t>);
+TYPED_TEST(SaturatingBinOpUnsignedTest, SaturatingAdd) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, max_v<int16_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, maxl_v<int16_t>), int16_t(minr_v<int8_t>) + maxl_v<int16_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zero_v<int16_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zeror_v<int16_t>), int16_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zerol_v<int16_t>), int16_t(min_v<int8_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(add, +, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(add, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(add, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int8_t>, min_v<int16_t>), int16_t(max_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zero_v<int16_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zeror_v<int16_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zerol_v<int16_t>), int16_t(maxl_v<int8_t>));
+    EXPECT_REG(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, min_v<int16_t>), int16_t(maxl_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, minr_v<int16_t>), int16_t(maxl_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zero_v<int16_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zeror_v<int16_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zerol_v<int16_t>), int16_t(maxll_v<int8_t>));
+    EXPECT_REG(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(minr_v<Lhs>, max_v<Rhs>);
+    } else {
+        EXPECT_MAX(minr_v<Lhs>, max_v<Rhs>);
+    }
+    EXPECT_REG(minr_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, minr_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, maxl_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zeror_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zerol_v<int16_t>), int16_t(zerol_v<int16_t>));
+    EXPECT_REG(max_v<Lhs>, min_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    } else {
+        EXPECT_MAX(max_v<Lhs>, minr_v<Rhs>);
+    }
+    EXPECT_MAX(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, min_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, minr_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zero_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zeror_v<int16_t>), int16_t(zerorr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
+    EXPECT_REG(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, max_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, maxl_v<int16_t>), int16_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zero_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zerol_v<int16_t>), int16_t(zeroll_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, minr_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, maxl_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, min_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, minr_v<uint16_t>), uint16_t(minrr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, min_v<uint16_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, minr_v<uint16_t>), uint16_t(max_v<uint8_t>) + zeror_v<uint16_t>);
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, min_v<uint16_t>), uint16_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, minr_v<uint16_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_8_32) {
-    EXPECT_THAT(saturating_add(min_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, max_v<int32_t>), int32_t(min_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, maxl_v<int32_t>), int32_t(min_v<int8_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zero_v<int32_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zeror_v<int32_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zerol_v<int32_t>), int32_t(min_v<int8_t>) + zerol_v<int32_t>);
+TYPED_TEST(SaturatingBinOpSignedTest, SaturatingSub) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, max_v<int32_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, maxl_v<int32_t>), int32_t(minr_v<int8_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zero_v<int32_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zeror_v<int32_t>), int32_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zerol_v<int32_t>), int32_t(min_v<int8_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(sub, -, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(sub, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(sub, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int8_t>, min_v<int32_t>), int32_t(max_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zero_v<int32_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zeror_v<int32_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zerol_v<int32_t>), int32_t(maxl_v<int8_t>));
+    EXPECT_REG(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zero_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(min_v<Lhs>, zeror_v<Rhs>);
+    } else {
+        EXPECT_MIN(min_v<Lhs>, zeror_v<Rhs>);
+    }
+    EXPECT_REG(min_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, min_v<int32_t>), int32_t(maxl_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, minr_v<int32_t>), int32_t(maxl_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zero_v<int32_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zeror_v<int32_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zerol_v<int32_t>), int32_t(maxll_v<int8_t>));
+    EXPECT_REG(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
+    EXPECT_MAX(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zeror_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(max_v<Lhs>, zerol_v<Rhs>);
+    } else {
+        EXPECT_MAX(max_v<Lhs>, zerol_v<Rhs>);
+    }
 
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, min_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, minr_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zeror_v<int32_t>), int32_t(zerorr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
+    EXPECT_MAX(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, max_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, maxl_v<int32_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zerol_v<int32_t>), int32_t(zeroll_v<int32_t>));
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(zero_v<Lhs>, min_v<Rhs>);
+    } else {
+        EXPECT_MAX(zero_v<Lhs>, min_v<Rhs>);
+    }
+    EXPECT_REG(zero_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(zeror_v<Lhs>, min_v<Rhs>);
+        EXPECT_REG(zeror_v<Lhs>, minr_v<Rhs>);
+    } else {
+        EXPECT_MAX(zeror_v<Lhs>, min_v<Rhs>);
+        EXPECT_MAX(zeror_v<Lhs>, minr_v<Rhs>);
+    }
+    EXPECT_REG(zeror_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, minr_v<uint32_t>), uint32_t(minrr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
+    EXPECT_REG(zerol_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, min_v<uint32_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, minr_v<uint32_t>), uint32_t(max_v<uint8_t>) + zeror_v<uint32_t>);
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, min_v<uint32_t>), uint32_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, minr_v<uint32_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_8_64) {
-    EXPECT_THAT(saturating_add(min_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, max_v<int64_t>), int64_t(min_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, maxl_v<int64_t>), int64_t(min_v<int8_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zero_v<int64_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zeror_v<int64_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(min_v<int8_t>, zerol_v<int64_t>), int64_t(min_v<int8_t>) + zerol_v<int64_t>);
+TYPED_TEST(SaturatingBinOpUnsignedTest, SaturatingSub) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, max_v<int64_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, maxl_v<int64_t>), int64_t(minr_v<int8_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zero_v<int64_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zeror_v<int64_t>), int64_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(minr_v<int8_t>, zerol_v<int64_t>), int64_t(min_v<int8_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(sub, -, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(sub, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(sub, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int8_t>, min_v<int64_t>), int64_t(max_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zero_v<int64_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zeror_v<int64_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int8_t>, zerol_v<int64_t>), int64_t(maxl_v<int8_t>));
+    EXPECT_REG(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, min_v<int64_t>), int64_t(maxl_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, minr_v<int64_t>), int64_t(maxl_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zero_v<int64_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zeror_v<int64_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int8_t>, zerol_v<int64_t>), int64_t(maxll_v<int8_t>));
+    EXPECT_REG(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int8_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
+    EXPECT_REG(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    if constexpr (sizeof(Lhs) >= sizeof(Rhs)) {
+        EXPECT_REG(max_v<Lhs>, max_v<Rhs>);
+        EXPECT_REG(max_v<Lhs>, maxl_v<Rhs>);
+    } else {
+        EXPECT_MIN(max_v<Lhs>, max_v<Rhs>);
+        EXPECT_MIN(max_v<Lhs>, maxl_v<Rhs>);
+    }
 
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, min_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, minr_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zeror_v<int64_t>), int64_t(zerorr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int8_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
+    EXPECT_REG(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(maxl_v<Lhs>, max_v<Rhs>);
+        EXPECT_REG(maxl_v<Lhs>, maxl_v<Rhs>);
+    } else {
+        EXPECT_MIN(maxl_v<Lhs>, max_v<Rhs>);
+        EXPECT_MIN(maxl_v<Lhs>, maxl_v<Rhs>);
+    }
 
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, max_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, maxl_v<int64_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int8_t>, zerol_v<int64_t>), int64_t(zeroll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint8_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, minr_v<uint64_t>), uint64_t(minrr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint8_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, min_v<uint64_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, minr_v<uint64_t>), uint64_t(max_v<uint8_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint8_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, min_v<uint64_t>), uint64_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, minr_v<uint64_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint8_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_16_8) {
-    EXPECT_THAT(saturating_add(min_v<int16_t>, min_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, minr_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, max_v<int8_t>), int16_t(max_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, maxl_v<int8_t>), int16_t(maxl_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zero_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zeror_v<int8_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zerol_v<int8_t>), int16_t(min_v<int16_t>));
+TYPED_TEST(SaturatingBinOpSignedTest, SaturatingMul) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, min_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, minr_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, max_v<int8_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, maxl_v<int8_t>), int16_t(maxl_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zero_v<int8_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zeror_v<int8_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zerol_v<int8_t>), int16_t(min_v<int16_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(mul, *, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(mul, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(mul, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int16_t>, min_v<int8_t>), int16_t(min_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, minr_v<int8_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, max_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, maxl_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zero_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zeror_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zerol_v<int8_t>), int16_t(maxl_v<int16_t>));
+    EXPECT_MAX(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_MAX(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(min_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zeror_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(min_v<Lhs>, zerol_v<Rhs>);
+    } else {
+        EXPECT_MAX(min_v<Lhs>, zerol_v<Rhs>);
+    }
 
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, min_v<int8_t>), int16_t(min_v<int8_t>) + maxl_v<int16_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, minr_v<int8_t>), int16_t(minr_v<int8_t>) + maxl_v<int16_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, max_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, maxl_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zero_v<int8_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zeror_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zerol_v<int8_t>), int16_t(maxll_v<int16_t>));
+    EXPECT_MAX(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_MAX(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_MIN(minr_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, min_v<int8_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, minr_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, max_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, maxl_v<int8_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zeror_v<int8_t>), int16_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zerol_v<int8_t>), int16_t(zerol_v<int8_t>));
+    EXPECT_MIN(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_MIN(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, min_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, minr_v<int8_t>), int16_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, max_v<int8_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, maxl_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zero_v<int8_t>), int16_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zeror_v<int8_t>), int16_t(zerorr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zerol_v<int8_t>), int16_t(zero_v<int8_t>));
+    EXPECT_MIN(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_MIN(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, min_v<int8_t>), int16_t(min_v<int8_t>) + zerol_v<int16_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, minr_v<int8_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, max_v<int8_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, maxl_v<int8_t>), int16_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zero_v<int8_t>), int16_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zeror_v<int8_t>), int16_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zerol_v<int8_t>), int16_t(zeroll_v<int8_t>));
+    EXPECT_REG(zero_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, minr_v<uint8_t>), uint16_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, maxl_v<uint8_t>), uint16_t(maxl_v<uint8_t>));
+    EXPECT_REG(zeror_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, min_v<uint8_t>), uint16_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, minr_v<uint8_t>), uint16_t(minrr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint8_t>) + zeror_v<uint16_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, maxl_v<uint8_t>), uint16_t(max_v<uint8_t>));
+    if constexpr (sizeof(Lhs) > sizeof(Rhs)) {
+        EXPECT_REG(zerol_v<Lhs>, min_v<Rhs>);
+    } else {
+        EXPECT_MAX(zerol_v<Lhs>, min_v<Rhs>);
+    }
+    EXPECT_REG(zerol_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zero_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, min_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, minr_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, maxl_v<uint8_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, min_v<uint8_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, minr_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, maxl_v<uint8_t>), uint16_t(max_v<uint16_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_16_16) {
-    EXPECT_THAT(saturating_add(min_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, max_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, maxl_v<int16_t>), int16_t(zeroll_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zero_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zeror_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zerol_v<int16_t>), int16_t(min_v<int16_t>));
+TYPED_TEST(SaturatingBinOpUnsignedTest, SaturatingMul) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, max_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, maxl_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zero_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zeror_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zerol_v<int16_t>), int16_t(min_v<int16_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(mul, *, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(mul, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(mul, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int16_t>, min_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, minr_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zero_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zeror_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zerol_v<int16_t>), int16_t(maxl_v<int16_t>));
+    EXPECT_REG(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, min_v<int16_t>), int16_t(zeroll_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, minr_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zero_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zeror_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zerol_v<int16_t>), int16_t(maxll_v<int16_t>));
+    EXPECT_REG(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, minr_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, maxl_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zeror_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zerol_v<int16_t>), int16_t(zerol_v<int16_t>));
+    EXPECT_REG(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(max_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, min_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, minr_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zero_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zeror_v<int16_t>), int16_t(zerorr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
+    EXPECT_REG(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_MAX(maxl_v<Lhs>, maxl_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, max_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, maxl_v<int16_t>), int16_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zero_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zerol_v<int16_t>), int16_t(zeroll_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, minr_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, maxl_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, min_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, minr_v<uint16_t>), uint16_t(minrr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, min_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, minr_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, min_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, minr_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_16_32) {
-    EXPECT_THAT(saturating_add(min_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, max_v<int32_t>), int32_t(min_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, maxl_v<int32_t>), int32_t(min_v<int16_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zero_v<int32_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zeror_v<int32_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zerol_v<int32_t>), int32_t(min_v<int16_t>) + zerol_v<int32_t>);
+TYPED_TEST(SaturatingBinOpSignedTest, SaturatingDiv) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
 
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, max_v<int32_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, maxl_v<int32_t>), int32_t(minr_v<int16_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zero_v<int32_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zeror_v<int32_t>), int32_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zerol_v<int32_t>), int32_t(min_v<int16_t>));
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(div, /, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(div, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(div, lhs, rhs, min_v<Result>)
 
-    EXPECT_THAT(saturating_add(max_v<int16_t>, min_v<int32_t>), int32_t(max_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zero_v<int32_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zeror_v<int32_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zerol_v<int32_t>), int32_t(maxl_v<int16_t>));
+    EXPECT_REG(min_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, zeror_v<Rhs>);
+    if constexpr (sizeof(Rhs) > sizeof(Lhs)) {
+        EXPECT_REG(min_v<Lhs>, zerol_v<Rhs>);
+    } else {
+        EXPECT_MAX(min_v<Lhs>, zerol_v<Rhs>);
+    }
 
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, min_v<int32_t>), int32_t(maxl_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, minr_v<int32_t>), int32_t(maxl_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zero_v<int32_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zeror_v<int32_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zerol_v<int32_t>), int32_t(maxll_v<int16_t>));
+    EXPECT_REG(minr_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
+    EXPECT_REG(max_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, min_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, minr_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zeror_v<int32_t>), int32_t(zerorr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
+    EXPECT_REG(maxl_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, max_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, maxl_v<int32_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zerol_v<int32_t>), int32_t(zeroll_v<int32_t>));
+    EXPECT_REG(zero_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zero_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
+    EXPECT_REG(zeror_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zeror_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, minr_v<uint32_t>), uint32_t(minrr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
+    EXPECT_REG(zerol_v<Lhs>, min_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, maxl_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zeror_v<Rhs>);
+    EXPECT_REG(zerol_v<Lhs>, zerol_v<Rhs>);
 
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, min_v<uint32_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, minr_v<uint32_t>), uint32_t(max_v<uint16_t>) + zeror_v<uint32_t>);
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, min_v<uint32_t>), uint32_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, minr_v<uint32_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }
 
-TEST(SaturatingAddTest, Test_16_64) {
-    EXPECT_THAT(saturating_add(min_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, max_v<int64_t>), int64_t(min_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, maxl_v<int64_t>), int64_t(min_v<int16_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zero_v<int64_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zeror_v<int64_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(min_v<int16_t>, zerol_v<int64_t>), int64_t(min_v<int16_t>) + zerol_v<int64_t>);
-
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, max_v<int64_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, maxl_v<int64_t>), int64_t(minr_v<int16_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zero_v<int64_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zeror_v<int64_t>), int64_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(minr_v<int16_t>, zerol_v<int64_t>), int64_t(min_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int16_t>, min_v<int64_t>), int64_t(max_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zero_v<int64_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zeror_v<int64_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int16_t>, zerol_v<int64_t>), int64_t(maxl_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, min_v<int64_t>), int64_t(maxl_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, minr_v<int64_t>), int64_t(maxl_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zero_v<int64_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zeror_v<int64_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int16_t>, zerol_v<int64_t>), int64_t(maxll_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int16_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, min_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, minr_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zeror_v<int64_t>), int64_t(zerorr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int16_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, max_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, maxl_v<int64_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int16_t>, zerol_v<int64_t>), int64_t(zeroll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint16_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, minr_v<uint64_t>), uint64_t(minrr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint16_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, min_v<uint64_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, minr_v<uint64_t>), uint64_t(max_v<uint16_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint16_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, min_v<uint64_t>), uint64_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, minr_v<uint64_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint16_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingAddTest, Test_32_8) {
-    EXPECT_THAT(saturating_add(min_v<int32_t>, min_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, minr_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, max_v<int8_t>), int32_t(max_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, maxl_v<int8_t>), int32_t(maxl_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zero_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zeror_v<int8_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zerol_v<int8_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, min_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, minr_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, max_v<int8_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, maxl_v<int8_t>), int32_t(maxl_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zero_v<int8_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zeror_v<int8_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zerol_v<int8_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int32_t>, min_v<int8_t>), int32_t(min_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, minr_v<int8_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, max_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, maxl_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zero_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zeror_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zerol_v<int8_t>), int32_t(maxl_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, min_v<int8_t>), int32_t(min_v<int8_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, minr_v<int8_t>), int32_t(minr_v<int8_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, max_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, maxl_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zero_v<int8_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zeror_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zerol_v<int8_t>), int32_t(maxll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, min_v<int8_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, minr_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, max_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, maxl_v<int8_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zeror_v<int8_t>), int32_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zerol_v<int8_t>), int32_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, min_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, minr_v<int8_t>), int32_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, max_v<int8_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, maxl_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zero_v<int8_t>), int32_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zeror_v<int8_t>), int32_t(zerorr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zerol_v<int8_t>), int32_t(zero_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, min_v<int8_t>), int32_t(min_v<int8_t>) + zerol_v<int32_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, minr_v<int8_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, max_v<int8_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, maxl_v<int8_t>), int32_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zero_v<int8_t>), int32_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zeror_v<int8_t>), int32_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zerol_v<int8_t>), int32_t(zeroll_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, minr_v<uint8_t>), uint32_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, maxl_v<uint8_t>), uint32_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, min_v<uint8_t>), uint32_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, minr_v<uint8_t>), uint32_t(minrr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint8_t>) + zeror_v<uint32_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, maxl_v<uint8_t>), uint32_t(max_v<uint8_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, min_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, minr_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, maxl_v<uint8_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, min_v<uint8_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, minr_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, maxl_v<uint8_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingAddTest, Test_32_16) {
-    EXPECT_THAT(saturating_add(min_v<int32_t>, min_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, minr_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, max_v<int16_t>), int32_t(max_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, maxl_v<int16_t>), int32_t(maxl_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zero_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zeror_v<int16_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zerol_v<int16_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, min_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, minr_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, max_v<int16_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, maxl_v<int16_t>), int32_t(maxl_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zero_v<int16_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zeror_v<int16_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zerol_v<int16_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int32_t>, min_v<int16_t>), int32_t(min_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, minr_v<int16_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, max_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, maxl_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zero_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zeror_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zerol_v<int16_t>), int32_t(maxl_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, min_v<int16_t>), int32_t(min_v<int16_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, minr_v<int16_t>), int32_t(minr_v<int16_t>) + maxl_v<int32_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, max_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, maxl_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zero_v<int16_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zeror_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zerol_v<int16_t>), int32_t(maxll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, min_v<int16_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, minr_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, max_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, maxl_v<int16_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zeror_v<int16_t>), int32_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zerol_v<int16_t>), int32_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, min_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, minr_v<int16_t>), int32_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, max_v<int16_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, maxl_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zero_v<int16_t>), int32_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zeror_v<int16_t>), int32_t(zerorr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zerol_v<int16_t>), int32_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, min_v<int16_t>), int32_t(min_v<int16_t>) + zerol_v<int32_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, minr_v<int16_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, max_v<int16_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, maxl_v<int16_t>), int32_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zero_v<int16_t>), int32_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zeror_v<int16_t>), int32_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zerol_v<int16_t>), int32_t(zeroll_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, minr_v<uint16_t>), uint32_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, maxl_v<uint16_t>), uint32_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, min_v<uint16_t>), uint32_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, minr_v<uint16_t>), uint32_t(minrr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint16_t>) + zeror_v<uint32_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, maxl_v<uint16_t>), uint32_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, min_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, minr_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, maxl_v<uint16_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, min_v<uint16_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, minr_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, maxl_v<uint16_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingAddTest, Test_32_32) {
-    EXPECT_THAT(saturating_add(min_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, max_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, maxl_v<int32_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zero_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zeror_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zerol_v<int32_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, max_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, maxl_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zero_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zeror_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zerol_v<int32_t>), int32_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int32_t>, min_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, minr_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zero_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zeror_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zerol_v<int32_t>), int32_t(maxl_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, min_v<int32_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, minr_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zero_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zeror_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zerol_v<int32_t>), int32_t(maxll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, min_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, minr_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zeror_v<int32_t>), int32_t(zerorr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, max_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, maxl_v<int32_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zerol_v<int32_t>), int32_t(zeroll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, minr_v<uint32_t>), uint32_t(minrr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, min_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, minr_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, min_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, minr_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingAddTest, Test_32_64) {
-    EXPECT_THAT(saturating_add(min_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, max_v<int64_t>), int64_t(min_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, maxl_v<int64_t>), int64_t(min_v<int32_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zero_v<int64_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zeror_v<int64_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(min_v<int32_t>, zerol_v<int64_t>), int64_t(min_v<int32_t>) + zerol_v<int64_t>);
-
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, max_v<int64_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, maxl_v<int64_t>), int64_t(minr_v<int32_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zero_v<int64_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zeror_v<int64_t>), int64_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(minr_v<int32_t>, zerol_v<int64_t>), int64_t(min_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int32_t>, min_v<int64_t>), int64_t(max_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zero_v<int64_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zeror_v<int64_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int32_t>, zerol_v<int64_t>), int64_t(maxl_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, min_v<int64_t>), int64_t(maxl_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, minr_v<int64_t>), int64_t(maxl_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zero_v<int64_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zeror_v<int64_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int32_t>, zerol_v<int64_t>), int64_t(maxll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int32_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, min_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, minr_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zeror_v<int64_t>), int64_t(zerorr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int32_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, max_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, maxl_v<int64_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int32_t>, zerol_v<int64_t>), int64_t(zeroll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint32_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, minr_v<uint64_t>), uint64_t(minrr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint32_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, min_v<uint64_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, minr_v<uint64_t>), uint64_t(max_v<uint32_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint32_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, min_v<uint64_t>), uint64_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, minr_v<uint64_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint32_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingAddTest, Test_64_8) {
-    EXPECT_THAT(saturating_add(min_v<int64_t>, min_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, minr_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, max_v<int8_t>), int64_t(max_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, maxl_v<int8_t>), int64_t(maxl_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zero_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zeror_v<int8_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zerol_v<int8_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, min_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, minr_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, max_v<int8_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, maxl_v<int8_t>), int64_t(maxl_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zero_v<int8_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zeror_v<int8_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zerol_v<int8_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int64_t>, min_v<int8_t>), int64_t(min_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, minr_v<int8_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, max_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, maxl_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zero_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zeror_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zerol_v<int8_t>), int64_t(maxl_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, min_v<int8_t>), int64_t(min_v<int8_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, minr_v<int8_t>), int64_t(minr_v<int8_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, max_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, maxl_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zero_v<int8_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zeror_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zerol_v<int8_t>), int64_t(maxll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, min_v<int8_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, minr_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, max_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, maxl_v<int8_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zeror_v<int8_t>), int64_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zerol_v<int8_t>), int64_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, min_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, minr_v<int8_t>), int64_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, max_v<int8_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, maxl_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zero_v<int8_t>), int64_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zeror_v<int8_t>), int64_t(zerorr_v<int8_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zerol_v<int8_t>), int64_t(zero_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, min_v<int8_t>), int64_t(min_v<int8_t>) + zerol_v<int64_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, minr_v<int8_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, max_v<int8_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, maxl_v<int8_t>), int64_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zero_v<int8_t>), int64_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zeror_v<int8_t>), int64_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zerol_v<int8_t>), int64_t(zeroll_v<int8_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, minr_v<uint8_t>), uint64_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, maxl_v<uint8_t>), uint64_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, min_v<uint8_t>), uint64_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, minr_v<uint8_t>), uint64_t(minrr_v<uint8_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint8_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, maxl_v<uint8_t>), uint64_t(max_v<uint8_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, min_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, minr_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, maxl_v<uint8_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, min_v<uint8_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, minr_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, maxl_v<uint8_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingAddTest, Test_64_16) {
-    EXPECT_THAT(saturating_add(min_v<int64_t>, min_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, minr_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, max_v<int16_t>), int64_t(max_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, maxl_v<int16_t>), int64_t(maxl_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zero_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zeror_v<int16_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zerol_v<int16_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, min_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, minr_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, max_v<int16_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, maxl_v<int16_t>), int64_t(maxl_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zero_v<int16_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zeror_v<int16_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zerol_v<int16_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int64_t>, min_v<int16_t>), int64_t(min_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, minr_v<int16_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, max_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, maxl_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zero_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zeror_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zerol_v<int16_t>), int64_t(maxl_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, min_v<int16_t>), int64_t(min_v<int16_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, minr_v<int16_t>), int64_t(minr_v<int16_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, max_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, maxl_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zero_v<int16_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zeror_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zerol_v<int16_t>), int64_t(maxll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, min_v<int16_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, minr_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, max_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, maxl_v<int16_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zeror_v<int16_t>), int64_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zerol_v<int16_t>), int64_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, min_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, minr_v<int16_t>), int64_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, max_v<int16_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, maxl_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zero_v<int16_t>), int64_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zeror_v<int16_t>), int64_t(zerorr_v<int16_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zerol_v<int16_t>), int64_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, min_v<int16_t>), int64_t(min_v<int16_t>) + zerol_v<int64_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, minr_v<int16_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, max_v<int16_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, maxl_v<int16_t>), int64_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zero_v<int16_t>), int64_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zeror_v<int16_t>), int64_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zerol_v<int16_t>), int64_t(zeroll_v<int16_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, minr_v<uint16_t>), uint64_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, maxl_v<uint16_t>), uint64_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, min_v<uint16_t>), uint64_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, minr_v<uint16_t>), uint64_t(minrr_v<uint16_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint16_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, maxl_v<uint16_t>), uint64_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, min_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, minr_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, maxl_v<uint16_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, min_v<uint16_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, minr_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, maxl_v<uint16_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingAddTest, Test_64_32) {
-    EXPECT_THAT(saturating_add(min_v<int64_t>, min_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, minr_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, max_v<int32_t>), int64_t(max_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, maxl_v<int32_t>), int64_t(maxl_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zero_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zeror_v<int32_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zerol_v<int32_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, min_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, minr_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, max_v<int32_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, maxl_v<int32_t>), int64_t(maxl_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zero_v<int32_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zeror_v<int32_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zerol_v<int32_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int64_t>, min_v<int32_t>), int64_t(min_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, minr_v<int32_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_add(max_v<int64_t>, max_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, maxl_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zero_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zeror_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zerol_v<int32_t>), int64_t(maxl_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, min_v<int32_t>), int64_t(min_v<int32_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, minr_v<int32_t>), int64_t(minr_v<int32_t>) + maxl_v<int64_t>);
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, max_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, maxl_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zero_v<int32_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zeror_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zerol_v<int32_t>), int64_t(maxll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, min_v<int32_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, minr_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, max_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, maxl_v<int32_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zeror_v<int32_t>), int64_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zerol_v<int32_t>), int64_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, min_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, minr_v<int32_t>), int64_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, max_v<int32_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, maxl_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zero_v<int32_t>), int64_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zeror_v<int32_t>), int64_t(zerorr_v<int32_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zerol_v<int32_t>), int64_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, min_v<int32_t>), int64_t(min_v<int32_t>) + zerol_v<int64_t>);
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, minr_v<int32_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, max_v<int32_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, maxl_v<int32_t>), int64_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zero_v<int32_t>), int64_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zeror_v<int32_t>), int64_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zerol_v<int32_t>), int64_t(zeroll_v<int32_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, minr_v<uint32_t>), uint64_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, maxl_v<uint32_t>), uint64_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, min_v<uint32_t>), uint64_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, minr_v<uint32_t>), uint64_t(minrr_v<uint32_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint32_t>) + zeror_v<uint64_t>);
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, maxl_v<uint32_t>), uint64_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, min_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, minr_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, maxl_v<uint32_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, min_v<uint32_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, minr_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, maxl_v<uint32_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingAddTest, Test_64_64) {
-    EXPECT_THAT(saturating_add(min_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, max_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, maxl_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zero_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zeror_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(min_v<int64_t>, zerol_v<int64_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, maxl_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zero_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zeror_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(minr_v<int64_t>, zerol_v<int64_t>), int64_t(min_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<int64_t>, min_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zero_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zeror_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(max_v<int64_t>, zerol_v<int64_t>), int64_t(maxl_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, min_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, minr_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zero_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zeror_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<int64_t>, zerol_v<int64_t>), int64_t(maxll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zero_v<int64_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, min_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, minr_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zeror_v<int64_t>), int64_t(zerorr_v<int64_t>));
-    EXPECT_THAT(saturating_add(zeror_v<int64_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, max_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, maxl_v<int64_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_add(zerol_v<int64_t>, zerol_v<int64_t>), int64_t(zeroll_v<int64_t>));
-
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(min_v<uint64_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, minr_v<uint64_t>), uint64_t(minrr_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(minr_v<uint64_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, min_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, minr_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(max_v<uint64_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, min_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, minr_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_add(maxl_v<uint64_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingSubTest, Test_8_8) {
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, min_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, minr_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, max_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, maxl_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zero_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zeror_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zerol_v<int8_t>), int8_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, min_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, minr_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, max_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, maxl_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zero_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zeror_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zerol_v<int8_t>), int8_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, max_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, maxl_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zero_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zeror_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zerol_v<int8_t>), int8_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, max_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, maxl_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zero_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zeror_v<int8_t>), int8_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zerol_v<int8_t>), int8_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, max_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, maxl_v<int8_t>), int8_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zeror_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zerol_v<int8_t>), int8_t(zeror_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, max_v<int8_t>), int8_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, maxl_v<int8_t>), int8_t(minrr_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zero_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zeror_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zerol_v<int8_t>), int8_t(zerorr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, minr_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, max_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, maxl_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zero_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zeror_v<int8_t>), int8_t(zeroll_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zerol_v<int8_t>), int8_t(zero_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, minr_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, max_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, maxl_v<uint8_t>), uint8_t(min_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, min_v<uint8_t>), uint8_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, minr_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, max_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, maxl_v<uint8_t>), uint8_t(min_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, min_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, minr_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, max_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, maxl_v<uint8_t>), uint8_t(minr_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, min_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, minr_v<uint8_t>), uint8_t(maxll_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, max_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, maxl_v<uint8_t>), uint8_t(min_v<uint8_t>));
-}
-
-TEST(SaturatingSubTest, Test_8_16) {
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, min_v<int16_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zero_v<int16_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zeror_v<int16_t>), int16_t(min_v<int8_t>) - zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zerol_v<int16_t>), int16_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, min_v<int16_t>), int16_t(minrr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, minr_v<int16_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zero_v<int16_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zeror_v<int16_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zerol_v<int16_t>), int16_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, max_v<int16_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int8_t>) + minrr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zero_v<int16_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zeror_v<int16_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zerol_v<int16_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, max_v<int16_t>), int16_t(max_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zero_v<int16_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zeror_v<int16_t>), int16_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zerol_v<int16_t>), int16_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, max_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zeror_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zerol_v<int16_t>), int16_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, max_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zero_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zerol_v<int16_t>), int16_t(zerorr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, minr_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, maxl_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zero_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zeror_v<int16_t>), int16_t(zeroll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, min_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, min_v<uint16_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, minr_v<uint16_t>), uint16_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, min_v<uint16_t>), uint16_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, minr_v<uint16_t>), uint16_t(maxll_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-}
-
-TEST(SaturatingSubTest, Test_8_32) {
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, min_v<int32_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zero_v<int32_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zeror_v<int32_t>), int32_t(min_v<int8_t>) - zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zerol_v<int32_t>), int32_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, min_v<int32_t>), int32_t(minrr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, minr_v<int32_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zero_v<int32_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zeror_v<int32_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zerol_v<int32_t>), int32_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, max_v<int32_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int8_t>) + minrr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zero_v<int32_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zeror_v<int32_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zerol_v<int32_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, max_v<int32_t>), int32_t(max_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zero_v<int32_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zeror_v<int32_t>), int32_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zerol_v<int32_t>), int32_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, max_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zerol_v<int32_t>), int32_t(zerorr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, minr_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, maxl_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zeror_v<int32_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, min_v<uint32_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, min_v<uint32_t>), uint32_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, minr_v<uint32_t>), uint32_t(maxll_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-}
-
-TEST(SaturatingSubTest, Test_8_64) {
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, min_v<int64_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zero_v<int64_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zeror_v<int64_t>), int64_t(min_v<int8_t>) - zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int8_t>, zerol_v<int64_t>), int64_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, min_v<int64_t>), int64_t(minrr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, minr_v<int64_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zero_v<int64_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zeror_v<int64_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int8_t>, zerol_v<int64_t>), int64_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, max_v<int64_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int8_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zero_v<int64_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zeror_v<int64_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(max_v<int8_t>, zerol_v<int64_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, max_v<int64_t>), int64_t(max_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zero_v<int64_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zeror_v<int64_t>), int64_t(maxll_v<int8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int8_t>, zerol_v<int64_t>), int64_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int8_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, max_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int8_t>, zerol_v<int64_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, minr_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, maxl_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zeror_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int8_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint8_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint8_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, min_v<uint64_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint8_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, min_v<uint64_t>), uint64_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, minr_v<uint64_t>), uint64_t(maxll_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint8_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-}
-
-TEST(SaturatingSubTest, Test_16_8) {
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int8_t>) + min_v<int16_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, max_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, maxl_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zero_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zeror_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zerol_v<int8_t>), int16_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>) + minrr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int8_t>) + minr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, max_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, maxl_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zero_v<int8_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zeror_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zerol_v<int8_t>), int16_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, min_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, max_v<int8_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, maxl_v<int8_t>), int16_t(minrr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zero_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zeror_v<int8_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zerol_v<int8_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, min_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, max_v<int8_t>), int16_t(min_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, maxl_v<int8_t>), int16_t(minr_v<int8_t>) + max_v<int16_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zero_v<int8_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zeror_v<int8_t>), int16_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zerol_v<int8_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, max_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, maxl_v<int8_t>), int16_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zeror_v<int8_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zerol_v<int8_t>), int16_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>) + zerorr_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, max_v<int8_t>), int16_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, maxl_v<int8_t>), int16_t(minrr_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zero_v<int8_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zeror_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zerol_v<int8_t>), int16_t(zerorr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, minr_v<int8_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, max_v<int8_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, maxl_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zero_v<int8_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zeror_v<int8_t>), int16_t(zeroll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zerol_v<int8_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, minr_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, max_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, maxl_v<uint8_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, min_v<uint8_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, minr_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, max_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, maxl_v<uint8_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, min_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, minr_v<uint8_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, max_v<uint8_t>), max_v<uint16_t> - uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, maxl_v<uint8_t>), max_v<uint16_t> - uint16_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, min_v<uint8_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, minr_v<uint8_t>), uint16_t(maxll_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, max_v<uint8_t>), maxl_v<uint16_t> - uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, maxl_v<uint8_t>), max_v<uint16_t> - uint16_t(max_v<uint8_t>));
-}
-
-TEST(SaturatingSubTest, Test_16_16) {
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, min_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, minr_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zero_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zeror_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zerol_v<int16_t>), int16_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, min_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, minr_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zero_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zeror_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zerol_v<int16_t>), int16_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, max_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, maxl_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zero_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zeror_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zerol_v<int16_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, max_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, maxl_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zero_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zeror_v<int16_t>), int16_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zerol_v<int16_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, max_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zeror_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zerol_v<int16_t>), int16_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, max_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zero_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zerol_v<int16_t>), int16_t(zerorr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, minr_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, maxl_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zero_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zeror_v<int16_t>), int16_t(zeroll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, min_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, min_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, minr_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, maxl_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, min_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, minr_v<uint16_t>), uint16_t(maxll_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-}
-
-TEST(SaturatingSubTest, Test_16_32) {
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, min_v<int32_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zero_v<int32_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zeror_v<int32_t>), int32_t(min_v<int16_t>) - zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zerol_v<int32_t>), int32_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, min_v<int32_t>), int32_t(minrr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, minr_v<int32_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zero_v<int32_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zeror_v<int32_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zerol_v<int32_t>), int32_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, max_v<int32_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int16_t>) + minrr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zero_v<int32_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zeror_v<int32_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zerol_v<int32_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, max_v<int32_t>), int32_t(max_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zero_v<int32_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zeror_v<int32_t>), int32_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zerol_v<int32_t>), int32_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, max_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zerol_v<int32_t>), int32_t(zerorr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, minr_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, maxl_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zeror_v<int32_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, min_v<uint32_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, min_v<uint32_t>), uint32_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, minr_v<uint32_t>), uint32_t(maxll_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-}
-
-TEST(SaturatingSubTest, Test_16_64) {
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, min_v<int64_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zero_v<int64_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zeror_v<int64_t>), int64_t(min_v<int16_t>) - zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int16_t>, zerol_v<int64_t>), int64_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, min_v<int64_t>), int64_t(minrr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, minr_v<int64_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zero_v<int64_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zeror_v<int64_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int16_t>, zerol_v<int64_t>), int64_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, max_v<int64_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int16_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zero_v<int64_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zeror_v<int64_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(max_v<int16_t>, zerol_v<int64_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, max_v<int64_t>), int64_t(max_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zero_v<int64_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zeror_v<int64_t>), int64_t(maxll_v<int16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int16_t>, zerol_v<int64_t>), int64_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int16_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, max_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int16_t>, zerol_v<int64_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, minr_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, maxl_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zeror_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int16_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint16_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint16_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, min_v<uint64_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint16_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, min_v<uint64_t>), uint64_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, minr_v<uint64_t>), uint64_t(maxll_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint16_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-}
-
-TEST(SaturatingSubTest, Test_32_8) {
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int8_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, max_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, maxl_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zero_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zeror_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zerol_v<int8_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>) + minrr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int8_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, max_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, maxl_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zero_v<int8_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zeror_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zerol_v<int8_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, min_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, max_v<int8_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, maxl_v<int8_t>), int32_t(minrr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zero_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zeror_v<int8_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zerol_v<int8_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, min_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, max_v<int8_t>), int32_t(min_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, maxl_v<int8_t>), int32_t(minr_v<int8_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zero_v<int8_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zeror_v<int8_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zerol_v<int8_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, max_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, maxl_v<int8_t>), int32_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zeror_v<int8_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zerol_v<int8_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>) + zerorr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, max_v<int8_t>), int32_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, maxl_v<int8_t>), int32_t(minrr_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zero_v<int8_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zeror_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zerol_v<int8_t>), int32_t(zerorr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, minr_v<int8_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, max_v<int8_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, maxl_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zero_v<int8_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zeror_v<int8_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zerol_v<int8_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, minr_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, max_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, maxl_v<uint8_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, min_v<uint8_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, minr_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, max_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, maxl_v<uint8_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, min_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, minr_v<uint8_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, max_v<uint8_t>), max_v<uint32_t> - uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, maxl_v<uint8_t>), max_v<uint32_t> - uint32_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, min_v<uint8_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, minr_v<uint8_t>), uint32_t(maxll_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, max_v<uint8_t>), maxl_v<uint32_t> - uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, maxl_v<uint8_t>), max_v<uint32_t> - uint32_t(max_v<uint8_t>));
-}
-
-TEST(SaturatingSubTest, Test_32_16) {
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int16_t>) + min_v<int32_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, max_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, maxl_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zero_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zeror_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zerol_v<int16_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>) + minrr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int16_t>) + minr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, max_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, maxl_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zero_v<int16_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zeror_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zerol_v<int16_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, min_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, max_v<int16_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, maxl_v<int16_t>), int32_t(minrr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zero_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zeror_v<int16_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zerol_v<int16_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, min_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, max_v<int16_t>), int32_t(min_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, maxl_v<int16_t>), int32_t(minr_v<int16_t>) + max_v<int32_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zero_v<int16_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zeror_v<int16_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zerol_v<int16_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, max_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, maxl_v<int16_t>), int32_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zeror_v<int16_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zerol_v<int16_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>) + zerorr_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, max_v<int16_t>), int32_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, maxl_v<int16_t>), int32_t(minrr_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zero_v<int16_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zeror_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zerol_v<int16_t>), int32_t(zerorr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, minr_v<int16_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, max_v<int16_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, maxl_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zero_v<int16_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zeror_v<int16_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zerol_v<int16_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, minr_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, max_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, maxl_v<uint16_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, min_v<uint16_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, minr_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, max_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, maxl_v<uint16_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, min_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, minr_v<uint16_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, max_v<uint16_t>), max_v<uint32_t> - uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, maxl_v<uint16_t>), max_v<uint32_t> - uint32_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, min_v<uint16_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, minr_v<uint16_t>), uint32_t(maxll_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, max_v<uint16_t>), maxl_v<uint32_t> - uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, maxl_v<uint16_t>), max_v<uint32_t> - uint32_t(max_v<uint16_t>));
-}
-
-TEST(SaturatingSubTest, Test_32_32) {
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, min_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, minr_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zero_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zeror_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zerol_v<int32_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, min_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, minr_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zero_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zeror_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zerol_v<int32_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, max_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, maxl_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zero_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zeror_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zerol_v<int32_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, max_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, maxl_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zero_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zeror_v<int32_t>), int32_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zerol_v<int32_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, max_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zero_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zerol_v<int32_t>), int32_t(zerorr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, minr_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, maxl_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zero_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zeror_v<int32_t>), int32_t(zeroll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, min_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, min_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, maxl_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, min_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, minr_v<uint32_t>), uint32_t(maxll_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-}
-
-TEST(SaturatingSubTest, Test_32_64) {
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, min_v<int64_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zero_v<int64_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zeror_v<int64_t>), int64_t(min_v<int32_t>) - zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int32_t>, zerol_v<int64_t>), int64_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, min_v<int64_t>), int64_t(minrr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, minr_v<int64_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zero_v<int64_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zeror_v<int64_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int32_t>, zerol_v<int64_t>), int64_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, max_v<int64_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int32_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zero_v<int64_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zeror_v<int64_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(max_v<int32_t>, zerol_v<int64_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, max_v<int64_t>), int64_t(max_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zero_v<int64_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zeror_v<int64_t>), int64_t(maxll_v<int32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int32_t>, zerol_v<int64_t>), int64_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int32_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, max_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int32_t>, zerol_v<int64_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, minr_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, maxl_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zeror_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int32_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint32_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint32_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, min_v<uint64_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint32_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, min_v<uint64_t>), uint64_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, minr_v<uint64_t>), uint64_t(maxll_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint32_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-}
-
-TEST(SaturatingSubTest, Test_64_8) {
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int8_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, max_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, maxl_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zero_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zeror_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zerol_v<int8_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int8_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, max_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, maxl_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zero_v<int8_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zeror_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zerol_v<int8_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, min_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, max_v<int8_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, maxl_v<int8_t>), int64_t(minrr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zero_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zeror_v<int8_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zerol_v<int8_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, min_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, max_v<int8_t>), int64_t(min_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, maxl_v<int8_t>), int64_t(minr_v<int8_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zero_v<int8_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zeror_v<int8_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zerol_v<int8_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, max_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, maxl_v<int8_t>), int64_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zeror_v<int8_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zerol_v<int8_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>) + zerorr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, max_v<int8_t>), int64_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, maxl_v<int8_t>), int64_t(minrr_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zero_v<int8_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zeror_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zerol_v<int8_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, minr_v<int8_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, max_v<int8_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, maxl_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zero_v<int8_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zeror_v<int8_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zerol_v<int8_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, minr_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, max_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, maxl_v<uint8_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, min_v<uint8_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, minr_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, max_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, maxl_v<uint8_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, min_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, minr_v<uint8_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, max_v<uint8_t>), max_v<uint64_t> - uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, maxl_v<uint8_t>), max_v<uint64_t> - uint64_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, min_v<uint8_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, minr_v<uint8_t>), uint64_t(maxll_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, max_v<uint8_t>), maxl_v<uint64_t> - uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, maxl_v<uint8_t>), max_v<uint64_t> - uint64_t(max_v<uint8_t>));
-}
-
-TEST(SaturatingSubTest, Test_64_16) {
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int16_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, max_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, maxl_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zero_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zeror_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zerol_v<int16_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int16_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, max_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, maxl_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zero_v<int16_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zeror_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zerol_v<int16_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, min_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, max_v<int16_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, maxl_v<int16_t>), int64_t(minrr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zero_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zeror_v<int16_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zerol_v<int16_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, min_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, max_v<int16_t>), int64_t(min_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, maxl_v<int16_t>), int64_t(minr_v<int16_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zero_v<int16_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zeror_v<int16_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zerol_v<int16_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, max_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, maxl_v<int16_t>), int64_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zeror_v<int16_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zerol_v<int16_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>) + zerorr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, max_v<int16_t>), int64_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, maxl_v<int16_t>), int64_t(minrr_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zero_v<int16_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zeror_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zerol_v<int16_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, minr_v<int16_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, max_v<int16_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, maxl_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zero_v<int16_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zeror_v<int16_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zerol_v<int16_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, minr_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, max_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, maxl_v<uint16_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, min_v<uint16_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, minr_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, max_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, maxl_v<uint16_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, min_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, minr_v<uint16_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, max_v<uint16_t>), max_v<uint64_t> - uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, maxl_v<uint16_t>), max_v<uint64_t> - uint64_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, min_v<uint16_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, minr_v<uint16_t>), uint64_t(maxll_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, max_v<uint16_t>), maxl_v<uint64_t> - uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, maxl_v<uint16_t>), max_v<uint64_t> - uint64_t(max_v<uint16_t>));
-}
-
-TEST(SaturatingSubTest, Test_64_32) {
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int32_t>) + min_v<int64_t>);
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, max_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, maxl_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zero_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zeror_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zerol_v<int32_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>) + minrr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int32_t>) + minr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, max_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, maxl_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zero_v<int32_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zeror_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zerol_v<int32_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, min_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, max_v<int32_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, maxl_v<int32_t>), int64_t(minrr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zero_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zeror_v<int32_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zerol_v<int32_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, min_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, max_v<int32_t>), int64_t(min_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, maxl_v<int32_t>), int64_t(minr_v<int32_t>) + max_v<int64_t>);
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zero_v<int32_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zeror_v<int32_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zerol_v<int32_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, max_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, maxl_v<int32_t>), int64_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zeror_v<int32_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zerol_v<int32_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>) + zerorr_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, max_v<int32_t>), int64_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, maxl_v<int32_t>), int64_t(minrr_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zero_v<int32_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zeror_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zerol_v<int32_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, minr_v<int32_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, max_v<int32_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, maxl_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zero_v<int32_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zeror_v<int32_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zerol_v<int32_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, minr_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, max_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, maxl_v<uint32_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, min_v<uint32_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, minr_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, max_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, maxl_v<uint32_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, min_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, minr_v<uint32_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, max_v<uint32_t>), max_v<uint64_t> - uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, maxl_v<uint32_t>), max_v<uint64_t> - uint64_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, min_v<uint32_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, minr_v<uint32_t>), uint64_t(maxll_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, max_v<uint32_t>), maxl_v<uint64_t> - uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, maxl_v<uint32_t>), max_v<uint64_t> - uint64_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingSubTest, Test_64_64) {
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, min_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, minr_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zero_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zeror_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(min_v<int64_t>, zerol_v<int64_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, min_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zero_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zeror_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<int64_t>, zerol_v<int64_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, maxl_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zero_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zeror_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(max_v<int64_t>, zerol_v<int64_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, max_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, maxl_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zero_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zeror_v<int64_t>), int64_t(maxll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<int64_t>, zerol_v<int64_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zero_v<int64_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, max_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zero_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zeror_v<int64_t>, zerol_v<int64_t>), int64_t(zerorr_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, minr_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, maxl_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zero_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zeror_v<int64_t>), int64_t(zeroll_v<int64_t>));
-    EXPECT_THAT(saturating_sub(zerol_v<int64_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(min_v<uint64_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, min_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(minr_v<uint64_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, min_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(max_v<uint64_t>, maxl_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, min_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, minr_v<uint64_t>), uint64_t(maxll_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_sub(maxl_v<uint64_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_8_8) {
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, max_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, maxl_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zeror_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zerol_v<int8_t>), int8_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, max_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, maxl_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zeror_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zerol_v<int8_t>), int8_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, minr_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, maxl_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zeror_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zerol_v<int8_t>), int8_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, minr_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, maxl_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zeror_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zerol_v<int8_t>), int8_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, min_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, minr_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, max_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, maxl_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zeror_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zerol_v<int8_t>), int8_t(zero_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, min_v<int8_t>), int8_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, minr_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, max_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, maxl_v<int8_t>), int8_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zeror_v<int8_t>), int8_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zerol_v<int8_t>), int8_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, min_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, minr_v<int8_t>), int8_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, max_v<int8_t>), int8_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, maxl_v<int8_t>), int8_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zero_v<int8_t>), int8_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zeror_v<int8_t>), int8_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zerol_v<int8_t>), int8_t(zeror_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, minr_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, max_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, maxl_v<uint8_t>), uint8_t(min_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, minr_v<uint8_t>), uint8_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, maxl_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, minr_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, maxl_v<uint8_t>), uint8_t(max_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, min_v<uint8_t>), uint8_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, minr_v<uint8_t>), uint8_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, max_v<uint8_t>), uint8_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, maxl_v<uint8_t>), uint8_t(max_v<uint8_t>));
-}
-
-TEST(SaturatingMulTest, Test_8_16) {
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zeror_v<int16_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zerol_v<int16_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zeror_v<int16_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zerol_v<int16_t>), int16_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zeror_v<int16_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zerol_v<int16_t>), int16_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zeror_v<int16_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zerol_v<int16_t>), int16_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, min_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, minr_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, max_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, maxl_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, minr_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, maxl_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zeror_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zerol_v<int16_t>), int16_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, max_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zeror_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zerol_v<int16_t>), int16_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, minr_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, maxl_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, minr_v<uint16_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, minr_v<uint16_t>), uint16_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-}
-
-TEST(SaturatingMulTest, Test_8_32) {
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zeror_v<int32_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zerol_v<int32_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zeror_v<int32_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zerol_v<int32_t>), int32_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zeror_v<int32_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zerol_v<int32_t>), int32_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zeror_v<int32_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zerol_v<int32_t>), int32_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, min_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, minr_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, max_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, maxl_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, minr_v<uint32_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingMulTest, Test_8_64) {
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zeror_v<int64_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(min_v<int8_t>, zerol_v<int64_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zeror_v<int64_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int8_t>, zerol_v<int64_t>), int64_t(max_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zeror_v<int64_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(max_v<int8_t>, zerol_v<int64_t>), int64_t(minr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zeror_v<int64_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int8_t>, zerol_v<int64_t>), int64_t(minrr_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, min_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, maxl_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int8_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int8_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int8_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint8_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint8_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, minr_v<uint64_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint8_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint8_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_16_8) {
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, min_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, max_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, maxl_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zeror_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zerol_v<int8_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, min_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, max_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, maxl_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zeror_v<int8_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zerol_v<int8_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, min_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, minr_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, max_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, maxl_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zeror_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zerol_v<int8_t>), int16_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, min_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, minr_v<int8_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, max_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, maxl_v<int8_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zeror_v<int8_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zerol_v<int8_t>), int16_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, min_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, minr_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, max_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, maxl_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zeror_v<int8_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zerol_v<int8_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, min_v<int8_t>), int16_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, minr_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, max_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, maxl_v<int8_t>), int16_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zeror_v<int8_t>), int16_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zerol_v<int8_t>), int16_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, min_v<int8_t>), int16_t(max_v<int8_t>) + zeror_v<int16_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, minr_v<int8_t>), int16_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, max_v<int8_t>), int16_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, maxl_v<int8_t>), int16_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zero_v<int8_t>), int16_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zeror_v<int8_t>), int16_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zerol_v<int8_t>), int16_t(zeror_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, minr_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, max_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, maxl_v<uint8_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, minr_v<uint8_t>), uint16_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, maxl_v<uint8_t>), uint16_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, minr_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, maxl_v<uint8_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, min_v<uint8_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, minr_v<uint8_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, max_v<uint8_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, maxl_v<uint8_t>), uint16_t(max_v<uint16_t>));
-}
-
-TEST(SaturatingMulTest, Test_16_16) {
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zeror_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zerol_v<int16_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, max_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, maxl_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zeror_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zerol_v<int16_t>), int16_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zeror_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zerol_v<int16_t>), int16_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, minr_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, maxl_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zeror_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zerol_v<int16_t>), int16_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, min_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, minr_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, max_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, maxl_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zeror_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zerol_v<int16_t>), int16_t(zero_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, min_v<int16_t>), int16_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, minr_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, max_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, maxl_v<int16_t>), int16_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zeror_v<int16_t>), int16_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zerol_v<int16_t>), int16_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, min_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, minr_v<int16_t>), int16_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, max_v<int16_t>), int16_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, maxl_v<int16_t>), int16_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zero_v<int16_t>), int16_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zeror_v<int16_t>), int16_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zerol_v<int16_t>), int16_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, minr_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, max_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, maxl_v<uint16_t>), uint16_t(min_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, minr_v<uint16_t>), uint16_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, maxl_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, minr_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, min_v<uint16_t>), uint16_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, minr_v<uint16_t>), uint16_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, max_v<uint16_t>), uint16_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, maxl_v<uint16_t>), uint16_t(max_v<uint16_t>));
-}
-
-TEST(SaturatingMulTest, Test_16_32) {
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zeror_v<int32_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zerol_v<int32_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zeror_v<int32_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zerol_v<int32_t>), int32_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zeror_v<int32_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zerol_v<int32_t>), int32_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zeror_v<int32_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zerol_v<int32_t>), int32_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, min_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, minr_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, max_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, maxl_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, minr_v<uint32_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingMulTest, Test_16_64) {
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zeror_v<int64_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(min_v<int16_t>, zerol_v<int64_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zeror_v<int64_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int16_t>, zerol_v<int64_t>), int64_t(max_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zeror_v<int64_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(max_v<int16_t>, zerol_v<int64_t>), int64_t(minr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zeror_v<int64_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int16_t>, zerol_v<int64_t>), int64_t(minrr_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, min_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, maxl_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int16_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int16_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int16_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint16_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint16_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, minr_v<uint64_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint16_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint16_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_32_8) {
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, min_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, max_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, maxl_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zeror_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zerol_v<int8_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, min_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, max_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, maxl_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zeror_v<int8_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zerol_v<int8_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, min_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, minr_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, max_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, maxl_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zeror_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zerol_v<int8_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, min_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, minr_v<int8_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, max_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, maxl_v<int8_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zeror_v<int8_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zerol_v<int8_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, min_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, minr_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, max_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, maxl_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zeror_v<int8_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zerol_v<int8_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, min_v<int8_t>), int32_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, minr_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, max_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, maxl_v<int8_t>), int32_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zeror_v<int8_t>), int32_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zerol_v<int8_t>), int32_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, min_v<int8_t>), int32_t(max_v<int8_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, minr_v<int8_t>), int32_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, max_v<int8_t>), int32_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, maxl_v<int8_t>), int32_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zero_v<int8_t>), int32_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zeror_v<int8_t>), int32_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zerol_v<int8_t>), int32_t(zeror_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, minr_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, max_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, maxl_v<uint8_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, minr_v<uint8_t>), uint32_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, maxl_v<uint8_t>), uint32_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, minr_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, maxl_v<uint8_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, min_v<uint8_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, minr_v<uint8_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, max_v<uint8_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, maxl_v<uint8_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingMulTest, Test_32_16) {
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, min_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, max_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, maxl_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zeror_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zerol_v<int16_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, min_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, max_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, maxl_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zeror_v<int16_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zerol_v<int16_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, min_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, minr_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, max_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, maxl_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zeror_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zerol_v<int16_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, min_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, minr_v<int16_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, max_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, maxl_v<int16_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zeror_v<int16_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zerol_v<int16_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, min_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, minr_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, max_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, maxl_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zeror_v<int16_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zerol_v<int16_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, min_v<int16_t>), int32_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, minr_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, max_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, maxl_v<int16_t>), int32_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zeror_v<int16_t>), int32_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zerol_v<int16_t>), int32_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, min_v<int16_t>), int32_t(max_v<int16_t>) + zeror_v<int32_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, minr_v<int16_t>), int32_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, max_v<int16_t>), int32_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, maxl_v<int16_t>), int32_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zero_v<int16_t>), int32_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zeror_v<int16_t>), int32_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zerol_v<int16_t>), int32_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, minr_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, max_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, maxl_v<uint16_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, minr_v<uint16_t>), uint32_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, maxl_v<uint16_t>), uint32_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, minr_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, maxl_v<uint16_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, min_v<uint16_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, minr_v<uint16_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, max_v<uint16_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, maxl_v<uint16_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingMulTest, Test_32_32) {
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zeror_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zerol_v<int32_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, max_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, maxl_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zeror_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zerol_v<int32_t>), int32_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zeror_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zerol_v<int32_t>), int32_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, minr_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, maxl_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zeror_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zerol_v<int32_t>), int32_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, min_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, minr_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, max_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, maxl_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zeror_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zerol_v<int32_t>), int32_t(zero_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, min_v<int32_t>), int32_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, minr_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, max_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, maxl_v<int32_t>), int32_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zeror_v<int32_t>), int32_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zerol_v<int32_t>), int32_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, min_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, minr_v<int32_t>), int32_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, max_v<int32_t>), int32_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, maxl_v<int32_t>), int32_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zero_v<int32_t>), int32_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zeror_v<int32_t>), int32_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zerol_v<int32_t>), int32_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, minr_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, max_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, maxl_v<uint32_t>), uint32_t(min_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, minr_v<uint32_t>), uint32_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, maxl_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, minr_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, min_v<uint32_t>), uint32_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, minr_v<uint32_t>), uint32_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, max_v<uint32_t>), uint32_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, maxl_v<uint32_t>), uint32_t(max_v<uint32_t>));
-}
-
-TEST(SaturatingMulTest, Test_32_64) {
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zeror_v<int64_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(min_v<int32_t>, zerol_v<int64_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zeror_v<int64_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int32_t>, zerol_v<int64_t>), int64_t(max_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zeror_v<int64_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(max_v<int32_t>, zerol_v<int64_t>), int64_t(minr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zeror_v<int64_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int32_t>, zerol_v<int64_t>), int64_t(minrr_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, min_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, maxl_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int32_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int32_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int32_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint32_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint32_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, minr_v<uint64_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint32_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint32_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_64_8) {
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, min_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, max_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, maxl_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zeror_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zerol_v<int8_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, min_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, max_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, maxl_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zeror_v<int8_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zerol_v<int8_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, min_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, minr_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, max_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, maxl_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zeror_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zerol_v<int8_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, min_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, minr_v<int8_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, max_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, maxl_v<int8_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zeror_v<int8_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zerol_v<int8_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, min_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, minr_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, max_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, maxl_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zeror_v<int8_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zerol_v<int8_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, min_v<int8_t>), int64_t(min_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, minr_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, max_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, maxl_v<int8_t>), int64_t(maxl_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zeror_v<int8_t>), int64_t(zeror_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zerol_v<int8_t>), int64_t(zerol_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, min_v<int8_t>), int64_t(max_v<int8_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, minr_v<int8_t>), int64_t(max_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, max_v<int8_t>), int64_t(minr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, maxl_v<int8_t>), int64_t(minrr_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zero_v<int8_t>), int64_t(zero_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zeror_v<int8_t>), int64_t(zerol_v<int8_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zerol_v<int8_t>), int64_t(zeror_v<int8_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, minr_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, max_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, maxl_v<uint8_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, minr_v<uint8_t>), uint64_t(minr_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint8_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, maxl_v<uint8_t>), uint64_t(maxl_v<uint8_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, minr_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, maxl_v<uint8_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, min_v<uint8_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, minr_v<uint8_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, max_v<uint8_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, maxl_v<uint8_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_64_16) {
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, min_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, max_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, maxl_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zeror_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zerol_v<int16_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, min_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, max_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, maxl_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zeror_v<int16_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zerol_v<int16_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, min_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, minr_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, max_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, maxl_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zeror_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zerol_v<int16_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, min_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, minr_v<int16_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, max_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, maxl_v<int16_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zeror_v<int16_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zerol_v<int16_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, min_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, minr_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, max_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, maxl_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zeror_v<int16_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zerol_v<int16_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, min_v<int16_t>), int64_t(min_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, minr_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, max_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, maxl_v<int16_t>), int64_t(maxl_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zeror_v<int16_t>), int64_t(zeror_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zerol_v<int16_t>), int64_t(zerol_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, min_v<int16_t>), int64_t(max_v<int16_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, minr_v<int16_t>), int64_t(max_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, max_v<int16_t>), int64_t(minr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, maxl_v<int16_t>), int64_t(minrr_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zero_v<int16_t>), int64_t(zero_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zeror_v<int16_t>), int64_t(zerol_v<int16_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zerol_v<int16_t>), int64_t(zeror_v<int16_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, minr_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, max_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, maxl_v<uint16_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, minr_v<uint16_t>), uint64_t(minr_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint16_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, maxl_v<uint16_t>), uint64_t(maxl_v<uint16_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, minr_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, maxl_v<uint16_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, min_v<uint16_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, minr_v<uint16_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, max_v<uint16_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, maxl_v<uint16_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_64_32) {
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, min_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, max_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, maxl_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zeror_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zerol_v<int32_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, min_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, max_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, maxl_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zeror_v<int32_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zerol_v<int32_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, min_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, minr_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, max_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, maxl_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zeror_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zerol_v<int32_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, min_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, minr_v<int32_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, max_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, maxl_v<int32_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zeror_v<int32_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zerol_v<int32_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, min_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, minr_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, max_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, maxl_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zeror_v<int32_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zerol_v<int32_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, min_v<int32_t>), int64_t(min_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, minr_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, max_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, maxl_v<int32_t>), int64_t(maxl_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zeror_v<int32_t>), int64_t(zeror_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zerol_v<int32_t>), int64_t(zerol_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, min_v<int32_t>), int64_t(max_v<int32_t>) + zeror_v<int64_t>);
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, minr_v<int32_t>), int64_t(max_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, max_v<int32_t>), int64_t(minr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, maxl_v<int32_t>), int64_t(minrr_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zero_v<int32_t>), int64_t(zero_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zeror_v<int32_t>), int64_t(zerol_v<int32_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zerol_v<int32_t>), int64_t(zeror_v<int32_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, minr_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, max_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, maxl_v<uint32_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, minr_v<uint32_t>), uint64_t(minr_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint32_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, maxl_v<uint32_t>), uint64_t(maxl_v<uint32_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, minr_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, maxl_v<uint32_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, min_v<uint32_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, minr_v<uint32_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, max_v<uint32_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, maxl_v<uint32_t>), uint64_t(max_v<uint64_t>));
-}
-
-TEST(SaturatingMulTest, Test_64_64) {
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zeror_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(min_v<int64_t>, zerol_v<int64_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, max_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, maxl_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zeror_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<int64_t>, zerol_v<int64_t>), int64_t(max_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zeror_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(max_v<int64_t>, zerol_v<int64_t>), int64_t(minr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, minr_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, maxl_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zeror_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<int64_t>, zerol_v<int64_t>), int64_t(minrr_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, min_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, minr_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, max_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, maxl_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zeror_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zero_v<int64_t>, zerol_v<int64_t>), int64_t(zero_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, min_v<int64_t>), int64_t(min_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, minr_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, max_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, maxl_v<int64_t>), int64_t(maxl_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zeror_v<int64_t>), int64_t(zeror_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zeror_v<int64_t>, zerol_v<int64_t>), int64_t(zerol_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, min_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, minr_v<int64_t>), int64_t(max_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, max_v<int64_t>), int64_t(minr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, maxl_v<int64_t>), int64_t(minrr_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zero_v<int64_t>), int64_t(zero_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zeror_v<int64_t>), int64_t(zerol_v<int64_t>));
-    EXPECT_THAT(saturating_mul(zerol_v<int64_t>, zerol_v<int64_t>), int64_t(zeror_v<int64_t>));
-
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, minr_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, max_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(min_v<uint64_t>, maxl_v<uint64_t>), uint64_t(min_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, minr_v<uint64_t>), uint64_t(minr_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(minr_v<uint64_t>, maxl_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, minr_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(max_v<uint64_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
-
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, min_v<uint64_t>), uint64_t(min_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, minr_v<uint64_t>), uint64_t(maxl_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, max_v<uint64_t>), uint64_t(max_v<uint64_t>));
-    EXPECT_THAT(saturating_mul(maxl_v<uint64_t>, maxl_v<uint64_t>), uint64_t(max_v<uint64_t>));
+TYPED_TEST(SaturatingBinOpUnsignedTest, SaturatingDiv) {
+    using Lhs = typename TestFixture::Lhs;
+    using Rhs = typename TestFixture::Rhs;
+    using Result = typename TestFixture::Result;
+
+#define EXPECT_REG(lhs, rhs) EXPECT_REG_BIN_OP(div, /, lhs, rhs, Result)
+#define EXPECT_MAX(lhs, rhs) EXPECT_SAT_BIN_OP(div, lhs, rhs, max_v<Result>)
+#define EXPECT_MIN(lhs, rhs) EXPECT_SAT_BIN_OP(div, lhs, rhs, min_v<Result>)
+
+    EXPECT_REG(min_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(min_v<Lhs>, maxl_v<Rhs>);
+
+    EXPECT_REG(minr_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(minr_v<Lhs>, maxl_v<Rhs>);
+
+    EXPECT_REG(max_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(max_v<Lhs>, maxl_v<Rhs>);
+
+    EXPECT_REG(maxl_v<Lhs>, minr_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, max_v<Rhs>);
+    EXPECT_REG(maxl_v<Lhs>, maxl_v<Rhs>);
+
+#undef EXPECT_REG
+#undef EXPECT_MAX
+#undef EXPECT_MIN
 }

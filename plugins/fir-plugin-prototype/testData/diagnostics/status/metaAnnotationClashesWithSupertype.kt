@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 import org.jetbrains.kotlin.fir.plugin.AllOpen
 
 @AllOpen
@@ -12,7 +11,7 @@ open class Base {
 }
 
 class Derived : Base() {
-    @<!PLUGIN_ANNOTATION_AMBIGUITY!>Open<!> // should be an error
+    @<!COMPILER_REQUIRED_ANNOTATION_AMBIGUITY!>Open<!> // should be an error
     @Ann // should be ok
     class ShouldBeFinal
 }

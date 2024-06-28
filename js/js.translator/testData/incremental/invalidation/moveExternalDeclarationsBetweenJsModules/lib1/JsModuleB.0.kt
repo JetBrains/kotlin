@@ -1,1 +1,1 @@
-@file:JsModule("js-module-b")
+@file:JsModule("./js-module-b.mjs")

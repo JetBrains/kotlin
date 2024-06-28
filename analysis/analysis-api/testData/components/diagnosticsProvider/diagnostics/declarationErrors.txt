@@ -8,9 +8,6 @@ Diagnostics from elements:
   for PSI element of type KtTypeReference at (6,10-11)
     FINAL_SUPERTYPE      text ranges: [(71,72)]
       PSI: KtTypeReference at (6,10-11)
-  for PSI element of type KtProperty at (1,1-11)
-    MUST_BE_INITIALIZED      text ranges: [(0,10)]
-      PSI: KtProperty at (1,1-11)
   for PSI element of type KtNamedFunction at (2,1-18)
     NON_MEMBER_FUNCTION_NO_BODY      text ranges: [(11,28)]
       PSI: KtNamedFunction at (2,1-18)

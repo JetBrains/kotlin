@@ -1,0 +1,8 @@
+package test
+
+// CHECK:
+//   Mangled name: test#callBuiltinFunctions(kotlin.Int;kotlin.Int){}
+//   Public signature: test/callBuiltinFunctions|7396310918419190407[0]
+//   Public signature debug description: callBuiltinFunctions(kotlin.Int;kotlin.Int){}
+fun callBuiltinFunctions(a: Int, b: Int): Unit
+

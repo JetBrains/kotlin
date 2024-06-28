@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: warn
 
 // FILE: spr/Nullable.java
@@ -63,17 +63,17 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A) {
-    a.foo("", null)?.length
+    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
-    a.foo(null, "").length
+    a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>, "").length
 
     a.bar().length
-    a.bar()!!.length
+    a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
     a.field?.length
     a.field.length
 
-    a.baz().get(0)
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz()<!>.get(0)
     a.baz()!!.get(0).get(0)
     a.baz()!!.get(0)?.get(0)
 }

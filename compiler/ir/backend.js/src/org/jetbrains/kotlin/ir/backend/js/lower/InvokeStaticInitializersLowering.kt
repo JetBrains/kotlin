@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.*
 
-class InvokeStaticInitializersLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+class InvokeStaticInitializersLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrConstructor) return
         if (container.parentClassOrNull?.isEnumClass == true) return
@@ -28,7 +29,15 @@ class InvokeStaticInitializersLowering(val context: JsIrBackendContext) : BodyLo
 
         val instance = context.mapping.objectToGetInstanceFunction[companionObject] ?: return
 
-        val getInstanceCall = IrCallImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, instance.symbol, 0, 0)
+        val getInstanceCall = IrCallImpl(
+            irClass.startOffset,
+            irClass.endOffset,
+            context.irBuiltIns.unitType,
+            instance.symbol,
+            0,
+            0,
+            JsStatementOrigins.SYNTHESIZED_STATEMENT
+        )
 
         (irBody as IrStatementContainer).statements.add(0, getInstanceCall)
     }

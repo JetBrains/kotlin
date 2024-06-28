@@ -1,0 +1,16 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/Suppress|[Types](names = vararg(String()))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] danglingAnnotationInClass.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class F : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=F] constructor(): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+    }

@@ -1,6 +1,19 @@
 package test.another;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/another/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 
@@ -11,6 +24,41 @@ public abstract @interface Anno {
 
 package test.another;
 
+/**
+ * package {
+ *
+ *   // signature: extensionFunction(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+ *   public final fun kotlin/String.extensionFunction(a: kotlin/String, b: kotlin/String): kotlin/Unit
+ *
+ *   // signature: topLevelFunction()Ljava/lang/String;
+ *   public final fun topLevelFunction(): kotlin/String?
+ *
+ *   // signature: topLevelGenericFunction()Ljava/util/List;
+ *   public final fun <T#0 (* X *) : kotlin/CharSequence, T#1 (* T *) : kotlin/collections/List<out T#0>> topLevelGenericFunction(): T#1?
+ *
+ *   // getter: getExtensionProperty(Ljava/lang/Object;)Ljava/lang/String;
+ *   // setter: setExtensionProperty(Ljava/lang/Object;Ljava/lang/String;)V
+ *   // synthetic method for annotations: getExtensionProperty$annotations(Ljava/lang/Object;)V
+ *   public final var <T#0 (* T *) : kotlin/Any> T#0.extensionProperty: kotlin/String
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(setParamName: kotlin/String)
+ *
+ *   // field: topLevelProperty:I
+ *   // getter: getTopLevelProperty()I
+ *   public final val topLevelProperty: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // getter: getTopLevelProperty2()Ljava/lang/String;
+ *   public final val topLevelProperty2: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // field: topLevelConstProperty:I
+ *   public final const val topLevelConstProperty: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TopLevelKt {
 

@@ -5,7 +5,6 @@
 
 package test.comparisons
 
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.test.*
 
 data class Item(val name: String, val rating: Int) : Comparable<Item> {
@@ -14,7 +13,6 @@ data class Item(val name: String, val rating: Int) : Comparable<Item> {
     }
 }
 
-@SharedImmutable
 val STRING_CASE_INSENSITIVE_ORDER: Comparator<String> =
     compareBy { it: String -> it.uppercase() }.thenBy { it.lowercase() }.thenBy { it }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -20,32 +19,44 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kotlinx-serialization/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
 public class SerializationFirLightTreeAsmLikeInstructionsListingTestGenerated extends AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest {
-    @Test
-    public void testAllFilesPresentInCodegen() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  @Test
+  public void testAllFilesPresentInCodegen() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @Test
-    @TestMetadata("Basic.kt")
-    public void testBasic() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Basic.kt");
-    }
+  @Test
+  @TestMetadata("Basic.kt")
+  public void testBasic() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Basic.kt");
+  }
 
-    @Test
-    @TestMetadata("Intrinsics.kt")
-    public void testIntrinsics() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
-    }
+  @Test
+  @TestMetadata("Intrinsics.kt")
+  public void testIntrinsics() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Intrinsics.kt");
+  }
 
-    @Test
-    @TestMetadata("IntrinsicsAdvanced.kt")
-    public void testIntrinsicsAdvanced() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsAdvanced.kt");
-    }
+  @Test
+  @TestMetadata("IntrinsicsAdvanced.kt")
+  public void testIntrinsicsAdvanced() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsAdvanced.kt");
+  }
 
-    @Test
-    @TestMetadata("Sealed.kt")
-    public void testSealed() throws Exception {
-        runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
-    }
+  @Test
+  @TestMetadata("IntrinsicsNonReified.kt")
+  public void testIntrinsicsNonReified() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/IntrinsicsNonReified.kt");
+  }
+
+  @Test
+  @TestMetadata("KeepGeneratedSerializer.kt")
+  public void testKeepGeneratedSerializer() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/KeepGeneratedSerializer.kt");
+  }
+
+  @Test
+  @TestMetadata("Sealed.kt")
+  public void testSealed() {
+    runTest("plugins/kotlinx-serialization/testData/codegen/Sealed.kt");
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.allopen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,14 +18,44 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/allopen/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
 public class FirLightTreeDiagnosticTestForAllOpenGenerated extends AbstractFirLightTreeDiagnosticTestForAllOpen {
-    @Test
-    public void testAllFilesPresentInDiagnostics() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-    }
+  @Test
+  public void testAllFilesPresentInDiagnostics() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+  }
 
-    @Test
-    @TestMetadata("kt54260.kt")
-    public void testKt54260() throws Exception {
-        runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
-    }
+  @Test
+  @TestMetadata("allOpenOnAnnotation.kt")
+  public void testAllOpenOnAnnotation() {
+    runTest("plugins/allopen/testData/diagnostics/allOpenOnAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("kjkHierarchy.kt")
+  public void testKjkHierarchy() {
+    runTest("plugins/allopen/testData/diagnostics/kjkHierarchy.kt");
+  }
+
+  @Test
+  @TestMetadata("kt54260.kt")
+  public void testKt54260() {
+    runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
+  }
+
+  @Test
+  @TestMetadata("kt60448.kt")
+  public void testKt60448() {
+    runTest("plugins/allopen/testData/diagnostics/kt60448.kt");
+  }
+
+  @Test
+  @TestMetadata("redundantModality.kt")
+  public void testRedundantModality() {
+    runTest("plugins/allopen/testData/diagnostics/redundantModality.kt");
+  }
+
+  @Test
+  @TestMetadata("smartcast.kt")
+  public void testSmartcast() {
+    runTest("plugins/allopen/testData/diagnostics/smartcast.kt");
+  }
 }

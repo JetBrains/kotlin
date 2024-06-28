@@ -46,11 +46,16 @@ FILE: kt53494.kt
             !=(R|<local>/t|, Null(null)) ->  {
                 R|/Wrapped.Wrapped|<R|T? & Any|>(R|<local>/t|)
             }
-            (R|<local>/t| is R|T|) ->  {
-                R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
-            }
             else ->  {
-                Q|Default|
+                when () {
+                    (R|<local>/t| is R|T|) ->  {
+                        R|/Wrapped.Wrapped|<R|it(kotlin/Nothing? & T)|>(R|<local>/t|)
+                    }
+                    else ->  {
+                        Q|Default|
+                    }
+                }
+
             }
         }
 

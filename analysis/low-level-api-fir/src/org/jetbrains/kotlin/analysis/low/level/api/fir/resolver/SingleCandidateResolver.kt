@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -21,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class SingleCandidateResolver(
     private val firSession: FirSession,
@@ -53,24 +54,25 @@ class SingleCandidateResolver(
             callInfo,
             resolutionParameters.callableSymbol,
             explicitReceiverKind = explicitReceiverKind,
-            dispatchReceiverValue = dispatchReceiverValue,
+            dispatchReceiver = dispatchReceiverValue?.receiverExpression,
             givenExtensionReceiverOptions = listOfNotNull(
                 if (explicitReceiverKind.isExtensionReceiver)
-                    callInfo.explicitReceiver?.let { ExpressionReceiverValue(it) }
+                    callInfo.explicitReceiver
                 else
-                    implicitExtensionReceiverValue
+                    implicitExtensionReceiverValue?.receiverExpression
             ),
             scope = null,
         )
 
         val applicability = resolutionStageRunner.processCandidate(candidate, resolutionContext, stopOnFirstError = true)
 
-        val fakeCall = if (applicability.isSuccess) {
+        val fakeCall = if (candidate.isSuccessful) {
             buildCallForResolvedCandidate(candidate, resolutionParameters)
         } else if (
             resolutionParameters.allowUnsafeCall && applicability == CandidateApplicability.UNSAFE_CALL ||
             resolutionParameters.allowUnstableSmartCast && applicability == CandidateApplicability.UNSTABLE_SMARTCAST
         ) {
+            resolutionStageRunner.fullyProcessCandidate(candidate, resolutionContext)
             buildCallForCandidateWithError(candidate, applicability, resolutionParameters)
         } else {
             return null
@@ -82,7 +84,7 @@ class SingleCandidateResolver(
                 ?: ResolutionMode.ContextIndependent
         )
 
-        return completionResult.takeIf { it.callCompleted }?.result
+        return completionResult
     }
 
     private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {

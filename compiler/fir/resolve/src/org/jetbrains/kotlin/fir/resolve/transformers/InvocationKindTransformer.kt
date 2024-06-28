@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 
@@ -29,14 +29,14 @@ tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunct
 
 fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
-    val argumentMapping = calleeReference.candidate.argumentMapping ?: return
+    val argumentMapping = calleeReference.candidate.argumentMapping
     val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return
     val isInline = function.isInline
 
     val byParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
-    function.contractDescription.effects?.forEach { fir ->
+    function.contractDescription?.effects?.forEach { fir ->
         val effect = fir.effect as? ConeCallsEffectDeclaration ?: return@forEach
-        // TODO: Support callsInPlace contracts on receivers
+        // TODO: Support callsInPlace contracts on receivers, KT-59681
         val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: return@forEach
         byParameter[valueParameter] = effect.kind
     }

@@ -1,4 +1,4 @@
-depends = AddressBook CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL EventKit FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+depends = AddressBook CFCGTypes CFNetwork CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreText CoreVideo EAGL EventKit FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security Symbols UIKit UserNotifications darwin posix
 language = Objective-C
 package = platform.EventKitUI
 modules = EventKitUI

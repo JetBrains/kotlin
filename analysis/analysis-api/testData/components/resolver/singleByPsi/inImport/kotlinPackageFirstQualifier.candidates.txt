@@ -1,0 +1,2 @@
+KtNameReferenceExpression(7,13): 'kotlin'
+  NO_CANDIDATES

@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +PreferJavaFieldOverload
-// !CHECK_TYPE
+// LANGUAGE: +PreferJavaFieldOverload
+// CHECK_TYPE
 
 // FILE: CompressionType.java
 public enum CompressionType {

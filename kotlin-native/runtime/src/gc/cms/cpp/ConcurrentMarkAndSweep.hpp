@@ -7,176 +7,93 @@
 
 #include <atomic>
 #include <cstddef>
+#include <memory>
+#include <vector>
 
-#include "Allocator.hpp"
+#include "AllocatorImpl.hpp"
+#include "Barriers.hpp"
+#include "FinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
+#include "GCState.hpp"
+#include "GCStatistics.hpp"
 #include "IntrusiveList.hpp"
+#include "MainThreadFinalizerProcessor.hpp"
 #include "MarkAndSweepUtils.hpp"
-#include "ObjectFactory.hpp"
-#include "ScopedThread.hpp"
+#include "ObjectData.hpp"
+#include "ConcurrentMark.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 #include "Utils.hpp"
-#include "GCState.hpp"
-#include "std_support/Memory.hpp"
-#include "GCStatistics.hpp"
-
-#ifdef CUSTOM_ALLOCATOR
-#include "CustomAllocator.hpp"
-#include "Heap.hpp"
-
-namespace kotlin::alloc {
-class CustomFinalizerProcessor;
-}
-#endif
 
 namespace kotlin {
 namespace gc {
 
-#ifndef CUSTOM_ALLOCATOR
-class FinalizerProcessor;
-#endif
-
-// Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
-// TODO: Also make marking run concurrently with Kotlin threads.
+// TODO concurrent mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
+// TODO: Make marking run concurrently with Kotlin threads.
 class ConcurrentMarkAndSweep : private Pinned {
 public:
-    class ObjectData {
-    public:
-        bool tryMark() noexcept {
-            return trySetNext(reinterpret_cast<ObjectData*>(1));
-        }
-
-        bool marked() const noexcept { return next() != nullptr; }
-
-        bool tryResetMark() noexcept {
-            if (next() == nullptr) return false;
-            next_.store(nullptr, std::memory_order_relaxed);
-            return true;
-        }
-
-    private:
-        friend struct DefaultIntrusiveForwardListTraits<ObjectData>;
-
-        ObjectData* next() const noexcept { return next_.load(std::memory_order_relaxed); }
-        void setNext(ObjectData* next) noexcept {
-            RuntimeAssert(next, "next cannot be nullptr");
-            next_.store(next, std::memory_order_relaxed);
-        }
-        bool trySetNext(ObjectData* next) noexcept {
-            RuntimeAssert(next, "next cannot be nullptr");
-            ObjectData* expected = nullptr;
-            return next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
-        }
-
-        std::atomic<ObjectData*> next_ = nullptr;
-    };
-
-    enum MarkingBehavior { kMarkOwnStack, kDoNotMark };
-
-    using MarkQueue = intrusive_forward_list<ObjectData>;
-
     class ThreadData : private Pinned {
     public:
-        using ObjectData = ConcurrentMarkAndSweep::ObjectData;
-
-        using Allocator = AllocatorWithGC<Allocator, ThreadData>;
-
-        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
-            gc_(gc), threadData_(threadData), gcScheduler_(gcScheduler) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
-
-        void SafePointAllocation(size_t size) noexcept;
-
-        void Schedule() noexcept;
-        void ScheduleAndWaitFullGC() noexcept;
-        void ScheduleAndWaitFullGCWithFinalizers() noexcept;
-
-        void OnOOM(size_t size) noexcept;
 
         void OnSuspendForGC() noexcept;
 
-        Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
+        void safePoint() noexcept { mark_.onSafePoint(); }
+
+        void onThreadRegistration() noexcept { barriers_.onThreadRegistration(); }
+
+        bool tryLockRootSet();
+        void publish();
+        bool published() const;
+        void clearMarkFlags();
+
+        auto& commonThreadData() const noexcept { return threadData_; }
+        auto& barriers() noexcept { return barriers_; }
+        auto& mark() noexcept { return mark_; }
 
     private:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
-        GCSchedulerThreadData& gcScheduler_;
-        std::atomic<bool> marking_;
+        barriers::BarriersThreadData barriers_;
+        mark::ConcurrentMark::ThreadData mark_;
+
+        std::atomic<bool> rootSetLocked_ = false;
+        std::atomic<bool> published_ = false;
     };
 
-    using Allocator = ThreadData::Allocator;
-
-    ConcurrentMarkAndSweep(mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& scheduler) noexcept;
+    ConcurrentMarkAndSweep(
+            alloc::Allocator& allocator, gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
-    void SetMarkingBehaviorForTests(MarkingBehavior markingBehavior) noexcept;
-    void SetMarkingRequested(uint64_t epoch) noexcept;
-    void WaitForThreadsReadyToMark() noexcept;
-    void CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept;
 
-#ifdef CUSTOM_ALLOCATOR
-    alloc::Heap& heap() noexcept { return heap_; }
-#endif
+    GCStateHolder& state() noexcept { return state_; }
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits>& mainThreadFinalizerProcessor() noexcept {
+        return mainThreadFinalizerProcessor_;
+    }
+
+    auto& mark() noexcept { return markDispatcher_; }
 
 private:
-    // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
-    bool PerformFullGC(int64_t epoch) noexcept;
+    void mainGCThreadBody();
+    void PerformFullGC(int64_t epoch) noexcept;
 
-#ifndef CUSTOM_ALLOCATOR
-    mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
-#else
-    alloc::Heap heap_;
-#endif
-    GCScheduler& gcScheduler_;
+    alloc::Allocator& allocator_;
+    gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;
-    ScopedThread gcThread_;
-#ifndef CUSTOM_ALLOCATOR
-    std_support::unique_ptr<FinalizerProcessor> finalizerProcessor_;
-#else
-    std_support::unique_ptr<alloc::CustomFinalizerProcessor> finalizerProcessor_;
-#endif
+    FinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> finalizerProcessor_;
+    alloc::MainThreadFinalizerProcessor<alloc::FinalizerQueueSingle, alloc::FinalizerQueueTraits> mainThreadFinalizerProcessor_;
 
-    MarkQueue markQueue_;
-    MarkingBehavior markingBehavior_;
+    mark::ConcurrentMark markDispatcher_;
+    ScopedThread mainThread_;
+    std::vector<ScopedThread> auxThreads_;
 };
-
-namespace internal {
-struct MarkTraits {
-    using MarkQueue = gc::ConcurrentMarkAndSweep::MarkQueue;
-
-    static void clear(MarkQueue& queue) noexcept { queue.clear(); }
-
-    static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
-        if (auto* top = queue.try_pop_front()) {
-            auto node = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(*top);
-            return node->GetObjHeader();
-        }
-        return nullptr;
-    }
-
-    static bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
-        return queue.try_push_front(objectData);
-    }
-
-    static bool tryMark(ObjHeader* object) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
-        return objectData.tryMark();
-    }
-
-    static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
-        auto process = object->type_info()->processObjectInMark;
-        RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
-        process(static_cast<void*>(&markQueue), object);
-    }
-};
-} // namespace internal
 
 } // namespace gc
 } // namespace kotlin

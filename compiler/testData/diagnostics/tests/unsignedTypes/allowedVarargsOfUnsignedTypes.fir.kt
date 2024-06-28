@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun ubyte(vararg a: <!OPT_IN_USAGE!>UByte<!>) {}
 fun ushort(vararg a: <!OPT_IN_USAGE!>UShort<!>) {}

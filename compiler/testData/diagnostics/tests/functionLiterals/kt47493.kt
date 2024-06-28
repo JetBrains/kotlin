@@ -1,4 +1,4 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54568
+// FIR_IDENTICAL
 fun test1() {
     try {
         { <!CANNOT_INFER_PARAMETER_TYPE!>toDouble<!> ->

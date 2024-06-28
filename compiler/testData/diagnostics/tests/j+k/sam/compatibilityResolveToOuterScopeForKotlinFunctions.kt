@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 object Test0 {
     fun foo(f: Runnable): Int = 0
@@ -67,5 +67,16 @@ object Test5 {
         fun test() {
             <!DEBUG_INFO_CALL("fqName: Test5.foo; typeCall: function")!><!COMPATIBILITY_WARNING!>foo<!> { }<!>
         }
+    }
+}
+
+object Test6 {
+    fun foo(x: Any) = 1
+    fun foo(f: () -> Unit) = 2.0
+    fun foo(r: Runnable) = "3"
+
+    fun test() {
+        val result = foo { }
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>result<!>
     }
 }

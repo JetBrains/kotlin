@@ -1,0 +1,42 @@
+@kotlin.Metadata
+public final class MultiInit$Companion {
+    // source: 'MultiInitTest.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method foo(): void
+    public final inner class MultiInit$Companion
+}
+
+@kotlin.Metadata
+public final class MultiInit {
+    // source: 'MultiInitTest.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: MultiInit$Companion
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field b$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getB$volatile(): int
+    public final method incA(): int
+    public final method incB(): int
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setB$volatile(p0: int): void
+    public final inner class MultiInit$Companion
+}
+
+@kotlin.Metadata
+public final class MultiInitTest {
+    // source: 'MultiInitTest.kt'
+    public method <init>(): void
+    public final method testBasic(): void
+}
+
+@kotlin.Metadata
+public final class MultiInitTestKt {
+    // source: 'MultiInitTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

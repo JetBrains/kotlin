@@ -33,6 +33,8 @@ class JvmCachedDeclarations(
     private val context: JvmBackendContext,
     val fieldsForObjectInstances: CachedFieldsForObjectInstances,
 ) {
+    val syntheticAccessorGenerator = JvmSyntheticAccessorGenerator(context)
+
     private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
     private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
@@ -133,6 +135,7 @@ class JvmCachedDeclarations(
 
     private fun IrClass.makeProxy(target: IrSimpleFunction, isStatic: Boolean) =
         context.irFactory.buildFun {
+            setSourceRange(target)
             returnType = target.returnType
             origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
             // The proxy needs to have the same name as what it is targeting. If that is a property accessor,
@@ -199,7 +202,7 @@ class JvmCachedDeclarations(
             // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
             val defaultImplsOrigin =
                 if (!forCompatibilityMode && !interfaceFun.isFakeOverride) interfaceFun.origin
-                else interfaceFun.resolveFakeOverride()!!.origin
+                else interfaceFun.resolveFakeOverrideOrFail().origin
 
             // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.
             // However, Cloneable has no DefaultImpls, so this merely replicates the incorrect behavior of the old backend.
@@ -218,11 +221,12 @@ class JvmCachedDeclarations(
                 modality = Modality.OPEN,
                 visibility = defaultImplsVisibility,
                 isFakeOverride = false,
-                typeParametersFromContext = parent.typeParameters
+                typeParametersFromContext = parent.typeParameters,
+                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
-                if (forCompatibilityMode && !interfaceFun.resolveFakeOverride()!!.origin.isSynthetic) {
+                if (forCompatibilityMode && !interfaceFun.resolveFakeOverrideOrFail().origin.isSynthetic) {
                     context.createJvmIrBuilder(it.symbol).run {
                         it.annotations = it.annotations
                             .filterNot { it.symbol.owner.constructedClass.hasEqualFqName(DeprecationResolver.JAVA_DEPRECATED) }
@@ -255,7 +259,6 @@ class JvmCachedDeclarations(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            val mfvcReplacementStructure = context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure
             val redirectFunction = context.irFactory.buildFun {
                 origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
                 name = fakeOverride.name
@@ -280,7 +283,7 @@ class JvmCachedDeclarations(
                 annotations = fakeOverride.annotations
                 copyCorrespondingPropertyFrom(fakeOverride)
             }
-            mfvcReplacementStructure[fakeOverride]?.let { mfvcReplacementStructure[redirectFunction] = it }
+            context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
             redirectFunction
         }
 
@@ -385,3 +388,4 @@ class CachedFieldsForObjectInstances(
             getFieldForObjectInstance(singleton)
 
 }
+

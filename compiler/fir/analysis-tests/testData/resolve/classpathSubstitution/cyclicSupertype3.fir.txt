@@ -1,0 +1,42 @@
+Module: topmost
+FILE: topmost.kt
+    package org.example
+
+    public abstract interface Base : R|kotlin/Any| {
+        public abstract fun topmost(): R|kotlin/Unit|
+
+    }
+    public abstract interface Topmost : R|org/example/Base| {
+    }
+Module: top
+FILE: top.kt
+    package org.example
+
+    public abstract interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/TopAdditional> {
+        public abstract fun top(): R|kotlin/Unit|
+
+    }
+Module: middle
+FILE: middle.kt
+    package org.example
+
+    public abstract interface Base : <ERROR TYPE REF: Loop in supertype: org/example/Base -> org/example/MiddleAdditional> {
+        public abstract fun middle(): R|kotlin/Unit|
+
+    }
+    public abstract interface MiddleAdditional : <ERROR TYPE REF: Loop in supertype: org/example/MiddleAdditional -> org/example/Middle> {
+    }
+    public abstract interface Middle : <ERROR TYPE REF: Loop in supertype: org/example/Middle -> org/example/Top> {
+    }
+Module: bottom
+FILE: bottom.kt
+    package org.example
+
+    public abstract interface Base : R|org/example/BottomAdditional| {
+        public abstract fun bottom(): R|kotlin/Unit|
+
+    }
+    public abstract interface BottomAdditional : R|org/example/Bottom| {
+    }
+    public abstract interface Bottom : R|org/example/Middle| {
+    }

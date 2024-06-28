@@ -1,8 +1,9 @@
 // TARGET_BACKEND: JVM_IR
-// AFTER KT-53649 - TARGET_BACKEND: NATIVE, JS_IR
+// AFTER KT-53649 - TARGET_BACKEND: NATIVE, JS_IR, JS_IR_ES6
 // WITH_STDLIB
 
 // MODULE: lib
+// LANGUAGE: -EnumEntries
 // FILE: MyEnums.kt
 enum class MyEnum {
     N, O
@@ -13,7 +14,7 @@ enum class MyEnum2 {
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // FILE: Box.kt
 
 @OptIn(ExperimentalStdlibApi::class)

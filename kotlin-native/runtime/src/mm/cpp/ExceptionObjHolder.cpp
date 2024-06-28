@@ -5,7 +5,7 @@
 
 #include "Memory.h"
 
-#include "StableRefRegistry.hpp"
+#include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 
@@ -13,29 +13,20 @@ using namespace kotlin;
 
 namespace {
 
-#if !KONAN_NO_EXCEPTIONS
-class ExceptionObjHolderImpl : public ExceptionObjHolder {
+class ExceptionObjHolderImpl : public ExceptionObjHolder, private Pinned {
 public:
-    explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept {
-        auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-        stableRef_ = threadData->stableRefThreadQueue().Insert(obj);
-    }
+    explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept : stableRef_(mm::StableRef::create(obj)) {}
 
-    ~ExceptionObjHolderImpl() override {
-        auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-        threadData->stableRefThreadQueue().Erase(stableRef_);
-    }
+    ~ExceptionObjHolderImpl() override { std::move(stableRef_).dispose(); }
 
-    ObjHeader* obj() noexcept { return **stableRef_; }
+    ObjHeader* obj() noexcept { return *stableRef_; }
 
 private:
-    mm::StableRefRegistry::Node* stableRef_;
+    mm::StableRef stableRef_;
 };
-#endif
 
 } // namespace
 
-#if !KONAN_NO_EXCEPTIONS
 // static
 RUNTIME_NORETURN void ExceptionObjHolder::Throw(ObjHeader* exception) {
     throw ExceptionObjHolderImpl(exception);
@@ -44,4 +35,3 @@ RUNTIME_NORETURN void ExceptionObjHolder::Throw(ObjHeader* exception) {
 ObjHeader* ExceptionObjHolder::GetExceptionObject() noexcept {
     return static_cast<ExceptionObjHolderImpl*>(this)->obj();
 }
-#endif

@@ -1,0 +1,11 @@
+FILE: useSite.kt
+    public final fun foo(): R|kotlin/Int| {
+        ^foo Int(4)
+    }
+FILE: KotlinInterface.kt
+    public abstract interface KotlinInterface : R|kotlin/Any| {
+        public abstract var selectedOptions: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

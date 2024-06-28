@@ -52,12 +52,19 @@ abstract class AbstractKlibBinaryCompatibilityTest : KotlinTestWithEnvironment()
         }
     }
 
-    fun doTest(filePath: String, expectedResult: String) = doTest(
-        filePath,
-        expectedResult,
-        produceKlib = ::produceKlib,
-        produceAndRunProgram = ::produceAndRunProgram,
-    )
+    open fun isIgnoredTest(filePath: String): Boolean = false
+
+    fun doTest(filePath: String, expectedResult: String) {
+        if (isIgnoredTest(filePath))
+            return
+
+        doTest(
+            filePath,
+            expectedResult,
+            produceKlib = ::produceKlib,
+            produceAndRunProgram = ::produceAndRunProgram,
+        )
+    }
 
     abstract fun produceKlib(module: TestModule, version: Int)
     abstract fun produceProgram(module: TestModule)

@@ -18,11 +18,9 @@ class Controller {
 
 fun builder(c: suspend Controller.() -> Unit) {
     val controller = Controller()
-    c.startCoroutine(controller, object : helpers.ContinuationAdapter<Unit>() {
+    c.startCoroutine(controller, object : Continuation<Unit> {
         override val context: CoroutineContext = EmptyCoroutineContext
-        override fun resume(value: Unit) {}
-
-        override fun resumeWithException(exception: Throwable) {}
+        override fun resumeWith(value: Result<Unit>) {}
     })
 
     controller.callback()

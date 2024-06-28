@@ -20,6 +20,7 @@
             <jvmarg value="-Xmx128m"/>
             <jvmarg value="-javaagent:${temp}/premain.jar"/>
             <compilerarg value="-nowarn"/>
+            <compilerarg line="-Xuse-fir-lt=false"/>
         </kotlinc>
     </target>
 </project>

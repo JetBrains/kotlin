@@ -1,5 +1,5 @@
 public final enum class StaticMembersInEnum : R|kotlin/Enum<test/StaticMembersInEnum!>| {
-    public final static enum entry ENTRY: R|@EnhancedNullability test/StaticMembersInEnum|
+    public final static enum entry ENTRY: R|test/StaticMembersInEnum|
     public open static field STATIC_FIELD: R|kotlin/Int|
 
     public final static field CONSTANT: R|test/StaticMembersInEnum!|

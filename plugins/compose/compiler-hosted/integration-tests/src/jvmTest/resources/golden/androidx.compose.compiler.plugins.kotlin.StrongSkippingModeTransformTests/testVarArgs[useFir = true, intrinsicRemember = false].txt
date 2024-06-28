@@ -1,0 +1,65 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable fun Varargs(vararg ints: Int) {
+}
+@Composable fun Test() {
+    Varargs(1, 2, 3)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  val %dirty = %changed
+  %composer.startMovableGroup(<>, ints.size)
+  val <iterator> = ints.iterator()
+  while (<iterator>.hasNext()) {
+    val value = <iterator>.next()
+    %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+  }
+  %composer.endMovableGroup()
+  if (%dirty and 0b1110 == 0) {
+    %dirty = %dirty or 0b0010
+  }
+  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Varargs(*ints, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    Varargs(1, 2, 3, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

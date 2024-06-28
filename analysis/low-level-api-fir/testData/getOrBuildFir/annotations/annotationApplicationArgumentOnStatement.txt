@@ -1,0 +1,28 @@
+KT element: KtValueArgument
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+String(y)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-annotationApplicationArgumentOnStatement.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Annotation.name] name: R|kotlin/String|): R|Annotation| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] get(): R|kotlin/String|
+
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun x(): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = @R|Annotation|[Types](name = String(y)) R|/x|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

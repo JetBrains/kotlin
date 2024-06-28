@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
-import org.jetbrains.kotlin.analysis.utils.errors.*
+import org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments
+import org.jetbrains.kotlin.utils.exceptions.buildAttachment
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -21,7 +21,7 @@ class InvalidFirElementTypeException(
     actualFirElement: Any?,
     ktElement: KtElement?,
     expectedFirClasses: List<KClass<*>>,
-) : KotlinExceptionWithAttachments("") {
+) : KotlinIllegalArgumentExceptionWithAttachments("") {
     init {
         buildAttachment {
             when (actualFirElement) {

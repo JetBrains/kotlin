@@ -1,0 +1,22 @@
+> Configure project :
+w: [PlatformSourceSetConventionUsedWithCustomTargetName | WARNING] Accessed 'source set jvmMain', but jvm target used a custom name 'customName' (expected 'jvm'):
+
+Replace:
+    kotlin {
+        jvm("customName") /* <- custom name used */
+    }
+
+With:
+   kotlin {
+       jvm()
+   }
+
+Stacktrace:
+    <... stackframes are omitted for test stability ...>
+#diagnostic-end
+
+w: [UnusedSourceSetsWarning | WARNING] The Kotlin source set jvmMain was configured but not added to any Kotlin compilation.
+
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+#diagnostic-end

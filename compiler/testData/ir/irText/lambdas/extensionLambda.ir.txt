@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/extensionLambda.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Int declared in <root>'
-        CALL 'public final fun run <T, R> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.run, R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.Int origin=null
+        CALL 'public final fun run <T, R> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.run, R of kotlin.run>): R of kotlin.run declared in kotlin' type=kotlin.Int origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
           $receiver: CONST String type=kotlin.String value="42"

@@ -33,7 +33,7 @@ abstract class FirScope {
     ) {
     }
 
-    open fun mayContainName(name: Name) = true
+    open fun mayContainName(name: Name): Boolean = true
 
     open val scopeOwnerLookupNames: List<String> get() = emptyList()
 }
@@ -63,15 +63,6 @@ fun FirTypeScope.processOverriddenFunctionsAndSelf(
     return processOverriddenFunctions(functionSymbol, processor = processor)
 }
 
-fun FirTypeScope.processOverriddenPropertiesAndSelf(
-    propertySymbol: FirPropertySymbol,
-    processor: (FirPropertySymbol) -> ProcessorAction
-): ProcessorAction {
-    if (!processor(propertySymbol)) return ProcessorAction.STOP
-
-    return processOverriddenProperties(propertySymbol, processor = processor)
-}
-
 fun List<FirTypeScope>.processOverriddenPropertiesAndSelf(
     propertySymbol: FirPropertySymbol,
     processor: (FirPropertySymbol) -> ProcessorAction
@@ -93,8 +84,8 @@ enum class ProcessorAction {
         }
     }
 
-    fun stop() = this == STOP
-    fun next() = this != STOP
+    fun stop(): Boolean = this == STOP
+    fun next(): Boolean = this != STOP
 
     operator fun plus(other: ProcessorAction): ProcessorAction {
         if (this == NEXT || other == NEXT) return NEXT

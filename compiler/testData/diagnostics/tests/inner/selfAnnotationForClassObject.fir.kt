@@ -1,3 +1,5 @@
+// ISSUE: KT-63063
+
 class Test {
     @ClassObjectAnnotation
     @NestedAnnotation

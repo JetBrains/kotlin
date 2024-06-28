@@ -10,11 +10,13 @@
 package kotlin.io.path
 
 import java.io.*
+import java.nio.CharBuffer
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.OpenOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
+import kotlin.contracts.*
 import kotlin.jvm.Throws
 
 /**
@@ -168,7 +170,22 @@ public fun Path.readText(charset: Charset = Charsets.UTF_8): String =
 @WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8, vararg options: OpenOption) {
-    Files.newOutputStream(this, *options).writer(charset).use { it.append(text) }
+    Files.newOutputStream(this, *options).use { out ->
+        if (text is String) {
+            out.writeTextImpl(text, charset)
+            return@use
+        }
+
+        val encoder = charset.newReplaceEncoder()
+        val charBuffer = if (text is CharBuffer) text.asReadOnlyBuffer() else CharBuffer.wrap(text)
+        val byteBuffer = byteBufferForEncoding(chunkSize = minOf(text.length, DEFAULT_BUFFER_SIZE), encoder)
+
+        while (charBuffer.hasRemaining()) {
+            encoder.encode(charBuffer, byteBuffer, /*endOfInput = */true).also { check(!it.isError) }
+            out.write(byteBuffer.array(), 0, byteBuffer.position())
+            byteBuffer.clear()
+        }
+    }
 }
 
 /**
@@ -181,7 +198,7 @@ public fun Path.writeText(text: CharSequence, charset: Charset = Charsets.UTF_8,
 @WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 public fun Path.appendText(text: CharSequence, charset: Charset = Charsets.UTF_8) {
-    Files.newOutputStream(this, StandardOpenOption.APPEND).writer(charset).use { it.append(text) }
+    writeText(text, charset, StandardOpenOption.APPEND)
 }
 
 /**
@@ -261,6 +278,9 @@ public inline fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Path.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
     return Files.newBufferedReader(this, charset).use { block(it.lineSequence()) }
 }
 

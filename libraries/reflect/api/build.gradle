@@ -22,7 +22,7 @@ sourceSets {
 }
 
 dependencies {
-    api kotlinStdlib()
+    api RepoDependencies.kotlinStdlib(project)
     compileOnly project(':core:descriptors')
     compileOnly project(':core:descriptors.jvm')
     compileOnly project(':core:deserialization')
@@ -46,7 +46,7 @@ if (includeJava9) {
 }
 
 compileKotlin {
-    kotlinOptions {
+    compilerOptions {
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xno-optimized-callable-references",
@@ -54,19 +54,18 @@ compileKotlin {
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction",
                 "-Xno-new-java-annotation-targets",
+                "-Xdont-warn-on-error-suppression",
         ]
         moduleName = "kotlin-reflection"
     }
 }
 
-configureFrontendIr(project)
-
 jar {
-    manifestAttributes(manifest, project, "internal")
+    LibrariesCommon.manifestAttributes(project, manifest, "internal")
 }
 
-task java9Jar(type: Jar) {
-    classifier = "java9"
+tasks.register("java9Jar", Jar) {
+    archiveClassifier.set("java9")
     if (includeJava9) {
         from sourceSets.java9.output
     }

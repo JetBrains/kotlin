@@ -1,0 +1,35 @@
+package
+
+public fun KlassA(): kotlin.Unit
+public fun KlassB(): kotlin.Unit
+public fun KlassC(): kotlin.Unit
+public fun KlassD(): kotlin.Unit
+
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final class KlassA {
+    public constructor KlassA()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final class KlassB {
+    public constructor KlassB()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final class KlassC {
+    public constructor KlassC()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final class KlassD {
+    public constructor KlassD()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

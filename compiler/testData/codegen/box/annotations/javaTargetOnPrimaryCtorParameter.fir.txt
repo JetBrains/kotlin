@@ -4,7 +4,7 @@ FILE: test.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
+        field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

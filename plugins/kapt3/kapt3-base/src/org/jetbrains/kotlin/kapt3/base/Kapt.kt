@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.kapt3.base
 
 import com.sun.tools.javac.util.Context
-import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.base.util.info
-import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
 import kotlin.system.measureTimeMillis
 
 object Kapt {
@@ -32,26 +31,27 @@ object Kapt {
             return false
         }
 
-        val kaptContext = KaptContext(options, false, logger)
+        KaptContext(options, false, logger).use { kaptContext ->
 
-        logger.info { options.logString("stand-alone mode") }
+            logger.info { options.logString("stand-alone mode") }
 
-        val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
+            val javaSourceFiles = options.collectJavaSourceFiles(kaptContext.sourcesToReprocess)
 
-        val processorLoader = ProcessorLoader(options, logger)
+            val processorLoader = ProcessorLoader(options, logger)
 
-        processorLoader.use {
-            val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
+            processorLoader.use {
+                val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
 
-            val annotationProcessingTime = measureTimeMillis {
-                kaptContext.doAnnotationProcessing(
-                    javaSourceFiles,
-                    processors.processors,
-                    binaryTypesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
-                )
+                val annotationProcessingTime = measureTimeMillis {
+                    kaptContext.doAnnotationProcessing(
+                        javaSourceFiles,
+                        processors.processors,
+                        binaryTypesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
+                    )
+                }
+
+                logger.info { "Annotation processing took $annotationProcessingTime ms" }
             }
-
-            logger.info { "Annotation processing took $annotationProcessingTime ms" }
         }
 
         return true

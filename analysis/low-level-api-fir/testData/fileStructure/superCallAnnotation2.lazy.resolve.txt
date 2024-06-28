@@ -1,0 +1,15 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] superCallAnnotation2.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class B : R|@R|Anno|()  A| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

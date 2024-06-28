@@ -1,3 +1,0 @@
-public open override [BODY_RESOLVE] fun baseMember(): R|kotlin/Int| {
-    ^baseMember Int(3)
-}

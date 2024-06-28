@@ -19,16 +19,16 @@ fun builder(shouldSuspend: Boolean, c: suspend () -> String): String {
     var fromSuspension: String? = null
 
     val result = try {
-        c.startCoroutineUninterceptedOrReturn(object: ContinuationAdapter<String>() {
+        c.startCoroutineUninterceptedOrReturn(object: Continuation<String> {
             override val context: CoroutineContext
                 get() =  EmptyCoroutineContext
 
-            override fun resumeWithException(exception: Throwable) {
-                fromSuspension = "Exception: " + exception.message!!
-            }
-
-            override fun resume(value: String) {
-                fromSuspension = value
+            override fun resumeWith(value: Result<String>) {
+                fromSuspension = try {
+                    value.getOrThrow()
+                } catch (exception: Throwable) {
+                    "Exception: " + exception.message!!
+                }
             }
         })
     } catch (e: Exception) {

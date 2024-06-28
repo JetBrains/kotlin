@@ -1,5 +1,4 @@
 // KT-44054
-
 enum class Enum {
     Entry1,
     Entry2

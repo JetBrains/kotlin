@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -23,18 +22,24 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isGeneratorFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
-fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpression {
-    return when (val void = backendContext.getVoid()) {
+fun jsUndefined(context: JsStaticContext): JsExpression {
+    return when (val void = context.backendContext.getVoid()) {
         is IrGetField -> context.getNameForField(void.symbol.owner).makeRef()
         else -> JsNullLiteral()
     }
@@ -44,7 +49,7 @@ fun <T : JsNode> IrWhen.toJsNode(
     tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
     context: JsGenerationContext,
     node: (JsExpression, T, T?) -> T,
-    implicitElse: T? = null
+    implicitElse: T? = null,
 ): T? =
     branches.foldRight(implicitElse) { br, n ->
         val body = br.result.accept(tr, context)
@@ -57,6 +62,10 @@ fun <T : JsNode> IrWhen.toJsNode(
 
 fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     jsElementAccess(JsName(name, false), receiver)
+
+fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
+    return JsVars(JsVars.JsVar(name, this))
+}
 
 fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.ident.isValidES5Identifier()) {
@@ -83,18 +92,14 @@ fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
         prototype
     )
 
-fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext) =
-    JsInvocation(
+fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext): JsExpression {
+    return JsInvocation(
         context
             .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
             .makeRef(),
-        obj,
-        JsStringLiteral(name),
-        *listOf(getter, setter)
-            .dropLastWhile { it == null }
-            .map { it ?: jsUndefined(context, context.backendContext) }
-            .toTypedArray()
+        listOfNotNull(obj, JsStringLiteral(name), getter ?: runIf(setter != null) { jsUndefined(context) }, setter)
     )
+}
 
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
@@ -114,7 +119,13 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
-        .apply { if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC) }
+        .apply {
+            if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC)
+            if (declaration.shouldBeCompiledAsGenerator()) {
+                name?.isGeneratorFunction = true
+                modifiers.add(JsFunction.Modifier.GENERATOR)
+            }
+        }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
@@ -130,22 +141,31 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     return function
 }
 
+private fun IrFunction.shouldBeCompiledAsGenerator(): Boolean =
+    hasAnnotation(JsAnnotations.jsGeneratorFqn)
+
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false
-    val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
+    val simpleFunction = call.symbol.owner
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
     if (call.origin === JsStatementOrigins.EXPLICIT_INVOKE) return false
 
-    return simpleFunction.name == OperatorNameConventions.INVOKE
-            && receiverType.isFunctionTypeOrSubtype()
-            && (!receiverType.isSuspendFunctionTypeOrSubtype() || receiverType.isSuspendFunction())
+    val isInvokeFun = simpleFunction.name == OperatorNameConventions.INVOKE
+    if (!isInvokeFun) return false
+
+    val isNonSuspendFunction = receiverType.isFunctionTypeOrSubtype() && !receiverType.isSuspendFunctionTypeOrSubtype()
+    val isSuspendFunction = receiverType.isSuspendFunction()
+
+    // Dce can eliminate Function parent of SuspendFunctionN
+    // So we need to check them separately
+    return isNonSuspendFunction || isSuspendFunction
 }
 
 fun translateCall(
     expression: IrCall,
     context: JsGenerationContext,
-    transformer: IrElementToJsExpressionTransformer
+    transformer: IrElementToJsExpressionTransformer,
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
     val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
@@ -190,13 +210,13 @@ fun translateCall(
 
     expression.superQualifierSymbol?.let { superQualifier ->
         val (target: IrSimpleFunction, klass: IrClass) = if (superQualifier.owner.isInterface) {
-            val impl = function.resolveFakeOverride()!!
+            val impl = function.resolveFakeOverrideOrFail()
             Pair(impl, impl.parentAsClass)
         } else {
             Pair(function, superQualifier.owner)
         }
 
-        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(function, context, klass)) {
+        if (currentDispatchReceiver.canUseSuperRef(context, klass)) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 
@@ -204,13 +224,13 @@ fun translateCall(
             val nameForStaticDeclaration = context.getNameForStaticDeclaration(target)
             JsNameRef(Namer.CALL_FUNCTION, JsNameRef(nameForStaticDeclaration))
         } else {
-            val qualifierName = context.getNameForClass(klass).makeRef()
+            val qualifierName = klass.getClassRef(context.staticContext)
             val targetName = context.getNameForMemberFunction(target)
             val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName, context.staticContext))
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
         }
 
-        return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
+        return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) memoryOptimizedPlus arguments } ?: arguments)
     }
 
     val varargParameterIndex = function.varargParameterIndex()
@@ -224,6 +244,11 @@ fun translateCall(
     val ref = when (jsDispatchReceiver) {
         null -> JsNameRef(symbolName)
         else -> jsElementAccess(symbolName.ident, jsDispatchReceiver)
+    }
+
+    if (symbolName.isGeneratorFunction) {
+        (ref.commentsBeforeNode ?: mutableListOf<JsComment>().also { ref.commentsBeforeNode = it })
+            .add(JsMultiLineComment("#__NOINLINE__"))
     }
 
     return if (isExternalVararg) {
@@ -289,7 +314,14 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) memoryOptimizedPlus arguments).pureIfPossible(function, context)
+    }
+}
+
+private fun JsInvocation.pureIfPossible(function: IrFunction, context: JsGenerationContext) = apply {
+    if (function.symbol.isUnitInstanceFunction(context.staticContext.backendContext)) {
+        sideEffects = SideEffectKind.PURE
+        qualifier.sideEffects = SideEffectKind.PURE
     }
 }
 
@@ -375,7 +407,7 @@ fun translateCallArguments(
     expression: IrMemberAccessExpression<IrFunctionSymbol>,
     context: JsGenerationContext,
     transformer: IrElementToJsExpressionTransformer,
-    allowDropTailVoids: Boolean = true
+    allowDropTailVoids: Boolean = true,
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
@@ -383,36 +415,35 @@ fun translateCallArguments(
     val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
-    val arguments = (0 until size)
-        .mapTo(ArrayList(size)) { index ->
-            expression.getValueArgument(index).checkOnNullability(
-                validWithNullArgs || function.valueParameters[index].isBoxParameter
-            )
-        }
-        .dropLastWhile {
-            allowDropTailVoids &&
-                    it is IrGetField &&
-                    it.symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
-        }
-        .map {
-            it?.accept(transformer, context)
-        }
-        .mapIndexed { index, result ->
-            val isEmptyExternalVararg = validWithNullArgs &&
-                    varargParameterIndex == index &&
-                    result is JsArrayLiteral &&
-                    result.expressions.isEmpty()
+    val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context.staticContext) }
 
-            if (isEmptyExternalVararg && index == size - 1) {
-                null
-            } else result
+    val arguments = (0 until size)
+        .mapIndexedTo(ArrayList(size)) { i, _ ->
+            expression.getValueArgument(i).checkOnNullability(validWithNullArgs || function.valueParameters[i].isBoxParameter)
+        }
+        .mapIndexed { i, it ->
+            val jsArgument = when {
+                allowDropTailVoids && (it == null || it.isVoidGetter(context)) -> null
+                else -> it?.accept(transformer, context)
+            }
+
+            val isEmptyExternalVararg = validWithNullArgs &&
+                    varargParameterIndex == i &&
+                    jsArgument is JsArrayLiteral &&
+                    jsArgument.expressions.isEmpty()
+
+            jsArgument.takeIf { !isEmptyExternalVararg || i != size - 1 }
         }
         .dropLastWhile { it == null }
-        .map { it ?: jsUndefined(context, context.staticContext.backendContext) }
+        .memoryOptimizedMap { it ?: jsUndefined }
 
     check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
     return arguments
 }
+
+private fun IrExpression.isVoidGetter(context: JsGenerationContext): Boolean = this is IrGetField &&
+        symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
+
 
 private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
     also {
@@ -439,7 +470,7 @@ object JsAstUtils {
     fun newJsIf(
         ifExpression: JsExpression,
         thenStatement: JsStatement,
-        elseStatement: JsStatement? = null
+        elseStatement: JsStatement? = null,
     ): JsIf {
         return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement?.let { deBlockIfPossible(it) })
     }
@@ -532,7 +563,7 @@ internal fun <T : JsNode> T.withSource(
     node: IrElement,
     context: JsGenerationContext,
     useNameOf: IrDeclarationWithName? = null,
-    container: IrDeclaration? = null
+    container: IrDeclaration? = null,
 ): T {
     addSourceInfoIfNeed(node, context, useNameOf, container)
     return this
@@ -543,7 +574,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(
     node: IrElement,
     context: JsGenerationContext,
     useNameOf: IrDeclarationWithName?,
-    container: IrDeclaration?
+    container: IrDeclaration?,
 ) {
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
     val originalName = useNameOf?.originalNameForUseInSourceMap(sourceMapsInfo.namesPolicy)
@@ -577,7 +608,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(
 
 private fun JsLocation.withEmbeddedSource(
     @Suppress("UNUSED_PARAMETER")
-    context: JsGenerationContext
+    context: JsGenerationContext,
 ): JsLocationWithEmbeddedSource {
     // FIXME: fileIdentity is used to distinguish between different files with the same paths.
     // For now we use the file's path to read its content, which makes fileIdentity useless.
@@ -608,8 +639,7 @@ inline fun IrElement.getSourceLocation(fileEntry: IrFileEntry, offsetSelector: I
     if (startOffset == UNDEFINED_OFFSET || endOffset == UNDEFINED_OFFSET) return null
     val path = fileEntry.name
     val offset = offsetSelector()
-    val startLine = fileEntry.getLineNumber(offset)
-    val startColumn = fileEntry.getColumnNumber(offset)
+    val (startLine, startColumn) = fileEntry.getLineAndColumnNumbers(offset)
     return JsLocation(path, startLine, startColumn)
 }
 
@@ -645,10 +675,10 @@ private val nameMappingOriginAllowList = setOf(
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
 )
 
-private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationContext, superClass: IrClass): Boolean {
+private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
+    val currentFunction = context.currentFunction ?: return false
     return this != null &&
-            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
             context.staticContext.backendContext.es6mode &&
-            !superClass.isInterface && !isInner && !isLocal &&
-            context.currentFunction?.isEs6ConstructorReplacement != true
+            !superClass.isInterface &&
+            !isInner && !isLocal && !currentFunction.isEs6ConstructorReplacement && currentFunction.parentClassOrNull?.superClass?.symbol != context.staticContext.backendContext.coroutineSymbols.coroutineImpl
 }

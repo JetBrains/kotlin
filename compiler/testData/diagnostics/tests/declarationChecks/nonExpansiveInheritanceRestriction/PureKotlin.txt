@@ -96,6 +96,20 @@ public interface G2</*0*/ T> : G0<G1<out G2<*>, T>> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public abstract class H0</*0*/ X> {
+    public constructor H0</*0*/ X>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public abstract inner class H1</*0*/ Y> /*captured type parameters: /*1*/ X*/ : H0<H0<X>.H1<Y>> {
+        public constructor H1</*0*/ Y>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
 public interface N0</*0*/ in T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

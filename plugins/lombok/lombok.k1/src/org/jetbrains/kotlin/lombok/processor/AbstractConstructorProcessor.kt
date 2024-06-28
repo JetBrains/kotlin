@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Processor {
 
-    context(LazyJavaResolverContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         getAnnotation(classDescriptor)?.let { annotation ->
             val valueParameters = getPropertiesForParameters(classDescriptor).map { property ->
                 LombokValueParameter(property.name, property.type)
@@ -46,6 +44,4 @@ abstract class AbstractConstructorProcessor<A : ConstructorAnnotation> : Process
     protected abstract fun getAnnotation(classDescriptor: ClassDescriptor): A?
 
     protected abstract fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor>
-
-
 }

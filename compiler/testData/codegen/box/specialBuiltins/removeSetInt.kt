@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: STDLIB_COLLECTION_INHERITANCE
 // KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND: NATIVE
+// DONT_TARGET_EXACT_BACKEND: NATIVE
 class MySet : HashSet<Int>() {
     override fun remove(element: Int): Boolean {
         return super.remove(element)

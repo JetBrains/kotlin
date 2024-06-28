@@ -1,10 +1,10 @@
-compiler/testData/cli/jvm/jsr305Migration.kt:2:19: warning: type mismatch: inferred type is Nothing? but String was expected
+compiler/testData/cli/jvm/jsr305Migration.kt:2:19: warning: Java type mismatch: inferred type is 'kotlin.Nothing?', but 'kotlin.String' was expected.
     annotated.foo(null)
-                  ^
-compiler/testData/cli/jvm/jsr305Migration.kt:3:19: warning: type mismatch: inferred type is Nothing? but String was expected
+                  ^^^^
+compiler/testData/cli/jvm/jsr305Migration.kt:3:19: warning: Java type mismatch: inferred type is 'kotlin.Nothing?', but 'kotlin.String' was expected.
     annotated.bar(null)
-                  ^
-compiler/testData/cli/jvm/jsr305Migration.kt:4:5: warning: unsafe use of a nullable receiver of type String?
+                  ^^^^
+compiler/testData/cli/jvm/jsr305Migration.kt:4:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'kotlin.String?'.
     annotated.nullable().length
-    ^
+    ^^^^^^^^^^^^^^^^^^^^
 OK

@@ -186,14 +186,25 @@ open class Derived2 : Derived() {
     override fun foo() {}
 }
 
+interface I1 {
+    @ObjCName("foo1")
+    fun foo()
+}
+
+interface DerivedI1 : I1 {
+    override fun foo()
+}
+
+abstract class KT64276 : Base(), DerivedI1 {}
+
 private const val exact = false
 private const val objcName = "nonLiteralArgsObjC"
 
-<!INVALID_OBJC_NAME!>@ObjCName(
+@ObjCName(
     <!NON_LITERAL_OBJC_NAME_ARG!>objcName<!>,
     <!NON_LITERAL_OBJC_NAME_ARG!>"nonLiteralArgs" + "Swift"<!>,
     <!NON_LITERAL_OBJC_NAME_ARG!>exact<!>
-)<!>
+)
 val nonLiteralArgs: Int = 0
 
 @ObjCName("invalidArgsObjC", <!ARGUMENT_TYPE_MISMATCH!>false<!>, <!ARGUMENT_TYPE_MISMATCH!>"not a boolean"<!>)

@@ -1,5 +1,4 @@
-// IGNORE_FIR
-// Ignored due to KT-53573
+// FULL_JDK
 
 import java.util.function.*
 

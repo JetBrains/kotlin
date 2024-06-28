@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -15,11 +16,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendContext) {
+abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext) {
+
     protected fun IrFunction.generateDefaultArgumentsFunctionName() =
         Name.identifier("${name}\$default")
 
@@ -39,22 +43,27 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
         contextReceiverParametersCount = original.contextReceiverParametersCount
     }
 
-    protected fun IrFunction.copyValueParametersFrom(original: IrFunction, wrapWithNullable: Boolean = true) {
-        valueParameters = original.valueParameters.map {
+    /**
+     * Whether `null` will be used for this type if no argument is passed.
+     * In that case, the type of the default dispatch function will be made nullable.
+     *
+     * By default, always returns `true` – this is valid, but suboptimal.
+     * Better performance can be achieved in a backend-specific way.
+     */
+    protected open fun IrType.hasNullAsUndefinedValue(): Boolean = true
+
+    protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
+        valueParameters = original.valueParameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
-            val makeNullable = wrapWithNullable && it.defaultValue != null &&
-                    (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
+            val makeNullable = it.defaultValue != null && it.type.hasNullAsUndefinedValue()
             it.copyTo(
                 this,
                 type = if (makeNullable) newType.makeNullable() else newType,
                 defaultValue = if (it.defaultValue != null) {
                     original.factory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            it.type,
-                            "Default Stub"
-                        )
+                        IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub").apply {
+                            attributeOwnerId = it.defaultValue!!.expression
+                        }
                     )
                 } else null,
                 isAssignable = it.defaultValue != null
@@ -102,7 +111,7 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
         if (skipInlineMethods && declaration.isInline) return null
         if (skipExternalMethods && declaration.isExternalOrInheritedFromExternal()) return null
         if (context.mapping.defaultArgumentsOriginalFunction[declaration] != null) return null
-        context.mapping.defaultArgumentsDispatchFunction[declaration]?.let { return it }
+        declaration.defaultArgumentsDispatchFunction?.let { return it }
         if (declaration is IrSimpleFunction) {
             // If this is an override of a function with default arguments, produce a fake override of a default stub.
             if (declaration.overriddenSymbols.any {
@@ -120,21 +129,22 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
                     true,
                     useConstructorMarker,
                 ).also { defaultsFunction ->
-                    context.mapping.defaultArgumentsDispatchFunction[declaration] = defaultsFunction
+                    declaration.defaultArgumentsDispatchFunction = defaultsFunction
                     context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = declaration
 
                     if (forceSetOverrideSymbols) {
-                        (defaultsFunction as IrSimpleFunction).overriddenSymbols += declaration.overriddenSymbols.mapNotNull {
-                            generateDefaultsFunction(
-                                it.owner,
-                                skipInlineMethods,
-                                skipExternalMethods,
-                                forceSetOverrideSymbols,
-                                visibility,
-                                useConstructorMarker,
-                                it.owner.copyAnnotations(),
-                            )?.symbol as IrSimpleFunctionSymbol?
-                        }
+                        (defaultsFunction as IrSimpleFunction).overriddenSymbols =
+                            defaultsFunction.overriddenSymbols memoryOptimizedPlus declaration.overriddenSymbols.mapNotNull {
+                                generateDefaultsFunction(
+                                    it.owner,
+                                    skipInlineMethods,
+                                    skipExternalMethods,
+                                    forceSetOverrideSymbols,
+                                    visibility,
+                                    useConstructorMarker,
+                                    it.owner.copyAnnotations(),
+                                )?.symbol as IrSimpleFunctionSymbol?
+                            }
                     }
                 }
         }
@@ -157,7 +167,7 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
                 false,
                 useConstructorMarker,
             ).also {
-                context.mapping.defaultArgumentsDispatchFunction[declaration] = it
+                declaration.defaultArgumentsDispatchFunction = it
                 context.mapping.defaultArgumentsOriginalFunction[it] = declaration
             }
         }
@@ -203,7 +213,7 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
             parent = declaration.parent
             generateDefaultArgumentStubFrom(declaration, useConstructorMarker)
             // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-            annotations += copiedAnnotations
+            annotations = annotations memoryOptimizedPlus copiedAnnotations
         }
     }
 }

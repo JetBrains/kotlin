@@ -89,7 +89,7 @@ public abstract class SequenceScope<in T> internal constructor() {
      *
      * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
-    public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
+    public suspend fun yieldAll(sequence: Sequence<T>): Unit = yieldAll(sequence.iterator())
 }
 
 private typealias State = Int

@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-268
+ * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION: properties available through the invoke convention are non-eligible for operator calls
+ */
 
 // FILE: TestCase1.kt
 /*
@@ -16,7 +25,7 @@ fun case1() {
 }
 
 class B() {
-    val p: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
+    val p: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NOT_FUNCTION_AS_OPERATOR!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
 }
 
 class Delegate {
@@ -41,7 +50,7 @@ fun case2() {
 }
 
 class B() {
-    var p: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
+    var p: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NOT_FUNCTION_AS_OPERATOR, NOT_FUNCTION_AS_OPERATOR!>Delegate()<!> // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE expected
 }
 
 class Delegate {
@@ -100,14 +109,14 @@ class B() {
 
 fun case3() {
     var b = B()
-    b <!PROPERTY_AS_OPERATOR!>+<!> 5
-    b <!PROPERTY_AS_OPERATOR!>-<!> 5
-    b <!PROPERTY_AS_OPERATOR!><<!> 5
-    b <!PROPERTY_AS_OPERATOR!>>=<!> 5
-    1 <!PROPERTY_AS_OPERATOR!>in<!> b
-    <!PROPERTY_AS_OPERATOR!>b[2]<!>
-    <!PROPERTY_AS_OPERATOR!>b[3]<!> = 4
-    <!PROPERTY_AS_OPERATOR!>+<!>b
+    b <!NOT_FUNCTION_AS_OPERATOR!>+<!> 5
+    b <!NOT_FUNCTION_AS_OPERATOR!>-<!> 5
+    b <!NOT_FUNCTION_AS_OPERATOR!><<!> 5
+    b <!NOT_FUNCTION_AS_OPERATOR!>>=<!> 5
+    1 <!NOT_FUNCTION_AS_OPERATOR!>in<!> b
+    <!NOT_FUNCTION_AS_OPERATOR!>b[2]<!>
+    <!NOT_FUNCTION_AS_OPERATOR!>b[3]<!> = 4
+    <!NOT_FUNCTION_AS_OPERATOR!>+<!>b
 }
 
 // FILE: TestCase4.kt
@@ -126,8 +135,8 @@ class B(val minusAssign: Assign = Assign()) {
 
 fun case3() {
     var b = B()
-    b  <!PROPERTY_AS_OPERATOR!>+=<!>  2
-    b  <!PROPERTY_AS_OPERATOR!>-=<!>  3
+    b  <!NOT_FUNCTION_AS_OPERATOR!>+=<!>  2
+    b  <!NOT_FUNCTION_AS_OPERATOR!>-=<!>  3
 }
 
 // FILE: TestCase5.kt
@@ -142,12 +151,12 @@ package testPackCase5
 class Case5() {
 
     fun f(c: Case5){
-        this + 1 //OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
-        c + 1 //OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
+        this <!OPERATOR_CALL_ON_CONSTRUCTOR!>+<!> 1 // OPERATOR_CALL_ON_CONSTRUCTOR/OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
+        c <!OPERATOR_CALL_ON_CONSTRUCTOR!>+<!> 1 // OPERATOR_CALL_ON_CONSTRUCTOR/OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
     }
 
-    inner class  plus constructor(val i:Int){
-        operator fun invoke(i:Int) {}  //(1)
+    inner class plus /* (1) */ constructor(val i:Int){
+        operator fun invoke(i:Int) {}
     }
 }
 
@@ -166,7 +175,7 @@ class B(var a: Int = 0) {
         val plus :E =TODO()
 
         fun foo(b: B){
-            this <!PROPERTY_AS_OPERATOR!>+<!> 1
+            this <!NOT_FUNCTION_AS_OPERATOR!>+<!> 1
         }
 
         operator fun invoke(value: Int) = B()
@@ -178,13 +187,13 @@ class B(var a: Int = 0) {
  * TESTCASE NUMBER: 7
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase7
 
 fun case7 () {
     val iterable: Iterable = Iterable(Inv('s'))
-    for (i in iterable) {
+    for (i in <!NOT_FUNCTION_AS_OPERATOR!>iterable<!>) {
         println(i)
     }
 }
@@ -211,13 +220,13 @@ class Inv(val c: Char) {
  * TESTCASE NUMBER: 8
  * NOTE: for-loop operators
  * UNEXPECTED BEHAVIOUR
- * ISSUES: KT-36898
+ * ISSUES: KT-36898, KT-62356
  */
 package testPackCase8
 
 fun case8 () {
     val iterable: Iterable = Iterable()
-    for (i in iterable) {
+    for (i in <!NOT_FUNCTION_AS_OPERATOR!>iterable<!>) {
         println(i)
     }
 }

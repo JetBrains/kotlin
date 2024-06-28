@@ -34,5 +34,7 @@ publishing {
 def complexLibAttribute = Attribute.of('org.jetbrains.qa.complexlib', String)
 
 configurations.all {
-    attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    if (isCanBeResolved()) {
+        attributes { attribute(complexLibAttribute, 'jvmWithJava') }
+    }
 }

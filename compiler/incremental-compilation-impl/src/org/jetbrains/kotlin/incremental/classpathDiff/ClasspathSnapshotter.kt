@@ -5,20 +5,29 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClass
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClassExcludingMembers
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotField
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotMethod
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.incremental.SelectiveClassVisitor
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import java.io.Closeable
 import java.io.File
-import java.util.zip.ZipInputStream
+import java.util.zip.ZipFile
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
 object ClasspathEntrySnapshotter {
@@ -26,61 +35,98 @@ object ClasspathEntrySnapshotter {
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
-                && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
                 && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
+                && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
 
     fun snapshot(
         classpathEntry: File,
         granularity: ClassSnapshotGranularity,
-        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
-        val classes = metrics.measure(BuildTime.LOAD_CLASSES) {
-            DirectoryOrJarContentsReader
-                .read(classpathEntry, DEFAULT_CLASS_FILTER)
-                .map { (unixStyleRelativePath, contents) ->
-                    ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
+        DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
+            val classes = metrics.measure(GradleBuildTime.LOAD_CLASSES_PATHS_ONLY) {
+                directoryOrJarReader.getUnixStyleRelativePaths(DEFAULT_CLASS_FILTER).map { unixStyleRelativePath ->
+                    ClassFileWithContentsProvider(
+                        classFile = ClassFile(classpathEntry, unixStyleRelativePath),
+                        contentsProvider = { directoryOrJarReader.readBytes(unixStyleRelativePath) }
+                    )
                 }
+            }
+            val snapshots = metrics.measure(GradleBuildTime.SNAPSHOT_CLASSES) {
+                ClassSnapshotter.snapshot(classes, granularity, metrics)
+            }
+            return ClasspathEntrySnapshot(
+                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+            )
         }
-
-        val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
-            ClassSnapshotter.snapshot(classes, granularity, metrics = metrics)
-        }
-
-        val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
-        return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
     }
 }
 
-/** Creates [ClassSnapshot]s of classes. */
+/** Computes [ClassSnapshot]s of classes. */
 object ClassSnapshotter {
 
-    /** Creates [ClassSnapshot]s of the given classes. */
     fun snapshot(
-        classes: List<ClassFileWithContents>,
-        granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
-        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+        classes: List<ClassFileWithContentsProvider>,
+        granularity: ClassSnapshotGranularity,
+        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): List<ClassSnapshot> {
-        val classesInfo: List<BasicClassInfo> = metrics.measure(BuildTime.READ_CLASSES_BASIC_INFO) {
-            classes.map { it.classInfo }
+        fun ClassFile.getClassName(): JvmClassName {
+            check(unixStyleRelativePath.endsWith(".class", ignoreCase = true))
+            return JvmClassName.byInternalName(unixStyleRelativePath.dropLast(".class".length))
         }
-        val inaccessibleClassesInfo: Set<BasicClassInfo> = metrics.measure(BuildTime.FIND_INACCESSIBLE_CLASSES) {
-            findInaccessibleClasses(classesInfo)
-        }
-        return classes.map {
-            when {
-                it.classInfo in inaccessibleClassesInfo -> InaccessibleClassSnapshot
-                it.classInfo.isKotlinClass -> metrics.measure(BuildTime.SNAPSHOT_KOTLIN_CLASSES) {
-                    snapshotKotlinClass(it, granularity)
+
+        val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
+        val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
+
+        fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
+            return classFileToSnapshotMap.getOrPut(classFile) {
+                val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                    classFile.loadContents()
                 }
-                else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
-                    JavaClassSnapshotter.snapshot(it, granularity)
+                // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
+                val outerClassSnapshot = clazz.classInfo.classId.outerClassId?.let { outerClassId ->
+                    val outerClassFile = classNameToClassFileMap[JvmClassName.byClassId(outerClassId)]
+                    // It's possible that the outer class is not found in the given classes (it could happen with faulty jars)
+                    outerClassFile?.let { snapshotClass(it) }
+                }
+                when {
+                    // We don't need to snapshot (directly or transitively) inaccessible classes.
+                    // A class is transitively inaccessible if its outer class is inaccessible.
+                    clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
+                        InaccessibleClassSnapshot
+                    }
+                    clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                        snapshotKotlinClass(clazz, granularity)
+                    }
+                    else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
+                        snapshotJavaClass(clazz, granularity)
+                    }
                 }
             }
         }
+
+        return classes.map { snapshotClass(it) }
     }
 
-    /** Creates [KotlinClassSnapshot] of the given Kotlin class (the caller must ensure that the given class is a Kotlin class). */
+    /**
+     * Returns `true` if this class is inaccessible, and `false` otherwise (or if we don't know).
+     *
+     * A class is inaccessible if it can't be referenced from other source files (and therefore any changes in an inaccessible class will
+     * not require recompilation of other source files).
+     */
+    private fun BasicClassInfo.isInaccessible(): Boolean {
+        return when {
+            isKotlinClass -> when (kotlinClassHeader!!.kind) {
+                CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
+                SYNTHETIC_CLASS -> true
+                else -> false // We don't know about the other class kinds
+            }
+            else -> isPrivate || isLocal || isAnonymous || isSynthetic
+        }
+    }
+
+    /** Computes a [KotlinClassSnapshot] of the given Kotlin class. */
     private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
         val kotlinClassInfo =
             KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
@@ -101,121 +147,140 @@ object ClassSnapshotter {
             )
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
-                constantNames = kotlinClassInfo.constantsMap.keys
+                constantNames = kotlinClassInfo.extraInfo.constantSnapshots.keys
             )
             SYNTHETIC_CLASS -> error("Unexpected class $classId with class kind ${SYNTHETIC_CLASS.name} (synthetic classes should have been removed earlier)")
             UNKNOWN -> error("Can't handle class $classId with class kind ${UNKNOWN.name}")
         }
     }
 
-    /**
-     * Returns inaccessible classes, i.e. classes that can't be referenced from other source files (and therefore any changes in these
-     * classes will not require recompilation of other source files).
-     *
-     * Examples include private, local, anonymous, and synthetic classes.
-     *
-     * If a class is inaccessible, its nested classes (if any) are also inaccessible.
-     *
-     * NOTE: If we do not have enough info to determine whether a class is inaccessible, we will assume that the class is accessible to be
-     * safe.
-     */
-    private fun findInaccessibleClasses(classesInfo: List<BasicClassInfo>): Set<BasicClassInfo> {
-        fun BasicClassInfo.isInaccessible(): Boolean {
-            return if (this.isKotlinClass) {
-                when (this.kotlinClassHeader!!.kind) {
-                    CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
-                    SYNTHETIC_CLASS -> true
-                    // We're not sure about the other kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
-                    else -> false
-                }
-            } else {
-                isPrivate || isLocal || isAnonymous || isSynthetic
-            }
-        }
+    /** Computes a [JavaClassSnapshot] of the given Java class. */
+    private fun snapshotJavaClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): JavaClassSnapshot {
+        // For incremental compilation, we only care about the ABI info of a class. There are 2 approaches:
+        //   1. Collect ABI info directly
+        //   2. Remove non-ABI info from the full class
+        // Note that for incremental compilation to be correct, all ABI info must be collected exhaustively (now and in the future when
+        // there are updates to Java/ASM), whereas it is acceptable if non-ABI info is not removed completely.
+        // Therefore, we will use the second approach as it is safer and easier.
 
-        val classIsInaccessible: MutableMap<BasicClassInfo, Boolean> = HashMap(classesInfo.size)
-        val classIdToClassInfo: Map<ClassId, BasicClassInfo> = classesInfo.associateBy { it.classId }
+        // 1. Create a ClassNode that will contain ABI info of the class
+        val classNode = ClassNode()
 
-        fun BasicClassInfo.isTransitivelyInaccessible(): Boolean {
-            classIsInaccessible[this]?.let { return it }
+        // 2. Load the class's contents into the ClassNode, removing non-ABI info:
+        //     - Remove private fields and methods
+        //     - Remove method bodies
+        //     - [Not yet implemented] Ignore fields' values except for constants
+        // Note the `parsingOptions` passed to `classReader`:
+        //     - Pass SKIP_CODE as we want to remove method bodies
+        //     - Do not pass SKIP_DEBUG as debug info (e.g., method parameter names) may be important
+        val classReader = ClassReader(classFile.contents)
+        val selectiveClassVisitor = SelectiveClassVisitor(
+            classNode,
+            shouldVisitField = { _: JvmMemberSignature.Field, isPrivate: Boolean, _: Boolean -> !isPrivate },
+            shouldVisitMethod = { _: JvmMemberSignature.Method, isPrivate: Boolean -> !isPrivate }
+        )
+        classReader.accept(selectiveClassVisitor, ClassReader.SKIP_CODE)
 
-            val inaccessible = if (isInaccessible()) {
-                true
-            } else classId.outerClassId?.let { outerClassId ->
-                classIdToClassInfo[outerClassId]?.isTransitivelyInaccessible()
-                // If we can't find the outer class from the given list of classes (which could happen with faulty jars), we assume that
-                // the class is accessible (see this method's kdoc).
-                    ?: false
-            } ?: false
+        // 3. Sort fields and methods as their order is not important
+        sortClassMembers(classNode)
 
-            return inaccessible.also {
-                classIsInaccessible[this] = inaccessible
-            }
-        }
-
-        return classesInfo.filterTo(mutableSetOf()) { it.isTransitivelyInaccessible() }
-    }
-}
-
-/** Utility to read the contents of a directory or jar. */
-private object DirectoryOrJarContentsReader {
-
-    /**
-     * Returns a map from Unix-style relative paths of entries to their contents. The paths are relative to the given container (directory
-     * or jar).
-     *
-     * The map entries need to satisfy the given filter.
-     *
-     * The map entries are sorted based on their Unix-style relative paths (to ensure deterministic results across filesystems).
-     *
-     * Note: If a jar has duplicate entries after filtering, only the first one is retained.
-     */
-    fun read(
-        directoryOrJar: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        return if (directoryOrJar.isDirectory) {
-            readDirectory(directoryOrJar, entryFilter)
+        // 4. Snapshot the class
+        val classMemberLevelSnapshot = if (granularity == CLASS_MEMBER_LEVEL) {
+            JavaClassMemberLevelSnapshot(
+                classAbiExcludingMembers = JavaElementSnapshot(classNode.name, snapshotClassExcludingMembers(classNode)),
+                fieldsAbi = classNode.fields.map { JavaElementSnapshot(it.name, snapshotField(it)) },
+                methodsAbi = classNode.methods.map { JavaElementSnapshot(it.name, snapshotMethod(it, classNode.version)) }
+            )
         } else {
-            check(directoryOrJar.isFile && directoryOrJar.path.endsWith(".jar", ignoreCase = true))
-            readJar(directoryOrJar, entryFilter)
+            null
         }
+        val classAbiHash = if (granularity == CLASS_MEMBER_LEVEL) {
+            // We already have the class-member-level snapshot, so we can just hash it instead of snapshotting the class again
+            JavaClassMemberLevelSnapshotExternalizer.toByteArray(classMemberLevelSnapshot!!).hashToLong()
+        } else {
+            snapshotClass(classNode)
+        }
+
+        return JavaClassSnapshot(
+            classId = classFile.classInfo.classId,
+            classAbiHash = classAbiHash,
+            classMemberLevelSnapshot = classMemberLevelSnapshot,
+            supertypes = classFile.classInfo.supertypes
+        )
     }
 
-    private fun readDirectory(
-        directory: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents = mutableMapOf<String, ByteArray>()
-        directory.walk().forEach { file ->
-            val unixStyleRelativePath = file.relativeTo(directory).invariantSeparatorsPath
-            if (entryFilter == null || entryFilter(unixStyleRelativePath, file.isDirectory)) {
-                relativePathsToContents[unixStyleRelativePath] = file.readBytes()
-            }
-        }
-        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
-    }
+}
 
-    private fun readJar(
-        jarFile: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents = mutableMapOf<String, ByteArray>()
-        ZipInputStream(jarFile.inputStream().buffered()).use { zipInputStream ->
-            while (true) {
-                val entry = zipInputStream.nextEntry ?: break
-                val unixStyleRelativePath = entry.name
-                if (entryFilter == null || entryFilter(unixStyleRelativePath, entry.isDirectory)) {
-                    relativePathsToContents.getOrPut(unixStyleRelativePath) { zipInputStream.readBytes() }
-                }
+private sealed interface DirectoryOrJarReader : Closeable {
+
+    /**
+     * Returns the Unix-style relative paths of all entries under the containing directory or jar which satisfy the given [filter].
+     *
+     * The paths are in Unix style and are sorted to ensure deterministic results across platforms.
+     *
+     * If a jar has duplicate entries, only unique paths are kept in the returned list (similar to the way the compiler selects the first
+     * class if the classpath has duplicate classes).
+     */
+    fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String>
+
+    fun readBytes(unixStyleRelativePath: String): ByteArray
+
+    companion object {
+
+        fun create(directoryOrJar: File): DirectoryOrJarReader {
+            return if (directoryOrJar.isDirectory) {
+                DirectoryReader(directoryOrJar)
+            } else {
+                check(directoryOrJar.isFile && directoryOrJar.path.endsWith(".jar", ignoreCase = true))
+                JarReader(directoryOrJar)
             }
         }
-        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
     }
 }
 
-internal fun ByteArray.hashToLong(): Long {
-    // Note: md5 is 128-bit while Long is 64-bit.
-    // Use md5 for now until we find a better 64-bit hash function.
-    return md5()
+private class DirectoryReader(private val directory: File) : DirectoryOrJarReader {
+
+    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
+        return directory.walk()
+            .filter { filter.invoke(it.relativeTo(directory).invariantSeparatorsPath, it.isDirectory) }
+            .map { it.relativeTo(directory).invariantSeparatorsPath }
+            .sorted()
+            .toList()
+    }
+
+    override fun readBytes(unixStyleRelativePath: String): ByteArray {
+        return directory.resolve(unixStyleRelativePath).readBytes()
+    }
+
+    override fun close() {
+        // Do nothing
+    }
+}
+
+private class JarReader(jar: File) : DirectoryOrJarReader {
+
+    // Use `java.util.zip.ZipFile` API to read jars (it matches what the compiler is using).
+    // Note: Using `java.util.zip.ZipInputStream` API is slightly faster, but (1) it may fail on certain jars (e.g., KT-57767), and (2) it
+    // doesn't support non-sequential access of the entries, so we would have to load and index all entries in memory to provide
+    // non-sequential access, thereby increasing memory usage (KT-57757).
+    // Another option is to use `java.nio.file.FileSystem` API, but it seems to be slower than the other two.
+    private val zipFile = ZipFile(jar)
+
+    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
+        return zipFile.entries()
+            .asSequence()
+            .filter { filter.invoke(it.name, it.isDirectory) }
+            .mapTo(sortedSetOf()) { it.name } // Map to `Set` to de-duplicate entries
+            .toList()
+    }
+
+    override fun readBytes(unixStyleRelativePath: String): ByteArray {
+        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
+            it.readBytes()
+        }
+    }
+
+    override fun close() {
+        zipFile.close()
+    }
 }

@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun test_1(x: Any) {
     require(x is Int)
     x.inc()

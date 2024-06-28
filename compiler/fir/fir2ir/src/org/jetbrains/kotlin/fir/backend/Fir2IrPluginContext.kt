@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,24 +8,22 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fir.backend.utils.unsubstitutedScope
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.CallableId
@@ -36,8 +34,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Fir2IrPluginContext(
-    private val components: Fir2IrComponents,
-    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor
+    private val c: Fir2IrComponents,
+    override val irBuiltIns: IrBuiltIns,
+    @property:ObsoleteDescriptorBasedAPI override val moduleDescriptor: ModuleDescriptor,
+    @property:ObsoleteDescriptorBasedAPI override val symbolTable: ReferenceSymbolTable,
 ) : IrPluginContext {
     companion object {
         private const val ERROR_MESSAGE = "This API is not supported for K2"
@@ -56,39 +56,27 @@ class Fir2IrPluginContext(
     override val afterK2: Boolean = true
 
     override val languageVersionSettings: LanguageVersionSettings
-        get() = components.session.languageVersionSettings
+        get() = c.session.languageVersionSettings
 
     override val platform: TargetPlatform
-        get() = components.session.moduleData.platform
-
-    override val symbolTable: ReferenceSymbolTable
-        get() = components.symbolTable
+        get() = c.session.moduleData.platform
 
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, symbolTable)
 
-    override val irBuiltIns: IrBuiltIns
-        get() = components.irBuiltIns
-
     private val symbolProvider: FirSymbolProvider
-        get() = components.session.symbolProvider
+        get() = c.session.symbolProvider
+
+    override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
+        get() = c.annotationsFromPluginRegistrar
 
     override fun referenceClass(classId: ClassId): IrClassSymbol? {
         val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol<*> ?: return null
-        return components.classifierStorage.getIrClassSymbol(firSymbol)
+        return c.classifierStorage.getIrClassSymbol(firSymbol)
     }
 
     override fun referenceTypeAlias(classId: ClassId): IrTypeAliasSymbol? {
-        return referenceClassLikeSymbol(classId, symbolProvider::getClassLikeSymbolByClassId, symbolTable::referenceTypeAlias)
-    }
-
-    private inline fun <R> referenceClassLikeSymbol(
-        id: ClassId,
-        firSymbolExtractor: (ClassId) -> FirBasedSymbol<*>?,
-        irSymbolExtractor: (IdSignature) -> R
-    ): R? {
-        val firSymbol = firSymbolExtractor(id) ?: return null
-        val signature = components.signatureComposer.composeSignature(firSymbol.fir) ?: return null
-        return irSymbolExtractor(signature)
+        val firSymbol = symbolProvider.getClassLikeSymbolByClassId(classId) as? FirTypeAliasSymbol ?: return null
+        return c.classifierStorage.getIrTypeAliasSymbol(firSymbol)
     }
 
     override fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol> {
@@ -126,19 +114,17 @@ class Fir2IrPluginContext(
     ): Collection<R> {
         val callables = if (classId != null) {
             val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
-                ?.fullyExpandedClass(components.session)
+                ?.fullyExpandedClass(c.session)
                 ?: return emptyList()
-            expandedClass
-                .unsubstitutedScope(components.session, components.scopeSession, withForcedTypeCalculator = true)
-                .getCallablesFromScope()
+            expandedClass.unsubstitutedScope(c).getCallablesFromScope()
         } else {
             symbolProvider.getCallablesFromProvider()
         }
 
-        return callables.mapNotNull { components.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
+        return callables.mapNotNull { c.declarationStorage.irExtractor(it) }.filterIsInstance<R>()
     }
 
-    override fun createDiagnosticReporter(pluginId: String): IrMessageLogger {
+    override fun createDiagnosticReporter(pluginId: String): MessageCollector {
         error(ERROR_MESSAGE)
     }
 

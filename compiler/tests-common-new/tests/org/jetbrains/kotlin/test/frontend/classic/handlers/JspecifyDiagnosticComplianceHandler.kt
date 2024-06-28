@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.JspecifyMarkerCodeMetaInfo
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.load.java.JSPECIFY_ANNOTATIONS_PACKAGE
 import org.jetbrains.kotlin.load.java.ReportLevel
 import org.jetbrains.kotlin.load.java.getDefaultReportLevelForAnnotation
@@ -52,9 +53,11 @@ internal val diagnosticsToJspecifyMarks = mapOf(
     ReportLevel.WARN to mapOf(
         ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
         ErrorsJvm.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
-        ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
         ErrorsJvm.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
-        // TODO: list FIR warnings (they don't exist yet)
+
+        FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
+        FirJvmErrors.RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
+        FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch",
     ),
     ReportLevel.STRICT to mapOf(
         Errors.TYPE_MISMATCH to "jspecify_nullness_mismatch",

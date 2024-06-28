@@ -1,0 +1,9 @@
+MODULE main
+	CLASS b/B.class
+		CLASS METADATA
+			PROPERTY getOK()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: kotlin/String
+					K2
+						value: kotlin/String

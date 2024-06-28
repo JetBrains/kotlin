@@ -1,0 +1,6 @@
+KtNameReferenceExpression(72,73): 'f'
+  KtSimpleNameReference:
+    (in A) val f: kotlin.String.() -> kotlin.Unit
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

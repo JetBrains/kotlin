@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 open class B<R1, R2>(x: R1, y: R2)
 
 class A0<T1, T2> {
@@ -6,9 +6,9 @@ class A0<T1, T2> {
 
     constructor(x: T1, y: T2, z: T2): this(x, 1) // ok, delegates to constructor(x: T1, y: Int)
 
-    constructor(x: T1, y: Int): <!NONE_APPLICABLE!>this<!>(x, "")
+    constructor(x: T1, y: Int): this(x, <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     constructor(x: T1): this(x, 1)
-    constructor(x: T1, y: T2, z: String): <!NONE_APPLICABLE!>this<!>(y, x)
+    constructor(x: T1, y: T2, z: String): this(<!ARGUMENT_TYPE_MISMATCH!>y<!>, <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 }
 
 class A1<T1, T2> : B<T1, T2> {

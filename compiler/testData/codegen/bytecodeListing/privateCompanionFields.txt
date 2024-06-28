@@ -32,8 +32,8 @@ final class TestClass2$Companion {
 public final class TestClass2 {
     // source: 'privateCompanionFields.kt'
     private final static @org.jetbrains.annotations.NotNull field Companion: TestClass2$Companion
-    private deprecated final static @java.lang.Deprecated field testPrivate: java.lang.String
-    private deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field testPublic: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field testPrivate: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field testPublic: java.lang.String
     public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field testPublicConst: java.lang.String
     static method <clinit>(): void
     public method <init>(): void
@@ -54,7 +54,7 @@ final class TestConst$Companion {
 @kotlin.Metadata
 public interface TestConst {
     // source: 'privateCompanionFields.kt'
-    public synthetic final static @org.jetbrains.annotations.NotNull field Companion: TestConst$Companion
+    public synthetic final static field Companion: TestConst$Companion
     public deprecated final static @java.lang.Deprecated field testConst: int
     static method <clinit>(): void
     public final inner class TestConst$Companion
@@ -64,15 +64,15 @@ public interface TestConst {
 final class TestJvmField$Companion {
     // source: 'privateCompanionFields.kt'
     synthetic final static field $$INSTANCE: TestJvmField$Companion
+    static method <clinit>(): void
     private method <init>(): void
-    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final inner class TestJvmField$Companion
 }
 
 @kotlin.Metadata
 public interface TestJvmField {
     // source: 'privateCompanionFields.kt'
-    public synthetic final static @org.jetbrains.annotations.NotNull field Companion: TestJvmField$Companion
+    public synthetic final static field Companion: TestJvmField$Companion
     public deprecated final static @java.lang.Deprecated @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field test3: java.lang.String
     static method <clinit>(): void
     public final inner class TestJvmField$Companion

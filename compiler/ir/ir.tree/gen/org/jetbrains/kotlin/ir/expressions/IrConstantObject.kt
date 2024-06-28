@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,15 +15,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.constantObject
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.constantObject]
  */
 abstract class IrConstantObject : IrConstantValue() {
     abstract var constructor: IrConstructorSymbol
 
     abstract val valueArguments: MutableList<IrConstantValue>
 
-    abstract val typeArguments: List<IrType>
+    abstract val typeArguments: MutableList<IrType>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantObject(this, data)

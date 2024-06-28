@@ -1,0 +1,29 @@
+public open override [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+public open [ResolvedTo(STATUS)] fun isSchemeFile([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+public open override [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /BaseInterface.anotherFunction, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean|
+
+public open [ResolvedTo(STATUS)] fun anotherFunction([ResolvedTo(STATUS)] name: R|kotlin/CharSequence|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+@R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.propertyWithAnnotations, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] var propertyWithAnnotations: R|kotlin/Int|
+    @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+@R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] var propertyWithAnnotations: R|kotlin/Int|
+    @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] get(): R|kotlin/Int|
+    @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+public open override [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirPropertySymbol /BaseInterface.property, containingClass=MyClass, delegateField=FirFieldSymbol /MyClass.$$delegate_0] var property: R|kotlin/Int|
+
+
+
+public abstract [ResolvedTo(STATUS)] var property: R|kotlin/Int|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] get(): R|kotlin/Int|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=BaseInterface] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

@@ -1,0 +1,28 @@
+KT element: KtBlockExpression
+FIR element: FirBlockImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+ {
+    ^ this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] argsFromInit.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-argsFromInit.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] init {
+                <Unresolved name: foo>#(<L> = [ResolvedTo(BODY_RESOLVE)] foo@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                    ^ this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+                }
+                )
+            }
+
+        }

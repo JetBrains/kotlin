@@ -20,17 +20,17 @@ FILE: namedArguments.kt
 
     }
     public final fun test_1(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        R|/foo|(x = R|<local>/x|, y = R|<local>/y|)
+        R|/foo|(R|<local>/x|, R|<local>/y|)
         R|<local>/x|.R|kotlin/Int.inc|()
         R|<local>/y|.R|kotlin/String.length|
     }
     public final fun test_2(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        R|/foo|(R|<local>/x|, y = R|<local>/y|)
+        R|/foo|(R|<local>/x|, R|<local>/y|)
         R|<local>/x|.R|kotlin/Int.inc|()
         R|<local>/y|.R|kotlin/String.length|
     }
     public final fun test_3(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
-        R|/foo|(y = R|<local>/y|, x = R|<local>/x|)
+        R|/foo|(R|<local>/y|, R|<local>/x|)
         R|<local>/x|.R|kotlin/Int.inc|()
         R|<local>/y|.R|kotlin/String.length|
     }

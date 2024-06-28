@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -18,9 +20,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession: FirSession) : FirContainingNamesAwareScope() {
@@ -31,15 +34,24 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         val matchedClass = getNestedClassSymbol(name) ?: return
-        val substitution = klass.typeParameters.associate {
-            it.symbol to it.toConeType()
+        val substitutor = if (klass.typeParameters.isEmpty()) {
+            ConeSubstitutor.Empty
+        } else {
+            val substitution = klass.typeParameters.associate {
+                it.symbol to it.toConeType()
+            }
+            ConeSubstitutorByMap.create(substitution, useSiteSession)
         }
-        processor(matchedClass, ConeSubstitutorByMap(substitution, useSiteSession))
+        processor(matchedClass, substitutor)
     }
 
     abstract fun isEmpty(): Boolean
 
     override fun getCallableNames(): Set<Name> = emptySet()
+
+    override val scopeOwnerLookupNames: List<String> =
+        if (klass.isLocal) emptyList()
+        else SmartList(klass.classId.asFqNameString())
 }
 
 class FirNestedClassifierScopeImpl(klass: FirClass, useSiteSession: FirSession) : FirNestedClassifierScope(klass, useSiteSession) {
@@ -86,6 +98,9 @@ class FirCompositeNestedClassifierScope(
     }
 }
 
-fun FirTypeParameterRef.toConeType(): ConeKotlinType = symbol.toConeType()
+fun FirTypeParameterRef.toConeType(): ConeTypeParameterType = symbol.toConeType()
 
-fun FirTypeParameterSymbol.toConeType(): ConeKotlinType = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable = false)
+fun FirTypeParameterSymbol.toConeType(): ConeTypeParameterType = toConeType(false)
+
+fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeTypeParameterType =
+    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable)

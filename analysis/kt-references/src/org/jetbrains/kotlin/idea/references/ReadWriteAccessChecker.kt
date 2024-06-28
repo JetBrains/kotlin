@@ -40,9 +40,13 @@ interface ReadWriteAccessChecker {
             }
         }
 
-        val unaryExpression = expression.parent as? KtUnaryExpression
-        return if (unaryExpression != null && unaryExpression.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
-            ReferenceAccess.READ_WRITE to unaryExpression
+        val parent = expression.parent
+        if (parent is KtValueArgumentName) {
+            return ReferenceAccess.WRITE to expression
+        }
+
+        return if (parent is KtUnaryExpression && parent.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
+            ReferenceAccess.READ_WRITE to parent
         else
             ReferenceAccess.READ to expression
     }

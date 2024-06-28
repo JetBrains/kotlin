@@ -12,7 +12,6 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.process.ExecOperations
@@ -139,7 +138,8 @@ private abstract class CompileToExecutableJob : WorkAction<CompileToExecutableJo
  */
 abstract class CompileToExecutable : DefaultTask() {
 
-    private val platformManager = project.extensions.getByType<PlatformManager>()
+    @get:Input
+    val platformManager = project.extensions.getByType<PlatformManager>()
 
     /**
      * Target for which to compile.
@@ -212,24 +212,21 @@ abstract class CompileToExecutable : DefaultTask() {
     @get:Input
     abstract val linkerArgs: ListProperty<String>
 
-    @get:Input
-    protected val linkCommands: Provider<List<List<String>>> = project.provider {
-        // Getting link commands requires presence of a target toolchain.
-        // Thus we cannot get them at the configuration stage because the toolchain may be not downloaded yet.
-        platformManager.platform(target.get()).linker.finalLinkCommands(
-                listOf(compilerOutputFile.asFile.get().absolutePath),
-                outputFile.asFile.get().absolutePath,
-                listOf(),
-                linkerArgs.get(),
-                optimize = false,
-                debug = true,
-                kind = LinkerOutputKind.EXECUTABLE,
-                outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
-                needsProfileLibrary = false,
-                mimallocEnabled = mimallocEnabled.get(),
-                sanitizer = sanitizer.orNull
-        ).map { it.argsWithExecutable }
-    }
+    fun linkCommands(): List<List<String>> =
+    // Getting link commands requires presence of a target toolchain.
+            // Thus we cannot get them at the configuration stage because the toolchain may be not downloaded yet.
+            platformManager.platform(target.get()).linker.finalLinkCommands(
+                    listOf(compilerOutputFile.asFile.get().absolutePath),
+                    outputFile.asFile.get().absolutePath,
+                    listOf(),
+                    linkerArgs.get(),
+                    optimize = false,
+                    debug = true,
+                    kind = LinkerOutputKind.EXECUTABLE,
+                    outputDsymBundle = outputFile.asFile.get().absolutePath + ".dSYM",
+                    mimallocEnabled = mimallocEnabled.get(),
+                    sanitizer = sanitizer.orNull
+            ).map { it.argsWithExecutable }
 
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
@@ -254,7 +251,7 @@ abstract class CompileToExecutable : DefaultTask() {
             outputFile.set(this@CompileToExecutable.outputFile)
             targetName.set(this@CompileToExecutable.target.get().name)
             clangFlags.addAll(defaultClangFlags + compilerArgs.get() + sanitizerFlags)
-            linkCommands.set(this@CompileToExecutable.linkCommands)
+            linkCommands.set(this@CompileToExecutable.linkCommands())
             platformManager.set(this@CompileToExecutable.platformManager)
         }
     }

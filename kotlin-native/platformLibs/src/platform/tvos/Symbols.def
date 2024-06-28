@@ -1,0 +1,7 @@
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase Foundation Security darwin posix
+language = Objective-C
+package = platform.Symbols
+
+modules = Symbols
+compilerOpts = -framework Symbols
+linkerOpts = -framework Symbols

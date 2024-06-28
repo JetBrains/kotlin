@@ -16,19 +16,21 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:fir:fir-serialization"))
+    compileOnly(project(":compiler:fir:fir-deserialization"))
 
     compileOnly(intellijCore())
 
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:analysis-tests"))
-    testApi(project(":compiler:fir:fir-serialization"))
 
-    testApiJUnit5()
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(project(":core:deserialization"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
@@ -39,13 +41,16 @@ dependencies {
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testRuntimeOnly(commonDependency("one.util:streamex"))
 
     testRuntimeOnly(jpsModel())
     testRuntimeOnly(jpsModelImpl())
 }
+
+optInToObsoleteDescriptorBasedAPI()
 
 val generationRoot = projectDir.resolve("tests-gen")
 
@@ -54,14 +59,6 @@ sourceSets {
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
-    }
-}
-
-tasks {
-    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        }
     }
 }
 
@@ -80,7 +77,10 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(
+    jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+) {
     configure()
 }
 

@@ -4,7 +4,7 @@ public final class DIntCollection {
     private synthetic final field $$delegate_0: java.util.Collection
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
     public method add(p0: int): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(p0: int): boolean
@@ -28,7 +28,7 @@ public final class DIntCollectionByList {
     private synthetic final field $$delegate_0: java.util.List
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public method add(p0: int): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(p0: int): boolean
@@ -52,7 +52,7 @@ public final class DIntCollectionBySet {
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
     public method add(p0: int): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(p0: int): boolean
@@ -96,8 +96,8 @@ public final class DIntList {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
     public method add(p0: int): boolean
     public method add(p0: int, p1: int): void
-    public synthetic method add(p0: int, p1: java.lang.Object): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
@@ -116,13 +116,13 @@ public final class DIntList {
     public @org.jetbrains.annotations.NotNull method listIterator(): java.util.ListIterator
     public @org.jetbrains.annotations.NotNull method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): int
-    public synthetic method remove(p0: int): java.lang.Object
+    public synthetic bridge method remove(p0: int): java.lang.Object
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method replaceAll(p0: java.util.function.UnaryOperator): void
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: int): java.lang.Integer
-    public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
     public bridge final method size(): int
     public method sort(p0: java.util.Comparator): void
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
@@ -136,7 +136,7 @@ public final class DIntListIterator {
     private synthetic final field $$delegate_0: java.util.ListIterator
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.ListIterator): void
     public method add(p0: int): void
-    public synthetic method add(p0: java.lang.Object): void
+    public synthetic bridge method add(p0: java.lang.Object): void
     public method hasNext(): boolean
     public method hasPrevious(): boolean
     public @org.jetbrains.annotations.NotNull method next(): java.lang.Integer
@@ -147,7 +147,7 @@ public final class DIntListIterator {
     public method previousIndex(): int
     public method remove(): void
     public method set(p0: int): void
-    public synthetic method set(p0: java.lang.Object): void
+    public synthetic bridge method set(p0: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -157,18 +157,19 @@ public final class DIntMap {
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
     public method clear(): void
     public method compute(p0: java.lang.Integer, p1: java.util.function.BiFunction): java.lang.Double
-    public synthetic method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method compute(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method computeIfAbsent(p0: java.lang.Integer, p1: java.util.function.Function): java.lang.Double
-    public synthetic method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
+    public synthetic bridge method computeIfAbsent(p0: java.lang.Object, p1: java.util.function.Function): java.lang.Object
     public method computeIfPresent(p0: java.lang.Integer, p1: java.util.function.BiFunction): java.lang.Double
-    public synthetic method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method computeIfPresent(p0: java.lang.Object, p1: java.util.function.BiFunction): java.lang.Object
     public method containsKey(p0: int): boolean
     public bridge final method containsKey(p0: java.lang.Object): boolean
     public method containsValue(p0: double): boolean
     public bridge final method containsValue(p0: java.lang.Object): boolean
     public bridge final method entrySet(): java.util.Set
     public @org.jetbrains.annotations.Nullable method get(p0: int): java.lang.Double
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public bridge final method get(p0: java.lang.Object): java.lang.Double
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public @org.jetbrains.annotations.NotNull method getEntries(): java.util.Set
     public @org.jetbrains.annotations.NotNull method getKeys(): java.util.Set
     public method getSize(): int
@@ -176,21 +177,23 @@ public final class DIntMap {
     public method isEmpty(): boolean
     public bridge final method keySet(): java.util.Set
     public method merge(p0: java.lang.Integer, p1: java.lang.Double, p2: java.util.function.BiFunction): java.lang.Double
-    public synthetic method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
+    public synthetic bridge method merge(p0: java.lang.Object, p1: java.lang.Object, p2: java.util.function.BiFunction): java.lang.Object
     public method put(p0: int, p1: double): java.lang.Double
-    public synthetic method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
     public method putAll(p0: java.util.Map): void
     public method putIfAbsent(p0: java.lang.Integer, p1: java.lang.Double): java.lang.Double
-    public synthetic method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method putIfAbsent(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public method remove(p0: java.lang.Object): java.lang.Double
+    public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
     public method remove(p0: java.lang.Object, p1: java.lang.Object): boolean
     public method replace(p0: java.lang.Integer, p1: java.lang.Double): java.lang.Double
     public method replace(p0: java.lang.Integer, p1: java.lang.Double, p2: java.lang.Double): boolean
-    public synthetic method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public synthetic method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
+    public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge method replace(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): boolean
     public method replaceAll(p0: java.util.function.BiFunction): void
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -203,7 +206,8 @@ public final class DIntMapEntry {
     public @org.jetbrains.annotations.NotNull method getValue(): java.lang.Double
     public synthetic bridge method getValue(): java.lang.Object
     public method setValue(p0: double): java.lang.Double
-    public synthetic method setValue(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
@@ -212,7 +216,7 @@ public final class DIntSet {
     private synthetic final field $$delegate_0: java.util.Set
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.Set): void
     public method add(p0: int): boolean
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public method contains(p0: int): boolean

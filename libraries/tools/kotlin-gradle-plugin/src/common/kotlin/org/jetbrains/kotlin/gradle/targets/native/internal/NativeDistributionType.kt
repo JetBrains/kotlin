@@ -7,60 +7,29 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.*
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.LIGHT
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.PREBUILT
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal enum class NativeDistributionType(val suffix: String?, val mustGeneratePlatformLibs: Boolean) {
     LIGHT(null, true),
     PREBUILT("prebuilt", false),
-
-    // Distribution types for 1.3:
-    LIGHT_1_3("restricted", false), // aka "restricted" distribution without platform libs for Apple targets.
-    PREBUILT_1_3(null, false)
 }
 
 internal class NativeDistributionTypeProvider(private val project: Project) {
     private val propertiesProvider = PropertiesProvider(project)
 
-    private fun warning(message: String) = SingleWarningPerBuild.show(project, "Warning: $message")
-
-    private fun chooseDistributionType(
-        prebuiltType: NativeDistributionType,
-        lightType: NativeDistributionType,
-        defaultType: NativeDistributionType
-    ): NativeDistributionType {
-        val requestedByUser = propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()
-        val deprecatedRestricted = propertiesProvider.nativeDeprecatedRestricted
-
-        // A case when a deprecated property (kotlin.native.restrictedDistribution) is used to choose the restricted distribution.
-        // Effectively the restricted distribution from 1.3 and the light distribution from 1.4 are the same,
-        // so we allow user to specify kotlin.native.restrictedDistribution in both 1.3 and 1.4
-        if (requestedByUser == null && deprecatedRestricted != null) {
-            return if (deprecatedRestricted) {
-                lightType
-            } else {
-                defaultType
-            }
-        }
-
-        // A normal path: no deprecated properties, only kotlin.native.distribution.type.
-        return when (requestedByUser) {
-            null -> defaultType
-            "prebuilt" -> prebuiltType
-            "light" -> lightType
+    fun getDistributionType(): NativeDistributionType {
+        return when (val type = propertiesProvider.nativeDistributionType?.toLowerCaseAsciiOnly()) {
+            null -> PREBUILT
+            "prebuilt" -> PREBUILT
+            "light" -> LIGHT
             else -> {
-                warning("Unknown Kotlin/Native distribution type: $requestedByUser. Available values: prebuilt, light")
-                defaultType
+                project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.UnrecognizedKotlinNativeDistributionType(type))
+                PREBUILT
             }
         }
-    }
-
-    fun getDistributionType(version: String): NativeDistributionType {
-        if (propertiesProvider.nativeDeprecatedRestricted != null) {
-            warning("Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
-        }
-
-        return chooseDistributionType(prebuiltType = PREBUILT, lightType = LIGHT, defaultType = PREBUILT)
     }
 }

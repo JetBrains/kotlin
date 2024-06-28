@@ -1,5 +1,7 @@
 // SKIP_KT_DUMP
 // TARGET_BACKEND: JVM
+// FIR_IDENTICAL
+
 // FILE: A.java
 
 public class A {

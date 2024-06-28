@@ -1,0 +1,24 @@
+FILE: secondaryConstructor.kt
+    @Target(AnnotationTarget#.TYPE#) public final? annotation class Anno : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Anno] constructor([CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const val prop: <implicit> = String(str)
+        public? get(): <implicit>
+    public abstract class AbstractClass<T> : R|kotlin/Any| {
+        public? [ContainingClassKey=AbstractClass] constructor<T>(): R|util/AbstractClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final? class MyClass : @Anno(<strcat>(String(super type call ), prop#)) AbstractClass<@Anno(<strcat>(String(nested super type ref ), prop#)) List<@Anno(<strcat>(String(nested nested super type ref ), prop#)) Int>> {
+        public? [ContainingClassKey=MyClass] constructor(): R|util/MyClass| {
+            super<<implicit>>()
+        }
+
+    }

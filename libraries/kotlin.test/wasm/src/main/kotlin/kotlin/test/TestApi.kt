@@ -5,17 +5,10 @@
 
 package kotlin.test
 
-import kotlin.js.JsExport
+import kotlin.wasm.WasmExport
 
-/**
- * Overrides current framework adapter with a provided instance of [FrameworkAdapter]. Use in order to support custom test frameworks.
- *
- * If this function is not called, the test framework will be detected automatically.
- *
- */
-internal fun setAdapter(adapter: FrameworkAdapter) {
-    currentAdapter = adapter
-}
+
+internal expect fun adapter(): FrameworkAdapter
 
 /**
  * The functions below are used by the compiler to describe the tests structure, e.g.
@@ -37,20 +30,8 @@ internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
     adapter().test(name, ignored, testFn)
 }
 
-internal var currentAdapter: FrameworkAdapter? = null
-
-private fun isJasmine(): Boolean =
-    js("typeof describe === 'function' && typeof it === 'function'")
-
-internal fun adapter(): FrameworkAdapter {
-    val result = currentAdapter ?: if (isJasmine()) JasmineLikeAdapter() else TeamcityAdapter()
-    currentAdapter = result
-    return result
-}
-
 // This is called from the js-launcher alongside wasm start function
-@JsExport
-@OptIn(kotlin.js.ExperimentalJsExport::class)
+@WasmExport
 internal fun startUnitTests() {
     // This will be filled with the corresponding code during lowering
 }

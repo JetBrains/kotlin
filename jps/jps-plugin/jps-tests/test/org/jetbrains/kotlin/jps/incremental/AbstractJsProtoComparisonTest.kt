@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -27,14 +26,35 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
+import kotlin.test.assertNotEquals
 
-abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<ProtoData>() {
-    override fun expectedOutputFile(testDir: File): File =
-        File(testDir, "result-js.out")
-                .takeIf { it.exists() }
-                ?: super.expectedOutputFile(testDir)
+abstract class AbstractFirJsProtoComparisonTest: AbstractJsProtoComparisonTest(null)
+
+abstract class AbstractJsProtoComparisonTest(val languageVersionOverride: String? = "1.9") : AbstractProtoComparisonTest<ProtoData>() {
+    protected open val jsStdlibFile: File
+        get() = PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath
+
+    override fun expectedOutputFile(testDir: File): File {
+        val k1Out = File(testDir, "result-js.out")
+        val k2Out = File(testDir, "result-js.fir.out")
+        val resultFile = when {
+            languageVersionOverride?.startsWith("1.") == true -> k1Out
+            !k2Out.exists() -> k1Out
+            else -> {
+                assertNotEquals(
+                    k1Out.readText(),
+                    k2Out.readText(),
+                    "Please remove ${k2Out.absolutePath}, since its contents is equal to ${k1Out.absolutePath}."
+                )
+                k2Out
+            }
+        }
+        return resultFile.takeIf { it.exists() } ?: super.expectedOutputFile(testDir)
+    }
 
     override fun compileAndGetClasses(sourceDir: File, outputDir: File): Map<ClassId, ProtoData> {
         val incrementalResults = IncrementalResultsConsumerImpl()
@@ -47,13 +67,14 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
         val messageCollector = TestMessageCollector()
         val outputItemsCollector = OutputItemsCollectorImpl()
         val args = K2JSCompilerArguments().apply {
-            outputFile = File(outputDir, "out.js").canonicalPath
-            metaInfo = true
+            this.outputDir = outputDir.normalize().absolutePath
+            moduleName = "out"
+            libraries = jsStdlibFile.absolutePath
+            irProduceKlibDir = true
+            irOnly = true
             main = K2JsArgumentConstants.NO_CALL
             freeArgs = ktFiles
-            useDeprecatedLegacyCompiler = true
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+            languageVersionOverride?.let { languageVersion = it }
         }
 
         val env = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)

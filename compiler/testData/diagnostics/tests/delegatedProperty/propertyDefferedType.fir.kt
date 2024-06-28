@@ -1,10 +1,10 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // NI_EXPECTED_FILE
 
 import kotlin.reflect.KProperty
 
 class B {
-    val c by Delegate(<!UNRESOLVED_REFERENCE!>ag<!>)
+    val c by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Delegate<!>(<!UNRESOLVED_REFERENCE!>ag<!>)<!>
 }
 
 class Delegate<T: Any>(val init: T) {

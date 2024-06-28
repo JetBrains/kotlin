@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 48
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -21,7 +30,7 @@ fun case_1(x: Any?, y: Any?) {
  * ISSUES: KT-30317
  */
 fun case_2(x: Any?, y: Any?) {
-    if (x as Int === y) {
+    if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>x as Int === y<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>
@@ -49,7 +58,7 @@ fun case_3(x: Any?, y: Any?) {
  * ISSUES: KT-30317
  */
 fun case_4(x: Any?, y: Any?) {
-    if (y === x as Int) {
+    if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>y === x as Int<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>

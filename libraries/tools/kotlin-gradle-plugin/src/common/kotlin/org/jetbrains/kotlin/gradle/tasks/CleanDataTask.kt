@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.time.Duration
 import java.time.Instant
@@ -16,6 +17,7 @@ import java.time.Instant
 /**
  * Task to clean all old unused loaded files from registered stores in [CleanableStore].
  */
+@DisableCachingByDefault
 open class CleanDataTask : DefaultTask() {
 
     /**

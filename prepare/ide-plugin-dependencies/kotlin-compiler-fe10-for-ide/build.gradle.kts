@@ -11,6 +11,6 @@ val excludedCompilerModules = listOf(
     ":compiler:incremental-compilation-impl"
 )
 
-val projects = fe10CompilerModules.asList() - excludedCompilerModules + listOf(":analysis:kt-references:kt-references-fe10")
+val projects = fe10CompilerModules.asList() - excludedCompilerModules
 
 publishJarsForIde(projects)

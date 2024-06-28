@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -30,7 +29,7 @@ abstract class LightClassGenerationSupport {
     protected abstract fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport
 
     fun createConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator = getUltraLightClassSupport(expression).run {
-        ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
+        ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings)
     }
 
     fun createUltraLightClassForFacade(facadeClassFqName: FqName, files: Collection<KtFile>): KtUltraLightClassForFacade {
@@ -71,7 +70,7 @@ abstract class LightClassGenerationSupport {
     companion object {
         @JvmStatic
         fun getInstance(project: Project): LightClassGenerationSupport {
-            return ServiceManager.getService(project, LightClassGenerationSupport::class.java)
+            return project.getService(LightClassGenerationSupport::class.java)
         }
     }
 }

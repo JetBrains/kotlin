@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Compiler Infrastructure for Scripting"
 
@@ -32,7 +33,7 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
 }
 
 sourceSets {
@@ -40,10 +41,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-metadata-version-check"
-    }
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
 }
 
 publish()

@@ -1,12 +1,13 @@
 class Test {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int = 0) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
 }
+

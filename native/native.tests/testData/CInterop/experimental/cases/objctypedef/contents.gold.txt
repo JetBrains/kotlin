@@ -1,0 +1,45 @@
+library {
+  // module name: <dependency.def>
+
+  library fragment {
+    // package name: dependency
+
+    // class name: dependency/MyClass
+    // class name: dependency/MyClass.Companion
+    // class name: dependency/MyClassMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+    }
+
+    public final companion object dependency/MyClass.Companion : dependency/MyClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/MyClass> {
+
+      private constructor()
+    }
+
+    @kotlinx/cinterop/ExternalObjCClass
+    @kotlinx/cinterop/ExperimentalForeignApi
+    public open class dependency/MyClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
+
+      protected /* secondary */ constructor()
+    }
+
+    package {
+
+      public typealias MyClassRef = dependency/MyClass? /* = dependency/MyClass? */
+
+      public typealias MyClassRefVar = kotlinx/cinterop/ObjCObjectVar<dependency/MyClassRef^> /* = kotlinx/cinterop/ObjCObjectVar<dependency/MyClass? /* = dependency/MyClassRef^ */> */
+
+      public typealias MyId = kotlin/Any? /* = kotlin/Any? */
+
+      public typealias MyIdVar = kotlinx/cinterop/ObjCObjectVar<dependency/MyId^> /* = kotlinx/cinterop/ObjCObjectVar<kotlin/Any? /* = dependency/MyId^ */> */
+    }
+  }
+}

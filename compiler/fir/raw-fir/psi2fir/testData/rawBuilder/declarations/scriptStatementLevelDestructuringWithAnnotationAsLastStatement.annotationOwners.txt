@@ -1,0 +1,23 @@
+@DestrAnno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+
+@LeftAnno(<strcat>(String(a ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/a from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+
+@RightAnno(<strcat>(String(b ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/b from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+
+@Destr2Anno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+
+@SecondLeftAnno(<strcat>(String(c ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/c from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
+
+@SecondRightAnno(<strcat>(String(d ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts>
+context -> FirPropertySymbol <local>/d from FirAnonymousInitializerSymbol <init> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts

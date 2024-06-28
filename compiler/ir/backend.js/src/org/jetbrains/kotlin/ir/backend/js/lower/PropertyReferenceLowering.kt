@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
 
@@ -31,7 +32,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
     private val localDelegateBuilderSymbol = context.klocalDelegateBuilder
     private val jsClassSymbol = context.intrinsics.jsClass
 
-    private val throwISE = context.throwISEsymbol
+    private val throwISE = context.ir.symbols.throwISE
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val currentParent = container as? IrDeclarationParent ?: container.parent
@@ -144,7 +145,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
 
             function.parent = factory
 
-            val unboundValueParameters = supperAccessor.valueParameters.map { it.copyTo(function) }
+            val unboundValueParameters = supperAccessor.valueParameters.memoryOptimizedMap { it.copyTo(function) }
             function.valueParameters = unboundValueParameters
             val arity = unboundValueParameters.size
             val total = arity + boundValueParameters.size
@@ -270,6 +271,6 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
     }
 
     companion object {
-        object PROPERTY_REFERENCE_FACTORY : IrDeclarationOriginImpl("PROPERTY_REFERNCE_FACTORY")
+        val PROPERTY_REFERENCE_FACTORY = IrDeclarationOriginImpl("PROPERTY_REFERNCE_FACTORY")
     }
 }

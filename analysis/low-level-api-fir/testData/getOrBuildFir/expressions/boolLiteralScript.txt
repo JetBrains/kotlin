@@ -1,0 +1,15 @@
+KT element: KtConstantExpression
+FIR element: FirLiteralExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Boolean(true)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] boolLiteralScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-boolLiteralScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Boolean| = Boolean(true)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean|

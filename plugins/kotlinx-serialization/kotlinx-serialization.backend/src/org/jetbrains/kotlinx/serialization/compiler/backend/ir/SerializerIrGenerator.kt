@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -46,7 +46,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UN
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 import org.jetbrains.kotlinx.serialization.compiler.resolve.bitMaskSlotCount
 
-object SERIALIZATION_PLUGIN_ORIGIN : IrDeclarationOriginImpl("KOTLINX_SERIALIZATION", true)
+val SERIALIZATION_PLUGIN_ORIGIN = IrDeclarationOriginImpl("KOTLINX_SERIALIZATION", true)
 
 internal typealias FunctionWithArgs = Pair<IrFunctionSymbol, List<IrExpression>>
 
@@ -66,11 +66,9 @@ open class SerializerIrGenerator(
         SerialEntityNames.SERIAL_DESC_FIELD
     ) { true }?.takeIf { it.isFromPlugin(compilerContext.afterK2) }
 
-    protected val anySerialDescProperty = getProperty(
+    protected val irAnySerialDescProperty = getProperty(
         SerialEntityNames.SERIAL_DESC_FIELD,
-    ) { true } // remove true?
-
-    protected val irAnySerialDescProperty = anySerialDescProperty
+    ) { true }
 
     fun getProperty(
         name: String,
@@ -83,13 +81,16 @@ open class SerializerIrGenerator(
         private set
 
     // child serializers cached if serializable class is internal
-    private val cachedChildSerializersProperty = if (isGeneratedSerializer)
-        serializableIrClass.companionObject()?.properties?.singleOrNull { it.name == CACHED_CHILD_SERIALIZERS_PROPERTY_NAME }
-    else null
+    private val cachedChildSerializersProperty by lazy {
+        if (isGeneratedSerializer)
+            serializableIrClass.companionObject()?.properties?.singleOrNull { it.name == CACHED_CHILD_SERIALIZERS_PROPERTY_NAME }
+        else null
+    }
 
     // non-object serializers which can be cached
-    private val cacheableChildSerializers =
-        serializableIrClass.createCachedChildSerializers(properties.serializableProperties).map { it != null }
+    private val cacheableChildSerializers by lazy {
+        serializableIrClass.createCachedChildSerializers(serializableIrClass, properties.serializableProperties).map { it != null }
+    }
 
     // null if was not found — we're in FIR
     private fun findLocalSerializersFieldDescriptors(): List<IrProperty?> {
@@ -112,6 +113,7 @@ open class SerializerIrGenerator(
         lateinit var prop: IrProperty
 
         // how to (auto)create backing field and getter/setter?
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         compilerContext.symbolTable.withReferenceScope(irClass) {
             prop = generatePropertyMissingParts(desc, desc.name, serialDescImplClass.starProjectedType, irClass, desc.visibility)
 
@@ -230,7 +232,12 @@ open class SerializerIrGenerator(
 
         val allSerializers = serializableProperties.mapIndexed { index, property ->
             requireNotNull(
-                serializerTower(this@SerializerIrGenerator, irFun.dispatchReceiverParameter!!, property, cachedChildSerializerByIndex(index))
+                serializerTower(
+                    this@SerializerIrGenerator,
+                    irFun.dispatchReceiverParameter!!,
+                    property,
+                    cachedChildSerializerByIndex(index)
+                )
             ) { "Property ${property.name} must have a serializer" }
         }
 
@@ -354,7 +361,7 @@ open class SerializerIrGenerator(
                 else -> null
             }
         return if (defaultPrimitive == null)
-            irNull(compilerContext.irBuiltIns.anyNType) to (compilerContext.irBuiltIns.anyNType)
+            T.makeNullable().let { irNull(it) to it }
         else
             defaultPrimitive to T
     }
@@ -455,7 +462,7 @@ open class SerializerIrGenerator(
         val decodeSequentiallyCall = irInvoke(localInput.get(), inputClass.functionByName(CallingConventions.decodeSequentially))
 
         val sequentialPart = irBlock {
-            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithVariables() }
+            decoderCalls.forEach { (_, expr) -> +expr.deepCopyWithoutPatchingParents() }
         }
 
         val byIndexPart: IrExpression = irWhile().also { loop ->
@@ -503,7 +510,7 @@ open class SerializerIrGenerator(
 
         val typeArgs = (loadFunc.returnType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         val deserCtor: IrConstructorSymbol? = serializableIrClass.findSerializableSyntheticConstructor()
-        if (serializableIrClass.isInternalSerializable && deserCtor != null) {
+        if (serializableIrClass.shouldHaveGeneratedMethods() && deserCtor != null) {
             var args: List<IrExpression> = serializableProperties.map { serialPropertiesMap.getValue(it.ir).get() }
             args = bitMasks.map { irGet(it) } + args + irNull()
             +irReturn(irInvoke(null, deserCtor, typeArgs, args))

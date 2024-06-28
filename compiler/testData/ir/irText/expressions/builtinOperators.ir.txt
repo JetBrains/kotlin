@@ -4,21 +4,21 @@ FILE fqName:test fileName:/test.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: GET_VAR 'a: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun or (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun and (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun and (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
           other: GET_VAR 'b: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun inv (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+        CALL 'public final fun shl (bitCount: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null
           bitCount: GET_VAR 'b: kotlin.Int declared in test.callBuiltinFunctions' type=kotlin.Int origin=null

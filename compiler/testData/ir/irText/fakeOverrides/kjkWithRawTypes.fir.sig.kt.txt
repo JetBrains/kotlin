@@ -1,0 +1,41 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Number?){}
+  //   Public signature: /A.foo|2831167016207060641[0]
+  //   Public signature debug description: foo(kotlin.Number?){}
+  /* fake */ override fun foo(t: Number?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Any?){}
+  //   Public signature: /A.foo|-6211124056249407422[0]
+  //   Public signature debug description: foo(kotlin.Any?){}
+  /* fake */ override fun foo(t: Any?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass<T : Number> : Java1<T> {
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: KotlinClass#foo(1:0?){}
+  //   Public signature: /KotlinClass.foo|-131141195414545503[0]
+  //   Public signature debug description: foo(1:0?){}
+  /* fake */ override fun foo(t: T?): Unit
+
+}

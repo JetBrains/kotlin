@@ -26,7 +26,7 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
     protected fun File.toTestFile(relativePath: String? = null): TestFile {
         return TestFile(
             relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
-            this.readText(),
+            this.useLines { it.joinToString("\n") },
             originalFile = this,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,

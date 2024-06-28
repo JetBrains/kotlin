@@ -1,33 +1,22 @@
 {
   "name": "kotlin-test-js-runner",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple Kotlin/JS tests runner with TeamCity reporter",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "bin": {
-    "kotlin-js-tests": "lib/kotlin-js-test.js"
-  },
-  "files": [
-    "lib/**/*"
-  ],
-  "scripts": {
-    "build": "rimraf lib/* && copyfiles static/* lib && rollup -c rollup.config.js"
-  },
+  "license": "Apache-2.0",
   "dependencies": {
+    "format-util": "^1.0.5"
   },
   "devDependencies": {
-    "@types/node": "^12.12.14",
-    "rimraf": "^3.0.0",
-    "copyfiles": "^2.4.1",
-    "rollup": "^2.68.0",
-    "@rollup/plugin-commonjs": "^21.0.1",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "rollup-plugin-sourcemaps": "^0.6.3",
-    "@rollup/plugin-typescript": "^8.3.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "typescript": "^3.7.2",
-    "format-util": "^1.0.5",
-    "tslib": "^2.3.1",
-    "is-wsl": "^2.2.0"
+    "@types/node": "^18.11.18",
+    "rollup": "^4.8.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "typescript": "4.3.5",
+    "tslib": "^2.6.2",
+    "karma-webpack": "^5.0.1",
+    "mocha": "^10.4.0",
+    "mocha-teamcity-reporter": "^4.2.0"
   }
 }

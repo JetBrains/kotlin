@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.incremental.ConstantValueExternalizer
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -46,9 +46,9 @@ object CachedClasspathSnapshotSerializer {
         })
 
         cache.evictEntries()
-        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
-        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS, classpathEntrySnapshotFiles.size - cacheMisses)
-        reporter.addMetric(BuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES, cacheMisses)
+        reporter.addMetric(GradleBuildPerformanceMetric.LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+        reporter.addMetric(GradleBuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS, classpathEntrySnapshotFiles.size - cacheMisses)
+        reporter.addMetric(GradleBuildPerformanceMetric.LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES, cacheMisses)
 
         return classpathSnapshot
     }
@@ -162,8 +162,7 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
         ListExternalizer(StringExternalizer).save(output, info.classHeaderData.toList())
         ListExternalizer(StringExternalizer).save(output, info.classHeaderStrings.toList())
         NullableValueExternalizer(StringExternalizer).save(output, info.multifileClassName)
-        MapExternalizer(StringExternalizer, ConstantValueExternalizer).save(output, info.constantsMap)
-        MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).save(output, info.inlineFunctionsAndAccessorsMap)
+        ExtraInfoExternalizer.save(output, info.extraInfo)
     }
 
     override fun read(input: DataInput): KotlinClassInfo {
@@ -174,8 +173,24 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
             classHeaderData = ListExternalizer(StringExternalizer).read(input).toTypedArray(),
             classHeaderStrings = ListExternalizer(StringExternalizer).read(input).toTypedArray(),
             multifileClassName = NullableValueExternalizer(StringExternalizer).read(input),
-            constantsMap = MapExternalizer(StringExternalizer, ConstantValueExternalizer).read(input),
-            inlineFunctionsAndAccessorsMap = MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).read(input)
+            extraInfo = ExtraInfoExternalizer.read(input)
+        )
+    }
+}
+
+private object ExtraInfoExternalizer : DataExternalizer<KotlinClassInfo.ExtraInfo> {
+
+    override fun save(output: DataOutput, info: KotlinClassInfo.ExtraInfo) {
+        NullableValueExternalizer(LongExternalizer).save(output, info.classSnapshotExcludingMembers)
+        MapExternalizer(StringExternalizer, LongExternalizer).save(output, info.constantSnapshots)
+        MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).save(output, info.inlineFunctionOrAccessorSnapshots)
+    }
+
+    override fun read(input: DataInput): KotlinClassInfo.ExtraInfo {
+        return KotlinClassInfo.ExtraInfo(
+            classSnapshotExcludingMembers = NullableValueExternalizer(LongExternalizer).read(input),
+            constantSnapshots = MapExternalizer(StringExternalizer, LongExternalizer).read(input),
+            inlineFunctionOrAccessorSnapshots = MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).read(input)
         )
     }
 }
@@ -200,7 +215,7 @@ private object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapsho
     }
 }
 
-private object JavaClassMemberLevelSnapshotExternalizer : DataExternalizer<JavaClassMemberLevelSnapshot> {
+internal object JavaClassMemberLevelSnapshotExternalizer : DataExternalizer<JavaClassMemberLevelSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassMemberLevelSnapshot) {
         JavaElementSnapshotExternalizer.save(output, snapshot.classAbiExcludingMembers)
@@ -249,9 +264,9 @@ private object ClassIdExternalizerWithInterning : DataExternalizer<ClassId> by C
         return ClassId(
             // To reduce memory usage, apply object interning to package name as they are commonly shared.
             // (Don't apply object interning to relative class name as they are not commonly shared.)
-            /* packageFqName */ FqNameExternalizerWithInterning.read(input),
-            /* relativeClassName */ FqNameExternalizer.read(input),
-            /* isLocal */ input.readBoolean()
+            packageFqName = FqNameExternalizerWithInterning.read(input),
+            relativeClassName = FqNameExternalizer.read(input),
+            isLocal = input.readBoolean()
         )
     }
 }

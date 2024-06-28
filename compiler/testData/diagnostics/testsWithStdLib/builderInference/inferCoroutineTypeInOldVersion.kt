@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +UnrestrictedBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Builder<T> {
     suspend fun add(t: T) {}

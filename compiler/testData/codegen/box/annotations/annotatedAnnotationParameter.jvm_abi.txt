@@ -1,0 +1,15 @@
+MODULE main
+	CLASS Anno.class
+		CLASS METADATA
+			PROPERTY k()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */
+			PROPERTY o()Ljava/lang/String;
+				Property: class.metadata.property.getterModifiers
+					K1
+						public final
+					K2
+						public final /* non-default */

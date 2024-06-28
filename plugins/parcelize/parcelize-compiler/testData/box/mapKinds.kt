@@ -8,6 +8,7 @@ import kotlinx.parcelize.*
 import android.os.Parcel
 import android.os.Parcelable
 import java.util.*
+import kotlinx.collections.immutable.*
 
 @Parcelize
 data class Test(
@@ -17,7 +18,9 @@ data class Test(
         val d: LinkedHashMap<String, String>,
         val e: TreeMap<String, String>,
         val f: SortedMap<String, String>,
-        val g: NavigableMap<String, String>
+        val g: NavigableMap<String, String>,
+        val h: PersistentMap<String, String>,
+        val i: ImmutableMap<String, String>,
 ) : Parcelable
 
 fun box() = parcelTest { parcel ->
@@ -28,7 +31,9 @@ fun box() = parcelTest { parcel ->
             d = LinkedHashMap<String, String>().apply { put("A", "B") },
             e = TreeMap<String, String>().apply { put("A", "B") },
             f = TreeMap<String, String>().apply { put("A", "B") },
-            g = TreeMap<String, String>().apply { put("A", "B") }
+            g = TreeMap<String, String>().apply { put("A", "B") },
+            h = persistentMapOf("A" to "B"),
+            i = persistentMapOf("A" to "B"),
     )
 
     first.writeToParcel(parcel, 0)

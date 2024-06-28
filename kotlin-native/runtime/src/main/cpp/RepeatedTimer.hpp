@@ -5,15 +5,13 @@
 
 #pragma once
 
-#ifndef KONAN_NO_THREADS
-
 #include <condition_variable>
 #include <mutex>
 #include <string_view>
 
 #include "Clock.hpp"
 #include "KAssert.h"
-#include "ScopedThread.hpp"
+#include "concurrent/ScopedThread.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -80,5 +78,3 @@ private:
 };
 
 } // namespace kotlin
-
-#endif // !KONAN_NO_THREADS

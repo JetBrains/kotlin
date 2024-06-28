@@ -6,32 +6,26 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginExtension
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
-import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
+import org.jdom2.Element
+import org.jdom2.Verifier
+import org.jdom2.input.SAXBuilder
+import org.jdom2.output.Format
+import org.jdom2.output.XMLOutputter
 import org.jetbrains.kotlin.pill.model.PDependency
 import org.jetbrains.kotlin.pill.model.PLibrary
 import org.jetbrains.kotlin.pill.model.POrderRoot
 import org.jetbrains.kotlin.pill.model.PProject
-import shadow.org.jdom2.input.SAXBuilder
-import shadow.org.jdom2.*
-import shadow.org.jdom2.output.Format
-import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 
 const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 
 class JpsCompatiblePluginTasks(
     private val rootProject: Project,
     private val platformDir: File,
-    private val resourcesDir: File,
-    private val isIdePluginAttached: Boolean
+    private val resourcesDir: File
 ) {
     companion object {
         private val DIST_LIBRARIES = listOf(
@@ -40,8 +34,7 @@ class JpsCompatiblePluginTasks(
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
             ":kotlin-reflect",
-            ":kotlin-test:kotlin-test-jvm",
-            ":kotlin-test:kotlin-test-junit",
+            ":kotlin-test",
             ":kotlin-script-runtime"
         )
 
@@ -70,8 +63,11 @@ class JpsCompatiblePluginTasks(
 
         private val ALLOWED_ARTIFACT_PATTERNS = listOf(
             Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml"),
-            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml")
+            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml"),
+            Regex("kotlin_dom_api_compat_[\\d_]+_SNAPSHOT\\.xml")
         )
+
+        private val EXCLUDED_DIRECTORY_PATHS = listOf("out")
     }
 
     private lateinit var projectDir: File
@@ -91,17 +87,11 @@ class JpsCompatiblePluginTasks(
     fun pill() {
         initEnvironment(rootProject)
 
-        val variantOptionValue = System.getProperty("pill.variant", "base").uppercase(Locale.US)
-        val variant = PillExtensionMirror.Variant.values().firstOrNull { it.name == variantOptionValue }
-            ?: run {
-                rootProject.logger.error("Invalid variant name: $variantOptionValue")
-                return
-            }
-
-        rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.lowercase(Locale.US)}' variant...")
+        rootProject.logger.lifecycle("Pill: Setting up project...")
 
         val modulePrefix = System.getProperty("pill.module.prefix", "")
-        val modelParser = ModelParser(variant, modulePrefix)
+        val globalExcludedDirectories = EXCLUDED_DIRECTORY_PATHS.map { File(rootProject.projectDir, it) }
+        val modelParser = ModelParser(modulePrefix, globalExcludedDirectories)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)
@@ -115,29 +105,6 @@ class JpsCompatiblePluginTasks(
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
         removeArtifactConfigurations()
-
-        if (isIdePluginAttached && variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
-            val artifactDependencyMapper = object : ArtifactDependencyMapper {
-                override fun map(dependency: PDependency): List<PDependency> {
-                    val result = mutableListOf<PDependency>()
-
-                    for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
-                        result += mappedDependency
-
-                        if (mappedDependency is PDependency.Module) {
-                            val module = jpsProject.modules.find { it.name == mappedDependency.name }
-                            if (module != null) {
-                                result += module.embeddedDependencies
-                            }
-                        }
-                    }
-
-                    return result
-                }
-            }
-
-            ArtifactGenerator(artifactDependencyMapper).generateKotlinPluginArtifact(rootProject).write()
-        }
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
@@ -290,7 +257,6 @@ class JpsCompatiblePluginTasks(
         kotlinJunitConfiguration.applyJUnitTemplate()
 
         val output = XMLOutputter().also {
-            @Suppress("UsePropertyAccessSyntax")
             it.format = Format.getPrettyFormat().apply {
                 setEscapeStrategy { c -> Verifier.isHighSurrogate(c) || c == '"' }
                 setIndent("  ")
@@ -317,18 +283,28 @@ class JpsCompatiblePluginTasks(
 
             for (path in DIST_LIBRARIES) {
                 val project = rootProject.findProject(path) ?: error("Project '$path' not found")
-                val archiveName = project.extensions.getByType<BasePluginExtension>().archivesName.get()
-                val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
-                val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
 
-                val applicableSourceSets = listOfNotNull(
-                    sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
-                    sourceSets.findByName("java9")
-                )
+                for (sourceSet in computeAllSourceSets(project)) {
+                    if (sourceSet.isTest) {
+                        continue
+                    }
 
-                val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
-                applicableSourceSets.forEach { ss -> result["$path/${ss.name}"] = optLibrary }
+                    val jarTask = sourceSet.findJarTask(project) ?: continue
+
+                    val archiveName = listOfNotNull(jarTask.archiveBaseName.get(), jarTask.archiveAppendix.orNull).joinToString("-")
+                    val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
+                    val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
+                    val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+
+                    result[path + "/" + sourceSet.name] = optLibrary
+
+                    val java9SourceSetName = when (val sourceSetBaseName = sourceSet.baseName) {
+                        SourceSet.MAIN_SOURCE_SET_NAME -> "java9"
+                        else -> sourceSetBaseName + "Java9"
+                    }
+
+                    result["$path/$java9SourceSetName"] = optLibrary
+                }
             }
 
             for (path in IGNORED_LIBRARIES) {
@@ -365,7 +341,8 @@ class JpsCompatiblePluginTasks(
             for (path in paths) {
                 val module = project.modules.find { it.path == path }
                 if (module != null) {
-                    result += PDependency.Module(module.name)
+                    result += PDependency.Module(module)
+                    result += module.embeddedDependencies.flatMap { invoke(project, it) }
                     continue
                 }
 

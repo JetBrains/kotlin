@@ -48,7 +48,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
 
     fun generateDestructuringDeclarationEntryAsPropertyDeclaration(ktEntry: KtDestructuringDeclarationEntry): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktEntry)
-        return context.symbolTable.declareProperty(
+        return context.symbolTable.descriptorExtension.declareProperty(
             ktEntry.startOffsetSkippingComments, ktEntry.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -99,7 +99,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         generateSyntheticAccessors: Boolean,
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrProperty {
-        return context.symbolTable.declareProperty(
+        return context.symbolTable.descriptorExtension.declareProperty(
             ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -158,7 +158,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         propertyDescriptor: PropertyDescriptor,
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrField =
-        context.symbolTable.declareField(
+        context.symbolTable.descriptorExtension.declareField(
             ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             propertyDescriptor, propertyDescriptor.type.toIrType(),
@@ -181,7 +181,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         hasBackingField(bindingContext) || context.extensions.isPropertyWithPlatformField(this)
 
     private fun generateSimpleProperty(ktProperty: KtVariableDeclaration, propertyDescriptor: PropertyDescriptor): IrProperty =
-        context.symbolTable.declareProperty(
+        context.symbolTable.descriptorExtension.declareProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
@@ -228,7 +228,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        return context.symbolTable.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor).apply {
+        return context.symbolTable.descriptorExtension.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor, propertyDescriptor.isDelegated).apply {
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
@@ -243,7 +243,7 @@ internal class PropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     private fun IrProperty.generateOverrides(propertyDescriptor: PropertyDescriptor) {
         overriddenSymbols =
             propertyDescriptor.overriddenDescriptors.map { overriddenPropertyDescriptor ->
-                context.symbolTable.referenceProperty(overriddenPropertyDescriptor.original)
+                context.symbolTable.descriptorExtension.referenceProperty(overriddenPropertyDescriptor.original)
             }
     }
 

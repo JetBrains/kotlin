@@ -7,8 +7,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
+import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -31,11 +35,18 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
 
     final override fun dependsOn(other: KotlinSourceSet) {
         if (other == this) return
+
+        check(project.kotlinPluginLifecycle.stage <= KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
+            "Illegal 'dependsOn' call in stage '${project.kotlinPluginLifecycle.stage}'"
+        }
+
         /*
         Circular dependsOn hierarchies are not allowed:
         Throw if this SourceSet is already present in the dependsOnClosure of 'other'
          */
         checkForCircularDependsOnEdges(other)
+
+        project.multiplatformExtensionOrNull?.redundantDependsOnEdgesTracker?.remember(this, other)
 
         /* Nothing to-do, if already added as dependency */
         if (!dependsOnImpl.add(other)) return

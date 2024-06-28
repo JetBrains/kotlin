@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -19,10 +20,8 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.platform.modification.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -32,15 +31,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
 
-abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule, manager: PsiManager) :
+abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
     LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
 
     private val myInnersCache by lazyPub {
         ClassInnerStuffCache(
             /* aClass = */ this,
             /* generateEnumMethods = */ false,
-            /* modificationTracker = */ project.createProjectWideOutOfBlockModificationTracker(),
+            /* modificationTrackers = */ modificationTrackerForClassInnerStuff(),
         )
+    }
+
+    protected open fun modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
+        return listOf(project.createProjectWideOutOfBlockModificationTracker())
     }
 
     override fun getFields(): Array<PsiField> = myInnersCache.fields
@@ -125,9 +128,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     abstract override fun hashCode(): Int
 
-    override fun getContext(): PsiElement = parent ?: buildErrorWithAttachment("parent must not be null") {
-        withClassEntry("class", this@SymbolLightClassBase)
-    }
+    override fun getContext(): PsiElement? = parent
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = PsiClassImplUtil.isClassEquivalentTo(this, another)
 
@@ -139,14 +140,14 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getImplementsListTypes(this)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> =
-        patternMethod?.let { PsiClassImplUtil.findMethodsBySignature(this, it, checkBases) } ?: PsiMethod.EMPTY_ARRAY
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 
     override fun findMethodsAndTheirSubstitutorsByName(
-        @NonNls name: String?,
+        @NonNls name: String,
         checkBases: Boolean,
     ): List<Pair<PsiMethod?, PsiSubstitutor?>?> = PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 

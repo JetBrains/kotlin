@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.constant
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 
@@ -55,7 +58,8 @@ internal class RedundantVariableDeclarationElimination(private val root: JsState
         object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsVars, ctx: JsContext<*>) {
                 if (x.synthetic) {
-                    if (x.vars.removeAll { it.initExpression == null && it.name !in usages }) {
+                    if (
+                        x.vars.removeAll { it.initExpression.isPure && it.name !in usages }) {
                         hasChanges = true
                     }
                     if (x.vars.isEmpty()) {
@@ -64,6 +68,9 @@ internal class RedundantVariableDeclarationElimination(private val root: JsState
                 }
                 super.endVisit(x, ctx)
             }
+
+            private val JsExpression?.isPure: Boolean
+                get() = this == null || constant || sideEffects == SideEffectKind.PURE
 
             override fun visit(x: JsFunction, ctx: JsContext<*>) = false
         }.accept(root)

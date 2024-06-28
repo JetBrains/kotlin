@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: -INLINE_CLASS_DEPRECATED -NO_TAIL_CALLS_FOUND
+// LANGUAGE: +JsExternalPropertyParameters
 
 // Classes
 
@@ -16,9 +19,9 @@ external class C5 {
     inner class <!WRONG_EXTERNAL_DECLARATION!>C7<!>
 }
 
-external <!INLINE_CLASS_DEPRECATED!>inline<!> class <!WRONG_EXTERNAL_DECLARATION!>C8(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)<!>
+external inline class <!WRONG_EXTERNAL_DECLARATION!>C8(val x: Int)<!>
 
-external value class <!WRONG_EXTERNAL_DECLARATION!>C9(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val x: Int<!>)<!>
+external value class <!WRONG_EXTERNAL_DECLARATION!>C9(val x: Int)<!>
 
 
 // Interfaces
@@ -49,3 +52,7 @@ external fun foo1(): Int
 
 <!WRONG_EXTERNAL_DECLARATION!>external val Int.v2: String<!>
     get() = definedExternally
+
+
+// Property parameters
+external class C(x: Int, val y: String)

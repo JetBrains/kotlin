@@ -1,0 +1,144 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+fun ArrayConstructorTest(n: Int) {
+    Array(n) { remember { it } }
+    ByteArray(n) { remember { it.toByte() } }
+    CharArray(n) { remember { it.toChar() } }
+    ShortArray(n) { remember { it.toShort() } }
+    IntArray(n) { remember { it } }
+    LongArray(n) { remember { it.toLong() } }
+    FloatArray(n) { remember { it.toFloat() } }
+    DoubleArray(n) { remember { it.toDouble() } }
+    BooleanArray(n) { remember { false } }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun ArrayConstructorTest(n: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(ArrayConstructorTest)<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(n)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Array(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    ByteArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toByte()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    CharArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toChar()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    ShortArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toShort()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    IntArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    LongArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toLong()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    FloatArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toFloat()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    DoubleArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          it.toDouble()
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    BooleanArray(n) { it: Int ->
+      val tmp1_return = <block>{
+        sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+        val tmp0_group = %composer.cache(false) {
+          false
+        }
+        sourceInformationMarkerEnd(%composer)
+        tmp0_group
+      }
+      tmp1_return
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    ArrayConstructorTest(n, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -4,7 +4,9 @@ public val </*0*/ T> test3: kotlin.reflect.KClass<T>
 public val </*0*/ T> test4: kotlin.reflect.KClass<T>
 public fun </*0*/ T> listOf(/*0*/ e: T): kotlin.collections.List<T>
 public fun </*0*/ L> locals(): kotlin.Unit
+public fun </*0*/ T, /*1*/ K> mapOf(/*0*/ e: T, /*1*/ b: K): kotlin.collections.Map<T, K>
 public fun </*0*/ T> test1(): kotlin.reflect.KClass<T>
+public fun </*0*/ T, /*1*/ K> test10(): kotlin.collections.Map<kotlin.reflect.KClass<T>, kotlin.reflect.KClass<K>>
 public fun </*0*/ T : kotlin.Any> test2(): kotlin.reflect.KClass<T>
 public fun </*0*/ T> test5(): kotlin.collections.List<kotlin.reflect.KClass<T>>
 public fun </*0*/ T> test6(): kotlin.reflect.KClass<T>

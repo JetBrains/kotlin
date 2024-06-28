@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+@NonRestartableComposable
+fun Test(condition: Boolean) {
+    Text("Before outer")
+    InlineLinearA outer@{
+        Text("Before inner")
+        InlineLinearB {
+            Text("Before return")
+            if (condition) return@outer
+            Text("After return")
+        }
+        Text("After inner")
+    }
+    Text("Before outer")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
+  Text("Before outer", %composer, 0b0110)
+  InlineLinearA({ %composer: Composer?, %changed: Int ->
+    val tmp0_marker = %composer.currentMarker
+    %composer.startReplaceGroup(<>)
+    Text("Before inner", %composer, 0b0110)
+    InlineLinearB({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      Text("Before return", %composer, 0b0110)
+      if (condition) {
+        %composer.endToMarker(tmp0_marker)
+        return@InlineLinearA
+      }
+      Text("After return", %composer, 0b0110)
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    Text("After inner", %composer, 0b0110)
+    %composer.endReplaceGroup()
+  }, %composer, 0)
+  Text("Before outer", %composer, 0b0110)
+}

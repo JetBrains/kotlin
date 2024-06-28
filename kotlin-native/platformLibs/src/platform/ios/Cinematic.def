@@ -1,0 +1,11 @@
+depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore Security UniformTypeIdentifiers darwin posix
+language = Objective-C
+package = platform.Cinematic
+
+modules.ios_arm32 = Cinematic
+compilerOpts.ios_arm32 = -framework Cinematic
+linkerOpts.ios_arm32 = -framework Cinematic
+
+modules.ios_arm64 = Cinematic
+compilerOpts.ios_arm64 = -framework Cinematic
+linkerOpts.ios_arm64 = -framework Cinematic

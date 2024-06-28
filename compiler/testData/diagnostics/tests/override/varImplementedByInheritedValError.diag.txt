@@ -1,0 +1,18 @@
+/varImplementedByInheritedValError.kt:22:1: error: class 'C1' must override public abstract var a: String defined in IVar because it inherits multiple interface methods of it
+class C1 : IVar, IVarDefault
+^^^^^^^^
+/varImplementedByInheritedValError.kt:24:1: error: class 'C3' must override public final val a: String defined in CVal because it inherits many implementations of it
+class C3 : CVal(), IVarDefault
+^^^^^^^^
+/varImplementedByInheritedValError.kt:25:1: error: class 'C4' must override public final val a: String defined in CVal because it inherits many implementations of it
+class C4 : CVal(), IVar, IVarDefault
+^^^^^^^^
+/varImplementedByInheritedValError.kt:27:1: error: class 'C6' must override public final var a: String defined in CVar because it inherits many implementations of it
+class C6 : CVar(), IVarDefault
+^^^^^^^^
+/varImplementedByInheritedValError.kt:28:1: error: class 'C7' must override public final var a: String defined in CVar because it inherits many implementations of it
+class C7 : CVar(), IVar, IVarDefault
+^^^^^^^^
+/varImplementedByInheritedValError.kt:29:1: error: val-property 'public open val a: String defined in C8' implicitly overrides a var-property 'public abstract var a: String defined in IVar' by delegation
+class C8(ival: IVal) : IVar, IVal by ival
+^^^^^^^^

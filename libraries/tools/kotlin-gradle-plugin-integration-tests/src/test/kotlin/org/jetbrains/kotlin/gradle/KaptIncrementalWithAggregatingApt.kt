@@ -92,7 +92,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     }
 
     @DisplayName("Incremental changes in JDK9+")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_9])
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
     @GradleWithJdkTest
     fun testIncrementalChangesWithJdk9(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         kaptProject(gradleVersion, buildJdk = jdk.location) {
@@ -212,14 +212,14 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     }
 
     @DisplayName("Incremental aggregating changes")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_1_9])
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
     @GradleWithJdkTest
     fun testIncrementalAggregatingChanges(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         doIncrementalAggregatingChanges(gradleVersion, jdk)
     }
 
     @DisplayName("Incremental binary aggregating changes")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_1_9])
+    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
     @GradleWithJdkTest
     fun testIncrementalBinaryAggregatingChanges(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         doIncrementalAggregatingChanges(
@@ -390,7 +390,8 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     }
 }
 
-@DisplayName("Kapt incremental tests with aggregating apt with precise compilation outputs backup")
-class KaptIncrementalWithAggregatingAptAndPreciseBackup : KaptIncrementalWithAggregatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+
+@DisplayName("Kapt incremental tests with aggregating apt with disabled precise compilation outputs backup")
+class KaptIncrementalWithAggregatingAptAndWithoutPreciseBackup : KaptIncrementalWithAggregatingApt() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }

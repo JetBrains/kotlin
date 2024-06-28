@@ -8,31 +8,39 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.capabilities.Capability
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
-import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.buildNameCompat
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 
 
 internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
     return IdeaKotlinProjectCoordinates(
-        buildId = identifier.build.name,
+        buildPath = identifier.build.buildPathCompat,
+        buildName = identifier.build.buildNameCompat,
         projectPath = identifier.projectPath,
         projectName = identifier.projectName
     )
 }
 
 internal fun IdeaKotlinProjectCoordinates(project: Project): IdeaKotlinProjectCoordinates {
+    val buildIdentifier = project.currentBuildId()
     return IdeaKotlinProjectCoordinates(
-        buildId = project.currentBuildId().name,
+        buildPath = buildIdentifier.buildPathCompat,
+        buildName = buildIdentifier.buildNameCompat,
         projectPath = project.path,
         projectName = project.name
     )
 }
+
+
 
 internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlinSourceCoordinates {
     return IdeaKotlinSourceCoordinates(
@@ -41,23 +49,43 @@ internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlin
     )
 }
 
-fun IdeaKotlinBinaryCoordinates(identifier: ModuleComponentIdentifier): IdeaKotlinBinaryCoordinates {
+internal fun IdeaKotlinBinaryCoordinates(
+    identifier: ModuleComponentIdentifier,
+    capabilities: List<Capability> = emptyList(),
+    attributes: AttributeContainer,
+): IdeaKotlinBinaryCoordinates {
     return IdeaKotlinBinaryCoordinates(
         group = identifier.group,
         module = identifier.module,
-        version = identifier.version
+        version = identifier.version,
+        capabilities = capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+        attributes = IdeaKotlinBinaryAttributes(attributes)
+    )
+}
+
+internal fun IdeaKotlinBinaryCapability(capability: Capability): IdeaKotlinBinaryCapability {
+    return IdeaKotlinBinaryCapability(
+        group = capability.group,
+        name = capability.name,
+        version = capability.version
+    )
+}
+
+internal fun IdeaKotlinBinaryAttributes(attributes: AttributeContainer): IdeaKotlinBinaryAttributes {
+    return IdeaKotlinBinaryAttributes(
+        attributes.keySet().associate { key -> key.name to attributes.getAttribute(key).toString() }
     )
 }
 
 internal fun KlibExtra(library: KotlinLibrary): KlibExtra {
     return KlibExtra(
-        builtInsPlatform = library.builtInsPlatform,
+        builtInsPlatform = library.builtInsPlatform?.name,
         uniqueName = library.uniqueName,
         shortName = library.shortName,
         packageFqName = library.packageFqName,
         nativeTargets = library.nativeTargets,
         commonizerNativeTargets = library.commonizerNativeTargets,
         commonizerTarget = library.commonizerTarget,
-        isInterop = library.isInterop
+        isInterop = library.isCInteropLibrary() || library.isCommonizedCInteropLibrary()
     )
 }

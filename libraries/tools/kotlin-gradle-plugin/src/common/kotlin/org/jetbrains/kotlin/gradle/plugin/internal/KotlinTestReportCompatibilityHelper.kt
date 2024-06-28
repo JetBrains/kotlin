@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.TestReport
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
-import java.io.File
 
 /**
  * Handles the differences in the [TestReport] API introduced in Gradle 7.4
@@ -20,7 +21,7 @@ import java.io.File
 interface KotlinTestReportCompatibilityHelper {
     fun getDestinationDirectory(kotlinTestReport: KotlinTestReport): DirectoryProperty
 
-    fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: File)
+    fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: Provider<Directory>)
 
     fun addTestResultsFrom(kotlinTestReport: KotlinTestReport, task: AbstractTestTask)
 
@@ -37,8 +38,8 @@ internal class DefaultKotlinTestReportCompatibilityHelperVariantFactory :
 internal class DefaultKotlinTestReportCompatibilityHelper : KotlinTestReportCompatibilityHelper {
     override fun getDestinationDirectory(kotlinTestReport: KotlinTestReport): DirectoryProperty = kotlinTestReport.destinationDirectory
 
-    override fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: File) {
-        kotlinTestReport.destinationDirectory.fileValue(directory).finalizeValueOnRead()
+    override fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: Provider<Directory>) {
+        kotlinTestReport.destinationDirectory.value(directory).finalizeValueOnRead()
     }
 
     override fun addTestResultsFrom(kotlinTestReport: KotlinTestReport, task: AbstractTestTask) {

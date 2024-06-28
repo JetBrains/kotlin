@@ -1,10 +1,10 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/innerClassPackageConflict2/source.kt:10:9: error: unresolved reference: Nested
 val v3: Nested? = null
-        ^
+        ^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/innerClassPackageConflict2/source.kt:11:18: error: unresolved reference: Nested
 val v4: test.Foo.Nested? = null
-                 ^
+                 ^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/innerClassPackageConflict2/source.kt:14:18: error: unresolved reference: Nested
 val v6: test.Boo.Nested? = null
-                 ^
+                 ^^^^^^
 COMPILATION_ERROR

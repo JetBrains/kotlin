@@ -1,6 +1,8 @@
-typealias KR = KRunnable
-typealias KSS = KSupplier<String>
-typealias KCS = KConsumer<String>
+fun interface KConsumer<T : Any?> {
+  abstract fun accept(x: T)
+
+}
+
 fun interface KRunnable {
   abstract fun run()
 
@@ -8,11 +10,6 @@ fun interface KRunnable {
 
 fun interface KSupplier<T : Any?> {
   abstract fun get(): T
-
-}
-
-fun interface KConsumer<T : Any?> {
-  abstract fun accept(x: T)
 
 }
 
@@ -95,3 +92,7 @@ fun test3b(): KFunction<KConsumer<String>> {
     ::KConsumer
   }
 }
+
+typealias KCS = KConsumer<String>
+typealias KR = KRunnable
+typealias KSS = KSupplier<String>

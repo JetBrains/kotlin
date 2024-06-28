@@ -19,10 +19,7 @@ version = "1.0.0-SNAPSHOT"
 
 publishing {
     repositories {
-        this.maven {
-            this.name = "build"
-            this.url = rootProject.buildDir.resolve("repo").toURI()
-        }
+        maven("<localRepo>")
     }
 }
 
@@ -37,7 +34,6 @@ kotlin {
     ios()
 
     mingwX64("windowsX64")
-    mingwX86("windowsX86")
 
     val commonMain by sourceSets.getting
     val concurrentMain by sourceSets.creating
@@ -51,9 +47,7 @@ kotlin {
     val appleMain by sourceSets.creating
     val macosMain by sourceSets.getting
     val iosMain by sourceSets.getting
-    val windowsMain by sourceSets.creating
     val windowsX64Main by sourceSets.getting
-    val windowsX86Main by sourceSets.getting
 
     commonMain {
         -jsMain
@@ -70,10 +64,8 @@ kotlin {
                         -linuxX64Main
                     }
                 }
-                -windowsMain {
-                    -windowsX64Main
-                    -windowsX86Main
-                }
+
+                -windowsX64Main
             }
         }
     }
@@ -86,5 +78,9 @@ kotlin {
         target.compilations.getByName("main").cinterops.create("simple") {
             header(file("libs/simple.h"))
         }
+    }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 }

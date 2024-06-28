@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 4 -> sentence 1
+ * NUMBER: 4
+ * DESCRIPTION: Real literals with an omitted whole-number part and underscores in a whole-number part, a fraction part and an exponent part.
+ */
+
 // TESTCASE NUMBER: 1
 val value_1 = .0_0
 

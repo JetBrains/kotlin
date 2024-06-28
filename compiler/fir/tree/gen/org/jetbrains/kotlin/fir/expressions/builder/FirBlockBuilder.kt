@@ -1,9 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
@@ -15,44 +18,31 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
 class FirBlockBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     val statements: MutableList<FirStatement> = mutableListOf()
 
     override fun build(): FirBlock {
         return FirBlockImpl(
             source,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             statements,
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirBlockBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)
 inline fun buildBlock(init: FirBlockBuilder.() -> Unit = {}): FirBlock {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBlockBuilder().apply(init).build()
 }

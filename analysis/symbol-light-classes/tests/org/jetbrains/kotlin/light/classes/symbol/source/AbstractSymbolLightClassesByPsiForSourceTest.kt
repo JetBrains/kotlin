@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClasses
 abstract class AbstractSymbolLightClassesByPsiForSourceTest : AbstractSymbolLightClassesByPsiTest(
     AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false),
     EXTENSIONS.FIR_JAVA,
-    stopIfCompilationErrorDirectivePresent = false,
+    isTestAgainstCompiledCode = false,
 )

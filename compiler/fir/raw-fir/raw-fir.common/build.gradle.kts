@@ -6,16 +6,18 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("generators.checkers.generated-sources")
 }
 
 dependencies {
     api(project(":compiler:fir:tree"))
 
     implementation(kotlinxCollectionsImmutable())
+    implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi"))
 
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
@@ -24,7 +26,6 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDir("gen")
     }
     "test" { none() }
 }

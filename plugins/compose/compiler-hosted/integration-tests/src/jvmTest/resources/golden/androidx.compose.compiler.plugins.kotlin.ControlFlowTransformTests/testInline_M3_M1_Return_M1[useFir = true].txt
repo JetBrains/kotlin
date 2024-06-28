@@ -1,0 +1,64 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Test_M3_M1_Return_M1(condition: Boolean) {
+    A()
+    M3 {
+        A()
+        M1 {
+            if (condition) {
+                return@M1
+            }
+        }
+        A()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test_M3_M1_Return_M1(condition: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test_M3_M1_Return_M1)<A()>,<M3>,<A()>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    A(%composer, 0)
+    M3({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<A()>,<M1>,<A()>:Test.kt")
+      A(%composer, 0)
+      M1({ %composer: Composer?, %changed: Int ->
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "C:Test.kt")
+        if (condition) {
+          %composer.endReplaceGroup()
+          return@M1
+        }
+        %composer.endReplaceGroup()
+      }, %composer, 0)
+      A(%composer, 0)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    A(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test_M3_M1_Return_M1(condition, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

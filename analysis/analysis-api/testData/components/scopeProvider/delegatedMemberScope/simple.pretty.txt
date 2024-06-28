@@ -1,0 +1,11 @@
+override var kotlin.Int.zoo: kotlin.Unit
+
+override fun foo()
+
+override val foo: kotlin.Int
+
+override fun kotlin.Int.smth(): kotlin.Short
+
+override var bar: kotlin.Long
+
+override val kotlin.Int.doo: kotlin.String

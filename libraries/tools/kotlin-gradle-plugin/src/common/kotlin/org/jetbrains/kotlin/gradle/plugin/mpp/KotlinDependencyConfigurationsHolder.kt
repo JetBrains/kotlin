@@ -30,7 +30,7 @@ internal abstract class KotlinDependencyConfigurationsHolder @Inject constructor
         get() = lowerCamelCaseName(configurationNamesPrefix, RUNTIME_ONLY)
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, project).run(configure)
+        project.objects.DefaultKotlinDependencyHandler(this, project).run(configure)
 
     override fun dependencies(configure: Action<KotlinDependencyHandler>) =
         dependencies { configure.execute(this) }

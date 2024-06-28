@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: type-system, introduction-1 -> paragraph 6 -> sentence 2
+ * NUMBER: 1
+ * DESCRIPTION: The use of Boolean literals as the identifier (with backtick) in the class.
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1() {
@@ -56,4 +65,4 @@ fun case_10(x: Int?) {
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int?, y: Int = x) = null
+fun case_11(x: Int?, y: Int = <!INITIALIZER_TYPE_MISMATCH!>x<!>) = null

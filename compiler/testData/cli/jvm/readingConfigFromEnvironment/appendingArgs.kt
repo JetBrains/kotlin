@@ -1,5 +1,5 @@
 package kotlin
 
-fun main() {
-    val x = 1?.dec()
+fun foo(arg: Int) {
+    val x = arg / 0
 }

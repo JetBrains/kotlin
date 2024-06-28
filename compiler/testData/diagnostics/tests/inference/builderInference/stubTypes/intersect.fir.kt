@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
+// LANGUAGE: +UnrestrictedBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNCHECKED_CAST -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
 
 // FILE: Test.java
@@ -31,7 +31,7 @@ fun <E> intersect(vararg x: In<E>): E = null as E
 fun test() {
     val ret = build {
         emit("1")
-        intersect(getIn(), getIn())
+        <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>intersect<!>(getIn(), getIn())
         intersect(getIn(), Test.foo(getIn()))
         intersect(Test.foo(getIn()), Test.foo(getIn()))
         intersect(Test.foo(getIn()), getIn())

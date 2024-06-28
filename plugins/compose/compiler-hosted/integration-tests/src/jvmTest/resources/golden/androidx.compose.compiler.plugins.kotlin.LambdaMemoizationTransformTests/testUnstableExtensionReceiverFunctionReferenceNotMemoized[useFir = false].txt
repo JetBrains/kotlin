@@ -1,0 +1,42 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Something() {
+    val x = unstable::method
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Something(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Something)<unstab...>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val x = <block>{
+      val tmp0 = unstable
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%composer.changedInstance(tmp0)) {
+        tmp0::method
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Something(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

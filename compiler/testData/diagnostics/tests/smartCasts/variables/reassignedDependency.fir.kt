@@ -75,3 +75,12 @@ fun test5() {
     c.x<!UNSAFE_CALL!>.<!>length // bad
     d.x.length // ok
 }
+
+fun test6() {
+    var c: C? = null
+    var maybeC: C? = C("")
+    if (c == null) {
+        c = maybeC ?: throw Exception()
+    }
+    c.x
+}

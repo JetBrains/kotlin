@@ -1,6 +1,0 @@
-KT element: KtOperationReferenceExpression
-FIR element: FirResolvedNamedReferenceImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/Int.plus|

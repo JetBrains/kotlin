@@ -201,6 +201,7 @@ inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranches(
     return getParentOfType<T>(strict)?.getIfChildIsInBranches(this, branches)
 }
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 tailrec fun PsiElement.getOutermostParentContainedIn(container: PsiElement): PsiElement? {
     val parent = parent
     return if (parent == container) this else parent?.getOutermostParentContainedIn(container)
@@ -225,6 +226,7 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline action: (T) -> Unit
 ) {
+    checkDecompiledText()
     this.accept(object : PsiRecursiveElementVisitor() {
         override fun visitElement(element: PsiElement) {
             if (canGoInside(element)) {
@@ -233,6 +235,28 @@ inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
 
             if (element is T) {
                 action(element)
+            }
+        }
+    })
+}
+
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(noinline action: (T) -> Unit) {
+    forEachDescendantOfTypeInPreorder({ true }, action)
+}
+
+inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfTypeInPreorder(
+    crossinline canGoInside: (PsiElement) -> Boolean,
+    noinline action: (T) -> Unit,
+) {
+    checkDecompiledText()
+    this.accept(object : PsiRecursiveElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is T) {
+                action(element)
+            }
+
+            if (canGoInside(element)) {
+                super.visitElement(element)
             }
         }
     })
@@ -257,6 +281,7 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
     crossinline canGoInside: (PsiElement) -> Boolean,
     noinline predicate: (T) -> Boolean = { true }
 ): T? {
+    checkDecompiledText()
     var result: T? = null
     this.accept(object : PsiRecursiveElementWalkingVisitor() {
         override fun visitElement(element: PsiElement) {
@@ -272,6 +297,13 @@ inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(
         }
     })
     return result
+}
+
+fun PsiElement.checkDecompiledText() {
+    val file = containingFile
+    if (file is KtFile && file.isCompiled && file.stub != null) {
+        error("Attempt to load decompiled text, please use stubs instead. Decompile process might be slow and should be avoided")
+    }
 }
 
 inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
@@ -411,6 +443,10 @@ fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList
 
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
+@Deprecated(
+    "Use only in 'kotlin' repo until the alternative method from 'com.intellij.psi' package becomes available from the IJ platform",
+    ReplaceWith("this.createSmartPointer()", "com.intellij.psi.createSmartPointer"),
+)
 fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
     SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
 

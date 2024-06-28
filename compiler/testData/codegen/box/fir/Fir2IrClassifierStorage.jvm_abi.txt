@@ -1,0 +1,19 @@
+MODULE main
+	CLASS Fir2IrClassifierStorage.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				classifierStorage
+			K1
+				getClassifierStorage()LFir2IrClassifierStorage;
+			K2
+				---
+			K1
+				getSession()LFirSession;
+			K2
+				---
+			K1
+				---
+			K2
+				session

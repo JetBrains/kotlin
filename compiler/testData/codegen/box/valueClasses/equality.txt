@@ -79,7 +79,7 @@ public final class B {
     public method hashCode(): int
     public static method hashCode-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
-    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, @org.jetbrains.annotations.NotNull p6: java.lang.String, p7: int, p8: int, @org.jetbrains.annotations.NotNull p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, @org.jetbrains.annotations.NotNull p16: java.lang.String, p17: int, p18: int, @org.jetbrains.annotations.NotNull p19: java.lang.String): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int, p1: int, p2: int, p3: int, p4: int, p5: int, p6: java.lang.String, p7: int, p8: int, p9: java.lang.String, p10: int, p11: int, p12: int, p13: int, p14: int, p15: int, p16: java.lang.String, p17: int, p18: int, p19: java.lang.String): java.lang.String
     public synthetic final method unbox-impl-a1(): A
     public synthetic final method unbox-impl-a1-f1(): int
     public synthetic final method unbox-impl-a1-f2(): int

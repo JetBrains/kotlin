@@ -45,7 +45,7 @@ fun foo() {
     val <!UNUSED_VARIABLE!>a<!>: <!REDUNDANT_EXPLICIT_TYPE!>Boolean<!> = true
     val <!UNUSED_VARIABLE!>i<!>: Int = 2 * 2
     val <!UNUSED_VARIABLE!>l<!>: <!REDUNDANT_EXPLICIT_TYPE!>Long<!> = 1234567890123L
-    val <!UNUSED_VARIABLE!>s<!>: String? = null
+    val <!UNUSED_VARIABLE!>s1<!>: String? = null
     val <!UNUSED_VARIABLE!>sh<!>: Short = 42
 
     val <!UNUSED_VARIABLE!>integer<!>: <!REDUNDANT_EXPLICIT_TYPE!>Int<!> = 42
@@ -70,7 +70,7 @@ class My {
 val ZERO: Int = 0
 
 fun main() {
-    val <!UNUSED_VARIABLE!>id<!>: Id = 11
+    val <!UNUSED_VARIABLE!>id<!>: <!REDUNDANT_EXPLICIT_TYPE!>Id<!> = 11
 }
 
 typealias Id = Int

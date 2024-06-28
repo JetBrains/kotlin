@@ -1,0 +1,9 @@
+FILE: initWithLocalDeclarations.kt
+    public final? class A : R|kotlin/Any| {
+        public? constructor(): R|util/A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        init { LAZY_BLOCK }
+
+    }

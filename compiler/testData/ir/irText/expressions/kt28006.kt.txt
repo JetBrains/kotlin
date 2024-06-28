@@ -6,6 +6,18 @@ val test2: String
   field = "\uD83E\uDD17\uD83E\uDD17"
   get
 
+fun test1(x: Int): String {
+  return "\uD83E\uDD17" + x
+}
+
+fun test2(x: Int): String {
+  return x + "\uD83E\uDD17"
+}
+
+fun test3(x: Int): String {
+  return x + "\uD83E\uDD17" + x
+}
+
 const val testConst1: String
   field = "\uD83E\uDD17"
   get
@@ -22,14 +34,3 @@ const val testConst4: String
   field = "\uD83E\uDD17\uD83E\uDD17\uD83E\uDD17\uD83E\uDD17"
   get
 
-fun test1(x: Int): String {
-  return "\uD83E\uDD17" + x
-}
-
-fun test2(x: Int): String {
-  return x + "\uD83E\uDD17"
-}
-
-fun test3(x: Int): String {
-  return x + "\uD83E\uDD17" + x
-}

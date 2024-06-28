@@ -1,8 +1,6 @@
-// IGNORE_BACKEND_K2: JS_IR
+// JVM_ABI_K1_K2_DIFF: KT-62903
 // CHECK_CASES_COUNT: function=doTheThing count=2 TARGET_BACKENDS=JS
-// CHECK_CASES_COUNT: function=doTheThing count=0 IGNORED_BACKENDS=JS
 // CHECK_IF_COUNT: function=doTheThing count=2 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=doTheThing count=4 IGNORED_BACKENDS=JS
 
 private fun Any?.doTheThing(): String {
     when (this) {

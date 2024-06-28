@@ -12,3 +12,7 @@ fun best(): Int {
 fun simpleBest(): Int {
     return 73
 }
+
+fun main(args: Array<String>) {
+    println("ACCEPTED: ${args.drop(2).joinToString(";")}")
+}

@@ -52,7 +52,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
@@ -589,41 +588,9 @@ public class DescriptorAsmUtil {
         else if (type.getSort() == Type.OBJECT) {
             iv.invokevirtual("java/lang/Object", "hashCode", "()I", false);
         }
-        else if (type.getSort() == Type.BOOLEAN) {
-            Label end = new Label();
-            iv.dup();
-            iv.ifeq(end);
-            iv.pop();
-            iv.iconst(1);
-            iv.mark(end);
-        }
         else {
-            if (JvmTarget.JVM_1_6 == jvmTarget) {
-                if (type.getSort() == Type.LONG) {
-                    genLongHashCode(mv, iv);
-                }
-                else if (type.getSort() == Type.DOUBLE) {
-                    iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J", false);
-                    genLongHashCode(mv, iv);
-                }
-                else if (type.getSort() == Type.FLOAT) {
-                    iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I", false);
-                }
-                else { // byte short char int
-                    // do nothing
-                }
-            } else {
-                HashCode.Companion.invokeHashCode(iv, type);
-            }
+            HashCode.Companion.invokeHashCode(iv, type);
         }
-    }
-
-    private static void genLongHashCode(MethodVisitor mv, InstructionAdapter iv) {
-        iv.dup2();
-        iv.iconst(32);
-        iv.ushr(Type.LONG_TYPE);
-        iv.xor(Type.LONG_TYPE);
-        mv.visitInsn(L2I);
     }
 
     @NotNull
@@ -709,7 +676,7 @@ public class DescriptorAsmUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FrameMap frameMap
     ) {
-        if (state.isParamAssertionsDisabled()) return;
+        if (state.getConfig().isParamAssertionsDisabled()) return;
         // currently when resuming a suspend function we pass default values instead of real arguments (i.e. nulls for references)
         if (descriptor.isSuspend()) return;
 
@@ -721,7 +688,7 @@ public class DescriptorAsmUtil {
             // Such functions can be invoked in operator conventions desugaring,
             // which is currently done on ad hoc basis in ExpressionCodegen.
 
-            if (state.isReceiverAssertionsDisabled()) return;
+            if (state.getConfig().isReceiverAssertionsDisabled()) return;
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
@@ -770,7 +737,7 @@ public class DescriptorAsmUtil {
             }
             value.put(asmType, v);
             v.visitLdcInsn(name);
-            String methodName = state.getUnifiedNullChecks() ? "checkNotNullParameter" : "checkParameterIsNotNull";
+            String methodName = state.getConfig().getUnifiedNullChecks() ? "checkNotNullParameter" : "checkParameterIsNotNull";
             v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
@@ -781,7 +748,7 @@ public class DescriptorAsmUtil {
             @NotNull StackValue stackValue,
             @Nullable RuntimeAssertionInfo runtimeAssertionInfo
     ) {
-        if (state.isCallAssertionsDisabled()) return stackValue;
+        if (state.getConfig().isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
         return new StackValue(stackValue.type, stackValue.kotlinType) {
@@ -793,7 +760,8 @@ public class DescriptorAsmUtil {
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
-                    String methodName = state.getUnifiedNullChecks() ? "checkNotNullExpressionValue" : "checkExpressionValueIsNotNull";
+                    String methodName =
+                            state.getConfig().getUnifiedNullChecks() ? "checkNotNullExpressionValue" : "checkExpressionValueIsNotNull";
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
                 StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);

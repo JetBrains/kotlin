@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING")
 object SyntheticCallableId {
     private val syntheticPackageName: FqName = FqName("_synthetic")
 

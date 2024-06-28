@@ -7,29 +7,24 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering.Companion.tryToFold
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
-val flattenStringConcatenationPhase = makeIrFilePhase(
-    ::FlattenStringConcatenationLowering,
-    name = "FlattenStringConcatenationLowering",
-    description = "Flatten nested string concatenation expressions into a single IrStringConcatenation"
-)
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Flattens nested string concatenation expressions into a single [IrStringConcatenation]. Consolidating these into IrStringConcatenations
@@ -67,8 +62,11 @@ val flattenStringConcatenationPhase = makeIrFilePhase(
  *       CONST Double type=kotlin.Double value=3.0
  *       CONST Null type=kotlin.Nothing? value=null
  */
+@PhaseDescription(
+    name = "FlattenStringConcatenationLowering",
+    description = "Flatten nested string concatenation expressions into a single IrStringConcatenation"
+)
 class FlattenStringConcatenationLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
-
     companion object {
         // There are two versions of String.plus in the library. One for nullable and one for non-nullable strings.
         // The version for nullable strings has FqName kotlin.plus, the version for non-nullable strings
@@ -119,9 +117,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 if (superQualifierSymbol != null)
                     return false
 
-                val function = symbol.owner as? IrSimpleFunction
-                    ?: return false
-
+                val function = symbol.owner
                 return function.isToString || function.isNullableToString
             }
 
@@ -182,11 +178,54 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                         endOffset,
                         type,
                         collectStringConcatenationArguments(this)
-                    ).tryToFold(context, floatSpecial = false)
+                    ).tryToFold()
                 }
             else expression
 
         transformedExpression.transformChildrenVoid(this)
         return transformedExpression
+    }
+
+    private fun IrStringConcatenation.tryToFold(): IrExpression {
+        val folded = mutableListOf<IrExpression>()
+        for (next in this.arguments) {
+            val last = folded.lastOrNull()
+            when {
+                next !is IrConst<*> -> folded += next
+                last !is IrConst<*> -> folded += IrConstImpl.string(
+                    next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
+                )
+                else -> folded[folded.size - 1] = IrConstImpl.string(
+                    // Inlined strings may have `last.startOffset > next.endOffset`
+                    min(last.startOffset, next.startOffset), max(last.endOffset, next.endOffset),
+                    context.irBuiltIns.stringType,
+                    constToString(last) + constToString(next)
+                )
+            }
+        }
+        return folded.singleOrNull() as? IrConst<*>
+            ?: IrStringConcatenationImpl(this.startOffset, this.endOffset, this.type, folded)
+    }
+
+    private fun constToString(const: IrConst<*>): String {
+        return normalizeUnsignedValue(const).toString()
+    }
+
+    private fun normalizeUnsignedValue(const: IrConst<*>): Any? {
+        // Unsigned constants are represented through signed constants with a different IrType
+        if (const.type.isUnsigned()) {
+            when (val kind = const.kind) {
+                is IrConstKind.Byte ->
+                    return kind.valueOf(const).toUByte()
+                is IrConstKind.Short ->
+                    return kind.valueOf(const).toUShort()
+                is IrConstKind.Int ->
+                    return kind.valueOf(const).toUInt()
+                is IrConstKind.Long ->
+                    return kind.valueOf(const).toULong()
+                else -> {}
+            }
+        }
+        return const.value
     }
 }

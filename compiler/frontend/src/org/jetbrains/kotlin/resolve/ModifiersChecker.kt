@@ -122,7 +122,7 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val deprecatedModifierReplacement = deprecatedModifierMap[modifier]
+        val deprecatedModifierReplacement = deprecatedKmpModifierMap[modifier]
         val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
         when {
@@ -180,6 +180,15 @@ object ModifierCheckerCore {
             )
             return true
         }
+        if (modifier == PROTECTED_KEYWORD && isFinalExpectClass(parentDescriptor)) {
+            trace.report(
+                Errors.WRONG_MODIFIER_CONTAINING_DECLARATION.on(
+                    node.psi,
+                    modifier,
+                    "final expect class"
+                )
+            )
+        }
         val possibleParentPredicate = possibleParentTargetPredicateMap[modifier] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, languageVersionSettings) }) return true
         trace.report(
@@ -207,8 +216,6 @@ object ModifierCheckerCore {
                 continue
             }
 
-            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
-
             if (dependency == LanguageFeature.Coroutines) {
                 checkCoroutinesFeature(languageVersionSettings, trace, node.psi)
                 continue
@@ -219,6 +226,13 @@ object ModifierCheckerCore {
                     trace.report(Errors.INLINE_CLASS_DEPRECATED.on(node.psi))
                     continue
                 }
+            }
+
+            val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
+
+            if (dependency == LanguageFeature.MultiPlatformProjects && featureSupport == LanguageFeature.State.DISABLED) {
+                trace.report(Errors.NOT_A_MULTIPLATFORM_COMPILATION.on(node.psi))
+                continue
             }
 
             val diagnosticData = dependency to languageVersionSettings
@@ -236,5 +250,9 @@ object ModifierCheckerCore {
         }
 
         return true
+    }
+
+    private fun isFinalExpectClass(d: DeclarationDescriptor?): Boolean {
+        return d is ClassDescriptor && d.isFinalOrEnum && d.isExpect
     }
 }

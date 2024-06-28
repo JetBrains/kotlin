@@ -5,13 +5,14 @@
 
 #include "SingleThreadExecutor.hpp"
 
+#include <memory>
+#include <vector>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "KAssert.h"
 #include "TestSupport.hpp"
-#include "std_support/Memory.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -62,7 +63,7 @@ TEST(SingleThreadExecutorTest, ContextThreadBound) {
         createdContext = &context;
         createdThread = std::this_thread::get_id();
     });
-    auto executor = std_support::make_unique<SingleThreadExecutor<PinnedContext>>();
+    auto executor = std::make_unique<SingleThreadExecutor<PinnedContext>>();
     // Make sure context is created.
     executor->context();
     testing::Mock::VerifyAndClearExpectations(&mocks.ctorMock);
@@ -129,7 +130,7 @@ TEST(SingleThreadExecutorTest, execute) {
 
 TEST(SingleThreadExecutorTest, DropExecutorWithTasks) {
     struct Context {};
-    auto executor = std_support::make_unique<SingleThreadExecutor<Context>>();
+    auto executor = std::make_unique<SingleThreadExecutor<Context>>();
 
     std::mutex taskMutex;
     testing::StrictMock<testing::MockFunction<void()>> task;
@@ -143,7 +144,7 @@ TEST(SingleThreadExecutorTest, DropExecutorWithTasks) {
     auto future = executor->execute(task.AsStdFunction());
     while (!taskStarted) {}
 
-    std_support::vector<std::pair<std::future<void>, bool>> newTasks;
+    std::vector<std::pair<std::future<void>, bool>> newTasks;
     constexpr size_t tasksCount = 100;
     for (size_t i = 0; i < tasksCount; ++i) {
         newTasks.push_back(std::make_pair(executor->execute([&newTasks, i] { newTasks[i].second = true; }), false));
@@ -167,14 +168,14 @@ TEST(SingleThreadExecutorTest, DropExecutorWithTasks) {
 
 TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
     struct Context {
-        std_support::vector<int> result;
+        std::vector<int> result;
     };
     SingleThreadExecutor<Context> executor;
 
     std::atomic_bool canStart = false;
 
-    std_support::vector<int> expected;
-    std_support::vector<ScopedThread> threads;
+    std::vector<int> expected;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         expected.push_back(i);
         threads.emplace_back([&, i] {

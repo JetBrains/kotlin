@@ -66,6 +66,11 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
             getAllOptionalAnnotationClasses(module.mapping)
         }
 
+    override fun mayHaveOptionalAnnotationClasses(): Boolean {
+        // `loadedModules` is mutable, so even a package part provider without optional annotation classes may have some in the future.
+        return true
+    }
+
     companion object {
         fun getAllOptionalAnnotationClasses(module: ModuleMapping): List<ClassData> {
             val data = module.moduleData

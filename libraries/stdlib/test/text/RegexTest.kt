@@ -8,7 +8,6 @@
 package test.text
 
 import test.regexSplitUnicodeCodePointHandling
-import test.supportsNamedCapturingGroup
 import test.supportsOctalLiteralInRegex
 import test.supportsEscapeAnyCharInRegex
 import test.BackReferenceHandling
@@ -174,15 +173,13 @@ class RegexTest {
     }
 
     @Test fun matchNamedGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val regex = "\\b(?<city>[A-Za-z\\s]+),\\s(?<state>[A-Z]{2}):\\s(?<areaCode>[0-9]{3})\\b".toRegex()
         val input = "Coordinates: Austin, TX: 123"
 
         val match = regex.find(input)!!
         assertEquals(listOf("Austin, TX: 123", "Austin", "TX", "123"), match.groupValues)
 
-        val namedGroups = match.groups as MatchNamedGroupCollection
+        val namedGroups = match.groups
         assertEquals(4, namedGroups.size)
         assertEquals("Austin", namedGroups["city"]?.value)
         assertEquals("TX", namedGroups["state"]?.value)
@@ -190,26 +187,22 @@ class RegexTest {
     }
 
     @Test fun matchDuplicateGroupName() {
-        if (!supportsNamedCapturingGroup) return
-
         // should fail with IllegalArgumentException, but JS fails with SyntaxError
         assertFails { "(?<hi>hi)|(?<hi>bye)".toRegex() }
         assertFails { "(?<first>\\d+)-(?<first>\\d+)".toRegex() }
     }
 
     @Test fun matchOptionalNamedGroup() {
-        if (!supportsNamedCapturingGroup) return
-
         "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE).let { regex ->
             val hiMatch = regex.find("Hi!")!!
-            val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+            val hiGroups = hiMatch.groups
             assertEquals(3, hiGroups.size)
             assertEquals("Hi", hiGroups["hi"]?.value)
             assertEquals(null, hiGroups["bye"])
             assertFailsWith<IllegalArgumentException> { hiGroups["hello"] }
 
             val byeMatch = regex.find("bye...")!!
-            val byeGroups = byeMatch.groups as MatchNamedGroupCollection
+            val byeGroups = byeMatch.groups
             assertEquals(3, byeGroups.size)
             assertEquals(null, byeGroups["hi"])
             assertEquals("bye", byeGroups["bye"]?.value)
@@ -218,14 +211,14 @@ class RegexTest {
 
         "(?<hi>hi)|bye".toRegex(RegexOption.IGNORE_CASE).let { regex ->
             val hiMatch = regex.find("Hi!")!!
-            val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+            val hiGroups = hiMatch.groups
             assertEquals(2, hiGroups.size)
             assertEquals("Hi", hiGroups["hi"]?.value)
             assertFailsWith<IllegalArgumentException> { hiGroups["bye"] }
 
             // Named group collection consisting of a single 'null' group value
             val byeMatch = regex.find("bye...")!!
-            val byeGroups = byeMatch.groups as MatchNamedGroupCollection
+            val byeGroups = byeMatch.groups
             assertEquals(2, byeGroups.size)
             assertEquals(null, byeGroups["hi"])
             assertFailsWith<IllegalArgumentException> { byeGroups["bye"] }
@@ -278,12 +271,10 @@ class RegexTest {
     }
 
     @Test fun matchNamedGroupsWithBackReference() {
-        if (!supportsNamedCapturingGroup) return
-
         "(?<title>\\w+), yes \\k<title>".toRegex().let { regex ->
             val match = regex.find("Do you copy? Sir, yes Sir!")!!
             assertEquals("Sir, yes Sir", match.value)
-            assertEquals("Sir", (match.groups as MatchNamedGroupCollection)["title"]?.value)
+            assertEquals("Sir", match.groups["title"]?.value)
 
             assertNull(regex.find("Do you copy? Sir, yes I do!"))
         }
@@ -291,6 +282,13 @@ class RegexTest {
         testInvalidBackReference(BackReferenceHandling.nonExistentNamedGroup, pattern = "a(a)\\k<name>")
         testInvalidBackReference(BackReferenceHandling.enclosingGroup, pattern = "a(?<first>a\\k<first>)")
         testInvalidBackReference(BackReferenceHandling.notYetDefinedNamedGroup, pattern = "a\\k<first>(?<first>a)")
+    }
+
+    @Test fun matchNamedGroupCollection() {
+        val regex = "(?<hi>hi)".toRegex(RegexOption.IGNORE_CASE)
+        val hiMatch = regex.find("Hi!")!!
+        val hiGroups = hiMatch.groups as MatchNamedGroupCollection
+        assertEquals("Hi", hiGroups["hi"]?.value)
     }
 
     private fun testInvalidBackReference(option: HandlingOption, pattern: String, input: CharSequence = "aaaa", matchValue: String = "aa") {
@@ -306,8 +304,6 @@ class RegexTest {
     }
 
     @Test fun invalidNamedGroupDeclaration() {
-        if (!supportsNamedCapturingGroup) return
-
         // should fail with IllegalArgumentException, but JS fails with SyntaxError
 
         assertFails {
@@ -460,8 +456,6 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val pattern = Regex("(?<first>\\d+)-(?<second>\\d+)")
 
         "123-456".let { input ->
@@ -492,8 +486,6 @@ class RegexTest {
     }
 
     @Test fun replaceWithNamedOptionalGroups() {
-        if (!supportsNamedCapturingGroup) return
-
         val regex = "(?<hi>hi)|(?<bye>bye)".toRegex(RegexOption.IGNORE_CASE)
 
         assertEquals("[Hi, ]gh wall", regex.replace("High wall", "[$1, $2]"))
@@ -537,17 +529,19 @@ class RegexTest {
     @Test fun splitByEmptyMatch() {
         val input = "test"
 
-        val emptyMatch = "".toRegex()
+        for (pattern in listOf("", "(?<=)")) {
+            val emptyMatch = pattern.toRegex()
 
-        testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
-        testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
+            testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
+            testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
 
-        testSplitEquals("".split(""), "", emptyMatch)
+            testSplitEquals("".split(""), "", emptyMatch)
 
-        testSplitEquals(
-            if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
-            "\uD83D\uDE04\uD801", emptyMatch
-        )
+            testSplitEquals(
+                if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
+                "\uD83D\uDE04\uD801", emptyMatch
+            )
+        }
 
         val emptyMatchBeforeT = "(?=t)".toRegex()
 

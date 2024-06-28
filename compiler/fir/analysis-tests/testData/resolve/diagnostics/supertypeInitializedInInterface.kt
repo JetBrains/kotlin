@@ -1,6 +1,6 @@
 interface A
 
-interface B : <!SUPERTYPE_INITIALIZED_IN_INTERFACE!>A<!>()
+interface B : <!SUPERTYPE_INITIALIZED_IN_INTERFACE!>A<!><!NO_CONSTRUCTOR!>()<!>
 
 open class C
 

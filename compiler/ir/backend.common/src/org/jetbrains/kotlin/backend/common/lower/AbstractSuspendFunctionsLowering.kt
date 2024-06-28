@@ -17,13 +17,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val context: C) : FileLoweringPass {
-
-    protected object STATEMENT_ORIGIN_COROUTINE_IMPL : IrStatementOriginImpl("COROUTINE_IMPL")
-    protected object DECLARATION_ORIGIN_COROUTINE_IMPL : IrDeclarationOriginImpl("COROUTINE_IMPL")
+    protected companion object {
+        val STATEMENT_ORIGIN_COROUTINE_IMPL = IrStatementOriginImpl("COROUTINE_IMPL")
+        val DECLARATION_ORIGIN_COROUTINE_IMPL = IrDeclarationOriginImpl("COROUTINE_IMPL")
+    }
 
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
@@ -141,8 +143,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }.apply {
                 parent = irFunction.parent
                 createParameterDeclarations()
-                typeParameters = irFunction.typeParameters.map { typeParam ->
-                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes += typeParam.superTypes }
+                typeParameters = irFunction.typeParameters.memoryOptimizedMap { typeParam ->
+                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
                 }
             }
 
@@ -186,11 +188,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                valueParameters = functionParameters.mapIndexed { index, parameter ->
+                valueParameters = functionParameters.memoryOptimizedMapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                valueParameters += continuationParameter.copyTo(
+                valueParameters = valueParameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     index = valueParameters.size, type = continuationType
                 )
@@ -235,50 +237,22 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 parent = coroutineClass
                 coroutineClass.declarations += this
 
-                typeParameters = stateMachineFunction.typeParameters.map { parameter ->
+                typeParameters = stateMachineFunction.typeParameters.memoryOptimizedMap { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
-                        .apply { superTypes += parameter.superTypes }
+                        .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
+                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 
                 this.createDispatchReceiverParameter()
 
-                overriddenSymbols += stateMachineFunction.symbol
+                overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
             }
 
             buildStateMachine(function, irFunction, argumentToPropertiesMap)
             return function
-        }
-    }
-
-    protected open class VariablesScopeTracker : IrElementVisitorVoid {
-
-        protected val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
-
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitContainerExpression(expression: IrContainerExpression) {
-            if (!expression.isTransparentScope)
-                scopeStack.push(mutableSetOf())
-            super.visitContainerExpression(expression)
-            if (!expression.isTransparentScope)
-                scopeStack.pop()
-        }
-
-        override fun visitCatch(aCatch: IrCatch) {
-            scopeStack.push(mutableSetOf())
-            super.visitCatch(aCatch)
-            scopeStack.pop()
-        }
-
-        override fun visitVariable(declaration: IrVariable) {
-            super.visitVariable(declaration)
-            scopeStack.peek()!!.add(declaration)
         }
     }
 

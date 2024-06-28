@@ -1,4 +1,4 @@
-// !LANGUAGE: +SoundSmartCastsAfterTry
+// LANGUAGE: +SoundSmartCastsAfterTry
 
 fun foo() {
     var s: String?

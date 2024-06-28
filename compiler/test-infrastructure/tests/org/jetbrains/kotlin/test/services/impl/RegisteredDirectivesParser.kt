@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.test.directives.model.*
 
 class RegisteredDirectivesParser(private val container: DirectivesContainer, private val assertions: Assertions) {
     companion object {
-        private val DIRECTIVE_PATTERN = Regex("""^//\s*[!]?([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
+        private val DIRECTIVE_PATTERN = Regex("""^//\s*([A-Z0-9_]+)(:[ \t]*(.*))? *$""")
         private val SPACES_PATTERN = Regex("""[,]?[ \t]+""")
         private const val NAME_GROUP = 1
         private const val VALUES_GROUP = 3
@@ -43,11 +43,11 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
 
     fun addParsedDirective(parsedDirective: ParsedDirective) {
         val (directive, values) = parsedDirective
+        @Suppress("UNCHECKED_CAST")
         when (directive) {
             is SimpleDirective -> simpleDirectives += directive
             is StringDirective -> {
                 val list = stringValueDirectives.getOrPut(directive, ::mutableListOf)
-                @Suppress("UNCHECKED_CAST")
                 list += values as List<String>
             }
             is ValueDirective<*> -> {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.source;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,62 +18,80 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/symbol-light-classes/testData/annotationsEquality")
 @TestDataPath("$PROJECT_ROOT")
 public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends AbstractSymbolLightClassesAnnotationEqualityForSourceTest {
-    @Test
-    public void testAllFilesPresentInAnnotationsEquality() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/annotationsEquality"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInAnnotationsEquality() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/annotationsEquality"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("ExplicitRetension.kt")
-    public void testExplicitRetension() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
-    }
+  @Test
+  @TestMetadata("Deprecated.kt")
+  public void testDeprecated() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Deprecated.kt");
+  }
 
-    @Test
-    @TestMetadata("ImplicitRetension.kt")
-    public void testImplicitRetension() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/ImplicitRetension.kt");
-    }
+  @Test
+  @TestMetadata("EnumConstantNameInQuotes.kt")
+  public void testEnumConstantNameInQuotes() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/EnumConstantNameInQuotes.kt");
+  }
 
-    @Test
-    @TestMetadata("JavaRepeatable.kt")
-    public void testJavaRepeatable() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/JavaRepeatable.kt");
-    }
+  @Test
+  @TestMetadata("ExplicitRetension.kt")
+  public void testExplicitRetension() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
+  }
 
-    @Test
-    @TestMetadata("JvmRepeatable.kt")
-    public void testJvmRepeatable() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/JvmRepeatable.kt");
-    }
+  @Test
+  @TestMetadata("ImplicitRetension.kt")
+  public void testImplicitRetension() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/ImplicitRetension.kt");
+  }
 
-    @Test
-    @TestMetadata("OverrideMethod.kt")
-    public void testOverrideMethod() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/OverrideMethod.kt");
-    }
+  @Test
+  @TestMetadata("JavaRepeatable.kt")
+  public void testJavaRepeatable() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/JavaRepeatable.kt");
+  }
 
-    @Test
-    @TestMetadata("Repeatable.kt")
-    public void testRepeatable() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/Repeatable.kt");
-    }
+  @Test
+  @TestMetadata("JvmRepeatable.kt")
+  public void testJvmRepeatable() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/JvmRepeatable.kt");
+  }
 
-    @Test
-    @TestMetadata("Target.kt")
-    public void testTarget() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/Target.kt");
-    }
+  @Test
+  @TestMetadata("KotlinTargetFirst.kt")
+  public void testKotlinTargetFirst() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/KotlinTargetFirst.kt");
+  }
 
-    @Test
-    @TestMetadata("TopLevelFunctionWithDeprecatedAnnotation.kt")
-    public void testTopLevelFunctionWithDeprecatedAnnotation() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithDeprecatedAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("OverrideMethod.kt")
+  public void testOverrideMethod() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/OverrideMethod.kt");
+  }
 
-    @Test
-    @TestMetadata("TopLevelFunctionWithRegularAnnotation.kt")
-    public void testTopLevelFunctionWithRegularAnnotation() throws Exception {
-        runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithRegularAnnotation.kt");
-    }
+  @Test
+  @TestMetadata("Repeatable.kt")
+  public void testRepeatable() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Repeatable.kt");
+  }
+
+  @Test
+  @TestMetadata("Target.kt")
+  public void testTarget() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/Target.kt");
+  }
+
+  @Test
+  @TestMetadata("TopLevelFunctionWithDeprecatedAnnotation.kt")
+  public void testTopLevelFunctionWithDeprecatedAnnotation() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithDeprecatedAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("TopLevelFunctionWithRegularAnnotation.kt")
+  public void testTopLevelFunctionWithRegularAnnotation() {
+    runTest("analysis/symbol-light-classes/testData/annotationsEquality/TopLevelFunctionWithRegularAnnotation.kt");
+  }
 }

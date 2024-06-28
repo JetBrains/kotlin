@@ -8,23 +8,31 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
-import org.gradle.process.ExecOperations
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
-import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
-import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.commonizer.konanTargets
+import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -34,22 +42,22 @@ import java.io.File
 import java.net.URLEncoder
 import javax.inject.Inject
 
-internal open class NativeDistributionCommonizerTask
+@DisableCachingByDefault(because = "Native Distribution Commonizer Task uses internal caching mechanism with fine grained cache control")
+internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
-    private val execOperations: ExecOperations,
-) : DefaultTask() {
+    providerFactory: ProviderFactory,
+) : DefaultTask(),
+    UsesBuildMetricsService,
+    UsesKotlinNativeBundleBuildService,
+    UsesClassLoadersCachingBuildService {
 
-    private val konanHome = project.file(project.konanHome)
-
-    private val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
-        project.collectAllSharedCommonizerTargetsFromBuild()
-    }
+    private val konanHome = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Internal
-    internal val kotlinPluginVersion: Property<String> = objectFactory
-        .property<String>()
-        .chainedFinalizeValueOnRead()
+    internal val commonizerTargets: Set<SharedCommonizerTarget> by lazy {
+        project.collectAllSharedCommonizerTargetsFromBuild()
+    }
 
     @get:Classpath
     internal val commonizerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
@@ -59,52 +67,93 @@ internal open class NativeDistributionCommonizerTask
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
 
-    private val runnerSettings: Provider<KotlinNativeCommonizerToolRunner.Settings> = kotlinPluginVersion
-        .zip(customJvmArgs) { pluginVersion, customJvmArgs ->
-            KotlinNativeCommonizerToolRunner.Settings(
-                pluginVersion,
-                commonizerClasspath.files,
-                customJvmArgs
-            )
-        }
+    @get:Internal
+    internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
     private val logLevel = project.commonizerLogLevel
 
     private val additionalSettings = project.additionalCommonizerSettings
 
+    @Suppress("unused")
     @get:Internal
-    internal val rootOutputDirectory: File = project.file {
-        project.file(project.konanHome)
-            .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-            .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-            .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
-    }
+    @Deprecated("Use lazy replacement", replaceWith = ReplaceWith("rootOutputDirectoryProperty.get().asFile"))
+    internal val rootOutputDirectory: File get() = rootOutputDirectoryProperty.asFile.get()
 
-    private val commonizerCache = NativeDistributionCommonizerCache(
-        outputDirectory = rootOutputDirectory,
-        konanHome = konanHome,
-        logger = logger,
-        isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
-    )
+    private val kotlinPluginVersion = project.getKotlinPluginVersion()
+
+    @get:OutputDirectory
+    internal val rootOutputDirectoryProperty: DirectoryProperty = objectFactory
+        .directoryProperty().fileProvider(
+            konanHome.map {
+                it.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                    .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
+                    .resolve(URLEncoder.encode(kotlinPluginVersion, Charsets.UTF_8.name()))
+            }
+        )
+
+    private val isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
+
+    private val commonizerCache
+        get() = NativeDistributionCommonizerCache(
+            outputDirectory = rootOutputDirectoryProperty.get().asFile,
+            konanHome = konanHome.get(),
+            logger = logger,
+            isCachingEnabled = isCachingEnabled
+        )
+
+    @get:Internal
+    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+        .property(GradleBuildMetricsReporter())
+
+    @get:Nested
+    internal val kotlinNativeProvider: Property<KotlinNativeProvider> =
+        project.objects.propertyWithConvention<KotlinNativeProvider>(
+            // For KT-66452 we need to get rid of invocation of 'Task.project'.
+            // That is why we moved setting this property to task registration
+            // and added convention for backwards compatibility.
+            project.provider {
+                KotlinNativeProvider(
+                    project,
+                    commonizerTargets.flatMap { target -> target.konanTargets }.toSet(),
+                    kotlinNativeBundleBuildService,
+                    enableDependenciesDownloading = false
+                )
+            })
+
+    @get:Internal
+    internal val commonizerToolRunner: Provider<KotlinNativeToolRunner> = providerFactory.provider {
+        objectFactory.KotlinNativeCommonizerToolRunner(
+            metrics,
+            classLoadersCachingService,
+            commonizerClasspath,
+            customJvmArgs
+        )
+    }
 
     @TaskAction
     protected fun run() {
-        val commonizerRunner = KotlinNativeCommonizerToolRunner(
-            context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-            settings = runnerSettings.get()
-        )
+        val metricsReporter = metrics.get()
 
-        commonizerCache.writeCacheForUncachedTargets(commonizerTargets) { todoOutputTargets ->
-            val commonizer = GradleCliCommonizer(commonizerRunner)
-            /* Invoke commonizer with only 'to do' targets */
-            commonizer.commonizeNativeDistribution(
-                konanHome, rootOutputDirectory, todoOutputTargets, logLevel, additionalSettings
-            )
+        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = null) {
+            commonizerCache.writeCacheForUncachedTargets(commonizerTargets) { todoOutputTargets ->
+                val commonizer = GradleCliCommonizer(commonizerToolRunner.get(), kotlinCompilerArgumentsLogLevel.get())
+                /* Invoke commonizer with only 'to do' targets */
+                commonizer.commonizeNativeDistribution(
+                    konanHome.get(),
+                    rootOutputDirectoryProperty.get().asFile,
+                    todoOutputTargets,
+                    logLevel,
+                    additionalSettings,
+                )
+            }
         }
     }
 
     init {
         outputs.upToDateWhen {
+            // upToDateWhen executes after configuration phase, but before inputs are calculated,
+            // that is why we need to get k/n bundle before commonizerCache.isUpToDate here
+            kotlinNativeProvider.get().kotlinNativeBundleVersion.get()
             commonizerCache.isUpToDate(commonizerTargets)
         }
     }
@@ -116,7 +165,7 @@ private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedComm
 
 private fun Project.collectAllSharedCommonizerTargetsFromProject(): Set<SharedCommonizerTarget> {
     return (project.multiplatformExtensionOrNull ?: return emptySet()).sourceSets
-        .mapNotNull { sourceSet -> getCommonizerTarget(sourceSet) }
+        .mapNotNull { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
         .filterIsInstance<SharedCommonizerTarget>()
         .toSet()
 }

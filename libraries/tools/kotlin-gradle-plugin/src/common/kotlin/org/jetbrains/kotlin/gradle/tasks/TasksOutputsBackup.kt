@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.File
 import java.net.URI
 import java.nio.file.FileSystems
@@ -34,7 +34,7 @@ internal class TaskOutputsBackup(
      */
     val outputsToRestore: List<File>,
 
-    val logger: Logger
+    val logger: KotlinLogger,
 ) {
 
     fun createSnapshot() {
@@ -50,7 +50,9 @@ internal class TaskOutputsBackup(
                 )
             } else if (!outputPath.exists()) {
                 logger.debug("Ignoring $outputPath in making a backup as it does not exist")
-                File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile).createNewFile()
+                val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
+                markerFile.parentFile.mkdirs()
+                markerFile.createNewFile()
             } else {
                 val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
                 logger.debug("Copying $outputPath as $snapshotFile to make a backup")
@@ -164,3 +166,26 @@ internal class TaskOutputsBackup(
     private val Int.asSnapshotDirectoryName: String
         get() = "$this"
 }
+
+internal fun interface BackupRestoreWrapper {
+    fun wrap(restoreAction: () -> Unit)
+}
+
+internal fun TaskOutputsBackup.tryRestoringOnRecoverableException(
+    e: FailedCompilationException,
+    restoreWrapper: BackupRestoreWrapper,
+) {
+    // Restore outputs only in cases where we expect that the user will make some changes to their project:
+    //   - For a compilation error, the user will need to fix their source code
+    //   - For an OOM error, the user will need to increase their memory settings
+    // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
+    // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
+    // the same.
+    if (e is CompilationErrorException || e is OOMErrorException) {
+        restoreWrapper.wrap {
+            restoreOutputs()
+        }
+    }
+}
+
+internal const val DEFAULT_BACKUP_RESTORE_MESSAGE = "Restoring task outputs to pre-compilation state"

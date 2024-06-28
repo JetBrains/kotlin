@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
-import kotlin.math.max
+import org.jetbrains.kotlin.konan.util.ProgressCallback
 
 class AppleConfigurablesImpl(
-        target: KonanTarget,
-        properties: Properties,
-        baseDir: String?
-) : AppleConfigurables, KonanPropertiesLoader(target, properties, baseDir) {
+    target: KonanTarget,
+    properties: Properties,
+    dependenciesDir: String?,
+    progressCallback: ProgressCallback,
+) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir, progressCallback = progressCallback) {
 
     private val sdkDependency = this.targetSysRoot!!
     private val toolchainDependency = this.targetToolchain!!
@@ -38,7 +39,7 @@ class AppleConfigurablesImpl(
 
     override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
-        XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
+        XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
     }
 
     override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
@@ -46,10 +47,13 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
     }
 
-    override val dependencies get() = super.dependencies + when (xcodePartsProvider) {
-        is XcodePartsProvider.Local -> emptyList()
-        XcodePartsProvider.InternalServer -> listOf(sdkDependency, toolchainDependency, xcodeAddonDependency)
-    }
+    override val dependencies
+        get() = super.dependencies +
+                if (InternalServer.isAvailable) listOf(
+                    sdkDependency,
+                    toolchainDependency,
+                    xcodeAddonDependency
+                ) else emptyList()
 
     private val xcodePartsProvider by lazy {
         if (InternalServer.isAvailable) {
@@ -58,7 +62,7 @@ class AppleConfigurablesImpl(
             val xcode = Xcode.findCurrent()
 
             if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
-                properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
+                properties.getProperty("minimalXcodeVersion")?.let(XcodeVersion::parse)?.let { minimalXcodeVersion ->
                     val currentXcodeVersion = xcode.version
                     checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
                 }
@@ -68,22 +72,9 @@ class AppleConfigurablesImpl(
         }
     }
 
-    private fun checkXcodeVersion(minimalVersion: String, currentVersion: String) {
-        // Xcode versions contain only numbers (even betas).
-        // But we still split by '-' and whitespaces to take into account versions like 11.2-beta.
-        val minimalVersionParts = minimalVersion.split("(\\s+|\\.|-)".toRegex()).map { it.toIntOrNull() ?: 0 }
-        val currentVersionParts = currentVersion.split("(\\s+|\\.|-)".toRegex()).map { it.toIntOrNull() ?: 0 }
-        val size = max(minimalVersionParts.size, currentVersionParts.size)
-
-        for (i in 0 until size) {
-            val currentPart = currentVersionParts.getOrElse(i) { 0 }
-            val minimalPart = minimalVersionParts.getOrElse(i) { 0 }
-
-            when {
-                currentPart > minimalPart -> return
-                currentPart < minimalPart ->
-                    error("Unsupported Xcode version $currentVersion, minimal supported version is $minimalVersion.")
-            }
+    private fun checkXcodeVersion(minimalVersion: XcodeVersion, currentVersion: XcodeVersion) {
+        if (currentVersion < minimalVersion) {
+            error("Unsupported Xcode version $currentVersion, minimal supported version is $minimalVersion.")
         }
     }
 

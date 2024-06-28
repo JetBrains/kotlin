@@ -9,6 +9,6 @@ FILE: main.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        Q|JavaInv|::R|/JavaInv.stringVal|
-        Q|KotlinInv|::R|SubstitutionOverride</KotlinInv.stringVal: R|kotlin/String|>|
+        Q|JavaInv|<out R|kotlin/Number|>::R|/JavaInv.stringVal|
+        Q|KotlinInv|<out R|kotlin/Number|>::R|SubstitutionOverride</KotlinInv.stringVal: R|kotlin/String|>|
     }

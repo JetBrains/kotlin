@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
@@ -33,8 +34,8 @@ import java.util.Collection;
 
 public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
         implements JavaValueParameter, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
-    public JavaValueParameterImpl(@NotNull PsiParameter psiParameter) {
-        super(psiParameter);
+    public JavaValueParameterImpl(@NotNull JavaElementPsiSource<PsiParameter> psiParameterSource) {
+        super(psiParameterSource);
     }
 
     @Nullable
@@ -72,13 +73,13 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getRegularAndExternalAnnotations(this);
+        return JavaElementUtil.getRegularAndExternalAnnotations(this, getSourceFactory());
     }
 
     @Nullable
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
+        return JavaElementUtil.findAnnotation(this, fqName, getSourceFactory());
     }
 
     @Override
@@ -101,7 +102,7 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     @Override
     @NotNull
     public JavaType getType() {
-        return JavaTypeImpl.create(getPsi().getType());
+        return JavaTypeImpl.create(getPsi().getType(), createVariableReturnTypeSource(psiElementSource));
     }
 
     @Override

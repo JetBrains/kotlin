@@ -19,7 +19,6 @@ enum class JvmDeclarationOriginKind {
     SYNTHETIC, // this means that there's no proper descriptor for this jvm declaration,
     COLLECTION_STUB,
     AUGMENTED_BUILTIN_API,
-    ERASED_INLINE_CLASS,
     UNBOX_METHOD_OF_INLINE_CLASS,
     JVM_OVERLOADS,
     INLINE_VERSION_OF_SUSPEND_FUN,

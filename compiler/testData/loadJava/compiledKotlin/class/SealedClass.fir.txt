@@ -1,0 +1,20 @@
+public final class Inheritor2 : R|test/SealedClass| {
+    public constructor(): R|test/Inheritor2|
+
+}
+
+public final class Inheritor3 : R|test/SealedClass| {
+    public constructor(): R|test/Inheritor3|
+
+}
+
+public sealed class SealedClass : R|kotlin/Any| {
+    protected constructor(): R|test/SealedClass|
+
+    public final class Inheritor1 : R|test/SealedClass| {
+        public constructor(): R|test/SealedClass.Inheritor1|
+
+    }
+
+}
+

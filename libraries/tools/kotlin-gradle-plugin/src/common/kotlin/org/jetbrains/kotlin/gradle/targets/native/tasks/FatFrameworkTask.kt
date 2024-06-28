@@ -7,16 +7,24 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.FileTree
+import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -26,6 +34,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.Serializable
 import java.nio.file.Files
 import javax.inject.Inject
 
@@ -97,7 +106,7 @@ class FrameworkDescriptor(
     val file: File,
     val isStatic: Boolean,
     val target: KonanTarget
-) {
+) : Serializable {
     constructor(framework: Framework) : this(
         framework.outputFile,
         framework.isStatic,
@@ -108,25 +117,32 @@ class FrameworkDescriptor(
         require(NativeOutputKind.FRAMEWORK.availableFor(target))
     }
 
-    val name = file.nameWithoutExtension
-    val files = FrameworkLayout(file, target.family == Family.OSX)
+    val name get() = file.nameWithoutExtension
+    val files get() = FrameworkLayout(file, target.family == Family.OSX)
 }
 
 /**
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
+@DisableCachingByDefault
 open class FatFrameworkTask
 @Inject
 internal constructor(
     private val execOperations: ExecOperations,
     private val fileOperations: FileSystemOperations,
     private val objectFactory: ObjectFactory,
+    projectLayout: ProjectLayout,
 ) : DefaultTask() {
     init {
         onlyIf { HostManager.hostIsMac }
     }
 
-    private val archToFramework: MutableMap<AppleArchitecture, FrameworkDescriptor> = mutableMapOf()
+    @get:Input
+    protected val archToFrameworkProvider: MapProperty<AppleArchitecture, FrameworkDescriptor> = objectFactory.mapProperty(
+        AppleArchitecture::class.java,
+        FrameworkDescriptor::class.java,
+    )
+    private val archToFramework: Map<AppleArchitecture, FrameworkDescriptor> get() = archToFrameworkProvider.get().mapValues { it.value }
 
     //region DSL properties.
     /**
@@ -142,11 +158,22 @@ internal constructor(
     @Input
     var baseName: String = project.name
 
+    @get:Internal
+    internal val defaultDestinationDir: Provider<Directory> = projectLayout.buildDirectory.dir("fat-framework")
+
+    @OutputDirectory
+    val destinationDirProperty: DirectoryProperty = objectFactory
+        .directoryProperty()
+        .convention(defaultDestinationDir)
+
     /**
      * A parent directory for the fat framework.
      */
-    @OutputDirectory
-    var destinationDir: File = project.buildDir.resolve("fat-framework")
+    @get:Internal
+    @Deprecated("please use destinationDirProperty", replaceWith = ReplaceWith("destinationDirProperty"))
+    var destinationDir: File
+        get() = destinationDirProperty.get().asFile
+        set(value) = destinationDirProperty.set(value)
 
     @get:Internal
     val fatFrameworkName: String
@@ -154,7 +181,11 @@ internal constructor(
 
     @get:Internal
     val fatFramework: File
-        get() = destinationDir.resolve(fatFrameworkName + ".framework")
+        get() = destinationDirProperty.file(fatFrameworkName + ".framework").getFile()
+
+    @get:Internal
+    internal val frameworkLayout: FrameworkLayout
+        get() = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:IgnoreEmptyDirectories
@@ -175,7 +206,7 @@ internal constructor(
             }
         }
 
-    private enum class AppleArchitecture(val clangMacro: String) {
+    protected enum class AppleArchitecture(val clangMacro: String) {
         X64("__x86_64__"),
         X86("__i386__"),
         ARM32("__arm__"),
@@ -193,9 +224,6 @@ internal constructor(
             Architecture.X86 -> AppleArchitecture.X86
             Architecture.ARM64 -> if (this == WATCHOS_ARM64) AppleArchitecture.ARM64_32 else AppleArchitecture.ARM64
             Architecture.ARM32 -> AppleArchitecture.ARM32
-            Architecture.MIPS32,
-            Architecture.MIPSEL32,
-            Architecture.WASM32 -> error("Fat frameworks are not supported for target `$name`")
         }
 
     // region DSL methods.
@@ -208,15 +236,27 @@ internal constructor(
      * Adds the specified frameworks in this fat framework.
      */
     fun from(frameworks: Iterable<Framework>) {
-        fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
-        frameworks.forEach { dependsOn(it.linkTask) }
+        fromFrameworkDescriptorProviders(
+            frameworks.map { framework ->
+                framework.linkTaskProvider.map {
+                    FrameworkDescriptor(framework)
+                }
+            }
+        )
     }
+
+    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) = fromFrameworkDescriptorProviders(
+        frameworks.map { framework ->
+            project.provider { framework }
+        }
+    )
 
     /**
      * Adds the specified frameworks in this fat framework.
      */
-    fun fromFrameworkDescriptors(frameworks: Iterable<FrameworkDescriptor>) {
-        frameworks.forEach { framework ->
+    internal fun fromFrameworkDescriptorProviders(frameworks: Iterable<Provider<FrameworkDescriptor>>) {
+        frameworks.forEach { frameworkProvider ->
+            val framework = frameworkProvider.get()
             val arch = framework.target.appleArchitecture
             val family = framework.target.family
             val fatFrameworkFamily = getFatFrameworkFamily()
@@ -245,7 +285,7 @@ internal constructor(
                 }
             }
 
-            archToFramework[arch] = framework
+            archToFrameworkProvider.put(arch, frameworkProvider)
         }
     }
     // endregion.
@@ -260,10 +300,9 @@ internal constructor(
             // remove `is ...` after Gradle Configuration Cache deserialization for Objects of a Sealed Class is fixed
             // https://github.com/gradle/gradle/issues/22347
             is MACOS_X64, is MACOS_ARM64 -> "MacOSX"
-            is IOS_ARM32, is IOS_ARM64, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
+            is IOS_ARM64, is IOS_X64, is IOS_SIMULATOR_ARM64 -> "iPhoneOS"
             is TVOS_ARM64, is TVOS_X64, is TVOS_SIMULATOR_ARM64 -> "AppleTVOS"
-            is WATCHOS_ARM32, is WATCHOS_ARM64, is WATCHOS_X86,
-            is WATCHOS_X64, is WATCHOS_SIMULATOR_ARM64, is WATCHOS_DEVICE_ARM64 -> "WatchOS"
+            is WATCHOS_ARM32, is WATCHOS_ARM64, is WATCHOS_X64, is WATCHOS_SIMULATOR_ARM64, is WATCHOS_DEVICE_ARM64 -> "WatchOS"
             else -> error("Fat frameworks are not supported for platform `${target.visibleName}`")
         }
 
@@ -358,14 +397,17 @@ internal constructor(
     }
 
     private fun createModuleFile(outputFile: File, frameworkName: String) {
-        outputFile.writeText("""
-            framework module $frameworkName {
-                umbrella header "$frameworkName.h"
+        outputFile.writeText(
+            ModuleMapGenerator.generateModuleMap {
+                isFramework = true
+                isUmbrellaHeader = true
 
-                export *
-                module * { export * }
+                name = frameworkName
+                export = "*"
+                umbrella = "$frameworkName.h"
+                module = "* { export * }"
             }
-        """.trimIndent())
+        )
     }
 
     private fun mergePlists(outputFile: File, frameworkName: String) {
@@ -434,7 +476,7 @@ internal constructor(
 
     @TaskAction
     protected fun createFatFramework() {
-        val outFramework = FrameworkLayout(fatFramework, getFatFrameworkFamily() == Family.OSX)
+        val outFramework = frameworkLayout
         if (outFramework.exists()) outFramework.rootDir.deleteRecursively()
 
         outFramework.mkdirs()
@@ -447,8 +489,8 @@ internal constructor(
 
     companion object {
         private val supportedTargets = listOf(
-            IOS_ARM32, IOS_ARM64, IOS_X64,
-            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64, WATCHOS_DEVICE_ARM64,
+            IOS_ARM64, IOS_X64,
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X64, WATCHOS_DEVICE_ARM64,
             TVOS_ARM64, TVOS_X64,
             MACOS_X64, MACOS_ARM64
         )

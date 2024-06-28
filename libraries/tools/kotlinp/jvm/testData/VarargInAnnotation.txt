@@ -1,0 +1,147 @@
+// A.class
+// ------------------------------------------
+public final enum class A : kotlin/Enum<A> {
+
+  // signature: <init>(Ljava/lang/String;I)V
+  private constructor()
+
+  V1,
+
+  V2,
+
+  // module name: test-module
+
+  // has Enum.entries
+}
+// AnnoAnnotation.class
+// ------------------------------------------
+public final annotation class AnnoAnnotation : kotlin/Annotation {
+
+  // signature: <init>(Lkotlin/Array;)V
+  public constructor(vararg value: AnnoString /* kotlin/Array<out AnnoString> */)
+
+  // getter: value()[LAnnoString;
+  public final val value: kotlin/Array<out AnnoString>
+    public final get
+
+  // module name: test-module
+}
+// AnnoEnum.class
+// ------------------------------------------
+public final annotation class AnnoEnum : kotlin/Annotation {
+
+  // signature: <init>(Lkotlin/Array;)V
+  public constructor(vararg value: A /* kotlin/Array<out A> */)
+
+  // getter: value()[LA;
+  public final val value: kotlin/Array<out A>
+    public final get
+
+  // module name: test-module
+}
+// AnnoInt.class
+// ------------------------------------------
+public final annotation class AnnoInt : kotlin/Annotation {
+
+  // signature: <init>([I)V
+  public constructor(vararg value: kotlin/Int /* kotlin/IntArray */)
+
+  // getter: value()[I
+  public final val value: kotlin/IntArray
+    public final get
+
+  // module name: test-module
+}
+// AnnoKClass.class
+// ------------------------------------------
+public final annotation class AnnoKClass : kotlin/Annotation {
+
+  // signature: <init>(Lkotlin/Array;)V
+  public constructor(vararg value: kotlin/reflect/KClass<*> /* kotlin/Array<out kotlin/reflect/KClass<*>> */)
+
+  // getter: value()[Ljava/lang/Class;
+  public final val value: kotlin/Array<out kotlin/reflect/KClass<*>>
+    public final get
+
+  // module name: test-module
+}
+// AnnoString.class
+// ------------------------------------------
+public final annotation class AnnoString : kotlin/Annotation {
+
+  // signature: <init>(Lkotlin/Array;)V
+  public constructor(vararg value: kotlin/String /* kotlin/Array<out kotlin/String> */)
+
+  // getter: value()[Ljava/lang/String;
+  public final val value: kotlin/Array<out kotlin/String>
+    public final get
+
+  // module name: test-module
+}
+// VarargInAnnotationKt.class
+// ------------------------------------------
+package {
+
+  // signature: annoAnnotationVararg0()V
+  public final fun annoAnnotationVararg0(): @AnnoAnnotation(value = []) kotlin/Unit
+
+  // signature: annoAnnotationVararg1()V
+  public final fun annoAnnotationVararg1(): @AnnoAnnotation(value = [AnnoString(value = [])]) kotlin/Unit
+
+  // signature: annoAnnotationVararg2()V
+  public final fun annoAnnotationVararg2(): @AnnoAnnotation(value = [AnnoString(value = ["OK"]), AnnoString(value = ["OK1", "OK2"])]) kotlin/Unit
+
+  // signature: annoArrayVararg0()V
+  public final fun annoArrayVararg0(): @AnnoString(value = []) kotlin/Unit
+
+  // signature: annoArrayVararg1()V
+  public final fun annoArrayVararg1(): @AnnoString(value = ["OK"]) kotlin/Unit
+
+  // signature: annoArrayVararg2()V
+  public final fun annoArrayVararg2(): @AnnoString(value = ["OK", "OK2"]) kotlin/Unit
+
+  // signature: annoEnumVararg0()V
+  public final fun annoEnumVararg0(): @AnnoEnum(value = []) kotlin/Unit
+
+  // signature: annoEnumVararg1()V
+  public final fun annoEnumVararg1(): @AnnoEnum(value = [A.V1]) kotlin/Unit
+
+  // signature: annoEnumVararg2()V
+  public final fun annoEnumVararg2(): @AnnoEnum(value = [A.V1, A.V2]) kotlin/Unit
+
+  // signature: annoIntVararg0()V
+  public final fun annoIntVararg0(): @AnnoInt(value = []) kotlin/Unit
+
+  // signature: annoIntVararg1()V
+  public final fun annoIntVararg1(): @AnnoInt(value = [0]) kotlin/Unit
+
+  // signature: annoIntVararg2()V
+  public final fun annoIntVararg2(): @AnnoInt(value = [0, 1]) kotlin/Unit
+
+  // signature: annoKClassVararg0()V
+  public final fun annoKClassVararg0(): @AnnoKClass(value = []) kotlin/Unit
+
+  // signature: annoKClassVararg1()V
+  public final fun annoKClassVararg1(): @AnnoKClass(value = [AnnoString::class]) kotlin/Unit
+
+  // signature: annoKClassVararg2()V
+  public final fun annoKClassVararg2(): @AnnoKClass(value = [AnnoString::class, AnnoInt::class]) kotlin/Unit
+
+  // signature: annoStringVararg0()V
+  public final fun annoStringVararg0(): @AnnoString(value = []) kotlin/Unit
+
+  // signature: annoStringVararg1()V
+  public final fun annoStringVararg1(): @AnnoString(value = ["OK"]) kotlin/Unit
+
+  // signature: annoStringVararg2()V
+  public final fun annoStringVararg2(): @AnnoString(value = ["OK", "OK2"]) kotlin/Unit
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    VarargInAnnotationKt
+  }
+}

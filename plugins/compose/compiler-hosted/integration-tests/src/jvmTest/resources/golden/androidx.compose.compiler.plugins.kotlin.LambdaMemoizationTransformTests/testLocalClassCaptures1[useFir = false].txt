@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.Composable
+
+@NonRestartableComposable
+@Composable
+fun Err(y: Int, z: Int) {
+    class Local {
+        val w = z
+        fun something(x: Int): Int { return x + y + w }
+    }
+    {
+      Local().something(2)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Err)<{>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  class Local {
+    val w: Int = z
+    fun something(x: Int): Int {
+      return x + y + w
+    }
+  }
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(y) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(z) || %changed and 0b00110000 == 0b00100000) {
+    {
+      Local().something(2)
+    }
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp0_group
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

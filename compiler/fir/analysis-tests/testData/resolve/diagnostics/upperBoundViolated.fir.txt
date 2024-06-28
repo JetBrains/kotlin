@@ -14,7 +14,7 @@ FILE: upperBoundViolated.kt
 
     }
     public final typealias GGG = R|C|
-    public final typealias HHH = R|GGG|
+    public final typealias HHH = R|{GGG=} C|
     public final typealias JJJ = R|B<C>|
     public final fun <T : R|A|> fest(): R|kotlin/Unit| {
     }
@@ -26,8 +26,8 @@ FILE: upperBoundViolated.kt
         lval b5: R|B<B<ERROR CLASS: Symbol not found for UnexistingType>>| = R|/B.B<Inapplicable(INAPPLICABLE): /B.B>#|<R|B<ERROR CLASS: Symbol not found for UnexistingType>|>()
         R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|kotlin/Boolean|>()
         R|/fest|<R|C|>()
-        R|/fest|<R|C|>()
-        R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|B<C>|>()
+        R|/fest|<R|{HHH=} C|>()
+        R|/fest<Inapplicable(INAPPLICABLE): /fest>#|<R|{JJJ=} B<C>|>()
     }
     public open class S<F, G : R|F|> : R|kotlin/Any| {
         public constructor<F, G : R|F|>(): R|S<F, G>| {
@@ -59,10 +59,10 @@ FILE: upperBoundViolated.kt
         lval o3: R|S<L, L>| = R|/S.S|<R|L|, R|L|>()
         lval o4: R|S<S<K, L>, T<K, L>>| = R|/S.S|<R|S<K, L>|, R|T<K, L>|>()
         lval o5: R|S<S<K, L>, T<K, K>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<K, L>|, R|T<K, K>|>()
-        lval o5: R|S<S<L, L>, T<K, L>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<L, L>|, R|T<K, L>|>()
-        lval o6: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
-        lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
-        lval o8: R|P<kotlin/String, P1<kotlin/String, kotlin/String>>| = R|/P.P<Inapplicable(INAPPLICABLE): /P.P>#|<R|kotlin/String|, R|P1<kotlin/String, kotlin/String>|>()
+        lval o6: R|S<S<L, L>, T<K, L>>| = R|/S.S<Inapplicable(INAPPLICABLE): /S.S>#|<R|S<L, L>|, R|T<K, L>|>()
+        lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
+        lval o8: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
+        lval o9: R|P<kotlin/String, P1<kotlin/String, kotlin/String>>| = R|/P.P<Inapplicable(INAPPLICABLE): /P.P>#|<R|kotlin/String|, R|P1<kotlin/String, kotlin/String>|>()
     }
     public final class NumColl<T : R|kotlin/collections/Collection<kotlin/Number>|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/collections/Collection<kotlin/Number>|>(): R|NumColl<T>| {
@@ -73,8 +73,8 @@ FILE: upperBoundViolated.kt
     public final typealias NL<K> = R|NumColl<kotlin/collections/List<K>>|
     public final val test7: <ERROR TYPE REF: Unresolved name: NumberPhile> = R|/NumColl.NumColl|<R|kotlin/Int|>().<Unresolved name: NumberPhile>#(ERROR_EXPR(No right operand))
         public get(): <ERROR TYPE REF: Unresolved name: NumberPhile>
-    public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
-        public get(): R|NumColl<kotlin/collections/List<kotlin/String>>|
+    public final val test8: R|{NL<kotlin/String>=} NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
+        public get(): R|{NL<kotlin/String>=} NumColl<kotlin/collections/List<kotlin/String>>|
     public final class NumberPhile<T : R|kotlin/Number|> : R|kotlin/Any| {
         public constructor<T : R|kotlin/Number|>(x: R|T|): R|NumberPhile<T>| {
             super<R|kotlin/Any|>()

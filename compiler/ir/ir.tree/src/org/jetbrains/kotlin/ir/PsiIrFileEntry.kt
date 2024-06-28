@@ -10,42 +10,18 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import kotlin.reflect.KClass
 
-class PsiIrFileEntry(val psiFile: PsiFile) : IrFileEntry {
+class PsiIrFileEntry(val psiFile: PsiFile) : AbstractIrFileEntry() {
     private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
 
     override val maxOffset: Int
-    private val lineStartOffsets: IntArray
+    override val lineStartOffsets: IntArray
     private val fileViewProvider = psiFile.viewProvider
 
     init {
         val document = fileViewProvider.document ?: throw AssertionError("No document for $psiFile")
         maxOffset = document.textLength
-        lineStartOffsets = IntArray(document.lineCount) { document.getLineStartOffset(it) }
+        lineStartOffsets = IntArray(document.lineCount.takeIf { it != 0 } ?: 1) { document.getLineStartOffset(it) }
     }
-
-    override fun getLineNumber(offset: Int): Int {
-        if (offset < 0) return -1
-        val index = lineStartOffsets.binarySearch(offset)
-        return if (index >= 0) index else -index - 2
-    }
-
-    override fun getColumnNumber(offset: Int): Int {
-        if (offset < 0) return -1
-        val lineNumber = getLineNumber(offset)
-        if (lineNumber < 0) return -1
-        return offset - lineStartOffsets[lineNumber]
-    }
-
-    override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
-        SourceRangeInfo(
-            filePath = getRecognizableName(),
-            startOffset = beginOffset,
-            startLineNumber = getLineNumber(beginOffset),
-            startColumnNumber = getColumnNumber(beginOffset),
-            endOffset = endOffset,
-            endLineNumber = getLineNumber(endOffset),
-            endColumnNumber = getColumnNumber(endOffset)
-        )
 
     private fun getRecognizableName(): String = psiFileName
 

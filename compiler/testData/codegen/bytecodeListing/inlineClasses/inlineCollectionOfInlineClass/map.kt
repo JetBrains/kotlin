@@ -13,4 +13,3 @@ inline class InlineMap(private val map: Map<IK, IV>) : Map<IK, IV> {
     override fun get(key: IK): IV? = map[key]
     override fun isEmpty(): Boolean = map.isEmpty()
 }
-

@@ -1,9 +1,14 @@
 // JAVAC_EXPECTED_FILE
-// FILE: test/My.java
+
+// FILE: test/Internal.java
 
 package test;
 
 class Internal {}
+
+// FILE: test/My.java
+
+package test;
 
 public class My {
     static public Internal foo() { return new Internal(); }
@@ -19,9 +24,9 @@ class His {
     // Ok: internal vs package-private in same package
     internal fun internal() = My.foo()
     // Error: protected vs package-private
-    protected fun protected() = My.foo()
+    protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>protected<!>() = My.foo()
     // Error: public vs package-private
-    fun public() = My.foo()
+    fun <!EXPOSED_FUNCTION_RETURN_TYPE!>public<!>() = My.foo()
 }
 
 // FILE: other/Your.kt

@@ -3,10 +3,10 @@ language = Objective-C
 package = platform.darwin
 headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityInternal.h \
     AvailabilityMacros.h Block.h ConditionalMacros.h MacTypes.h \
-    TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
+    TargetConditionals.h _locale.h _types.h _wctype.h \
     aio.h asl.h bitstring.h bzlib.h \
     cache.h cache_callbacks.h checkint.h compression.h copyfile.h \
-    cpio.h cxxabi.h db.h \
+    cpio.h db.h \
     dns.h dns_sd.h dns_util.h execinfo.h \
     fmtmsg.h fstab.h \
     gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \
@@ -40,6 +40,6 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     xpc_debugger_api_misuse_info \
                     vm_stats
 
-compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
-compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED
+compilerOpts.macos_x64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
+compilerOpts.macos_arm64 = -D_XOPEN_SOURCE -DSHARED_LIBBIND -DSYSCTL_DEF_ENABLED -D__CCT_ENABLE_USER_SPACE
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm

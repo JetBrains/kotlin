@@ -22,6 +22,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Node accepting any character except line terminators.
  */
@@ -34,6 +36,7 @@ internal class DotSet(val lt: AbstractLineTerminator, val matchLineTerminator: B
     override val consumesFixedLength: Boolean
         get() = true
 
+    @OptIn(ExperimentalNativeApi::class)
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         val rightBound = testString.length
         if (startIndex >= rightBound) {

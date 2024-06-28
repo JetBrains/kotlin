@@ -4,5 +4,14 @@ package f {
     public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
     public fun </*0*/ T> f(/*0*/ a: kotlin.Any, /*1*/ l: kotlin.collections.List<T>): kotlin.collections.Collection<T>
     public fun </*0*/ T> f(/*0*/ i: kotlin.Int, /*1*/ c: kotlin.collections.Collection<T>): kotlin.collections.List<T>
+    public fun </*0*/ T, /*1*/ K> g(/*0*/ a: kotlin.Any, /*1*/ l: kotlin.collections.List<T>, /*2*/ vararg x: f.In<K> /*kotlin.Array<out f.In<K>>*/): kotlin.collections.Collection<T>
+    public fun </*0*/ T, /*1*/ K> g(/*0*/ i: kotlin.Int, /*1*/ c: kotlin.collections.Collection<T>, /*2*/ vararg x: f.In<K> /*kotlin.Array<out f.In<K>>*/): kotlin.collections.List<T>
     public fun </*0*/ T> test(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
+
+    public final class In</*0*/ in K> {
+        public constructor In</*0*/ in K>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

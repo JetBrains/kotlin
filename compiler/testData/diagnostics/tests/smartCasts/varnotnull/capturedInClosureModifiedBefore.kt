@@ -1,4 +1,4 @@
-// !LANGUAGE: +CapturedInClosureSmartCasts
+// LANGUAGE: +CapturedInClosureSmartCasts
 
 fun run(f: () -> Unit) = f()
 

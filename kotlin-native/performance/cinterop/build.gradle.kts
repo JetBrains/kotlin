@@ -20,8 +20,14 @@ benchmark {
 }
 
 val native = kotlin.targets.getByName("native") as KotlinNativeTarget
-native.compilations["main"].cinterops {
-    create("macros")
-    create("struct")
-    create("types")
+native.compilations["main"].apply {
+    cinterops {
+        create("macros")
+        create("struct")
+        create("types")
+    }
+    compilerOptions
+            .options
+            .freeCompilerArgs
+            .add("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,15 +15,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
- * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.expression
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.expression]
  */
-abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement,
-        IrAttributeContainer {
-    override var attributeOwnerId: IrAttributeContainer = this
-
+abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
     abstract var type: IrType
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression
-            = accept(transformer, data) as IrExpression
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
+        accept(transformer, data) as IrExpression
 }

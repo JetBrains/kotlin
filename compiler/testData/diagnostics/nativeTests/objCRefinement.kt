@@ -8,7 +8,7 @@ package kotlin.native
 annotation class HidesFromObjC
 
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class HiddenFromObjC
 
@@ -21,11 +21,16 @@ annotation class RefinesInSwift
 @Retention(AnnotationRetention.BINARY)
 public annotation class ShouldRefineInSwift
 
+<!INVALID_REFINES_IN_SWIFT_TARGETS!>@RefinesInSwift<!>
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+public annotation class WrongShouldRefineInSwift
+
 // FILE: plugin.kt
 package plugin
 
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class PluginHiddenFromObjC
 
@@ -44,12 +49,12 @@ import plugin.PluginShouldRefineInSwift
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationA
 
-<!INVALID_OBJC_REFINEMENT_TARGETS!>@HidesFromObjC<!>
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
+<!INVALID_OBJC_HIDES_TARGETS!>@HidesFromObjC<!>
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationB
 
-<!INVALID_OBJC_REFINEMENT_TARGETS!>@RefinesInSwift<!>
+<!INVALID_REFINES_IN_SWIFT_TARGETS!>@RefinesInSwift<!>
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationC
 
@@ -131,4 +136,67 @@ interface I {
 
 open class Derived2 : Derived() {
     override fun foo() {}
+}
+
+@HiddenFromObjC
+open class OpenHiddenClass
+
+<!SUBTYPE_OF_HIDDEN_FROM_OBJC!>class InheritsFromOpenHiddenClass : OpenHiddenClass()<!>
+
+@HiddenFromObjC
+interface HiddenInterface
+
+interface NotHiddenInterface
+
+<!SUBTYPE_OF_HIDDEN_FROM_OBJC!>class ImplementsHiddenInterface : NotHiddenInterface, HiddenInterface<!>
+
+<!SUBTYPE_OF_HIDDEN_FROM_OBJC!>class InheritsFromOpenHiddenClass2 : NotHiddenInterface, OpenHiddenClass()<!>
+
+@HiddenFromObjC
+class OuterHidden {
+    class Nested {
+        open class Nested
+    }
+}
+
+<!SUBTYPE_OF_HIDDEN_FROM_OBJC!>class InheritsFromNested : OuterHidden.Nested.Nested()<!>
+
+private class PrivateInheritsFromNested : OuterHidden.Nested.Nested()
+
+internal class InternalInheritsFromNested : OuterHidden.Nested.Nested()
+
+fun produceInstanceOfHidden(): OuterHidden.Nested.Nested {
+    return object : OuterHidden.Nested.Nested() {}
+}
+
+@HiddenFromObjC
+enum class MyHiddenEnum {
+    A,
+    B,
+    C
+}
+
+@HiddenFromObjC
+object MyHiddenObject
+
+sealed class MySealedClass {
+    @HiddenFromObjC
+    class MyHiddenSealedVariant : MySealedClass()
+
+    class MyPublicVariant : MySealedClass()
+}
+
+@HiddenFromObjC
+enum class MyHiddenNonTrivialEnum {
+    A,
+    B,
+    C {
+        override fun sayCheese(): String {
+            return "Boo :("
+        }
+    };
+
+    open fun sayCheese(): String {
+        return "Cheese!"
+    }
 }

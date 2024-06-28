@@ -44,23 +44,33 @@ class FirScriptDefinitionProviderService(
     companion object {
         fun getFactory(
             definitions: List<ScriptDefinition>,
-            definitionSources: List<ScriptDefinitionsSource>
+            definitionSources: List<ScriptDefinitionsSource>,
+            definitionProvider: ScriptDefinitionProvider? = null,
+            configurationProvider: ScriptDependenciesProvider? = null
         ): Factory {
-            return Factory { session ->
-                FirScriptDefinitionProviderService(
-                    session,
-                    makeDefaultDefinitionProvider = {
-                        CliScriptDefinitionProvider().also {
-                            it.setScriptDefinitionsSources(definitionSources)
-                            it.setScriptDefinitions(definitions)
-                        }
-                    },
-                    makeDefaultConfigurationProvider = {
-                        // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
-                        CliScriptDependenciesProvider(MockProject(null, Disposer.newDisposable()))
+            val makeDefinitionsProvider = definitionProvider?.let { { it } }
+                ?: {
+                    CliScriptDefinitionProvider().also {
+                        it.setScriptDefinitionsSources(definitionSources)
+                        it.setScriptDefinitions(definitions)
                     }
-                )
-            }
+                }
+
+            val makeConfigurationProvider = configurationProvider?.let { { it } }
+                ?: {
+                    // TODO: check if memory can leak in MockProject (probably not too important, since currently the providers are set externaly in important cases)
+                    CliScriptDependenciesProvider(
+                        MockProject(
+                            null,
+                            Disposer.newDisposable(
+                                "Disposable for project of ${CliScriptDependenciesProvider::class.simpleName} created by" +
+                                        " ${FirScriptDefinitionProviderService::class.simpleName}"
+                            ),
+                        ),
+                    )
+                }
+
+            return Factory { session -> FirScriptDefinitionProviderService(session, makeDefinitionsProvider, makeConfigurationProvider) }
         }
     }
 }

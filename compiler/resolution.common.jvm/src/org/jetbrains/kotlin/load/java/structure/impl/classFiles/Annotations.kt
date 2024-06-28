@@ -160,7 +160,6 @@ class BinaryJavaAnnotation private constructor(
             return annotationVisitor
         }
 
-        @OptIn(ExperimentalStdlibApi::class)
         private fun translatePath(path: TypePath) = buildList {
             for (i in 0 until path.length) {
                 when (val step = path.getStep(i)) {

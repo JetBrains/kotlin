@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
+import org.jetbrains.kotlin.test.utils.isFirTestData
+import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import java.io.File
 
 open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
@@ -27,16 +29,19 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         val testData = moduleStructure.originalTestDataFiles.first()
         if (testData.extension == "kts") return
         if (FirDiagnosticsDirectives.FIR_IDENTICAL in moduleStructure.allDirectives) return
-        val firTestData = testData.firTestDataFile
+        val (firTestData, originalTestData) = when {
+            testData.isFirTestData -> testData to testData.originalTestDataFile
+            else -> testData.firTestDataFile to testData
+        }
         if (!firTestData.exists()) {
             runFirTestAndGeneratedTestData(testData, firTestData)
             return
         }
         val firPreprocessedTextData = firTestData.preprocessSource()
-        val originalPreprocessedTextData = testData.preprocessSource()
+        val originalPreprocessedTextData = originalTestData.preprocessSource()
         testServices.assertions.assertEquals(firPreprocessedTextData, originalPreprocessedTextData) {
             "Original and FIR test data aren't identical. " +
-                    "Please, add changes from ${testData.name} to ${firTestData.name}"
+                    "Please, add changes from ${originalTestData.name} to ${firTestData.name}"
         }
     }
 

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.android.build.gradle.api.TestVariant
-import com.android.build.gradle.api.UnitTestVariant
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
@@ -22,11 +21,9 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
 import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
+import org.jetbrains.kotlin.gradle.internal.KotlinTestJvmFramework.junit
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -36,7 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 
 private val Dependency.isKotlinTestRootDependency: Boolean
     get() = group == KOTLIN_MODULE_GROUP && name == KOTLIN_TEST_ROOT_MODULE_NAME
@@ -48,34 +45,16 @@ private fun isAtLeast1_5(version: String) = SemVer.fromGradleRichVersion(version
 private val jvmPlatforms = setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
 internal fun Project.configureKotlinTestDependency(
-    topLevelExtension: KotlinTopLevelExtension,
+    kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>,
 ) {
-    when (topLevelExtension) {
-        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.configureKotlinTestDependency(
-                configurations,
-                coreLibrariesVersion,
-                dependencies,
-                tasks
-            )
-        }
-
-        is KotlinSingleTargetExtension<*> -> topLevelExtension.target.configureKotlinTestDependency(
+    kotlinExtension.forAllTargets { target ->
+        target.configureKotlinTestDependency(
             configurations,
             coreLibrariesVersion,
             dependencies,
             tasks
         )
-
-        is KotlinMultiplatformExtension -> topLevelExtension.targets.configureEach { target ->
-            target.configureKotlinTestDependency(
-                configurations,
-                coreLibrariesVersion,
-                dependencies,
-                tasks
-            )
-        }
     }
 }
 
@@ -83,7 +62,7 @@ private fun KotlinTarget.configureKotlinTestDependency(
     configurations: ConfigurationContainer,
     coreLibrariesVersion: Provider<String>,
     dependencyHandler: DependencyHandler,
-    tasks: TaskContainer
+    tasks: TaskContainer,
 ) {
     compilations.configureEach { compilation ->
         val platformType = compilation.platformType
@@ -117,11 +96,24 @@ private fun KotlinTarget.configureKotlinTestDependency(
     }
 }
 
+internal fun DependencySet.addKotlinTestWithCapability(@Suppress("UNUSED_PARAMETER") dependencyHandler: DependencyHandler) {
+    val testRootDependency = allNonProjectDependencies().singleOrNull { it.isKotlinTestRootDependency }
+    if (testRootDependency == null || testRootDependency !is ExternalDependency) return
+
+    val testCapability = getKotlinTestCapability(junit)
+    val newTestDependencyWithCapability = testRootDependency.copy()
+    newTestDependencyWithCapability.capabilities {
+        it.requireCapability(testCapability)
+    }
+    add(newTestDependencyWithCapability)
+    remove(testRootDependency)
+}
+
 private fun Configuration.maybeAddTestDependencyCapability(
     compilation: KotlinCompilation<*>,
     coreLibrariesVersion: Provider<String>,
     dependencyHandler: DependencyHandler,
-    tasks: TaskContainer
+    tasks: TaskContainer,
 ) {
     withDependencies { dependencies ->
         val testRootDependency = allNonProjectDependencies()
@@ -153,6 +145,8 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
     tasks: TaskContainer,
 ): Provider<String>? {
     val compilationTarget = target
+
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
     val testTaskList: List<TaskProvider<out Task>> = when {
         compilationTarget is KotlinTargetWithTests<*, *> -> compilationTarget
             .findTestRunsByCompilation(this)
@@ -164,8 +158,8 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             listOfNotNull(tasks.locateTask(compilationTarget.testTaskName))
 
         this is KotlinJvmAndroidCompilation -> when (androidVariant) {
-            is UnitTestVariant -> listOfNotNull(tasks.locateTask(lowerCamelCaseName("test", androidVariant.name)))
-            is TestVariant -> listOfNotNull((androidVariant as TestVariant).connectedInstrumentTestProvider)
+            is DeprecatedAndroidUnitTestVariant -> listOfNotNull(tasks.locateTask(lowerCamelCaseName("test", androidVariant.name)))
+            is DeprecatedAndroidTestVariant -> listOfNotNull(androidVariant.connectedInstrumentTestProvider)
             else -> emptyList()
         }
 
@@ -180,12 +174,15 @@ private fun KotlinCompilation<*>.kotlinTestCapabilityForJvmSourceSet(
             val framework = when (task) {
                 is Test -> testFrameworkOf(task)
                 else -> // Android connected test tasks don't inherit from Test, but we use JUnit for them
-                    KotlinTestJvmFramework.junit
+                    junit
             }
 
-            "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
+            getKotlinTestCapability(framework)
         }
 }
+
+private fun getKotlinTestCapability(framework: KotlinTestJvmFramework) =
+    "$KOTLIN_MODULE_GROUP:$KOTLIN_TEST_ROOT_MODULE_NAME-framework-$framework"
 
 internal const val KOTLIN_TEST_ROOT_MODULE_NAME = "kotlin-test"
 
@@ -194,15 +191,15 @@ private enum class KotlinTestJvmFramework {
 }
 
 private fun testFrameworkOf(testTask: Test): KotlinTestJvmFramework = when (testTask.options) {
-    is JUnitOptions -> KotlinTestJvmFramework.junit
+    is JUnitOptions -> junit
     is JUnitPlatformOptions -> KotlinTestJvmFramework.junit5
     is TestNGOptions -> KotlinTestJvmFramework.testng
     else -> // failed to detect, fallback to junit
-        KotlinTestJvmFramework.junit
+        junit
 }
 
 private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
-    byCompilation: KotlinCompilation<*>
+    byCompilation: KotlinCompilation<*>,
 ): NamedDomainObjectSet<out KotlinTargetTestRun<*>> {
     fun KotlinExecution.ExecutionSource.isProducedFromTheCompilation(): Boolean = when (this) {
         is CompilationExecutionSource<*> -> compilation == byCompilation

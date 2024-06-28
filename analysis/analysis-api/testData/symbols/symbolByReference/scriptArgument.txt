@@ -1,0 +1,113 @@
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: KaBackingFieldSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    isActual: false
+    isExpect: false
+    isExtension: false
+    isVal: true
+    location: PROPERTY
+    modality: FINAL
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KaKotlinPropertySymbol(kotlin/script/templates/standard/ScriptTemplateWithArgs.args)
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    visibility: PUBLIC
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
+    deprecationStatus: null
+  callableId: kotlin/script/templates/standard/ScriptTemplateWithArgs.args
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: true
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/Array<kotlin/String>
+    valueParameters: []
+    visibility: PUBLIC
+    getDispatchReceiver(): KaUsualClassType:
+      annotations: []
+      typeArguments: []
+      type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+    getContainingFileSymbol: null
+    getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
+    deprecationStatus: null
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: args
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+    ]
+    type: kotlin/Array<kotlin/String>
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+  getContainingFileSymbol: null
+  getContainingJvmClassName: kotlin.script.templates.standard.ScriptTemplateWithArgs
+  getContainingModule: KaLibraryModule "Library kotlin-script-runtime"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getArgs
+  javaSetterName: null
+  setterDeprecationStatus: null

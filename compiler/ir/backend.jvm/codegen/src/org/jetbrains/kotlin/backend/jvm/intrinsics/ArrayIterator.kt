@@ -27,10 +27,10 @@ object ArrayIterator : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
-        classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+        classCodegen: ClassCodegen,
+    ): IntrinsicFunction {
         val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, owner) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(owner)) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
                 if (AsmUtil.isPrimitive(owner.elementType))

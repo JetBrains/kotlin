@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-41215, KT-43551
 
 // FILE: Base.java
@@ -19,6 +20,12 @@ public enum E implements Base {
     First, Second
 }
 
+// FILE: SameFile.java
+public sealed interface SameFile {
+    public static final class A implements SameFile {}
+    public static non-sealed class B implements SameFile {}
+}
+
 // FILE: main.kt
 fun test_ok_1(base: Base) {
     val x = when (base) {
@@ -35,6 +42,13 @@ fun test_ok_2(base: Base) {
         is B.D -> 3
         E.First -> 4
         E.Second -> 5
+    }
+}
+
+fun test_ok_3(sameFile: SameFile) {
+    val x = when (sameFile) {
+        is SameFile.A -> 1
+        is SameFile.B -> 2
     }
 }
 
@@ -60,5 +74,11 @@ fun test_error_3(base: Base) {
         is B.C -> 2
         E.First -> 4
         E.Second -> 5
+    }
+}
+
+fun test_error_4(sameFile: SameFile) {
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (sameFile) {
+        is SameFile.A -> 1
     }
 }

@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: -AdaptedCallableReferenceAgainstReflectiveType
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KCallable
 

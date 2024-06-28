@@ -1,0 +1,68 @@
+/**
+ * public final class C<T#0 (* T1 *) : I1 & I2, T#1 (* T2 *) : I3 & I4> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class C<T1 extends I1 & I2, T2 extends I3 & I4> {
+
+    public C() {
+        super();
+    }
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface I1 : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I1 {
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface I2 : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I2 {
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface I3 : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I3 {
+}
+
+
+////////////////////
+
+/**
+ * public abstract interface I4 : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I4 {
+}

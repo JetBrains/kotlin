@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM_IR
-// FILE: Jaba.java
+// JVM_ABI_K1_K2_DIFF: KT-55017
+
+// FILE: base/Jaba.java
 
 package base;
 

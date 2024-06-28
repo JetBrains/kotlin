@@ -9,10 +9,10 @@ import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class CommonizerDependencyTest {
+public class CommonizerDependencyTest {
 
     @Test
-    fun `sample identityString`() {
+    public fun `sample identityString`() {
         assertEquals(
             "(a, b, c)::${File("/").canonicalPath}hello.txt",
             TargetedCommonizerDependency(parseCommonizerTarget("(a, b, c)"), File("/hello.txt")).identityString
@@ -20,7 +20,7 @@ class CommonizerDependencyTest {
     }
 
     @Test
-    fun `test serialize deserialize`() {
+    public fun `test serialize deserialize`() {
         assertEquals(
             parseCommonizerDependency(NonTargetedCommonizerDependency(File("hello.txt")).identityString),
             NonTargetedCommonizerDependency(File("hello.txt").canonicalFile)

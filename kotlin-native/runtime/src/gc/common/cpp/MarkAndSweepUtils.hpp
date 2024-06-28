@@ -16,7 +16,7 @@
 #include "ObjectTraversal.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 
@@ -26,34 +26,34 @@ namespace gc {
 namespace internal {
 
 template <typename Traits>
-void processFieldInMark(void* state, ObjHeader* field) noexcept {
+void processFieldInMark(void* state, ObjHeader* object, ObjHeader* field) noexcept {
     auto& markQueue = *static_cast<typename Traits::MarkQueue*>(state);
     if (field->heap()) {
         Traits::tryEnqueue(markQueue, field);
+    }
+    if constexpr (!Traits::kAllowHeapToStackRefs) {
+        if (object->heap()) {
+            RuntimeAssert(!field->local(), "Heap object %p references stack object %p[typeInfo=%p]", object, field, field->type_info());
+        }
     }
 }
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    auto* typeInfo = object->type_info();
-    RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
-    for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
-        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[i]);
-        if (!field) continue;
-        processFieldInMark<Traits>(state, field);
-    }
+    traverseClassObjectFields(object, [=] (auto fieldAccessor) noexcept {
+        if (ObjHeader* field = fieldAccessor.direct()) {
+            processFieldInMark<Traits>(state, object, field);
+        }
+    });
 }
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
-    auto* begin = ArrayAddressOfElementAt(array, 0);
-    auto* end = ArrayAddressOfElementAt(array, array->count_);
-    for (auto* it = begin; it != end; ++it) {
-        auto* field = *it;
-        if (!field) continue;
-        processFieldInMark<Traits>(state, field);
-    }
+    traverseArrayOfObjectsElements(array, [=] (auto elemAccessor) noexcept {
+        if (ObjHeader* elem = elemAccessor.direct()) {
+            processFieldInMark<Traits>(state, array->obj(), elem);
+        }
+    });
 }
 
 template <typename Traits>
@@ -74,16 +74,16 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
 // TODO: Consider making it noinline to keep loop in `Mark` small.
 template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
-    if (auto weakCounter = extraObjectData.GetWeakReferenceCounter()) {
+    if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", object, weakCounter,
-                weakCounter->permanent(), weakCounter->local());
-        // Do not schedule WeakReferenceCounter but process it right away.
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
+                weakReference, weakReference->permanent(), weakReference->local());
+        // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
-        if (Traits::tryMark(weakCounter)) {
-            markHandle.addObject(mm::GetAllocatedHeapSize(weakCounter));
-            // WeakReferenceCounter is empty, but keeping this just in case.
-            Traits::processInMark(markQueue, weakCounter);
+        if (Traits::tryMark(weakReference)) {
+            markHandle.addObject();
+            // RegularWeakReferenceImpl is empty, but keeping this just in case.
+            Traits::processInMark(markQueue, weakReference);
         }
     }
 }
@@ -93,10 +93,13 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
 template <typename Traits>
 void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
     auto markHandle = handle.mark();
+    Mark<Traits>(markHandle, markQueue);
+}
+
+template <typename Traits>
+void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
     while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
-        // TODO: Consider moving it to the sweep phase to make this loop more tight.
-        //       This, however, requires care with scheduler interoperation.
-        markHandle.addObject(mm::GetAllocatedHeapSize(top));
+        markHandle.addObject();
 
         Traits::processInMark(markQueue, top);
 
@@ -108,59 +111,8 @@ void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
 }
 
 template <typename Traits>
-void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
-    objectFactory.ProcessDeletions();
-    auto sweepHandle = handle.sweepExtraObjects();
-    auto iter = objectFactory.LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
-        auto &extraObject = *it;
-        if (!extraObject.getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE) && !Traits::IsMarkedByExtraObject(extraObject)) {
-            extraObject.ClearWeakReferenceCounter();
-            if (extraObject.HasAssociatedObject()) {
-                extraObject.DetachAssociatedObject();
-                extraObject.setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
-                ++it;
-            } else {
-                extraObject.Uninstall();
-                objectFactory.EraseAndAdvance(it);
-            }
-        } else {
-            ++it;
-        }
-    }
-}
-
-template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename Traits::ObjectFactory::Iterable& objectFactoryIter) noexcept {
-    typename Traits::ObjectFactory::FinalizerQueue finalizerQueue;
-    auto sweepHandle = handle.sweep();
-
-    for (auto it = objectFactoryIter.begin(); it != objectFactoryIter.end();) {
-        if (Traits::TryResetMark(*it)) {
-            ++it;
-            continue;
-        }
-        auto* objHeader = it->GetObjHeader();
-        if (HasFinalizers(objHeader)) {
-            objectFactoryIter.MoveAndAdvance(finalizerQueue, it);
-        } else {
-            objectFactoryIter.EraseAndAdvance(it);
-        }
-    }
-
-    return finalizerQueue;
-}
-
-template <typename Traits>
-typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename Traits::ObjectFactory& objectFactory) noexcept {
-    auto iter = objectFactory.LockForIter();
-    return Sweep<Traits>(handle, iter);
-}
-
-template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
-    thread.gc().OnStoppedForGC();
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
@@ -179,7 +131,6 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
     auto handle = gcHandle.collectGlobalRoots();
-    mm::StableRefRegistry::Instance().ProcessDeletions();
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
@@ -206,6 +157,39 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
         collectRootSetForThread<Traits>(handle, markQueue, thread);
     }
     collectRootSetGlobals<Traits>(handle, markQueue);
+}
+
+template <typename Traits>
+void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+    auto handle = gcHandle.processWeaks();
+    for (auto& object : registry.lockForIter()) {
+        auto* obj = object.load(std::memory_order_relaxed);
+        if (!obj) {
+            // We already processed it at some point.
+            handle.addUndisposed();
+            continue;
+        }
+        if (obj->permanent() || Traits::IsMarked(obj)) {
+            // TODO: Let's not put permanent objects in here at all?
+            // Object is alive. Nothing to do.
+            handle.addAlive();
+            continue;
+        }
+        // Object is not alive. Clear it out.
+        object.store(nullptr, std::memory_order_relaxed);
+        handle.addNulled();
+    }
+}
+
+struct DefaultProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
+};
+
+void stopTheWorld(GCHandle gcHandle, const char* reason) noexcept;
+void resumeTheWorld(GCHandle gcHandle) noexcept;
+
+[[nodiscard]] inline auto stopTheWorldInScope(GCHandle gcHandle) noexcept {
+    return ScopeGuard([=]() { stopTheWorld(gcHandle, "GC stop the world"); }, [=]() { resumeTheWorld(gcHandle); });
 }
 
 } // namespace gc

@@ -7,14 +7,6 @@ package kotlin.text
 
 
 /**
- * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public actual inline fun String.toBoolean(): Boolean = this.toBoolean()
-
-/**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
@@ -131,6 +123,15 @@ public actual inline fun Short.toString(radix: Int): String = this.toInt().toStr
  */
 @SinceKotlin("1.2")
 public actual fun Int.toString(radix: Int): String = asDynamic().toString(checkRadix(radix))
+
+/**
+ * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+public actual fun Long.toString(radix: Int): String =
+    this.toStringImpl(checkRadix(radix))
 
 private fun String.isNaN(): Boolean = when (this.lowercase()) {
     "nan", "+nan", "-nan" -> true

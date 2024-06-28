@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
+import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptorWithoutName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -42,8 +43,13 @@ object JvmPropertyVsFieldAmbiguityCallChecker : CallChecker {
                 val hasLateInit = basePropertyDescriptor.selfOrBaseForFakeOverride { it.isLateInit }
                 val hasCustomGetter = basePropertyDescriptor.selfOrBaseForFakeOverride { it.getter?.isDefault == false }
                 val hasCustomSetter = basePropertyDescriptor.selfOrBaseForFakeOverride { it.setter?.isDefault == false }
+
+                val jvmDescriptorForField = resultingDescriptor.computeJvmDescriptorWithoutName()
+                val jvmDescriptorForProperty = alternativePropertyDescriptor.computeJvmDescriptorWithoutName()
+
                 if (!hasLateInit && !hasCustomGetter && !hasCustomSetter &&
-                    basePropertyDescriptor.modality == Modality.FINAL
+                    basePropertyDescriptor.modality == Modality.FINAL &&
+                    jvmDescriptorForField == jvmDescriptorForProperty
                 ) return@forEach
                 if (fieldClassDescriptor != null && propertyClassDescriptor != null &&
                     DescriptorUtils.isSubclass(fieldClassDescriptor, propertyClassDescriptor)
@@ -58,7 +64,8 @@ object JvmPropertyVsFieldAmbiguityCallChecker : CallChecker {
                     val factory = when {
                         hasCustomGetter -> ErrorsJvm.BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY
                         hasLateInit || hasCustomSetter -> ErrorsJvm.BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT
-                        else -> ErrorsJvm.BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY
+                        basePropertyDescriptor.modality != Modality.FINAL -> ErrorsJvm.BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY
+                        else -> ErrorsJvm.BASE_CLASS_FIELD_WITH_DIFFERENT_SIGNATURE_THAN_DERIVED_CLASS_PROPERTY
                     }
                     context.trace.report(
                         factory.on(

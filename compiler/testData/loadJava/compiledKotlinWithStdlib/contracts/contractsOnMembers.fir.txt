@@ -1,0 +1,18 @@
+public final class Foo : R|kotlin/Any| {
+    public final fun <X, Y, Z, R> callsEffectWithKind(block: R|(X, Y, Z) -> R|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+
+
+    public final fun returnsImplies(x: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x
+        >
+
+
+    public constructor(): R|test/Foo|
+
+}

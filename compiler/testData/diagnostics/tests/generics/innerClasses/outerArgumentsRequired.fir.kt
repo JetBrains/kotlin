@@ -1,3 +1,4 @@
+// WITH_STDLIB
 import A.B.D
 import A.B.C
 import A.B.D.Innermost
@@ -19,5 +20,24 @@ class A<T> {
         val d: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>D?<!> = null
 
         val innerMost: <!OUTER_CLASS_ARGUMENTS_REQUIRED("class 'B'")!>Innermost<String>?<!> = null
+
+        fun foo() {
+            object {
+                val something = listOf<<!OUTER_CLASS_ARGUMENTS_REQUIRED!>B<String><!>>()
+            }
+        }
+    }
+
+    fun foo() {
+        object {
+            val something = listOf<B<String>>() // False positive in K1 KT-63732
+        }
+    }
+}
+
+fun <T> bar() {
+    data class Example(val foo: Int)
+    object {
+        val something = listOf<Example>()
     }
 }

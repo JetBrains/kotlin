@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.CacheStorage
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
@@ -24,7 +25,7 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     val parent = context.context
     val moduleDeserializer = parent.irLinker.moduleDeserializers[module.descriptor]
     if (moduleDeserializer == null) {
-        require(module.descriptor.isFromInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
+        require(module.descriptor.isFromCInteropLibrary()) { "No module deserializer for ${module.descriptor}" }
     } else {
         CacheInfoBuilder(context, moduleDeserializer, module).build()
     }
@@ -44,7 +45,7 @@ internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nativ
 internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, OutputFiles>(
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
-) { _, outputFiles ->
+) { context, outputFiles ->
     //  TODO: Explicit parameter
-    CacheStorage.renameOutput(outputFiles)
+    CacheStorage.renameOutput(outputFiles, overwrite = context.config.producePerFileCache)
 }

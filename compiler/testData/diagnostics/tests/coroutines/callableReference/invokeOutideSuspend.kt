@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +Coroutines
+// LANGUAGE: +Coroutines
 // SKIP_TXT
 
 import kotlin.reflect.KSuspendFunction0

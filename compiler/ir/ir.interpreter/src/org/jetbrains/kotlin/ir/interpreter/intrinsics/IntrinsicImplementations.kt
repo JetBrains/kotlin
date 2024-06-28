@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
@@ -171,7 +172,7 @@ internal object EnumIntrinsics : IntrinsicBase() {
         val enumEntry = callStack.loadState(irFunction.dispatchReceiverParameter!!.symbol)
         when (irFunction.name.asString()) {
             "<get-name>", "<get-ordinal>" -> {
-                val symbol = (irFunction as IrSimpleFunction).correspondingPropertySymbol!!
+                val symbol = irFunction.property!!.symbol
                 callStack.pushState(enumEntry.getField(symbol)!!)
             }
             "compareTo" -> {

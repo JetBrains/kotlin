@@ -32,24 +32,23 @@ internal class KotlinGradleFinishBuildHandler {
         startMemory = getUsedMemoryKb()
     }
 
-    fun buildFinished(projectCacheDir: File) {
+    fun buildFinished(sessionsDir: File) {
         TaskLoggers.clear()
         TaskExecutionResults.clear()
 
         GradleCompilerRunner.clearBuildModulesInfo()
 
-        val sessionsDir = GradleCompilerRunner.sessionsDir(projectCacheDir)
         if (sessionsDir.exists()) {
             val sessionFiles = sessionsDir.listFiles()
 
             // it is expected that only one session file per build exists
             // afaik is is not possible to run multiple gradle builds in one project since gradle locks some dirs
             if (sessionFiles.size > 1) {
-                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrAbsolute(projectCacheDir)}")
+                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrAbsolute(sessionsDir)}")
             }
             for (file in sessionFiles) {
                 file.delete()
-                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeOrAbsolute(projectCacheDir) }
+                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.absolutePath }
             }
         }
 

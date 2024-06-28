@@ -1,0 +1,100 @@
+@0:0..46:0 FILE fqName:<root> fileName:/multiLineCall.kt
+  @2:0..6:1 FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @2:10..6:1 BLOCK_BODY
+      @5:4..10 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @5:4..10 CALL 'public final fun fail (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          @4:4..10 CALL 'public final fun test (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
+            @3:4..10 CALL 'public final fun test (): kotlin.String [inline] declared in <root>' type=kotlin.String origin=null
+  @8:0..10:1 FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.String [inline]
+    @8:26..10:1 BLOCK_BODY
+      @9:4..16 RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String [inline] declared in <root>'
+        @9:11..16 CONST String type=kotlin.String value="123"
+  @12:0..14:1 FUN name:test visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String [inline]
+    @12:11..17 VALUE_PARAMETER name:<this> type:kotlin.String
+    @12:33..14:1 BLOCK_BODY
+      @13:4..16 RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String [inline] declared in <root>'
+        @13:11..16 CONST String type=kotlin.String value="123"
+  @16:0..18:1 FUN name:fail visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
+    @16:4..10 VALUE_PARAMETER name:<this> type:kotlin.String
+    @16:26..18:1 BLOCK_BODY
+      @17:4..32 THROW type=kotlin.Nothing
+        @17:10..32 CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.Any?) declared in java.lang.AssertionError' type=java.lang.AssertionError origin=null
+          @17:25..31 CONST String type=kotlin.String value="fail"
+  @20:0..23:1 FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @20:10..23:1 BLOCK_BODY
+      @22:4..8 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @22:4..8 CALL 'public final fun <get-test> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          @21:4..9 CONST String type=kotlin.String value="123"
+  @25:0..26:16 PROPERTY name:test visibility:public modality:FINAL [val]
+    @26:4..16 FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String
+      @25:4..10 VALUE_PARAMETER name:<this> type:kotlin.String
+      @26:12..16 BLOCK_BODY
+        @26:16..16 RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String declared in <root>'
+          @26:12..16 GET_VAR '<this>: kotlin.String declared in <root>.<get-test>' type=kotlin.String origin=null
+  @28:0..37:1 FUN name:baz visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    @28:10..37:1 BLOCK_BODY
+      @30:4..10 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @30:4..10 GET_ENUM 'ENUM_ENTRY name:SINGLE' type=<root>.E
+      @32:4..33:7 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @32:4..33:7 FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+          @32:4..5 GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
+      @35:4..36:8 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @35:4..36:8 FUNCTION_REFERENCE 'public final fun fail (): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+          @35:4..6 CONST String type=kotlin.String value=""
+  @39:0..41:1 CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]
+    @39:0..41:1 CONSTRUCTOR visibility:private <> () returnType:<root>.E [primary]
+      @39:0..41:1 BLOCK_BODY
+        @39:0..41:1 ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+        @39:0..41:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]'
+    @40:4..10 ENUM_ENTRY name:SINGLE
+      @40:4..10 EXPRESSION_BODY
+        @40:4..10 ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.E'
+    @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.E>
+      @39:0..41:1 SYNTHETIC_BODY kind=ENUM_VALUES
+    @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.E
+      @39:0..41:1 VALUE_PARAMETER name:value index:0 type:kotlin.String
+      @39:0..41:1 SYNTHETIC_BODY kind=ENUM_VALUEOF
+    @39:0..41:1 PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      @39:0..41:1 FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.E>
+        @39:0..41:1 SYNTHETIC_BODY kind=ENUM_ENTRIES
+    @39:0..41:1 FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Any [fake_override]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>, other:<root>.E) returnType:kotlin.Int [fake_override,operator]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+      @39:0..41:1 VALUE_PARAMETER name:other index:0 type:<root>.E
+    @39:0..41:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+      @39:0..41:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @39:0..41:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Int [fake_override]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.String [fake_override]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      annotations:
+        @-1:-1..-1 CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.internal.IntrinsicConstEvaluation' type=kotlin.internal.IntrinsicConstEvaluation origin=null
+      @39:0..41:1 FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.String [fake_override]
+        @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+      @39:0..41:1 FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Int [fake_override]
+        @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.E?>? [fake_override]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.E>) returnType:kotlin.Unit [fake_override]
+      @39:0..41:1 VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.E>
+    @39:0..41:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+  @43:0..45:1 CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]
+    @43:0..45:1 CONSTRUCTOR visibility:private <> () returnType:<root>.O [primary]
+      @43:0..45:1 BLOCK_BODY
+        @43:0..45:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @43:0..45:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    @44:4..16 FUN name:foo visibility:public modality:FINAL <> ($this:<root>.O) returnType:kotlin.Unit
+      @44:4..16 VALUE_PARAMETER name:<this> type:<root>.O
+      @44:14..16 BLOCK_BODY
+    @43:0..45:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @43:0..45:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @43:0..45:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @43:0..45:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @43:0..45:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @43:0..45:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @43:0..45:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @43:0..45:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O

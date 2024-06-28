@@ -1,0 +1,5 @@
+public final class MyCodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method invoke(): java.lang.String
+}

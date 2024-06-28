@@ -1,0 +1,34 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+class Test1<T : U, U : Any?> {
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test2(){0§<0:1>;1§<kotlin.Any?>}
+//   Public signature: /test2|399191830655193395[0]
+//   Public signature debug description: test2(){0§<0:1>;1§<kotlin.Any?>}
+fun <T : U, U : Any?> test2(): Unit
+
+// CHECK:
+//   Mangled name: @Test1<0:0,0:1>{0§<0:1>;1§<kotlin.Any?>}test3
+//   Public signature: /test3|3727797672191258754[0]
+//   Public signature debug description: @Test1<0:0,0:1>{0§<0:1>;1§<kotlin.Any?>}test3
+var <T : U, U : Any?> Test1<T, U>.test3: Unit
+  // CHECK:
+  //   Mangled name: #<get-test3>@Test1<0:0,0:1>(){0§<0:1>;1§<kotlin.Any?>}
+  //   Public signature: /test3.<get-test3>|-1147160124830350693[0]
+  //   Public signature debug description: <get-test3>@Test1<0:0,0:1>(){0§<0:1>;1§<kotlin.Any?>}
+  get(): Unit
+  // CHECK:
+  //   Mangled name: #<set-test3>@Test1<0:0,0:1>(kotlin.Unit){0§<0:1>;1§<kotlin.Any?>}
+  //   Public signature: /test3.<set-test3>|-2752932164829394869[0]
+  //   Public signature debug description: <set-test3>@Test1<0:0,0:1>(kotlin.Unit){0§<0:1>;1§<kotlin.Any?>}
+  set(value: Unit): Unit
+

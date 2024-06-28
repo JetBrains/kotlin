@@ -10,6 +10,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.KotlinJsCompilerOptionsDefault
 
 @Deprecated(
     message = "Should be removed with Js platform plugin",
@@ -30,16 +31,15 @@ internal open class Kotlin2JsPlugin(
         Kotlin2JsSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
 
     override fun apply(project: Project) {
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "TYPEALIAS_EXPANSION_DEPRECATION", "DEPRECATION")
         val target = project.objects.newInstance(
             KotlinWithJavaTarget::class.java,
             project,
             KotlinPlatformType.js,
             targetName,
             {
-                object : HasCompilerOptions<KotlinJsCompilerOptions> {
-                    override val options: KotlinJsCompilerOptions =
-                        project.objects.newInstance(KotlinJsCompilerOptionsDefault::class.java)
+                object : DeprecatedHasCompilerOptions<KotlinJsCompilerOptions> {
+                    override val options: KotlinJsCompilerOptions = project.objects.KotlinJsCompilerOptionsDefault(project)
                 }
             },
             { compilerOptions: KotlinJsCompilerOptions ->
@@ -50,7 +50,7 @@ internal open class Kotlin2JsPlugin(
             }
         ) as KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
-        (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
+        (project.kotlinExtension as Kotlin2JsProjectExtension).targetFuture.complete(target)
         super.apply(project)
     }
 }

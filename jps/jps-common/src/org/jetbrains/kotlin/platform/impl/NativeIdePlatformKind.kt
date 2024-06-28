@@ -9,6 +9,9 @@
 package org.jetbrains.kotlin.platform.impl
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.Freezable
+import org.jetbrains.kotlin.cli.common.arguments.copyCommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -20,14 +23,14 @@ object NativeIdePlatformKind : IdePlatformKind() {
     override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isNative()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
-        return if (arguments is FakeK2NativeCompilerArguments)
+        return if (arguments is K2NativeCompilerArguments)
             NativePlatforms.unspecifiedNativePlatform
         else
             null
     }
 
-    override fun createArguments(): CommonCompilerArguments {
-        return FakeK2NativeCompilerArguments()
+    override fun createArguments(): K2NativeCompilerArguments {
+        return K2NativeCompilerArguments()
     }
 
     override val defaultPlatform: TargetPlatform
@@ -40,7 +43,7 @@ object NativeIdePlatformKind : IdePlatformKind() {
     override fun getDefaultPlatform(): IdePlatform<*, *> = Platform
 
     override val argumentsClass
-        get() = FakeK2NativeCompilerArguments::class.java
+        get() = K2NativeCompilerArguments::class.java
 
     override val name
         get() = "Native"
@@ -49,15 +52,22 @@ object NativeIdePlatformKind : IdePlatformKind() {
         message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
         level = DeprecationLevel.ERROR
     )
-    object Platform : IdePlatform<NativeIdePlatformKind, FakeK2NativeCompilerArguments>() {
+    object Platform : IdePlatform<NativeIdePlatformKind, K2NativeCompilerArguments>() {
         override val kind get() = NativeIdePlatformKind
         override val version get() = TargetPlatformVersion.NoVersion
-        override fun createArguments(init: FakeK2NativeCompilerArguments.() -> Unit) = FakeK2NativeCompilerArguments().apply(init)
+        override fun createArguments(init: K2NativeCompilerArguments.() -> Unit) = K2NativeCompilerArguments().apply(init)
     }
 }
 
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
-class FakeK2NativeCompilerArguments : CommonCompilerArguments()
+@Deprecated(
+    message = "Use K2NativeCompilerArguments instead",
+    level = DeprecationLevel.WARNING
+)
+class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
+    @Suppress("DEPRECATION")
+    override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
+}
 
 val IdePlatformKind?.isKotlinNative
     get() = this is NativeIdePlatformKind

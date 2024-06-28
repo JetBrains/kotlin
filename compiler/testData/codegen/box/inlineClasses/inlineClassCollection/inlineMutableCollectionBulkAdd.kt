@@ -2,6 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 // IGNORE_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-62817, KT-63828
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC1<T>(val list: MutableList<T>) : MutableList<T> by list

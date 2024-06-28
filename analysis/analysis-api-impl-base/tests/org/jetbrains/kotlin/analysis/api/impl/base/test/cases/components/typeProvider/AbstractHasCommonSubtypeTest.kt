@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePr
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -21,8 +22,9 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
-abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiSingleFileTest() {
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val ktFile = mainFile ?: mainModule.ktFiles.first()
         val errors = mutableListOf<String>()
         val originalText = ktFile.text
         val actualTextBuilder = StringBuilder()
@@ -50,20 +52,20 @@ abstract class AbstractHasCommonSubtypeTest : AbstractAnalysisApiSingleFileTest(
                     }
 
                     val a = valueArguments[0]
-                    val aType = a.getArgumentExpression()?.getKtType()
+                    val aType = a.getArgumentExpression()?.expressionType
                     if (aType == null) {
                         errors.add("'${a.text}' has no type at ${a.positionString}")
                         super.visitCallExpression(expression)
                         return
                     }
                     val b = valueArguments[1]
-                    val bType = b.getArgumentExpression()?.getKtType()
+                    val bType = b.getArgumentExpression()?.expressionType
                     if (bType == null) {
                         errors.add("'${b.text}' has no type at ${b.positionString}")
                         super.visitCallExpression(expression)
                         return
                     }
-                    if (haveCommonSubtype != aType.hasCommonSubTypeWith(bType)) {
+                    if (haveCommonSubtype != aType.hasCommonSubtypeWith(bType)) {
                         if (haveCommonSubtype) {
                             actualTextBuilder.append("typesHaveNoCommonSubtype")
                         } else {

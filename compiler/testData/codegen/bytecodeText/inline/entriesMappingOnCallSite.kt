@@ -3,6 +3,7 @@
 // WITH_RUNTIME
 
 // MODULE: lib
+// LANGUAGE: -EnumEntries
 // FILE: 1.kt
 
 enum class X {
@@ -11,7 +12,7 @@ enum class X {
 }
 
 // MODULE: caller(lib)
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 
 // FILE: F.kt
 

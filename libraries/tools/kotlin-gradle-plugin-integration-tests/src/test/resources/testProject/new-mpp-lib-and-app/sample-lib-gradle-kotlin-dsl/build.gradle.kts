@@ -1,67 +1,84 @@
 plugins {
-	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
-	id("maven-publish")
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+    //id("org.jetbrains.kotlin.plugin.allopen")
+    //id("org.jetbrains.kotlin.plugin.noarg")
+    //id("io.github.goooler.shadow")
+    //id("application")
+    //id("org.jetbrains.kotlin.kapt")
 }
 
 group = "com.example"
 version = "1.0"
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+val shouldBeJs = true
 
 kotlin {
-    val shouldBeJs = true
-    val jvm = jvm("jvm6")
-    val js = if (shouldBeJs) {
+    // Check the new preset functions:
+    jvm("jvm6") { }
+
+    if (shouldBeJs) {
         js("nodeJs") {
             nodejs()
         }
-    } else null
-    linuxX64("linux64")
-    if (shouldBeJs)
-        wasm()
+        wasmJs()
+    }
 
-    targets.all {
-        mavenPublication(Action<MavenPublication> {
-            pom.withXml(Action<XmlProvider> {
-                asNode().appendNode("name", "Sample MPP library")
-            })
-        })
+    linuxX64("linux64")
+    mingwX64("mingw64")
+    macosX64("macos64")
+    macosArm64("macosArm64")
+
+    targets {
+        all {
+            mavenPublication {
+                pom.withXml {
+                    asNode().appendNode("name", "Sample MPP library")
+                }
+            }
+        }
     }
 
     sourceSets {
-        val commonMain by getting {
+        commonTest {
             dependencies {
-                api(kotlin("stdlib-common"))
+                implementation(kotlin("test"))
             }
         }
-        jvm.compilations["main"].defaultSourceSet {
+        val jvm6Main by getting {
             dependencies {
-                api(kotlin("stdlib"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4")
             }
         }
-        js?.compilations?.get("main")?.defaultSourceSet {
-        	dependencies {
-                api(kotlin("stdlib-js"))
-        	}
+        val jvm6Test by getting {
+            dependencies {
+                implementation(kotlin("test-junit"))
+            }
         }
+
+        val nativeMain by creating { dependsOn(commonMain.get()) }
+        val linux64Main by getting { dependsOn(nativeMain) }
+        val macos64Main by getting { dependsOn(nativeMain) }
+        val macosArm64Main by getting { dependsOn(nativeMain) }
     }
 }
 
-publishing {
-	repositories {
-		maven { setUrl("file://${projectDir.absolutePath.replace('\\', '/')}/repo") }
-	}
-}
+kotlin.sourceSets.forEach { println(it.kotlin.srcDirs) }
 
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
         jvm("jvm6").compilations.create("benchmark") {
-            tasks["assemble"].dependsOn(compileKotlinTask)
+            tasks.named("assemble") { dependsOn(compileKotlinTask) }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }

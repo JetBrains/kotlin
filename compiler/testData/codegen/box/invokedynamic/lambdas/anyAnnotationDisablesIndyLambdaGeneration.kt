@@ -14,9 +14,9 @@ import kotlin.jvm.internal.Lambda
 public annotation class SomeAnnotation
 
 fun box(): String {
-    assert((@SomeAnnotation {}) is Lambda<*>)
-    assert((@SomeAnnotation fun () {}) is Lambda<*>)
-    assert((@SomeAnnotation fun Any.() {}) is Lambda<*>)
+    val a = @SomeAnnotation {}
+    val b = @SomeAnnotation fun () {}
+    val c = @SomeAnnotation fun Any.() {}
 
     return "OK"
 }

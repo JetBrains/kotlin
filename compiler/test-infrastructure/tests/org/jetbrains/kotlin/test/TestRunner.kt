@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,8 +30,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         } finally {
             try {
                 testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
-            } catch (_: IOException) {
-                // ignored
+            } catch (e: IOException) {
+                println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
             }
             beforeDispose(testConfiguration)
             Disposer.dispose(testConfiguration.rootDisposable)
@@ -82,7 +82,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-            preprocessor.prepareSealedClassInheritors(moduleStructure)
+            withAssertionCatching(WrappedException::FromPreAnalysisHandler) {
+                preprocessor.prepareSealedClassInheritors(moduleStructure)
+            }
         }
 
         for (module in modules) {

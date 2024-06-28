@@ -1,0 +1,84 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+import androidx.compose.runtime.NonRestartableComposable
+
+@Composable
+@NonRestartableComposable
+fun test1(x: KnownStable) {
+    remember(x) { 1 }
+}
+@Composable
+@NonRestartableComposable
+fun test2(x: KnownUnstable) {
+    remember(x) { 1 }
+}
+@Composable
+@NonRestartableComposable
+fun test3(x: Uncertain) {
+    remember(x) { 1 }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(test1)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 == 0b0100) {
+    1
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp0_group
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@NonRestartableComposable
+fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(test2)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp0_group = %composer.cache(%composer.changed(x)) {
+    1
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp0_group
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}
+@Composable
+@NonRestartableComposable
+fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(test3)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 == 0b0100) {
+    1
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp0_group
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
@@ -19,15 +18,19 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.parents
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -81,9 +84,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
     private val crossinlineLambdas: Set<IrSimpleFunction>
 ) {
-
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     /**
      * @see java.lang.invoke.LambdaMetafactory
@@ -153,7 +155,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
         // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
         if (implFun is IrSimpleFunction) {
-            val baseFun = findSuperDeclaration(implFun, false, context.state.jvmDefaultMode)
+            val baseFun = findSuperDeclaration(implFun, false, context.config.jvmDefaultMode)
             val baseFunClass = baseFun.parent as? IrClass
             if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
                 functionHazard = true
@@ -234,13 +236,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 continue
             val irImplFun =
                 if (irMemberFun.isFakeOverride)
-                    irMemberFun.findInterfaceImplementation(context.state.jvmDefaultMode)
+                    irMemberFun.findInterfaceImplementation(context.config.jvmDefaultMode)
                         ?: continue
                 else
                     irMemberFun
             if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
                 continue
-            if (!irImplFun.isCompiledToJvmDefault(context.state.jvmDefaultMode))
+            if (!irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
                 return true
         }
         return false
@@ -412,7 +414,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         for ((implParameter, methodParameter) in implParameters.zip(methodParameters)) {
             val parameterConstraint = constraints.valueParameters[methodParameter]
             if (parameterConstraint.requiresImplLambdaBoxing()) {
-                implParameter.type = implParameter.type.makeNullable()
+                makeLambdaParameterNullable(implFun, implParameter)
             }
         }
         if (constraints.returnType.requiresImplLambdaBoxing() ||
@@ -420,6 +422,22 @@ internal class LambdaMetafactoryArgumentsBuilder(
         ) {
             implFun.returnType = implFun.returnType.makeNullable()
         }
+    }
+
+    private fun makeLambdaParameterNullable(function: IrFunction, parameter: IrValueParameter) {
+        parameter.type = parameter.type.makeNullable()
+        function.body?.accept(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildren(this, null)
+            }
+
+            override fun visitGetValue(expression: IrGetValue) {
+                if (expression.symbol == parameter.symbol) {
+                    expression.type = expression.type.makeNullable()
+                }
+                super.visitGetValue(expression)
+            }
+        }, null)
     }
 
     private fun validateMethodParameters(

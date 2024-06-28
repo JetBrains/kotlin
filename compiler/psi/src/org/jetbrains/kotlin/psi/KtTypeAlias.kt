@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
+import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -35,7 +36,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
         visitor.visitTypeAlias(this, data)
 
     fun isTopLevel(): Boolean =
-        stub?.isTopLevel() ?: (parent is KtFile)
+        stub?.isTopLevel() ?: isKtFile(parent)
 
     @IfNotParsed
     fun getTypeAliasKeyword(): PsiElement? =

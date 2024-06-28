@@ -5,55 +5,39 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.internal.service.ServiceRegistry
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmEnvironment
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
+import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import java.io.File
 
-class Yarn : NpmApi {
+class Yarn : NpmApiExecution<YarnEnvironment> {
     private val yarnWorkspaces = YarnWorkspaces()
 
-    private fun getDelegate(project: Project): NpmApi =
-        yarnWorkspaces
-
-    override fun setup(project: Project) =
-        getDelegate(project.rootProject).setup(project)
-
-    override fun preparedFiles(nodeJs: NpmEnvironment): Collection<File> =
+    override fun preparedFiles(nodeJs: NodeJsEnvironment): Collection<File> =
         yarnWorkspaces.preparedFiles(nodeJs)
 
     override fun prepareRootProject(
-        rootProject: Project?,
-        nodeJs: NpmEnvironment,
+        nodeJs: NodeJsEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         rootProjectName: String,
         rootProjectVersion: String,
-        logger: Logger,
-        subProjects: Collection<KotlinCompilationNpmResolution>,
-        resolutions: Map<String, String>,
-        forceFullResolve: Boolean
+        subProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     ) = yarnWorkspaces
         .prepareRootProject(
-            rootProject,
             nodeJs,
+            packageManagerEnvironment,
             rootProjectName,
             rootProjectVersion,
-            logger,
             subProjects,
-            resolutions,
-            forceFullResolve
         )
 
     override fun resolveRootProject(
         services: ServiceRegistry,
         logger: Logger,
-        nodeJs: NpmEnvironment,
-        yarn: YarnEnv,
-        npmProjects: Collection<KotlinCompilationNpmResolution>,
+        nodeJs: NodeJsEnvironment,
+        packageManagerEnvironment: YarnEnvironment,
         cliArgs: List<String>
     ) {
         yarnWorkspaces
@@ -61,20 +45,8 @@ class Yarn : NpmApi {
                 services,
                 logger,
                 nodeJs,
-                yarn,
-                npmProjects,
+                packageManagerEnvironment,
                 cliArgs
             )
     }
-
-    override fun resolveDependency(
-        npmResolution: KotlinCompilationNpmResolution,
-        dependency: NpmDependency,
-        transitive: Boolean
-    ) = getDelegate(npmResolution.project)
-        .resolveDependency(
-            npmResolution,
-            dependency,
-            transitive
-        )
 }

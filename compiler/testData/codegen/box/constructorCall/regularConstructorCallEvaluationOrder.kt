@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+
+
 // FILE: test.kt
 fun box(): String {
     Foo(logged("i", 1), logged("j", 2))

@@ -10,16 +10,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkUnderscoreDiagnostics
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.isUnderscore
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreUsageWithoutBackticks
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
-object FirUnderscoreChecker : FirBasicExpressionChecker() {
+object FirUnderscoreChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         when (expression) {
             is FirResolvable -> {
-                checkUnderscoreDiagnostics(expression.calleeReference.source, context, reporter, true)
+                if (diagnosticsCheckNeeded(expression)) {
+                    checkUnderscoreDiagnostics(expression.calleeReference.source, context, reporter, true)
+                }
             }
             is FirResolvedQualifier -> {
                 for (reservedUnderscoreDiagnostic in expression.nonFatalDiagnostics) {
@@ -28,6 +33,16 @@ object FirUnderscoreChecker : FirBasicExpressionChecker() {
                     }
                 }
             }
+        }
+    }
+
+    private fun diagnosticsCheckNeeded(expression: FirResolvable): Boolean {
+        if (expression.calleeReference is FirErrorNamedReference)
+            return false
+        return when (expression) {
+            is FirImplicitInvokeCall -> expression.calleeReference.name.asString().isUnderscore
+            is FirCall -> expression.calleeReference.toResolvedSymbol<FirFunctionSymbol<*>>()?.callableId?.callableName?.asString()?.isUnderscore == true
+            else -> true
         }
     }
 }

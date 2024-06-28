@@ -1,10 +1,10 @@
-@0:0..4:1 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
+@0:0..5:0 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
   @0:0..4:1 CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
-    @0:5..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C [primary]
+    @0:12..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C [primary]
       @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String
       @3:8..18 VALUE_PARAMETER name:z index:2 type:kotlin.Any
-      @0:0..4:1 BLOCK_BODY
+      @0:12..4:1 BLOCK_BODY
         @0:0..4:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:0..4:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     @1:8..18 PROPERTY name:x visibility:public modality:FINAL [val]

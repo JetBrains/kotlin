@@ -1,0 +1,467 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-delegatesScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/valueWithExplicitType|)
+            R|/receive|(R|/valueWithImplicitType|)
+            R|/variableWithExplicitType| = Int(10)
+            R|/variableWithImplicitType| = Int(10)
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: R|kotlin/Any?|, [ResolvedTo(RAW_FIR)] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+                ^getValue Int(1)
+            }
+
+            public open override operator [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: R|kotlin/Any?|, [ResolvedTo(RAW_FIR)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        }
+
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
+
+        public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-delegatesScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/valueWithExplicitType|)
+            R|/receive|(R|/valueWithImplicitType|)
+            R|/variableWithExplicitType| = Int(10)
+            R|/variableWithImplicitType| = Int(10)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override operator [ResolvedTo(BODY_RESOLVE)] fun getValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+                ^getValue Int(1)
+            }
+
+            public open override operator [ResolvedTo(BODY_RESOLVE)] fun setValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        }
+
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val valueWithExplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/valueWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] var variableWithExplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ D|/variableWithExplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public final [ResolvedTo(BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+

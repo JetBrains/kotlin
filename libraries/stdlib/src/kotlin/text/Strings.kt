@@ -8,6 +8,7 @@
 
 package kotlin.text
 
+import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmName
 
@@ -73,7 +74,7 @@ public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
 
 /**
- * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] removed.
+ * Returns a subsequence of this char sequence having leading and trailing characters matching the [predicate] removed.
  */
 public inline fun CharSequence.trim(predicate: (Char) -> Boolean): CharSequence {
     var startIndex = 0
@@ -107,7 +108,7 @@ public inline fun String.trim(predicate: (Char) -> Boolean): String =
     (this as CharSequence).trim(predicate).toString()
 
 /**
- * Returns a sub sequence of this char sequence having leading characters matching the [predicate] removed.
+ * Returns a subsequence of this char sequence having leading characters matching the [predicate] removed.
  */
 public inline fun CharSequence.trimStart(predicate: (Char) -> Boolean): CharSequence {
     for (index in this.indices)
@@ -124,7 +125,7 @@ public inline fun String.trimStart(predicate: (Char) -> Boolean): String =
     (this as CharSequence).trimStart(predicate).toString()
 
 /**
- * Returns a sub sequence of this char sequence having trailing characters matching the [predicate] removed.
+ * Returns a subsequence of this char sequence having trailing characters matching the [predicate] removed.
  */
 public inline fun CharSequence.trimEnd(predicate: (Char) -> Boolean): CharSequence {
     for (index in this.indices.reversed())
@@ -141,7 +142,7 @@ public inline fun String.trimEnd(predicate: (Char) -> Boolean): String =
     (this as CharSequence).trimEnd(predicate).toString()
 
 /**
- * Returns a sub sequence of this char sequence having leading and trailing characters from the [chars] array removed.
+ * Returns a subsequence of this char sequence having leading and trailing characters from the [chars] array removed.
  */
 public fun CharSequence.trim(vararg chars: Char): CharSequence = trim { it in chars }
 
@@ -151,7 +152,7 @@ public fun CharSequence.trim(vararg chars: Char): CharSequence = trim { it in ch
 public fun String.trim(vararg chars: Char): String = trim { it in chars }
 
 /**
- * Returns a sub sequence of this char sequence having leading characters from the [chars] array removed.
+ * Returns a subsequence of this char sequence having leading characters from the [chars] array removed.
  */
 public fun CharSequence.trimStart(vararg chars: Char): CharSequence = trimStart { it in chars }
 
@@ -161,7 +162,7 @@ public fun CharSequence.trimStart(vararg chars: Char): CharSequence = trimStart 
 public fun String.trimStart(vararg chars: Char): String = trimStart { it in chars }
 
 /**
- * Returns a sub sequence of this char sequence having trailing characters from the [chars] array removed.
+ * Returns a subsequence of this char sequence having trailing characters from the [chars] array removed.
  */
 public fun CharSequence.trimEnd(vararg chars: Char): CharSequence = trimEnd { it in chars }
 
@@ -171,7 +172,7 @@ public fun CharSequence.trimEnd(vararg chars: Char): CharSequence = trimEnd { it
 public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
 /**
- * Returns a sub sequence of this char sequence having leading and trailing whitespace removed.
+ * Returns a subsequence of this char sequence having leading and trailing whitespace removed.
  */
 public fun CharSequence.trim(): CharSequence = trim(Char::isWhitespace)
 
@@ -182,7 +183,7 @@ public fun CharSequence.trim(): CharSequence = trim(Char::isWhitespace)
 public inline fun String.trim(): String = (this as CharSequence).trim().toString()
 
 /**
- * Returns a sub sequence of this char sequence having leading whitespace removed.
+ * Returns a subsequence of this char sequence having leading whitespace removed.
  */
 public fun CharSequence.trimStart(): CharSequence = trimStart(Char::isWhitespace)
 
@@ -193,7 +194,7 @@ public fun CharSequence.trimStart(): CharSequence = trimStart(Char::isWhitespace
 public inline fun String.trimStart(): String = (this as CharSequence).trimStart().toString()
 
 /**
- * Returns a sub sequence of this char sequence having trailing whitespace removed.
+ * Returns a subsequence of this char sequence having trailing whitespace removed.
  */
 public fun CharSequence.trimEnd(): CharSequence = trimEnd(Char::isWhitespace)
 
@@ -303,12 +304,15 @@ public inline fun CharSequence.isEmpty(): Boolean = length == 0
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
 
-// implemented differently in JVM and JS
-//public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() }
-
+/**
+ * Returns `true` if this char sequence is empty or consists solely of whitespace characters according to [Char.isWhitespace].
+ *
+ * @sample samples.text.Strings.stringIsBlank
+ */
+public fun CharSequence.isBlank(): Boolean = all { it.isWhitespace() }
 
 /**
- * Returns `true` if this char sequence is not empty and contains some characters except of whitespace characters.
+ * Returns `true` if this char sequence is not empty and contains some characters except whitespace characters.
  *
  * @sample samples.text.Strings.stringIsNotBlank
  */
@@ -352,8 +356,12 @@ public inline fun String?.orEmpty(): String = this ?: ""
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 /**
  * Returns this char sequence if it is not empty and doesn't consist solely of whitespace characters,
@@ -363,8 +371,12 @@ public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSeque
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSequence, C : R =
-    if (isBlank()) defaultValue() else this
+public inline fun <C, R> C.ifBlank(defaultValue: () -> R): R where C : CharSequence, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isBlank()) defaultValue() else this
+}
 
 /**
  * Returns the range of valid character indices for this char sequence.
@@ -632,7 +644,7 @@ public fun String.removeSuffix(suffix: CharSequence): String {
 /**
  * When this char sequence starts with the given [prefix] and ends with the given [suffix],
  * returns a new char sequence having both the given [prefix] and [suffix] removed.
- * Otherwise returns a new char sequence with the same characters.
+ * Otherwise, returns a new char sequence with the same characters.
  */
 public fun CharSequence.removeSurrounding(prefix: CharSequence, suffix: CharSequence): CharSequence {
     if ((length >= prefix.length + suffix.length) && startsWith(prefix) && endsWith(suffix)) {
@@ -644,7 +656,7 @@ public fun CharSequence.removeSurrounding(prefix: CharSequence, suffix: CharSequ
 /**
  * Removes from a string both the given [prefix] and [suffix] if and only if
  * it starts with the [prefix] and ends with the [suffix].
- * Otherwise returns this string unchanged.
+ * Otherwise, returns this string unchanged.
  */
 public fun String.removeSurrounding(prefix: CharSequence, suffix: CharSequence): String {
     if ((length >= prefix.length + suffix.length) && startsWith(prefix) && endsWith(suffix)) {
@@ -656,14 +668,14 @@ public fun String.removeSurrounding(prefix: CharSequence, suffix: CharSequence):
 /**
  * When this char sequence starts with and ends with the given [delimiter],
  * returns a new char sequence having this [delimiter] removed both from the start and end.
- * Otherwise returns a new char sequence with the same characters.
+ * Otherwise, returns a new char sequence with the same characters.
  */
 public fun CharSequence.removeSurrounding(delimiter: CharSequence): CharSequence = removeSurrounding(delimiter, delimiter)
 
 /**
  * Removes the given [delimiter] string from both the start and the end of this string
  * if and only if it starts with and ends with the [delimiter].
- * Otherwise returns this string unchanged.
+ * Otherwise, returns this string unchanged.
  */
 public fun String.removeSurrounding(delimiter: CharSequence): String = removeSurrounding(delimiter, delimiter)
 

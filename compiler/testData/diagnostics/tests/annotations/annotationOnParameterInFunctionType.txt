@@ -27,6 +27,13 @@ public final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final annotation class Ann2 : kotlin.Annotation {
+    public constructor Ann2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class TypeAnn : kotlin.Annotation {
     public constructor TypeAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -1,0 +1,40 @@
+open class A<A_T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class B<B_T : Any?> : A<B_T> {
+  constructor() /* primary */ {
+    super/*A*/<B_T>()
+    /* <init>() */
+
+  }
+
+  override fun hashCode(): Int {
+    return 0
+  }
+
+}
+
+open class C<C_T : Any?> : B<C_T> {
+  constructor() /* primary */ {
+    super/*B*/<C_T>()
+    /* <init>() */
+
+  }
+
+}
+
+open class D<D_T : Any?> : C<D_T> {
+  constructor() /* primary */ {
+    super/*C*/<D_T>()
+    /* <init>() */
+
+  }
+
+}
+

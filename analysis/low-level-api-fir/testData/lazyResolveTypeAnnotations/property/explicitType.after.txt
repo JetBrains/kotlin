@@ -1,0 +1,79 @@
+@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
+  context -> FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>
+  context -> FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int
+  context -> FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(receiver type ), R|myPack/prop|))  kotlin/collections/List<ERROR CLASS: Incomplete code>
+  context -> FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(bound ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested bound ), R|myPack/prop|))  kotlin/String>
+  context -> FirTypeParameterSymbol T from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+@R|myPack/Anno|(position = <strcat>(String(nested bound ), R|myPack/prop|))  kotlin/String
+  context -> FirTypeParameterSymbol T from FirPropertySymbol myPack/variableToResolve
+  anchor -> [FirPropertySymbol myPack/variableToResolve]
+
+FILE: [ResolvedTo(IMPORTS)] explicitType.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=myPack/Anno.position] position: R|kotlin/String|): R|myPack/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    @R|myPack/Anno|[Types](position = <strcat>(String(property ), R|myPack/prop|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|myPack/Anno|[Types](position = <strcat>(String(type parameter ), R|myPack/prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|@R|myPack/Anno|(position = <strcat>(String(bound ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested bound ), R|myPack/prop|))  kotlin/String>|> @RECEIVER:R|myPack/Anno|[Types](position = <strcat>(String(receiver ), R|myPack/prop|)) R|@R|myPack/Anno|(position = <strcat>(String(receiver type ), R|myPack/prop|))  kotlin/collections/List<ERROR CLASS: Incomplete code>|.variableToResolve: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|
+        @R|myPack/Anno|[Types](position = <strcat>(String(getter ), R|myPack/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>| {
+            ^ String(str)
+        }
+        @R|myPack/Anno|[Types](position = <strcat>(String(setter ), R|myPack/prop|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](position = <strcat>(String(setter parameter ), R|myPack/prop|)) value: R|@R|myPack/Anno|(position = <strcat>(String(return type ), R|myPack/prop|))  kotlin/collections/Collection<@R|myPack/Anno|(position = <strcat>(String(nested return type ), R|myPack/prop|))  kotlin/collections/List<@R|myPack/Anno|(position = <strcat>(String(nested nested return type ), R|myPack/prop|))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ Unit#
+        }

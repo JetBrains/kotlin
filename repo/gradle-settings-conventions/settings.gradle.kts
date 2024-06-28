@@ -17,13 +17,23 @@ buildscript {
 }
 
 plugins {
+    // Version here should be also synced with the version in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+}
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../../gradle/libs.versions.toml"))
+        }
+    }
 }
 
 include(":build-cache")
 include(":gradle-enterprise")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
+include(":internal-gradle-setup")
 
 // Unfortunately it is not possible to apply build-cache.settings.gradle.kts as script compilation
 // could not then find types from "kotlin-build-gradle-plugin"
@@ -38,8 +48,8 @@ buildCache {
         }
     }
 
-    val remoteBuildCacheUrl = buildProperties.buildCacheUrl
-    if (remoteBuildCacheUrl != null) {
+    val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
+    if (!remoteBuildCacheUrl.isNullOrEmpty()) {
         remote<HttpBuildCache> {
             url = uri(remoteBuildCacheUrl)
             isPush = buildProperties.pushToBuildCache

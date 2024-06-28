@@ -1,0 +1,26 @@
+FILE: noInferenceFromWrappedDelegate.kt
+    public final class State<S> : R|kotlin/Any| {
+        public constructor<S>(value: R|S|): R|State<S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var value: R|S| = R|<local>/value|
+            public get(): R|S|
+            public set(value: R|S|): R|kotlin/Unit|
+
+    }
+    public final inline operator fun <V> R|State<V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {
+        ^getValue this@R|/getValue|.R|SubstitutionOverride</State.value: R|V|>|
+    }
+    public final inline fun <M> remember(block: R|() -> M|): R|M| {
+        ^remember R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|M|>|()
+    }
+    public final val list: R|kotlin/collections/List<kotlin/Int>|by R|/remember|<R|State<kotlin/collections/List<kotlin/Int>>|>(<L> = remember@fun <anonymous>(): R|State<kotlin/collections/List<kotlin/Int>>| <inline=Inline, kind=UNKNOWN>  {
+        ^ R|/State.State|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(0)))
+    }
+    )
+        public get(): R|kotlin/collections/List<kotlin/Int>| {
+            ^ D|/list|.R|/getValue|<R|kotlin/collections/List<kotlin/Int>|>(Null(null), ::R|/list|)
+        }
+    public final val first: R|kotlin/Int| = R|/list|.R|kotlin/collections/first|<R|kotlin/Int|>()
+        public get(): R|kotlin/Int|

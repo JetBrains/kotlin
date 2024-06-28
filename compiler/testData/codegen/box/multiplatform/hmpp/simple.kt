@@ -3,10 +3,9 @@
  * Js backend is ignored because they use old test infrastructure which doesn't support HMPP
  */
 
-// !LANGUAGE: +MultiPlatformProjects
-
+// WITH_STDLIB
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
-
 // MODULE: common
 // TARGET_PLATFORM: Common
 

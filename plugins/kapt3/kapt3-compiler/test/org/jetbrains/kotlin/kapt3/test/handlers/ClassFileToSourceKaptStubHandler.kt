@@ -10,7 +10,7 @@ import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLogBase
-import org.jetbrains.kotlin.kapt3.prettyPrint
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.NON_EXISTENT_CLASS
@@ -40,7 +40,7 @@ class ClassFileToSourceKaptStubHandler(testServices: TestServices) : BaseKaptHan
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
-            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
+            .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context, ::renderMetadata) }
 
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()

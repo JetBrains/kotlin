@@ -11,9 +11,8 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -61,32 +60,24 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
         klass: KClass<out ComponentRegistrar>,
         expectedExitCode: ExitCode = ExitCode.OK,
         extras: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
     ) {
         val mainKt = tmpdir.resolve(src.name).apply {
             writeText(src.content)
         }
         val plugin = writePlugin(klass)
         val args = listOf("-Xplugin=$plugin", mainKt.absolutePath)
-        val outputPath = if (compiler is K2JSCompiler)
-            listOf("-Xuse-deprecated-legacy-compiler", "-output", tmpdir.resolve("out.js").absolutePath)
-        else
-            listOf("-d", tmpdir.resolve("out").absolutePath)
+        val outputPath = listOf(
+            "-language-version", "1.9",
+            "-d", tmpdir.resolve("out").absolutePath
+        )
 
-        if (compiler is K2JSCompiler) {
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
-        }
-
-        val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras)
+        val (output, exitCode) = CompilerTestUtil.executeCompiler(compiler, args + outputPath + extras, messageRenderer)
         assertEquals(expectedExitCode, exitCode, output)
     }
 
     fun testShouldNotGenerateCodeJVM() {
         runTest(K2JVMCompiler(), classNotFound, CustomComponentRegistrar::class)
-    }
-
-    fun testShouldNotGenerateCodeJS() {
-        runTest(K2JSCompiler(), classNotFound, CustomComponentRegistrar::class)
     }
 
     fun testShouldNotGenerateCodeMetadata() {
@@ -95,10 +86,6 @@ class AnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
 
     fun testRepeatedAnalysisJVM() {
         runTest(K2JVMCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
-    }
-
-    fun testRepeatedAnalysisJS() {
-        runTest(K2JSCompiler(), repeatedAnalysis, CustomComponentRegistrar::class)
     }
 
     fun testRepeatedAnalysisMetadata() {

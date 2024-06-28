@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInit.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Unit| = R|/myRun|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/X| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(10)
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
+
+    }
+    public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] R> myRun([ResolvedTo(BODY_RESOLVE)] block: R|() -> R|): R|R| {
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }

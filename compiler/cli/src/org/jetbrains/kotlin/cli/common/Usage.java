@@ -17,17 +17,19 @@
 package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KClass;
 import kotlin.reflect.KProperty1;
+import kotlin.reflect.jvm.ReflectJvmMapping;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt;
+
+import java.lang.reflect.Field;
 
 public class Usage {
     public static final String BAT_DELIMITER_CHARACTERS_NOTE =
@@ -71,9 +73,11 @@ public class Usage {
     }
 
     private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1<?, ?> property, boolean extraHelp) {
-        Argument argument = ContainerUtil.findInstance(property.getAnnotations(), Argument.class);
+        Field field = ReflectJvmMapping.getJavaField(property);
+        Argument argument = field.getAnnotation(Argument.class);
         if (argument == null) return;
 
+        if (ParseCommandLineArgumentsKt.isInternal(argument)) return;
         if (extraHelp != ParseCommandLineArgumentsKt.isAdvanced(argument)) return;
 
         int startLength = sb.length();
@@ -110,7 +114,7 @@ public class Usage {
         while (sb.length() < descriptionStart) {
             sb.append(" ");
         }
-        appendln(sb, "Pass an option directly to JVM");
+        appendln(sb, "Pass an option directly to JVM.");
     }
 
     private static void renderArgfileUsage(@NotNull StringBuilder sb) {
@@ -121,7 +125,7 @@ public class Usage {
         while (sb.length() < descriptionStart) {
             sb.append(" ");
         }
-        appendln(sb, "Read compiler arguments and file paths from the given file");
+        appendln(sb, "Read compiler arguments and file paths from the given file.");
     }
 
     private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {

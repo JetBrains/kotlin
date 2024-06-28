@@ -5,80 +5,81 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+abstract class AbstractIrTypeSubstitutor : TypeSubstitutorMarker {
+    abstract fun substitute(type: IrType): IrType
 
-abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : TypeSubstitutorMarker {
-
-    private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
-        return if (this is IrSimpleType) classifier as? IrTypeParameterSymbol
-        else null
-    }
-
-    abstract fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument
-
-    abstract fun isEmptySubstitution(): Boolean
-
-    fun substitute(type: IrType): IrType {
-        if (isEmptySubstitution()) return type
-
-        return type.typeParameterConstructor()?.let {
-            when (val typeArgument = getSubstitutionArgument(it)) {
-                is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
-                is IrTypeProjection -> typeArgument.type.run { if (type.isMarkedNullable()) makeNullable() else this }
-            }
-        } ?: substituteType(type)
-    }
-
-    private fun substituteType(irType: IrType): IrType {
-        return when (irType) {
-            is IrSimpleType ->
-                with(irType.toBuilder()) {
-                    arguments = irType.arguments.map { substituteTypeArgument(it) }
-                    buildSimpleType()
-                }
-            is IrDynamicType,
-            is IrErrorType ->
-                irType
-            else ->
-                throw AssertionError("Unexpected type: $irType")
-        }
-    }
-
-    private fun substituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument {
-        when (typeArgument) {
-            is IrStarProjection -> return typeArgument
-            is IrTypeProjection -> {
-                val type = typeArgument.type
-                if (type is IrSimpleType) {
-                    val classifier = type.classifier
-                    if (classifier is IrTypeParameterSymbol) {
-                        val newArgument = getSubstitutionArgument(classifier)
-                        return if (newArgument is IrTypeProjection) {
-                            makeTypeProjection(newArgument.type, typeArgument.variance)
-                        } else newArgument
-                    }
-                }
-                return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
-            }
+    object Empty : AbstractIrTypeSubstitutor() {
+        override fun substitute(type: IrType): IrType {
+            return type
         }
     }
 }
 
+abstract class BaseIrTypeSubstitutor : AbstractIrTypeSubstitutor() {
+    abstract fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument
+
+    abstract fun isEmptySubstitution(): Boolean
+
+    final override fun substitute(type: IrType): IrType {
+        if (isEmptySubstitution()) return type
+        return when (val result = substituteType(type)) {
+            is IrStarProjection -> error("Cannot replace top-level type with star projection: ${type.render()}")
+            is IrTypeProjection -> result.type
+        }
+    }
+
+    private fun substituteType(irType: IrType): IrTypeArgument {
+        val classifier = (irType as? IrSimpleType)?.classifier
+        if (classifier is IrTypeParameterSymbol) {
+            return when (val typeArgument = getSubstitutionArgument(classifier)) {
+                is IrStarProjection -> typeArgument
+                is IrTypeProjection -> makeTypeProjection(
+                    typeArgument.type.mergeNullability(irType).addAnnotations(irType.annotations),
+                    typeArgument.variance,
+                )
+            }
+        }
+
+        return when (irType) {
+            is IrSimpleType -> with(irType.toBuilder()) {
+                arguments = irType.arguments.memoryOptimizedMap { substituteTypeArgument(it) }
+                buildSimpleType()
+            }
+            is IrDynamicType, is IrErrorType -> makeTypeProjection(irType, Variance.INVARIANT)
+            else -> error("Unexpected type: $irType")
+        }
+    }
+
+    private fun substituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
+        when (typeArgument) {
+            is IrStarProjection -> typeArgument
+            is IrTypeProjection -> when (val replacement = substituteType(typeArgument.type)) {
+                is IrStarProjection -> replacement
+                is IrTypeProjection -> makeTypeProjection(
+                    replacement.type, TypeSubstitutor.combine(typeArgument.variance, replacement.variance)
+                )
+            }
+        }
+}
 
 class IrTypeSubstitutor(
-    typeParameters: List<IrTypeParameterSymbol>,
-    typeArguments: List<IrTypeArgument>,
-    irBuiltIns: IrBuiltIns
-) : AbstractIrTypeSubstitutor(irBuiltIns) {
-
-    init {
-        assert(typeParameters.size == typeArguments.size) {
+    private val substitution: Map<IrTypeParameterSymbol, IrTypeArgument>,
+    private val allowEmptySubstitution: Boolean = false
+) : BaseIrTypeSubstitutor() {
+    constructor(
+        typeParameters: List<IrTypeParameterSymbol>,
+        typeArguments: List<IrTypeArgument>,
+        allowEmptySubstitution: Boolean = false,
+    ) : this(typeParameters.zip(typeArguments).toMap(), allowEmptySubstitution) {
+        check(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +
                     "Type parameters are:\n" +
                     typeParameters.joinToString(separator = "\n") { it.owner.render() } +
@@ -87,22 +88,19 @@ class IrTypeSubstitutor(
         }
     }
 
-    private val substitution = typeParameters.zip(typeArguments).toMap()
-
     override fun getSubstitutionArgument(typeParameter: IrTypeParameterSymbol): IrTypeArgument =
         substitution[typeParameter]
-            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
+            ?: typeParameter.takeIf { allowEmptySubstitution }?.owner?.defaultType
+            ?: error("Unsubstituted type parameter: ${typeParameter.owner.render()}")
 
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }
 
-class IrCapturedTypeSubstitutor(
+internal class IrCapturedTypeSubstitutor(
     typeParameters: List<IrTypeParameterSymbol>,
     typeArguments: List<IrTypeArgument>,
     capturedTypes: List<IrCapturedType?>,
-    irBuiltIns: IrBuiltIns
-) : AbstractIrTypeSubstitutor(irBuiltIns) {
-
+) : BaseIrTypeSubstitutor() {
     init {
         assert(typeArguments.size == typeParameters.size)
         assert(capturedTypes.size == typeParameters.size)
@@ -118,4 +116,11 @@ class IrCapturedTypeSubstitutor(
     }
 
     override fun isEmptySubstitution(): Boolean = oldSubstitution.isEmpty()
+}
+
+class IrChainedSubstitutor(val first: AbstractIrTypeSubstitutor, val second: AbstractIrTypeSubstitutor) : AbstractIrTypeSubstitutor() {
+    override fun substitute(type: IrType): IrType {
+        val firstResult = first.substitute(type)
+        return second.substitute(firstResult)
+    }
 }

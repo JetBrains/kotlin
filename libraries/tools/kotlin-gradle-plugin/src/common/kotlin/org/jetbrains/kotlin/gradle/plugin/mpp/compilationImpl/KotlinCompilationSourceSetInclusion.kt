@@ -8,18 +8,23 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
+import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.tooling.core.extrasFactoryProperty
+import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
+import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
 import java.util.concurrent.Callable
 
 internal class KotlinCompilationSourceSetInclusion(
-    private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
+    private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask,
 ) {
 
     fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
@@ -63,7 +68,9 @@ internal class KotlinCompilationSourceSetInclusion(
             // Temporary solution for checking consistency across source sets participating in a compilation that may
             // not be interconnected with the dependsOn relation: check the settings as if the default source set of
             // the compilation depends on the one added to the compilation:
-            defaultSourceSetLanguageSettingsChecker.runAllChecks(compilation.defaultSourceSet, sourceSet)
+            compilation.project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
+                defaultSourceSetLanguageSettingsChecker.runAllChecks(compilation.defaultSourceSet, sourceSet)
+            }
         }
     }
 
@@ -74,7 +81,7 @@ internal class KotlinCompilationSourceSetInclusion(
          * to avoid re-processing of unnecessary source sets!
          */
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
-                by extrasFactoryProperty(KotlinCompilationSourceSetInclusion::class.java.name, { hashSetOf() })
+                by extrasStoredProperty { hashSetOf() }
     }
 
 
@@ -84,14 +91,27 @@ internal class KotlinCompilationSourceSetInclusion(
 
     object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
         override fun addSources(
-            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
-        ) = addSourcesToKotlinCompileTask(
-            project = compilation.project,
-            taskName = compilation.compileKotlinTaskName,
-            sourceFileExtensions = sourceSet.customSourceFilesExtensions,
-            addAsCommonSources = addAsCommonSources,
-            sources = { sourceSet.kotlin }
-        )
+            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>,
+        ) {
+            addSourcesToKotlinCompileTask(
+                project = compilation.project,
+                taskName = compilation.compileKotlinTaskName,
+                sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+                addAsCommonSources = addAsCommonSources,
+                sources = { sourceSet.kotlin }
+            )
+
+            compilation.project.whenKaptEnabled {
+                val kaptGenerateStubsTaskName = getKaptTaskName(compilation.compileKotlinTaskName, KAPT_GENERATE_STUBS_PREFIX)
+                addSourcesToKotlinCompileTask(
+                    project = compilation.project,
+                    taskName = kaptGenerateStubsTaskName,
+                    sourceFileExtensions = sourceSet.customSourceFilesExtensions,
+                    addAsCommonSources = addAsCommonSources,
+                    sources = { sourceSet.kotlin }
+                )
+            }
+        }
     }
 
     object NativeAddSourcesToCompileTask : AddSourcesToCompileTask {
@@ -117,7 +137,7 @@ internal class KotlinCompilationSourceSetInclusion(
      * and compiles them together.
      */
     class AddSourcesWithoutDependsOnClosure(
-        private val delegate: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
+        private val delegate: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask,
     ) : AddSourcesToCompileTask {
         override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
             if (sourceSet !in compilation.kotlinSourceSets) return

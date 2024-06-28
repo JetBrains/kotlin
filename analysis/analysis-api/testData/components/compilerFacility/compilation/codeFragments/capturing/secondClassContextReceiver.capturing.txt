@@ -1,0 +1,4 @@
+ContainingClass[name: <this>; isMutated: false; displayText: this@Test]
+    context(R|Ctx1|, R|Ctx2|)
+    class Test : R|kotlin/Any|
+    R|Test|

@@ -1,0 +1,17 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constructorParameterWithAnnotations.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @PROPERTY:R|Ann|[Types]() field:@FIELD:R|Ann|[Types]() public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = R|<local>/x|
+            @PROPERTY_GETTER:R|Ann|[Types]() public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Ann|[Types]() public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Ann|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

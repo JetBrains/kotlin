@@ -1,0 +1,30 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test: Partial Linkage JS / no IC" type="GradleRunConfiguration" factoryName="Gradle" folderName="Tests">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value="--stacktrace" />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":js:js.tests:test" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsPartialLinkageNoICTestCaseGenerated&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.FirJsPartialLinkageNoICTestCaseGenerated&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsPartialLinkageNoICES6TestCaseGenerated&quot;" />
+        </list>
+      </option>
+      <option name="vmOptions" />
+    </ExternalSystemSettings>
+    <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+    <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+    <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
+    <method v="2" />
+  </configuration>
+</component>

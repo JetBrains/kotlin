@@ -26,7 +26,7 @@ FILE: exhaustiveness_sealedClass.kt
 
     }
     public final fun test_1(e: R|Base|): R|kotlin/Unit| {
-        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|Base.A|) ->  {
                 Int(1)
             }
@@ -35,7 +35,7 @@ FILE: exhaustiveness_sealedClass.kt
             }
         }
 
-        lval b: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|Base.A|) ->  {
                 Int(1)
             }
@@ -70,7 +70,7 @@ FILE: exhaustiveness_sealedClass.kt
 
     }
     public final fun test_2(e: R|Base?|): R|kotlin/Unit| {
-        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
             ($subj$ is R|Base.A|) ->  {
                 Int(1)
             }

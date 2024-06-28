@@ -6,13 +6,13 @@ public open class ClassTypeParameterBounds {
     public/*package*/ interface G1</*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any> {
     }
 
-    public/*package*/ interface G10</*0*/ _A : test.ClassTypeParameterBounds.I4<@org.jetbrains.annotations.NotNull kotlin.IntArray!>!> where _A : test.ClassTypeParameterBounds.I2<out @org.jetbrains.annotations.Nullable kotlin.IntArray!>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<out @org.jetbrains.annotations.NotNull kotlin.IntArray!> {
+    public/*package*/ interface G10</*0*/ _A : test.ClassTypeParameterBounds.I4<@org.jetbrains.annotations.NotNull kotlin.IntArray>!> where _A : test.ClassTypeParameterBounds.I2<out @org.jetbrains.annotations.Nullable kotlin.IntArray?>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<out @org.jetbrains.annotations.NotNull kotlin.IntArray> {
     }
 
     public/*package*/ interface G11</*0*/ _A : test.ClassTypeParameterBounds.I4<kotlin.Array<(out) kotlin.Array<(out) (@org.jetbrains.annotations.NotNull kotlin.Array<kotlin.Int!>..@org.jetbrains.annotations.NotNull kotlin.Array<out kotlin.Int!>)>!>!>!> where _A : test.ClassTypeParameterBounds.I2<out (@org.jetbrains.annotations.NotNull kotlin.Array<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @org.jetbrains.annotations.NotNull kotlin.Int>!>!>!>..@org.jetbrains.annotations.NotNull kotlin.Array<out kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @org.jetbrains.annotations.NotNull kotlin.Int>!>!>!>)>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<out kotlin.Array<(out) (@org.jetbrains.annotations.NotNull kotlin.Array<kotlin.Int!>..@org.jetbrains.annotations.NotNull kotlin.Array<out kotlin.Int!>)>!> {
     }
 
-    public/*package*/ interface G12</*0*/ _A : test.ClassTypeParameterBounds.I4<(@org.jetbrains.annotations.Nullable kotlin.Array<kotlin.IntArray!>?..@org.jetbrains.annotations.Nullable kotlin.Array<out kotlin.IntArray!>?)>!> where _A : test.ClassTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Array<(out) @org.jetbrains.annotations.NotNull kotlin.IntArray!>!>!>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<out kotlin.Array<(out) (@org.jetbrains.annotations.NotNull kotlin.Array<kotlin.IntArray!>..@org.jetbrains.annotations.NotNull kotlin.Array<out kotlin.IntArray!>)>!> {
+    public/*package*/ interface G12</*0*/ _A : test.ClassTypeParameterBounds.I4<(@org.jetbrains.annotations.Nullable kotlin.Array<kotlin.IntArray!>?..@org.jetbrains.annotations.Nullable kotlin.Array<out kotlin.IntArray!>?)>!> where _A : test.ClassTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Array<(out) @org.jetbrains.annotations.NotNull kotlin.IntArray>!>!>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<out kotlin.Array<(out) (@org.jetbrains.annotations.NotNull kotlin.Array<kotlin.IntArray!>..@org.jetbrains.annotations.NotNull kotlin.Array<out kotlin.IntArray!>)>!> {
     }
 
     public/*package*/ open inner class G2</*0*/ _A : kotlin.Any!, /*1*/ B : @org.jetbrains.annotations.Nullable kotlin.Int?> {
@@ -22,15 +22,15 @@ public open class ClassTypeParameterBounds {
     public/*package*/ interface G3</*0*/ _A : kotlin.Any!, /*1*/ B : kotlin.Any!> where B : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I1 {
     }
 
-    public/*package*/ open inner class G4</*0*/ _A : @org.jetbrains.annotations.NotNull B, /*1*/ B : kotlin.Any!> {
-        public/*package*/ constructor G4</*0*/ _A : @org.jetbrains.annotations.NotNull B, /*1*/ B : kotlin.Any!>()
+    public/*package*/ open inner class G4</*0*/ _A : @org.jetbrains.annotations.NotNull B & Any, /*1*/ B : kotlin.Any!> {
+        public/*package*/ constructor G4</*0*/ _A : @org.jetbrains.annotations.NotNull B & Any, /*1*/ B : kotlin.Any!>()
     }
 
     public/*package*/ interface G5</*0*/ _A : kotlin.Any!, /*1*/ B : @org.jetbrains.annotations.Nullable _A?> {
     }
 
-    public/*package*/ open inner class G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
-        public/*package*/ constructor G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
+    public/*package*/ open inner class G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E & Any, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
+        public/*package*/ constructor G6</*0*/ _A : @org.jetbrains.annotations.Nullable test.ClassTypeParameterBounds.I1?, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @org.jetbrains.annotations.NotNull E & Any, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
     }
 
     public/*package*/ interface G7</*0*/ _A : kotlin.Any!> where _A : test.ClassTypeParameterBounds.I2<@org.jetbrains.annotations.NotNull kotlin.Int>!, _A : @org.jetbrains.annotations.NotNull test.ClassTypeParameterBounds.I3<kotlin.String!> {

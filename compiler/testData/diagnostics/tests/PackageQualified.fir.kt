@@ -6,8 +6,8 @@ package foobar.a
     import java.*
 
     val a : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.List<Int><!>? = null
-    val a2 : <!UNRESOLVED_REFERENCE!>util.List<Int><!>? = null
-    val a3 : <!UNRESOLVED_REFERENCE!>LinkedList<Int><!>? = null
+    val a2 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = null
+    val a3 : <!UNRESOLVED_REFERENCE!>LinkedList<!><Int>? = null
 
 // FILE: b.kt
 package foobar
@@ -21,7 +21,7 @@ package foobar.a
     import java.util.*
 
     val b : List<Int>? = <!INITIALIZER_TYPE_MISMATCH!>a<!>
-    val b1 : <!UNRESOLVED_REFERENCE!>util.List<Int><!>? = a
+    val b1 : <!UNRESOLVED_REFERENCE!>util<!>.List<Int>? = a
 
 // FILE: d.kt
 package foobar

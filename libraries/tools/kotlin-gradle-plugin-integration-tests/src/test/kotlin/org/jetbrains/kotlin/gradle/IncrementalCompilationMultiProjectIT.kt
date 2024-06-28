@@ -13,7 +13,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 
 @JsGradlePluginTests
-open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 
     override fun defaultProject(
@@ -41,6 +41,7 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
         get() = "caches-js"
 
     @Disabled("compileKotlinJs's modification does not work")
+    @GradleTest
     override fun testFailureHandling_ToolError(gradleVersion: GradleVersion) {}
 
     @Disabled("In JS IR all dependencies effectively api, not implementation")
@@ -135,14 +136,52 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
             }
         }
     }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
-class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("K/JS multi-project IC with disabled precise outputs backups")
+abstract class IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
+}
+
+class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+}
+
+class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+class IncrementalCompilationK1JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    override fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for Kotlin/JS (KT-56197 was fixed for Kotlin/JVM only)
+        doTestChangeInterfaceInLib(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
+}
+
+class IncrementalCompilationK2JsMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJsMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @JvmGradlePluginTests
-open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
@@ -229,6 +268,7 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
                 plugins {
                     id 'groovy'
                     id 'org.jetbrains.kotlin.jvm'
+                    id 'org.jetbrains.kotlin.test.kotlin-compiler-args-properties'
                 }
                 
                 dependencies {
@@ -298,12 +338,43 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
     }
 }
 
-class IncrementalCompilationJvmMultiProjectWithPreciseBackupIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("K/JVM multi-project IC with disabled precise outputs backups")
+abstract class IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
-class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFir = true)
+class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+
+    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
+    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    }
+}
+
+class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
+
+    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    @GradleTest
+    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    }
+}
+
+class IncrementalCompilationK1JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+class IncrementalCompilationK2JvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
@@ -413,7 +484,6 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
     override fun testAbiChangeInLib_afterLibClean_withAbiSnapshot(gradleVersion: GradleVersion) {
         defaultProject(
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
         ) {
             build("assemble")
 
@@ -437,10 +507,18 @@ open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilation
             }
         }
     }
+
+    @DisplayName("Lib project classes became final")
+    @GradleTest
+    override fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        // `impactedClassInAppIsRecompiled = false` for the old IC (KT-56197 was fixed for the new IC only)
+        doTestLibClassBecameFinal(gradleVersion, impactedClassInAppIsRecompiled = false)
+    }
 }
 
-class IncrementalCompilationOldICJvmMultiProjectWithPreciseBackupIT : IncrementalCompilationOldICJvmMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("K/JVM multi-project IC with disabled precise outputs backups and disabled classpath snapshots")
+class IncrementalCompilationOldICJvmMultiProjectWithoutPreciseBackupIT : IncrementalCompilationOldICJvmMultiProjectIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
 abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilationBaseIT() {
@@ -622,7 +700,11 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Lib project classes became final")
     @GradleTest
-    fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+    open fun testLibClassBecameFinal(gradleVersion: GradleVersion) {
+        doTestLibClassBecameFinal(gradleVersion)
+    }
+
+    protected fun doTestLibClassBecameFinal(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -633,7 +715,10 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             buildAndFail("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
                     libSources = listOf("bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"),
-                    appSources = listOf("foo/BB.kt", "foo/fooCallUseAB.kt", "foo/fooUseB.kt")
+                    appSources = listOfNotNull(
+                        "foo/BB.kt", "foo/fooUseB.kt", "foo/fooCallUseAB.kt",
+                        "foo/fooUseBB.kt".takeIf { impactedClassInAppIsRecompiled }
+                    )
                 )
                 assertCompiledKotlinSources(expectedSources, output)
             }
@@ -642,7 +727,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Remove library from classpath")
     @GradleTest
-    fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
+    open fun testRemoveLibFromClasspath(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             build("assemble")
 
@@ -776,14 +861,67 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
         }
     }
 
+    @DisplayName("KT-56197: Change interface in lib which has subclass in app")
+    @GradleTest
+    open fun testChangeInterfaceInLib(gradleVersion: GradleVersion) {
+        doTestChangeInterfaceInLib(gradleVersion)
+    }
+
+    protected fun doTestChangeInterfaceInLib(gradleVersion: GradleVersion, impactedClassInAppIsRecompiled: Boolean = true) {
+        defaultProject(gradleVersion) {
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").writeText(
+                """
+                package bar
+                interface InterfaceInLib {
+                    fun someMethod() {}
+                }
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/SubclassInApp.kt").writeText(
+                """
+                package foo
+                import bar.InterfaceInLib
+                class SubclassInApp : InterfaceInLib
+                """.trimIndent()
+            )
+            subProject("app").kotlinSourcesDir().resolve("foo/ClassUsingSubclassInApp.kt").writeText(
+                """
+                package foo
+                fun main() {
+                    SubclassInApp().someMethod()
+                }
+                """.trimIndent()
+            )
+            build(":app:compileKotlin")
+
+            subProject("lib").kotlinSourcesDir().resolve("bar/InterfaceInLib.kt").modify {
+                it.replace("fun someMethod() {}", "fun someMethod(addedParam: Int = 0) {}")
+            }
+
+            build(":app:compileKotlin") {
+                assertIncrementalCompilation(
+                    expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
+                        libSources = listOf("bar/InterfaceInLib.kt"),
+                        appSources = listOfNotNull(
+                            "foo/SubclassInApp.kt",
+                            "foo/ClassUsingSubclassInApp.kt".takeIf { impactedClassInAppIsRecompiled }
+                        )
+                    )
+                )
+            }
+        }
+    }
+
     @DisplayName("Test compilation when incremental state is missing")
     @GradleTest
-    fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    open fun testMissingIncrementalState(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
             build(
                 ":lib:compileKotlin",
-                "-Pkotlin.compiler.execution.strategy=${KotlinCompilerExecutionStrategy.IN_PROCESS.propertyValue}"
+                buildOptions = defaultBuildOptions.copy(
+                    compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS,
+                ),
             ) {
                 projectPath.resolve("lib/build/kotlin/${compileKotlinTaskName}/classpath-snapshot").let {
                     assert(!it.exists() || it.listDirectoryEntries().isEmpty())
@@ -873,6 +1011,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     private fun breakCachesAfterKotlinCompile(gradleProject: GradleProject, lookupFile: Path) {
         gradleProject.buildGradle.appendText(
             """
+                
             $compileKotlinTaskName {
                 doLast {
                     new File("${lookupFile.toFile().invariantSeparatorsPath}").write("Invalid contents")

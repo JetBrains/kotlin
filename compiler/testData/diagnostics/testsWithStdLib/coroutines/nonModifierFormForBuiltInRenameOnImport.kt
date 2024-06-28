@@ -1,4 +1,4 @@
-// !LANGUAGE: +ReleaseCoroutines
+// FIR_IDENTICAL
 // SKIP_TXT
 
 import kotlin.suspend as suspendLambda

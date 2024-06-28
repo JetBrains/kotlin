@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Provider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
@@ -67,6 +68,8 @@ class KotlinNativeFatFrameworkImpl(
     override val modes: Set<NativeBuildType>,
     override val isStatic: Boolean,
     override val linkerOptions: List<String>,
+    @Suppress("DEPRECATION")
+    @Deprecated("Please migrate to toolOptionsConfigure DSL. More details are here: https://kotl.in/u1r8ln")
     override val kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit,
     override val toolOptionsConfigure: KotlinCommonCompilerToolOptions.() -> Unit,
     override val binaryOptions: Map<String, String>,
@@ -91,12 +94,12 @@ class KotlinNativeFatFrameworkImpl(
                 lowerCamelCaseName("assemble", artifactName, buildType.visibleName, "FatFramework")
             ) {
                 it.baseName = artifactName
-                it.destinationDir = project.buildDir.resolve("$outDir/${buildType.getName()}")
+                it.destinationDirProperty.set(project.layout.buildDirectory.dir("$outDir/${buildType.getName()}"))
             }
             parentTask.dependsOn(fatTask)
 
             val nameSuffix = "ForFat"
-            val frameworkDescriptors: List<FrameworkDescriptor> = targets.map { target ->
+            val frameworkDescriptors: List<Provider<FrameworkDescriptor>> = targets.map { target ->
                 val librariesConfigurationName = project.registerLibsDependencies(target, artifactName + nameSuffix, modules)
                 val exportConfigurationName = project.registerExportDependencies(target, artifactName + nameSuffix, modules)
                 val targetTask = registerLinkFrameworkTask(
@@ -110,11 +113,11 @@ class KotlinNativeFatFrameworkImpl(
                     outDirName = "${artifactName}FatFrameworkTemp",
                     taskNameSuffix = nameSuffix
                 )
-                fatTask.dependsOn(targetTask)
-                val frameworkFileProvider = targetTask.flatMap { it.outputFile }
-                FrameworkDescriptor(frameworkFileProvider.get(), isStatic, target)
+                targetTask.map {
+                    FrameworkDescriptor(it.outputFile.get(), isStatic, target)
+                }
             }
-            fatTask.configure { it.fromFrameworkDescriptors(frameworkDescriptors) }
+            fatTask.configure { it.fromFrameworkDescriptorProviders(frameworkDescriptors) }
         }
     }
 }

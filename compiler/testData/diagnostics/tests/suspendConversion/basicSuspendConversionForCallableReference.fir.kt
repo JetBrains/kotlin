@@ -1,5 +1,5 @@
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo1(f: suspend () -> Unit) {}
 fun bar1() {}
@@ -14,5 +14,5 @@ fun test() {
     foo2(42, ::bar2)
     foo2("str", ::bar2)
 
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(42, ::<!UNRESOLVED_REFERENCE!>bar1<!>)
+    foo2(42, ::<!INAPPLICABLE_CANDIDATE!>bar1<!>)
 }

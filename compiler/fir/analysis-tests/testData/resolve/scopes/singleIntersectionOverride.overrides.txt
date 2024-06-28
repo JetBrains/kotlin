@@ -1,0 +1,11 @@
+D:
+  [IntersectionOverride]: public abstract override fun foo(): R|E4| from Use site scope of /D [id: 0]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E4| from Substitution scope for [Use site scope of /B] for type D<E4> [id: 1]
+      [Source]: public abstract override fun foo(): R|E2| from Use site scope of /B [id: 2]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E2| from Substitution scope for [Use site scope of /A] for type B<E2> [id: 3]
+          [Source]: public abstract fun foo(): R|E1| from Use site scope of /A [id: 4]
+    [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E4| from Substitution scope for [Use site scope of /C] for type D<E4> [id: 5]
+      [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E3| from Use site scope of /C [id: 6]
+        [SubstitutionOverride(DeclarationSite)]: public abstract override fun foo(): R|E3| from Substitution scope for [Use site scope of /A] for type C<E3> [id: 6]
+          [Source]: public abstract fun foo(): R|E1| from Use site scope of /A [id: 4]
+

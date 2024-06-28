@@ -1,0 +1,52 @@
+package test;
+
+/**
+ * public abstract class test/A : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(s: kotlin/String)
+ *
+ *   // field: s:Ljava/lang/String;
+ *   // getter: getS()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract class A {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String s = null;
+
+    public A(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getS() {
+        return null;
+    }
+}
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/B : test/A {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class B extends test.A {
+
+    public B() {
+        super(null);
+    }
+}

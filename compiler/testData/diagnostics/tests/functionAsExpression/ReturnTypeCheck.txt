@@ -1,3 +1,4 @@
 package
 
+public val bar: (kotlin.Int) -> kotlin.String
 public val foo: (kotlin.Int) -> kotlin.String

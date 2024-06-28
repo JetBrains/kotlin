@@ -118,11 +118,14 @@ internal class DescriptorRendererImpl(
         if (abbreviated != null) {
             if (renderTypeExpansions) {
                 renderNormalizedTypeAsIs(abbreviated.expandedType)
+                if (renderAbbreviatedTypeComments) {
+                    renderAbbreviatedTypeComment(abbreviated)
+                }
             } else {
                 // TODO nullability is lost for abbreviated type?
                 renderNormalizedTypeAsIs(abbreviated.abbreviation)
                 if (renderUnabbreviatedType) {
-                    renderAbbreviatedTypeExpansion(abbreviated)
+                    renderExpandedTypeComment(abbreviated)
                 }
             }
             return
@@ -131,12 +134,26 @@ internal class DescriptorRendererImpl(
         renderNormalizedTypeAsIs(type)
     }
 
-    private fun StringBuilder.renderAbbreviatedTypeExpansion(abbreviated: AbbreviatedType) {
+    private fun StringBuilder.renderAbbreviatedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("from: ")
+            renderNormalizedTypeAsIs(abbreviated.abbreviation)
+        }
+    }
+
+    private fun StringBuilder.renderExpandedTypeComment(abbreviated: AbbreviatedType) {
+        renderInBlockComment {
+            append("= ")
+            renderNormalizedTypeAsIs(abbreviated.expandedType)
+        }
+    }
+
+    private inline fun StringBuilder.renderInBlockComment(renderBody: () -> Unit) {
         if (textFormat == RenderingFormat.HTML) {
             append("<font color=\"808080\"><i>")
         }
-        append(" /* = ")
-        renderNormalizedTypeAsIs(abbreviated.expandedType)
+        append(" /* ")
+        renderBody()
         append(" */")
         if (textFormat == RenderingFormat.HTML) {
             append("</i></font>")
@@ -329,16 +346,6 @@ internal class DescriptorRendererImpl(
 
         val receiverType = type.getReceiverTypeFromFunctionType()
         val contextReceiversTypes = type.getContextReceiverTypesFromFunctionType()
-        if (contextReceiversTypes.isNotEmpty()) {
-            append("context(")
-            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
-            for (contextReceiverType in withoutLast) {
-                renderNormalizedType(contextReceiverType)
-                append(", ")
-            }
-            renderNormalizedType(contextReceiversTypes.last())
-            append(") ")
-        }
 
         val isSuspend = type.isSuspendFunctionType
         val isNullable = type.isMarkedNullable
@@ -358,6 +365,17 @@ internal class DescriptorRendererImpl(
 
                 append("(")
             }
+        }
+
+        if (contextReceiversTypes.isNotEmpty()) {
+            append("context(")
+            val withoutLast = contextReceiversTypes.subList(0, contextReceiversTypes.lastIndex)
+            for (contextReceiverType in withoutLast) {
+                renderNormalizedType(contextReceiverType)
+                append(", ")
+            }
+            renderNormalizedType(contextReceiversTypes.last())
+            append(") ")
         }
 
         renderModifier(this, isSuspend, "suspend")
@@ -491,9 +509,10 @@ internal class DescriptorRendererImpl(
         return (defaultList + argumentList).sorted()
     }
 
-    private fun renderConstant(value: ConstantValue<*>): String {
+    private fun renderConstant(value: ConstantValue<*>): String? {
+        options.propertyConstantRenderer?.let { return it.invoke(value) }
         return when (value) {
-            is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
+            is ArrayValue -> value.value.mapNotNull { renderConstant(it) }.joinToString(", ", "{", "}")
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
             is KClassValue -> when (val classValue = value.value) {
                 is KClassValue.Value.LocalClass -> "${classValue.type}::class"
@@ -684,8 +703,8 @@ internal class DescriptorRendererImpl(
     private fun renderFunction(function: FunctionDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                builder.renderAnnotations(function)
                 renderContextReceivers(function.contextReceiverParameters, builder)
+                builder.renderAnnotations(function)
                 renderVisibility(function.visibility, builder)
                 renderModalityForCallable(function, builder)
 
@@ -935,8 +954,8 @@ internal class DescriptorRendererImpl(
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                renderPropertyAnnotations(property, builder)
                 renderContextReceivers(property.contextReceiverParameters, builder)
+                renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, DescriptorRendererModifier.CONST in modifiers && property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -986,7 +1005,8 @@ internal class DescriptorRendererImpl(
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {
         if (includePropertyConstant) {
             variable.compileTimeInitializer?.let { constant ->
-                builder.append(" = ").append(escape(renderConstant(constant)))
+                val renderedConstant = renderConstant(constant)
+                if (renderedConstant != null) builder.append(" = ").append(escape(renderedConstant))
             }
         }
     }
@@ -1020,8 +1040,8 @@ internal class DescriptorRendererImpl(
         val isEnumEntry = klass.kind == ClassKind.ENUM_ENTRY
 
         if (!startFromName) {
-            builder.renderAnnotations(klass)
             renderContextReceivers(klass.contextReceivers, builder)
+            builder.renderAnnotations(klass)
             if (!isEnumEntry) {
                 renderVisibility(klass.visibility, builder)
             }

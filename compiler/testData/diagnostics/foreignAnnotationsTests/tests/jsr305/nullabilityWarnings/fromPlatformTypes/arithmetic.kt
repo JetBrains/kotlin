@@ -10,11 +10,11 @@ public class J {
 }
 
 // FILE: k.kt
-fun test() {
-    var platformNN = J.staticNN
-    var platformN = J.staticN
-    var platformJ = J.staticJ
+var platformNN = J.staticNN
+var platformN = J.staticN
+var platformJ = J.staticJ
 
+fun test() {
     +platformNN
     +<!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>platformN<!>
     +platformJ

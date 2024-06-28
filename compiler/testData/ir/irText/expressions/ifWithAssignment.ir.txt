@@ -1,0 +1,121 @@
+FILE fqName:<root> fileName:/ifWithAssignment.kt
+  FUN name:topLevelMethod visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:z type:kotlin.Int [var]
+        CONST Int type=kotlin.Int value=1
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Unit origin=null
+            SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              CONST Int type=kotlin.Int value=2
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Unit origin=null
+            SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              CONST Int type=kotlin.Int value=3
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+            CONST Int type=kotlin.Int value=4
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+            CONST Int type=kotlin.Int value=5
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Unit origin=null
+            SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                other: CONST Int type=kotlin.Int value=6
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Unit origin=null
+            SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                other: CONST Int type=kotlin.Int value=7
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+              $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+              other: CONST Int type=kotlin.Int value=8
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+            CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+              $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+              other: CONST Int type=kotlin.Int value=9
+      BLOCK type=kotlin.Unit origin=WHEN
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+          GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=1
+            then: BLOCK type=kotlin.Unit origin=null
+              SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+                CONST Int type=kotlin.Int value=10
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.Unit origin=null
+              SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+                CONST Int type=kotlin.Int value=11
+      BLOCK type=kotlin.Unit origin=WHEN
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+          GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=1
+            then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              CONST Int type=kotlin.Int value=12
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=EQ
+              CONST Int type=kotlin.Int value=13
+      BLOCK type=kotlin.Unit origin=WHEN
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+          GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=1
+            then: BLOCK type=kotlin.Unit origin=null
+              SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                  other: CONST Int type=kotlin.Int value=14
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: BLOCK type=kotlin.Unit origin=null
+              SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+                CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                  $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                  other: CONST Int type=kotlin.Int value=15
+      BLOCK type=kotlin.Unit origin=WHEN
+        VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
+          GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=null
+              arg1: CONST Int type=kotlin.Int value=1
+            then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                other: CONST Int type=kotlin.Int value=16
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: SET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Unit origin=PLUSEQ
+              CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+                $this: GET_VAR 'var z: kotlin.Int declared in <root>.topLevelMethod' type=kotlin.Int origin=PLUSEQ
+                other: CONST Int type=kotlin.Int value=17

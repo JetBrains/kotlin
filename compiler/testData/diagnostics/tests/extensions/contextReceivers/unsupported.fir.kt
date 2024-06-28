@@ -1,27 +1,34 @@
-// !DIAGNOSTICS: -UNCHECKED_CAST
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// DIAGNOSTICS: -UNCHECKED_CAST
 
-context(Any)
-fun f(g: context(Any) () -> Unit, value: Any): context(A) () -> Unit {
-    return value as (context(A) () -> Unit)
+<!UNSUPPORTED_FEATURE!>context(Any)<!>
+fun f(g: <!UNSUPPORTED_FEATURE!>context(Any)<!> () -> Unit, value: Any): <!UNSUPPORTED_FEATURE!>context(A)<!> () -> Unit {
+    return value as (<!UNSUPPORTED_FEATURE!>context(A)<!> () -> Unit)
 }
 
 fun f(g: () -> Unit, value: Any) : () -> Unit {
     return g
 }
 
-context(Any)
+<!UNSUPPORTED_FEATURE!>context(Any)<!>
 fun sameAsFWithoutNonContextualCounterpart(g: () -> Unit, value: Any) : () -> Unit {
     return g
 }
 
-context(Any) val p get() = 42
+<!UNSUPPORTED_FEATURE!>context(Any)<!> val p get() = 42
 
-context(String, Int)
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class D constructor(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class C(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
 class A {
-    context(Any)
+    <!UNSUPPORTED_FEATURE!>context(Any)<!>
     val p: Any get() = 42
 
-    context(String, Int)
+    <!UNSUPPORTED_FEATURE!>context(String, Int)<!>
     fun m() {}
 }
 
@@ -29,11 +36,11 @@ fun useWithContextReceivers() {
     with(42) {
         with("") {
             f({}, 42)
-            sameAsFWithoutNonContextualCounterpart({}, 42)
-            p
-            val a = A()
-            a.p
-            a.m()
+            <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>sameAsFWithoutNonContextualCounterpart<!>({}, 42)
+            <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
+            val a = <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>A<!>()
+            a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
+            a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>m<!>()
         }
     }
 }

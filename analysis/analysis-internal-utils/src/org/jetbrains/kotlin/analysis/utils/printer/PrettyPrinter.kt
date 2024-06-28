@@ -61,6 +61,13 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
         indent -= 1
     }
 
+    public inline fun withIndents(indentCount: Int, block: PrettyPrinter.() -> Unit) {
+        require(indentCount >= 0) { "Number of indents should be non-negative" }
+        indent += indentCount
+        block(this)
+        indent -= indentCount
+    }
+
     public inline fun withIndentInBraces(block: PrettyPrinter.() -> Unit) {
         withIndentWrapped(before = "{", after = "}", block)
     }
@@ -124,6 +131,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     }
 
     public inline fun checkIfPrinted(render: () -> Unit): Boolean {
+        contract { callsInPlace(render, InvocationKind.EXACTLY_ONCE) }
         val initialSize = builder.length
         render()
         return initialSize != builder.length

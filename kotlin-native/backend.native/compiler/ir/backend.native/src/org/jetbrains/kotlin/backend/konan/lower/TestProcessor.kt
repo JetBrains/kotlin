@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.isAbstract
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -21,11 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -36,22 +31,18 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.SetDeclarationsParentVisitor
-import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class TestProcessor (val context: Context) {
-
-    object TEST_SUITE_CLASS: IrDeclarationOriginImpl("TEST_SUITE_CLASS")
-    object TEST_SUITE_GENERATED_MEMBER: IrDeclarationOriginImpl("TEST_SUITE_GENERATED_MEMBER")
-
     companion object {
+        val TEST_SUITE_CLASS by IrDeclarationOriginImpl
+        val TEST_SUITE_GENERATED_MEMBER by IrDeclarationOriginImpl
+
         val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
         val INSTANCE_GETTER_NAME = Name.identifier("createInstance")
 
@@ -178,7 +169,7 @@ internal class TestProcessor (val context: Context) {
 
         val topLevelFunctions = mutableListOf<TestFunction>()
         val topLevelSuiteClassId: ClassId by lazy {
-            ClassId(irFile.fqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
+            ClassId(irFile.packageFqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
         }
         val topLevelSuiteName: String get() = topLevelSuiteClassId.asFqNameString()
 
@@ -340,22 +331,21 @@ internal class TestProcessor (val context: Context) {
     private fun buildObjectGetter(objectSymbol: IrClassSymbol,
                                   owner: IrClass,
                                   getterName: Name): IrSimpleFunction =
-        IrFunctionImpl(
-                owner.startOffset, owner.endOffset,
+        context.irFactory.createSimpleFunction(
+                owner.startOffset,
+                owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrSimpleFunctionSymbolImpl(),
                 getterName,
                 DescriptorVisibilities.PROTECTED,
-                Modality.FINAL,
-                objectSymbol.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                objectSymbol.starProjectedType,
+                Modality.FINAL,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         ).apply {
             parent = owner
 
@@ -378,22 +368,21 @@ internal class TestProcessor (val context: Context) {
     private fun buildInstanceGetter(classSymbol: IrClassSymbol,
                                     owner: IrClass,
                                     getterName: Name): IrSimpleFunction =
-        IrFunctionImpl(
-                owner.startOffset, owner.endOffset,
+        context.irFactory.createSimpleFunction(
+                owner.startOffset,
+                owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrSimpleFunctionSymbolImpl(),
                 getterName,
                 DescriptorVisibilities.PROTECTED,
-                Modality.FINAL,
-                classSymbol.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                classSymbol.starProjectedType,
+                Modality.FINAL,
+                IrSimpleFunctionSymbolImpl(),
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false,
-                isFakeOverride = false,
                 isOperator = false,
-                isInfix = false
+                isInfix = false,
         ).apply {
             parent = owner
 
@@ -427,17 +416,17 @@ internal class TestProcessor (val context: Context) {
                                            owner: IrClass,
                                            functions: Collection<TestFunction>,
                                            ignored: Boolean): IrConstructor =
-        IrConstructorImpl(
-                testSuite.owner.startOffset, testSuite.owner.endOffset,
+        context.irFactory.createConstructor(
+                testSuite.owner.startOffset,
+                testSuite.owner.endOffset,
                 TEST_SUITE_GENERATED_MEMBER,
-                IrConstructorSymbolImpl(),
                 Name.special("<init>"),
                 DescriptorVisibilities.PUBLIC,
-                testSuite.starProjectedType,
                 isInline = false,
-                isExternal = false,
+                isExpect = false,
+                testSuite.starProjectedType,
+                IrConstructorSymbolImpl(),
                 isPrimary = true,
-                isExpect = false
         ).apply {
             parent = owner
 
@@ -482,21 +471,15 @@ internal class TestProcessor (val context: Context) {
             functions: Collection<TestFunction>,
             irFile: IrFile
     ): IrClass {
-        return IrClassImpl(
-                testClass.startOffset, testClass.endOffset,
+        return context.irFactory.createClass(
+                testClass.startOffset,
+                testClass.endOffset,
                 TEST_SUITE_CLASS,
-                IrClassSymbolImpl(),
                 testClass.name.synthesizeSuiteClassName(),
-                ClassKind.CLASS,
                 DescriptorVisibilities.PRIVATE,
+                IrClassSymbolImpl(),
+                ClassKind.CLASS,
                 Modality.FINAL,
-                isCompanion = false,
-                isInner = false,
-                isData = false,
-                isExternal = false,
-                isValue = false,
-                isExpect = false,
-                isFun = false
         ).apply {
             irFile.addChild(this)
             createParameterDeclarations()
@@ -546,7 +529,7 @@ internal class TestProcessor (val context: Context) {
     /** Check if this fqName already used or not. */
     private fun checkTopLevelSuiteName(irFile: IrFile, topLevelSuiteName: String): Boolean {
         if (topLevelSuiteNames.contains(topLevelSuiteName)) {
-            context.reportCompilationError("Package '${irFile.fqName}' has top-level test " +
+            context.reportCompilationError("Package '${irFile.packageFqName}' has top-level test " +
                     "functions in several files with the same name: '${irFile.fileName}'")
         }
         topLevelSuiteNames.add(topLevelSuiteName)
@@ -634,7 +617,7 @@ internal class TestProcessor (val context: Context) {
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
                 annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
                 statements.forEach { it.accept(SetDeclarationsParentVisitor, this) }
-                initializer = IrExpressionBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                initializer = context.irFactory.createExpressionBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                         IrCompositeImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, null, statements)
                 )
             }
@@ -678,7 +661,7 @@ internal class TestProcessor (val context: Context) {
     }
     // endregion
 
-    private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.packageFragmentDescriptor.module.let {
+    private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.moduleDescriptor.let {
         // Process test annotations in source libraries too.
         it in context.sourcesModules
     }

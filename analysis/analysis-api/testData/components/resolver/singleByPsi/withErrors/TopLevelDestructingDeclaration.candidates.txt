@@ -1,0 +1,2 @@
+KtDestructuringDeclarationEntry(120,124): 'val1'
+  NO_CANDIDATES

@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: commonMain
 // FILE: Common.kt
 
@@ -7,7 +7,7 @@ expect object Platform {
     val name: String
 }
 
-// MODULE: androidMain(commonMain)
+// MODULE: androidMain()()(commonMain)
 // FILE: JvmAndroid.kt
 
 package sample

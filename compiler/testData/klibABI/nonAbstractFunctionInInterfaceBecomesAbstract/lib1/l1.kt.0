@@ -1,6 +1,0 @@
-package lib1
-
-interface A {
-    fun foo(): Int = 42
-    fun bar(): Int = 42
-}

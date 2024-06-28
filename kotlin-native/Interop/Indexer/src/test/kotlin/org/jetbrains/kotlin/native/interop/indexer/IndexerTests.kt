@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import kotlinx.cinterop.JvmCInteropCallbacks
-import org.jetbrains.kotlin.konan.util.NativeMemoryAllocator
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
 import java.io.File
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

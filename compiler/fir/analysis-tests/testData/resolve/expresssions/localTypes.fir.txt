@@ -4,7 +4,7 @@ FILE: localTypes.kt
     public final fun foo(): R|kotlin/Unit| {
         lval x: R|kotlin/Int| = Int(1)
         local final class Bar : R|Foo| {
-            public constructor(): R|Bar| {
+            public constructor(): R|<local>/Bar| {
                 super<R|kotlin/Any|>()
             }
 

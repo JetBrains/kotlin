@@ -5,31 +5,33 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
-    private val ktModule: KtModule,
-    private val annotatedSymbolPointer: KtSymbolPointer<T>,
+internal class SymbolAnnotationsProvider<T : KaAnnotatedSymbol>(
+    private val ktModule: KaModule,
+    private val annotatedSymbolPointer: KaSymbolPointer<T>,
     private val annotationUseSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) : AnnotationsProvider {
-    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
+    @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KaSession) (KaAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    override fun annotationInfos(): List<KtAnnotationApplicationInfo> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationInfos.filter {
-            annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget)
-        }
+    override fun annotationInfos(): List<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotations
+            .filter { annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget) }
+            .map { it.toDumbLightClassAnnotationApplication() }
     }
 
-    override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = withAnnotatedSymbol { annotatedSymbol ->
+    override fun get(classId: ClassId): Collection<AnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
         annotatedSymbol.annotationsByClassId(classId, annotationUseSiteTargetFilter)
+            .map { it.toLightClassAnnotationApplication() }
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->
@@ -45,6 +47,6 @@ internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
     override fun hashCode(): Int = annotatedSymbolPointer.hashCode()
 
     override fun ownerClassId(): ClassId? = withAnnotatedSymbol { annotatedSymbol ->
-        (annotatedSymbol as? KtClassLikeSymbol)?.classIdIfNonLocal
+        (annotatedSymbol as? KaClassLikeSymbol)?.classId
     }
 }

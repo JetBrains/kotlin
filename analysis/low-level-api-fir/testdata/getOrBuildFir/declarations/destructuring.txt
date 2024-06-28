@@ -1,6 +1,0 @@
-KT element: KtNameReferenceExpression
-FIR element: FirErrorPropertyImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-<ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values>

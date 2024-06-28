@@ -14,7 +14,7 @@ public class TypeReference @SinceKotlin("1.6") constructor(
     @SinceKotlin("1.6") internal val platformTypeUpperBound: KType?,
     @SinceKotlin("1.6") internal val flags: Int,
 ) : KType {
-    constructor(
+    public constructor(
         classifier: KClassifier,
         arguments: List<KTypeProjection>,
         isMarkedNullable: Boolean,

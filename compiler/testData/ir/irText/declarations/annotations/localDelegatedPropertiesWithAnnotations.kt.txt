@@ -1,13 +1,13 @@
 open annotation class A : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: String
-    field = x
-    get
 
 }
 
@@ -23,3 +23,4 @@ fun foo(m: Map<String, Int>) {
     }
 
 }
+

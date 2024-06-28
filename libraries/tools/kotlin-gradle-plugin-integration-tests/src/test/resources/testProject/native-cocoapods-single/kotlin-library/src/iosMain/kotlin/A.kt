@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import cocoapods.pod_dependency.*
 import cocoapods.subspec_dependency.*
 

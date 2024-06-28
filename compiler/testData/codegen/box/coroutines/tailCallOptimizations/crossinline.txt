@@ -1,7 +1,6 @@
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$box$1$filter$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -15,7 +14,6 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$box$1$filter$$inlined$source$1$lambda$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
@@ -56,7 +54,6 @@ public final class CrossinlineKt$box$1$filter$$inlined$source$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$box$1$fold$$inlined$consumeEach$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$box$1$fold$$inlined$consumeEach$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -85,7 +82,6 @@ public final class CrossinlineKt$box$1$fold$$inlined$consumeEach$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$box$1$invokeSuspend$$inlined$filter$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -176,7 +172,6 @@ public final class CrossinlineKt$consumeEach$2 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$filter$$inlined$source$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$filter$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -190,7 +185,6 @@ public final class CrossinlineKt$filter$$inlined$source$1$1 {
 
 @kotlin.Metadata
 public final class CrossinlineKt$filter$$inlined$source$1$lambda$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$filter$$inlined$source$1$lambda$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
@@ -231,7 +225,6 @@ public final class CrossinlineKt$filter$$inlined$source$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$fold$$inlined$consumeEach$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$fold$$inlined$consumeEach$1.send(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     field label: int
@@ -273,7 +266,6 @@ public final class CrossinlineKt$fold$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class CrossinlineKt$range$$inlined$source$1$1 {
-    // source: 'crossinline.kt'
     enclosing method CrossinlineKt$range$$inlined$source$1.consume(LSink;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field I$0: int
     field I$1: int

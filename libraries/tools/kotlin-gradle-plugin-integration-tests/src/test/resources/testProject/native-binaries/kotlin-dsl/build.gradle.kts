@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -27,10 +27,11 @@ kotlin {
     }
 
     val macos = macosX64("macos64")
+    val macosArm = macosArm64("macosArm64")
     val linux = linuxX64("linux64")
     val windows = mingwX64("mingw64")
 
-    configure(listOf(macos, linux, windows)) {
+    configure(listOf(macos, macosArm, linux, windows)) {
         compilations.all { kotlinOptions.verbose = true }
         compilations["test"].kotlinOptions.freeCompilerArgs += "-nowarn"
         binaries {

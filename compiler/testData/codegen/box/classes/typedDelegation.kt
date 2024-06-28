@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-63828
+
 interface A<T> {
   var zzzValue : T
   fun zzz() : T

@@ -1,4 +1,5 @@
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// LANGUAGE: +ContextReceivers
 
 interface Lazy<T>
 
@@ -16,21 +17,21 @@ fun <T> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT
         with(lazy2) {
             test1()
             test2()
-            <!NO_CONTEXT_RECEIVER!>test3<!>()
+            <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazy2) {
         with(lazy1) {
             test1()
             test2()
-            <!NO_CONTEXT_RECEIVER!>test3<!>()
+            <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazyT) {
         with(lazy1) {
             <!NO_CONTEXT_RECEIVER!>test1<!>()
             test2()
-            <!NO_CONTEXT_RECEIVER!>test3<!>()
+            <!CANNOT_INFER_PARAMETER_TYPE, NO_CONTEXT_RECEIVER!>test3<!>()
         }
     }
     with(lazyLazyT) {

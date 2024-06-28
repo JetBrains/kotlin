@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class PrivateAccessorKt {
-    // source: 'privateAccessor.kt'
-    public synthetic final static method access$bar(p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final static method bar(p0: kotlin.coroutines.Continuation): java.lang.Object
-    private final static method foo(): void
-}

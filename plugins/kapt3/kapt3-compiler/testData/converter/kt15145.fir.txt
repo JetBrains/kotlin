@@ -1,0 +1,33 @@
+/**
+ * public abstract interface MyInterface : kotlin/Any {
+ *
+ *   // signature: someFun()V
+ *   public abstract fun someFun(): kotlin/Unit
+ *
+ *   // nested class: MyDefaultInferface
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface MyInterface {
+
+    public abstract void someFun();
+
+    /**
+     * private final class MyInterface.MyDefaultInferface : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
+    @kotlin.Metadata()
+    static final class MyDefaultInferface {
+
+        public MyDefaultInferface() {
+            super();
+        }
+    }
+}

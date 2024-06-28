@@ -1,6 +1,0 @@
-STEP 0:
-    dependencies: stdlib, lib1
-STEP 1:
-    dependencies: stdlib, lib1
-    modifications:
-        U : l2.kt.1 -> l2.kt

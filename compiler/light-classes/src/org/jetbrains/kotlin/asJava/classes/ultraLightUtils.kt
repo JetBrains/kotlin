@@ -11,10 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
-import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
-import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
+import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_PROVIDER
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.impl.light.LightParameterListBuilder
@@ -25,7 +24,10 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
@@ -56,7 +58,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.text.StringCharacterIterator
 
 private interface TypeParametersSupport<D, T> {
     fun parameters(declaration: D): List<T>
@@ -165,15 +166,30 @@ internal fun KotlinType.asPsiType(
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
-private fun annotateByKotlinType(
+fun annotateByKotlinType(
     psiType: PsiType,
     kotlinType: KotlinType,
     psiContext: PsiTypeElement,
+    inferNullability: Boolean,
 ): PsiType {
-
     fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
         sequence {
-            yield(annotations.mapNotNull { it.toLightAnnotation(psiContext) })
+            val annotationsToDeclare = buildList<PsiAnnotation> {
+                // Explicitly declared annotations
+                annotations.mapNotNullTo(this) { it.toLightAnnotation(psiContext) }
+
+                if (inferNullability) {
+                    val nullabilityAnnotationQualifier = computeNullabilityQualifier(this@getAnnotationsSequence, psiType)
+                    val nullabilityAnnotation = nullabilityAnnotationQualifier?.let {
+                        KtUltraLightSimpleAnnotation(it, emptyList(), psiContext)
+                    }
+
+                    nullabilityAnnotation?.let(this::add)
+                }
+            }
+
+            yield(annotationsToDeclare)
+
             for (argument in arguments) {
                 yieldAll(argument.type.getAnnotationsSequence())
             }
@@ -198,13 +214,15 @@ private fun createTypeFromCanonicalText(
     canonicalSignature: String,
     psiContext: PsiElement,
 ): PsiType {
-    val signature = StringCharacterIterator(canonicalSignature)
-    val javaType = SignatureParsing.parseTypeString(signature, GUESSING_MAPPER)
-    val typeInfo = TypeInfo.fromString(javaType, false)
-    val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
+    val signature = SignatureParsing.CharIterator(canonicalSignature)
+    val typeInfo = SignatureParsing.parseTypeStringToTypeInfo(signature, GUESSING_PROVIDER)
+    val typeText = typeInfo.text() ?: return PsiTypes.nullType()
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
-    val type = if (kotlinType != null) annotateByKotlinType(typeElement.type, kotlinType, typeElement) else typeElement.type
+    val type = if (kotlinType != null)
+        annotateByKotlinType(typeElement.type, kotlinType, typeElement, inferNullability = false)
+    else
+        typeElement.type
 
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)
@@ -475,12 +493,6 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun KtFile.safeScript() = runReadAction { this.script }
 
 internal fun KtUltraLightSupport.findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
 

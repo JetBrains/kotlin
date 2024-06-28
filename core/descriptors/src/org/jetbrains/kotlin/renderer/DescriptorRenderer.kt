@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
@@ -100,6 +101,11 @@ abstract class DescriptorRenderer {
             options.changeOptions()
             options.lock()
             return DescriptorRendererImpl(options)
+        }
+
+        @JvmField
+        val WITHOUT_MODIFIERS: DescriptorRenderer = withOptions {
+            modifiers = emptySet()
         }
 
         @JvmField
@@ -233,6 +239,7 @@ interface DescriptorRendererOptions {
     var boldOnlyForNamesInHtml: Boolean
 
     var includePropertyConstant: Boolean
+    var propertyConstantRenderer: ((ConstantValue<*>) -> String?)?
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
     var receiverAfterName: Boolean
@@ -247,6 +254,12 @@ interface DescriptorRendererOptions {
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var renderTypeExpansions: Boolean
+
+    /**
+     * If [renderTypeExpansions] is `true`, additionally renders the abbreviated type as a comment behind the expanded type.
+     */
+    var renderAbbreviatedTypeComments: Boolean
+
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean

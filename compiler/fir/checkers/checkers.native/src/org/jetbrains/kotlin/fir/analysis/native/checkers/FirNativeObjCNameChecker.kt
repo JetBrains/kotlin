@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
@@ -21,36 +19,23 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_OBJC_NAME_FIRST_CHAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_LITERAL_OBJC_NAME_ARG
-import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameOverridesChecker.check
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.ObjCName
+import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCNameUtilities.getObjCNames
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
-
-    private val objCNameClassId = ClassId.topLevel(FqName("kotlin.native.ObjCName"))
-    private val nameName = Name.identifier("name")
-    private val swiftNameName = Name.identifier("swiftName")
-    private val exactName = Name.identifier("exact")
-
+object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Platform) {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        checkDeclaration(declaration, context, reporter)
-        if (declaration is FirCallableDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
-            val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
-            if (containingClass != null) {
-                val firTypeScope = containingClass.unsubstitutedScope(context)
-                check(firTypeScope, declaration.symbol, declaration, context, reporter)
-            }
-        }
-    }
-
-    private fun checkDeclaration(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration is FirValueParameter) return // those are checked with the FirFunction
         val objCNames = declaration.symbol.getObjCNames(context.session).filterNotNull()
         if (objCNames.isEmpty()) return
@@ -69,7 +54,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
     private fun checkObjCName(objCName: ObjCName, declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val annotationSource = objCName.annotation.source
         for ((_, argument) in objCName.annotation.argumentMapping.mapping) {
-            if (argument is FirConstExpression<*>) continue
+            if (argument is FirLiteralExpression) continue
             reporter.reportOn(argument.source, NON_LITERAL_OBJC_NAME_ARG, context)
         }
         if (objCName.name == null && objCName.swiftName == null) {
@@ -96,40 +81,5 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
         if (objCName.exact && objCName.name == null) {
             reporter.reportOn(annotationSource, MISSING_EXACT_OBJC_NAME, context)
         }
-    }
-
-    class ObjCName(
-        val annotation: FirAnnotation
-    ) {
-        val name: String? = annotation.getStringArgument(nameName)
-        val swiftName: String? = annotation.getStringArgument(swiftNameName)
-        val exact: Boolean = annotation.getBooleanArgument(exactName) ?: false
-
-        override fun equals(other: Any?): Boolean =
-            other is ObjCName && name == other.name && swiftName == other.swiftName && exact == other.exact
-
-        override fun hashCode(): Int {
-            var result = name.hashCode()
-            result = 31 * result + swiftName.hashCode()
-            result = 31 * result + exact.hashCode()
-            return result
-        }
-    }
-
-    private fun FirAnnotationContainer.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
-
-    private fun FirBasedSymbol<*>.getObjCName(session: FirSession): ObjCName? =
-        getAnnotationByClassId(objCNameClassId, session)?.let(::ObjCName)
-
-    fun FirBasedSymbol<*>.getObjCNames(session: FirSession): List<ObjCName?> = when (this) {
-        is FirFunctionSymbol<*> -> buildList {
-            add((this@getObjCNames as FirBasedSymbol<*>).getObjCName(session))
-            add(resolvedReceiverTypeRef?.getObjCName(session))
-            add(receiverParameter?.getObjCName(session))
-            valueParameterSymbols.forEach { add(it.getObjCName(session)) }
-        }
-
-        else -> listOf(getObjCName(session))
     }
 }

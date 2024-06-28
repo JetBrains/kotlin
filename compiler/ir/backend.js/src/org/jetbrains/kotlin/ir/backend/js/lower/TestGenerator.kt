@@ -12,53 +12,70 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-fun generateJsTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
-    val generator = TestGenerator(context, false)
+fun generateJsTests(context: JsCommonBackendContext, moduleFragment: IrModuleFragment, groupByPackage: Boolean) {
+    val generator = TestGenerator(
+        context = context,
+        groupByPackage = groupByPackage
+    )
 
     moduleFragment.files.toList().forEach {
         generator.lower(it)
     }
 }
 
-class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boolean) : FileLoweringPass {
+private class TestGenerator(
+    val context: JsCommonBackendContext,
+    private val groupByPackage: Boolean,
+) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         // Additional copy to prevent ConcurrentModificationException
+        if (irFile.declarations.isEmpty()) return
         ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { if (groupByPackage) suiteForPackage(irFile) else context.createTestContainerFun(irFile) }
+                generateTestCalls(it) { if (groupByPackage) suiteForPackage(it) else context.createTestContainerFun(it) }
             }
 
             // TODO top-level functions
         }
     }
 
-    private val packageSuites = mutableMapOf<FqName, IrSimpleFunction>()
+    private val packageSuites = hashMapOf<FqName, IrSimpleFunction>()
 
-    private fun suiteForPackage(irFile: IrFile) = packageSuites.getOrPut(irFile.fqName) {
-        context.suiteFun!!.createInvocation(irFile.fqName.asString(), context.createTestContainerFun(irFile))
+    private fun suiteForPackage(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
+        return packageSuites.getOrPut(irFile.packageFqName) {
+            context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), context.createTestContainerFun(container))
+        }
     }
 
     private fun IrSimpleFunctionSymbol.createInvocation(
         name: String,
         parentFunction: IrSimpleFunction,
-        ignored: Boolean = false
+        ignored: Boolean = false,
     ): IrSimpleFunction {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
@@ -84,12 +101,12 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
     private fun generateTestCalls(irClass: IrClass, parentFunction: () -> IrSimpleFunction) {
         if (irClass.modality == Modality.ABSTRACT || irClass.isEffectivelyExternal() || irClass.isExpect) return
 
-        val suiteFunBody by lazy {
+        val suiteFunBody by lazy(LazyThreadSafetyMode.NONE) {
             context.suiteFun!!.createInvocation(irClass.name.asString(), parentFunction(), irClass.isIgnored)
         }
 
-        val beforeFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isBefore }
-        val afterFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>().filter { it.isAfter }
+        val beforeFunctions = irClass.declarations.filterIsInstanceAnd<IrSimpleFunction> { it.isBefore }
+        val afterFunctions = irClass.declarations.filterIsInstanceAnd<IrSimpleFunction> { it.isAfter }
 
         irClass.declarations.forEach {
             when {
@@ -127,7 +144,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
         beforeFuns: List<IrSimpleFunction>,
         afterFuns: List<IrSimpleFunction>,
         irClass: IrClass,
-        parentFunction: IrSimpleFunction
+        parentFunction: IrSimpleFunction,
     ) {
         val fn = context.testFun!!.createInvocation(testFun.name.asString(), parentFunction, testFun.isIgnored)
         val body = fn.body as IrBlockBody
@@ -172,14 +189,21 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
             return
         }
 
-        if (context is JsIrBackendContext && (testFun.returnType as? IrSimpleType)?.classifier == context.intrinsics.promiseClassSymbol) {
-            val finally = context.intrinsics.promiseClassSymbol.owner.declarations
-                .filterIsInstance<IrSimpleFunction>()
-                .first {
-                    it.name.asString() == "finally"
-                }
-
-            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
+        val returnType = testFun.returnType as? IrSimpleType
+        val promiseSymbol = context.jsPromiseSymbol
+        if (promiseSymbol != null && returnType != null && returnType.isPromise) {
+            val promiseCastedIfNeeded = if (returnType.classifier == context.jsPromiseSymbol) {
+                returnStatement.value
+            } else {
+                IrTypeOperatorCallImpl(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    type = testFun.returnType,
+                    operator = IrTypeOperator.CAST,
+                    typeOperand = promiseSymbol.defaultType,
+                    argument = returnStatement.value
+                )
+            }
 
             val afterFunction = context.irFactory.buildFun {
                 this.name = Name.identifier("${irClass.name.asString()} after test fun")
@@ -190,7 +214,7 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
                 this.body = context.irFactory.createBlockBody(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    afterFuns.map {
+                    afterFuns.memoryOptimizedMap {
                         JsIrBuilder.buildCall(it.symbol).apply {
                             dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
                         }
@@ -198,12 +222,15 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
                 )
             }
 
+            val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
             val finallyLambda = JsIrBuilder.buildFunctionExpression(refType, afterFunction)
+            val finally = promiseSymbol.owner.declarations
+                .findIsInstanceAnd<IrSimpleFunction> { it.name.asString() == "finally" }!!
 
             val returnValue = JsIrBuilder.buildCall(
                 finally.symbol
             ).apply {
-                this.dispatchReceiver = returnStatement.value
+                this.dispatchReceiver = promiseCastedIfNeeded
                 putValueArgument(0, finallyLambda)
             }
 
@@ -257,4 +284,11 @@ class TestGenerator(val context: JsCommonBackendContext, val groupByPackage: Boo
 
     private fun IrAnnotationContainer.hasAnnotation(fqName: String) =
         annotations.any { it.symbol.owner.fqNameWhenAvailable?.parent()?.asString() == fqName }
+
+    private val IrSimpleType.isPromise: Boolean
+        get() {
+            if (this.classifier == context.jsPromiseSymbol) return true
+            val klass = classifier.owner as? IrClass ?: return false
+            return klass.isExternal && klass.getJsModule() == null && klass.getJsNameOrKotlinName().asString() == "Promise"
+        }
 }

@@ -7,22 +7,20 @@ package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.defaultArgumentsDispatchFunction
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapperPreservingSignatures
-import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.deepCopySavingMetadata
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -35,7 +33,7 @@ fun <Context : CommonBackendContext> performByIrFile(
 ): SameTypeNamedCompilerPhase<Context, IrModuleFragment> =
     SameTypeNamedCompilerPhase(
         name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
-        setOf(defaultDumper), nlevels = 1,
+        setOf(getIrDumper()), nlevels = 1,
     )
 
 private class PerformByIrFilePhase<Context : CommonBackendContext>(
@@ -67,7 +65,8 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             } catch (e: Throwable) {
                 CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name) { offset ->
                     irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                        it.getLineNumber(offset) to it.getColumnNumber(offset)
+                        val (line, column) = it.getLineAndColumnNumbers(offset)
+                        line to column
                     }
                 }
             }
@@ -116,7 +115,8 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         thrownFromThread.get()?.let { (e, irFile) ->
             CodegenUtil.reportBackendException(e, "Experimental parallel IR backend", irFile.fileEntry.name) { offset ->
                 irFile.fileEntry.takeIf { it.supportsDebugInfo }?.let {
-                    it.getLineNumber(offset) to it.getColumnNumber(offset)
+                    val (line, column) = it.getLineAndColumnNumbers(offset)
+                    line to column
                 }
             }
         }
@@ -135,7 +135,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             // and some entries in adjustDefaultArgumentStubs depend on those inserted by handleDeepCopy, so we need to repeat the call.
             adjustDefaultArgumentStubs(context, remappedFunctions)
 
-            input.transformChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
+            input.acceptChildrenVoid(CrossFileCallAdjuster(remappedFunctions))
         }
 
         // TODO: no guarantee that module identity is preserved by `lower`
@@ -173,9 +173,9 @@ private class DeepCopySymbolRemapperSavingFunctions : DeepCopySymbolRemapperPres
     val declaredFunctions = mutableSetOf<IrSimpleFunctionSymbol>()
     val declaredClasses = mutableSetOf<IrClassSymbol>()
 
-    override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
+    override fun getDeclaredSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol {
         declaredFunctions.add(symbol)
-        return super.getDeclaredFunction(symbol)
+        return super.getDeclaredSimpleFunction(symbol)
     }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol {
@@ -192,33 +192,27 @@ private fun adjustDefaultArgumentStubs(
         if (defaultStub !is IrSimpleFunction) continue
         val original = context.mapping.defaultArgumentsOriginalFunction[defaultStub] as? IrSimpleFunction ?: continue
         val originalNew = remappedFunctions[original.symbol]?.owner ?: continue
-        val defaultStubNew = context.mapping.defaultArgumentsDispatchFunction[originalNew] ?: continue
+        val defaultStubNew = originalNew.defaultArgumentsDispatchFunction ?: continue
         remappedFunctions[defaultStub.symbol] = defaultStubNew.symbol as IrSimpleFunctionSymbol
     }
 }
 
 private class CrossFileCallAdjuster(
     val remappedFunctions: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
-) : IrElementTransformerVoid() {
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
-        return super.visitSimpleFunction(declaration)
+) : IrElementVisitorVoid {
+    override fun visitElement(element: IrElement) {
+        element.acceptChildren(this, null)
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
-        return remappedFunctions[expression.symbol]?.let { newSymbol ->
-            with(expression) {
-                IrCallImpl(
-                    startOffset, endOffset, type,
-                    newSymbol,
-                    typeArgumentsCount, valueArgumentsCount, origin,
-                    superQualifierSymbol // TODO
-                ).apply {
-                    copyTypeAndValueArgumentsFrom(expression)
-                }
-            }
-        } ?: expression
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        declaration.overriddenSymbols = declaration.overriddenSymbols.map { remappedFunctions[it] ?: it }
+        declaration.acceptChildren(this, null)
+    }
+
+    override fun visitCall(expression: IrCall) {
+        expression.acceptChildren(this, null)
+        remappedFunctions[expression.symbol]?.let {
+            expression.symbol = it
+        }
     }
 }

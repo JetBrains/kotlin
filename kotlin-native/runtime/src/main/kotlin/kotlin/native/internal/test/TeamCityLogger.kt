@@ -5,8 +5,10 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.text.StringBuilder
 
+@ExperimentalNativeApi
 internal class TeamCityLogger : BaseTestLogger() {
 
     private fun String.escapeForTC(): String = StringBuilder(length).apply {

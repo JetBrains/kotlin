@@ -2,7 +2,7 @@ package
 
 @kotlinx.serialization.Serializable public final class Digest {
     public constructor Digest()
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Digest(/*0*/ seen1: kotlin.Int, /*1*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) internal /*synthesized*/ constructor Digest(/*0*/ seen1: kotlin.Int, /*1*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

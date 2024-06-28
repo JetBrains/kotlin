@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
-import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
+import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.correspondingProperty
@@ -27,10 +25,11 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.builder.buildPropertyFromParameterResolvedNamedReference
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -45,9 +45,11 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 class ValueParameter(
+    private val valueParameterSymbol: FirValueParameterSymbol,
     private val isVal: Boolean,
     private val isVar: Boolean,
     private val modifiers: Modifier,
+    private val valueParameterAnnotations: List<FirAnnotationCall>,
     val returnTypeRef: FirTypeRef,
     val source: KtSourceElement,
     private val moduleData: FirModuleData,
@@ -65,12 +67,9 @@ class ValueParameter(
     val annotations: List<FirAnnotation> by lazy(LazyThreadSafetyMode.NONE) {
         buildList {
             if (!isFromPrimaryConstructor)
-                addAll(modifiers.annotations)
+                addAll(valueParameterAnnotations)
             else
-                modifiers.annotations.filterTo(this) {
-                    val useSiteTarget = it.useSiteTarget
-                    useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER || useSiteTarget == AnnotationUseSiteTarget.RECEIVER || useSiteTarget == AnnotationUseSiteTarget.FILE
-                }
+                valueParameterAnnotations.filterTo(this) { it.useSiteTarget.appliesToPrimaryConstructorParameter() }
             addAll(additionalAnnotations)
         }
     }
@@ -80,13 +79,18 @@ class ValueParameter(
             source = this@ValueParameter.source
             moduleData = this@ValueParameter.moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = this@ValueParameter.returnTypeRef
+            isVararg = modifiers.hasVararg()
+            returnTypeRef = if (isVararg && this@ValueParameter.returnTypeRef is FirErrorTypeRef) {
+                this@ValueParameter.returnTypeRef.wrapIntoArray()
+            } else {
+                this@ValueParameter.returnTypeRef
+            }
+
             this.name = this@ValueParameter.name
-            symbol = FirValueParameterSymbol(name)
+            symbol = valueParameterSymbol
             defaultValue = this@ValueParameter.defaultValue
             isCrossinline = modifiers.hasCrossinline()
             isNoinline = modifiers.hasNoinline()
-            isVararg = modifiers.hasVararg()
             containingFunctionSymbol = this@ValueParameter.containingFunctionSymbol
                 ?: error("containingFunctionSymbol should present when converting ValueParameter to a FirValueParameter")
 
@@ -105,7 +109,7 @@ class ValueParameter(
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
-            type = buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax) }
+            type = buildErrorTypeRef { diagnostic = ConeSyntaxDiagnostic("Incomplete code") }
         }
 
         return buildProperty {
@@ -124,8 +128,16 @@ class ValueParameter(
                     source = propertySource
                 }
             }
+
             isVar = this@ValueParameter.isVar
-            symbol = FirPropertySymbol(callableId)
+            val propertySymbol = FirPropertySymbol(callableId)
+            val remappedAnnotations = valueParameterAnnotations.map {
+                buildAnnotationCallCopy(it) {
+                    containingDeclarationSymbol = propertySymbol
+                }
+            }
+
+            symbol = propertySymbol
             dispatchReceiverType = currentDispatchReceiver
             isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality(isClassOrObject = false)).apply {
@@ -133,21 +145,25 @@ class ValueParameter(
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
+                isLateInit = modifiers.hasLateinit()
             }
+
+            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
-                annotations = mutableListOf(),
+                origin = FirDeclarationOrigin.Source,
+                source = defaultAccessorSource,
+                annotations = remappedAnnotations.filter {
+                    it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                }.toMutableList(),
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = symbol,
-                status = status.copy(),
+                status = status.copy(isLateInit = false),
             )
-            annotations += modifiers.annotations.filter {
-                it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                        it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-            }
-            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+
+            annotations += remappedAnnotations.filterConstructorPropertyRelevantAnnotations(this.isVar)
+
             getter = FirDefaultPropertyGetter(
                 defaultAccessorSource,
                 moduleData,
@@ -155,9 +171,10 @@ class ValueParameter(
                 type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
+                isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
-                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_GETTER))
+                it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_GETTER))
             }
             setter = if (this.isVar) FirDefaultPropertySetter(
                 defaultAccessorSource,
@@ -166,10 +183,11 @@ class ValueParameter(
                 type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.SETTER_PARAMETER)
+                parameterAnnotations = remappedAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
+                isInline = modifiers.hasInline(),
             ).also {
                 it.initContainingClassAttr(context)
-                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_SETTER))
+                it.replaceAnnotations(remappedAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
             } else null
         }.apply {
             if (firValueParameter.isVararg) {

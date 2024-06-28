@@ -15,12 +15,11 @@ repositories {
 dependencies {
     testApi(intellijCore())
 
-    testRuntimeOnly("xerces:xercesImpl:2.12.0")
+    testRuntimeOnly(libs.xerces)
     testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(libs.junit4)
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))

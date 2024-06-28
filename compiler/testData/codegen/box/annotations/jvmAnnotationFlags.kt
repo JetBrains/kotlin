@@ -1,8 +1,9 @@
 // TARGET_BACKEND: JVM
 
-// !API_VERSION: 1.9
 // WITH_STDLIB
 // FULL_JDK
+
+// JVM_ABI_K1_K2_DIFF: KT-63853, KT-63854
 
 import java.lang.reflect.Modifier
 import kotlin.reflect.KProperty
@@ -13,7 +14,6 @@ class CustomDelegate {
 
 class C {
     @Volatile var vol = 1
-    @OptIn(ExperimentalStdlibApi::class)
     @kotlin.concurrent.Volatile var vol2 = 1
     @Transient val tra = 1
     @delegate:Transient val del: String by CustomDelegate()

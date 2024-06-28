@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,1625 +21,1630 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWithPsiClassReadingTest {
-    private void runTest(String testDataFilePath) throws Exception {
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+  }
+
+  public void testAllFilesPresentInCompiledJava() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
+  }
+
+  @TestMetadata("ArrayInGenericArguments.java")
+  public void testArrayInGenericArguments() {
+    runTest("compiler/testData/loadJava/compiledJava/ArrayInGenericArguments.java");
+  }
+
+  @TestMetadata("ArrayTypeVariance.java")
+  public void testArrayTypeVariance() {
+    runTest("compiler/testData/loadJava/compiledJava/ArrayTypeVariance.java");
+  }
+
+  @TestMetadata("ClassDoesNotOverrideMethod.java")
+  public void testClassDoesNotOverrideMethod() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassDoesNotOverrideMethod.java");
+  }
+
+  @TestMetadata("ClassWithConstVal.java")
+  public void testClassWithConstVal() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithConstVal.java");
+  }
+
+  @TestMetadata("ClassWithTypeP.java")
+  public void testClassWithTypeP() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypeP.java");
+  }
+
+  @TestMetadata("ClassWithTypePExtendsIterableP.java")
+  public void testClassWithTypePExtendsIterableP() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePExtendsIterableP.java");
+  }
+
+  @TestMetadata("ClassWithTypePP.java")
+  public void testClassWithTypePP() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePP.java");
+  }
+
+  @TestMetadata("ClassWithTypePRefNext.java")
+  public void testClassWithTypePRefNext() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefNext.java");
+  }
+
+  @TestMetadata("ClassWithTypePRefSelf.java")
+  public void testClassWithTypePRefSelf() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefSelf.java");
+  }
+
+  @TestMetadata("ClassWithTypePRefSelfAndClass.java")
+  public void testClassWithTypePRefSelfAndClass() {
+    runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefSelfAndClass.java");
+  }
+
+  @TestMetadata("FieldAsVar.java")
+  public void testFieldAsVar() {
+    runTest("compiler/testData/loadJava/compiledJava/FieldAsVar.java");
+  }
+
+  @TestMetadata("FieldOfArrayType.java")
+  public void testFieldOfArrayType() {
+    runTest("compiler/testData/loadJava/compiledJava/FieldOfArrayType.java");
+  }
+
+  @TestMetadata("FinalFieldAsVal.java")
+  public void testFinalFieldAsVal() {
+    runTest("compiler/testData/loadJava/compiledJava/FinalFieldAsVal.java");
+  }
+
+  @TestMetadata("InheritMethodsDifferentReturnTypes.java")
+  public void testInheritMethodsDifferentReturnTypes() {
+    runTest("compiler/testData/loadJava/compiledJava/InheritMethodsDifferentReturnTypes.java");
+  }
+
+  @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.java")
+  public void testInheritMethodsDifferentReturnTypesGeneric() {
+    runTest("compiler/testData/loadJava/compiledJava/InheritMethodsDifferentReturnTypesGeneric.java");
+  }
+
+  @TestMetadata("InnerClass.java")
+  public void testInnerClass() {
+    runTest("compiler/testData/loadJava/compiledJava/InnerClass.java");
+  }
+
+  @TestMetadata("InnerClassReferencesOuterTP.java")
+  public void testInnerClassReferencesOuterTP() {
+    runTest("compiler/testData/loadJava/compiledJava/InnerClassReferencesOuterTP.java");
+  }
+
+  @TestMetadata("InnerClassTypeMultipleGeneric.java")
+  public void testInnerClassTypeMultipleGeneric() {
+    runTest("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
+  }
+
+  @TestMetadata("InnerClassesInGeneric.java")
+  public void testInnerClassesInGeneric() {
+    runTest("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");
+  }
+
+  @TestMetadata("InnerOfGeneric.java")
+  public void testInnerOfGeneric() {
+    runTest("compiler/testData/loadJava/compiledJava/InnerOfGeneric.java");
+  }
+
+  @TestMetadata("IntrinsicCompanionObject.java")
+  public void testIntrinsicCompanionObject() {
+    runTest("compiler/testData/loadJava/compiledJava/IntrinsicCompanionObject.java");
+  }
+
+  @TestMetadata("MethodReferencesOuterClassTP.java")
+  public void testMethodReferencesOuterClassTP() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodReferencesOuterClassTP.java");
+  }
+
+  @TestMetadata("MethodTypePOneUpperBound.java")
+  public void testMethodTypePOneUpperBound() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodTypePOneUpperBound.java");
+  }
+
+  @TestMetadata("MethodTypePTwoUpperBounds.java")
+  public void testMethodTypePTwoUpperBounds() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodTypePTwoUpperBounds.java");
+  }
+
+  @TestMetadata("MethodWithTypeP.java")
+  public void testMethodWithTypeP() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodWithTypeP.java");
+  }
+
+  @TestMetadata("MethodWithTypePP.java")
+  public void testMethodWithTypePP() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodWithTypePP.java");
+  }
+
+  @TestMetadata("MethodWithTypePRefClassP.java")
+  public void testMethodWithTypePRefClassP() {
+    runTest("compiler/testData/loadJava/compiledJava/MethodWithTypePRefClassP.java");
+  }
+
+  @TestMetadata("MethosWithPRefTP.java")
+  public void testMethosWithPRefTP() {
+    runTest("compiler/testData/loadJava/compiledJava/MethosWithPRefTP.java");
+  }
+
+  @TestMetadata("MyException.java")
+  public void testMyException() {
+    runTest("compiler/testData/loadJava/compiledJava/MyException.java");
+  }
+
+  @TestMetadata("NestedClass.java")
+  public void testNestedClass() {
+    runTest("compiler/testData/loadJava/compiledJava/NestedClass.java");
+  }
+
+  @TestMetadata("OverrideMethod.java")
+  public void testOverrideMethod() {
+    runTest("compiler/testData/loadJava/compiledJava/OverrideMethod.java");
+  }
+
+  @TestMetadata("PackageLocalVisibility.java")
+  public void testPackageLocalVisibility() {
+    runTest("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
+  }
+
+  @TestMetadata("PrivateMembers.java")
+  public void testPrivateMembers() {
+    runTest("compiler/testData/loadJava/compiledJava/PrivateMembers.java");
+  }
+
+  @TestMetadata("PrivateMembersInHierarchy.java")
+  public void testPrivateMembersInHierarchy() {
+    runTest("compiler/testData/loadJava/compiledJava/PrivateMembersInHierarchy.java");
+  }
+
+  @TestMetadata("RawOverrides.java")
+  public void testRawOverrides() {
+    runTest("compiler/testData/loadJava/compiledJava/RawOverrides.java");
+  }
+
+  @TestMetadata("RawTypeWithUpperBound.java")
+  public void testRawTypeWithUpperBound() {
+    runTest("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");
+  }
+
+  @TestMetadata("RawUpperBound.java")
+  public void testRawUpperBound() {
+    runTest("compiler/testData/loadJava/compiledJava/RawUpperBound.java");
+  }
+
+  @TestMetadata("RecursiveRawUpperBound.java")
+  public void testRecursiveRawUpperBound() {
+    runTest("compiler/testData/loadJava/compiledJava/RecursiveRawUpperBound.java");
+  }
+
+  @TestMetadata("RecursiveWildcardUpperBound.java")
+  public void testRecursiveWildcardUpperBound() {
+    runTest("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
+  }
+
+  @TestMetadata("ReferenceCycleThroughAnnotation.java")
+  public void testReferenceCycleThroughAnnotation() {
+    runTest("compiler/testData/loadJava/compiledJava/ReferenceCycleThroughAnnotation.java");
+  }
+
+  @TestMetadata("RemoveRedundantProjectionKind.java")
+  public void testRemoveRedundantProjectionKind() {
+    runTest("compiler/testData/loadJava/compiledJava/RemoveRedundantProjectionKind.java");
+  }
+
+  @TestMetadata("Simple.java")
+  public void testSimple() {
+    runTest("compiler/testData/loadJava/compiledJava/Simple.java");
+  }
+
+  @TestMetadata("SubclassFromNested.java")
+  public void testSubclassFromNested() {
+    runTest("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");
+  }
+
+  @TestMetadata("TopLevel$Class.java")
+  public void testTopLevel$Class() {
+    runTest("compiler/testData/loadJava/compiledJava/TopLevel$Class.java");
+  }
+
+  @TestMetadata("TwoFields.java")
+  public void testTwoFields() {
+    runTest("compiler/testData/loadJava/compiledJava/TwoFields.java");
+  }
+
+  @TestMetadata("UnboundWildcard.java")
+  public void testUnboundWildcard() {
+    runTest("compiler/testData/loadJava/compiledJava/UnboundWildcard.java");
+  }
+
+  @TestMetadata("WildcardBounds.java")
+  public void testWildcardBounds() {
+    runTest("compiler/testData/loadJava/compiledJava/WildcardBounds.java");
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Annotations extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInAnnotations() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("AnnotatedAnnotation.java")
+    public void testAnnotatedAnnotation() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedAnnotation.java");
+    }
+
+    @TestMetadata("AnnotatedConstructor.java")
+    public void testAnnotatedConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedConstructor.java");
+    }
+
+    @TestMetadata("AnnotatedEnumEntry.java")
+    public void testAnnotatedEnumEntry() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
+    }
+
+    @TestMetadata("AnnotatedField.java")
+    public void testAnnotatedField() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedField.java");
+    }
+
+    @TestMetadata("AnnotatedMethod.java")
+    public void testAnnotatedMethod() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
+    }
+
+    @TestMetadata("AnnotatedParameterInEnumClassConstructor.java")
+    public void testAnnotatedParameterInEnumClassConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInEnumClassConstructor.java");
+    }
+
+    @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
+    public void testAnnotatedParameterInInnerClassConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
+    }
+
+    @TestMetadata("AnnotatedTypeInEnumClassConstructor.java")
+    public void testAnnotatedTypeInEnumClassConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor.java");
+    }
+
+    @TestMetadata("AnnotatedTypeInEnumClassConstructor2.java")
+    public void testAnnotatedTypeInEnumClassConstructor2() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor2.java");
+    }
+
+    @TestMetadata("AnnotatedTypeInFun.java")
+    public void testAnnotatedTypeInFun() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInFun.java");
+    }
+
+    @TestMetadata("AnnotatedTypeInInnerClassConstructor.java")
+    public void testAnnotatedTypeInInnerClassConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor.java");
+    }
+
+    @TestMetadata("AnnotatedTypeInInnerClassConstructor2.java")
+    public void testAnnotatedTypeInInnerClassConstructor2() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor2.java");
+    }
+
+    @TestMetadata("AnnotatedValueParameter.java")
+    public void testAnnotatedValueParameter() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedValueParameter.java");
+    }
+
+    @TestMetadata("AnnotationInParam.java")
+    public void testAnnotationInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationInParam.java");
+    }
+
+    @TestMetadata("AnnotationRetentions.java")
+    public void testAnnotationRetentions() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationRetentions.java");
+    }
+
+    @TestMetadata("AnnotationTargets.java")
+    public void testAnnotationTargets() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationTargets.java");
+    }
+
+    @TestMetadata("ArithmeticExpressionInParam.java")
+    public void testArithmeticExpressionInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ArithmeticExpressionInParam.java");
+    }
+
+    @TestMetadata("ArrayOfEnumInParam.java")
+    public void testArrayOfEnumInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ArrayOfEnumInParam.java");
+    }
+
+    @TestMetadata("ArrayOfStringInParam.java")
+    public void testArrayOfStringInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ArrayOfStringInParam.java");
+    }
+
+    @TestMetadata("ClassObjectArrayInParam.java")
+    public void testClassObjectArrayInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectArrayInParam.java");
+    }
+
+    @TestMetadata("ClassObjectInParam.java")
+    public void testClassObjectInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParam.java");
+    }
+
+    @TestMetadata("ClassObjectInParamRaw.java")
+    public void testClassObjectInParamRaw() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamRaw.java");
+    }
+
+    @TestMetadata("ClassObjectInParamVariance.java")
+    public void testClassObjectInParamVariance() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamVariance.java");
+    }
+
+    @TestMetadata("CustomAnnotation.java")
+    public void testCustomAnnotation() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");
+    }
+
+    @TestMetadata("CustomAnnotationWithDefaultParameter.java")
+    public void testCustomAnnotationWithDefaultParameter() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotationWithDefaultParameter.java");
+    }
+
+    @TestMetadata("EmptyArrayInParam.java")
+    public void testEmptyArrayInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/EmptyArrayInParam.java");
+    }
+
+    @TestMetadata("EnumArgumentWithCustomToString.java")
+    public void testEnumArgumentWithCustomToString() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
+    }
+
+    @TestMetadata("EnumConstructorParameter.java")
+    public void testEnumConstructorParameter() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
+    }
+
+    @TestMetadata("EnumInParam.java")
+    public void testEnumInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
+    }
+
+    @TestMetadata("JavaDocDeprecated.java")
+    public void testJavaDocDeprecated() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/JavaDocDeprecated.java");
+    }
+
+    @TestMetadata("NestedEnumArgument.java")
+    public void testNestedEnumArgument() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumArgument.java");
+    }
+
+    @TestMetadata("NestedEnumInAnnotation.java")
+    public void testNestedEnumInAnnotation() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumInAnnotation.java");
+    }
+
+    @TestMetadata("PrimitiveValueInParam.java")
+    public void testPrimitiveValueInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/PrimitiveValueInParam.java");
+    }
+
+    @TestMetadata("RecursiveAnnotation.java")
+    public void testRecursiveAnnotation() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation.java");
+    }
+
+    @TestMetadata("RecursiveAnnotation2.java")
+    public void testRecursiveAnnotation2() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation2.java");
+    }
+
+    @TestMetadata("SimpleAnnotation.java")
+    public void testSimpleAnnotation() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/SimpleAnnotation.java");
+    }
+
+    @TestMetadata("StringConcatenationInParam.java")
+    public void testStringConcatenationInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/StringConcatenationInParam.java");
+    }
+
+    @TestMetadata("StringConstantInParam.java")
+    public void testStringConstantInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/StringConstantInParam.java");
+    }
+
+    @TestMetadata("StringInParam.java")
+    public void testStringInParam() {
+      runTest("compiler/testData/loadJava/compiledJava/annotations/StringInParam.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/constructor")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Constructor extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInConstructor() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("ConstructorGenericDeep.java")
+    public void testConstructorGenericDeep() {
+      runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericDeep.java");
+    }
+
+    @TestMetadata("ConstructorGenericSimple.java")
+    public void testConstructorGenericSimple() {
+      runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericSimple.java");
+    }
+
+    @TestMetadata("ConstructorGenericUpperBound.java")
+    public void testConstructorGenericUpperBound() {
+      runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericUpperBound.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/enum")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Enum extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInEnum() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("EnumMembers.java")
+    public void testEnumMembers() {
+      runTest("compiler/testData/loadJava/compiledJava/enum/EnumMembers.java");
+    }
+
+    @TestMetadata("EnumWithSpecializedEntry.java")
+    public void testEnumWithSpecializedEntry() {
+      runTest("compiler/testData/loadJava/compiledJava/enum/EnumWithSpecializedEntry.java");
+    }
+
+    @TestMetadata("JavaEnum.java")
+    public void testJavaEnum() {
+      runTest("compiler/testData/loadJava/compiledJava/enum/JavaEnum.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/javaBean")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class JavaBean extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInJavaBean() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("DifferentGetterAndSetter.java")
+    public void testDifferentGetterAndSetter() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/DifferentGetterAndSetter.java");
+    }
+
+    @TestMetadata("JavaBeanAbstractGetter.java")
+    public void testJavaBeanAbstractGetter() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanAbstractGetter.java");
+    }
+
+    @TestMetadata("JavaBeanVal.java")
+    public void testJavaBeanVal() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVal.java");
+    }
+
+    @TestMetadata("JavaBeanVar.java")
+    public void testJavaBeanVar() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVar.java");
+    }
+
+    @TestMetadata("JavaBeanVarOfGenericType.java")
+    public void testJavaBeanVarOfGenericType() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVarOfGenericType.java");
+    }
+
+    @TestMetadata("TwoSetters.java")
+    public void testTwoSetters() {
+      runTest("compiler/testData/loadJava/compiledJava/javaBean/TwoSetters.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class KotlinSignature extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    @TestMetadata("AllBoundsInWhen.java")
+    public void testAllBoundsInWhen() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/AllBoundsInWhen.java");
+    }
+
+    public void testAllFilesPresentInKotlinSignature() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("ArrayType.java")
+    public void testArrayType() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ArrayType.java");
+    }
+
+    @TestMetadata("ConstructorWithNewTypeParams.java")
+    public void testConstructorWithNewTypeParams() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithNewTypeParams.java");
+    }
+
+    @TestMetadata("ConstructorWithParentTypeParams.java")
+    public void testConstructorWithParentTypeParams() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithParentTypeParams.java");
+    }
+
+    @TestMetadata("ConstructorWithSeveralParams.java")
+    public void testConstructorWithSeveralParams() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithSeveralParams.java");
+    }
+
+    @TestMetadata("ConstructorWithoutParams.java")
+    public void testConstructorWithoutParams() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithoutParams.java");
+    }
+
+    @TestMetadata("CustomProjectionKind.java")
+    public void testCustomProjectionKind() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/CustomProjectionKind.java");
+    }
+
+    @TestMetadata("MethodWithFunctionTypes.java")
+    public void testMethodWithFunctionTypes() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithFunctionTypes.java");
+    }
+
+    @TestMetadata("MethodWithGenerics.java")
+    public void testMethodWithGenerics() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithGenerics.java");
+    }
+
+    @TestMetadata("MethodWithMappedClasses.java")
+    public void testMethodWithMappedClasses() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithMappedClasses.java");
+    }
+
+    @TestMetadata("MethodWithTypeParameters.java")
+    public void testMethodWithTypeParameters() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithTypeParameters.java");
+    }
+
+    @TestMetadata("MethodWithVararg.java")
+    public void testMethodWithVararg() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithVararg.java");
+    }
+
+    @TestMetadata("PropertyArrayTypes.java")
+    public void testPropertyArrayTypes() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertyArrayTypes.java");
+    }
+
+    @TestMetadata("PropertyComplexTypes.java")
+    public void testPropertyComplexTypes() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertyComplexTypes.java");
+    }
+
+    @TestMetadata("PropertySimpleType.java")
+    public void testPropertySimpleType() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertySimpleType.java");
+    }
+
+    @TestMetadata("StarProjection.java")
+    public void testStarProjection() {
+      runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/StarProjection.java");
+    }
+
+    @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Error extends AbstractLoadJavaWithPsiClassReadingTest {
+      private void runTest(String testDataFilePath) {
         KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInError() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), null, true);
+      }
+
+      @TestMetadata("WrongProjectionKind.java")
+      public void testWrongProjectionKind() {
+        runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongProjectionKind.java");
+      }
+
+      @TestMetadata("WrongReturnTypeStructure.java")
+      public void testWrongReturnTypeStructure() {
+        runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongReturnTypeStructure.java");
+      }
+
+      @TestMetadata("WrongTypeParameterBoundStructure1.java")
+      public void testWrongTypeParameterBoundStructure1() {
+        runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeParameterBoundStructure1.java");
+      }
+
+      @TestMetadata("WrongValueParameterStructure1.java")
+      public void testWrongValueParameterStructure1() {
+        runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongValueParameterStructure1.java");
+      }
     }
 
-    public void testAllFilesPresentInCompiledJava() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
+    @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Propagation extends AbstractLoadJavaWithPsiClassReadingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInPropagation() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), null, true);
+      }
+
+      @TestMetadata("PropagateTypeArgumentNullable.java")
+      public void testPropagateTypeArgumentNullable() {
+        runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.java");
+      }
+
+      @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Parameter extends AbstractLoadJavaWithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInParameter() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("ChangeProjectionKind1.java")
+        public void testChangeProjectionKind1() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.java");
+        }
+
+        @TestMetadata("DeeplySubstitutedClassParameter.java")
+        public void testDeeplySubstitutedClassParameter() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.java");
+        }
+
+        @TestMetadata("DeeplySubstitutedClassParameter2.java")
+        public void testDeeplySubstitutedClassParameter2() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.java");
+        }
+
+        @TestMetadata("InheritNotVararg.java")
+        public void testInheritNotVararg() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVararg.java");
+        }
+
+        @TestMetadata("InheritNotVarargInteger.java")
+        public void testInheritNotVarargInteger() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.java");
+        }
+
+        @TestMetadata("InheritNotVarargNotNull.java")
+        public void testInheritNotVarargNotNull() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.java");
+        }
+
+        @TestMetadata("InheritNotVarargPrimitive.java")
+        public void testInheritNotVarargPrimitive() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.java");
+        }
+
+        @TestMetadata("InheritNullability.java")
+        public void testInheritNullability() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNullability.java");
+        }
+
+        @TestMetadata("InheritVararg.java")
+        public void testInheritVararg() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVararg.java");
+        }
+
+        @TestMetadata("InheritVarargInteger.java")
+        public void testInheritVarargInteger() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargInteger.java");
+        }
+
+        @TestMetadata("InheritVarargNotNull.java")
+        public void testInheritVarargNotNull() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.java");
+        }
+
+        @TestMetadata("InheritVarargPrimitive.java")
+        public void testInheritVarargPrimitive() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.java");
+        }
+
+        @TestMetadata("Kt3302.java")
+        public void testKt3302() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/Kt3302.java");
+        }
+
+        @TestMetadata("MutableToReadOnly.java")
+        public void testMutableToReadOnly() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/MutableToReadOnly.java");
+        }
+
+        @TestMetadata("NotNullToNullable.java")
+        public void testNotNullToNullable() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NotNullToNullable.java");
+        }
+
+        @TestMetadata("NullableToNotNull.java")
+        public void testNullableToNotNull() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NullableToNotNull.java");
+        }
+
+        @TestMetadata("NullableToNotNullKotlinSignature.java")
+        public void testNullableToNotNullKotlinSignature() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.java");
+        }
+
+        @TestMetadata("OverrideWithErasedParameter.java")
+        public void testOverrideWithErasedParameter() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.java");
+        }
+
+        @TestMetadata("ReadOnlyToMutable.java")
+        public void testReadOnlyToMutable() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.java");
+        }
+
+        @TestMetadata("SubclassFromGenericAndNot.java")
+        public void testSubclassFromGenericAndNot() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.java");
+        }
+
+        @TestMetadata("SubstitutedClassParameter.java")
+        public void testSubstitutedClassParameter() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.java");
+        }
+
+        @TestMetadata("SubstitutedClassParameters.java")
+        public void testSubstitutedClassParameters() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.java");
+        }
+      }
+
+      @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Return extends AbstractLoadJavaWithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        @TestMetadata("AddNotNullJavaSubtype.java")
+        public void testAddNotNullJavaSubtype() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.java");
+        }
+
+        @TestMetadata("AddNotNullSameJavaType.java")
+        public void testAddNotNullSameJavaType() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.java");
+        }
+
+        @TestMetadata("AddNullabilityJavaSubtype.java")
+        public void testAddNullabilityJavaSubtype() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.java");
+        }
+
+        @TestMetadata("AddNullabilitySameGenericType1.java")
+        public void testAddNullabilitySameGenericType1() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.java");
+        }
+
+        @TestMetadata("AddNullabilitySameGenericType2.java")
+        public void testAddNullabilitySameGenericType2() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.java");
+        }
+
+        @TestMetadata("AddNullabilitySameJavaType.java")
+        public void testAddNullabilitySameJavaType() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.java");
+        }
+
+        public void testAllFilesPresentInReturn() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("CantMakeImmutableInSubclass.java")
+        public void testCantMakeImmutableInSubclass() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.java");
+        }
+
+        @TestMetadata("DeeplySubstitutedClassParameter.java")
+        public void testDeeplySubstitutedClassParameter() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.java");
+        }
+
+        @TestMetadata("DeeplySubstitutedClassParameter2.java")
+        public void testDeeplySubstitutedClassParameter2() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.java");
+        }
+
+        @TestMetadata("HalfSubstitutedTypeParameters.java")
+        public void testHalfSubstitutedTypeParameters() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.java");
+        }
+
+        @TestMetadata("InheritNullabilityGenericSubclassSimple.java")
+        public void testInheritNullabilityGenericSubclassSimple() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.java");
+        }
+
+        @TestMetadata("InheritNullabilityJavaSubtype.java")
+        public void testInheritNullabilityJavaSubtype() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.java");
+        }
+
+        @TestMetadata("InheritNullabilitySameGenericType.java")
+        public void testInheritNullabilitySameGenericType() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.java");
+        }
+
+        @TestMetadata("InheritNullabilitySameJavaType.java")
+        public void testInheritNullabilitySameJavaType() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.java");
+        }
+
+        @TestMetadata("InheritProjectionKind.java")
+        public void testInheritProjectionKind() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritProjectionKind.java");
+        }
+
+        @TestMetadata("InheritReadOnlinessOfArgument.java")
+        public void testInheritReadOnlinessOfArgument() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.java");
+        }
+
+        @TestMetadata("InheritReadOnlinessSameClass.java")
+        public void testInheritReadOnlinessSameClass() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.java");
+        }
+
+        @TestMetadata("InheritReadOnlinessSubclass.java")
+        public void testInheritReadOnlinessSubclass() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.java");
+        }
+
+        @TestMetadata("SameProjectionKind.java")
+        public void testSameProjectionKind() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SameProjectionKind.java");
+        }
+
+        @TestMetadata("SubclassFromGenericAndNot.java")
+        public void testSubclassFromGenericAndNot() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.java");
+        }
+
+        @TestMetadata("SubclassOfCollection.java")
+        public void testSubclassOfCollection() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassOfCollection.java");
+        }
+
+        @TestMetadata("SubclassOfMapEntry.java")
+        public void testSubclassOfMapEntry() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassOfMapEntry.java");
+        }
+
+        @TestMetadata("SubstitutedClassParameter.java")
+        public void testSubstitutedClassParameter() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubstitutedClassParameter.java");
+        }
+
+        @TestMetadata("SubstitutedClassParameters.java")
+        public void testSubstitutedClassParameters() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubstitutedClassParameters.java");
+        }
+
+        @TestMetadata("TwoSuperclassesConflictingProjectionKinds.java")
+        public void testTwoSuperclassesConflictingProjectionKinds() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.java");
+        }
+
+        @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.java")
+        public void testTwoSuperclassesInvariantAndCovariantInferMutability() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.java");
+        }
+
+        @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.java")
+        public void testTwoSuperclassesInvariantAndCovariantInferNullability() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.java");
+        }
+
+        @TestMetadata("TwoSuperclassesMutableAndNot.java")
+        public void testTwoSuperclassesMutableAndNot() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.java");
+        }
+
+        @TestMetadata("TwoSuperclassesReturnJavaSubtype.java")
+        public void testTwoSuperclassesReturnJavaSubtype() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.java");
+        }
+
+        @TestMetadata("TwoSuperclassesReturnSameJavaType.java")
+        public void testTwoSuperclassesReturnSameJavaType() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.java");
+        }
+
+        @TestMetadata("TwoSuperclassesSupplementNotNull.java")
+        public void testTwoSuperclassesSupplementNotNull() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.java");
+        }
+
+        @TestMetadata("TypeParamOfClass.java")
+        public void testTypeParamOfClass() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfClass.java");
+        }
+
+        @TestMetadata("TypeParamOfClassSubstituted.java")
+        public void testTypeParamOfClassSubstituted() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.java");
+        }
+
+        @TestMetadata("TypeParamOfFun.java")
+        public void testTypeParamOfFun() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfFun.java");
+        }
+      }
+
+      @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class TypeParameter extends AbstractLoadJavaWithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeParameter() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("InheritNullability.java")
+        public void testInheritNullability() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/InheritNullability.java");
+        }
+
+        @TestMetadata("TwoBounds.java")
+        public void testTwoBounds() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoBounds.java");
+        }
+
+        @TestMetadata("TwoSuperclasses.java")
+        public void testTwoSuperclasses() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.java");
+        }
+
+        @TestMetadata("TwoTypeParameters.java")
+        public void testTwoTypeParameters() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.java");
+        }
+
+        @TestMetadata("UseParameterAsUpperBound.java")
+        public void testUseParameterAsUpperBound() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.java");
+        }
+
+        @TestMetadata("UseParameterInUpperBound.java")
+        public void testUseParameterInUpperBound() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.java");
+        }
+
+        @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.java")
+        public void testUseParameterInUpperBoundWithKotlinSignature() {
+          runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.java");
+        }
+      }
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/library")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Library extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("ArrayInGenericArguments.java")
-    public void testArrayInGenericArguments() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ArrayInGenericArguments.java");
+    public void testAllFilesPresentInLibrary() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
-    @TestMetadata("ArrayTypeVariance.java")
-    public void testArrayTypeVariance() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ArrayTypeVariance.java");
+    @TestMetadata("LoadIterable.java")
+    public void testLoadIterable() {
+      runTest("compiler/testData/loadJava/compiledJava/library/LoadIterable.java");
     }
 
-    @TestMetadata("ClassDoesNotOverrideMethod.java")
-    public void testClassDoesNotOverrideMethod() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassDoesNotOverrideMethod.java");
+    @TestMetadata("LoadIterator.java")
+    public void testLoadIterator() {
+      runTest("compiler/testData/loadJava/compiledJava/library/LoadIterator.java");
     }
 
-    @TestMetadata("ClassWithConstVal.java")
-    public void testClassWithConstVal() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithConstVal.java");
+    @TestMetadata("Max.java")
+    public void testMax() {
+      runTest("compiler/testData/loadJava/compiledJava/library/Max.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/modality")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Modality extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("ClassWithTypeP.java")
-    public void testClassWithTypeP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypeP.java");
+    public void testAllFilesPresentInModality() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
-    @TestMetadata("ClassWithTypePExtendsIterableP.java")
-    public void testClassWithTypePExtendsIterableP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePExtendsIterableP.java");
+    @TestMetadata("ModalityOfFakeOverrides.java")
+    public void testModalityOfFakeOverrides() {
+      runTest("compiler/testData/loadJava/compiledJava/modality/ModalityOfFakeOverrides.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/mutability")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Mutability extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("ClassWithTypePP.java")
-    public void testClassWithTypePP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePP.java");
+    public void testAllFilesPresentInMutability() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
-    @TestMetadata("ClassWithTypePRefNext.java")
-    public void testClassWithTypePRefNext() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefNext.java");
+    @TestMetadata("LoadIterable.java")
+    public void testLoadIterable() {
+      runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterable.java");
     }
 
-    @TestMetadata("ClassWithTypePRefSelf.java")
-    public void testClassWithTypePRefSelf() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefSelf.java");
+    @TestMetadata("LoadIterableWithConflict.java")
+    public void testLoadIterableWithConflict() {
+      runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithConflict.java");
     }
 
-    @TestMetadata("ClassWithTypePRefSelfAndClass.java")
-    public void testClassWithTypePRefSelfAndClass() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ClassWithTypePRefSelfAndClass.java");
+    @TestMetadata("LoadIterableWithNullability.java")
+    public void testLoadIterableWithNullability() {
+      runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithNullability.java");
     }
 
-    @TestMetadata("FieldAsVar.java")
-    public void testFieldAsVar() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/FieldAsVar.java");
+    @TestMetadata("LoadIterableWithPropagation.java")
+    public void testLoadIterableWithPropagation() {
+      runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
     }
 
-    @TestMetadata("FieldOfArrayType.java")
-    public void testFieldOfArrayType() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/FieldOfArrayType.java");
+    @TestMetadata("ReadOnlyExtendsWildcard.java")
+    public void testReadOnlyExtendsWildcard() {
+      runTest("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/notNull")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class NotNull extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("FinalFieldAsVal.java")
-    public void testFinalFieldAsVal() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/FinalFieldAsVal.java");
+    public void testAllFilesPresentInNotNull() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
-    @TestMetadata("InheritMethodsDifferentReturnTypes.java")
-    public void testInheritMethodsDifferentReturnTypes() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InheritMethodsDifferentReturnTypes.java");
+    @TestMetadata("NotNullField.java")
+    public void testNotNullField() {
+      runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullField.java");
     }
 
-    @TestMetadata("InheritMethodsDifferentReturnTypesGeneric.java")
-    public void testInheritMethodsDifferentReturnTypesGeneric() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InheritMethodsDifferentReturnTypesGeneric.java");
+    @TestMetadata("NotNullIntArray.java")
+    public void testNotNullIntArray() {
+      runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullIntArray.java");
+    }
+
+    @TestMetadata("NotNullMethod.java")
+    public void testNotNullMethod() {
+      runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullMethod.java");
+    }
+
+    @TestMetadata("NotNullObjectArray.java")
+    public void testNotNullObjectArray() {
+      runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullObjectArray.java");
+    }
+
+    @TestMetadata("NotNullParameter.java")
+    public void testNotNullParameter() {
+      runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullParameter.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/protectedPackage")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class ProtectedPackage extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInProtectedPackage() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("ProtectedPackageConstructor.java")
+    public void testProtectedPackageConstructor() {
+      runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageConstructor.java");
+    }
+
+    @TestMetadata("ProtectedPackageFun.java")
+    public void testProtectedPackageFun() {
+      runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageFun.java");
+    }
+
+    @TestMetadata("ProtectedPackageProperty.java")
+    public void testProtectedPackageProperty() {
+      runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageProperty.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/protectedStatic")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class ProtectedStatic extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInProtectedStatic() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("ConstructorInProtectedStaticNestedClass.java")
+    public void testConstructorInProtectedStaticNestedClass() {
+      runTest("compiler/testData/loadJava/compiledJava/protectedStatic/ConstructorInProtectedStaticNestedClass.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/rendering")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Rendering extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInRendering() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("Rendering.java")
+    public void testRendering() {
+      runTest("compiler/testData/loadJava/compiledJava/rendering/Rendering.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/sam")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Sam extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInSam() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("Comparator.java")
+    public void testComparator() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/Comparator.java");
+    }
+
+    @TestMetadata("DifferentParametersCount.java")
+    public void testDifferentParametersCount() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/DifferentParametersCount.java");
+    }
+
+    @TestMetadata("FakeStaticOverrides.java")
+    public void testFakeStaticOverrides() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/FakeStaticOverrides.java");
+    }
+
+    @TestMetadata("FilenameFilter.java")
+    public void testFilenameFilter() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/FilenameFilter.java");
+    }
+
+    @TestMetadata("GenericInterfaceParameterWithSelfBound.java")
+    public void testGenericInterfaceParameterWithSelfBound() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParameterWithSelfBound.java");
+    }
+
+    @TestMetadata("GenericInterfaceParametersWithBounds.java")
+    public void testGenericInterfaceParametersWithBounds() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParametersWithBounds.java");
+    }
+
+    @TestMetadata("GenericMethodParameters.java")
+    public void testGenericMethodParameters() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/GenericMethodParameters.java");
+    }
+
+    @TestMetadata("InterfaceWithObjectMethod.java")
+    public void testInterfaceWithObjectMethod() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/InterfaceWithObjectMethod.java");
+    }
+
+    @TestMetadata("Nested.java")
+    public void testNested() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/Nested.java");
+    }
+
+    @TestMetadata("Runnable.java")
+    public void testRunnable() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/Runnable.java");
+    }
+
+    @TestMetadata("SamSubinterfaceOfTwo.java")
+    public void testSamSubinterfaceOfTwo() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOfTwo.java");
+    }
+
+    @TestMetadata("SamSubinterfaceOverridding.java")
+    public void testSamSubinterfaceOverridding() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOverridding.java");
+    }
+
+    @TestMetadata("StaticOverrides.java")
+    public void testStaticOverrides() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/StaticOverrides.java");
+    }
+
+    @TestMetadata("SubstitutedSamInterface.java")
+    public void testSubstitutedSamInterface() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterface.java");
+    }
+
+    @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
+    public void testSubstitutedSamInterfaceSubclassOfBuiltin() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterfaceSubclassOfBuiltin.java");
+    }
+
+    @TestMetadata("VarargParameter.java")
+    public void testVarargParameter() {
+      runTest("compiler/testData/loadJava/compiledJava/sam/VarargParameter.java");
+    }
+
+    @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Adapters extends AbstractLoadJavaWithPsiClassReadingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInAdapters() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), null, true);
+      }
+
+      @TestMetadata("AmbiguousAdapters.java")
+      public void testAmbiguousAdapters() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/AmbiguousAdapters.java");
+      }
+
+      @TestMetadata("Basic.java")
+      public void testBasic() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/Basic.java");
+      }
+
+      @TestMetadata("Constructor.java")
+      public void testConstructor() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/Constructor.java");
+      }
+
+      @TestMetadata("ConstructorWithAnnotations.java")
+      public void testConstructorWithAnnotations() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/ConstructorWithAnnotations.java");
+      }
+
+      @TestMetadata("DeepSamLoop.java")
+      public void testDeepSamLoop() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/DeepSamLoop.java");
+      }
+
+      @TestMetadata("NoSamForClassTypeParameter.java")
+      public void testNoSamForClassTypeParameter() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForClassTypeParameter.java");
+      }
+
+      @TestMetadata("NoSamForMethodTypeParameter.java")
+      public void testNoSamForMethodTypeParameter() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForMethodTypeParameter.java");
+      }
+
+      @TestMetadata("NonTrivialFunctionType.java")
+      public void testNonTrivialFunctionType() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NonTrivialFunctionType.java");
+      }
+
+      @TestMetadata("PrivateSamAdapter.java")
+      public void testPrivateSamAdapter() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/PrivateSamAdapter.java");
+      }
+
+      @TestMetadata("SelfAsParameter.java")
+      public void testSelfAsParameter() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/SelfAsParameter.java");
+      }
+
+      @TestMetadata("SeveralSamParameters.java")
+      public void testSeveralSamParameters() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/SeveralSamParameters.java");
+      }
+
+      @TestMetadata("TypeParameterOfClass.java")
+      public void testTypeParameterOfClass() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfClass.java");
+      }
+
+      @TestMetadata("TypeParameterOfMethod.java")
+      public void testTypeParameterOfMethod() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfMethod.java");
+      }
+
+      @TestMetadata("TypeParameterOfOuterClass.java")
+      public void testTypeParameterOfOuterClass() {
+        runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfOuterClass.java");
+      }
+
+      @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance")
+      @TestDataPath("$PROJECT_ROOT")
+      @RunWith(JUnit3RunnerWithInners.class)
+      public static class Inheritance extends AbstractLoadJavaWithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) {
+          KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        @TestMetadata("AdapterDoesntOverrideDeclaration.java")
+        public void testAdapterDoesntOverrideDeclaration() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/AdapterDoesntOverrideDeclaration.java");
+        }
+
+        public void testAllFilesPresentInInheritance() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("InheritedAdapterAndDeclaration.java")
+        public void testInheritedAdapterAndDeclaration() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAdapterAndDeclaration.java");
+        }
+
+        @TestMetadata("InheritedAmbiguousAdapters.java")
+        public void testInheritedAmbiguousAdapters() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAmbiguousAdapters.java");
+        }
+
+        @TestMetadata("InheritedAndOverriddenAmbiguousAdapters.java")
+        public void testInheritedAndOverriddenAmbiguousAdapters() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAndOverriddenAmbiguousAdapters.java");
+        }
+
+        @TestMetadata("InheritedOverridden.java")
+        public void testInheritedOverridden() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverridden.java");
+        }
+
+        @TestMetadata("InheritedOverriddenAdapter.java")
+        public void testInheritedOverriddenAdapter() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverriddenAdapter.java");
+        }
+
+        @TestMetadata("InheritedSameAdapters.java")
+        public void testInheritedSameAdapters() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdapters.java");
+        }
+
+        @TestMetadata("InheritedSameAdaptersWithSubstitution.java")
+        public void testInheritedSameAdaptersWithSubstitution() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdaptersWithSubstitution.java");
+        }
+
+        @TestMetadata("InheritedSimple.java")
+        public void testInheritedSimple() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSimple.java");
+        }
+
+        @TestMetadata("OverriddenAmbiguousAdapters.java")
+        public void testOverriddenAmbiguousAdapters() {
+          runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/OverriddenAmbiguousAdapters.java");
+        }
+      }
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class SignaturePropagation extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInSignaturePropagation() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("ArraysInSubtypes.java")
+    public void testArraysInSubtypes() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/ArraysInSubtypes.java");
+    }
+
+    @TestMetadata("MethodTypeParameterErased.java")
+    public void testMethodTypeParameterErased() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/MethodTypeParameterErased.java");
+    }
+
+    @TestMetadata("RawSuperType.java")
+    public void testRawSuperType() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperType.java");
+    }
+
+    @TestMetadata("RawSuperTypeWithBound.java")
+    public void testRawSuperTypeWithBound() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithBound.java");
+    }
+
+    @TestMetadata("RawSuperTypeWithRecursiveBound.java")
+    public void testRawSuperTypeWithRecursiveBound() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBound.java");
+    }
+
+    @TestMetadata("RawSuperTypeWithRecursiveBoundMultipleParameters.java")
+    public void testRawSuperTypeWithRecursiveBoundMultipleParameters() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBoundMultipleParameters.java");
+    }
+
+    @TestMetadata("ReturnInnerSubclassOfSupersInner.java")
+    public void testReturnInnerSubclassOfSupersInner() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/ReturnInnerSubclassOfSupersInner.java");
+    }
+
+    @TestMetadata("SubclassWithRawType.java")
+    public void testSubclassWithRawType() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/SubclassWithRawType.java");
+    }
+
+    @TestMetadata("TwoSuperclassesInconsistentGenericTypes.java")
+    public void testTwoSuperclassesInconsistentGenericTypes() {
+      runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/TwoSuperclassesInconsistentGenericTypes.java");
+    }
+  }
+
+  @TestMetadata("compiler/testData/loadJava/compiledJava/static")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Static extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInStatic() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), null, true);
+    }
+
+    @TestMetadata("DeeplyInnerClass.java")
+    public void testDeeplyInnerClass() {
+      runTest("compiler/testData/loadJava/compiledJava/static/DeeplyInnerClass.java");
+    }
+
+    @TestMetadata("DeeplyNestedStatic.java")
+    public void testDeeplyNestedStatic() {
+      runTest("compiler/testData/loadJava/compiledJava/static/DeeplyNestedStatic.java");
+    }
+
+    @TestMetadata("Enum.java")
+    public void testEnum() {
+      runTest("compiler/testData/loadJava/compiledJava/static/Enum.java");
     }
 
     @TestMetadata("InnerClass.java")
-    public void testInnerClass() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InnerClass.java");
-    }
-
-    @TestMetadata("InnerClassReferencesOuterTP.java")
-    public void testInnerClassReferencesOuterTP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InnerClassReferencesOuterTP.java");
-    }
-
-    @TestMetadata("InnerClassTypeMultipleGeneric.java")
-    public void testInnerClassTypeMultipleGeneric() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
-    }
-
-    @TestMetadata("InnerClassesInGeneric.java")
-    public void testInnerClassesInGeneric() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");
-    }
-
-    @TestMetadata("InnerOfGeneric.java")
-    public void testInnerOfGeneric() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/InnerOfGeneric.java");
-    }
-
-    @TestMetadata("IntrinsicCompanionObject.java")
-    public void testIntrinsicCompanionObject() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/IntrinsicCompanionObject.java");
-    }
-
-    @TestMetadata("MethodReferencesOuterClassTP.java")
-    public void testMethodReferencesOuterClassTP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodReferencesOuterClassTP.java");
-    }
-
-    @TestMetadata("MethodTypePOneUpperBound.java")
-    public void testMethodTypePOneUpperBound() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodTypePOneUpperBound.java");
-    }
-
-    @TestMetadata("MethodTypePTwoUpperBounds.java")
-    public void testMethodTypePTwoUpperBounds() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodTypePTwoUpperBounds.java");
-    }
-
-    @TestMetadata("MethodWithTypeP.java")
-    public void testMethodWithTypeP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodWithTypeP.java");
-    }
-
-    @TestMetadata("MethodWithTypePP.java")
-    public void testMethodWithTypePP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodWithTypePP.java");
-    }
-
-    @TestMetadata("MethodWithTypePRefClassP.java")
-    public void testMethodWithTypePRefClassP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethodWithTypePRefClassP.java");
-    }
-
-    @TestMetadata("MethosWithPRefTP.java")
-    public void testMethosWithPRefTP() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MethosWithPRefTP.java");
-    }
-
-    @TestMetadata("MyException.java")
-    public void testMyException() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/MyException.java");
-    }
-
-    @TestMetadata("NestedClass.java")
-    public void testNestedClass() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/NestedClass.java");
-    }
-
-    @TestMetadata("OverrideMethod.java")
-    public void testOverrideMethod() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/OverrideMethod.java");
-    }
-
-    @TestMetadata("PackageLocalVisibility.java")
-    public void testPackageLocalVisibility() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
-    }
-
-    @TestMetadata("PrivateMembers.java")
-    public void testPrivateMembers() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/PrivateMembers.java");
-    }
-
-    @TestMetadata("PrivateMembersInHierarchy.java")
-    public void testPrivateMembersInHierarchy() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/PrivateMembersInHierarchy.java");
-    }
-
-    @TestMetadata("RawOverrides.java")
-    public void testRawOverrides() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RawOverrides.java");
-    }
-
-    @TestMetadata("RawTypeWithUpperBound.java")
-    public void testRawTypeWithUpperBound() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");
-    }
-
-    @TestMetadata("RawUpperBound.java")
-    public void testRawUpperBound() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RawUpperBound.java");
-    }
-
-    @TestMetadata("RecursiveRawUpperBound.java")
-    public void testRecursiveRawUpperBound() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RecursiveRawUpperBound.java");
-    }
-
-    @TestMetadata("RecursiveWildcardUpperBound.java")
-    public void testRecursiveWildcardUpperBound() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RecursiveWildcardUpperBound.java");
-    }
-
-    @TestMetadata("ReferenceCycleThroughAnnotation.java")
-    public void testReferenceCycleThroughAnnotation() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/ReferenceCycleThroughAnnotation.java");
-    }
-
-    @TestMetadata("RemoveRedundantProjectionKind.java")
-    public void testRemoveRedundantProjectionKind() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/RemoveRedundantProjectionKind.java");
+    public void testInnerClass() {
+      runTest("compiler/testData/loadJava/compiledJava/static/InnerClass.java");
     }
 
     @TestMetadata("Simple.java")
-    public void testSimple() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/Simple.java");
+    public void testSimple() {
+      runTest("compiler/testData/loadJava/compiledJava/static/Simple.java");
     }
 
-    @TestMetadata("SubclassFromNested.java")
-    public void testSubclassFromNested() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/SubclassFromNested.java");
+    @TestMetadata("StaticFinal.java")
+    public void testStaticFinal() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");
     }
 
-    @TestMetadata("TopLevel$Class.java")
-    public void testTopLevel$Class() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/TopLevel$Class.java");
+    @TestMetadata("StaticFinalConstTypes.java")
+    public void testStaticFinalConstTypes() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticFinalConstTypes.java");
     }
 
-    @TestMetadata("TwoFields.java")
-    public void testTwoFields() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/TwoFields.java");
+    @TestMetadata("StaticMembersFromParentClass.java")
+    public void testStaticMembersFromParentClass() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClass.java");
     }
 
-    @TestMetadata("UnboundWildcard.java")
-    public void testUnboundWildcard() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/UnboundWildcard.java");
+    @TestMetadata("StaticMembersFromParentClassVisibility.java")
+    public void testStaticMembersFromParentClassVisibility() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClassVisibility.java");
     }
 
-    @TestMetadata("WildcardBounds.java")
-    public void testWildcardBounds() throws Exception {
-        runTest("compiler/testData/loadJava/compiledJava/WildcardBounds.java");
+    @TestMetadata("StaticMembersFromParentInterface.java")
+    public void testStaticMembersFromParentInterface() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentInterface.java");
     }
 
-    @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAnnotations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/annotations"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("AnnotatedAnnotation.java")
-        public void testAnnotatedAnnotation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedAnnotation.java");
-        }
-
-        @TestMetadata("AnnotatedConstructor.java")
-        public void testAnnotatedConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedConstructor.java");
-        }
-
-        @TestMetadata("AnnotatedEnumEntry.java")
-        public void testAnnotatedEnumEntry() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
-        }
-
-        @TestMetadata("AnnotatedField.java")
-        public void testAnnotatedField() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedField.java");
-        }
-
-        @TestMetadata("AnnotatedMethod.java")
-        public void testAnnotatedMethod() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
-        }
-
-        @TestMetadata("AnnotatedParameterInEnumClassConstructor.java")
-        public void testAnnotatedParameterInEnumClassConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInEnumClassConstructor.java");
-        }
-
-        @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
-        public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
-        }
-
-        @TestMetadata("AnnotatedTypeInEnumClassConstructor.java")
-        public void testAnnotatedTypeInEnumClassConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor.java");
-        }
-
-        @TestMetadata("AnnotatedTypeInEnumClassConstructor2.java")
-        public void testAnnotatedTypeInEnumClassConstructor2() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor2.java");
-        }
-
-        @TestMetadata("AnnotatedTypeInFun.java")
-        public void testAnnotatedTypeInFun() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInFun.java");
-        }
-
-        @TestMetadata("AnnotatedTypeInInnerClassConstructor.java")
-        public void testAnnotatedTypeInInnerClassConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor.java");
-        }
-
-        @TestMetadata("AnnotatedTypeInInnerClassConstructor2.java")
-        public void testAnnotatedTypeInInnerClassConstructor2() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor2.java");
-        }
-
-        @TestMetadata("AnnotatedValueParameter.java")
-        public void testAnnotatedValueParameter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedValueParameter.java");
-        }
-
-        @TestMetadata("AnnotationInParam.java")
-        public void testAnnotationInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationInParam.java");
-        }
-
-        @TestMetadata("AnnotationRetentions.java")
-        public void testAnnotationRetentions() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationRetentions.java");
-        }
-
-        @TestMetadata("AnnotationTargets.java")
-        public void testAnnotationTargets() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotationTargets.java");
-        }
-
-        @TestMetadata("ArithmeticExpressionInParam.java")
-        public void testArithmeticExpressionInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ArithmeticExpressionInParam.java");
-        }
-
-        @TestMetadata("ArrayOfEnumInParam.java")
-        public void testArrayOfEnumInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ArrayOfEnumInParam.java");
-        }
-
-        @TestMetadata("ArrayOfStringInParam.java")
-        public void testArrayOfStringInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ArrayOfStringInParam.java");
-        }
-
-        @TestMetadata("ClassObjectArrayInParam.java")
-        public void testClassObjectArrayInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectArrayInParam.java");
-        }
-
-        @TestMetadata("ClassObjectInParam.java")
-        public void testClassObjectInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParam.java");
-        }
-
-        @TestMetadata("ClassObjectInParamRaw.java")
-        public void testClassObjectInParamRaw() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamRaw.java");
-        }
-
-        @TestMetadata("ClassObjectInParamVariance.java")
-        public void testClassObjectInParamVariance() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/ClassObjectInParamVariance.java");
-        }
-
-        @TestMetadata("CustomAnnotation.java")
-        public void testCustomAnnotation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotation.java");
-        }
-
-        @TestMetadata("CustomAnnotationWithDefaultParameter.java")
-        public void testCustomAnnotationWithDefaultParameter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/CustomAnnotationWithDefaultParameter.java");
-        }
-
-        @TestMetadata("EmptyArrayInParam.java")
-        public void testEmptyArrayInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/EmptyArrayInParam.java");
-        }
-
-        @TestMetadata("EnumArgumentWithCustomToString.java")
-        public void testEnumArgumentWithCustomToString() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/EnumArgumentWithCustomToString.java");
-        }
-
-        @TestMetadata("EnumConstructorParameter.java")
-        public void testEnumConstructorParameter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/EnumConstructorParameter.java");
-        }
-
-        @TestMetadata("EnumInParam.java")
-        public void testEnumInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/EnumInParam.java");
-        }
-
-        @TestMetadata("JavaDocDeprecated.java")
-        public void testJavaDocDeprecated() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/JavaDocDeprecated.java");
-        }
-
-        @TestMetadata("NestedEnumArgument.java")
-        public void testNestedEnumArgument() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumArgument.java");
-        }
-
-        @TestMetadata("NestedEnumInAnnotation.java")
-        public void testNestedEnumInAnnotation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/NestedEnumInAnnotation.java");
-        }
-
-        @TestMetadata("PrimitiveValueInParam.java")
-        public void testPrimitiveValueInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/PrimitiveValueInParam.java");
-        }
-
-        @TestMetadata("RecursiveAnnotation.java")
-        public void testRecursiveAnnotation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation.java");
-        }
-
-        @TestMetadata("RecursiveAnnotation2.java")
-        public void testRecursiveAnnotation2() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/RecursiveAnnotation2.java");
-        }
-
-        @TestMetadata("SimpleAnnotation.java")
-        public void testSimpleAnnotation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/SimpleAnnotation.java");
-        }
-
-        @TestMetadata("StringConcatenationInParam.java")
-        public void testStringConcatenationInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/StringConcatenationInParam.java");
-        }
-
-        @TestMetadata("StringConstantInParam.java")
-        public void testStringConstantInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/StringConstantInParam.java");
-        }
-
-        @TestMetadata("StringInParam.java")
-        public void testStringInParam() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/annotations/StringInParam.java");
-        }
+    @TestMetadata("StaticMembersInEnum.java")
+    public void testStaticMembersInEnum() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnum.java");
     }
 
-    @TestMetadata("compiler/testData/loadJava/compiledJava/constructor")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Constructor extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
+    @TestMetadata("StaticMembersInEnumFromParents.java")
+    public void testStaticMembersInEnumFromParents() {
+      runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnumFromParents.java");
+    }
+  }
 
-        public void testAllFilesPresentInConstructor() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/constructor"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ConstructorGenericDeep.java")
-        public void testConstructorGenericDeep() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericDeep.java");
-        }
-
-        @TestMetadata("ConstructorGenericSimple.java")
-        public void testConstructorGenericSimple() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericSimple.java");
-        }
-
-        @TestMetadata("ConstructorGenericUpperBound.java")
-        public void testConstructorGenericUpperBound() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/constructor/ConstructorGenericUpperBound.java");
-        }
+  @TestMetadata("compiler/testData/loadJava/compiledJava/vararg")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Vararg extends AbstractLoadJavaWithPsiClassReadingTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
 
-    @TestMetadata("compiler/testData/loadJava/compiledJava/enum")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Enum extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInEnum() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/enum"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("EnumMembers.java")
-        public void testEnumMembers() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/enum/EnumMembers.java");
-        }
-
-        @TestMetadata("EnumWithSpecializedEntry.java")
-        public void testEnumWithSpecializedEntry() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/enum/EnumWithSpecializedEntry.java");
-        }
-
-        @TestMetadata("JavaEnum.java")
-        public void testJavaEnum() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/enum/JavaEnum.java");
-        }
+    public void testAllFilesPresentInVararg() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), null, true);
     }
 
-    @TestMetadata("compiler/testData/loadJava/compiledJava/javaBean")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class JavaBean extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInJavaBean() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/javaBean"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("DifferentGetterAndSetter.java")
-        public void testDifferentGetterAndSetter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/DifferentGetterAndSetter.java");
-        }
-
-        @TestMetadata("JavaBeanAbstractGetter.java")
-        public void testJavaBeanAbstractGetter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanAbstractGetter.java");
-        }
-
-        @TestMetadata("JavaBeanVal.java")
-        public void testJavaBeanVal() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVal.java");
-        }
-
-        @TestMetadata("JavaBeanVar.java")
-        public void testJavaBeanVar() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVar.java");
-        }
-
-        @TestMetadata("JavaBeanVarOfGenericType.java")
-        public void testJavaBeanVarOfGenericType() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/JavaBeanVarOfGenericType.java");
-        }
-
-        @TestMetadata("TwoSetters.java")
-        public void testTwoSetters() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/javaBean/TwoSetters.java");
-        }
+    @TestMetadata("VarargInt.java")
+    public void testVarargInt() {
+      runTest("compiler/testData/loadJava/compiledJava/vararg/VarargInt.java");
     }
 
-    @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class KotlinSignature extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        @TestMetadata("AllBoundsInWhen.java")
-        public void testAllBoundsInWhen() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/AllBoundsInWhen.java");
-        }
-
-        public void testAllFilesPresentInKotlinSignature() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ArrayType.java")
-        public void testArrayType() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ArrayType.java");
-        }
-
-        @TestMetadata("ConstructorWithNewTypeParams.java")
-        public void testConstructorWithNewTypeParams() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithNewTypeParams.java");
-        }
-
-        @TestMetadata("ConstructorWithParentTypeParams.java")
-        public void testConstructorWithParentTypeParams() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithParentTypeParams.java");
-        }
-
-        @TestMetadata("ConstructorWithSeveralParams.java")
-        public void testConstructorWithSeveralParams() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithSeveralParams.java");
-        }
-
-        @TestMetadata("ConstructorWithoutParams.java")
-        public void testConstructorWithoutParams() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/ConstructorWithoutParams.java");
-        }
-
-        @TestMetadata("CustomProjectionKind.java")
-        public void testCustomProjectionKind() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/CustomProjectionKind.java");
-        }
-
-        @TestMetadata("MethodWithFunctionTypes.java")
-        public void testMethodWithFunctionTypes() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithFunctionTypes.java");
-        }
-
-        @TestMetadata("MethodWithGenerics.java")
-        public void testMethodWithGenerics() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithGenerics.java");
-        }
-
-        @TestMetadata("MethodWithMappedClasses.java")
-        public void testMethodWithMappedClasses() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithMappedClasses.java");
-        }
-
-        @TestMetadata("MethodWithTypeParameters.java")
-        public void testMethodWithTypeParameters() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithTypeParameters.java");
-        }
-
-        @TestMetadata("MethodWithVararg.java")
-        public void testMethodWithVararg() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/MethodWithVararg.java");
-        }
-
-        @TestMetadata("PropertyArrayTypes.java")
-        public void testPropertyArrayTypes() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertyArrayTypes.java");
-        }
-
-        @TestMetadata("PropertyComplexTypes.java")
-        public void testPropertyComplexTypes() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertyComplexTypes.java");
-        }
-
-        @TestMetadata("PropertySimpleType.java")
-        public void testPropertySimpleType() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/PropertySimpleType.java");
-        }
-
-        @TestMetadata("StarProjection.java")
-        public void testStarProjection() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/StarProjection.java");
-        }
-
-        @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Error extends AbstractLoadJavaWithPsiClassReadingTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInError() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.java$"), null, true);
-            }
-
-            @TestMetadata("WrongProjectionKind.java")
-            public void testWrongProjectionKind() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongProjectionKind.java");
-            }
-
-            @TestMetadata("WrongReturnTypeStructure.java")
-            public void testWrongReturnTypeStructure() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongReturnTypeStructure.java");
-            }
-
-            @TestMetadata("WrongTypeParameterBoundStructure1.java")
-            public void testWrongTypeParameterBoundStructure1() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongTypeParameterBoundStructure1.java");
-            }
-
-            @TestMetadata("WrongValueParameterStructure1.java")
-            public void testWrongValueParameterStructure1() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/error/WrongValueParameterStructure1.java");
-            }
-        }
-
-        @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Propagation extends AbstractLoadJavaWithPsiClassReadingTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInPropagation() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.java$"), null, true);
-            }
-
-            @TestMetadata("PropagateTypeArgumentNullable.java")
-            public void testPropagateTypeArgumentNullable() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/PropagateTypeArgumentNullable.java");
-            }
-
-            @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Parameter extends AbstractLoadJavaWithPsiClassReadingTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInParameter() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.java$"), null, true);
-                }
-
-                @TestMetadata("ChangeProjectionKind1.java")
-                public void testChangeProjectionKind1() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/ChangeProjectionKind1.java");
-                }
-
-                @TestMetadata("DeeplySubstitutedClassParameter.java")
-                public void testDeeplySubstitutedClassParameter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter.java");
-                }
-
-                @TestMetadata("DeeplySubstitutedClassParameter2.java")
-                public void testDeeplySubstitutedClassParameter2() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/DeeplySubstitutedClassParameter2.java");
-                }
-
-                @TestMetadata("InheritNotVararg.java")
-                public void testInheritNotVararg() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVararg.java");
-                }
-
-                @TestMetadata("InheritNotVarargInteger.java")
-                public void testInheritNotVarargInteger() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargInteger.java");
-                }
-
-                @TestMetadata("InheritNotVarargNotNull.java")
-                public void testInheritNotVarargNotNull() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargNotNull.java");
-                }
-
-                @TestMetadata("InheritNotVarargPrimitive.java")
-                public void testInheritNotVarargPrimitive() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNotVarargPrimitive.java");
-                }
-
-                @TestMetadata("InheritNullability.java")
-                public void testInheritNullability() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritNullability.java");
-                }
-
-                @TestMetadata("InheritVararg.java")
-                public void testInheritVararg() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVararg.java");
-                }
-
-                @TestMetadata("InheritVarargInteger.java")
-                public void testInheritVarargInteger() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargInteger.java");
-                }
-
-                @TestMetadata("InheritVarargNotNull.java")
-                public void testInheritVarargNotNull() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargNotNull.java");
-                }
-
-                @TestMetadata("InheritVarargPrimitive.java")
-                public void testInheritVarargPrimitive() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/InheritVarargPrimitive.java");
-                }
-
-                @TestMetadata("Kt3302.java")
-                public void testKt3302() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/Kt3302.java");
-                }
-
-                @TestMetadata("MutableToReadOnly.java")
-                public void testMutableToReadOnly() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/MutableToReadOnly.java");
-                }
-
-                @TestMetadata("NotNullToNullable.java")
-                public void testNotNullToNullable() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NotNullToNullable.java");
-                }
-
-                @TestMetadata("NullableToNotNull.java")
-                public void testNullableToNotNull() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NullableToNotNull.java");
-                }
-
-                @TestMetadata("NullableToNotNullKotlinSignature.java")
-                public void testNullableToNotNullKotlinSignature() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/NullableToNotNullKotlinSignature.java");
-                }
-
-                @TestMetadata("OverrideWithErasedParameter.java")
-                public void testOverrideWithErasedParameter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/OverrideWithErasedParameter.java");
-                }
-
-                @TestMetadata("ReadOnlyToMutable.java")
-                public void testReadOnlyToMutable() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/ReadOnlyToMutable.java");
-                }
-
-                @TestMetadata("SubclassFromGenericAndNot.java")
-                public void testSubclassFromGenericAndNot() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubclassFromGenericAndNot.java");
-                }
-
-                @TestMetadata("SubstitutedClassParameter.java")
-                public void testSubstitutedClassParameter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubstitutedClassParameter.java");
-                }
-
-                @TestMetadata("SubstitutedClassParameters.java")
-                public void testSubstitutedClassParameters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter/SubstitutedClassParameters.java");
-                }
-            }
-
-            @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Return extends AbstractLoadJavaWithPsiClassReadingTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-                }
-
-                @TestMetadata("AddNotNullJavaSubtype.java")
-                public void testAddNotNullJavaSubtype() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNotNullJavaSubtype.java");
-                }
-
-                @TestMetadata("AddNotNullSameJavaType.java")
-                public void testAddNotNullSameJavaType() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNotNullSameJavaType.java");
-                }
-
-                @TestMetadata("AddNullabilityJavaSubtype.java")
-                public void testAddNullabilityJavaSubtype() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilityJavaSubtype.java");
-                }
-
-                @TestMetadata("AddNullabilitySameGenericType1.java")
-                public void testAddNullabilitySameGenericType1() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType1.java");
-                }
-
-                @TestMetadata("AddNullabilitySameGenericType2.java")
-                public void testAddNullabilitySameGenericType2() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameGenericType2.java");
-                }
-
-                @TestMetadata("AddNullabilitySameJavaType.java")
-                public void testAddNullabilitySameJavaType() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/AddNullabilitySameJavaType.java");
-                }
-
-                public void testAllFilesPresentInReturn() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.java$"), null, true);
-                }
-
-                @TestMetadata("CantMakeImmutableInSubclass.java")
-                public void testCantMakeImmutableInSubclass() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/CantMakeImmutableInSubclass.java");
-                }
-
-                @TestMetadata("DeeplySubstitutedClassParameter.java")
-                public void testDeeplySubstitutedClassParameter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter.java");
-                }
-
-                @TestMetadata("DeeplySubstitutedClassParameter2.java")
-                public void testDeeplySubstitutedClassParameter2() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/DeeplySubstitutedClassParameter2.java");
-                }
-
-                @TestMetadata("HalfSubstitutedTypeParameters.java")
-                public void testHalfSubstitutedTypeParameters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/HalfSubstitutedTypeParameters.java");
-                }
-
-                @TestMetadata("InheritNullabilityGenericSubclassSimple.java")
-                public void testInheritNullabilityGenericSubclassSimple() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilityGenericSubclassSimple.java");
-                }
-
-                @TestMetadata("InheritNullabilityJavaSubtype.java")
-                public void testInheritNullabilityJavaSubtype() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilityJavaSubtype.java");
-                }
-
-                @TestMetadata("InheritNullabilitySameGenericType.java")
-                public void testInheritNullabilitySameGenericType() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilitySameGenericType.java");
-                }
-
-                @TestMetadata("InheritNullabilitySameJavaType.java")
-                public void testInheritNullabilitySameJavaType() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritNullabilitySameJavaType.java");
-                }
-
-                @TestMetadata("InheritProjectionKind.java")
-                public void testInheritProjectionKind() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritProjectionKind.java");
-                }
-
-                @TestMetadata("InheritReadOnlinessOfArgument.java")
-                public void testInheritReadOnlinessOfArgument() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessOfArgument.java");
-                }
-
-                @TestMetadata("InheritReadOnlinessSameClass.java")
-                public void testInheritReadOnlinessSameClass() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessSameClass.java");
-                }
-
-                @TestMetadata("InheritReadOnlinessSubclass.java")
-                public void testInheritReadOnlinessSubclass() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/InheritReadOnlinessSubclass.java");
-                }
-
-                @TestMetadata("SameProjectionKind.java")
-                public void testSameProjectionKind() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SameProjectionKind.java");
-                }
-
-                @TestMetadata("SubclassFromGenericAndNot.java")
-                public void testSubclassFromGenericAndNot() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassFromGenericAndNot.java");
-                }
-
-                @TestMetadata("SubclassOfCollection.java")
-                public void testSubclassOfCollection() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassOfCollection.java");
-                }
-
-                @TestMetadata("SubclassOfMapEntry.java")
-                public void testSubclassOfMapEntry() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubclassOfMapEntry.java");
-                }
-
-                @TestMetadata("SubstitutedClassParameter.java")
-                public void testSubstitutedClassParameter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubstitutedClassParameter.java");
-                }
-
-                @TestMetadata("SubstitutedClassParameters.java")
-                public void testSubstitutedClassParameters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/SubstitutedClassParameters.java");
-                }
-
-                @TestMetadata("TwoSuperclassesConflictingProjectionKinds.java")
-                public void testTwoSuperclassesConflictingProjectionKinds() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesConflictingProjectionKinds.java");
-                }
-
-                @TestMetadata("TwoSuperclassesInvariantAndCovariantInferMutability.java")
-                public void testTwoSuperclassesInvariantAndCovariantInferMutability() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferMutability.java");
-                }
-
-                @TestMetadata("TwoSuperclassesInvariantAndCovariantInferNullability.java")
-                public void testTwoSuperclassesInvariantAndCovariantInferNullability() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesInvariantAndCovariantInferNullability.java");
-                }
-
-                @TestMetadata("TwoSuperclassesMutableAndNot.java")
-                public void testTwoSuperclassesMutableAndNot() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesMutableAndNot.java");
-                }
-
-                @TestMetadata("TwoSuperclassesReturnJavaSubtype.java")
-                public void testTwoSuperclassesReturnJavaSubtype() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesReturnJavaSubtype.java");
-                }
-
-                @TestMetadata("TwoSuperclassesReturnSameJavaType.java")
-                public void testTwoSuperclassesReturnSameJavaType() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesReturnSameJavaType.java");
-                }
-
-                @TestMetadata("TwoSuperclassesSupplementNotNull.java")
-                public void testTwoSuperclassesSupplementNotNull() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TwoSuperclassesSupplementNotNull.java");
-                }
-
-                @TestMetadata("TypeParamOfClass.java")
-                public void testTypeParamOfClass() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfClass.java");
-                }
-
-                @TestMetadata("TypeParamOfClassSubstituted.java")
-                public void testTypeParamOfClassSubstituted() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfClassSubstituted.java");
-                }
-
-                @TestMetadata("TypeParamOfFun.java")
-                public void testTypeParamOfFun() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return/TypeParamOfFun.java");
-                }
-            }
-
-            @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class TypeParameter extends AbstractLoadJavaWithPsiClassReadingTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInTypeParameter() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.java$"), null, true);
-                }
-
-                @TestMetadata("InheritNullability.java")
-                public void testInheritNullability() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/InheritNullability.java");
-                }
-
-                @TestMetadata("TwoBounds.java")
-                public void testTwoBounds() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoBounds.java");
-                }
-
-                @TestMetadata("TwoSuperclasses.java")
-                public void testTwoSuperclasses() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoSuperclasses.java");
-                }
-
-                @TestMetadata("TwoTypeParameters.java")
-                public void testTwoTypeParameters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/TwoTypeParameters.java");
-                }
-
-                @TestMetadata("UseParameterAsUpperBound.java")
-                public void testUseParameterAsUpperBound() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterAsUpperBound.java");
-                }
-
-                @TestMetadata("UseParameterInUpperBound.java")
-                public void testUseParameterInUpperBound() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBound.java");
-                }
-
-                @TestMetadata("UseParameterInUpperBoundWithKotlinSignature.java")
-                public void testUseParameterInUpperBoundWithKotlinSignature() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter/UseParameterInUpperBoundWithKotlinSignature.java");
-                }
-            }
-        }
+    @TestMetadata("VarargString.java")
+    public void testVarargString() {
+      runTest("compiler/testData/loadJava/compiledJava/vararg/VarargString.java");
     }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/library")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Library extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInLibrary() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/library"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("LoadIterable.java")
-        public void testLoadIterable() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/library/LoadIterable.java");
-        }
-
-        @TestMetadata("LoadIterator.java")
-        public void testLoadIterator() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/library/LoadIterator.java");
-        }
-
-        @TestMetadata("Max.java")
-        public void testMax() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/library/Max.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/modality")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Modality extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInModality() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/modality"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ModalityOfFakeOverrides.java")
-        public void testModalityOfFakeOverrides() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/modality/ModalityOfFakeOverrides.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/mutability")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Mutability extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInMutability() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/mutability"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("LoadIterable.java")
-        public void testLoadIterable() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterable.java");
-        }
-
-        @TestMetadata("LoadIterableWithConflict.java")
-        public void testLoadIterableWithConflict() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithConflict.java");
-        }
-
-        @TestMetadata("LoadIterableWithNullability.java")
-        public void testLoadIterableWithNullability() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithNullability.java");
-        }
-
-        @TestMetadata("LoadIterableWithPropagation.java")
-        public void testLoadIterableWithPropagation() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/mutability/LoadIterableWithPropagation.java");
-        }
-
-        @TestMetadata("ReadOnlyExtendsWildcard.java")
-        public void testReadOnlyExtendsWildcard() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/mutability/ReadOnlyExtendsWildcard.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/notNull")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class NotNull extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInNotNull() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/notNull"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("NotNullField.java")
-        public void testNotNullField() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullField.java");
-        }
-
-        @TestMetadata("NotNullIntArray.java")
-        public void testNotNullIntArray() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullIntArray.java");
-        }
-
-        @TestMetadata("NotNullMethod.java")
-        public void testNotNullMethod() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullMethod.java");
-        }
-
-        @TestMetadata("NotNullObjectArray.java")
-        public void testNotNullObjectArray() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullObjectArray.java");
-        }
-
-        @TestMetadata("NotNullParameter.java")
-        public void testNotNullParameter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/notNull/NotNullParameter.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/protectedPackage")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ProtectedPackage extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInProtectedPackage() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedPackage"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ProtectedPackageConstructor.java")
-        public void testProtectedPackageConstructor() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageConstructor.java");
-        }
-
-        @TestMetadata("ProtectedPackageFun.java")
-        public void testProtectedPackageFun() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageFun.java");
-        }
-
-        @TestMetadata("ProtectedPackageProperty.java")
-        public void testProtectedPackageProperty() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/protectedPackage/ProtectedPackageProperty.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/protectedStatic")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ProtectedStatic extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInProtectedStatic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/protectedStatic"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ConstructorInProtectedStaticNestedClass.java")
-        public void testConstructorInProtectedStaticNestedClass() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/protectedStatic/ConstructorInProtectedStaticNestedClass.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/rendering")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Rendering extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInRendering() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/rendering"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("Rendering.java")
-        public void testRendering() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/rendering/Rendering.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/sam")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Sam extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInSam() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("Comparator.java")
-        public void testComparator() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/Comparator.java");
-        }
-
-        @TestMetadata("DifferentParametersCount.java")
-        public void testDifferentParametersCount() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/DifferentParametersCount.java");
-        }
-
-        @TestMetadata("FakeStaticOverrides.java")
-        public void testFakeStaticOverrides() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/FakeStaticOverrides.java");
-        }
-
-        @TestMetadata("FilenameFilter.java")
-        public void testFilenameFilter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/FilenameFilter.java");
-        }
-
-        @TestMetadata("GenericInterfaceParameterWithSelfBound.java")
-        public void testGenericInterfaceParameterWithSelfBound() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParameterWithSelfBound.java");
-        }
-
-        @TestMetadata("GenericInterfaceParametersWithBounds.java")
-        public void testGenericInterfaceParametersWithBounds() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/GenericInterfaceParametersWithBounds.java");
-        }
-
-        @TestMetadata("GenericMethodParameters.java")
-        public void testGenericMethodParameters() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/GenericMethodParameters.java");
-        }
-
-        @TestMetadata("InterfaceWithObjectMethod.java")
-        public void testInterfaceWithObjectMethod() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/InterfaceWithObjectMethod.java");
-        }
-
-        @TestMetadata("Nested.java")
-        public void testNested() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/Nested.java");
-        }
-
-        @TestMetadata("Runnable.java")
-        public void testRunnable() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/Runnable.java");
-        }
-
-        @TestMetadata("SamSubinterfaceOfTwo.java")
-        public void testSamSubinterfaceOfTwo() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOfTwo.java");
-        }
-
-        @TestMetadata("SamSubinterfaceOverridding.java")
-        public void testSamSubinterfaceOverridding() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/SamSubinterfaceOverridding.java");
-        }
-
-        @TestMetadata("StaticOverrides.java")
-        public void testStaticOverrides() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/StaticOverrides.java");
-        }
-
-        @TestMetadata("SubstitutedSamInterface.java")
-        public void testSubstitutedSamInterface() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterface.java");
-        }
-
-        @TestMetadata("SubstitutedSamInterfaceSubclassOfBuiltin.java")
-        public void testSubstitutedSamInterfaceSubclassOfBuiltin() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterfaceSubclassOfBuiltin.java");
-        }
-
-        @TestMetadata("VarargParameter.java")
-        public void testVarargParameter() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/sam/VarargParameter.java");
-        }
-
-        @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Adapters extends AbstractLoadJavaWithPsiClassReadingTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInAdapters() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters"), Pattern.compile("^(.+)\\.java$"), null, true);
-            }
-
-            @TestMetadata("AmbiguousAdapters.java")
-            public void testAmbiguousAdapters() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/AmbiguousAdapters.java");
-            }
-
-            @TestMetadata("Basic.java")
-            public void testBasic() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/Basic.java");
-            }
-
-            @TestMetadata("Constructor.java")
-            public void testConstructor() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/Constructor.java");
-            }
-
-            @TestMetadata("ConstructorWithAnnotations.java")
-            public void testConstructorWithAnnotations() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/ConstructorWithAnnotations.java");
-            }
-
-            @TestMetadata("DeepSamLoop.java")
-            public void testDeepSamLoop() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/DeepSamLoop.java");
-            }
-
-            @TestMetadata("NoSamForClassTypeParameter.java")
-            public void testNoSamForClassTypeParameter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForClassTypeParameter.java");
-            }
-
-            @TestMetadata("NoSamForMethodTypeParameter.java")
-            public void testNoSamForMethodTypeParameter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NoSamForMethodTypeParameter.java");
-            }
-
-            @TestMetadata("NonTrivialFunctionType.java")
-            public void testNonTrivialFunctionType() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/NonTrivialFunctionType.java");
-            }
-
-            @TestMetadata("PrivateSamAdapter.java")
-            public void testPrivateSamAdapter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/PrivateSamAdapter.java");
-            }
-
-            @TestMetadata("SelfAsParameter.java")
-            public void testSelfAsParameter() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/SelfAsParameter.java");
-            }
-
-            @TestMetadata("SeveralSamParameters.java")
-            public void testSeveralSamParameters() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/SeveralSamParameters.java");
-            }
-
-            @TestMetadata("TypeParameterOfClass.java")
-            public void testTypeParameterOfClass() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfClass.java");
-            }
-
-            @TestMetadata("TypeParameterOfMethod.java")
-            public void testTypeParameterOfMethod() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfMethod.java");
-            }
-
-            @TestMetadata("TypeParameterOfOuterClass.java")
-            public void testTypeParameterOfOuterClass() throws Exception {
-                runTest("compiler/testData/loadJava/compiledJava/sam/adapters/TypeParameterOfOuterClass.java");
-            }
-
-            @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Inheritance extends AbstractLoadJavaWithPsiClassReadingTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-                }
-
-                @TestMetadata("AdapterDoesntOverrideDeclaration.java")
-                public void testAdapterDoesntOverrideDeclaration() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/AdapterDoesntOverrideDeclaration.java");
-                }
-
-                public void testAllFilesPresentInInheritance() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance"), Pattern.compile("^(.+)\\.java$"), null, true);
-                }
-
-                @TestMetadata("InheritedAdapterAndDeclaration.java")
-                public void testInheritedAdapterAndDeclaration() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAdapterAndDeclaration.java");
-                }
-
-                @TestMetadata("InheritedAmbiguousAdapters.java")
-                public void testInheritedAmbiguousAdapters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAmbiguousAdapters.java");
-                }
-
-                @TestMetadata("InheritedAndOverriddenAmbiguousAdapters.java")
-                public void testInheritedAndOverriddenAmbiguousAdapters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedAndOverriddenAmbiguousAdapters.java");
-                }
-
-                @TestMetadata("InheritedOverridden.java")
-                public void testInheritedOverridden() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverridden.java");
-                }
-
-                @TestMetadata("InheritedOverriddenAdapter.java")
-                public void testInheritedOverriddenAdapter() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedOverriddenAdapter.java");
-                }
-
-                @TestMetadata("InheritedSameAdapters.java")
-                public void testInheritedSameAdapters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdapters.java");
-                }
-
-                @TestMetadata("InheritedSameAdaptersWithSubstitution.java")
-                public void testInheritedSameAdaptersWithSubstitution() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSameAdaptersWithSubstitution.java");
-                }
-
-                @TestMetadata("InheritedSimple.java")
-                public void testInheritedSimple() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/InheritedSimple.java");
-                }
-
-                @TestMetadata("OverriddenAmbiguousAdapters.java")
-                public void testOverriddenAmbiguousAdapters() throws Exception {
-                    runTest("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance/OverriddenAmbiguousAdapters.java");
-                }
-            }
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class SignaturePropagation extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInSignaturePropagation() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/signaturePropagation"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("ArraysInSubtypes.java")
-        public void testArraysInSubtypes() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/ArraysInSubtypes.java");
-        }
-
-        @TestMetadata("MethodTypeParameterErased.java")
-        public void testMethodTypeParameterErased() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/MethodTypeParameterErased.java");
-        }
-
-        @TestMetadata("RawSuperType.java")
-        public void testRawSuperType() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperType.java");
-        }
-
-        @TestMetadata("RawSuperTypeWithBound.java")
-        public void testRawSuperTypeWithBound() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithBound.java");
-        }
-
-        @TestMetadata("RawSuperTypeWithRecursiveBound.java")
-        public void testRawSuperTypeWithRecursiveBound() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBound.java");
-        }
-
-        @TestMetadata("RawSuperTypeWithRecursiveBoundMultipleParameters.java")
-        public void testRawSuperTypeWithRecursiveBoundMultipleParameters() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/RawSuperTypeWithRecursiveBoundMultipleParameters.java");
-        }
-
-        @TestMetadata("ReturnInnerSubclassOfSupersInner.java")
-        public void testReturnInnerSubclassOfSupersInner() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/ReturnInnerSubclassOfSupersInner.java");
-        }
-
-        @TestMetadata("SubclassWithRawType.java")
-        public void testSubclassWithRawType() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/SubclassWithRawType.java");
-        }
-
-        @TestMetadata("TwoSuperclassesInconsistentGenericTypes.java")
-        public void testTwoSuperclassesInconsistentGenericTypes() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/signaturePropagation/TwoSuperclassesInconsistentGenericTypes.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/static")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Static extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInStatic() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/static"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("DeeplyInnerClass.java")
-        public void testDeeplyInnerClass() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/DeeplyInnerClass.java");
-        }
-
-        @TestMetadata("DeeplyNestedStatic.java")
-        public void testDeeplyNestedStatic() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/DeeplyNestedStatic.java");
-        }
-
-        @TestMetadata("Enum.java")
-        public void testEnum() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/Enum.java");
-        }
-
-        @TestMetadata("InnerClass.java")
-        public void testInnerClass() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/InnerClass.java");
-        }
-
-        @TestMetadata("Simple.java")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/Simple.java");
-        }
-
-        @TestMetadata("StaticFinal.java")
-        public void testStaticFinal() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticFinal.java");
-        }
-
-        @TestMetadata("StaticMembersFromParentClass.java")
-        public void testStaticMembersFromParentClass() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClass.java");
-        }
-
-        @TestMetadata("StaticMembersFromParentClassVisibility.java")
-        public void testStaticMembersFromParentClassVisibility() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentClassVisibility.java");
-        }
-
-        @TestMetadata("StaticMembersFromParentInterface.java")
-        public void testStaticMembersFromParentInterface() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersFromParentInterface.java");
-        }
-
-        @TestMetadata("StaticMembersInEnum.java")
-        public void testStaticMembersInEnum() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnum.java");
-        }
-
-        @TestMetadata("StaticMembersInEnumFromParents.java")
-        public void testStaticMembersInEnumFromParents() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/static/StaticMembersInEnumFromParents.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava/compiledJava/vararg")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Vararg extends AbstractLoadJavaWithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInVararg() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledJava/vararg"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("VarargInt.java")
-        public void testVarargInt() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/vararg/VarargInt.java");
-        }
-
-        @TestMetadata("VarargString.java")
-        public void testVarargString() throws Exception {
-            runTest("compiler/testData/loadJava/compiledJava/vararg/VarargString.java");
-        }
-    }
+  }
 }

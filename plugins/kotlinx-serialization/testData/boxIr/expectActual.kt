@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR
 // TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 
 // FILE: common.kt

@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
 // JSPECIFY_STATE: warn
 
 // FILE: Foo.java
@@ -10,6 +12,6 @@ public class Foo {
 // FILE: main.kt
 fun <T> test(metric: T) {
     if (metric is String) {
-        Foo.gauge(<!DEBUG_INFO_SMARTCAST!>metric<!>)
+        Foo.gauge(metric)
     }
 }

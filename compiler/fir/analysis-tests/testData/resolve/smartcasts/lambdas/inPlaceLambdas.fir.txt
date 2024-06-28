@@ -23,7 +23,7 @@ FILE: inPlaceLambdas.kt
             ^ (R|<local>/x| as R|B|)
         }
         )
-        R|<local>/x|.R|/B.bar|()
+        R|<local>/x|.<Unresolved name: bar>#()
     }
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when () {
@@ -33,7 +33,7 @@ FILE: inPlaceLambdas.kt
                     ^ (R|<local>/x| as R|B|)
                 }
                 )
-                R|<local>/x|.R|/B.bar|()
+                R|<local>/x|.<Unresolved name: bar>#()
             }
         }
 

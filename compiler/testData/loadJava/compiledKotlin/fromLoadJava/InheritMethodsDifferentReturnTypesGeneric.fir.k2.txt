@@ -1,0 +1,21 @@
+public final class InheritMethodsDifferentReturnTypesGeneric : R|kotlin/Any| {
+    public constructor(): R|test/InheritMethodsDifferentReturnTypesGeneric|
+
+    public abstract interface Super1<F, B> : R|kotlin/Any| {
+        public abstract fun foo(): R|F?|
+
+        public abstract fun bar(): R|B?|
+
+    }
+
+    public abstract interface Super2<FF, BB> : R|kotlin/Any| {
+        public abstract fun foo(): R|FF?|
+
+        public abstract fun bar(): R|BB?|
+
+    }
+
+    public abstract interface Sub : R|test/InheritMethodsDifferentReturnTypesGeneric.Super1<kotlin/String, kotlin/CharSequence>|, R|test/InheritMethodsDifferentReturnTypesGeneric.Super2<kotlin/CharSequence, kotlin/String>| {
+    }
+
+}

@@ -1,5 +1,6 @@
 **/testData/** linguist-vendored
 *Generated.java linguist-generated=true
+*.kt.txt linguist-language=Kotlin
 * text=auto
 * eol=lf
 *.png binary
@@ -7,3 +8,4 @@
 compiler/cli/bin/* eol=lf
 compiler/cli/bin/*.bat eol=crlf
 gradlew.bat eol=crlf
+compiler/testData/** eol=auto

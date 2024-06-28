@@ -15,6 +15,13 @@ object AdditionalFilesDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
+    val CHECK_TYPE_WITH_EXACT by directive(
+        description = """
+            Adds util functions for type checking that use @kotlin.internal.Exact annotation
+            See file ./compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt
+        """.trimIndent()
+    )
+
     val WITH_COROUTINES by directive(
         description = """
             Adds util functions for checking coroutines

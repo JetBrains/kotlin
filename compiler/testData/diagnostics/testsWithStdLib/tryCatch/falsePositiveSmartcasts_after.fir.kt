@@ -1,5 +1,5 @@
-// !LANGUAGE: +NewDataFlowForTryExpressions
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
+// LANGUAGE: +NewDataFlowForTryExpressions
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 // Related issue: KT-28370
 
@@ -84,7 +84,7 @@ fun test5() {
         s2<!UNSAFE_CALL!>.<!>length
     }
     s1.length
-    s2<!UNSAFE_CALL!>.<!>length
+    s2.length
 }
 
 fun test6(s1: String?, s2: String?) {
@@ -102,6 +102,6 @@ fun test6(s1: String?, s2: String?) {
         requireNotNull(s2)
     }
     s<!UNSAFE_CALL!>.<!>length
-    s1<!UNSAFE_CALL!>.<!>length
+    s1.length
     s2.length
 }

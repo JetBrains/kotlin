@@ -5,19 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <noarg.common.src>${basedir}/../../../plugins/noarg/noarg.common/src</noarg.common.src>
-        <noarg.k1.src>${basedir}/../../../plugins/noarg/noarg.k1/src</noarg.k1.src>
-        <noarg.k2.src>${basedir}/../../../plugins/noarg/noarg.k2/src</noarg.k2.src>
-        <noarg.backend.src>${basedir}/../../../plugins/noarg/noarg.backend/src</noarg.backend.src>
-        <noarg.cli.src>${basedir}/../../../plugins/noarg/noarg.cli/src</noarg.cli.src>
-        <noarg.resources>${basedir}/../../../plugins/noarg/noarg.cli/resources</noarg.resources>
         <noarg.maven.plugin.src>${basedir}/src/main/kotlin</noarg.maven.plugin.src>
     </properties>
 
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>2.0.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -31,12 +25,18 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-noarg-compiler-plugin</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -47,10 +47,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource><directory>${noarg.resources}</directory></resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -62,11 +58,6 @@
                         <configuration>
                             <sources>
                                 <source>${noarg.maven.plugin.src}</source>
-                                <source>${noarg.common.src}</source>
-                                <source>${noarg.k1.src}</source>
-                                <source>${noarg.k2.src}</source>
-                                <source>${noarg.backend.src}</source>
-                                <source>${noarg.cli.src}</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -88,9 +79,6 @@
 
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
-                    <args>
-                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
-                    </args>
                 </configuration>
             </plugin>
             <plugin>
@@ -124,6 +112,26 @@
                         <id>process-test-classes</id>
                         <goals>
                             <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Shadowing kotlin-noarg-compiler-plugin into maven plugin without removing the dependency -->
+            <!-- Required for backward compatibility for Kotlin/IDEA plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>

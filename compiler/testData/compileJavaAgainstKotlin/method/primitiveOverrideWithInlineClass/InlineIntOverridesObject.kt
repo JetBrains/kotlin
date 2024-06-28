@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// IGNORE_FIR
+// KT-64909
+// LANGUAGE: +InlineClasses
 
 package test
 

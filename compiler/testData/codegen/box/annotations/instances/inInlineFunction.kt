@@ -4,7 +4,7 @@
 // IGNORE_DEXING
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 import kotlin.test.*
 

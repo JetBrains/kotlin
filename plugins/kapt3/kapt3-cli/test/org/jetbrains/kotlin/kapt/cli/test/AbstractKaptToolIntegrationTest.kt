@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt.cli.test
 
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -40,6 +41,13 @@ abstract class AbstractKaptToolIntegrationTest {
 
     private class GotResult(val actual: String): RuntimeException()
 
+    private fun List<String>.withSpecifiedMemoryIfNecessary(): List<String> {
+        val proguardedCompiler = System.getProperty("kotlin.proguard.enabled").toBoolean()
+        if (proguardedCompiler) return this
+        if (this.any { it.startsWith("-J-Xmx") }) return this
+        return this + "-J-Xmx384M"
+    }
+
     private fun doTestInTempDirectory(originalTestFile: File, testFile: File) {
         val sections = Section.parse(testFile)
 
@@ -48,10 +56,17 @@ abstract class AbstractKaptToolIntegrationTest {
                 when (section.name) {
                     "mkdir" -> section.args.forEach { File(tmpdir, it).mkdirs() }
                     "copy" -> copyFile(originalTestFile.parentFile, section.args)
-                    "kotlinc" -> runKotlinDistBinary("kotlinc", section.args)
+                    "kotlinc" -> runKotlinDistBinary("kotlinc", section.args.withSpecifiedMemoryIfNecessary())
                     "kapt" -> runKotlinDistBinary("kapt", section.args)
                     "javac" -> runJavac(section.args)
                     "java" -> runJava(section.args)
+                    "output" -> {
+                        val output = convertLineSeparators(File(tmpdir, "processOutput.txt").readText().trim())
+                        val expected = convertLineSeparators(section.content.trim())
+                        JUnit5Assertions.assertEquals(expected, output) {
+                            "Output\"$output\" is different from the expected string \"$expected\""
+                        }
+                    }
                     "after" -> {}
                     else -> error("Unknown section name ${section.name}")
                 }
@@ -80,7 +95,7 @@ abstract class AbstractKaptToolIntegrationTest {
 
     private fun runJavac(args: List<String>) {
         val executableName = if (SystemInfo.isWindows) "javac.exe" else "javac"
-        val executablePath = File(getJdk8Home(), "bin/" + executableName).absolutePath
+        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/" + executableName).absolutePath
         runProcess(executablePath, args)
     }
 
@@ -88,7 +103,7 @@ abstract class AbstractKaptToolIntegrationTest {
         val outputFile = File(tmpdir, "javaOutput.txt")
 
         val executableName = if (SystemInfo.isWindows) "java.exe" else "java"
-        val executablePath = File(getJdk8Home(), "bin/" + executableName).absolutePath
+        val executablePath = File(KtTestUtil.getJdk8Home(), "bin/" + executableName).absolutePath
         runProcess(executablePath, args, outputFile)
 
         throw GotResult(outputFile.takeIf { it.isFile }?.readText() ?: "")
@@ -118,17 +133,12 @@ abstract class AbstractKaptToolIntegrationTest {
     private fun transformArguments(args: List<String>): List<String> {
         return args.map {
             val arg = it.replace("%KOTLIN_STDLIB%", File("dist/kotlinc/lib/kotlin-stdlib.jar").absolutePath)
-            if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":"))) {
+            if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":") || arg.contains(";"))) {
                 "\"" + arg + "\""
             } else {
                 arg
             }
         }
-    }
-
-    private fun getJdk8Home(): File {
-        val homePath = System.getenv()["JDK_1_8"] ?: System.getenv()["JDK_18"] ?: error("Can't find JDK 1.8 home, please define JDK_1_8 variable")
-        return File(homePath)
     }
 }
 

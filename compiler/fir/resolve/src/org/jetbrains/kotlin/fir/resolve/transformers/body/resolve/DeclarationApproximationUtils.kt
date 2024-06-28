@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
-fun FirTypeRef.approximateDeclarationType(
+fun <T> T.approximateDeclarationType(
     session: FirSession,
     containingCallableVisibility: Visibility?,
     isLocal: Boolean,
     isInlineFunction: Boolean = false,
     stripEnhancedNullability: Boolean = true
-): FirTypeRef {
-    val baseType = (this as? FirResolvedTypeRef)?.type ?: return this
-
+): T {
+    if (this !is FirResolvedTypeRef) return this
+    val baseType = this.type
     val configuration = when (isLocal) {
         true -> TypeApproximatorConfiguration.LocalDeclaration
         false -> when (shouldApproximateAnonymousTypesOfNonLocalDeclaration(containingCallableVisibility, isInlineFunction)) {
@@ -29,16 +29,28 @@ fun FirTypeRef.approximateDeclarationType(
         }
     }
 
-    val preparedType = if (isLocal) baseType else baseType.substituteAlternativesInPublicType(session)
-    val approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
-    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
+    val preparedType = if (isLocal) baseType else baseType.substituteIntersectionTypesToUpperBoundsOrSelf(session)
+    var approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
+    if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
+        approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
+    }
+    @Suppress("UNCHECKED_CAST")
+    return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() } as T
 }
 
-private fun ConeKotlinType.substituteAlternativesInPublicType(session: FirSession): ConeKotlinType {
+private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        val filteredAttributes = type.attributes.filterNecessaryToKeep()
+        return if (filteredAttributes === type.attributes) null
+        else type.withAttributes(filteredAttributes)
+    }
+}
+
+fun ConeKotlinType.substituteIntersectionTypesToUpperBoundsOrSelf(session: FirSession): ConeKotlinType {
     val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeIntersectionType) return null
-            val alternativeType = type.alternativeType ?: return null
+            val alternativeType = type.upperBoundForApproximation ?: return null
             return substituteOrSelf(alternativeType)
         }
     }

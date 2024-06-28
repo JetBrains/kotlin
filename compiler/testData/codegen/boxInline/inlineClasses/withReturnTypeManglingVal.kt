@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses +MangleClassMembersReturningInlineClasses
+// LANGUAGE: +InlineClasses +MangleClassMembersReturningInlineClasses
 
 // FILE: 1.kt
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.compilationException
 
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
+import org.jetbrains.kotlin.backend.common.reflectedNameAccessor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -32,6 +33,9 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
@@ -112,16 +116,16 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     override fun lower(irFile: IrFile) {
 
         // Regular contextless lambdas are always transformed to function references
-        val ctorToFreeFunctionMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+        val ctorToFreeFunctionMap = hashMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
 
         // Regular lambdas with captured variables are transformed to function expressions whenever possible.
         // However, we don't do that if the lambda captures a variable declared in a loop, at least when variable
         // declarations are lowered into 'var' statements in JS. See the CapturedVariablesDeclaredInLoops class.
         // We also don't do that if there is more than one constructor call for a single lambda.
-        val ctorToFunctionExpressionMap = mutableMapOf<IrConstructorSymbol, FunctionExpressionFactory>()
+        val ctorToFunctionExpressionMap = hashMapOf<IrConstructorSymbol, FunctionExpressionFactory>()
 
         // Suspend lambdas are transformed to factory calls
-        val ctorToFactoryMap = mutableMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
+        val ctorToFactoryMap = hashMapOf<IrConstructorSymbol, IrSimpleFunctionSymbol>()
 
         val closureUsageAnalyser = ClosureUsageAnalyser()
 
@@ -408,12 +412,12 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         if (invokeFun.returnType.isUnit()) {
             val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
-            // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
+            // Set both offsets of the IrReturn to body.previousOffset so that a breakpoint set at the closing brace of a lambda expression
             // could be hit.
             body.statements.add(
                 IrReturnImpl(
-                    body.endOffset - 1,
-                    body.endOffset - 1,
+                    body.endOffset.previousOffset,
+                    body.endOffset.previousOffset,
                     context.irBuiltIns.nothingType,
                     lambdaDeclaration.symbol,
                     unitValue
@@ -502,7 +506,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val isSuspendLambda = invokeFun.overriddenSymbols.any { it.owner.isSuspend }
 
         fun createOldToNewInvokeParametersMapping(lambdaDeclaration: IrSimpleFunction) =
-            invokeFun.valueParameters.associateBy({ it.symbol }, { lambdaDeclaration.valueParameters[it.index].symbol })
+            invokeFun.valueParameters.associateBy({ it.symbol }) { lambdaDeclaration.valueParameters[it.index].symbol }
 
         fun lambdaInnerClasses() =
             lambdaClass.declarations.filter { it is IrClass || (it is IrSimpleFunction && it.dispatchReceiverParameter == null) }
@@ -563,7 +567,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
-        val nameGetter = context.mapping.reflectedNameAccessor[lambdaInfo.lambdaClass]
+        val nameGetter = lambdaInfo.lambdaClass.reflectedNameAccessor
 
         if (nameGetter != null || lambdaDeclaration.isSuspend) {
             val tmpVar = JsIrBuilder.buildVar(functionExpression.type, factoryFunction, "l", initializer = functionExpression)
@@ -620,7 +624,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         lambdaDeclaration.parent = parent
 
-        lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.mapIndexed { id, vp ->
+        lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.memoryOptimizedMapIndexed { id, vp ->
             val originalValueParameter = invokeFun.valueParameters[id]
             vp.copyTo(
                 irFunction = lambdaDeclaration,
@@ -652,11 +656,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             }
         }
 
-        factoryDeclaration.valueParameters = constructor.valueParameters.map { it.copyTo(factoryDeclaration) }
-        factoryDeclaration.typeParameters = constructor.typeParameters.map {
+        factoryDeclaration.valueParameters = constructor.valueParameters.memoryOptimizedMap { it.copyTo(factoryDeclaration) }
+        factoryDeclaration.typeParameters = constructor.typeParameters.memoryOptimizedMap {
             it.copyToWithoutSuperTypes(factoryDeclaration).also { tp ->
                 // TODO: make sure it is done well
-                tp.superTypes += it.superTypes
+                tp.superTypes = tp.superTypes memoryOptimizedPlus it.superTypes
             }
         }
 

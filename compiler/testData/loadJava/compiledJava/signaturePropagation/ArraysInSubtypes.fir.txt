@@ -4,7 +4,7 @@ public abstract interface ArraysInSubtypes : R|kotlin/Any| {
 
         public abstract fun listOfArray(): R|ft<kotlin/collections/MutableList<out ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>, kotlin/collections/List<out ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>>?>|
 
-        public abstract fun objArray(): R|ft<kotlin/Array<ft<T & Any, T?>>, kotlin/Array<out ft<T & Any, T?>>?>|
+        public abstract fun objArray(): R|ft<kotlin/Array<T!>, kotlin/Array<out T!>?>|
 
     }
     public abstract interface Super : R|kotlin/Any| {

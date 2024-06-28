@@ -1,19 +1,19 @@
 FILE: typeParameters.kt
-    public? final? interface List<out T : Any> : R|kotlin/Any| {
+    public final? interface List<out T : Any> : R|kotlin/Any| {
         public? final? operator fun get(index: Int): T
 
         public? final? infix fun concat(other: List<T>): List<T>
 
     }
-    public? final typealias StringList = List<out String>
-    public? final typealias AnyList = List<*>
-    public? abstract class AbstractList<out T : Any> : List<T> {
+    public final typealias StringList = List<out String>
+    public final typealias AnyList = List<*>
+    public abstract class AbstractList<out T : Any> : List<T> {
         public? constructor<out T : Any>(): R|AbstractList<T>| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? class SomeList : AbstractList<Int> {
+    public final? class SomeList : AbstractList<Int> {
         public? constructor(): R|SomeList| {
             LAZY_super<AbstractList<Int>>
         }
@@ -23,3 +23,4 @@ FILE: typeParameters.kt
         public? open? override fun concat(other: List<Int>): List<Int> { LAZY_BLOCK }
 
     }
+    public? final? fun <From : To, To : Any> copyNotNull(from: List<From>, to: List<To>): R|kotlin/Unit| { LAZY_BLOCK }

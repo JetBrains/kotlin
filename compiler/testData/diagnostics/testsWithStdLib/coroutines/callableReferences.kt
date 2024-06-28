@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ReleaseCoroutines
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 suspend fun foo() {}
 

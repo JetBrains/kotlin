@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : I {
+  // CHECK:
+  //   Mangled name: C#<init>(J){}
+  //   Public signature: /C.<init>|1083383516528472352[0]
+  //   Public signature debug description: <init>(J){}
+  constructor(client: J) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#foo(){0§<kotlin.Any?>}kotlin.collections.MutableList<0:0?>?
+  //   Public signature: /C.foo|1528742332167339732[0]
+  //   Public signature debug description: foo(){0§<kotlin.Any?>}kotlin.collections.MutableList<0:0?>?
+  override fun <C : Any?> foo(): MutableList<C?>?
+
+}

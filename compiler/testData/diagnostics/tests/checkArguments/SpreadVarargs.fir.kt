@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+// CHECK_TYPE
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 
 fun <T> array1(vararg a : T) = a
 
@@ -43,10 +43,10 @@ fun main() {
 
     joinG(1, "2")
     joinG(<!NON_VARARG_SPREAD!>*<!>1, "2")
-    joinG(1, *<!ARGUMENT_TYPE_MISMATCH!>"2"<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>joinG<!>(1, <!CANNOT_INFER_PARAMETER_TYPE!>*<!ARGUMENT_TYPE_MISMATCH!>"2"<!><!>)
     joinG(x = 1, a = a)
-    joinG(x = 1, a = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>"2"<!>)
-    joinG(x = <!NON_VARARG_SPREAD!>*<!>1, a = *<!ARGUMENT_TYPE_MISMATCH!>"2"<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>joinG<!>(x = 1, <!CANNOT_INFER_PARAMETER_TYPE!>a = <!ARGUMENT_TYPE_MISMATCH, ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION_ERROR!>"2"<!><!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>joinG<!>(x = <!NON_VARARG_SPREAD!>*<!>1, <!CANNOT_INFER_PARAMETER_TYPE!>a = *<!ARGUMENT_TYPE_MISMATCH!>"2"<!><!>)
     joinG(1, *a)
     joinG(1, *a, "3")
     joinG(1, "4", *a, "3")

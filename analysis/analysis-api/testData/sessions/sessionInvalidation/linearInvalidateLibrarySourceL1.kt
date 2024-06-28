@@ -1,0 +1,14 @@
+// MODULE: L1
+// MODULE_KIND: LibrarySource
+// WILDCARD_MODIFICATION_EVENT
+// FILE: l1.kt
+
+// MODULE: E(L1)
+
+// MODULE: D(E)
+
+// MODULE: C(D)
+
+// MODULE: B(C)
+
+// MODULE: A(B)

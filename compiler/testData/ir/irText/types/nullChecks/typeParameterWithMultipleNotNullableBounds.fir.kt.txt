@@ -4,6 +4,6 @@ fun <T> f(x: T): Int where T : CharSequence, T : Comparable<T> {
 
 fun test() {
   f<@FlexibleNullability String?>(x = s() /*!! String */) /*~> Unit */
-  f<@FlexibleNullability String?>(x = #STRING /*!! String */) /*~> Unit */
+  f<@FlexibleNullability String?>(x = super<J>.#STRING /*!! String */) /*~> Unit */
 }
 

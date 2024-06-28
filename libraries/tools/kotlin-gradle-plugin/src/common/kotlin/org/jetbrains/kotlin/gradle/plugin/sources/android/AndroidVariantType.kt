@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
-import com.android.build.gradle.api.*
+import org.jetbrains.kotlin.gradle.utils.*
 
-internal val BaseVariant.type: AndroidVariantType
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+internal val DeprecatedAndroidBaseVariant.type: AndroidVariantType
     get() = when (this) {
-        is UnitTestVariant -> AndroidVariantType.UnitTest
-        is TestVariant -> AndroidVariantType.InstrumentedTest
-        is ApplicationVariant, is LibraryVariant -> AndroidVariantType.Main
+        is DeprecatedAndroidUnitTestVariant -> AndroidVariantType.UnitTest
+        is DeprecatedAndroidTestVariant -> AndroidVariantType.InstrumentedTest
+        is DeprecatedAndroidApplicationVariant, is DeprecatedAndroidLibraryVariant -> AndroidVariantType.Main
         else -> AndroidVariantType.Unknown
     }
 

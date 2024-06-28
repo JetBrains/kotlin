@@ -31,7 +31,7 @@ class Owner {
 fun test() {
     val o = Owner()
     o.foo()
-    val err = Owner.<!RESOLUTION_TO_CLASSIFIER!>Inner<!>()
+    val err = Owner.<!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>Inner<!>()
     err.<!UNRESOLVED_REFERENCE!>baz<!>()
     val i = o.Inner()
     i.gau()

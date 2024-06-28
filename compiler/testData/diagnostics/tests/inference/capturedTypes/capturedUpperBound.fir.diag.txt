@@ -1,0 +1,9 @@
+/test.kt:(116,136): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/test.kt:(152,166): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/test.kt:(182,198): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)'. Consider removing the explicit type arguments.
+
+/test.kt:(227,237): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*) & Any'. Consider removing the explicit type arguments.
+
+/test.kt:(266,280): error: Type argument is not within its bounds: should be subtype of 'CapturedType(*)!'. Consider removing the explicit type arguments.

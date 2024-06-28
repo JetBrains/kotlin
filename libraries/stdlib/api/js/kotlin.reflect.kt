@@ -3,15 +3,17 @@
 public inline fun <reified T> typeOf(): kotlin.reflect.KType
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.cast(value: kotlin.Any?): T
+
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.js.ExperimentalJsReflectionCreateInstance
+public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.createInstance(): T
 
 @kotlin.reflect.ExperimentalAssociatedObjects
 public inline fun <reified T : kotlin.Annotation> kotlin.reflect.KClass<*>.findAssociatedObject(): kotlin.Any?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.safeCast(value: kotlin.Any?): T?
 
@@ -29,6 +31,7 @@ public final annotation class ExperimentalAssociatedObjects : kotlin.Annotation 
 }
 
 public interface KCallable<out R> {
+    @kotlin.internal.IntrinsicConstEvaluation
     public abstract val name: kotlin.String { get; }
 }
 

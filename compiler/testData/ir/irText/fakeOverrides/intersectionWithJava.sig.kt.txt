@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+abstract class C<R : Any?> : Java1<R>, KotlinInterface<R> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /C.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  /* fake */ override fun bar(): ArrayList<Int>
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#foo(){}1:0
+  //   Public signature: /C.foo|-5478580208809996038[0]
+  //   Public signature debug description: foo(){}1:0
+  /* fake */ override fun foo(): R
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface<T : Any?> {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#bar(){}java.util.ArrayList<kotlin.Int>
+  //   Public signature: /KotlinInterface.bar|3123552224271008170[0]
+  //   Public signature debug description: bar(){}java.util.ArrayList<kotlin.Int>
+  abstract fun bar(): ArrayList<Int>
+
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#foo(){}1:0
+  //   Public signature: /KotlinInterface.foo|-5478580208809996038[0]
+  //   Public signature debug description: foo(){}1:0
+  abstract fun foo(): T
+
+}
+

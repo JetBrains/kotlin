@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
  *
@@ -8,6 +9,8 @@
  */
 
 // TESTCASE NUMBER: 1
+package sometest
+
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 

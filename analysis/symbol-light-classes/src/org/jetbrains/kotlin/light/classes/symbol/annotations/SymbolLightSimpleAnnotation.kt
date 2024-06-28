@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightSimpleAnnotation(
     private val fqName: String?,
     parent: PsiElement,
-    private val arguments: List<KtNamedAnnotationValue> = listOf(),
+    private val arguments: List<AnnotationArgument> = listOf(),
     override val kotlinOrigin: KtCallElement? = null,
 ) : SymbolLightAbstractAnnotation(parent) {
+    override fun createReferenceInformationProvider(): ReferenceInformationProvider = ReferenceInformationHolder(
+        referenceName = fqName?.substringAfterLast('.'),
+    )
 
     override fun getQualifiedName(): String? = fqName
 

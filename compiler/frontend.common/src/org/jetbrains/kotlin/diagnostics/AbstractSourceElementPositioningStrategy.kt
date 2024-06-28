@@ -12,15 +12,4 @@ abstract class AbstractSourceElementPositioningStrategy {
     abstract fun markDiagnostic(diagnostic: KtDiagnostic): List<TextRange>
 
     abstract fun isValid(element: AbstractKtSourceElement): Boolean
-
-    companion object {
-
-        @JvmStatic
-        fun setDefault(default: AbstractSourceElementPositioningStrategy) {
-            DEFAULT = default
-        }
-
-        var DEFAULT: AbstractSourceElementPositioningStrategy = OffsetsOnlyPositioningStrategy()
-            private set
-    }
 }

@@ -1,0 +1,66 @@
+<idea-plugin>
+  <extensionPoints>
+    <extensionPoint
+        qualifiedName="org.jetbrains.kotlin.llFirSessionConfigurator"
+        interface="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator"
+        area="IDEA_PROJECT"
+        dynamic="true"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey
+        defaultValue="false"
+        description="Run resolve under a global lock."
+        key="kotlin.parallel.resolve.under.global.lock"
+        restartRequired="true"
+    />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElementByPsiElementChooser"
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLRealFirElementByPsiElementChooser"
+    />
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService"/>
+    <projectService
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationEventPublisher"
+    />
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService"/>
+    <projectService
+        serviceImplementation="org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDeclarationModificationService"
+    />
+  </extensions>
+
+  <projectListeners>
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleStateModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinModuleOutOfBlockModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModuleOutOfBlockModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalModuleStateModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceModuleStateModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceModuleStateModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinGlobalSourceOutOfBlockModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinGlobalSourceOutOfBlockModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLKotlinCodeFragmentContextModificationListener"
+        topic="org.jetbrains.kotlin.analysis.api.platform.modification.KotlinCodeFragmentContextModificationListener"
+    />
+    <listener
+        class="org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService$LLPsiModificationTrackerListener"
+        topic="com.intellij.psi.util.PsiModificationTracker$Listener"
+    />
+  </projectListeners>
+</idea-plugin>

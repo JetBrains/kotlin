@@ -1,6 +1,8 @@
 $TESTDATA_DIR$/experimentalIsNotAnnotation.kt
 -d
 $TEMP_DIR$
+-language-version
+2.0
 -opt-in
 org.test.NotAnAnnotation1
 -opt-in=org.test.NotAnAnnotation2

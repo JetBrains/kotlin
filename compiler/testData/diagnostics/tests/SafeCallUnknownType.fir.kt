@@ -1,4 +1,4 @@
-import com.unknown
+import <!UNRESOLVED_IMPORT!>com<!>.unknown
 
 fun ff() {
     val a = <!UNRESOLVED_REFERENCE!>unknown<!>()

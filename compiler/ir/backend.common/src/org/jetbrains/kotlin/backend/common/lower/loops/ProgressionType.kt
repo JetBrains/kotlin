@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
 
 package org.jetbrains.kotlin.backend.common.lower.loops
 
@@ -176,7 +175,7 @@ internal class UIntProgressionType(symbols: Symbols, allowUnsignedBounds: Boolea
         maxValueAsLong = UInt.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uInt!!],
-        unsignedType = symbols.uInt!!.defaultType,
+        unsignedType = symbols.uInt.defaultType,
         unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
 
@@ -192,7 +191,7 @@ internal class ULongProgressionType(symbols: Symbols, allowUnsignedBounds: Boole
         maxValueAsLong = ULong.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uLong!!],
-        unsignedType = symbols.uLong!!.defaultType,
+        unsignedType = symbols.uLong.defaultType,
         unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
 

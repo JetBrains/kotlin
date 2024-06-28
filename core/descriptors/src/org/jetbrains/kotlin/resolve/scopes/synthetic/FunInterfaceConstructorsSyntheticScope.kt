@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.resolve.sam.*
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
+import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 
 class FunInterfaceConstructorsScopeProvider(
     storageManager: StorageManager,

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingComponents
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 
+
 @InternalNonStableExtensionPoints
 interface AssignResolutionAltererExtension : AnnotationBasedExtension {
     companion object : ProjectExtensionDescriptor<AssignResolutionAltererExtension>(

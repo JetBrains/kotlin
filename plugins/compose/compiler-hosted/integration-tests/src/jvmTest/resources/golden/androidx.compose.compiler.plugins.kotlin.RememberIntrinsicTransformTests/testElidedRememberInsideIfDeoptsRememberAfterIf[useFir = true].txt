@@ -1,0 +1,57 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+import androidx.compose.runtime.NonRestartableComposable
+
+@Composable
+@NonRestartableComposable
+fun app(x: Boolean) {
+    val a = if (x) { remember { 1 } } else { 2 }
+    val b = remember { 2 }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@NonRestartableComposable
+fun app(x: Boolean, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(app)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val a = <block>{
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<rememb...>")
+    val tmp1_group = if (x) {
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        1
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    } else {
+      2
+    }
+    %composer.endReplaceGroup()
+    tmp1_group
+  }
+  val b = <block>{
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp2_group = %composer.cache(false) {
+      2
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp2_group
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

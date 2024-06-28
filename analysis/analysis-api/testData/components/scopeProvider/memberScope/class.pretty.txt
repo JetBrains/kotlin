@@ -1,0 +1,25 @@
+fun foo(): kotlin.Int
+
+val bar: kotlin.String
+
+fun perform()
+
+val x: kotlin.Int
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+class C2
+
+object O2
+
+companion object
+
+class C1
+
+object O1
+
+constructor()

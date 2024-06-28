@@ -20,8 +20,35 @@ object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
+
+    /**
+     * Platform CInterop usage:
+     * These are CInterop files that represent executable .klibs for a given konan target
+     * ! NOTE !: This usage is compatible with [KOTLIN_API], [JAVA_API] and [JAVA_RUNTIME]
+     */
     const val KOTLIN_CINTEROP = "kotlin-cinterop"
+
+    /**
+     * Commonized CInterop usage:
+     * This CInterops are produced by the commonizer.
+     * ! Note !: This usage is intended only for project to project dependencies.
+     * Unlike [KOTLIN_CINTEROP] this usage is not marked compatible with [KOTLIN_API], [JAVA_API] or [JAVA_RUNTIME]
+     */
+    const val KOTLIN_COMMONIZED_CINTEROP = "kotlin-commonized-cinterop"
     const val KOTLIN_SOURCES = "kotlin-sources"
+
+    /**
+     * Multiplatform resources usage:
+     * Resources variants for native, wasmJs and wasmWasi targets publish with these usages. To resolve a resources configuration with
+     * transitive dependencies that might not have a resource variant, we must use a compatibility rule to take dependencies from
+     * the klib variant. For native that is a "kotlin-api" variant and for wasmJs and wasmWasi that is a "kotlin-runtime" variant.
+     */
+    const val KOTLIN_RESOURCES = "kotlin-multiplatformresources"
+    const val KOTLIN_RESOURCES_JS = "kotlin-multiplatformresourcesjs"
+
+    // Following two constants were removed in Gradle 8.0 from 'Usages' class
+    private const val JAVA_RUNTIME_CLASSES = "java-runtime-classes"
+    private const val JAVA_RUNTIME_RESOURCES = "java-runtime-resources"
 
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
 
@@ -107,6 +134,27 @@ object KotlinUsages {
         }
     }
 
+    private class KotlinResourcesCompatibility : AttributeCompatibilityRule<Usage> {
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            /**
+             * When resolving resources using KotlinTarget.resourcesConfiguration, if a dependency doesn't have resources variant, we must
+             * take dependencies from the klib variant because they might contain transitive resources variants.
+             * */
+            val consumerValueName = consumerValue?.name
+            val producerValueName = producerValue?.name
+            if (consumerValueName == null || producerValueName == null) return
+
+            if (
+                mapOf(
+                    KOTLIN_RESOURCES to KOTLIN_API,
+                    KOTLIN_RESOURCES_JS to KOTLIN_RUNTIME,
+                )[consumerValueName] == producerValueName
+            ) {
+                compatible()
+            }
+        }
+    }
+
     private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage?>) = details.run {
             if (consumerValue?.name == KOTLIN_CINTEROP) {
@@ -168,7 +216,11 @@ object KotlinUsages {
         closestMatch(candidateValues.single { it?.name == name }!!)
     }
 
-    internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema, isKotlinGranularMetadata: Boolean) {
+    internal fun setupAttributesMatchingStrategy(
+        attributesSchema: AttributesSchema,
+        isKotlinGranularMetadata: Boolean,
+        isKotlinResourcesCompatibilityRuleEnabled: Boolean
+    ) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
@@ -179,6 +231,11 @@ object KotlinUsages {
             if (isKotlinGranularMetadata) {
                 strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)
                 strategy.disambiguationRules.add(KotlinMetadataDisambiguation::class.java)
+            }
+
+            // Only enable resources compatibility rule when resources configuration is used, so that for variant reselection klibs aren't selected
+            if (isKotlinResourcesCompatibilityRuleEnabled) {
+                strategy.compatibilityRules.add(KotlinResourcesCompatibility::class.java)
             }
         }
     }

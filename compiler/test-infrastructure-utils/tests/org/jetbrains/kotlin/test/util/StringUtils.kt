@@ -16,6 +16,11 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
 fun String.trimTrailingWhitespaces(): String =
     this.split('\n').joinToString(separator = "\n") { it.trimEnd() }
 
+fun String.trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd(): String {
+    val lines = this.split('\n').map { it.trimEnd() }
+    return lines.dropLastWhile { it.isBlank() }.joinToString("\n", postfix = "\n")
+}
+
 fun String.convertLineSeparators(separator: String = DEFAULT_LINE_SEPARATOR): String {
     return replace(Regex.fromLiteral("\r\n|\r|\n"), separator)
 }

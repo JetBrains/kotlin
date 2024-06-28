@@ -7,7 +7,7 @@ dependencies {
     api(project(":compiler:fir:providers"))
     implementation(project(":core:util.runtime"))
 
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

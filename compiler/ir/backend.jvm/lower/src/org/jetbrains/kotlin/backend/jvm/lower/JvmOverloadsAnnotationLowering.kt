@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -14,21 +14,21 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
 
-internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
-    ::JvmOverloadsAnnotationLowering,
+// TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
+@PhaseDescription(
     name = "JvmOverloadsAnnotation",
     description = "Handle JvmOverloads annotations"
 )
-
-// TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
-
-private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
+internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filter {
@@ -106,9 +106,9 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         }
 
         wrapperIrFunction.body = if (target is IrConstructor) {
-            IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+            context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
         } else {
-            IrExpressionBodyImpl(
+            context.irFactory.createExpressionBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, call
             )
         }
@@ -120,6 +120,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         val res = when (oldFunction) {
             is IrConstructor -> {
                 buildConstructor {
+                    setSourceRange(oldFunction)
                     origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                     name = oldFunction.name
                     visibility = oldFunction.visibility
@@ -128,11 +129,12 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                 }
             }
             is IrSimpleFunction -> buildFun {
+                setSourceRange(oldFunction)
                 origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                 name = oldFunction.name
                 visibility = oldFunction.visibility
                 modality =
-                    if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
+                    if (context.config.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) Modality.FINAL
                     else oldFunction.modality
                 returnType = oldFunction.returnType
                 isInline = oldFunction.isInline

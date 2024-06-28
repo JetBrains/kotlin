@@ -135,16 +135,16 @@ open class LookupStorage(
     }
 
     @Synchronized
-    override fun clean() {
+    override fun deleteStorageFiles() {
         icContext.transaction.deleteFile(countersFile.toPath())
 
         size = 0
 
-        super.clean()
+        super.deleteStorageFiles()
     }
 
     @Synchronized
-    override fun flush(memoryCachesOnly: Boolean) {
+    override fun close() {
         try {
             if (size != oldSize) {
                 if (size > 0) {
@@ -152,7 +152,7 @@ open class LookupStorage(
                 }
             }
         } finally {
-            super.flush(memoryCachesOnly)
+            super.close()
         }
     }
 
@@ -171,10 +171,10 @@ open class LookupStorage(
             lookupMap[hash] = lookupMap[hash]!!.filter { it in idToFile }.toSet()
         }
 
-        val oldFileToId = fileToId.toMap()
+        val oldFileToId = fileToId.keys.associateWith { fileToId[it]!! }
         val oldIdToNewId = HashMap<Int, Int>(oldFileToId.size)
-        idToFile.clean()
-        fileToId.clean()
+        idToFile.clear()
+        fileToId.clear()
         size = 0
 
         for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
@@ -197,12 +197,12 @@ open class LookupStorage(
     @TestOnly
     fun forceGC() {
         removeGarbageForTests()
-        flush(false)
+        flush()
     }
 
     @TestOnly
     fun dump(lookupSymbols: Set<LookupSymbol>): String {
-        flush(false)
+        flush()
 
         val sb = StringBuilder()
         val p = Printer(sb)
@@ -302,17 +302,17 @@ private class TrackedLookupMap(private val lookupMap: LookupMap, private val tra
     val addedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
     val removedKeys = if (trackChanges) mutableSetOf<LookupSymbolKey>() else null
 
-    val keys: Collection<LookupSymbolKey>
+    val keys: Set<LookupSymbolKey>
         get() = lookupMap.keys
 
-    operator fun get(key: LookupSymbolKey): Collection<Int>? = lookupMap[key]
+    operator fun get(key: LookupSymbolKey): Set<Int>? = lookupMap[key]
 
     operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
         recordSet(key)
         lookupMap[key] = fileIds
     }
 
-    fun append(key: LookupSymbolKey, fileIds: Collection<Int>) {
+    fun append(key: LookupSymbolKey, fileIds: Set<Int>) {
         recordSet(key)
         lookupMap.append(key, fileIds)
     }
@@ -324,23 +324,19 @@ private class TrackedLookupMap(private val lookupMap: LookupMap, private val tra
 
     private fun recordSet(key: LookupSymbolKey) {
         if (!trackChanges) return
-        if (lookupMap[key] == null) {
-            if (key in removedKeys!!) {
-                removedKeys.remove(key)
-            } else {
-                addedKeys!!.add(key)
-            }
+        when (key) {
+            in lookupMap -> Unit
+            in removedKeys!! -> removedKeys.remove(key)
+            else -> addedKeys!!.add(key)
         }
     }
 
     private fun recordRemove(key: LookupSymbolKey) {
         if (!trackChanges) return
-        if (lookupMap[key] != null) {
-            if (key in addedKeys!!) {
-                addedKeys.remove(key)
-            } else {
-                removedKeys!!.add(key)
-            }
+        when (key) {
+            !in lookupMap -> Unit
+            in addedKeys!! -> addedKeys.remove(key)
+            else -> removedKeys!!.add(key)
         }
     }
 }

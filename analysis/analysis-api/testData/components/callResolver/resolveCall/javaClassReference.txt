@@ -1,3 +1,0 @@
-KtSuccessCallInfo:
-  call = KtGenericTypeQualifier:
-    qualifier = Array<String>

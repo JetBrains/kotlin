@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
  * The main difference between [LookupPredicate] and [DeclarationPredicate] is that [DeclarationPredicate] allows
  *   to create predicate with meta annotations, and [LookupPredicate] allows to use only annotations with predefined
  *   qualified names
+ *
+ * Note that predicates can not be used for matching or looking up local declarations (local functions, local classes, anonymous objects
+ *   and their members). The only exception is matching local classes/anonymous objects with [AbstractPredicate.AnnotatedWith] and
+ *   [AbstractPredicate.MetaAnnotatedWith] by [FirPredicateBasedProvider.matches]
  */
 sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
     val annotations: Set<AnnotationFqn>

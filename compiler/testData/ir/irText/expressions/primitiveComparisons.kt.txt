@@ -14,20 +14,36 @@ fun btest4(a: Byte, b: Byte): Boolean {
   return lessOrEqual(arg0 = a.toInt(), arg1 = b.toInt())
 }
 
-fun stest1(a: Short, b: Short): Boolean {
-  return greater(arg0 = a.toInt(), arg1 = b.toInt())
+fun dtest1(a: Double, b: Double): Boolean {
+  return greater(arg0 = a, arg1 = b)
 }
 
-fun stest2(a: Short, b: Short): Boolean {
-  return less(arg0 = a.toInt(), arg1 = b.toInt())
+fun dtest2(a: Double, b: Double): Boolean {
+  return less(arg0 = a, arg1 = b)
 }
 
-fun stest3(a: Short, b: Short): Boolean {
-  return greaterOrEqual(arg0 = a.toInt(), arg1 = b.toInt())
+fun dtest3(a: Double, b: Double): Boolean {
+  return greaterOrEqual(arg0 = a, arg1 = b)
 }
 
-fun stest4(a: Short, b: Short): Boolean {
-  return lessOrEqual(arg0 = a.toInt(), arg1 = b.toInt())
+fun dtest4(a: Double, b: Double): Boolean {
+  return lessOrEqual(arg0 = a, arg1 = b)
+}
+
+fun ftest1(a: Float, b: Float): Boolean {
+  return greater(arg0 = a, arg1 = b)
+}
+
+fun ftest2(a: Float, b: Float): Boolean {
+  return less(arg0 = a, arg1 = b)
+}
+
+fun ftest3(a: Float, b: Float): Boolean {
+  return greaterOrEqual(arg0 = a, arg1 = b)
+}
+
+fun ftest4(a: Float, b: Float): Boolean {
+  return lessOrEqual(arg0 = a, arg1 = b)
 }
 
 fun itest1(a: Int, b: Int): Boolean {
@@ -62,34 +78,19 @@ fun ltest4(a: Long, b: Long): Boolean {
   return lessOrEqual(arg0 = a, arg1 = b)
 }
 
-fun ftest1(a: Float, b: Float): Boolean {
-  return greater(arg0 = a, arg1 = b)
+fun stest1(a: Short, b: Short): Boolean {
+  return greater(arg0 = a.toInt(), arg1 = b.toInt())
 }
 
-fun ftest2(a: Float, b: Float): Boolean {
-  return less(arg0 = a, arg1 = b)
+fun stest2(a: Short, b: Short): Boolean {
+  return less(arg0 = a.toInt(), arg1 = b.toInt())
 }
 
-fun ftest3(a: Float, b: Float): Boolean {
-  return greaterOrEqual(arg0 = a, arg1 = b)
+fun stest3(a: Short, b: Short): Boolean {
+  return greaterOrEqual(arg0 = a.toInt(), arg1 = b.toInt())
 }
 
-fun ftest4(a: Float, b: Float): Boolean {
-  return lessOrEqual(arg0 = a, arg1 = b)
+fun stest4(a: Short, b: Short): Boolean {
+  return lessOrEqual(arg0 = a.toInt(), arg1 = b.toInt())
 }
 
-fun dtest1(a: Double, b: Double): Boolean {
-  return greater(arg0 = a, arg1 = b)
-}
-
-fun dtest2(a: Double, b: Double): Boolean {
-  return less(arg0 = a, arg1 = b)
-}
-
-fun dtest3(a: Double, b: Double): Boolean {
-  return greaterOrEqual(arg0 = a, arg1 = b)
-}
-
-fun dtest4(a: Double, b: Double): Boolean {
-  return lessOrEqual(arg0 = a, arg1 = b)
-}

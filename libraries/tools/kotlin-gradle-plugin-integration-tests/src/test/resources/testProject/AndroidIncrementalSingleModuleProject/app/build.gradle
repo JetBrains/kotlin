@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,6 +14,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
+
+    namespace 'com.example'
+
     compileSdkVersion 23
 
     defaultConfig {
@@ -45,10 +47,13 @@ repositories {
     mavenLocal()
     maven { url 'https://maven.google.com' }
     mavenCentral()
-    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 dependencies {
     implementation 'com.android.support:appcompat-v7:23.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+kotlin {
+    jvmToolchain(8)
 }

@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.runProcess
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.exists
+import java.nio.file.Path
 
 @DisplayName("Compiler plugin incremental compilation")
 @OtherGradlePluginTests
-open class CompilerPluginsIncrementalIT : KGPBaseTest() {
+abstract class CompilerPluginsIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             incremental = true
@@ -23,53 +25,61 @@ open class CompilerPluginsIncrementalIT : KGPBaseTest() {
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Kotlin compiler holds an open file descriptor to plugin jar file")
     @DisplayName("KT-38570: After changing compiler plugin code, next incremental build picks it up")
     @GradleTest
-    internal fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
+    open fun afterChangeInPluginBuildDoesIncrementalProcessing(gradleVersion: GradleVersion) {
         project("incrementalChangeInPlugin".prefix, gradleVersion) {
-            build("assemble")
-
-            val genDir = subProject("library").projectPath.resolve("build/sample-dir/plugin/test/gen")
-            assert(genDir.exists()) { "$genDir does not exists!" }
-
-            val generatedFiles = genDir.toFile()
-                .walkTopDown()
-                .asSequence()
-                .filterNot { it.isDirectory }
-                .associate {
-                    it.absolutePath to it.readBytes()
-                }
+            val classesDirectory = subProject("library").kotlinClassesDir("main")
+            build("assemble") {
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeClass",
+                    "public java.lang.String myMethod();"
+                )
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeInterface",
+                    "public abstract java.lang.String myMethod();"
+                )
+            }
 
             subProject("plugin")
                 .kotlinSourcesDir()
-                .resolve("test/compiler/plugin/TestComponentRegistrar.kt")
+                .resolve("test/compiler/plugin/MyMethodGenerator.kt")
                 .modify {
-                    it.replace("world.", "something else.")
+                    it.replace("\"myMethod\"", "\"myNewMethod\"")
                 }
 
             build("assemble") {
-                assert(genDir.exists()) { "$genDir does not exists!" }
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeClass",
+                    "public java.lang.String myNewMethod();"
+                )
+                assertClassDeclarationsContain(
+                    classesDirectory, "library.SomeInterface",
+                    "public abstract java.lang.String myNewMethod();"
+                )
             }
-
-            genDir.toFile()
-                .walkTopDown()
-                .asSequence()
-                .filterNot { it.isDirectory }
-                .forEach {
-                    assert(!it.readBytes().contentEquals(generatedFiles[it.absolutePath])) {
-                        """
-                        
-                        File ${it.absolutePath} content is equals to previous one!
-                        New content:
-                        ${it.readText()}
-                        """.trimIndent()
-                    }
-                }
         }
     }
 
     private val String.prefix get() = "compilerPlugins/$this"
 }
 
+class CompilerPluginsK1IncrementalIT : CompilerPluginsIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+@DisplayName("Compiler plugin incremental compilation with disabled precise compilation outputs backup")
+abstract class CompilerPluginsIncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
+}
+
 @DisplayName("Compiler plugin incremental compilation with precise compilation outputs backup")
-class CompilerPluginsIncrementalWithPreciseBackupIT : CompilerPluginsIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+class CompilerPluginsK1IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+class CompilerPluginsK2IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalWithoutPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 }

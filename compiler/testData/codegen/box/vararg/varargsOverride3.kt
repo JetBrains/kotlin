@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+
 // MODULE: lib
 // FILE: A.java
 

@@ -1,0 +1,22 @@
+FILE: danglingConstrants.kt
+    public? final? fun function(): Int { LAZY_BLOCK }
+    public? final? val property: String = LAZY_EXPRESSION
+        public? get(): String
+    public final? class TopLevelClass : R|kotlin/Any| {
+        public? constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? fun memberFunction(): Int { LAZY_BLOCK }
+
+        public? final? val memberProperty: String = LAZY_EXPRESSION
+            public? get(): String
+
+        public final? class NestedClass : R|kotlin/Any| {
+            public? constructor(): R|TopLevelClass.NestedClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }

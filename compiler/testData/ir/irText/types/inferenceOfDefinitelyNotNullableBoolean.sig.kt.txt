@@ -1,0 +1,31 @@
+// CHECK:
+//   Mangled name: {}key
+//   Public signature: /key|1144547298251177939[0]
+//   Public signature debug description: {}key
+val key: Key<Boolean>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-key>(){}A.Key<kotlin.Boolean>
+  //   Public signature: /key.<get-key>|-6107443460337397211[0]
+  //   Public signature debug description: <get-key>(){}A.Key<kotlin.Boolean>
+  get
+
+// CHECK:
+//   Mangled name: {}x
+//   Public signature: /x|-8060530855978347579[0]
+//   Public signature debug description: {}x
+val x: @EnhancedNullability Boolean /* by */
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-x>(){}kotlin.Boolean{EnhancedNullability}
+  //   Public signature: /x.<get-x>|-384063749268193272[0]
+  //   Public signature debug description: <get-x>(){}kotlin.Boolean{EnhancedNullability}
+  get(): @EnhancedNullability Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%test.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|-2141841464851950582[0]
+//   Public signature by Frontend debug description: main(){}%test.kt
+fun main(): Unit

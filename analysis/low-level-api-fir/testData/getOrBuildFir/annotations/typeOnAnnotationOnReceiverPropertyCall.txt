@@ -1,0 +1,22 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|Anno|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyCall.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|@R|Anno|(s = String(a))  kotlin/Int|.i: R|kotlin/String|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+            ^ String()
+        }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }

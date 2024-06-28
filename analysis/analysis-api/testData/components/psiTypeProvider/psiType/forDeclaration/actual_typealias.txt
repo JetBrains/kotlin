@@ -1,2 +1,2 @@
-KtType: Foo
-PsiType: PsiType:int
+KaType: Foo
+PsiType: int

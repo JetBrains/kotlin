@@ -1,4 +1,4 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo Foundation IOSurface Metal ModelIO OpenGLESCommon Security darwin posix
+depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreMIDI CoreMedia CoreVideo EAGL Foundation IOSurface ImageIO MediaToolbox Metal ModelIO OpenGLESCommon QuartzCore Security UniformTypeIdentifiers darwin posix
 language = Objective-C
 package = platform.PHASE
 

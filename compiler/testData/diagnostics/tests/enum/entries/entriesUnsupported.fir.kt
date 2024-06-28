@@ -1,4 +1,4 @@
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // WITH_STDLIB
 // ISSUE: KT-55251
 
@@ -7,5 +7,5 @@ enum class Foo {
 }
 
 fun main() {
-    Foo.<!OPT_IN_USAGE_ERROR!>entries<!>
+    Foo.entries
 }

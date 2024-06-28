@@ -1,0 +1,61 @@
+@kotlin.Metadata
+final enum class TraceTest$Status {
+    // source: 'TraceTest.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: TraceTest$Status[]
+    public final enum static field END: TraceTest$Status
+    public final enum static field START: TraceTest$Status
+    private synthetic final static method $values(): TraceTest$Status[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): TraceTest$Status
+    public static method values(): TraceTest$Status[]
+    private final inner class TraceTest$Status
+}
+
+@kotlin.Metadata
+public final class TraceTest {
+    // source: 'TraceTest.kt'
+    private synthetic final static field a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a$volatile: int
+    private synthetic final static field a1$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a1$volatile: int
+    private synthetic final static field a2$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a2$volatile: int
+    private synthetic final static field a3$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field a3$volatile: int
+    private synthetic final static field s$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field s$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA$volatile(): int
+    private synthetic final static method getA1$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA1$volatile(): int
+    private synthetic final static method getA2$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA2$volatile(): int
+    private synthetic final static method getA3$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getA3$volatile(): int
+    private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getS$volatile(): int
+    private synthetic final method setA$volatile(p0: int): void
+    private synthetic final method setA1$volatile(p0: int): void
+    private synthetic final method setA2$volatile(p0: int): void
+    private synthetic final method setA3$volatile(p0: int): void
+    private synthetic final method setS$volatile(p0: int): void
+    public final method test(): void
+    public final method testDefaultTrace(): void
+    public final method testMultipleAppend(): void
+    public final method testNamedTrace(): void
+    public final method testTraceInBlock(): void
+    public final method testTraceWithFormat(): void
+    public final method testTraceWithSize(): void
+    private final inner class TraceTest$Status
+}
+
+@kotlin.Metadata
+public final class TraceTestKt {
+    // source: 'TraceTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

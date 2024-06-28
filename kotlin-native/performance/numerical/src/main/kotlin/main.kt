@@ -7,6 +7,7 @@ import org.jetbrains.benchmarksLauncher.*
 import kotlinx.cli.*
 
 expect class NumericalLauncher() : Launcher {
+    override val baseBenchmarksSet: MutableMap<String, AbstractBenchmarkEntry>
 }
 
 fun main(args: Array<String>) {

@@ -1,50 +1,4 @@
-interface X {
-  abstract val xs: MutableList<Any>
-    abstract get
-
-  abstract fun f(): MutableList<Any>
-
-}
-
-fun test(x: X, nx: X?) {
-  { // BLOCK
-    val tmp0_this: X = x
-    tmp0_this.<get-xs>().plusAssign<Int>(element = 1)
-  }
-  x.f().plusAssign<Int>(element = 2)
-  x.<get-xs>() as MutableList<Int>.plusAssign<Int>(element = 3)
-  x.f() as MutableList<Int>.plusAssign<Int>(element = 4)
-  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
-    val tmp1_safe_receiver: X? = nx
-    when {
-      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.<get-xs>()
-    }
-  }).plusAssign<Int>(element = 5)
-  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
-    val tmp2_safe_receiver: X? = nx
-    when {
-      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-      else -> tmp2_safe_receiver.f()
-    }
-  }).plusAssign<Int>(element = 6)
-}
-
-fun MutableList<Any>.testExtensionReceiver() {
-  <this>.plusAssign<Int>(element = 100)
-}
-
 abstract class AML : MutableList<Int> {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  fun testExplicitThis() {
-    <this>.plusAssign<Int>(element = 200)
-  }
-
   inner class Inner {
     constructor() /* primary */ {
       super/*Any*/()
@@ -58,4 +12,51 @@ abstract class AML : MutableList<Int> {
 
   }
 
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun testExplicitThis() {
+    <this>.plusAssign<Int>(element = 200)
+  }
+
 }
+
+interface X {
+  abstract fun f(): MutableList<Any>
+
+  abstract val xs: MutableList<Any>
+    abstract get
+
+}
+
+fun test(x: X, nx: X?) {
+  { // BLOCK
+    val tmp_0: X = x
+    tmp_0.<get-xs>().plusAssign<Int>(element = 1)
+  }
+  x.f().plusAssign<Int>(element = 2)
+  x.<get-xs>() as MutableList<Int>.plusAssign<Int>(element = 3)
+  x.f() as MutableList<Int>.plusAssign<Int>(element = 4)
+  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
+    val tmp_1: X? = nx
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.<get-xs>()
+    }
+  }).plusAssign<Int>(element = 5)
+  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
+    val tmp_2: X? = nx
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.f()
+    }
+  }).plusAssign<Int>(element = 6)
+}
+
+fun MutableList<Any>.testExtensionReceiver() {
+  <this>.plusAssign<Int>(element = 100)
+}
+

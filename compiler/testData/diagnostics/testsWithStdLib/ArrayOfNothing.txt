@@ -2,7 +2,7 @@ package
 
 public fun </*0*/ T> bar(): B<kotlin.Array<T>>
 public fun </*0*/ T> foo(): kotlin.Array<T>
-public fun test1(/*0*/ a: kotlin.Array<kotlin.Nothing>, /*1*/ b: kotlin.Array<kotlin.Nothing?>, /*2*/ c: kotlin.Array<in kotlin.Nothing>, /*3*/ d: kotlin.Array<in kotlin.Nothing?>, /*4*/ e: kotlin.Array<out kotlin.Nothing>, /*5*/ f: kotlin.Array<out kotlin.Nothing?>): kotlin.Unit
+public fun test1(/*0*/ a: kotlin.Array<kotlin.Nothing>, /*1*/ b: kotlin.Array<kotlin.Nothing?>, /*2*/ c: kotlin.Array<in kotlin.Nothing>, /*3*/ d: kotlin.Array<in kotlin.Nothing?>, /*4*/ e: kotlin.Array<out kotlin.Nothing>, /*5*/ f: kotlin.Array<out kotlin.Nothing?>, /*6*/ g: C<kotlin.String, kotlin.Array<kotlin.Nothing>>, /*7*/ h: A<D<kotlin.Array<kotlin.Nothing>>>): kotlin.Unit
 public fun test2(/*0*/ a: kotlin.Array<kotlin.Nothing>?, /*1*/ b: kotlin.Array<kotlin.Nothing?>?, /*2*/ c: kotlin.Array<in kotlin.Nothing>?, /*3*/ d: kotlin.Array<in kotlin.Nothing?>?, /*4*/ e: kotlin.Array<out kotlin.Nothing>?, /*5*/ f: kotlin.Array<out kotlin.Nothing?>?): kotlin.Unit
 public fun test3(/*0*/ a: A<kotlin.Array<kotlin.Nothing>>, /*1*/ b: A<kotlin.Array<kotlin.Nothing?>>, /*2*/ c: A<kotlin.Array<in kotlin.Nothing>>, /*3*/ d: A<kotlin.Array<in kotlin.Nothing?>>, /*4*/ e: A<kotlin.Array<out kotlin.Nothing>>, /*5*/ f: A<kotlin.Array<out kotlin.Nothing?>>): kotlin.Unit
 public fun test4(/*0*/ a: kotlin.Array<A<kotlin.Nothing>>, /*1*/ b: kotlin.Array<A<kotlin.Nothing?>>, /*2*/ c: kotlin.Array<A<in kotlin.Nothing>>, /*3*/ d: kotlin.Array<A<in kotlin.Nothing?>>, /*4*/ e: kotlin.Array<A<out kotlin.Nothing>>, /*5*/ f: kotlin.Array<A<out kotlin.Nothing?>>): kotlin.Unit
@@ -24,3 +24,18 @@ public final class B</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class C</*0*/ T, /*1*/ G> {
+    public constructor C</*0*/ T, /*1*/ G>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class D</*0*/ T> {
+    public constructor D</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

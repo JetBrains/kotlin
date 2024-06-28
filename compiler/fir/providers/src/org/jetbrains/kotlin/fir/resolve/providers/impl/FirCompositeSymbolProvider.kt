@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.name.Name
 
 @NoMutableState
 class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
+    override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeSymbolNamesProvider.fromSymbolProviders(providers)
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }
@@ -50,13 +53,4 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
     }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
-        providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallables() }
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        providers.flatMapToNullableSet { it.knownTopLevelClassifiersInPackage(packageFqName) }
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        providers.flatMapToNullableSet { it.computeCallableNamesInPackage(packageFqName) }
 }

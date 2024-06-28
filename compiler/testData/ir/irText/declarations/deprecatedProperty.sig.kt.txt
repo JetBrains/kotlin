@@ -1,0 +1,200 @@
+// CHECK:
+//   Mangled name: {}testVal
+//   Public signature: /testVal|2839078120601828782[0]
+//   Public signature debug description: {}testVal
+val testVal: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVal>(){}kotlin.Int
+  //   Public signature: /testVal.<get-testVal>|-7988245952340984303[0]
+  //   Public signature debug description: <get-testVal>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVal>(){}
+  //   Public signature: /testVal.<get-testVal>|-3119877793352707332[0]
+  //   Public signature debug description: <get-testVal>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}testVar
+//   Public signature: /testVar|8413087277002944883[0]
+//   Public signature debug description: {}testVar
+var testVar: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVar>(){}kotlin.Int
+  //   Public signature: /testVar.<get-testVar>|9191290906921825044[0]
+  //   Public signature debug description: <get-testVar>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVar>(){}
+  //   Public signature: /testVar.<get-testVar>|-6235253478789807887[0]
+  //   Public signature debug description: <get-testVar>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-testVar>(kotlin.Int){}
+  //   Public signature: /testVar.<set-testVar>|6808984626494163247[0]
+  //   Public signature debug description: <set-testVar>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: {}testValWithExplicitDefaultGet
+//   Public signature: /testValWithExplicitDefaultGet|-1362346025810080601[0]
+//   Public signature debug description: {}testValWithExplicitDefaultGet
+val testValWithExplicitDefaultGet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testValWithExplicitDefaultGet>(){}kotlin.Int
+  //   Public signature: /testValWithExplicitDefaultGet.<get-testValWithExplicitDefaultGet>|2648103895002657715[0]
+  //   Public signature debug description: <get-testValWithExplicitDefaultGet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testValWithExplicitDefaultGet>(){}
+  //   Public signature: /testValWithExplicitDefaultGet.<get-testValWithExplicitDefaultGet>|-8735908783303630657[0]
+  //   Public signature debug description: <get-testValWithExplicitDefaultGet>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}testVarWithExplicitDefaultGet
+//   Public signature: /testVarWithExplicitDefaultGet|-8754279407647697140[0]
+//   Public signature debug description: {}testVarWithExplicitDefaultGet
+var testVarWithExplicitDefaultGet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVarWithExplicitDefaultGet>(){}kotlin.Int
+  //   Public signature: /testVarWithExplicitDefaultGet.<get-testVarWithExplicitDefaultGet>|3955830634200256099[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultGet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVarWithExplicitDefaultGet>(){}
+  //   Public signature: /testVarWithExplicitDefaultGet.<get-testVarWithExplicitDefaultGet>|992058837805048370[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultGet>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-testVarWithExplicitDefaultGet>(kotlin.Int){}
+  //   Public signature: /testVarWithExplicitDefaultGet.<set-testVarWithExplicitDefaultGet>|4119788075131884604[0]
+  //   Public signature debug description: <set-testVarWithExplicitDefaultGet>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: {}testVarWithExplicitDefaultSet
+//   Public signature: /testVarWithExplicitDefaultSet|3134433727768464527[0]
+//   Public signature debug description: {}testVarWithExplicitDefaultSet
+var testVarWithExplicitDefaultSet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVarWithExplicitDefaultSet>(){}kotlin.Int
+  //   Public signature: /testVarWithExplicitDefaultSet.<get-testVarWithExplicitDefaultSet>|-2052637508114761529[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultSet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVarWithExplicitDefaultSet>(){}
+  //   Public signature: /testVarWithExplicitDefaultSet.<get-testVarWithExplicitDefaultSet>|-2635424036897877324[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultSet>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-testVarWithExplicitDefaultSet>(kotlin.Int){}
+  //   Public signature: /testVarWithExplicitDefaultSet.<set-testVarWithExplicitDefaultSet>|3131385112898998488[0]
+  //   Public signature debug description: <set-testVarWithExplicitDefaultSet>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: {}testVarWithExplicitDefaultGetSet
+//   Public signature: /testVarWithExplicitDefaultGetSet|-1096239594080027300[0]
+//   Public signature debug description: {}testVarWithExplicitDefaultGetSet
+var testVarWithExplicitDefaultGetSet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVarWithExplicitDefaultGetSet>(){}kotlin.Int
+  //   Public signature: /testVarWithExplicitDefaultGetSet.<get-testVarWithExplicitDefaultGetSet>|3584728981296673693[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultGetSet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVarWithExplicitDefaultGetSet>(){}
+  //   Public signature: /testVarWithExplicitDefaultGetSet.<get-testVarWithExplicitDefaultGetSet>|-2125629970699123398[0]
+  //   Public signature debug description: <get-testVarWithExplicitDefaultGetSet>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-testVarWithExplicitDefaultGetSet>(kotlin.Int){}
+  //   Public signature: /testVarWithExplicitDefaultGetSet.<set-testVarWithExplicitDefaultGetSet>|-3337739576673384360[0]
+  //   Public signature debug description: <set-testVarWithExplicitDefaultGetSet>(kotlin.Int){}
+  set
+
+// CHECK:
+//   Mangled name: {}testLateinitVar
+//   Public signature: /testLateinitVar|1925235078562480345[0]
+//   Public signature debug description: {}testLateinitVar
+lateinit var testLateinitVar: Any
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testLateinitVar>(){}kotlin.Any
+  //   Public signature: /testLateinitVar.<get-testLateinitVar>|4393847554774081346[0]
+  //   Public signature debug description: <get-testLateinitVar>(){}kotlin.Any
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testLateinitVar>(){}
+  //   Public signature: /testLateinitVar.<get-testLateinitVar>|-4880838389462456231[0]
+  //   Public signature debug description: <get-testLateinitVar>(){}
+  get
+  // CHECK:
+  //   Mangled name: #<set-testLateinitVar>(kotlin.Any){}
+  //   Public signature: /testLateinitVar.<set-testLateinitVar>|7446759265434254613[0]
+  //   Public signature debug description: <set-testLateinitVar>(kotlin.Any){}
+  set
+
+// CHECK:
+//   Mangled name: @kotlin.Any{}testExtVal
+//   Public signature: /testExtVal|-8237418459332608534[0]
+//   Public signature debug description: @kotlin.Any{}testExtVal
+val Any.testExtVal: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testExtVal>@kotlin.Any(){}kotlin.Int
+  //   Public signature: /testExtVal.<get-testExtVal>|8770503610838008181[0]
+  //   Public signature debug description: <get-testExtVal>@kotlin.Any(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testExtVal>@kotlin.Any(){}
+  //   Public signature: /testExtVal.<get-testExtVal>|1308965094478704656[0]
+  //   Public signature debug description: <get-testExtVal>@kotlin.Any(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}testValWithExplicitGet
+//   Public signature: /testValWithExplicitGet|-2760968258434476382[0]
+//   Public signature debug description: {}testValWithExplicitGet
+val testValWithExplicitGet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testValWithExplicitGet>(){}kotlin.Int
+  //   Public signature: /testValWithExplicitGet.<get-testValWithExplicitGet>|-5725471951034126732[0]
+  //   Public signature debug description: <get-testValWithExplicitGet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testValWithExplicitGet>(){}
+  //   Public signature: /testValWithExplicitGet.<get-testValWithExplicitGet>|4659206126654299952[0]
+  //   Public signature debug description: <get-testValWithExplicitGet>(){}
+  get(): Int
+
+// CHECK:
+//   Mangled name: {}testVarWithExplicitGetSet
+//   Public signature: /testVarWithExplicitGetSet|1929510087894372653[0]
+//   Public signature debug description: {}testVarWithExplicitGetSet
+var testVarWithExplicitGetSet: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-testVarWithExplicitGetSet>(){}kotlin.Int
+  //   Public signature: /testVarWithExplicitGetSet.<get-testVarWithExplicitGetSet>|-9115970585418240898[0]
+  //   Public signature debug description: <get-testVarWithExplicitGetSet>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-testVarWithExplicitGetSet>(){}
+  //   Public signature: /testVarWithExplicitGetSet.<get-testVarWithExplicitGetSet>|5154869453605324201[0]
+  //   Public signature debug description: <get-testVarWithExplicitGetSet>(){}
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-testVarWithExplicitGetSet>(kotlin.Int){}
+  //   Public signature: /testVarWithExplicitGetSet.<set-testVarWithExplicitGetSet>|-4962773332362494644[0]
+  //   Public signature debug description: <set-testVarWithExplicitGetSet>(kotlin.Int){}
+  set(v: Int): Unit
+
+// CHECK:
+//   Mangled name: @kotlin.Any{}textExtVar
+//   Public signature: /textExtVar|4539451128426188922[0]
+//   Public signature debug description: @kotlin.Any{}textExtVar
+var Any.textExtVar: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-textExtVar>@kotlin.Any(){}kotlin.Int
+  //   Public signature: /textExtVar.<get-textExtVar>|3926456668852509000[0]
+  //   Public signature debug description: <get-textExtVar>@kotlin.Any(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-textExtVar>@kotlin.Any(){}
+  //   Public signature: /textExtVar.<get-textExtVar>|-4403417818273803832[0]
+  //   Public signature debug description: <get-textExtVar>@kotlin.Any(){}
+  get(): Int
+  // CHECK:
+  //   Mangled name: #<set-textExtVar>@kotlin.Any(kotlin.Int){}
+  //   Public signature: /textExtVar.<set-textExtVar>|8797278301660283872[0]
+  //   Public signature debug description: <set-textExtVar>@kotlin.Any(kotlin.Int){}
+  set(v: Int): Unit
+

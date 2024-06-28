@@ -1,0 +1,10 @@
+FILE: illFormed.kt
+    public open class AtomicReferenceArray<<no name provided>> : R|kotlin/Any| {
+        public constructor<<no name provided>>(): R|AtomicReferenceArray<<no name provided>>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun compareAndExchange(p0: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for T1> {
+        ^compareAndExchange R|/AtomicReferenceArray.AtomicReferenceArray<Inapplicable(INAPPLICABLE): /AtomicReferenceArray.AtomicReferenceArray>#|<<ERROR TYPE REF: Symbol not found for T1>>().<Unresolved name: compareAndExchange>#(Int(1))
+    }

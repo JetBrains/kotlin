@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
-import gnu.trove.THashSet
-import gnu.trove.TObjectHashingStrategy
+import it.unimi.dsi.fastutil.Hash
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -26,9 +26,7 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
-import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -55,15 +53,14 @@ open class OverloadingConflictResolver<C : Any>(
 
     private val isTypeRefinementEnabled by lazy { module.isTypeRefinementEnabled() }
 
-    private val resolvedCallHashingStrategy = object : TObjectHashingStrategy<C> {
+    private val resolvedCallHashingStrategy = object : Hash.Strategy<C> {
         override fun equals(call1: C?, call2: C?): Boolean =
             if (call1 != null && call2 != null)
                 call1.resultingDescriptor == call2.resultingDescriptor
             else
                 call1 == call2
 
-        override fun computeHashCode(call: C?): Int =
-            call?.resultingDescriptor?.hashCode() ?: 0
+        override fun hashCode(call: C?): Int = call?.resultingDescriptor?.hashCode() ?: 0
     }
 
     private val C.resultingDescriptor: CallableDescriptor get() = getResultingDescriptor(this)
@@ -459,10 +456,10 @@ open class OverloadingConflictResolver<C : Any>(
 
     // Different smart casts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
     private fun uniquifyCandidatesSet(candidates: Collection<C>): Set<C> =
-        THashSet(candidates.size, resolvedCallHashingStrategy).apply { addAll(candidates) }
+        ObjectOpenCustomHashSet(candidates.size, resolvedCallHashingStrategy).apply { addAll(candidates) }
 
     private fun newResolvedCallSet(expectedSize: Int): MutableSet<C> =
-        THashSet(expectedSize, resolvedCallHashingStrategy)
+        ObjectOpenCustomHashSet(expectedSize, resolvedCallHashingStrategy)
 
     private fun FlatSignature<C>.candidateDescriptor() =
         origin.resultingDescriptor.original

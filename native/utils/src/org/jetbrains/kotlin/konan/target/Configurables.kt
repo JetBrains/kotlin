@@ -67,7 +67,6 @@ interface Configurables : TargetableExternalStorage, RelocationModeFlags {
     // TODO: Delegate to a map?
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")
-    val mimallocLinkerDependencies get() = targetList("mimallocLinkerDependencies")
     val linkerNoDebugFlags get() = targetList("linkerNoDebugFlags")
     val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
     val targetSysRoot get() = targetString("targetSysRoot")
@@ -98,7 +97,7 @@ interface ConfigurablesWithEmulator : Configurables {
 interface AppleConfigurables : Configurables, ClangFlags {
     val arch get() = targetTriple.architecture
     val osVersionMin get() = targetString("osVersionMin")!!
-    val osVersionMinFlagLd get() = targetString("osVersionMinFlagLd")!!
+    val sdkVersion get() = targetString("sdkVersion")!!
     val stripFlags get() = targetList("stripFlags")
     val additionalToolsDir get() = hostString("additionalToolsDir")
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)

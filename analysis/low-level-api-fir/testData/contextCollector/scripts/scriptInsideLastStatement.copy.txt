@@ -1,0 +1,79 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+    Element 8
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public final? class ScriptClass : R|kotlin/Any|
+            Functions
+                FirNamedFunctionSymbol public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                FirNamedFunctionSymbol public final fun scriptFunction(): R|kotlin/Int|
+                FirNamedFunctionSymbol public? final? fun unusedScriptFunction(p: String): <implicit>
+            Properties:
+                FirPropertySymbol public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Implicit receiver:
+            FirScriptSymbol SCRIPT: <script-scriptInsideLastStatement.kts>
+                <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+                lval args: R|kotlin/Array<kotlin/String>|
+            
+                public final? class ScriptClass : R|kotlin/Any|
+                public final fun scriptFunction(): R|kotlin/Int|
+                public? final? fun unusedScriptFunction(p: String): <implicit>
+                init
+                public final fun foo(i: R|kotlin/Int|, action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit|
+                public final val $$result: R|kotlin/Unit|
+                    public get(): R|kotlin/Unit|
+                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol it: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] scriptInsideLastStatement.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptInsideLastStatement.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|ScriptClass| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun scriptFunction(): <implicit> { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedScriptFunction([ResolvedTo(RAW_FIR)] p: String): <implicit> { LAZY_BLOCK }
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int, [ResolvedTo(RAW_FIR)] action: ( (Int) -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|(R|/scriptFunction|(), <L> = [ResolvedTo(BODY_RESOLVE)] foo@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            R|/scriptFunction|()
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

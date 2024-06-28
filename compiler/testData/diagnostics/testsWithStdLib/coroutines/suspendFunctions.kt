@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// CHECK_TYPE
 import kotlin.coroutines.*
 
 class Controller {

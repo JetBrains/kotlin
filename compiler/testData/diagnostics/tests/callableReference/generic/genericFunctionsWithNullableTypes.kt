@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun <T, R> foo(x: T): R = TODO()
 fun <T, R> bar(x: T, y: R, f: (T) -> R): Pair<T, R?> = TODO()

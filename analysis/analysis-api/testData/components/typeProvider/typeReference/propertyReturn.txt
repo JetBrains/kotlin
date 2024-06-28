@@ -1,0 +1,2 @@
+KtTypeReference: Boolean
+KaType: kotlin.Boolean

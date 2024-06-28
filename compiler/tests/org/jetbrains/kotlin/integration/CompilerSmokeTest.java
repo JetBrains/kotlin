@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class CompilerSmokeTest extends CompilerSmokeTestBase {
@@ -36,24 +39,10 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
-    public void testHelloAppIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt");
-    }
-
     public void testHelloAppFQMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt");
-    }
-
-    public void testHelloAppFQMainIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
@@ -64,11 +53,11 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
-    public void testHelloAppVarargMainIR() throws Exception {
+    public void testHelloAppExtensionMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt");
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
     }
 
     public void testHelloAppSuspendMain() throws Exception {
@@ -85,24 +74,10 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.Foo", "O", "K");
     }
 
-    public void testHelloAppSuspendMainInMultifileIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.Foo", "O", "K");
-    }
-
     public void testHelloAppParameterlessMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt");
-    }
-
-    public void testHelloAppParameterlessMainIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
@@ -113,31 +88,10 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
-    public void testHelloAppOldAndParameterlessMainIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt");
-    }
-
     public void testHelloAppSuspendParameterlessMain() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
-    }
-
-    public void testHelloAppSuspendParameterlessMainIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
-        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
-    }
-
-    public void testSimplestSuspendMainIR() throws Exception {
-        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
-
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "-Xuse-ir", "hello.kt", "-d", jar));
         run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
     }
 
@@ -172,7 +126,7 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
     public void testCompileScript() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "script.jar";
 
-        runCompiler("script", "-Xallow-any-scripts-in-source-roots", "script.kts", "-d", jar);
+        runCompiler("script", "-Xuse-fir-lt=false", "-Xallow-any-scripts-in-source-roots", "script.kts", "-d", jar);
     }
 
     public void testInlineOnly() throws Exception {

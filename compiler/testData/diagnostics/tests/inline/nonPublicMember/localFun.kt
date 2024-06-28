@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 public fun test() {
 
     fun localFun() {

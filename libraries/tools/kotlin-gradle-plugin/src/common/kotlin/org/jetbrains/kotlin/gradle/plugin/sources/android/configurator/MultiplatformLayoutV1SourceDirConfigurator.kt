@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.utils.*
 
 internal object MultiplatformLayoutV1SourceDirConfigurator : KotlinAndroidSourceSetConfigurator {
-    override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+    override fun configure(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+    ) {
         /*
         Mitigate ambiguity!
         Example: disambiguationClassifier="android"
@@ -23,7 +27,5 @@ internal object MultiplatformLayoutV1SourceDirConfigurator : KotlinAndroidSource
         if (!androidSourceSet.name.startsWith(target.disambiguationClassifier)) {
             kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
         }
-
-        kotlinSourceSet.kotlin.srcDir(target.project.provider { androidSourceSet.java.srcDirs })
     }
 }

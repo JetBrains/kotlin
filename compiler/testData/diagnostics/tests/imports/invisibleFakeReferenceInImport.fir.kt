@@ -1,6 +1,6 @@
 // FILE: A.kt
 
-import B.foo
+import B.<!INVISIBLE_REFERENCE!>foo<!>
 
 fun test() {
     <!INVISIBLE_REFERENCE!>foo<!>

@@ -3,6 +3,8 @@
 // FULL_JDK
 // WITH_STDLIB
 
+// JVM_ABI_K1_K2_DIFF: KT-63858
+
 interface ImmutableCollection<out E> : Collection<E> {
     fun add(element: @UnsafeVariance E): ImmutableCollection<E>
     fun addAll(elements: Collection<@UnsafeVariance E>): ImmutableCollection<E>

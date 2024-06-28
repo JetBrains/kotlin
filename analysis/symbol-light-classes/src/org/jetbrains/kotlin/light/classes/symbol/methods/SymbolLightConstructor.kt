@@ -6,25 +6,26 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import java.util.*
 
 internal class SymbolLightConstructor(
-    ktAnalysisSession: KtAnalysisSession,
-    constructorSymbol: KtConstructorSymbol,
+    ktAnalysisSession: KaSession,
+    constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
     argumentsSkipMask: BitSet? = null,
-) : SymbolLightMethod<KtConstructorSymbol>(
+) : SymbolLightMethod<KaConstructorSymbol>(
     ktAnalysisSession = ktAnalysisSession,
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
@@ -66,8 +67,11 @@ internal class SymbolLightConstructor(
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
-        return GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        return when {
+            modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS -> null
+            (containingClass as? SymbolLightClassForNamedClassLike)?.isSealed == true -> GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
+            else -> GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

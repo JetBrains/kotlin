@@ -42,7 +42,16 @@ object JsStandardClassIds {
         val JsExport = "JsExport".jsId()
 
         @JvmField
-        val JsExportIgnore = ClassId(JsExport.asSingleFqName(), Name.identifier("Ignore"))
+        val JsStatic = "JsStatic".jsId()
+
+        @JvmField
+        val JsExternalInheritorsOnly = "JsExternalInheritorsOnly".jsId()
+
+        @JvmField
+        val JsExternalArgument = "JsExternalArgument".jsId()
+
+        @JvmField
+        val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
 
         @JvmField
         val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
@@ -52,6 +61,9 @@ object JsStandardClassIds {
     }
 
     object Callables {
+        @JvmField
+        val JsCode = "js".callableId(BASE_JS_PACKAGE)
+
         @JvmField
         val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
 

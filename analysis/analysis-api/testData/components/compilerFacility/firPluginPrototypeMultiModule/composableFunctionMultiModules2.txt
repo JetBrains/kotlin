@@ -1,0 +1,18 @@
+final class MainKt$test$1 {
+    // source: 'main.kt'
+    enclosing method MainKt.test()I
+    public final static field INSTANCE: MainKt$test$1
+    inner (anonymous) class MainKt$test$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(): java.lang.Object
+    public final method invoke(): void
+}
+
+public final class MainKt {
+    // source: 'main.kt'
+    inner (anonymous) class MainKt$test$1
+    public final static method Greeting(p0: java.lang.String): void
+    public final static method show(p0: java.lang.String): void
+    public final static method test(): int
+}

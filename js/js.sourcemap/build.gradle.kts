@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":js:js.parser")) // TODO remove, required for JSON AST
     compileOnly(project(":js:js.frontend")) // TODO remove
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
 sourceSets {

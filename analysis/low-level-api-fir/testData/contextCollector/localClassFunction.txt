@@ -1,0 +1,43 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+    Element 7
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol local final class Local : R|kotlin/Any|
+    Element 8
+        Implicit receiver:
+            FirRegularClassSymbol local final class Local : R|kotlin/Any|
+                Type: <local>.Local
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] localClassFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
+                ^foo String(foo)
+            }
+
+        }
+
+        R|<local>/Local.Local|().R|<local>/foo|()
+    }

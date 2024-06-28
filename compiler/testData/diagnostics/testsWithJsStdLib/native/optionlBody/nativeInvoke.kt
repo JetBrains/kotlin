@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -DEPRECATION
+// DIAGNOSTICS: -DEPRECATION
 @nativeInvoke
 fun String.foo(): Int
 @nativeInvoke

@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -317,7 +318,7 @@ val CallableDescriptor.arity: Int
             (if (extensionReceiverParameter != null) 1 else 0) +
             (if (dispatchReceiverParameter != null) 1 else 0)
 
-fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
+fun FqName.topLevelClassInternalName() = JvmClassName.internalNameByClassId(ClassId(parent(), shortName()))
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
 fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label?) {
@@ -593,7 +594,7 @@ private fun generateLambdaForRunSuspend(
     )
 
     lambdaBuilder.defineClass(
-        originElement, state.classFileVersion,
+        originElement, state.config.classFileVersion,
         ACC_FINAL or ACC_SUPER or ACC_SYNTHETIC,
         internalName, null,
         AsmTypes.LAMBDA.internalName,
@@ -674,9 +675,9 @@ private fun generateLambdaForRunSuspend(
         visitEnd()
     }
 
-    writeSyntheticClassMetadata(lambdaBuilder, state, false)
+    writeSyntheticClassMetadata(lambdaBuilder, state.config, false)
 
-    lambdaBuilder.done(state.generateSmapCopyToAnnotation)
+    lambdaBuilder.done(state.config.generateSmapCopyToAnnotation)
     return lambdaBuilder.thisName
 }
 
@@ -736,6 +737,14 @@ fun splitStringConstant(value: String): List<String> {
 
         result
     }
+}
+
+fun AnnotationVisitor.visitWithSplitting(name: String?, value: String) {
+    val av = visitArray(name)
+    for (part in splitStringConstant(value)) {
+        av.visit(null, part)
+    }
+    av.visitEnd()
 }
 
 fun String.encodedUTF8Size(): Int {

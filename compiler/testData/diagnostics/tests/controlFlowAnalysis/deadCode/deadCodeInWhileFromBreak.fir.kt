@@ -25,13 +25,13 @@ fun test(arr: Array<Int>) {
     }
 
     while (true) {
-        var <!UNUSED_VARIABLE!>x<!> = 1
+        var <!VARIABLE_NEVER_READ!>x<!> = 1
         break
         <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> = 2<!>
     }
 
     while (true) {
-        var <!UNUSED_VARIABLE!>x<!> = 1
+        var <!VARIABLE_NEVER_READ!>x<!> = 1
         <!UNREACHABLE_CODE!><!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> =<!> break
     }
 

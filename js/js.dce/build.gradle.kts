@@ -10,7 +10,7 @@ dependencies {
     api(project(":js:js.translator"))
     compileOnly(project(":js:js.sourcemap"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(libs.guava)
 }
 
 sourceSets {

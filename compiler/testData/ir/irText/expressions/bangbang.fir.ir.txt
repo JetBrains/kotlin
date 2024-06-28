@@ -18,13 +18,13 @@ FILE fqName:<root> fileName:/bangbang.kt
             WHEN type=kotlin.Int? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
+                  arg0: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:{X of <root>.test3 & Any}
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
@@ -33,9 +33,6 @@ FILE fqName:<root> fileName:/bangbang.kt
         CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={X of <root>.test3 & Any} origin=EXCLEXCL
           <T0>: {X of <root>.test3 & Any}
           arg0: GET_VAR 'a: X of <root>.test3 declared in <root>.test3' type=X of <root>.test3 origin=null
-  FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
-    BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <X> (a:X of <root>.test4) returnType:kotlin.Unit
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER name:a index:0 type:X of <root>.test4
@@ -45,16 +42,18 @@ FILE fqName:<root> fileName:/bangbang.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
           then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
-              <T0>: kotlin.String
-              arg0: TYPE_OP type=kotlin.String? origin=IMPLICIT_CAST typeOperand=kotlin.String?
-                GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
+            CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
+              <T0>: kotlin.Any
+              arg0: GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
           then: CALL 'public final fun useString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            s: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.String origin=EXCLEXCL
-              <T0>: kotlin.String
-              arg0: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
+            s: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
+              <T0>: kotlin.Any
+              arg0: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                 GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
+  FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY

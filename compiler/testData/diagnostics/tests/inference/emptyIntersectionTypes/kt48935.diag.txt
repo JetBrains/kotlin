@@ -1,7 +1,4 @@
-/kt48935.kt:7:35: warning: parameter 'func' is never used
-fun <T, V> exampleGenericFunction(func: V) where T: Base, V: (T) -> Unit {
-                                  ^
 /kt48935.kt:13:5: warning: type argument for a type parameter T has possible incompatible upper bounds: Base, DoesNotImplementBase (final class and interface)
     exampleGenericFunction(func) // expected this to be a compilation error as the T: Base constraint should not be satisfied
-    ^
+    ^^^^^^^^^^^^^^^^^^^^^^
 

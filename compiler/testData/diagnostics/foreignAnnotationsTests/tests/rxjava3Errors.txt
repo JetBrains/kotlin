@@ -6,7 +6,7 @@ public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     @io.reactivex.rxjava3.annotations.Nullable public final var field: @io.reactivex.rxjava3.annotations.Nullable kotlin.String?
     @io.reactivex.rxjava3.annotations.NonNull public open fun bar(): @io.reactivex.rxjava3.annotations.NonNull kotlin.String
-    @io.reactivex.rxjava3.annotations.Nullable public open fun baz(/*0*/ @io.reactivex.rxjava3.annotations.NonNull x: @io.reactivex.rxjava3.annotations.NonNull T): @io.reactivex.rxjava3.annotations.Nullable T?
+    @io.reactivex.rxjava3.annotations.Nullable public open fun baz(/*0*/ @io.reactivex.rxjava3.annotations.NonNull x: @io.reactivex.rxjava3.annotations.NonNull T & Any): @io.reactivex.rxjava3.annotations.Nullable T?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @io.reactivex.rxjava3.annotations.Nullable public open fun foo(/*0*/ @io.reactivex.rxjava3.annotations.NonNull x: @io.reactivex.rxjava3.annotations.NonNull kotlin.String, /*1*/ @io.reactivex.rxjava3.annotations.Nullable y: @io.reactivex.rxjava3.annotations.Nullable kotlin.CharSequence?): @io.reactivex.rxjava3.annotations.Nullable kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,0 +1,33 @@
+MODULE main
+	Missing in K1
+		_1Kt$sam$Consumer$0.class
+	CLASS User$use$1.class
+		Property: class.signature
+			K1
+				<T:Ljava/lang/Object;>Ljava/lang/Object;LConsumer;
+			K2
+				NULL
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/Lambda
+		Property: class.superInterfaces
+			K1
+				[Consumer]
+			K2
+				[kotlin/jvm/functions/Function1]
+		K1
+			consume(Ljava/lang/Object;)V [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Object;)V [public, final]
+		FIELD INSTANCE:LUser$use$1;
+			Property: field.signature
+				K1
+					LUser$use$1<TT;>;
+				K2
+					NULL

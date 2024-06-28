@@ -1,0 +1,59 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+class Stable { fun qux() {} }
+
+@Composable
+fun Something() {
+    val x = remember { Stable() }
+    val shouldMemoize = x::qux
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+class Stable {
+  fun qux() { }
+  static val %stable: Int = 0
+}
+@Composable
+fun Something(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Something)<rememb...>,<x::qux>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val x = <block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        Stable()
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }
+    val shouldMemoize = <block>{
+      val tmp0 = x
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp1_group = %composer.cache(false) {
+        tmp0::qux
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp1_group
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Something(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

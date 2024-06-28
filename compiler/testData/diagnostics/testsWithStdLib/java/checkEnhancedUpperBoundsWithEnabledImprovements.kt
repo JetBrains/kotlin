@@ -1,5 +1,5 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FULL_JDK
 
 // FILE: MapLike.java

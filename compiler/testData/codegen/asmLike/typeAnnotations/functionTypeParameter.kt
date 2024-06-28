@@ -1,7 +1,7 @@
 // EMIT_JVM_TYPE_ANNOTATIONS
 // RENDER_ANNOTATIONS
 // TARGET_BACKEND: JVM_IR
-// JVM_TARGET: 1.8
+
 package foo
 
 @Target(AnnotationTarget.TYPE)
@@ -53,9 +53,5 @@ class Kotlin {
     }
 
     fun <@TypeParameterAnn("Y") Y, @TypeParameterAnn("T") T: @TypeAnn("Y as Bound") @TypeAnnBinary @TypeAnnSource Y> typeParameterTypeParameterBound() {
-    }
-
-    // Second annotation is missed: see KT-46483, remove this test after prohibition of such cases
-    fun <@TypeParameterAnn("T") T: Any> whereClauseWithAnnotation() where @TypeParameterAnn("Additional")  T : Generic<String> {
     }
 }

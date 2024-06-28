@@ -3,21 +3,21 @@ fun test() {
   a.someFunction(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> @FlexibleNullability Hello<out @FlexibleNullability String?>? */)
+ /*-> Hello<out @FlexibleNullability String?> */)
   a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> @FlexibleNullability Hello<out @FlexibleNullability String?>? */) /*~> Unit */
+ /*-> Hello<out @FlexibleNullability String?> */) /*~> Unit */
   a.get(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> @FlexibleNullability Hello<out @FlexibleNullability String?>? */)
+ /*-> Hello<out @FlexibleNullability String?> */)
   a = a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> @FlexibleNullability Hello<out @FlexibleNullability String?>? */)
-  a.set(i = 0, hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+ /*-> Hello<out @FlexibleNullability String?> */)
+  a /*as SomeJavaClass<out @FlexibleNullability String?> */.set(i = 0, hello = local fun <anonymous>(it: @FlexibleNullability String?) {
     return Unit
   }
- /*-> @FlexibleNullability Hello<out @FlexibleNullability String?>? */)
+ /*-> Hello<out @FlexibleNullability String?> */)
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.hasMangledParameters
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -22,20 +22,17 @@ import org.jetbrains.kotlin.ir.util.copyAnnotationsFrom
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 import org.jetbrains.kotlin.ir.util.passTypeArgumentsFrom
 
-internal val jvmDefaultConstructorPhase = makeIrFilePhase(
-    ::JvmDefaultConstructorLowering,
-    name = "JvmDefaultConstructor",
-    description = "Generate default constructors for Java",
-    prerequisite = setOf(jvmOverloadsAnnotationPhase)
-)
-
 // Quoted from https://kotlinlang.org/docs/reference/classes.html
 //
 // "On the JVM, if all of the parameters of the primary constructor have default values, the compiler will generate an additional
 //  parameterless constructor which will use the default values. This makes it easier to use Kotlin with libraries such as Jackson
 //  or JPA that create class instances through parameterless constructors."
-private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
-
+@PhaseDescription(
+    name = "JvmDefaultConstructor",
+    description = "Generate default constructors for Java",
+    prerequisite = [JvmOverloadsAnnotationLowering::class]
+)
+internal class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isValue || irClass.isInner ||
             irClass.modality == Modality.SEALED

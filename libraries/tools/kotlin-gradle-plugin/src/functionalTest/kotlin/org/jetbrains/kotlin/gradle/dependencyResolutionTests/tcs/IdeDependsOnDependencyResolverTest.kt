@@ -20,6 +20,7 @@ class IdeDependsOnDependencyResolverTest {
     fun `test - sample 0 - default dependsOn to commonMain and commonTest`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.jvm()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
@@ -41,6 +42,7 @@ class IdeDependsOnDependencyResolverTest {
     fun `test - sample 1 - custom dependsOn edge`() {
         val project = buildProjectWithMPP()
         val kotlin = project.multiplatformExtension
+        kotlin.applyDefaultHierarchyTemplate()
         kotlin.jvm()
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val customMain = kotlin.sourceSets.create("customMain")

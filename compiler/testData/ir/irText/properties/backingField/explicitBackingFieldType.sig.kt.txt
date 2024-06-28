@@ -1,0 +1,76 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A{}a
+  //   Public signature: /A.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-a>(){}kotlin.Int
+    //   Public signature: /A.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-a>(){}
+    //   Public signature: /A.a.<get-a>|6785176174175479410[0]
+    //   Public signature debug description: <get-a>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A{}it
+  //   Public signature: /A.it|3309866017710461759[0]
+  //   Public signature debug description: {}it
+  val it: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-it>(){}kotlin.Number
+    //   Public signature: /A.it.<get-it>|-5000280677775858846[0]
+    //   Public signature debug description: <get-it>(){}kotlin.Number
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-it>(){}
+    //   Public signature: /A.it.<get-it>|1332554369542649775[0]
+    //   Public signature debug description: <get-it>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A{}invertedTypes
+  //   Public signature: /A.invertedTypes|-5387375160663636997[0]
+  //   Public signature debug description: {}invertedTypes
+  var invertedTypes: Number
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-invertedTypes>(){}kotlin.Int
+    //   Public signature: /A.invertedTypes.<get-invertedTypes>|-1770574096074676248[0]
+    //   Public signature debug description: <get-invertedTypes>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-invertedTypes>(){}
+    //   Public signature: /A.invertedTypes.<get-invertedTypes>|6483831475743108403[0]
+    //   Public signature debug description: <get-invertedTypes>(){}
+    get(): Int
+    // CHECK:
+    //   Mangled name: A#<set-invertedTypes>(kotlin.Int){}
+    //   Public signature: /A.invertedTypes.<set-invertedTypes>|7674452151545793623[0]
+    //   Public signature debug description: <set-invertedTypes>(kotlin.Int){}
+    set
+
+  // CHECK:
+  //   Mangled name: A{}p
+  //   Public signature: /A.p|6715504260787941082[0]
+  //   Public signature debug description: {}p
+  val p: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-p>(){}kotlin.Int
+    //   Public signature: /A.p.<get-p>|5329635969197638839[0]
+    //   Public signature debug description: <get-p>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-p>(){}
+    //   Public signature: /A.p.<get-p>|-1162552463316289847[0]
+    //   Public signature debug description: <get-p>(){}
+    get(): Int
+
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}

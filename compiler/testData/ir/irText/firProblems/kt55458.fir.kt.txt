@@ -1,5 +1,5 @@
-fun main() {
-  val <destruct>: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
-  val a: Int = <destruct>.component1()
+fun runMe() {
+  val tmp_0: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
+  val a: Int = tmp_0.component1()
   println(message = a)
 }

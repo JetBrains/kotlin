@@ -5,21 +5,22 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -38,8 +39,7 @@ import kotlin.properties.Delegates
 class FirJavaClass @FirImplementationDetail internal constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
     private val unEnhancedAnnotations: MutableOrEmptyList<JavaAnnotation>,
@@ -48,11 +48,12 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
-    private val unenhnancedSuperTypes: List<FirTypeRef>,
+    private val nonEnhancedSuperTypes: List<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
-    val javaTypeParameterStack: JavaTypeParameterStack,
-    internal val existingNestedClassifierNames: List<Name>
+    val javaTypeParameterStack: MutableJavaTypeParameterStack,
+    internal val existingNestedClassifierNames: List<Name>,
+    private val isDeprecatedInJavaDoc: Boolean,
 ) : FirRegularClass() {
     override val hasLazyNestedClassifiers: Boolean get() = true
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
@@ -61,7 +62,11 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         get() = emptyList()
 
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -69,12 +74,14 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val superTypeRefs: List<FirTypeRef> by lazy {
         val enhancement = FirSignatureEnhancement(this@FirJavaClass, moduleData.session, overridden = { emptyList() })
-        enhancement.enhanceSuperTypes(unenhnancedSuperTypes)
+        enhancement.enhanceSuperTypes(nonEnhancedSuperTypes)
     }
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> by lazy {
-        unEnhancedAnnotations.convertAnnotationsToFir(moduleData.session, javaTypeParameterStack)
+        unEnhancedAnnotations.convertAnnotationsToFir(
+            moduleData.session, source?.fakeElement(KtFakeSourceElementKind.Enhancement), isDeprecatedInJavaDoc
+        )
     }
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead
@@ -84,10 +91,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
@@ -157,10 +160,10 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     var isFromSource: Boolean by Delegates.notNull()
     var isTopLevel: Boolean by Delegates.notNull()
     var isStatic: Boolean by Delegates.notNull()
-    var isNotSam: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
-    lateinit var javaTypeParameterStack: JavaTypeParameterStack
+    lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
     val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
+    var isDeprecatedInJavaDoc: Boolean = false
 
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
@@ -188,7 +191,8 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
             typeParameters,
             javaPackage,
             javaTypeParameterStack,
-            existingNestedClassifierNames
+            existingNestedClassifierNames,
+            isDeprecatedInJavaDoc,
         )
     }
 

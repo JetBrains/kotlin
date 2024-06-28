@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 
 class FirJvmDefaultModeComponent(val jvmDefaultMode: JvmDefaultMode) : FirSessionComponent
 
-private val FirSession.jvmDefaultModeComponent: FirJvmDefaultModeComponent? by FirSession.nullableSessionComponentAccessor()
+private val FirSession.jvmDefaultModeComponent: FirJvmDefaultModeComponent by FirSession.sessionComponentAccessor()
 
-val FirSession.jvmDefaultModeState: JvmDefaultMode?
-    get() = jvmDefaultModeComponent?.jvmDefaultMode
+val FirSession.jvmDefaultModeState: JvmDefaultMode
+    get() = jvmDefaultModeComponent.jvmDefaultMode

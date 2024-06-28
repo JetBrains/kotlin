@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 // KT-17753
 
@@ -11,18 +12,23 @@ fun test(a: Boolean, b: Boolean, c: Boolean): Boolean {
             && c
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:5 box
 // EXPECTATIONS JVM_IR
-// test.kt:9 test
-// test.kt:10 test
-// EXPECTATIONS JVM JVM_IR
-// test.kt:11 test
-// test.kt:9 test
-// test.kt:5 box
 // test.kt:6 box
+// test.kt:10 test
+// test.kt:11 test
+// test.kt:12 test
+// test.kt:10 test
+// test.kt:6 box
+// test.kt:7 box
 
 // EXPECTATIONS JS_IR
-// test.kt:5 box
-// test.kt:9 test
 // test.kt:6 box
+// test.kt:10 test
+// test.kt:7 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box (9, 15, 21, 4)
+// test.kt:10 $test (11, 4)
+// test.kt:11 $test
+// test.kt:12 $test
+// test.kt:7 $box

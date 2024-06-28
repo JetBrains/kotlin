@@ -1,0 +1,59 @@
+KtArrayAccessExpression(93,110): 'c[1, "foo", 3.14]'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaExplicitReceiverValue:
+            expression = c
+            isSafeNavigation = false
+            type = C
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /C.set(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String, value: kotlin.Boolean): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = a
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = a: kotlin.Int
+                callableId = null,
+              KaVariableSignature:
+                name = b
+                receiverType = null
+                returnType = kotlin.String
+                symbol = b: kotlin.String
+                callableId = null,
+              KaVariableSignature:
+                name = value
+                receiverType = null
+                returnType = kotlin.Boolean
+                symbol = value: kotlin.Boolean
+                callableId = null
+            ]
+            callableId = /C.set
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          1 -> (KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            callableId = null),
+          "foo" -> (KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            callableId = null),
+          false -> (KaVariableSignature:
+            name = value
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = value: kotlin.Boolean
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'fun set(a: Int, b: String, value: Boolean): Unit'.>

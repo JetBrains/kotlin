@@ -1,0 +1,11 @@
+MODULE main
+	CLASS Derived.class
+		CLASS METADATA
+			K1
+				getResult()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				result

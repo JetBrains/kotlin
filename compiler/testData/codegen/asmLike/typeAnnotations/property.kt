@@ -1,15 +1,11 @@
 // EMIT_JVM_TYPE_ANNOTATIONS
 // RENDER_ANNOTATIONS
-// TARGET_BACKEND: JVM
-// JVM_TARGET: 1.8
 // WITH_STDLIB
-// WITH_REFLECT
-// FULL_JDK
-package foo
 
-import java.lang.reflect.AnnotatedType
-import kotlin.reflect.jvm.javaMethod
-import kotlin.test.fail
+// FIR_DIFFERENCE
+// ^ KT-67510 K2: difference in generation of JVM type annotations on property getter's type
+
+package foo
 
 @Target(AnnotationTarget.TYPE)
 annotation class TypeAnn(val name: String)

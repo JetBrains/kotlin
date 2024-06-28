@@ -1,10 +1,4 @@
 class Some {
-  constructor(foo: Int) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   var foo: Int
     field = foo
     get
@@ -18,4 +12,11 @@ class Some {
     }
   }
 
+  constructor(foo: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

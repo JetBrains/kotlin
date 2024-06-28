@@ -1,0 +1,24 @@
+package test
+
+// CHECK:
+//   Mangled name: test#foo(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: test/foo|251397761749529488[0]
+//   Public signature debug description: foo(kotlin.Function0<kotlin.Unit>){}
+inline fun foo(x: Function0<Unit>): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+//   Public signature: test/id|-8103162913932729860[0]
+//   Public signature debug description: id@kotlin.String(kotlin.String;kotlin.IntArray...){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: test#id@kotlin.String(kotlin.String;kotlin.IntArray...){}
+//   Public signature: test/id|58840929144244075[0]
+//   Public signature debug description: id@kotlin.String(kotlin.String;kotlin.IntArray...){}
+fun String.id(s: String, vararg xs: Int): String
+
+// CHECK:
+//   Mangled name: test#test(){}
+//   Public signature: test/test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+

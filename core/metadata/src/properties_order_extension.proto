@@ -1,0 +1,11 @@
+package org.jetbrains.kotlin.metadata;
+
+import "core/metadata/src/metadata.proto";
+import "core/metadata/src/ext_options.proto";
+
+option java_outer_classname = "SerializationPluginMetadataExtensions";
+option optimize_for = LITE_RUNTIME;
+
+extend org.jetbrains.kotlin.metadata.Class {
+  repeated int32 properties_names_in_program_order = 18000;
+}

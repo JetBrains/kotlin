@@ -16,13 +16,12 @@ using namespace kotlin;
 namespace {
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 struct Payload1 {
-    ObjHeader* field1;
-    ObjHeader* field2;
+    mm::RefField field1;
+    mm::RefField field2;
 
     static constexpr std::array kFields{
             &Payload1::field1,
@@ -31,8 +30,8 @@ struct Payload1 {
 };
 
 struct Payload2 {
-    ObjHeader* field1;
-    ObjHeader* field2;
+    mm::RefField field1;
+    mm::RefField field2;
 
     static constexpr std::array kFields{
             &Payload2::field1,

@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestFile
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest.TestModule
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.checkers.diagnostics.factories.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
@@ -234,7 +231,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             bindingContext: BindingContext,
             implementingModulesBindings: List<Pair<TargetPlatform, BindingContext>>,
             actualText: StringBuilder,
-            skipJvmSignatureDiagnostics: Boolean,
             languageVersionSettings: LanguageVersionSettings,
             moduleDescriptor: ModuleDescriptorImpl
         ): Boolean {
@@ -246,12 +242,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             }
 
             if (ktFile.name.endsWith("CoroutineUtil.kt") && ktFile.packageFqName == FqName("helpers")) return true
-
-            // TODO: report JVM signature diagnostics also for implementing modules
-            val jvmSignatureDiagnostics = if (skipJvmSignatureDiagnostics)
-                emptySet<ActualDiagnostic>()
-            else
-                computeJvmSignatureDiagnostics(bindingContext)
 
             val ok = booleanArrayOf(true)
             val withNewInference = newInferenceEnabled && withNewInferenceDirective && !USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI
@@ -272,7 +262,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 moduleDescriptor,
                 this.diagnosedRangesToDiagnosticNames
             )
-            val filteredDiagnostics = ContainerUtil.filter(diagnostics + jvmSignatureDiagnostics) {
+            val filteredDiagnostics = ContainerUtil.filter(diagnostics) {
                 whatDiagnosticsToConsider.value(it.diagnostic)
             }
 
@@ -369,20 +359,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 TextDiagnostic.InferenceCompatibility.OLD
         }
 
-        private fun computeJvmSignatureDiagnostics(bindingContext: BindingContext): Set<ActualDiagnostic> {
-            val jvmSignatureDiagnostics = HashSet<ActualDiagnostic>()
-            val declarations = PsiTreeUtil.findChildrenOfType(ktFile, KtDeclaration::class.java)
-            for (declaration in declarations) {
-                val diagnostics = getJvmSignatureDiagnostics(
-                    declaration,
-                    bindingContext.diagnostics,
-                ) ?: continue
-
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration).map { ActualDiagnostic(it, null, newInferenceEnabled) })
-            }
-            return jvmSignatureDiagnostics
-        }
-
         override fun toString(): String = ktFile?.name ?: "Java file"
     }
 
@@ -459,7 +435,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val matcher = DIAGNOSTICS_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail(
-                    "Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
+                    "Wrong syntax in the '// $DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
                             "found: '$directives'\n" +
                             "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
                             "where '+' means 'include'\n" +

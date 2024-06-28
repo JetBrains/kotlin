@@ -1,12 +1,12 @@
 FILE: initBlockWithDeclarations.kt
-    public? final? class X : R|kotlin/Any| {
+    public final? class X : R|kotlin/Any| {
         public? [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
         init {
             local final? class classInInit : R|kotlin/Any| {
-                public? [ContainingClassKey=classInInit] constructor(): R|X.classInInit| {
+                public? [ContainingClassKey=classInInit] constructor(): R|<local>/classInInit| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -21,14 +21,14 @@ FILE: initBlockWithDeclarations.kt
         }
 
     }
-    public? final? object <no name provided> : R|kotlin/Any| {
+    public final? object <no name provided> : R|kotlin/Any| {
         private [ContainingClassKey=<no name provided>] constructor(): R|<no name provided>| {
             super<R|kotlin/Any|>()
         }
 
         init {
             local final? class classInInit : R|kotlin/Any| {
-                public? [ContainingClassKey=classInInit] constructor(): R|<no name provided>.classInInit| {
+                public? [ContainingClassKey=classInInit] constructor(): R|<local>/classInInit| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -73,13 +73,11 @@ fun reassignField(x: DPoint, box: Box) {
 // 0 107(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){3}108
 // 0 108(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){1}109
 // 0 109(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){1}110
-// 1 109(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){1}110
-// 0 109(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){2}110
+// 0 109(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){1}110
 // 1 110(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){2}111
 // 0 110(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){3}111
 // 0 111(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){1}112
 // 0 112(\D|\d\D|\d\d\D)*(DSTORE(\D|\d\D|\d\d\D)*){1}113
-// 1 112(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){1}113
-// 0 112(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){2}113
+// 0 112(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){1}113
 // 1 113(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){1}114
 // 0 113(\D|\d\D|\d\d\D)*(ASTORE(\D|\d\D|\d\d\D)*){2}114

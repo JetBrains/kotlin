@@ -1,0 +1,62 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    // composable calls are in the condition blocks of the when statement. Since these
+    // are conditionally executed, we can't statically know the number of groups during
+    // execution. as a result, we must wrap the when clause with a group.
+    when {
+        x == R(a) -> NA()
+        x > R(b) -> NA()
+        else -> NA()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "")
+  when {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<R(a)>")
+    val tmp0_group = x == R(a, %composer, 0)
+    %composer.endReplaceGroup()
+    tmp0_group -> {
+      NA()
+    }
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "<R(b)>")
+    val tmp1_group = x > R(b, %composer, 0)
+    %composer.endReplaceGroup()
+    tmp1_group -> {
+      NA()
+    }
+    else -> {
+      NA()
+    }
+  }
+  %composer.endReplaceGroup()
+  A(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

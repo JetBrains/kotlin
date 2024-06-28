@@ -19,8 +19,10 @@ STEP 4:
     modifications:
         U : Interface.4.kt -> Interface.kt
     modified ir: Interface.kt
+    updated exports: Interface.kt
+    updated imports: ClassB.kt, ClassA.kt
 STEP 5:
-    updated exports: Interface.kt, ClassB.kt
+    updated exports: ClassB.kt
 STEP 6:
     modifications:
         U : ClassB.6.kt -> ClassB.kt

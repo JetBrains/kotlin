@@ -409,6 +409,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         val immediates = op.immediates.map {
             when (it) {
+                WasmImmediateKind.CONST_U8 -> WasmImmediate.ConstU8(b.readUByte())
                 WasmImmediateKind.CONST_I32 -> WasmImmediate.ConstI32(b.readVarInt32())
                 WasmImmediateKind.CONST_I64 -> WasmImmediate.ConstI64(b.readVarInt64())
                 WasmImmediateKind.CONST_F32 -> WasmImmediate.ConstF32(b.readUInt32())
@@ -438,6 +439,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.TYPE_IMM -> TODO()
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
                 WasmImmediateKind.LOCAL_DEFS -> TODO()
+                WasmImmediateKind.CATCH_VECTOR -> TODO()
             }
         }
 

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinNati
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 open class KotlinSharedNativeCompilationFactory internal constructor(
-    override val target: KotlinMetadataTarget,
+    final override val target: KotlinMetadataTarget,
     private val konanTargets: Set<KonanTarget>,
     private val defaultSourceSet: KotlinSourceSet
 ) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
@@ -51,10 +51,9 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             Metadata compilations are created *because* of a pre-existing SourceSet.
             We therefore can create the container inline
              */
-            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
+            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) },
         )
 
-    @Suppress("DEPRECATION")
     override fun create(name: String): KotlinSharedNativeCompilation {
         return target.project.objects.newInstance(
             itemClass, konanTargets.toList(), compilationImplFactory.create(target, name)

@@ -1,0 +1,3 @@
+FILE: anonymousObjectWithAnnotation.kt
+    public? final? val prop: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>

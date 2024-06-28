@@ -23,7 +23,7 @@ internal fun Project.transformMetadataLibrariesForIde(
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
     return when (val metadataProvider = resolution.metadataProvider) {
         is ProjectMetadataProvider -> resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
-            metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName)
+            metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName) ?: emptyList()
         }
 
         is ArtifactMetadataProvider -> transformMetadataLibrariesForIde(
@@ -38,15 +38,13 @@ internal fun Project.transformMetadataLibrariesForIde(
  *
  * In case the [resolution] points to a project dependency, then the output file collections will be returned.
  */
-internal fun ObjectFactory.transformMetadataLibrariesForBuild(
+internal fun transformMetadataLibrariesForBuild(
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets, outputDirectory: File, materializeFiles: Boolean
-): Iterable<File> {
+): Map<String /* visibleSourceSetName */, Iterable<File>> {
     return when (resolution.metadataProvider) {
-        is ProjectMetadataProvider -> fileCollection().from(
-            resolution.visibleSourceSetNamesExcludingDependsOn.map { visibleSourceSetName ->
-                resolution.metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName)
-            }
-        )
+        is ProjectMetadataProvider -> resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
+            resolution.metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName) ?: emptyList()
+        }
 
         is ArtifactMetadataProvider -> transformMetadataLibrariesForBuild(
             resolution, outputDirectory, materializeFiles, resolution.metadataProvider
@@ -82,7 +80,7 @@ private fun transformMetadataLibrariesForBuild(
     outputDirectory: File,
     materializeFiles: Boolean,
     compositeMetadataArtifact: CompositeMetadataArtifact
-): Set<File> {
+): Map<String /* visibleSourceSetName */, Iterable<File>> {
     /*
     Careful handling of composite builds:
     Right now, composite multiplatform builds will compile against the composite artifact build by the producer build (not
@@ -91,7 +89,7 @@ private fun transformMetadataLibrariesForBuild(
     This means, that this function might be called to figure out task inputs at a time, where
     this composite artifact is not present on disk yet.
      */
-    if (!materializeFiles && !compositeMetadataArtifact.exists()) return emptySet()
+    if (!materializeFiles && !compositeMetadataArtifact.exists()) return emptyMap()
 
     return compositeMetadataArtifact.read { artifactContent ->
         resolution.visibleSourceSetNamesExcludingDependsOn.mapNotNull { visibleSourceSetName ->
@@ -102,7 +100,7 @@ private fun transformMetadataLibrariesForBuild(
                 metadataLibraryFile.parentFile?.mkdirs()
                 metadataBinary.copyTo(metadataLibraryFile)
             }
-            metadataLibraryFile
+            visibleSourceSetName to listOf(metadataLibraryFile)
         }
-    }.toSet()
+    }.toMap()
 }

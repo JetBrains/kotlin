@@ -1,4 +1,4 @@
-depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreMIDI CoreML CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal OpenGLESCommon QuartzCore QuickLook SceneKit Security SpriteKit UIKit UniformTypeIdentifiers UserNotifications Vision darwin posix
+depends = AVFAudio AVFoundation AudioToolbox CFCGTypes CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreFoundationBase CoreGraphics CoreImage CoreLocation CoreMIDI CoreML CoreMedia CoreText CoreVideo EAGL FileProvider Foundation GLKit IOSurface ImageIO MediaToolbox Metal ModelIO OpenGLES2 OpenGLESCommon PDFKit QuartzCore QuickLook QuickLookThumbnailing SceneKit Security SpriteKit Symbols UIKit UniformTypeIdentifiers UserNotifications Vision darwin posix
 language = Objective-C
 package = platform.ARKit
 modules = ARKit

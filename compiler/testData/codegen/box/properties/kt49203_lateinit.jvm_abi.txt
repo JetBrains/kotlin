@@ -1,0 +1,9 @@
+MODULE main
+	CLASS A.class
+		CLASS METADATA
+			PROPERTY getX()LX;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<set-?>: X
+					K2
+						value: X

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 public interface I {
     public fun doIt()

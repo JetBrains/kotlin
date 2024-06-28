@@ -1,5 +1,5 @@
 // ISSUE: KT-51969
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 

@@ -113,9 +113,10 @@ class WasmModuleCodegenContext(
             val superClass = irClass.owner.getSuperClass(backendContext.irBuiltIns)
             val superClassMetadata = superClass?.let { getClassMetadata(it.symbol) }
             ClassMetadata(
-                irClass.owner,
-                superClassMetadata,
-                backendContext.irBuiltIns
+                klass = irClass.owner,
+                superClass = superClassMetadata,
+                irBuiltIns = backendContext.irBuiltIns,
+                allowAccidentalOverride = backendContext.partialLinkageSupport.isEnabled
             )
         }
 
@@ -135,25 +136,14 @@ class WasmModuleCodegenContext(
     fun referenceGlobalClassITable(irClass: IrClassSymbol): WasmSymbol<WasmGlobal> =
         wasmFragment.globalClassITables.reference(irClass)
 
-    private fun referenceNonNothingType(
-        irClass: IrClassSymbol,
-        from: WasmCompiledModuleFragment.ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>
-    ): WasmSymbol<WasmTypeDeclaration> {
-        val type = irClass.defaultType
-        require(!type.isNothing()) {
-            "Can't reference Nothing type"
-        }
-        return from.reference(irClass)
-    }
-
     fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.gcTypes)
+        wasmFragment.gcTypes.reference(irClass)
 
     fun referenceVTableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.vTableGcTypes)
+        wasmFragment.vTableGcTypes.reference(irClass)
 
     fun referenceClassITableGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration> =
-        referenceNonNothingType(irClass, wasmFragment.classITableGcType)
+        wasmFragment.classITableGcType.reference(irClass)
 
     fun defineClassITableGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
         wasmFragment.classITableGcType.define(irClass, wasmType)
@@ -177,12 +167,8 @@ class WasmModuleCodegenContext(
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFragment.functionTypes.reference(irFunction)
 
-    fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int> =
-        wasmFragment.classIds.reference(irClass)
-
-    fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int> {
-        return wasmFragment.interfaceId.reference(irInterface)
-    }
+    fun referenceTypeId(irClass: IrClassSymbol): WasmSymbol<Int> =
+        wasmFragment.typeIds.reference(irClass)
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
         val klass = field.parentAsClass

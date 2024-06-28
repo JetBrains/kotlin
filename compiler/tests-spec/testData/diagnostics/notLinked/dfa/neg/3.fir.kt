@@ -1,12 +1,21 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNREACHABLE_CODE
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 3
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Nothing?) {
     if (x is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -14,7 +23,7 @@ fun case_1(x: Nothing?) {
 fun case_2(x: Nothing) {
     if (<!USELESS_IS_CHECK!>x is Unit<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 
@@ -62,7 +71,7 @@ fun case_7(x: Nothing) {
 fun case_8(x: Nothing?) {
     if (!(<!USELESS_IS_CHECK!>x is Int?<!>)) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!MISSING_DEPENDENCY_CLASS!>inv<!>()
     }
 }
 

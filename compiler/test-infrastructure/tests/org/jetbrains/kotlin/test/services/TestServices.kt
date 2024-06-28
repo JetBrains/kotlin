@@ -39,7 +39,10 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
         }
     }
 
-    fun register(data: ServiceRegistrationData) {
+    fun register(data: ServiceRegistrationData, skipAlreadyRegistered: Boolean) {
+        if (skipAlreadyRegistered && getOrNull(data.kClass) != null) {
+            return
+        }
         registerComponent(data.kClass, data.serviceConstructor(this))
     }
 
@@ -47,8 +50,8 @@ class TestServices : ComponentArrayOwner<TestService, TestService>(){
         registerComponent(kClass, service)
     }
 
-    fun register(data: List<ServiceRegistrationData>) {
-        data.forEach { register(it) }
+    fun register(data: List<ServiceRegistrationData>, skipAlreadyRegistered: Boolean) {
+        data.forEach { register(it, skipAlreadyRegistered) }
     }
 }
 

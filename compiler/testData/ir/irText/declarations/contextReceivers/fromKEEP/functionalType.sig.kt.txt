@@ -1,0 +1,86 @@
+// CHECK:
+//   Mangled name: K
+//   Public signature: /K|null[0]
+class K {
+  // CHECK:
+  //   Mangled name: K{}k
+  //   Public signature: /K.k|2162811783424158931[0]
+  //   Public signature debug description: {}k
+  val k: String
+    // CHECK JVM_IR:
+    //   Mangled name: K#<get-k>(){}kotlin.String
+    //   Public signature: /K.k.<get-k>|-8248201737917988340[0]
+    //   Public signature debug description: <get-k>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: K#<get-k>(){}
+    //   Public signature: /K.k.<get-k>|2619553883593572199[0]
+    //   Public signature debug description: <get-k>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: K#<init>(){}
+  //   Public signature: /K.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: O
+//   Public signature: /O|null[0]
+class O {
+  // CHECK:
+  //   Mangled name: O{}o
+  //   Public signature: /O.o|-5332571409865440260[0]
+  //   Public signature debug description: {}o
+  val o: String
+    // CHECK JVM_IR:
+    //   Mangled name: O#<get-o>(){}kotlin.String
+    //   Public signature: /O.o.<get-o>|2606027183154875572[0]
+    //   Public signature debug description: <get-o>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: O#<get-o>(){}
+    //   Public signature: /O.o.<get-o>|-5005637647237604760[0]
+    //   Public signature debug description: <get-o>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: O#<init>(){}
+  //   Public signature: /O.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Param
+//   Public signature: /Param|null[0]
+class Param {
+  // CHECK:
+  //   Mangled name: Param#<init>(){}
+  //   Public signature: /Param.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /f|-7653040485655702379[0]
+//   Public signature debug description: f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}
+//   Public signature: /f|6244942347355309773[0]
+//   Public signature debug description: f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}
+fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType Function3<O, K, Param, T>): T
+

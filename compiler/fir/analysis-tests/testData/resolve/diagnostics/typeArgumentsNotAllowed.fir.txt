@@ -6,15 +6,15 @@ FILE: typeArgumentsNotAllowed.kt
             super<R|kotlin/Any|>()
         }
 
-        public abstract val x: <ERROR TYPE REF: Type arguments not allowed>
-            public get(): <ERROR TYPE REF: Type arguments not allowed>
+        public abstract val x: <ERROR TYPE REF: Type arguments not allowed for type parameters>
+            public get(): <ERROR TYPE REF: Type arguments not allowed for type parameters>
 
-        public abstract fun foo(): <ERROR TYPE REF: Type arguments not allowed>
+        public abstract fun foo(): <ERROR TYPE REF: Type arguments not allowed for type parameters>
 
     }
     public final fun <T> foo(): R|kotlin/Unit| {
-        R|rest/bar<Inapplicable(INAPPLICABLE): rest/bar>#|<<ERROR TYPE REF: Type arguments not allowed>>()
-        R|rest/bar|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>|>()
+        R|rest/bar<Inapplicable(INAPPLICABLE): rest/bar>#|<<ERROR TYPE REF: Type arguments not allowed for type parameters>>()
+        R|rest/bar|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>|>()
     }
     public final fun <T> bar(): R|kotlin/Unit| {
     }
@@ -24,7 +24,7 @@ FILE: typeArgumentsNotAllowed.kt
         }
 
     }
-    public final val a: <ERROR TYPE REF: Unresolved name: MyClass> = Q|rest|.<Unresolved name: MyClass>#<R|kotlin/String|>
+    public final val a: <ERROR TYPE REF: Unresolved name: MyClass> = Q|rest|<R|kotlin/Int|>.<Unresolved name: MyClass>#<R|kotlin/String|>
         public get(): <ERROR TYPE REF: Unresolved name: MyClass>
     public final val b: <ERROR TYPE REF: Unresolved name: MyClass> = Q|rest/Best|.<Unresolved name: MyClass>#<R|kotlin/String|>
         public get(): <ERROR TYPE REF: Unresolved name: MyClass>
@@ -43,9 +43,9 @@ FILE: typeArgumentsNotAllowed.kt
     public final fun <G> gest(): R|kotlin/Unit| {
     }
     public final fun <T> fest(): R|kotlin/Unit| {
-        lval b: R|kotlin/collections/List<ERROR CLASS: Type arguments not allowed>|
-        R|rest/gest<Inapplicable(INAPPLICABLE): rest/gest>#|<<ERROR TYPE REF: Type arguments not allowed>>()
+        lval b: R|kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>|
+        R|rest/gest<Inapplicable(INAPPLICABLE): rest/gest>#|<<ERROR TYPE REF: Type arguments not allowed for type parameters>>()
         R|rest/gest|<R|T|>()
-        lval c: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>>|
-        R|rest/gest|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed>>|>()
+        lval c: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>>|
+        R|rest/gest|<R|kotlin/collections/List<kotlin/collections/List<ERROR CLASS: Type arguments not allowed for type parameters>>|>()
     }

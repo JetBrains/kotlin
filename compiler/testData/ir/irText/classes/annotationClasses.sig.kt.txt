@@ -1,0 +1,108 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+open annotation class Test1 : Annotation {
+  // CHECK:
+  //   Mangled name: Test1{}x
+  //   Public signature: /Test1.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test1#<get-x>(){}kotlin.Int
+    //   Public signature: /Test1.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test1#<get-x>(){}
+    //   Public signature: /Test1.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test1#<init>(kotlin.Int){}
+  //   Public signature: /Test1.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
+open annotation class Test2 : Annotation {
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>(){}kotlin.Int
+    //   Public signature: /Test2.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-x>(){}
+    //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int){}
+  //   Public signature: /Test2.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
+open annotation class Test3 : Annotation {
+  // CHECK:
+  //   Mangled name: Test3{}x
+  //   Public signature: /Test3.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Test1
+    // CHECK JVM_IR:
+    //   Mangled name: Test3#<get-x>(){}Test1
+    //   Public signature: /Test3.x.<get-x>|-2232578314937133118[0]
+    //   Public signature debug description: <get-x>(){}Test1
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test3#<get-x>(){}
+    //   Public signature: /Test3.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test3#<init>(Test1){}
+  //   Public signature: /Test3.<init>|-2039475164068253223[0]
+  //   Public signature debug description: <init>(Test1){}
+  constructor(x: Test1) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test4
+//   Public signature: /Test4|null[0]
+open annotation class Test4 : Annotation {
+  // CHECK:
+  //   Mangled name: Test4{}xs
+  //   Public signature: /Test4.xs|1063330853857063704[0]
+  //   Public signature debug description: {}xs
+  val xs: IntArray
+    // CHECK JVM_IR:
+    //   Mangled name: Test4#<get-xs>(){}kotlin.IntArray
+    //   Public signature: /Test4.xs.<get-xs>|5887559004820637749[0]
+    //   Public signature debug description: <get-xs>(){}kotlin.IntArray
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test4#<get-xs>(){}
+    //   Public signature: /Test4.xs.<get-xs>|-6958094100501701183[0]
+    //   Public signature debug description: <get-xs>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test4#<init>(kotlin.IntArray...){}
+  //   Public signature: /Test4.<init>|3304157197881351514[0]
+  //   Public signature debug description: <init>(kotlin.IntArray...){}
+  constructor(vararg xs: Int) /* primary */
+
+}
+

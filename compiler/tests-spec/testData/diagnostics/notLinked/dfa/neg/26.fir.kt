@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE -UNUSED_VALUE
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 26
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 /*
  * TESTCASE NUMBER: 1
@@ -9,7 +18,7 @@
 fun case_1() {
     var x: MutableList<Int>? = mutableListOf(1)
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>")!>x<!>[if (true) {x=null;0} else 0] <!UNRESOLVED_REFERENCE!>+=<!> <!UNSAFE_CALL!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>")!>x<!>[if (true) {x=null;0} else 0] += <!UNSAFE_CALL!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
     <!UNSAFE_CALL!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>.inv()
 }
@@ -53,7 +62,7 @@ fun case_4() {
 fun case_5() {
     var x: Class? = Class()
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
+    x(if (true) {x=null;0} else 0, <!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 
@@ -74,7 +83,7 @@ fun case_6() {
 fun case_7() {
     var x: Class? = Class()
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) {x=null;0} else 0)(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
+    x(if (true) {x=null;0} else 0)(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }
 

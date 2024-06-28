@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: canInspectArrays.txt
+// FIR_IDENTICAL
 fun main(args: Array<String>) {
     val xs = IntArray(3)
     xs[0] = 1

@@ -20,7 +20,7 @@ FILE: superCallWithDelegation.kt
         }
 
         public open override fun foo(): R|kotlin/Unit| {
-            this@R|/C|.super<R|B|>.R|/A.foo|()
+            this@R|/C|.super<R|B|>.R|/B.foo|()
         }
 
     }

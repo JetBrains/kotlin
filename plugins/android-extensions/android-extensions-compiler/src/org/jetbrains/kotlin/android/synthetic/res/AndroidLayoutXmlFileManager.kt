@@ -93,6 +93,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
     protected abstract fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup
 
     protected fun parseAndroidResource(id: ResourceIdentifier, tag: String, sourceElement: PsiElement?): AndroidResource {
+        @Suppress("DEPRECATION")
         val sourceElementPointer = sourceElement?.createSmartPointer()
         return when (tag) {
             "fragment" -> AndroidResource.Fragment(id, sourceElementPointer)
@@ -146,6 +147,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
         fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
             @Suppress("DEPRECATION")
             val service = com.intellij.openapi.module.ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
+            @Suppress("DEPRECATION") // KT-68390
             return service ?: module.getComponent(AndroidLayoutXmlFileManager::class.java)
         }
     }

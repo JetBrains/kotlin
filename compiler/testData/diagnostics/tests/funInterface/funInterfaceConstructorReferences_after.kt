@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +KotlinFunInterfaceConstructorReference
+// LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 fun interface Foo {
     fun run()

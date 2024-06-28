@@ -4,35 +4,35 @@ Adding -Xextended-compiler-checks argument might provide additional information.
 
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:3:1: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies
 class SubSub : Sub()
-^
+^^^^^^^^^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:4:14: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
 class Client<T : Sub>(val prop: T)
-             ^
+             ^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:5:6: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
 fun <T : Sub> withTypeParam() {}
-     ^
+     ^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: unresolved reference: unresolved
     Sub().unresolved()
-          ^
+          ^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
     Sub().unresolved()
-          ^
+          ^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: unresolved reference: unresolved
     SubSub().unresolved()
-             ^
+             ^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies
     SubSub().unresolved()
-             ^
+             ^^^^^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:14:15: error: cannot access 'test.Super' which is a supertype of 'test.<no name provided>'. Check your module classpath for missing or conflicting dependencies
     val obj = object : Sub() {}
-              ^
+              ^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:15:25: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
     withCallRefArg(Sub::resolved)
-                        ^
+                        ^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:16:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
     Sub().resolved()
-          ^
+          ^^^^^^^^
 compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:17:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies
     Sub().extension()
-          ^
+          ^^^^^^^^^
 COMPILATION_ERROR

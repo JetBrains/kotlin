@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.util.render as newRender
 
 /**
  * [IdSignature] is a unique key that corresponds to each Kotlin Declaration. It is used to reference declarations in klib.
@@ -248,7 +249,13 @@ sealed class IdSignature {
 
     open fun asPublic(): CommonSignature? = null
 
-    abstract fun render(): String
+    @Deprecated(
+        "Rendering of signatures has been extracted to IdSignatureRenderer.render()",
+        replaceWith = ReplaceWith("render()", "org.jetbrains.kotlin.ir.util.render"),
+        level = DeprecationLevel.HIDDEN
+    )
+    fun render(): String = newRender()
+    final override fun toString() = newRender()
 
     fun Flags.test(): Boolean = decode(flags())
 
@@ -261,13 +268,32 @@ sealed class IdSignature {
     // TODO: this API is a bit hacky, consider to act somehow else
     open val visibleCrossFile: Boolean get() = true
 
-    override fun toString(): String =
-        "${if (isLocal) "local " else ""}${render()}"
-
     /**
      * This signature corresponds to a publicly accessible Kotlin declaration.
+     *
+     * @property description This property does not affect linkage and is used only for showing human-readable error messages.
+     * Note: currently, we store here the mangled name from which [id] was computed. Later we can reconsider.
      */
-    class CommonSignature(val packageFqName: String, val declarationFqName: String, val id: Long?, val mask: Long) : IdSignature() {
+    class CommonSignature(
+        val packageFqName: String,
+        val declarationFqName: String,
+        val id: Long?,
+        val mask: Long,
+        val description: String?,
+    ) : IdSignature() {
+
+        @Deprecated(
+            "When constructing 'CommonSignature', you need to set 'description' to the mangled name from which 'id' was " +
+                    "computed, or to null if it's not applicable",
+            level = DeprecationLevel.WARNING,
+        )
+        constructor(
+            packageFqName: String,
+            declarationFqName: String,
+            id: Long?,
+            mask: Long,
+        ) : this(packageFqName, declarationFqName, id, mask, null)
+
         override val isPubliclyVisible: Boolean get() = true
 
         override fun packageFqName(): FqName = FqName(packageFqName)
@@ -279,7 +305,7 @@ sealed class IdSignature {
         val nameSegments: List<String> get() = declarationFqName.split('.')
 
         private fun adaptMask(old: Long): Long =
-            old xor Flags.values().fold(0L) { a, f ->
+            old xor Flags.entries.fold(0L) { a, f ->
                 if (!f.recursive) a or (old and (1L shl f.ordinal))
                 else a
             }
@@ -295,7 +321,13 @@ sealed class IdSignature {
             val adaptedMask = adaptMask(mask)
             if (nameSegments.size == 1 && mask == adaptedMask) return this
 
-            return CommonSignature(packageFqName, nameSegments.first(), null, adaptedMask)
+            return CommonSignature(
+                packageFqName = packageFqName,
+                declarationFqName = nameSegments.first(),
+                id = null,
+                mask = adaptedMask,
+                description = null
+            )
         }
 
         override fun isPackageSignature(): Boolean = id == null && declarationFqName.isEmpty()
@@ -303,8 +335,6 @@ sealed class IdSignature {
         override fun nearestPublicSig(): CommonSignature = this
 
         override fun flags(): Long = mask
-
-        override fun render(): String = "$packageFqName/$declarationFqName|$id[${mask.toString(2)}]"
 
         override fun asPublic(): CommonSignature = this
 
@@ -344,16 +374,6 @@ sealed class IdSignature {
             return if (container is FileSignature) inner.packageFqName() else container.packageFqName()
         }
 
-        override fun render(): String {
-            return buildString {
-                append("[ ")
-                append(container)
-                append(" <- ")
-                append(inner)
-                append(" ]")
-            }
-        }
-
         override fun equals(other: Any?): Boolean = other is CompositeSignature && container == other.container && inner == other.inner
 
         override fun hashCode(): Int = container.hashCode() * 31 + inner.hashCode()
@@ -377,8 +397,6 @@ sealed class IdSignature {
         override fun nearestPublicSig(): IdSignature = this
 
         override fun packageFqName(): FqName = propertySignature.packageFqName()
-
-        override fun render(): String = accessorSignature.render()
 
         override fun flags(): Long = accessorSignature.mask
 
@@ -410,7 +428,7 @@ sealed class IdSignature {
     ) : IdSignature() {
 
         constructor(fileSymbol: IrFileSymbol) : this(
-            fileSymbol, fileSymbol.owner.fqName, fileSymbol.owner.fileEntry.name
+            fileSymbol, fileSymbol.owner.packageFqName, fileSymbol.owner.fileEntry.name
         )
 
         override fun equals(other: Any?): Boolean = other is FileSignature && id == other.id
@@ -433,10 +451,6 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = fqName
 
-        override fun render(): String {
-            return "File '$fileName'"
-        }
-
         override val hasTopLevel: Boolean
             get() = false
     }
@@ -453,34 +467,18 @@ sealed class IdSignature {
         override val isLocal: Boolean
             get() = true
 
-        fun index(): Int = hashSig?.toInt() ?: error("Expected index in ${render()}")
+        fun index(): Int = hashSig?.toInt() ?: error("Expected index in $this")
 
         override fun topLevelSignature(): IdSignature {
-            error("Illegal access: Local Sig does not have toplevel (${render()}")
+            error("Illegal access: Local Sig does not have toplevel ($this")
         }
 
         override fun nearestPublicSig(): IdSignature {
-            error("Illegal access: Local Sig does not have information about its public part (${render()}")
+            error("Illegal access: Local Sig does not have information about its public part ($this")
         }
 
         override fun packageFqName(): FqName {
-            error("Illegal access: Local signature does not have package (${render()}")
-        }
-
-        override fun render(): String {
-            return buildString {
-                append("Local[")
-                append(localFqn)
-                hashSig?.let {
-                    append(",")
-                    append(it)
-                }
-                description?.let {
-                    append(" | ")
-                    append(it)
-                }
-                append("]")
-            }
+            error("Illegal access: Local signature does not have package ($this")
         }
 
         override fun equals(other: Any?): Boolean {
@@ -521,6 +519,8 @@ sealed class IdSignature {
         override val isPubliclyVisible: Boolean
             get() = memberSignature.isPubliclyVisible
 
+        override fun asPublic(): CommonSignature? = memberSignature.asPublic()
+
         override fun topLevelSignature(): IdSignature =
             memberSignature.topLevelSignature()
 
@@ -532,9 +532,6 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName =
             memberSignature.packageFqName()
-
-        override fun render(): String =
-            memberSignature.render()
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -582,8 +579,6 @@ sealed class IdSignature {
 
         override fun nearestPublicSig(): IdSignature = container.nearestPublicSig()
 
-        override fun render(): String = "${container.render()}:$id"
-
         override fun equals(other: Any?): Boolean =
             other is FileLocalSignature && id == other.id && container == other.container
 
@@ -597,9 +592,7 @@ sealed class IdSignature {
      *
      * This signature is not navigatable through files.
      */
-    class ScopeLocalDeclaration(val id: Int, _description: String? = null) : IdSignature() {
-
-        val description: String = _description ?: "<no description>"
+    class ScopeLocalDeclaration(val id: Int, val description: String? = null) : IdSignature() {
 
         override val isPubliclyVisible: Boolean get() = false
 
@@ -613,8 +606,6 @@ sealed class IdSignature {
         override fun nearestPublicSig(): IdSignature = error("Is not supported for Local ID")
 
         override fun packageFqName(): FqName = error("Is not supported for Local ID")
-
-        override fun render(): String = "#$id"
 
         override fun equals(other: Any?): Boolean =
             other is ScopeLocalDeclaration && id == other.id
@@ -639,8 +630,6 @@ sealed class IdSignature {
 
         override fun packageFqName(): FqName = original.packageFqName()
 
-        override fun render(): String = "ic#$stage:${original.render()}-$index"
-
         override fun equals(other: Any?): Boolean {
             return other is LoweredDeclarationSignature && original == other.original && stage == other.stage && index == other.index
         }
@@ -658,4 +647,6 @@ interface IdSignatureComposer {
     fun composeAnonInitSignature(descriptor: ClassDescriptor): IdSignature?
 
     fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit)
+
+    val mangler: KotlinMangler.DescriptorMangler
 }

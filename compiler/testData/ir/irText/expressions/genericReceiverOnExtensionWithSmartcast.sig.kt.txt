@@ -1,0 +1,17 @@
+// CHECK:
+//   Mangled name: #bar@0:0(){0§<kotlin.CharSequence>}
+//   Public signature: /bar|8964320427600610167[0]
+//   Public signature debug description: bar@0:0(){0§<kotlin.CharSequence>}
+fun <F : CharSequence> F.bar(): Unit
+
+// CHECK:
+//   Mangled name: #test_1(kotlin.Any){0§<kotlin.CharSequence>}
+//   Public signature: /test_1|-9076880516293570076[0]
+//   Public signature debug description: test_1(kotlin.Any){0§<kotlin.CharSequence>}
+inline fun <reified T : CharSequence> test_1(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_2(kotlin.Any?){}
+//   Public signature: /test_2|-2820233899677445404[0]
+//   Public signature debug description: test_2(kotlin.Any?){}
+fun test_2(x: Any?): Unit

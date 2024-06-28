@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,9 +11,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -27,13 +24,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T) {
 
     abstract val symbols: Symbols
 
-    val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
-
     internal val localScopeWithCounterMap = LocalDeclarationsLowering.LocalScopeWithCounterMap()
-
-    // If irType is an inline class type, return the underlying type according to the
-    // unfolding rules of the current backend. Otherwise, returns null.
-    open fun unfoldInlineClassType(irType: IrType): IrType? = null
 
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
@@ -55,7 +46,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
     val string = getClass(Name.identifier("String"), "kotlin")
 
-    val primitiveIteratorsByType = PrimitiveType.values().associate { type ->
+    val primitiveIteratorsByType = PrimitiveType.entries.associate { type ->
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass
     }
@@ -68,10 +59,10 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    open val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
-    open val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
-    open val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
-    open val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
+    val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
+    val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
+    val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
+    val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
     val uIntProgression = progressionOrNull("UIntProgression")
     val uLongProgression = progressionOrNull("ULongProgression")
     val uIntRange = progressionOrNull("UIntRange")
@@ -214,6 +205,9 @@ abstract class Symbols(
     open val throwISE: IrSimpleFunctionSymbol
         get() = error("throwISE is not implemented")
 
+    open val throwIAE: IrSimpleFunctionSymbol
+        get() = error("throwIAE is not implemented")
+
     abstract val stringBuilder: IrClassSymbol
 
     abstract val defaultConstructorMarker: IrClassSymbol
@@ -249,7 +243,7 @@ abstract class Symbols(
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
                 function.name.asString() == "<get-isInitialized>" &&
                         function.isTopLevel &&
-                        function.getPackageFragment().fqName.asString() == "kotlin" &&
+                        function.getPackageFragment().packageFqName.asString() == "kotlin" &&
                         function.valueParameters.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
                             receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
@@ -258,9 +252,10 @@ abstract class Symbols(
 
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "typeOf" &&
-                        function.valueParameters.isEmpty() &&
-                        (function.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
+                function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME)
+                        && function.valueParameters.isEmpty()
+                        && function.dispatchReceiverParameter == null
+                        && function.extensionReceiverParameter == null
             }
     }
 }

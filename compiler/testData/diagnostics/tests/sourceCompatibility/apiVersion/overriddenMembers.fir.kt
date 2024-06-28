@@ -1,4 +1,4 @@
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 // FILE: J.java
 
 public interface J {

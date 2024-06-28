@@ -1,10 +1,10 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 // TARGET_BACKEND: JVM
 // EMIT_JVM_TYPE_ANNOTATIONS
 // JVM_TARGET: 1.8
 // WITH_REFLECT
 // FULL_JDK
+
 package foo
 
 import java.lang.reflect.AnnotatedType

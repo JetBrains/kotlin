@@ -1,0 +1,12 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|(enumEntry = /EnumClass.First)  Usage| = R|/usage|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|@R|Anno|(enumEntry = /EnumClass.First)  Usage| = R|/usage|
+    }

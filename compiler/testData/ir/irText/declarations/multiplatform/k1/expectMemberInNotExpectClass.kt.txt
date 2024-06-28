@@ -1,0 +1,36 @@
+expect open class C1 {
+  expect val p: Int
+    get
+
+  expect constructor() /* primary */
+
+  expect fun f(): String
+
+}
+
+open class C1 {
+  val p: Int
+    field = 42
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun f(): String {
+    return "O"
+  }
+
+}
+
+class C2 : C1 {
+  constructor() /* primary */ {
+    super/*C1*/()
+    /* <init>() */
+
+  }
+
+}
+

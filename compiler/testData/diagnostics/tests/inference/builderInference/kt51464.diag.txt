@@ -1,4 +1,4 @@
-/kt51464.kt:13:15: error: not enough information to infer type variable R
+/kt51464.kt:12:15: warning: type parameter for a type argument R can't be inferred into declared upper bounds. Please provide any use-site type information. It will become an error in future releases.
     flowOf(1).transform { doEmit(this) }
-              ^
+              ^^^^^^^^^
 

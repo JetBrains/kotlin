@@ -1,23 +1,64 @@
+library {
+  // module name: <dependency.def>
 
-package dependency {
+  library fragment {
+    // package name: dependency
 
-    @ExternalObjCClass open class MyClass : ObjCObjectBase {
-        @ObjCConstructor(designated = true, initSelector = "initWithFloat:") constructor(float: Float)
-        @ObjCConstructor(designated = true, initSelector = "initWithPointer:") constructor(pointer: COpaquePointer? /* = CPointer<out CPointed>? */)
-        protected constructor()
-        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass(number)", imports = {})) @ObjCMethod(encoding = "@20@0:8f16", isStret = false, selector = "initWithFloat:") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun initWithFloat(number: Float): Any?
-        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass(any)", imports = {})) @ObjCMethod(encoding = "@24@0:8^v16", isStret = false, selector = "initWithPointer:") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun initWithPointer(any: COpaquePointer? /* = CPointer<out CPointed>? */): MyClass?
-        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    // class name: dependency/MyClass
+    // class name: dependency/MyClass.Companion
+    // class name: dependency/MyClassMeta
+
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClass : kotlinx/cinterop/ObjCObjectBase {
+
+      protected /* secondary */ constructor()
+
+      @kotlinx/cinterop/ObjCConstructor(designated = true, initSelector = "initWithFloat:")
+      public /* secondary */ constructor(float: kotlin/Float)
+
+      @kotlinx/cinterop/ObjCConstructor(designated = true, initSelector = "initWithPointer:")
+      public /* secondary */ constructor(pointer: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */)
+
+      @kotlin/Deprecated(message = "Use constructor instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "MyClass(number)"), level = kotlin/DeprecationLevel.ERROR)
+      @kotlinx/cinterop/ObjCMethod(selector = "initWithFloat:", encoding = "@20@0:8f16", isStret = false)
+      @kotlinx/cinterop/internal/CCall.ConsumesReceiver
+      @kotlinx/cinterop/internal/CCall.ReturnsRetained
+      public open external fun initWithFloat(number: kotlin/Float): kotlin/Any?
+
+      @kotlin/Deprecated(message = "Use constructor instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "MyClass(any)"), level = kotlin/DeprecationLevel.ERROR)
+      @kotlinx/cinterop/ObjCMethod(selector = "initWithPointer:", encoding = "@24@0:8^v16", isStret = false)
+      @kotlinx/cinterop/internal/CCall.ConsumesReceiver
+      @kotlinx/cinterop/internal/CCall.ReturnsRetained
+      public open external fun initWithPointer(any: kotlinx/cinterop/CPointer<out kotlinx/cinterop/CPointed>? /* = kotlinx/cinterop/COpaquePointer^? */): dependency/MyClass?
+
+      // companion object: Companion
+
+      // nested class: Companion
     }
 
-    @ExternalObjCClass open class MyClassMeta : ObjCObjectBaseMeta {
-        protected constructor()
+    public final companion object dependency/MyClass.Companion : dependency/MyClassMeta, kotlinx/cinterop/ObjCClassOf<dependency/MyClass> {
+
+      private constructor()
     }
 
-}
+    @kotlinx/cinterop/ExternalObjCClass
+    public open class dependency/MyClassMeta : kotlinx/cinterop/ObjCObjectBaseMeta {
 
-package dependency {
-    @ObjCFactory(encoding = "@24@0:8@16", isStret = false, selector = "initWithAnother:") @CCall.ConsumesReceiver @CCall.ReturnsRetained external fun <T : MyClass> ObjCClassOf<T>.create(another: MyClass?): T?
-    @Deprecated(level = DeprecationLevel.ERROR, message = "Use factory method instead", replaceWith = ReplaceWith(expression = "MyClass.create(instance)", imports = {})) @ObjCMethod(encoding = "@24@0:8@16", isStret = false, selector = "initWithAnother:") @CCall.ConsumesReceiver @CCall.ReturnsRetained external fun MyClass.initWithAnother(instance: MyClass?): Any?
-}
+      protected /* secondary */ constructor()
+    }
 
+    package {
+
+      @kotlinx/cinterop/ObjCFactory(selector = "initWithAnother:", encoding = "@24@0:8@16", isStret = false)
+      @kotlinx/cinterop/internal/CCall.ConsumesReceiver
+      @kotlinx/cinterop/internal/CCall.ReturnsRetained
+      public final external fun <T#0 /* T */ : dependency/MyClass> kotlinx/cinterop/ObjCClassOf<T#0>.create(another: dependency/MyClass?): T#0?
+
+      @kotlin/Deprecated(message = "Use factory method instead", replaceWith = kotlin/ReplaceWith(imports = [], expression = "MyClass.create(instance)"), level = kotlin/DeprecationLevel.ERROR)
+      @kotlinx/cinterop/ObjCMethod(selector = "initWithAnother:", encoding = "@24@0:8@16", isStret = false)
+      @kotlinx/cinterop/internal/CCall.ConsumesReceiver
+      @kotlinx/cinterop/internal/CCall.ReturnsRetained
+      public final external fun dependency/MyClass.initWithAnother(instance: dependency/MyClass?): kotlin/Any?
+    }
+  }
+}

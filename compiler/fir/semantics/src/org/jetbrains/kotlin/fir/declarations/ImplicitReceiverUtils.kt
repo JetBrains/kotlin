@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -82,7 +86,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
             ?.asTowerDataElementForStaticScope(staticScopeOwnerSymbol = superClass.symbol)
             ?.let(superClassesStaticsAndCompanionReceivers::add)
 
-        (superClass as? FirRegularClass)?.companionObjectSymbol?.let {
+        superClass.companionObjectSymbol?.let {
             val superCompanionReceiver = ImplicitDispatchReceiverValue(
                 it, session, scopeSession
             )
@@ -199,6 +203,21 @@ class FirTowerDataContext private constructor(
         return addNonLocalScope(scope)
     }
 
+    // Optimized version for two parameters
+    fun addNonLocalScopesIfNotNull(scope1: FirScope?, scope2: FirScope?): FirTowerDataContext {
+        return if (scope1 != null) {
+            if (scope2 != null) {
+                addNonLocalScopeElements(listOf(scope1.asTowerDataElement(isLocal = false), scope2.asTowerDataElement(isLocal = false)))
+            } else {
+                addNonLocalScope(scope1)
+            }
+        } else if (scope2 != null) {
+            addNonLocalScope(scope2)
+        } else {
+            this
+        }
+    }
+
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
         return FirTowerDataContext(
@@ -209,16 +228,26 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun createSnapshot(): FirTowerDataContext {
+    private fun addNonLocalScopeElements(elements: List<FirTowerDataElement>): FirTowerDataContext {
         return FirTowerDataContext(
-            towerDataElements.map(FirTowerDataElement::createSnapshot).toPersistentList(),
-            implicitReceiverStack.createSnapshot(),
+            towerDataElements.addAll(elements),
+            implicitReceiverStack,
+            localScopes,
+            nonLocalTowerDataElements.addAll(elements)
+        )
+    }
+
+    fun createSnapshot(keepMutable: Boolean): FirTowerDataContext {
+        return FirTowerDataContext(
+            towerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList(),
+            implicitReceiverStack.createSnapshot(keepMutable),
             localScopes.toPersistentList(),
-            nonLocalTowerDataElements.map(FirTowerDataElement::createSnapshot).toPersistentList()
+            nonLocalTowerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList()
         )
     }
 }
 
+// Each FirTowerDataElement has exactly one non-null value among values of properties: scope, implicitReceiver and contextReceiverGroup.
 class FirTowerDataElement(
     val scope: FirScope?,
     val implicitReceiver: ImplicitReceiverValue<*>?,
@@ -226,21 +255,41 @@ class FirTowerDataElement(
     val isLocal: Boolean,
     val staticScopeOwnerSymbol: FirRegularClassSymbol? = null
 ) {
-    fun createSnapshot(): FirTowerDataElement =
+    fun createSnapshot(keepMutable: Boolean): FirTowerDataElement =
         FirTowerDataElement(
             scope,
-            implicitReceiver?.createSnapshot(),
-            contextReceiverGroup?.map { it.createSnapshot() },
+            implicitReceiver?.createSnapshot(keepMutable),
+            contextReceiverGroup?.map { it.createSnapshot(keepMutable) },
             isLocal,
             staticScopeOwnerSymbol
         )
 
     /**
-     * Returns [scope] if it is not null. Otherwise, returns [implicitReceiver.implicitScope].
+     * Returns [scope] if it is not null. Otherwise, returns scopes of implicit receivers (including context receivers).
      *
      * Note that a scope for a companion object is an implicit scope.
      */
-    fun getAvailableScope() = scope ?: implicitReceiver?.implicitScope
+    fun getAvailableScopes(
+        processTypeScope: FirTypeScope.(ConeKotlinType) -> FirTypeScope = { this },
+    ): List<FirScope> = when {
+        scope != null -> listOf(scope)
+        implicitReceiver != null -> listOf(implicitReceiver.getImplicitScope(processTypeScope))
+        contextReceiverGroup != null -> contextReceiverGroup.map { it.getImplicitScope(processTypeScope) }
+        else -> error("Tower data element is expected to have either scope or implicit receivers.")
+    }
+
+    private fun ImplicitReceiverValue<*>.getImplicitScope(
+        processTypeScope: FirTypeScope.(ConeKotlinType) -> FirTypeScope,
+    ): FirScope {
+        // N.B.: implicitScope == null when the type sits in a user-defined 'kotlin' package,
+        // but there is no '-Xallow-kotlin-package' compiler argument provided
+        val implicitScope = implicitScope ?: return FirTypeScope.Empty
+
+        val type = type.fullyExpandedType(useSiteSession)
+        if (type is ConeErrorType || type is ConeStubType) return FirTypeScope.Empty
+
+        return implicitScope.processTypeScope(type)
+    }
 }
 
 fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
@@ -254,6 +303,9 @@ fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
 
 fun FirScope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataElement =
     FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = false, staticScopeOwnerSymbol = staticScopeOwnerSymbol)
+
+fun FirClassSymbol<*>.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
+    fir.staticScope(sessionHolder)
 
 fun FirClass.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
     staticScope(sessionHolder.session, sessionHolder.scopeSession)

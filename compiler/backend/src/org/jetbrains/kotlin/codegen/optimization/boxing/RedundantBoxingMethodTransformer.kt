@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair
 import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
@@ -37,12 +38,14 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
 
     override fun transform(internalClassName: String, node: MethodNode) {
-        val insns = node.instructions.toArray()
-        if (insns.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
+        if (node.instructions.none { it.isBoxing(generationState) || it.isMethodInsnWith(Opcodes.INVOKEINTERFACE) { name == "next" } })
             return
 
         val interpreter = RedundantBoxingInterpreter(node, generationState)
-        val frames = BoxingAnalyzer(internalClassName, node, interpreter).analyze()
+        val analyzer = FastMethodAnalyzer<BasicValue>(
+            internalClassName, node, interpreter, pruneExceptionEdges = false
+        ) { nLocals, nStack -> BoxingFrame(nLocals, nStack) }
+        val frames = analyzer.analyze()
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 

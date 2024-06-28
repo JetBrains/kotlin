@@ -100,7 +100,7 @@ class LazyTopDownAnalyzer(
                     assert(file.isScript() || packageDirective != null) { "No package in a non-script file: " + file }
                     packageDirective?.accept(this)
                     c.addFile(file)
-                    topLevelFqNames.put(file.packageFqName, packageDirective)
+                    if (packageDirective != null) topLevelFqNames.put(file.packageFqName, packageDirective)
                 }
 
                 override fun visitPackageDirective(directive: KtPackageDirective) {

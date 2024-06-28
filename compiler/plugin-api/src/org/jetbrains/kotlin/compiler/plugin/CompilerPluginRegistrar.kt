@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compiler.plugin
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -25,9 +26,29 @@ abstract class CompilerPluginRegistrar {
         val registeredExtensions: Map<ProjectExtensionDescriptor<*>, List<Any>>
             get() = _registeredExtensions
 
+        private val _disposables = mutableListOf<PluginDisposable>()
+        val disposables: List<PluginDisposable>
+            get() = _disposables
+
         fun <T : Any> ProjectExtensionDescriptor<T>.registerExtension(extension: T) {
             _registeredExtensions.getOrPut(this, ::mutableListOf).add(extension)
         }
+
+        /**
+         * Passed [disposable] will be called when the plugin is no longer needed:
+         *
+         * - In the CLI mode: At the end of the compilation process.
+         * - In the IDE mode: When the whole project is closed, or when the module
+         * with the corresponding compiler plugin enabled is removed from the project.
+         */
+        @Suppress("unused")
+        fun registerDisposable(disposable: PluginDisposable) {
+            _disposables += disposable
+        }
+    }
+
+    fun interface PluginDisposable {
+        fun dispose()
     }
 
     abstract val supportsK2: Boolean
@@ -46,6 +67,9 @@ fun CompilerPluginRegistrar.ExtensionStorage.registerInProject(
                 throw IllegalStateException(errorMessage(extension), e)
             }
         }
+    }
+    for (disposable in disposables) {
+        Disposer.register(project) { disposable.dispose() }
     }
 }
 

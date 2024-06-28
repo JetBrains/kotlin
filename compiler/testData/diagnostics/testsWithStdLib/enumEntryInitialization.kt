@@ -25,4 +25,19 @@ enum class JvmTarget(val description: String) {
             JVM_15 -> "Opcodes.V12 + 3"
         }
     }
+
+    // Should not report UNINITIALIZED_ENUM_ENTRY
+    val bytecodeVersion2: String by lazy({
+        when (this) {
+            JVM_1_6 -> "Opcodes.V1_6"
+            JVM_1_8 -> "Opcodes.V1_8"
+            JVM_9 -> "Opcodes.V9"
+            JVM_10 -> "Opcodes.V10"
+            JVM_11 -> "Opcodes.V11"
+            JVM_12 -> "Opcodes.V12"
+            JVM_13 -> "Opcodes.V12 + 1"
+            JVM_14 -> "Opcodes.V12 + 2"
+            JVM_15 -> "Opcodes.V12 + 3"
+        }
+    })
 }

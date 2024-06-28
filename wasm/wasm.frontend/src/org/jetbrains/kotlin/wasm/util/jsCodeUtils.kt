@@ -25,7 +25,7 @@ fun FunctionDescriptor.hasValidJsCodeBody(bindingContext: BindingContext): Boole
 }
 
 private fun KtDeclarationWithBody.hasValidJsCodeBody(bindingContext: BindingContext): Boolean {
-    if (!hasBody()) return true
+    if (!hasBody()) return false
     val body = bodyExpression!!
     return when {
         !hasBlockBody() -> body.isJsCall(bindingContext)

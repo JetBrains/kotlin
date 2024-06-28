@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnonymousObjectExpressionImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -21,7 +20,7 @@ import kotlin.contracts.contract
 @FirBuilderDsl
 class FirAnonymousObjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    override var coneTypeOrNull: ConeKotlinType? = null
     lateinit var anonymousObject: FirAnonymousObject
 
     override val annotations: MutableList<FirAnnotation>
@@ -30,7 +29,7 @@ class FirAnonymousObjectExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     override fun build(): FirAnonymousObjectExpression {
         return FirAnonymousObjectExpressionImpl(
             source,
-            typeRef,
+            coneTypeOrNull,
             anonymousObject,
         )
     }

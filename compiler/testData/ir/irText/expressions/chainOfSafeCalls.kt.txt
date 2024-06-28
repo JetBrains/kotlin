@@ -5,11 +5,11 @@ class C {
 
   }
 
-  fun foo(): C {
+  fun bar(): C? {
     return <this>
   }
 
-  fun bar(): C? {
+  fun foo(): C {
     return <this>
   }
 
@@ -17,28 +17,29 @@ class C {
 
 fun test(nc: C?): C? {
   return { // BLOCK
-    val tmp3_safe_receiver: C? = { // BLOCK
-      val tmp2_safe_receiver: C? = { // BLOCK
-        val tmp1_safe_receiver: C? = { // BLOCK
-          val tmp0_safe_receiver: C? = nc
+    val tmp_0: C? = { // BLOCK
+      val tmp_1: C? = { // BLOCK
+        val tmp_2: C? = { // BLOCK
+          val tmp_3: C? = nc
           when {
-            EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-            else -> tmp0_safe_receiver.foo()
+            EQEQ(arg0 = tmp_3, arg1 = null) -> null
+            else -> tmp_3.foo()
           }
         }
         when {
-          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-          else -> tmp1_safe_receiver.bar()
+          EQEQ(arg0 = tmp_2, arg1 = null) -> null
+          else -> tmp_2.bar()
         }
       }
       when {
-        EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-        else -> tmp2_safe_receiver.foo()
+        EQEQ(arg0 = tmp_1, arg1 = null) -> null
+        else -> tmp_1.foo()
       }
     }
     when {
-      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-      else -> tmp3_safe_receiver.foo()
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.foo()
     }
   }
 }
+

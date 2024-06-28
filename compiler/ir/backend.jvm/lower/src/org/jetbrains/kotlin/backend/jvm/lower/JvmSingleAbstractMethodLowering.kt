@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
@@ -18,27 +18,22 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
-internal val singleAbstractMethodPhase = makeIrFilePhase(
-    ::JvmSingleAbstractMethodLowering,
+@PhaseDescription(
     name = "SingleAbstractMethod",
     description = "Replace SAM conversions with instances of interface-implementing classes",
     // FunctionReferenceLowering produces optimized SAM wrappers.
-    prerequisite = setOf(functionReferencePhase),
+    prerequisite = [FunctionReferenceLowering::class]
 )
-
-private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {
-
+internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : SingleAbstractMethodLowering(context) {
     private val isJavaSamConversionWithEqualsHashCode =
-        context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
+        context.config.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override val inInlineFunctionScope: Boolean
         get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }
@@ -67,4 +62,13 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
 
     override val IrType.needEqualsHashCodeMethods
         get() = isKotlinFunInterface || isJavaSamConversionWithEqualsHashCode
+
+    override fun postprocessCreatedObjectProxy(klass: IrClass) {
+        val fakeOverrideProperties = klass.declarations.filterIsInstanceAnd(IrProperty::isFakeOverride)
+        klass.declarations.removeAll(fakeOverrideProperties)
+        for (property in fakeOverrideProperties) {
+            property.getter?.let(klass.declarations::add)
+            property.setter?.let(klass.declarations::add)
+        }
+    }
 }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
@@ -24,7 +24,7 @@ const val NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER = "_"
 
 class InfoForMangling(
     val fqName: FqNameUnsafe,
-    val isInline: Boolean,
+    val isValue: Boolean,
     val isNullable: Boolean
 )
 
@@ -36,7 +36,7 @@ fun collectFunctionSignatureForManglingSuffix(
 ): String? {
     fun getSignatureElementForMangling(info: InfoForMangling?): String = buildString {
         if (info == null) return ""
-        if (useOldManglingRules || info.isInline) {
+        if (useOldManglingRules || info.isValue) {
             append('L')
             append(info.fqName)
             if (info.isNullable) append('?')
@@ -112,7 +112,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
 private fun getInfoForMangling(type: KotlinType): InfoForMangling? {
     val descriptor = type.constructor.declarationDescriptor ?: return null
     return when (descriptor) {
-        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isInlineClass(), type.isMarkedNullable)
+        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isValueClass(), type.isMarkedNullable)
 
         is TypeParameterDescriptor -> {
             getInfoForMangling(descriptor.representativeUpperBound)

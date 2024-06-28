@@ -1,7 +1,9 @@
-// !LANGUAGE: +MultiPlatformProjects +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// !OPT_IN: kotlin.ExperimentalMultiplatform
+// LANGUAGE: +MultiPlatformProjects +UseGetterNameForPropertyAnnotationsMethodOnJvm
+// OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-63984
+
 
 @file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
 

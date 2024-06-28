@@ -23,9 +23,11 @@ open class KotlinCompileArgumentsProvider<T : AbstractKotlinCompile<out CommonCo
 class KotlinJvmCompilerArgumentsProvider
     (taskProvider: KotlinCompile) : KotlinCompileArgumentsProvider<KotlinCompile>(taskProvider) {
     val taskName: String = taskProvider.name
-    val moduleName: String = taskProvider.moduleName.get()
     val friendPaths: FileCollection = taskProvider.friendPaths
     val compileClasspath: Iterable<File> = taskProvider.libraries
     val destinationDir: File = taskProvider.destinationDirectory.get().asFile
+    @Suppress("DEPRECATION")
+    val taskModuleName: String? = taskProvider.moduleName.orNull
+    val nagTaskModuleNameUsage: Boolean = taskProvider.nagTaskModuleNameUsage.get()
     internal val compilerOptions: KotlinJvmCompilerOptions = taskProvider.compilerOptions
 }

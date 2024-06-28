@@ -14,7 +14,7 @@ fun foo1(x: B<String>): Any {
 }
 
 fun foo2(x: B<String>): Additional {
-    return if (x.hashCode() == 0) aOf() else x.convert()
+    return if (x.hashCode() == 0) <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>aOf<!>() else x.convert()
 }
 
 fun foo3(x: B<String>): Any {
@@ -26,7 +26,7 @@ fun foo3(x: B<String>): Any {
 
 fun foo4(x: B<String>): Additional {
     return when {
-        x.hashCode() == 0 -> aOf()
+        x.hashCode() == 0 -> <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>aOf<!>()
         else -> x.convert()
     }
 }
@@ -41,7 +41,7 @@ fun foo5(x: B<String>): Any {
 
 fun foo6(x: B<String>): Additional {
     return if (x.hashCode() == 0) {
-        aOf()
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>aOf<!>()
     } else {
         x.convert()
     }
@@ -56,7 +56,7 @@ fun foo7(x: B<String>): Any {
 
 fun foo8(x: B<String>): Additional {
     return when {
-        x.hashCode() == 0 -> { aOf() }
+        x.hashCode() == 0 -> { <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>aOf<!>() }
         else -> { x.convert() }
     }
 }

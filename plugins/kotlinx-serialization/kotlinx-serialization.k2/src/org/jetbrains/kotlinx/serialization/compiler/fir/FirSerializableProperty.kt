@@ -6,7 +6,9 @@
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.deserialization.registeredInSerializationPluginMetadataExtension
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -28,7 +30,14 @@ class FirSerializableProperty(
 
     override val optional: Boolean = !propertySymbol.getSerialRequired(session) && declaresDefaultValue
 
-    override val transient: Boolean = propertySymbol.hasSerialTransient(session) || !propertySymbol.hasBackingField
+    override val transient: Boolean = run {
+        if (propertySymbol.hasSerialTransient(session)) return@run true
+        val hasBackingField = when (propertySymbol.origin) {
+            FirDeclarationOrigin.Library -> propertySymbol.registeredInSerializationPluginMetadataExtension
+            else -> propertySymbol.hasBackingField
+        }
+        !hasBackingField
+    }
 
     val serializableWith: ConeKotlinType? = propertySymbol.getSerializableWith(session)
         ?: analyzeSpecialSerializers(session, propertySymbol.resolvedAnnotationsWithArguments)?.defaultType()

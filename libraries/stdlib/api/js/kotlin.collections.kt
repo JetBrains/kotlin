@@ -1097,337 +1097,130 @@ public fun <T> kotlin.Array<out T>.contentDeepToString(): kotlin.String
 @kotlin.SinceKotlin(version = "1.4")
 public fun <T> kotlin.Array<out T>?.contentDeepToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun <T> kotlin.Array<out T>.contentEquals(other: kotlin.Array<out T>): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun <T> kotlin.Array<out T>?.contentEquals(other: kotlin.Array<out T>?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.BooleanArray.contentEquals(other: kotlin.BooleanArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.BooleanArray?.contentEquals(other: kotlin.BooleanArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.ByteArray.contentEquals(other: kotlin.ByteArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.ByteArray?.contentEquals(other: kotlin.ByteArray?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.CharArray.contentEquals(other: kotlin.CharArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.CharArray?.contentEquals(other: kotlin.CharArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.DoubleArray.contentEquals(other: kotlin.DoubleArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.DoubleArray?.contentEquals(other: kotlin.DoubleArray?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.FloatArray.contentEquals(other: kotlin.FloatArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.FloatArray?.contentEquals(other: kotlin.FloatArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.IntArray.contentEquals(other: kotlin.IntArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.IntArray?.contentEquals(other: kotlin.IntArray?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.LongArray.contentEquals(other: kotlin.LongArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.LongArray?.contentEquals(other: kotlin.LongArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public infix fun kotlin.ShortArray.contentEquals(other: kotlin.ShortArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public infix fun kotlin.ShortArray?.contentEquals(other: kotlin.ShortArray?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public infix fun kotlin.UByteArray.contentEquals(other: kotlin.UByteArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public infix fun kotlin.UByteArray?.contentEquals(other: kotlin.UByteArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public infix fun kotlin.UIntArray.contentEquals(other: kotlin.UIntArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public infix fun kotlin.UIntArray?.contentEquals(other: kotlin.UIntArray?): kotlin.Boolean
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public infix fun kotlin.ULongArray.contentEquals(other: kotlin.ULongArray): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public infix fun kotlin.ULongArray?.contentEquals(other: kotlin.ULongArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public infix fun kotlin.UShortArray.contentEquals(other: kotlin.UShortArray): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public infix fun kotlin.UShortArray?.contentEquals(other: kotlin.UShortArray?): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun <T> kotlin.Array<out T>.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun <T> kotlin.Array<out T>?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.BooleanArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.BooleanArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.ByteArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.ByteArray?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.CharArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.DoubleArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.DoubleArray?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.FloatArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.FloatArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.IntArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.IntArray?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.LongArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.LongArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.ShortArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.ShortArray?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UByteArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.UByteArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UIntArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.UIntArray?.contentHashCode(): kotlin.Int
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.ULongArray.contentHashCode(): kotlin.Int
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.ULongArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UShortArray.contentHashCode(): kotlin.Int
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.UShortArray?.contentHashCode(): kotlin.Int
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun <T> kotlin.Array<out T>.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun <T> kotlin.Array<out T>?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.BooleanArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.BooleanArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.ByteArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.ByteArray?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.CharArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.DoubleArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.DoubleArray?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.FloatArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.FloatArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.IntArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.IntArray?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.LongArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.LongArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.1")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-public fun kotlin.ShortArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.ShortArray?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UByteArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.UByteArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UIntArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.UIntArray?.contentToString(): kotlin.String
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.ULongArray.contentToString(): kotlin.String
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.ULongArray?.contentToString(): kotlin.String
-
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.ExperimentalUnsignedTypes
-public fun kotlin.UShortArray.contentToString(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
@@ -6747,137 +6540,109 @@ public inline fun <T> kotlin.collections.Collection<T>.random(): T
 public fun <T> kotlin.collections.Collection<T>.random(random: kotlin.random.Random): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.Array<out T>.randomOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.Array<out T>.randomOrNull(random: kotlin.random.Random): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.BooleanArray.randomOrNull(): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.BooleanArray.randomOrNull(random: kotlin.random.Random): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ByteArray.randomOrNull(): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ByteArray.randomOrNull(random: kotlin.random.Random): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharArray.randomOrNull(): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.CharArray.randomOrNull(random: kotlin.random.Random): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.DoubleArray.randomOrNull(): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.DoubleArray.randomOrNull(random: kotlin.random.Random): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.FloatArray.randomOrNull(): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.FloatArray.randomOrNull(random: kotlin.random.Random): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.IntArray.randomOrNull(): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.IntArray.randomOrNull(random: kotlin.random.Random): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.LongArray.randomOrNull(): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.LongArray.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ShortArray.randomOrNull(): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ShortArray.randomOrNull(random: kotlin.random.Random): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.randomOrNull(): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UByteArray.randomOrNull(random: kotlin.random.Random): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.randomOrNull(): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UIntArray.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.randomOrNull(): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ULongArray.randomOrNull(random: kotlin.random.Random): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.randomOrNull(): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UShortArray.randomOrNull(random: kotlin.random.Random): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Collection<T>.randomOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.Collection<T>.randomOrNull(random: kotlin.random.Random): T?
 
 public inline fun <S, T : S> kotlin.Array<out T>.reduce(operation: (acc: S, T) -> S): S
@@ -7014,67 +6779,53 @@ public inline fun kotlin.UShortArray.reduceIndexedOrNull(operation: (index: kotl
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.reduceIndexedOrNull(operation: (index: kotlin.Int, acc: S, T) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.BooleanArray.reduceOrNull(operation: (acc: kotlin.Boolean, kotlin.Boolean) -> kotlin.Boolean): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ByteArray.reduceOrNull(operation: (acc: kotlin.Byte, kotlin.Byte) -> kotlin.Byte): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.CharArray.reduceOrNull(operation: (acc: kotlin.Char, kotlin.Char) -> kotlin.Char): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.DoubleArray.reduceOrNull(operation: (acc: kotlin.Double, kotlin.Double) -> kotlin.Double): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.FloatArray.reduceOrNull(operation: (acc: kotlin.Float, kotlin.Float) -> kotlin.Float): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.IntArray.reduceOrNull(operation: (acc: kotlin.Int, kotlin.Int) -> kotlin.Int): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.LongArray.reduceOrNull(operation: (acc: kotlin.Long, kotlin.Long) -> kotlin.Long): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ShortArray.reduceOrNull(operation: (acc: kotlin.Short, kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceOrNull(operation: (acc: kotlin.UByte, kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceOrNull(operation: (acc: kotlin.UInt, kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceOrNull(operation: (acc: kotlin.ULong, kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceOrNull(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.reduceOrNull(operation: (acc: S, T) -> S): S?
 
 public inline fun <S, T : S> kotlin.Array<out T>.reduceRight(operation: (T, acc: S) -> S): S
@@ -7208,67 +6959,53 @@ public inline fun kotlin.UShortArray.reduceRightIndexedOrNull(operation: (index:
 public inline fun <S, T : S> kotlin.collections.List<T>.reduceRightIndexedOrNull(operation: (index: kotlin.Int, T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.reduceRightOrNull(operation: (T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.BooleanArray.reduceRightOrNull(operation: (kotlin.Boolean, acc: kotlin.Boolean) -> kotlin.Boolean): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ByteArray.reduceRightOrNull(operation: (kotlin.Byte, acc: kotlin.Byte) -> kotlin.Byte): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.CharArray.reduceRightOrNull(operation: (kotlin.Char, acc: kotlin.Char) -> kotlin.Char): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.DoubleArray.reduceRightOrNull(operation: (kotlin.Double, acc: kotlin.Double) -> kotlin.Double): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.FloatArray.reduceRightOrNull(operation: (kotlin.Float, acc: kotlin.Float) -> kotlin.Float): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.IntArray.reduceRightOrNull(operation: (kotlin.Int, acc: kotlin.Int) -> kotlin.Int): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.LongArray.reduceRightOrNull(operation: (kotlin.Long, acc: kotlin.Long) -> kotlin.Long): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ShortArray.reduceRightOrNull(operation: (kotlin.Short, acc: kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceRightOrNull(operation: (kotlin.UByte, acc: kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceRightOrNull(operation: (kotlin.UInt, acc: kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceRightOrNull(operation: (kotlin.ULong, acc: kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceRightOrNull(operation: (kotlin.UShort, acc: kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.List<T>.reduceRightOrNull(operation: (T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.1")
@@ -7301,19 +7038,15 @@ public fun <T> kotlin.collections.MutableIterable<T>.removeAll(predicate: (T) ->
 public fun <T> kotlin.collections.MutableList<T>.removeAll(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirst(): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirstOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLast(): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLastOrNull(): T?
 
 public fun <T : kotlin.Any> kotlin.Array<T?>.requireNoNulls(): kotlin.Array<T>
@@ -7614,7 +7347,6 @@ public inline fun <R> kotlin.UShortArray.runningFoldIndexed(initial: R, operatio
 public inline fun <T, R> kotlin.collections.Iterable<T>.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -7670,7 +7402,6 @@ public inline fun kotlin.ULongArray.runningReduce(operation: (acc: kotlin.ULong,
 public inline fun kotlin.UShortArray.runningReduce(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.collections.List<kotlin.UShort>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -7732,147 +7463,119 @@ public inline fun kotlin.UShortArray.runningReduceIndexed(operation: (index: kot
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.BooleanArray.scan(initial: R, operation: (acc: R, kotlin.Boolean) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ByteArray.scan(initial: R, operation: (acc: R, kotlin.Byte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.CharArray.scan(initial: R, operation: (acc: R, kotlin.Char) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.DoubleArray.scan(initial: R, operation: (acc: R, kotlin.Double) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.FloatArray.scan(initial: R, operation: (acc: R, kotlin.Float) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.IntArray.scan(initial: R, operation: (acc: R, kotlin.Int) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.LongArray.scan(initial: R, operation: (acc: R, kotlin.Long) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ShortArray.scan(initial: R, operation: (acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scan(initial: R, operation: (acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scan(initial: R, operation: (acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scan(initial: R, operation: (acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scan(initial: R, operation: (acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.collections.Iterable<T>.scan(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.Array<out T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.BooleanArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Boolean) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ByteArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Byte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.CharArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Char) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.DoubleArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Double) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.FloatArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Float) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.IntArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Int) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.LongArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Long) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.collections.Iterable<T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.internal.InlineOnly
@@ -10327,7 +10030,6 @@ public abstract class AbstractSet<out E> : kotlin.collections.AbstractCollection
 }
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
     public constructor ArrayDeque<E>()
 
@@ -10383,6 +10085,8 @@ public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
 
     public final fun removeLastOrNull(): E?
 
+    protected open override fun removeRange(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.Unit
+
     public open override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open override operator fun set(index: kotlin.Int, element: E): E
@@ -10408,6 +10112,11 @@ public open class ArrayList<E> : kotlin.collections.AbstractMutableList<E>, kotl
     public open override fun addAll(index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open override fun asJsArrayView(): kotlin.js.collections.JsArray<E>
 
     public open override fun clear(): kotlin.Unit
 
@@ -10518,6 +10227,8 @@ public open class HashMap<K, V> : kotlin.collections.AbstractMutableMap<K, V>, k
 
     public open override fun put(key: K, value: V): V?
 
+    public open override fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
+
     public open override fun remove(key: K): V?
 }
 
@@ -10591,20 +10302,6 @@ public open class LinkedHashMap<K, V> : kotlin.collections.HashMap<K, V>, kotlin
     public constructor LinkedHashMap<K, V>(initialCapacity: kotlin.Int, loadFactor: kotlin.Float)
 
     public constructor LinkedHashMap<K, V>(original: kotlin.collections.Map<out K, V>)
-
-    public open override val size: kotlin.Int { get; }
-
-    public open override fun clear(): kotlin.Unit
-
-    public open override fun containsKey(key: K): kotlin.Boolean
-
-    public open override fun containsValue(value: V): kotlin.Boolean
-
-    public open override operator fun get(key: K): V?
-
-    public open override fun put(key: K, value: V): V?
-
-    public open override fun remove(key: K): V?
 }
 
 public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.collections.MutableSet<E> {
@@ -10619,6 +10316,11 @@ public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.colle
 
 public interface List<out E> : kotlin.collections.Collection<E> {
     public abstract override val size: kotlin.Int { get; }
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsReadonlyArrayView(): kotlin.js.collections.JsReadonlyArray<E>
 
     public abstract override operator fun contains(element: E): kotlin.Boolean
 
@@ -10672,6 +10374,11 @@ public interface Map<K, out V> {
 
     public abstract val values: kotlin.collections.Collection<V> { get; }
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsReadonlyMapView(): kotlin.js.collections.JsReadonlyMap<K, V>
+
     public abstract fun containsKey(key: K): kotlin.Boolean
 
     public abstract fun containsValue(value: V): kotlin.Boolean
@@ -10720,6 +10427,11 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
 
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsArrayView(): kotlin.js.collections.JsArray<E>
+
     public abstract override fun clear(): kotlin.Unit
 
     public abstract override fun listIterator(): kotlin.collections.MutableListIterator<E>
@@ -10758,6 +10470,11 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     public abstract override val values: kotlin.collections.MutableCollection<V> { get; }
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsMapView(): kotlin.js.collections.JsMap<K, V>
+
     public abstract fun clear(): kotlin.Unit
 
     public abstract fun put(key: K, value: V): V?
@@ -10776,6 +10493,11 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
 
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsSetView(): kotlin.js.collections.JsSet<E>
+
     public abstract override fun clear(): kotlin.Unit
 
     public abstract override operator fun iterator(): kotlin.collections.MutableIterator<E>
@@ -10792,6 +10514,11 @@ public interface RandomAccess {
 
 public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract override val size: kotlin.Int { get; }
+
+    @kotlin.js.ExperimentalJsExport
+    @kotlin.js.ExperimentalJsCollectionsApi
+    @kotlin.SinceKotlin(version = "2.0")
+    public open fun asJsReadonlySetView(): kotlin.js.collections.JsReadonlySet<E>
 
     public abstract override operator fun contains(element: E): kotlin.Boolean
 

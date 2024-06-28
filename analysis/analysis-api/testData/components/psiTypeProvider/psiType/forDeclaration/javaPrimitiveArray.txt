@@ -1,0 +1,2 @@
+KaType: kotlin.IntArray!
+PsiType: int[]

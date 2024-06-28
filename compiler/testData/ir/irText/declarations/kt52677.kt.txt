@@ -1,27 +1,27 @@
 @Target(allowedTargets = [AnnotationTarget.TYPE])
 open annotation class MySerializable : Annotation {
+  val c: KClass<*>
+    field = c
+    get
+
   constructor(c: KClass<*>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val c: KClass<*>
-    field = c
-    get
-
 }
 
 data class LoginSuccessPacket {
+  val id: @MySerializable(c = UuidSerializer::class) Uuid1
+    field = id
+    get
+
   constructor(id: @MySerializable(c = UuidSerializer::class) Uuid1) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val id: @MySerializable(c = UuidSerializer::class) Uuid1
-    field = id
-    get
 
   operator fun component1(): @MySerializable(c = UuidSerializer::class) Uuid1 {
     return <this>.#id
@@ -31,14 +31,6 @@ data class LoginSuccessPacket {
     return LoginSuccessPacket(id = id)
   }
 
-  override fun toString(): String {
-    return "LoginSuccessPacket(" + "id=" + <this>.#id + ")"
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#id.hashCode()
-  }
-
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -46,25 +38,19 @@ data class LoginSuccessPacket {
     when {
       other !is LoginSuccessPacket -> return false
     }
-    val tmp0_other_with_cast: LoginSuccessPacket = other as LoginSuccessPacket
+    val tmp_0: LoginSuccessPacket = other as LoginSuccessPacket
     when {
-      EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
+      EQEQ(arg0 = <this>.#id, arg1 = tmp_0.#id).not() -> return false
     }
     return true
   }
 
-}
+  override fun hashCode(): Int {
+    return <this>.#id.hashCode()
+  }
 
-typealias Uuid = @MySerializable(c = UuidSerializer::class) Uuid1
-interface MySerializer<T : Any?> {
-
-}
-
-object UuidSerializer : MySerializer<@MySerializable(c = UuidSerializer::class) Uuid1> {
-  private constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
+  override fun toString(): String {
+    return "LoginSuccessPacket(" + "id=" + <this>.#id + ")"
   }
 
 }
@@ -78,10 +64,24 @@ class Uuid1 {
 
 }
 
-fun foo(): @MySerializable(c = UuidSerializer::class) Uuid1 {
-  throw RuntimeException()
+interface MySerializer<T : Any?> {
+}
+
+object UuidSerializer : MySerializer<@MySerializable(c = UuidSerializer::class) Uuid1> {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 fun bar(): @MySerializable(c = UuidSerializer::class) Uuid1 {
   return foo()
 }
+
+fun foo(): @MySerializable(c = UuidSerializer::class) Uuid1 {
+  throw RuntimeException()
+}
+
+typealias Uuid = @MySerializable(c = UuidSerializer::class) Uuid1

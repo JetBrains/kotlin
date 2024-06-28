@@ -1,0 +1,70 @@
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
+abstract class Bar<T : Any> {
+  // CHECK:
+  //   Mangled name: Bar#<init>(){}
+  //   Public signature: /Bar.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Bar#bar(){}
+  //   Public signature: /Bar.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
+  abstract fun bar(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+interface Foo<out T : Any?> {
+  // CHECK:
+  //   Mangled name: Foo#foo(){}
+  //   Public signature: /Foo.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  abstract fun foo(): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #extBar@Bar<0:0>(){0§<kotlin.Any>}
+//   Public signature: /extBar|8642037032021446167[0]
+//   Public signature debug description: extBar@Bar<0:0>(){0§<kotlin.Any>}
+fun <T : Any> Bar<T>.extBar(): Unit
+
+// CHECK:
+//   Mangled name: #extFoo@Foo<0:0>(){0§<kotlin.Any?>}
+//   Public signature: /extFoo|-4576860830521619991[0]
+//   Public signature debug description: extFoo@Foo<0:0>(){0§<kotlin.Any?>}
+fun <T : Any?> Foo<T>.extFoo(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #materialize(){0§<kotlin.Any?>}0:0
+//   Public signature: /materialize|4529465674657197020[0]
+//   Public signature debug description: materialize(){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #materialize(){0§<kotlin.Any?>}
+//   Public signature: /materialize|5983574876741311895[0]
+//   Public signature debug description: materialize(){0§<kotlin.Any?>}
+fun <K : Any?> materialize(): K
+
+// CHECK:
+//   Mangled name: #test_1(kotlin.Any){}
+//   Public signature: /test_1|-8508867973894375926[0]
+//   Public signature debug description: test_1(kotlin.Any){}
+fun test_1(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_2(kotlin.Any){}
+//   Public signature: /test_2|4713680415350302923[0]
+//   Public signature debug description: test_2(kotlin.Any){}
+fun test_2(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_3(kotlin.Any){}
+//   Public signature: /test_3|-963080351911937203[0]
+//   Public signature debug description: test_3(kotlin.Any){}
+fun test_3(x: Any): Unit
+

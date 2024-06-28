@@ -3,15 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.native.internal.gc
+@file:Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE") // Scheduled for eventual removal
 
-import kotlin.native.internal.*
-import kotlin.native.internal.NativePtr
-import kotlin.native.concurrent.*
-import kotlin.time.*
-import kotlin.time.Duration.Companion.nanoseconds
-import kotlinx.cinterop.*
-import kotlin.system.*
+package kotlin.native.internal.gc
 
 /**
  * This class represents statistics of memory usage in one memory pool.
@@ -21,6 +15,8 @@ import kotlin.system.*
  *                                 so it can not perfectly match the value received by os tools.
  *                                 All alignment and auxiliary object headers are included.
  */
+@Deprecated("Use kotlin.native.runtime.MemoryUsage instead.", ReplaceWith("MemoryUsage", "kotlin.native.runtime.MemoryUsage"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 @ExperimentalStdlibApi
 public class MemoryUsage(
         val objectsCount: Long,
@@ -42,6 +38,8 @@ public class MemoryUsage(
  *                            of this API, and internal usages, e.g. inside interop and Worker API.
  */
 @ExperimentalStdlibApi
+@Deprecated("Use kotlin.native.runtime.RootSetStatistics instead.", ReplaceWith("RootSetStatistics", "kotlin.native.runtime.RootSetStatistics"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public class RootSetStatistics(
         val threadLocalReferences: Long,
         val stackReferences: Long,
@@ -57,10 +55,16 @@ public class RootSetStatistics(
  * @property startTimeNs Time, when garbage collector run is started, meausered by [kotlin.system.getTimeNanos].
  * @property endTimeNs Time, when garbage collector run is ended, measured by [kotlin.system.getTimeNanos].
  *                     After this point, most of the memory is reclaimed, and a new garbage collector run can start.
- * @property pauseStartTimeNs Time, when mutator threads are suspended, mesured by [kotlin.system.getTimeNanos].
- * @property pauseEndTimeNs Time, when mutator threads are unsuspended, mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the first time,
+ *                                   mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseStartTimeNs Time, when mutator threads are suspended for the first time, mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseEndTimeNs Time, when mutator threads are unsuspended for the first time, mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the second time,
+ *                                    mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseStartTimeNs Time, when mutator threads are suspended for the second time, mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseEndTimeNs Time, when mutator threads are unsuspended for the second time, mesured by [kotlin.system.getTimeNanos].
  * @property postGcCleanupTimeNs Time, when all memory is reclaimed, measured by [kotlin.system.getTimeNanos].
- *                                If null, memory reclamation is still in progress.
+ *                               If null, memory reclamation is still in progress.
  * @property rootSet The number of objects in each root set pool. Check [RootSetStatistics] doc for details.
  * @property memoryUsageAfter Memory usage at the start of garbage collector run, separated by memory pools.
  *                            The set of memory pools depends on the collector implementation.
@@ -70,12 +74,20 @@ public class RootSetStatistics(
  *                            Can be empty, of colelction is in progress.
  */
 @ExperimentalStdlibApi
+@Deprecated("Use kotlin.native.runtime.GCInfo instead.", ReplaceWith("GCInfo", "kotlin.native.runtime.GCInfo"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+@Suppress("DEPRECATION")
 public class GCInfo(
         val epoch: Long,
         val startTimeNs: Long,
         val endTimeNs: Long,
-        val pauseStartTimeNs: Long,
-        val pauseEndTimeNs: Long,
+        val firstPauseRequestTimeNs: Long,
+        val firstPauseStartTimeNs: Long,
+        val firstPauseEndTimeNs: Long,
+        val secondPauseRequestTimeNs: Long?,
+        val secondPauseStartTimeNs: Long?,
+        val secondPauseEndTimeNs: Long?,
         val postGcCleanupTimeNs: Long?,
         val rootSet: RootSetStatistics,
         val memoryUsageBefore: Map<String, MemoryUsage>,
@@ -83,88 +95,40 @@ public class GCInfo(
 ) {
     internal companion object {
         val lastGCInfo: GCInfo?
-            get() = getGcInfo(0)
-
-        private fun getGcInfo(id: Int) = GCInfoBuilder().apply { fill(id) }.build();
+            get() {
+                val info = kotlin.native.runtime.GCInfo.lastGCInfo ?: return null
+                return GCInfo(
+                        info.epoch,
+                        info.startTimeNs,
+                        info.endTimeNs,
+                        info.firstPauseRequestTimeNs,
+                        info.firstPauseStartTimeNs,
+                        info.firstPauseEndTimeNs,
+                        info.secondPauseRequestTimeNs,
+                        info.secondPauseStartTimeNs,
+                        info.secondPauseEndTimeNs,
+                        info.postGcCleanupTimeNs,
+                        info.rootSet.let {
+                            RootSetStatistics(
+                                    it.threadLocalReferences,
+                                    it.stackReferences,
+                                    it.globalReferences,
+                                    it.stableReferences
+                            )
+                        },
+                        info.memoryUsageBefore.mapValues { (_, v) ->
+                            MemoryUsage(
+                                    0L,
+                                    v.totalObjectsSizeBytes,
+                            )
+                        },
+                        info.memoryUsageAfter.mapValues { (_, v) ->
+                            MemoryUsage(
+                                    0L,
+                                    v.totalObjectsSizeBytes,
+                            )
+                        }
+                )
+            }
     }
-}
-
-
-@ExperimentalStdlibApi
-private class GCInfoBuilder() {
-    var epoch: Long? = null
-    var startTimeNs: Long? = null
-    var endTimeNs: Long? = null
-    var pauseStartTimeNs: Long? = null
-    var pauseEndTimeNs: Long? = null
-    var postGcCleanupTimeNs: Long? = null
-    var rootSet: RootSetStatistics? = null
-    var memoryUsageBefore = mutableMapOf<String, MemoryUsage>()
-    var memoryUsageAfter = mutableMapOf<String, MemoryUsage>()
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setEpoch")
-    private fun setEpoch(value: Long) {
-        epoch = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setStartTime")
-    private fun setStartTime(value: Long) {
-        startTimeNs = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setEndTime")
-    private fun setEndTime(value: Long) {
-        endTimeNs = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime")
-    private fun setPauseStartTime(value: Long) {
-        pauseStartTimeNs = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime")
-    private fun setPauseEndTime(value: Long) {
-        pauseEndTimeNs = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime")
-    private fun setFinalizersDoneTime(value: Long) {
-        postGcCleanupTimeNs = value
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setRootSet")
-    private fun setRootSet(threadLocalReferences: Long, stackReferences: Long, globalReferences: Long, stableReferences: Long) {
-        rootSet = RootSetStatistics(threadLocalReferences, stackReferences, globalReferences, stableReferences)
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore")
-    private fun setMemoryUsageBefore(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
-        val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
-        memoryUsageBefore[nameString] = memoryUsage
-    }
-
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter")
-    private fun setMemoryUsageAfter(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
-        val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
-        memoryUsageAfter[nameString] = memoryUsage
-    }
-
-    fun build(): GCInfo? {
-        return GCInfo(
-                epoch ?: return null,
-                startTimeNs ?: return null,
-                endTimeNs ?: return null,
-                pauseStartTimeNs ?: return null,
-                pauseEndTimeNs ?: return null,
-                postGcCleanupTimeNs,
-                rootSet ?: return null,
-                memoryUsageBefore.toMap(),
-                memoryUsageAfter.toMap()
-        )
-    }
-
-    @GCUnsafeCall("Kotlin_Internal_GC_GCInfoBuilder_Fill")
-    external fun fill(id: Int)
 }

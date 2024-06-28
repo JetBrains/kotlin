@@ -1,0 +1,192 @@
+// CHECK:
+//   Mangled name: #checkBoolean(kotlin.BooleanArray...){}
+//   Public signature: /checkBoolean|-8900573306860743345[0]
+//   Public signature debug description: checkBoolean(kotlin.BooleanArray...){}
+fun checkBoolean(vararg values: Boolean): Unit
+
+// CHECK:
+//   Mangled name: #checkByte(kotlin.ByteArray...){}
+//   Public signature: /checkByte|-1236162224121318215[0]
+//   Public signature debug description: checkByte(kotlin.ByteArray...){}
+fun checkByte(vararg values: Byte): Unit
+
+// CHECK:
+//   Mangled name: #checkChar(kotlin.CharArray...){}
+//   Public signature: /checkChar|4028794436901682784[0]
+//   Public signature debug description: checkChar(kotlin.CharArray...){}
+fun checkChar(vararg values: Char): Unit
+
+// CHECK:
+//   Mangled name: #checkDouble(kotlin.DoubleArray...){}
+//   Public signature: /checkDouble|8290238685806222977[0]
+//   Public signature debug description: checkDouble(kotlin.DoubleArray...){}
+fun checkDouble(vararg values: Double): Unit
+
+// CHECK:
+//   Mangled name: #checkFloat(kotlin.FloatArray...){}
+//   Public signature: /checkFloat|-8155707993237274223[0]
+//   Public signature debug description: checkFloat(kotlin.FloatArray...){}
+fun checkFloat(vararg values: Float): Unit
+
+// CHECK:
+//   Mangled name: #checkInt(kotlin.IntArray...){}
+//   Public signature: /checkInt|4583739980796207[0]
+//   Public signature debug description: checkInt(kotlin.IntArray...){}
+fun checkInt(vararg values: Int): Unit
+
+// CHECK:
+//   Mangled name: #checkLong(kotlin.LongArray...){}
+//   Public signature: /checkLong|-8989236926718089499[0]
+//   Public signature debug description: checkLong(kotlin.LongArray...){}
+fun checkLong(vararg values: Long): Unit
+
+// CHECK:
+//   Mangled name: #checkMyBoolean(kotlin.BooleanArray...){}
+//   Public signature: /checkMyBoolean|-5890207970004559376[0]
+//   Public signature debug description: checkMyBoolean(kotlin.BooleanArray...){}
+fun checkMyBoolean(vararg values: Boolean): Unit
+
+// CHECK:
+//   Mangled name: #checkMyByte(kotlin.ByteArray...){}
+//   Public signature: /checkMyByte|8598509431667985710[0]
+//   Public signature debug description: checkMyByte(kotlin.ByteArray...){}
+fun checkMyByte(vararg values: Byte): Unit
+
+// CHECK:
+//   Mangled name: #checkMyChar(kotlin.CharArray...){}
+//   Public signature: /checkMyChar|5192351702236597298[0]
+//   Public signature debug description: checkMyChar(kotlin.CharArray...){}
+fun checkMyChar(vararg values: Char): Unit
+
+// CHECK:
+//   Mangled name: #checkMyDouble(kotlin.DoubleArray...){}
+//   Public signature: /checkMyDouble|5543709509339167549[0]
+//   Public signature debug description: checkMyDouble(kotlin.DoubleArray...){}
+fun checkMyDouble(vararg values: Double): Unit
+
+// CHECK:
+//   Mangled name: #checkMyFloat(kotlin.FloatArray...){}
+//   Public signature: /checkMyFloat|-6679219747753787079[0]
+//   Public signature debug description: checkMyFloat(kotlin.FloatArray...){}
+fun checkMyFloat(vararg values: Float): Unit
+
+// CHECK:
+//   Mangled name: #checkMyInt(kotlin.IntArray...){}
+//   Public signature: /checkMyInt|-2811351994369715293[0]
+//   Public signature debug description: checkMyInt(kotlin.IntArray...){}
+fun checkMyInt(vararg values: Int): Unit
+
+// CHECK:
+//   Mangled name: #checkMyLong(kotlin.LongArray...){}
+//   Public signature: /checkMyLong|3940126759026537730[0]
+//   Public signature debug description: checkMyLong(kotlin.LongArray...){}
+fun checkMyLong(vararg values: Long): Unit
+
+// CHECK:
+//   Mangled name: #checkMyShort(kotlin.ShortArray...){}
+//   Public signature: /checkMyShort|-7805523702921298983[0]
+//   Public signature debug description: checkMyShort(kotlin.ShortArray...){}
+fun checkMyShort(vararg values: Short): Unit
+
+// CHECK:
+//   Mangled name: #checkMyUByte(kotlin.UByteArray...){}
+//   Public signature: /checkMyUByte|7955300320297277795[0]
+//   Public signature debug description: checkMyUByte(kotlin.UByteArray...){}
+fun checkMyUByte(vararg values: UByte): Unit
+
+// CHECK:
+//   Mangled name: #checkMyUInt(kotlin.UIntArray...){}
+//   Public signature: /checkMyUInt|-2622635368460611797[0]
+//   Public signature debug description: checkMyUInt(kotlin.UIntArray...){}
+fun checkMyUInt(vararg values: UInt): Unit
+
+// CHECK:
+//   Mangled name: #checkMyULong(kotlin.ULongArray...){}
+//   Public signature: /checkMyULong|9072087205927442218[0]
+//   Public signature debug description: checkMyULong(kotlin.ULongArray...){}
+fun checkMyULong(vararg values: ULong): Unit
+
+// CHECK:
+//   Mangled name: #checkMyUShort(kotlin.UShortArray...){}
+//   Public signature: /checkMyUShort|1511662805791199330[0]
+//   Public signature debug description: checkMyUShort(kotlin.UShortArray...){}
+fun checkMyUShort(vararg values: UShort): Unit
+
+// CHECK:
+//   Mangled name: #checkShort(kotlin.ShortArray...){}
+//   Public signature: /checkShort|7593907512713404632[0]
+//   Public signature debug description: checkShort(kotlin.ShortArray...){}
+fun checkShort(vararg values: Short): Unit
+
+// CHECK:
+//   Mangled name: #checkUByte(kotlin.UByteArray...){}
+//   Public signature: /checkUByte|-3348320895831596048[0]
+//   Public signature debug description: checkUByte(kotlin.UByteArray...){}
+fun checkUByte(vararg values: UByte): Unit
+
+// CHECK:
+//   Mangled name: #checkUInt(kotlin.UIntArray...){}
+//   Public signature: /checkUInt|-2411050561765822747[0]
+//   Public signature debug description: checkUInt(kotlin.UIntArray...){}
+fun checkUInt(vararg values: UInt): Unit
+
+// CHECK:
+//   Mangled name: #checkULong(kotlin.ULongArray...){}
+//   Public signature: /checkULong|-6184558403322521435[0]
+//   Public signature debug description: checkULong(kotlin.ULongArray...){}
+fun checkULong(vararg values: ULong): Unit
+
+// CHECK:
+//   Mangled name: #checkUShort(kotlin.UShortArray...){}
+//   Public signature: /checkUShort|3472066239065680351[0]
+//   Public signature debug description: checkUShort(kotlin.UShortArray...){}
+fun checkUShort(vararg values: UShort): Unit
+
+// CHECK:
+//   Mangled name: MyBoolean
+//   Public signature: /MyBoolean|null[0]
+typealias MyBoolean = Boolean
+// CHECK:
+//   Mangled name: MyByte
+//   Public signature: /MyByte|null[0]
+typealias MyByte = Byte
+// CHECK:
+//   Mangled name: MyChar
+//   Public signature: /MyChar|null[0]
+typealias MyChar = Char
+// CHECK:
+//   Mangled name: MyDouble
+//   Public signature: /MyDouble|null[0]
+typealias MyDouble = Double
+// CHECK:
+//   Mangled name: MyFloat
+//   Public signature: /MyFloat|null[0]
+typealias MyFloat = Float
+// CHECK:
+//   Mangled name: MyInt
+//   Public signature: /MyInt|null[0]
+typealias MyInt = Int
+// CHECK:
+//   Mangled name: MyLong
+//   Public signature: /MyLong|null[0]
+typealias MyLong = Long
+// CHECK:
+//   Mangled name: MyShort
+//   Public signature: /MyShort|null[0]
+typealias MyShort = Short
+// CHECK:
+//   Mangled name: MyUByte
+//   Public signature: /MyUByte|null[0]
+typealias MyUByte = UByte
+// CHECK:
+//   Mangled name: MyUInt
+//   Public signature: /MyUInt|null[0]
+typealias MyUInt = UInt
+// CHECK:
+//   Mangled name: MyULong
+//   Public signature: /MyULong|null[0]
+typealias MyULong = ULong
+// CHECK:
+//   Mangled name: MyUShort
+//   Public signature: /MyUShort|null[0]
+typealias MyUShort = UShort

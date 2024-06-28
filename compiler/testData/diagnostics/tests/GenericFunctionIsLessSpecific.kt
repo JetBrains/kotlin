@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 // A generic funciton is always less specific than a non-generic one
 fun <T> foo(t : T) : Unit {}

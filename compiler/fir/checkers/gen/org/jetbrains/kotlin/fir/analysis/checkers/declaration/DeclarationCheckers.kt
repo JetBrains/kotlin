@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,6 +29,7 @@ abstract class DeclarationCheckers {
     open val regularClassCheckers: Set<FirRegularClassChecker> = emptySet()
     open val constructorCheckers: Set<FirConstructorChecker> = emptySet()
     open val fileCheckers: Set<FirFileChecker> = emptySet()
+    open val scriptCheckers: Set<FirScriptChecker> = emptySet()
     open val typeParameterCheckers: Set<FirTypeParameterChecker> = emptySet()
     open val typeAliasCheckers: Set<FirTypeAliasChecker> = emptySet()
     open val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = emptySet()
@@ -52,6 +53,7 @@ abstract class DeclarationCheckers {
     @CheckersComponentInternal internal val allRegularClassCheckers: Set<FirRegularClassChecker> by lazy { regularClassCheckers + classCheckers + classLikeCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allConstructorCheckers: Set<FirConstructorChecker> by lazy { constructorCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allFileCheckers: Set<FirFileChecker> by lazy { fileCheckers + basicDeclarationCheckers }
+    @CheckersComponentInternal internal val allScriptCheckers: Set<FirScriptChecker> by lazy { scriptCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allTypeParameterCheckers: Set<FirTypeParameterChecker> by lazy { typeParameterCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allTypeAliasCheckers: Set<FirTypeAliasChecker> by lazy { typeAliasCheckers + classLikeCheckers + basicDeclarationCheckers }
     @CheckersComponentInternal internal val allAnonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> by lazy { anonymousFunctionCheckers + functionCheckers + callableDeclarationCheckers + basicDeclarationCheckers }

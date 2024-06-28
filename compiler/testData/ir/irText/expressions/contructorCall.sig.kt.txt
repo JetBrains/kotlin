@@ -1,0 +1,27 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
+//   Public signature debug description: {}test
+val test: A
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test>(){}A
+  //   Public signature: /test.<get-test>|1008694073924452605[0]
+  //   Public signature debug description: <get-test>(){}A
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test>(){}
+  //   Public signature: /test.<get-test>|208282462577758837[0]
+  //   Public signature debug description: <get-test>(){}
+  get
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

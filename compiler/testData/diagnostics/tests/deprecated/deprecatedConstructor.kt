@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.kt
 class A(s: String) {
@@ -22,10 +22,12 @@ public class B extends A {
 }
 
 // FILE: C.kt
-class C @Deprecated("") constructor(s: String) {
+open class C @Deprecated("") constructor(s: String) {
 }
 
 // FILE: use.kt
+class D : <!DEPRECATION!>C<!>("")
+
 fun use(a: A, b: B, c: C) {
     <!DEPRECATION!>A<!>(3)
     A("")

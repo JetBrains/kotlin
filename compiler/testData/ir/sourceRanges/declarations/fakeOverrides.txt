@@ -1,4 +1,4 @@
-@0:0..10 FILE fqName:<root> fileName:/fakeOverrides.kt
+@0:0..3:0 FILE fqName:<root> fileName:/fakeOverrides.kt
   @0:0..10 CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     @0:0..10 CONSTRUCTOR visibility:public <> () returnType:<root>.Test [primary]
       @0:0..10 BLOCK_BODY

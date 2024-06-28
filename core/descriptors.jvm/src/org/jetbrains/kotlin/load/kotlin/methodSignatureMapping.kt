@@ -44,6 +44,22 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
     }
 }
 
+fun PropertyDescriptor.computeJvmDescriptorWithoutName() = buildString {
+    append("(")
+
+    extensionReceiverParameter?.let {
+        appendErasedType(it.type)
+    }
+
+    append(")")
+
+    if (hasVoidReturnType(this@computeJvmDescriptorWithoutName)) {
+        append("V")
+    } else {
+        appendErasedType(returnType!!)
+    }
+}
+
 // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation
 // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt')
 fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
@@ -77,7 +93,7 @@ internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
 internal val ClassDescriptor.internalName: String
     get() {
         JavaToKotlinClassMap.mapKotlinToJava(fqNameSafe.toUnsafe())?.let {
-            return JvmClassName.byClassId(it).internalName
+            return JvmClassName.internalNameByClassId(it)
         }
 
         return computeInternalName(this)

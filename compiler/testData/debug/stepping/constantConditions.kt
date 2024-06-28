@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 // KT-22488
 
@@ -14,17 +15,22 @@ fun test(): Long {
     return 1
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:5 box
 // EXPECTATIONS JVM_IR
-// test.kt:9 test
-// EXPECTATIONS JVM JVM_IR
+// test.kt:6 box
 // test.kt:10 test
 // test.kt:11 test
-// test.kt:5 box
+// test.kt:12 test
 // test.kt:6 box
+// test.kt:7 box
 
 // EXPECTATIONS JS_IR
-// test.kt:5 box
-// test.kt:11 test
 // test.kt:6 box
+// test.kt:10 test
+// test.kt:12 test
+// test.kt:7 box
+
+// EXPECTATIONS WASM
+// test.kt:6 $box
+// test.kt:11 $test
+// test.kt:12 $test (15, 8)
+// test.kt:7 $box

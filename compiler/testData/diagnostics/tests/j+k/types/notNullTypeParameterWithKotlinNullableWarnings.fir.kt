@@ -1,6 +1,6 @@
-// !SKIP_JAVAC
-// !LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !RENDER_DIAGNOSTICS_FULL_TEXT
+// SKIP_JAVAC
+// LANGUAGE: -ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
+// RENDER_DIAGNOSTICS_FULL_TEXT
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;
@@ -22,9 +22,9 @@ fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
     takeV(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
     takeVList(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
-    takeE(value)
-    takeEList(l)
-    takeE(id(value))
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>value<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeEList<!>(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
+    <!CANNOT_INFER_PARAMETER_TYPE!>takeE<!>(<!ARGUMENT_TYPE_MISMATCH!>id(value)<!>)
 
     if (value != null) {
         takeV(value)

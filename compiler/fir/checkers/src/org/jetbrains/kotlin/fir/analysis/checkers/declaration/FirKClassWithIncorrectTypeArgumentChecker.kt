@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
 // See FE1.0 [KClassWithIncorrectTypeArgumentChecker]
-object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker() {
+object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
 
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         // Only report on top level callable declarations
@@ -29,12 +30,21 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val returnType = declaration.returnTypeRef.coneType
-        if (!returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) return
+        val typeArgumentsWithWrongType = mutableListOf<ConeKotlinType>()
 
-        val typeArgument = (returnType.typeArguments[0] as ConeKotlinTypeProjection).type
-        typeArgument.typeParameterFromError?.let {
-            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, it, context)
+        val returnType = declaration.returnTypeRef.coneType
+        if (returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) typeArgumentsWithWrongType.add(returnType)
+
+        returnType.typeArguments.forEach {
+            val type = it.type ?: return@forEach
+            if (type.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext))
+                typeArgumentsWithWrongType.add(type)
+        }
+
+        if (typeArgumentsWithWrongType.isEmpty()) return
+        typeArgumentsWithWrongType.forEach {
+            val typeParameterFromError = (it.typeArguments[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
+            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError, context)
         }
     }
 

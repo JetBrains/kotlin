@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +PolymorphicSignature -ProhibitSpreadOnSignaturePolymorphicCall
+// LANGUAGE: +PolymorphicSignature -ProhibitSpreadOnSignaturePolymorphicCall
 // FULL_JDK
 
 import java.lang.invoke.MethodHandle

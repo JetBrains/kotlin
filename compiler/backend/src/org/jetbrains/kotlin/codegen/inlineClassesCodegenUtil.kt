@@ -48,6 +48,7 @@ fun classFileContainsMethod(descriptor: FunctionDescriptor, state: GenerationSta
             (descriptor.containingDeclaration as DeserializedClassDescriptor).classId ?: return null
         }
         descriptor.containerSource is JvmPackagePartSource -> {
+            @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
             (descriptor.containerSource as JvmPackagePartSource).classId
         }
         else -> {

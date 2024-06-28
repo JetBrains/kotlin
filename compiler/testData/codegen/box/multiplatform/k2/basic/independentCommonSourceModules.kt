@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common1
 // TARGET_PLATFORM: Common
@@ -9,12 +8,15 @@ fun o() = "O"
 
 // MODULE: common2
 // TARGET_PLATFORM: Common
+// The test framework adds additional files to common modules with no dependencies.
+// Those files should only be added once, so we exclude them from common2 and only include
+// them in common1.
+// NO_COMMON_FILES
 // FILE: common2.kt
 
 fun k() = "K"
 
-// MODULE: jvm()()(common1, common2)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common1, common2)
+// FILE: platform.kt
 
 fun box() = o() + k()

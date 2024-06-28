@@ -1,5 +1,5 @@
 FILE: collectionLiterals.kt
-    public? final? annotation class Ann1 : R|kotlin/Annotation| {
+    public final? annotation class Ann1 : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann1] constructor([CorrespondingProperty=/Ann1.arr] arr: IntArray): R|Ann1| {
             super<R|kotlin/Any|>()
         }
@@ -8,7 +8,7 @@ FILE: collectionLiterals.kt
             public? [ContainingClassKey=Ann1] get(): IntArray
 
     }
-    public? final? annotation class Ann2 : R|kotlin/Annotation| {
+    public final? annotation class Ann2 : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann2] constructor([CorrespondingProperty=/Ann2.arr] arr: DoubleArray): R|Ann2| {
             super<R|kotlin/Any|>()
         }
@@ -17,7 +17,7 @@ FILE: collectionLiterals.kt
             public? [ContainingClassKey=Ann2] get(): DoubleArray
 
     }
-    public? final? annotation class Ann3 : R|kotlin/Annotation| {
+    public final? annotation class Ann3 : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann3] constructor([CorrespondingProperty=/Ann3.arr] arr: Array<String>): R|Ann3| {
             super<R|kotlin/Any|>()
         }
@@ -26,25 +26,25 @@ FILE: collectionLiterals.kt
             public? [ContainingClassKey=Ann3] get(): Array<String>
 
     }
-    @Ann1(<implicitArrayOf>()) @Ann2(<implicitArrayOf>()) @Ann3(<implicitArrayOf>()) public? final? class Zero : R|kotlin/Any| {
+    @Ann1(<implicitArrayOf>()) @Ann2(<implicitArrayOf>()) @Ann3(<implicitArrayOf>()) public final? class Zero : R|kotlin/Any| {
         public? [ContainingClassKey=Zero] constructor(): R|Zero| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2))) public? final? class First : R|kotlin/Any| {
+    @Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2))) public final? class First : R|kotlin/Any| {
         public? [ContainingClassKey=First] constructor(): R|First| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Ann2(<implicitArrayOf>(Double(3.14))) public? final? class Second : R|kotlin/Any| {
+    @Ann2(<implicitArrayOf>(Double(3.14))) public final? class Second : R|kotlin/Any| {
         public? [ContainingClassKey=Second] constructor(): R|Second| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Ann3(<implicitArrayOf>(String(Alpha), String(Omega))) public? final? class Third : R|kotlin/Any| {
+    @Ann3(<implicitArrayOf>(String(Alpha), String(Omega))) public final? class Third : R|kotlin/Any| {
         public? [ContainingClassKey=Third] constructor(): R|Third| {
             super<R|kotlin/Any|>()
         }

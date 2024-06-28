@@ -34,7 +34,6 @@ private fun FileWriter.writeCollection(
         append(strategy.indentation + string)
     }
 
-    append(strategy.rangesAnnotation)
     appendWithIndentation("${strategy.rangesVisibilityModifier} val $name = $constructingFun(")
     for (i in elements.indices) {
         if (i % 20 == 0) {

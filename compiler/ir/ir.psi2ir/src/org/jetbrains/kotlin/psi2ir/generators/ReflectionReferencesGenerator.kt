@@ -166,16 +166,22 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         val functionParameter = descriptor.valueParameters.singleOrNull()
             ?: throw AssertionError("Single value parameter expected: $descriptor")
 
-        return context.irFactory.createFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
-            IrSimpleFunctionSymbolImpl(),
+        return context.irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR,
             name = samClassDescriptor.name,
             visibility = DescriptorVisibilities.LOCAL,
-            modality = Modality.FINAL,
+            isInline = false,
+            isExpect = false,
             returnType = irSamType,
-            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false, isInfix = false,
-            isExpect = false, isFakeOverride = false
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
+            isExternal = false,
         ).also { irAdapterFun ->
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = null
@@ -313,7 +319,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
             is IrSimpleFunctionSymbol ->
                 IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
-            else -> error("Unknown symbol kind $adapteeSymbol")
         }
 
         val hasBoundDispatchReceiver = resolvedCall.dispatchReceiver != null && resolvedCall.dispatchReceiver !is TransientReceiver
@@ -438,22 +443,22 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         val hasSuspendConversion = !adapteeDescriptor.isSuspend &&
                 callableReferenceType.isKSuspendFunctionType
 
-        return context.irFactory.createFunction(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
-            IrSimpleFunctionSymbolImpl(),
-            adapteeDescriptor.name,
-            DescriptorVisibilities.LOCAL,
-            Modality.FINAL,
-            ktExpectedReturnType.toIrType(),
+        return context.irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
+            name = adapteeDescriptor.name,
+            visibility = DescriptorVisibilities.LOCAL,
             isInline = adapteeDescriptor.isInline, // TODO ?
-            isExternal = false,
+            isExpect = false,
+            returnType = ktExpectedReturnType.toIrType(),
+            modality = Modality.FINAL,
+            symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
             isSuspend = adapteeDescriptor.isSuspend || hasSuspendConversion,
             isOperator = adapteeDescriptor.isOperator, // TODO ?
             isInfix = adapteeDescriptor.isInfix,
-            isExpect = false,
-            isFakeOverride = false
+            isExternal = false,
         ).also { irAdapterFun ->
             context.symbolTable.withScope(irAdapterFun) {
                 irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
@@ -492,13 +497,18 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
 
     private fun createAdapterParameter(startOffset: Int, endOffset: Int, name: Name, index: Int, type: KotlinType): IrValueParameter =
         context.irFactory.createValueParameter(
-            startOffset, endOffset,
-            IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-            IrValueParameterSymbolImpl(),
-            name,
-            index,
-            type.toIrType(),
-            varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+            name = name,
+            type = type.toIrType(),
+            isAssignable = false,
+            symbol = IrValueParameterSymbolImpl(),
+            index = index,
+            varargElementType = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isHidden = false,
         )
 
     fun generateCallableReference(
@@ -536,12 +546,12 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             variableDescriptor.getter ?: throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
         val setterDescriptor = variableDescriptor.setter
 
-        val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor)
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it) }
+        val getterSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(getterDescriptor)
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
         return IrLocalDelegatedPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
+            context.symbolTable.descriptorExtension.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
         ).apply {
@@ -556,35 +566,34 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
     )
 
     private fun resolvePropertySymbol(descriptor: PropertyDescriptor, mutable: Boolean): DelegatedPropertySymbols {
-        val symbol = context.symbolTable.referenceProperty(descriptor)
+        val symbol = context.symbolTable.descriptorExtension.referenceProperty(descriptor)
         val syntheticJavaProperty = context.extensions.unwrapSyntheticJavaProperty(descriptor)
         if (syntheticJavaProperty != null) {
             val (getMethod, setMethod) = syntheticJavaProperty
             // This is the special case of synthetic java properties when requested property doesn't even exist but IR design
             // requires its symbol to be bound so let do that
             // see `irText/declarations/provideDelegate/javaDelegate.kt` and KT-45297
-            val getterSymbol = context.symbolTable.referenceSimpleFunction(getMethod)
+            val getterSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(getMethod)
             val setterSymbol = if (mutable) setMethod?.let {
-                context.symbolTable.referenceSimpleFunction(it)
+                context.symbolTable.descriptorExtension.referenceSimpleFunction(it)
             } else null
             if (!symbol.isBound) {
                 val offset = UNDEFINED_OFFSET
-                context.symbolTable.declareProperty(offset, offset, IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE, descriptor) {
+                context.symbolTable.descriptorExtension.declareProperty(descriptor) {
                     context.irFactory.createProperty(
-                        offset,
-                        offset,
-                        IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE,
-                        symbol,
-                        descriptor.name,
-                        descriptor.visibility,
-                        descriptor.modality,
-                        descriptor.isVar,
-                        descriptor.isConst,
-                        descriptor.isLateInit,
-                        descriptor.isDelegated,
-                        descriptor.isExternal,
-                        descriptor.isExpect,
-                        isFakeOverride = false
+                        startOffset = offset,
+                        endOffset = offset,
+                        origin = IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE,
+                        name = descriptor.name,
+                        visibility = descriptor.visibility,
+                        modality = descriptor.modality,
+                        symbol = symbol,
+                        isVar = descriptor.isVar,
+                        isConst = descriptor.isConst,
+                        isLateinit = descriptor.isLateInit,
+                        isDelegated = descriptor.isDelegated,
+                        isExternal = descriptor.isExternal,
+                        isExpect = descriptor.isExpect,
                     ).also {
                         it.parent = scope.getLocalDeclarationParent()
                     }
@@ -592,8 +601,8 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             }
             return DelegatedPropertySymbols(symbol, getterSymbol, setterSymbol)
         } else {
-            val getterSymbol = descriptor.getter?.let { context.symbolTable.referenceSimpleFunction(it) }
-            val setterSymbol = if (mutable) descriptor.setter?.let { context.symbolTable.referenceSimpleFunction(it) } else null
+            val getterSymbol = descriptor.getter?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+            val setterSymbol = if (mutable) descriptor.setter?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) } else null
             return DelegatedPropertySymbols(symbol, getterSymbol, setterSymbol)
         }
     }
@@ -629,7 +638,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         when {
             originalProperty.isDelegated -> null
             originalProperty.getter != null -> null
-            else -> context.symbolTable.referenceField(originalProperty)
+            else -> context.symbolTable.descriptorExtension.referenceField(originalProperty)
         }
 
     private fun generateFunctionReference(

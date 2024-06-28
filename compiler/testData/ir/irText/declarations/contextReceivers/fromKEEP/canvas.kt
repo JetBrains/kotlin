@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ContextReceivers
-// TARGET_BACKEND: JVM_IR
+// LANGUAGE: +ContextReceivers
 
 interface Canvas {
     val suffix: String

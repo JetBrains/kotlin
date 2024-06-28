@@ -42,69 +42,71 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
      */
     private val partsCache: MutableMap<ClassDescriptor, SyntheticParts> = HashMap()
 
-    context(LazyJavaResolverContext)
-    override fun getMethodNames(thisDescriptor: ClassDescriptor): List<Name> =
-        getSyntheticParts(thisDescriptor).methods.map { it.name }
+    override fun getMethodNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> =
+        c.getSyntheticParts(thisDescriptor).methods.map { it.name }
 
-    context(LazyJavaResolverContext)
     override fun generateMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
-        result: MutableCollection<SimpleFunctionDescriptor>
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
     ) {
-        val methods = getSyntheticParts(thisDescriptor).methods.filter { it.name == name }
+        val methods = c.getSyntheticParts(thisDescriptor).methods.filter { it.name == name }
         addNonExistent(result, methods)
     }
 
-    context(LazyJavaResolverContext)
-    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
-        getSyntheticParts(thisDescriptor).staticFunctions.map { it.name }
+    override fun getStaticFunctionNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> =
+        c.getSyntheticParts(thisDescriptor).staticFunctions.map { it.name }
 
-    context(LazyJavaResolverContext)
-    override fun generateStaticFunctions(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
-        val functions = getSyntheticParts(thisDescriptor).staticFunctions.filter { it.name == name }
+    override fun generateStaticFunctions(
+        thisDescriptor: ClassDescriptor,
+        name: Name,
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        c: LazyJavaResolverContext,
+    ) {
+        val functions = c.getSyntheticParts(thisDescriptor).staticFunctions.filter { it.name == name }
         addNonExistent(result, functions)
     }
 
-    context(LazyJavaResolverContext)
-    override fun generateConstructors(thisDescriptor: ClassDescriptor, result: MutableList<ClassConstructorDescriptor>) {
-        val constructors = getSyntheticParts(thisDescriptor).constructors
+    override fun generateConstructors(
+        thisDescriptor: ClassDescriptor,
+        result: MutableList<ClassConstructorDescriptor>,
+        c: LazyJavaResolverContext,
+    ) {
+        val constructors = c.getSyntheticParts(thisDescriptor).constructors
         addNonExistent(result, constructors)
     }
 
-    context(LazyJavaResolverContext)
-    override fun getNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> {
-        return getSyntheticParts(thisDescriptor).classes.map { it.name }
+    override fun getNestedClassNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name> {
+        return c.getSyntheticParts(thisDescriptor).classes.map { it.name }
     }
 
-    context(LazyJavaResolverContext)
     override fun generateNestedClass(
         thisDescriptor: ClassDescriptor,
         name: Name,
-        result: MutableList<ClassDescriptor>
+        result: MutableList<ClassDescriptor>,
+        c: LazyJavaResolverContext,
     ) {
-        result += getSyntheticParts(thisDescriptor).classes.filter { it.name == name }
+        result += c.getSyntheticParts(thisDescriptor).classes.filter { it.name == name }
     }
 
-    context(LazyJavaResolverContext)
-    private fun getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
+    private fun LazyJavaResolverContext.getSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
         if (descriptor !is LazyJavaClassDescriptor && descriptor !is SyntheticJavaClassDescriptor) return SyntheticParts.Empty
         return partsCache.getOrPut(descriptor) {
             computeSyntheticParts(descriptor)
         }
     }
 
-    context(LazyJavaResolverContext)
-    private fun computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
+    private fun LazyJavaResolverContext.computeSyntheticParts(descriptor: ClassDescriptor): SyntheticParts {
         val builder = SyntheticPartsBuilder()
-        processors.forEach { it.contribute(descriptor, builder) }
+        processors.forEach { it.contribute(descriptor, builder, this) }
         return builder.build()
     }
 
-    context(LazyJavaResolverContext)
     override fun modifyField(
         thisDescriptor: ClassDescriptor,
-        propertyDescriptor: PropertyDescriptorImpl
+        propertyDescriptor: PropertyDescriptorImpl,
+        c: LazyJavaResolverContext
     ): PropertyDescriptorImpl {
         return valueFieldModifier.modifyField(thisDescriptor, propertyDescriptor) ?: propertyDescriptor
     }

@@ -1,0 +1,234 @@
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: test/E.A
+  compilerVisibility: Public
+  contextReceivers: []
+  enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: A
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/E
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+  getContainingJvmClassName: test.E
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaEnumEntrySymbol:
+  annotations: []
+  callableId: test/E.B
+  compilerVisibility: Public
+  contextReceivers: []
+  enumEntryInitializer: null
+  isActual: false
+  isExpect: false
+  isExtension: false
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: B
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/E
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+  getContainingJvmClassName: test.E
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/E.values
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: values
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: test/E
+    ]
+    type: kotlin/Array<test/E>
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+  getContainingJvmClassName: test.E
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: test/E.valueOf
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: true
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: FINAL
+  name: valueOf
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: test/E
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: value
+      origin: SOURCE_MEMBER_GENERATED
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      visibility: PUBLIC
+      getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+      getContainingJvmClassName: test.E
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+  getContainingJvmClassName: test.E
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+
+KaKotlinPropertySymbol:
+  annotations: []
+  backingFieldSymbol: null
+  callableId: test/E.entries
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: null
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: true
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: FINAL
+    origin: SOURCE_MEMBER_GENERATED
+    receiverParameter: null
+    returnType: KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaUsualClassType:
+          annotations: []
+          typeArguments: []
+          type: test/E
+      ]
+      type: kotlin/enums/EnumEntries<test/E>
+    valueParameters: []
+    visibility: PUBLIC
+    getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+    getContainingJvmClassName: test.E
+    getContainingModule: KaSourceModule "Sources of main"
+    deprecationStatus: null
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: true
+  isVal: true
+  location: CLASS
+  modality: FINAL
+  name: entries
+  origin: SOURCE_MEMBER_GENERATED
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: test/E
+    ]
+    type: kotlin/enums/EnumEntries<test/E>
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(enumClass.kt)
+  getContainingJvmClassName: test.E
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getEntries
+  javaSetterName: null
+  setterDeprecationStatus: null

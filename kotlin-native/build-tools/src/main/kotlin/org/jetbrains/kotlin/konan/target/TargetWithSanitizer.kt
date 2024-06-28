@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.konan.target
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeDisambiguationRule
+import org.gradle.api.attributes.AttributesSchema
+import org.gradle.api.attributes.MultipleCandidatesDetails
 import java.io.Serializable
 
 /**
@@ -49,8 +52,29 @@ fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetWithSani
  * All known targets with their sanitizers.
  */
 val PlatformManager.allTargetsWithSanitizers
-    get() = this.enabled.flatMap { target ->
+    get() = enabledTargets(this).flatMap { target ->
         listOf(target.withSanitizer()) + target.supportedSanitizers().map {
             target.withSanitizer(it)
         }
     }
+
+private class TargetDisambiguationRule : AttributeDisambiguationRule<TargetWithSanitizer> {
+    override fun execute(details: MultipleCandidatesDetails<TargetWithSanitizer>) = details.run {
+        if (consumerValue == null) {
+            // If the consumer didn't want a specific target, provide host target if it's available.
+            val default = TargetWithSanitizer.host
+            if (candidateValues.contains(default)) {
+                closestMatch(default)
+            }
+        }
+    }
+}
+
+/**
+ * Register [TargetWithSanitizer] attribute with [AttributesSchema].
+ */
+fun AttributesSchema.registerTargetWithSanitizerAttribute() {
+    attribute(TargetWithSanitizer.TARGET_ATTRIBUTE) {
+        disambiguationRules.add(TargetDisambiguationRule::class.java)
+    }
+}

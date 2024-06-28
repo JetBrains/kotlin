@@ -14,6 +14,7 @@ version = deployVersion ?: "0.0.1-SNAPSHOT"
 
 sourceSets {
     "main" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 val embedded by configurations
@@ -23,7 +24,7 @@ configurations.getByName("testApi").extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
-    embedded(project(":kotlinx-metadata"))
+    embedded(project(":kotlin-metadata"))
     embedded(project(":core:compiler.common"))
     embedded(project(":core:metadata"))
     embedded(project(":core:deserialization"))
@@ -33,6 +34,8 @@ dependencies {
     embedded(project(":kotlin-util-klib"))
     embedded(project(":kotlin-util-io"))
     embedded(protobufLite())
+    testImplementation(kotlinTest("junit"))
+    testImplementation(libs.junit4)
 }
 
 if (deployVersion != null) {
@@ -42,9 +45,15 @@ if (deployVersion != null) {
 runtimeJarWithRelocation {
     from(mainSourceSet.output)
     exclude("**/*.proto")
-    relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
+    relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
 }
 
 sourcesJar()
 
 javadocJar()
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
+}

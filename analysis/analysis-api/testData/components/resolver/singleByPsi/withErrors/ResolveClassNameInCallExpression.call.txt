@@ -1,0 +1,20 @@
+KtNameReferenceExpression(327,331): 'Test'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = Test<T>
+            symbol = <constructor>(): Test<T>
+            valueParameters = []
+            callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.Int)
+        }
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

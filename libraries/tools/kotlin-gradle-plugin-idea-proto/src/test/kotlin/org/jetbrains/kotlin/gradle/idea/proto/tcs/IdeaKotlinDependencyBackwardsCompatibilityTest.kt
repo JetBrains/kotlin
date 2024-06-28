@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.classLoaderForBackwardsCompatibleClasses
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectArtifactDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinDependencySerializer
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.TestIdeaKotlinInstances
 import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.copy
@@ -54,8 +51,16 @@ class IdeaKotlinDependencyBackwardsCompatibilityTest {
         val deserializedCopied = deserialized.copy<IdeaKotlinSourceDependency>()
 
         assertEquals(dependency.type, deserializedCopied.type)
-        assertEquals(dependency.coordinates, deserializedCopied.coordinates)
         assertEquals(dependency.extras, deserializedCopied.extras)
+
+        /* Check if coordinates are equals: Note the old class does not contain buildPath and buildName in project coordinates */
+        run {
+            assertEquals(dependency.coordinates.sourceSetName, deserializedCopied.coordinates.sourceSetName)
+            assertProjectCoordinatesEquals(
+                dependency.coordinates.project,
+                deserialized.callMethod("getCoordinates").callMethod("getProject")
+            )
+        }
     }
 
     @Test
@@ -66,9 +71,22 @@ class IdeaKotlinDependencyBackwardsCompatibilityTest {
         val deserializedCopied = deserialized.copy<IdeaKotlinProjectArtifactDependency>()
 
         assertEquals(dependency.type, deserializedCopied.type)
-        assertEquals(dependency.coordinates, deserializedCopied.coordinates)
         assertEquals(dependency.extras, deserializedCopied.extras)
+        assertProjectCoordinatesEquals(dependency.coordinates, deserialized.callMethod("getCoordinates"))
     }
+}
+
+private fun assertProjectCoordinatesEquals(
+    expected: IdeaKotlinProjectCoordinates, deserialized: Any,
+) {
+    val deserializedBuildId = deserialized.callMethod("getBuildId")
+    val deserializedProjectPath = deserialized.callMethod("getProjectPath")
+    val deserializedProjectName = deserialized.callMethod("getProjectName")
+    @Suppress("DEPRECATION")
+    assertEquals(expected.buildId, deserializedBuildId)
+    assertEquals(expected.buildName, deserializedBuildId)
+    assertEquals(expected.projectPath, deserializedProjectPath)
+    assertEquals(expected.projectName, deserializedProjectName)
 }
 
 private fun deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(project: ByteArray): Any {
@@ -92,3 +110,5 @@ private fun deserializeIdeaKotlinDependencyWithBackwardsCompatibleClasses(projec
 
     return deserialized
 }
+
+private fun Any.callMethod(name: String) = javaClass.getDeclaredMethod(name).invoke(this)

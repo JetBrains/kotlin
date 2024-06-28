@@ -1,19 +1,19 @@
 enum class En : Enum<En> {
-  private constructor() /* primary */ {
-    super/*Enum*/<En>()
-    /* <init>() */
-
-  }
-
   A = En()
 
   B = En()
 
   C = En()
 
-  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+  private constructor() /* primary */ {
+    super/*Enum*/<En>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<En>
     get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
@@ -26,14 +26,14 @@ fun test() {
   when {
     x is En -> { // BLOCK
       { // BLOCK
-        val tmp0_subject: En = x /*as En */
+        val tmp_0: En = x /*as En */
         when {
-          EQEQ(arg0 = tmp0_subject, arg1 = En.A) -> { // BLOCK
+          EQEQ(arg0 = tmp_0, arg1 = En.A) -> { // BLOCK
             r = "when1"
           }
-          EQEQ(arg0 = tmp0_subject, arg1 = En.B) -> { // BLOCK
+          EQEQ(arg0 = tmp_0, arg1 = En.B) -> { // BLOCK
           }
-          EQEQ(arg0 = tmp0_subject, arg1 = En.C) -> { // BLOCK
+          EQEQ(arg0 = tmp_0, arg1 = En.C) -> { // BLOCK
           }
         }
       }
@@ -43,17 +43,18 @@ fun test() {
   when {
     y is En -> { // BLOCK
       { // BLOCK
-        val tmp1_subject: En = y /*as En */
+        val tmp_1: En = y /*as En */
         when {
-          EQEQ(arg0 = tmp1_subject, arg1 = En.A) -> { // BLOCK
+          EQEQ(arg0 = tmp_1, arg1 = En.A) -> { // BLOCK
             r = "when2"
           }
-          EQEQ(arg0 = tmp1_subject, arg1 = En.B) -> { // BLOCK
+          EQEQ(arg0 = tmp_1, arg1 = En.B) -> { // BLOCK
           }
-          EQEQ(arg0 = tmp1_subject, arg1 = En.C) -> { // BLOCK
+          EQEQ(arg0 = tmp_1, arg1 = En.C) -> { // BLOCK
           }
         }
       }
     }
   }
 }
+

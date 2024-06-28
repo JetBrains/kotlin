@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.lombok.k2.generators
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -123,6 +125,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                         is FirJavaTypeRef -> buildJavaTypeRef {
                             type = substitutor.substituteOrSelf(typeRef.type)
                             annotationBuilder = { emptyList() }
+                            source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         }
                         else -> typeRef
                     }

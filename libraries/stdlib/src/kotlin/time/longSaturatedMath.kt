@@ -6,69 +6,75 @@
 package kotlin.time
 
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.nanoseconds
 
 // Long time reading saturation math, shared between JVM and Native
 
-internal fun saturatingAdd(longNs: Long, duration: Duration): Long {
-    val durationNs = duration.inWholeNanoseconds
-    if (longNs.isSaturated()) { // MIN_VALUE or MAX_VALUE - the reading is infinite
-        return checkInfiniteSumDefined(longNs, duration, durationNs)
+internal fun saturatingAdd(value: Long, unit: DurationUnit, duration: Duration): Long {
+    val durationInUnit = duration.toLong(unit)
+    if (value.isSaturated()) { // the reading is infinitely saturated
+        return checkInfiniteSumDefined(value, duration, durationInUnit)
     }
-    if (durationNs.isSaturated()) { // duration doesn't fit in Long nanos
-        return saturatingAddInHalves(longNs, duration)
+    if (durationInUnit.isSaturated()) { // duration doesn't fit in Long units
+        return saturatingAddInHalves(value, unit, duration)
     }
 
-    val result = longNs + durationNs
-    if (((longNs xor result) and (durationNs xor result)) < 0) {
-        return if (longNs < 0) Long.MIN_VALUE else Long.MAX_VALUE
+    val result = value + durationInUnit
+    if (((value xor result) and (durationInUnit xor result)) < 0) {
+        return if (value < 0) Long.MIN_VALUE else Long.MAX_VALUE
     }
     return result
 }
 
-private fun checkInfiniteSumDefined(longNs: Long, duration: Duration, durationNs: Long): Long {
-    if (duration.isInfinite() && (longNs xor durationNs < 0)) throw IllegalArgumentException("Summing infinities of different signs")
-    return longNs
+private fun checkInfiniteSumDefined(value: Long, duration: Duration, durationInUnit: Long): Long {
+    if (duration.isInfinite() && (value xor durationInUnit < 0)) throw IllegalArgumentException("Summing infinities of different signs")
+    return value
 }
 
-private fun saturatingAddInHalves(longNs: Long, duration: Duration): Long {
+private fun saturatingAddInHalves(value: Long, unit: DurationUnit, duration: Duration): Long {
     val half = duration / 2
-    if (half.inWholeNanoseconds.isSaturated()) {
-        // this will definitely saturate
-        return (longNs + duration.toDouble(DurationUnit.NANOSECONDS)).toLong()
+    val halfInUnit = half.toLong(unit)
+    if (halfInUnit.isSaturated()) {
+        return halfInUnit // value + inf == inf, return saturated value
     } else {
-        return saturatingAdd(saturatingAdd(longNs, half), duration - half)
+        return saturatingAdd(saturatingAdd(value, unit, half), unit, duration - half)
     }
 }
 
-internal fun saturatingDiff(valueNs: Long, originNs: Long): Duration {
-    if (originNs.isSaturated()) { // MIN_VALUE or MAX_VALUE
-        return -(originNs.toDuration(DurationUnit.DAYS)) // saturate to infinity
+private fun infinityOfSign(value: Long): Duration = if (value < 0) Duration.NEG_INFINITE else Duration.INFINITE
+
+internal fun saturatingDiff(valueNs: Long, origin: Long, unit: DurationUnit): Duration {
+    if (origin.isSaturated()) { // MIN_VALUE or MAX_VALUE
+        return -infinityOfSign(origin)
     }
-    return saturatingFiniteDiff(valueNs, originNs)
+    return saturatingFiniteDiff(valueNs, origin, unit)
 }
 
-internal fun saturatingOriginsDiff(origin1Ns: Long, origin2Ns: Long): Duration {
-    if (origin2Ns.isSaturated()) { // MIN_VALUE or MAX_VALUE
-        if (origin1Ns == origin2Ns) return Duration.ZERO // saturated values of the same sign are considered equal
-        return -(origin2Ns.toDuration(DurationUnit.DAYS)) // saturate to infinity
+internal fun saturatingOriginsDiff(origin1: Long, origin2: Long, unit: DurationUnit): Duration {
+    if (origin2.isSaturated()) {
+        if (origin1 == origin2) return Duration.ZERO // saturated values of the same sign are considered equal
+        return -infinityOfSign(origin2)
     }
-    if (origin1Ns.isSaturated()) {
-        return origin1Ns.toDuration(DurationUnit.DAYS)
+    if (origin1.isSaturated()) {
+        return infinityOfSign(origin1)
     }
-    return saturatingFiniteDiff(origin1Ns, origin2Ns)
+    return saturatingFiniteDiff(origin1, origin2, unit)
 }
 
-private fun saturatingFiniteDiff(value1Ns: Long, value2Ns: Long): Duration {
-    val result = value1Ns - value2Ns
-    if ((result xor value1Ns) and (result xor value2Ns).inv() < 0) {
-        val resultMs = value1Ns / NANOS_IN_MILLIS - value2Ns / NANOS_IN_MILLIS
-        val resultNs = value1Ns % NANOS_IN_MILLIS - value2Ns % NANOS_IN_MILLIS
-        return resultMs.milliseconds + resultNs.nanoseconds
+private fun saturatingFiniteDiff(value1: Long, value2: Long, unit: DurationUnit): Duration {
+    val result = value1 - value2
+    if ((result xor value1) and (result xor value2).inv() < 0) { // Long overflow
+        if (unit < DurationUnit.MILLISECONDS) {
+            val unitsInMilli = convertDurationUnit(1, DurationUnit.MILLISECONDS, unit)
+            val resultMs = value1 / unitsInMilli - value2 / unitsInMilli
+            val resultUnit = value1 % unitsInMilli - value2 % unitsInMilli
+            return resultMs.milliseconds + resultUnit.toDuration(unit)
+        } else {
+            return -infinityOfSign(result)
+        }
     }
-    return result.nanoseconds
+    return result.toDuration(unit)
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun Long.isSaturated(): Boolean =
+internal inline fun Long.isSaturated(): Boolean =
     (this - 1) or 1 == Long.MAX_VALUE // == either MAX_VALUE or MIN_VALUE

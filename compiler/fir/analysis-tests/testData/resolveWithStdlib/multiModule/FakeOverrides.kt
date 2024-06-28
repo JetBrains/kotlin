@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -10,11 +10,11 @@ open class B : A<String>() {
     // Fake (JVM only): override fun bar(arg: String): String = super.bar(arg)
 }
 open class C : B() {
-    open fun bar(arg: String): String = arg
+    open fun <!VIRTUAL_MEMBER_HIDDEN!>bar<!>(arg: String): String = arg
     open fun baz(arg: CharSequence): String = arg.toString()
 }
 
-// MODULE: m1-jvm(m1-common)
+// MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual open class A<T> {

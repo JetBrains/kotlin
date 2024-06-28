@@ -12,6 +12,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -132,7 +133,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     }
 
     val files = mutableMapOf<String, DIFileRef>()
-    val subprograms = mutableMapOf<LLVMValueRef, DISubprogramRef>()
+    val subprograms = mutableMapOf<LlvmCallable, DISubprogramRef>()
 
     /* Some functions are inlined on all callsites and body is eliminated by DCE, so there's no LLVM value */
     val inlinedSubprograms = mutableMapOf<IrFunction, DISubprogramRef>()
@@ -170,6 +171,39 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     fun subroutineType(llvmTargetData: LLVMTargetDataRef, types: List<IrType>): DISubroutineTypeRef = memScoped {
         DICreateSubroutineType(builder, allocArrayOf(types.map { it.diType(llvmTargetData) }), types.size)!!
     }
+
+    fun IrFile.diFileScope() = files.getOrPut(this.fileEntry.name) {
+        val path = this.fileEntry.name.toFileAndFolder(context.config)
+        DICreateFile(builder, path.file, path.folder)!!
+    }
+
+    fun IrFunction.diFunctionScope(
+            file: IrFile,
+            linkageName: String,
+            startLine: Int,
+            nodebug: Boolean,
+    ) = diFunctionScope(file, name.asString(), linkageName, startLine, subroutineType(llvmTargetData), nodebug)
+
+    fun diFunctionScope(
+            file: IrFile,
+            name: String,
+            linkageName: String,
+            startLine: Int,
+            subroutineType: DISubroutineTypeRef,
+            nodebug: Boolean,
+    ) = DICreateFunction(
+            builder = builder,
+            scope = compilationUnit,
+            name = (if (nodebug) "<NODEBUG>" else "") + name,
+            linkageName = linkageName,
+            file = file.diFileScope(),
+            lineNo = startLine,
+            type = subroutineType,
+            //TODO: need more investigations.
+            isLocal = 0,
+            isDefinition = 1,
+            scopeLine = 0
+    )!!
 
     private fun dwarfPointerType(type: DITypeOpaqueRef): DITypeOpaqueRef =
             DICreatePointerType(builder, type)!!.reinterpret()
@@ -225,7 +259,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
 /**
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
-private val NO_SOURCE_FILE = "no source file"
+private const val NO_SOURCE_FILE = "no source file"
 private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
     // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
     if (offset == UNDEFINED_OFFSET) return 0
@@ -236,9 +270,12 @@ private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int
     return result
 }
 
-internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
+internal fun IrFileEntry.lineAndColumn(offset: Int): Pair<Int, Int> {
+    val (line, column) = this.getLineAndColumnNumbers(offset)
+    return location(offset) { line } to location(offset) { column }
+}
 
-internal fun IrFileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
+internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
 
 internal data class FileAndFolder(val file: String, val folder: String) {
     companion object {
@@ -264,7 +301,7 @@ internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
 
 internal fun alignTo(value: Long, align: Long): Long = (value + align - 1) / align * align
 
-internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LLVMValueRef): LocationInfo? {
+internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LlvmCallable): LocationInfo? {
     if (!generationState.shouldContainLocationDebugInfo()) {
         return null
     }
@@ -273,17 +310,16 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
     val file = debugInfo.compilerGeneratedFile
 
     // TODO: can we share the scope among all bridges?
-    val scope: DIScopeOpaqueRef = DICreateBridgeFunction(
+    val scope: DIScopeOpaqueRef = function.createBridgeFunctionDebugInfo(
             builder = debugInfo.builder,
             scope = file.reinterpret(),
-            function = function,
             file = file,
             lineNo = 0,
             type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0
-    )!!.reinterpret()
+    ).reinterpret()
 
     return LocationInfo(scope, 1, 0)
 }

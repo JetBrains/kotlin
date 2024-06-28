@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +DslMarkerOnFunctionTypeReceiver
+// DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +DslMarkerOnFunctionTypeReceiver
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker

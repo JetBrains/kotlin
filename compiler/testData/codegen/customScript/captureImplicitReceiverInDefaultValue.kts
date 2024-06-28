@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE, WASM, JVM_OLD
+// TARGET_BACKEND: JVM_IR
 // KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.codegen.TestScriptWithReceivers
 
 // receiver: abracadabra

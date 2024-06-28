@@ -1,4 +1,5 @@
-// FIR_IDENTICAL
+// K2: See KT-65342
+
 fun test() {
     a@ b@ while(true) {
         val f = {

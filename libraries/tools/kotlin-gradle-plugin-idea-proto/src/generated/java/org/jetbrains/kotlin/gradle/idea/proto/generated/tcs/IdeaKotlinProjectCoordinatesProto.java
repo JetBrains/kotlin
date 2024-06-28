@@ -16,7 +16,8 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private IdeaKotlinProjectCoordinatesProto() {
-    buildId_ = "";
+    buildName_ = "";
+    buildPath_ = "";
     projectPath_ = "";
     projectName_ = "";
   }
@@ -47,46 +48,116 @@ private static final long serialVersionUID = 0L;
   }
 
   private int bitField0_;
-  public static final int BUILD_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object buildId_;
+  public static final int BUILD_NAME_FIELD_NUMBER = 1;
+  private volatile java.lang.Object buildName_;
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return Whether the buildId field is set.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return Whether the buildName field is set.
    */
   @java.lang.Override
-  public boolean hasBuildId() {
+  public boolean hasBuildName() {
     return ((bitField0_ & 0x00000001) != 0);
   }
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return The buildId.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return The buildName.
    */
   @java.lang.Override
-  public java.lang.String getBuildId() {
-    java.lang.Object ref = buildId_;
+  public java.lang.String getBuildName() {
+    java.lang.Object ref = buildName_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      buildId_ = s;
+      buildName_ = s;
       return s;
     }
   }
   /**
-   * <code>optional string build_id = 1;</code>
-   * @return The bytes for buildId.
+   * <pre>
+   * Renamed from 'build_id' to 'build_name' in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_name = 1;</code>
+   * @return The bytes for buildName.
    */
   @java.lang.Override
   public com.google.protobuf.ByteString
-      getBuildIdBytes() {
-    java.lang.Object ref = buildId_;
+      getBuildNameBytes() {
+    java.lang.Object ref = buildName_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      buildId_ = b;
+      buildName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int BUILD_PATH_FIELD_NUMBER = 4;
+  private volatile java.lang.Object buildPath_;
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return Whether the buildPath field is set.
+   */
+  @java.lang.Override
+  public boolean hasBuildPath() {
+    return ((bitField0_ & 0x00000002) != 0);
+  }
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return The buildPath.
+   */
+  @java.lang.Override
+  public java.lang.String getBuildPath() {
+    java.lang.Object ref = buildPath_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      buildPath_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Added in 1.9.20
+   * </pre>
+   *
+   * <code>optional string build_path = 4;</code>
+   * @return The bytes for buildPath.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getBuildPathBytes() {
+    java.lang.Object ref = buildPath_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      buildPath_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -101,7 +172,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public boolean hasProjectPath() {
-    return ((bitField0_ & 0x00000002) != 0);
+    return ((bitField0_ & 0x00000004) != 0);
   }
   /**
    * <code>optional string project_path = 2;</code>
@@ -147,7 +218,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public boolean hasProjectName() {
-    return ((bitField0_ & 0x00000004) != 0);
+    return ((bitField0_ & 0x00000008) != 0);
   }
   /**
    * <code>optional string project_name = 3;</code>
@@ -200,13 +271,16 @@ private static final long serialVersionUID = 0L;
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     if (((bitField0_ & 0x00000001) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, buildId_);
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, projectPath_);
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, buildName_);
     }
     if (((bitField0_ & 0x00000004) != 0)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, projectPath_);
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 3, projectName_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 4, buildPath_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -218,13 +292,16 @@ private static final long serialVersionUID = 0L;
 
     size = 0;
     if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, buildId_);
-    }
-    if (((bitField0_ & 0x00000002) != 0)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, projectPath_);
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, buildName_);
     }
     if (((bitField0_ & 0x00000004) != 0)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, projectPath_);
+    }
+    if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, projectName_);
+    }
+    if (((bitField0_ & 0x00000002) != 0)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, buildPath_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -241,10 +318,15 @@ private static final long serialVersionUID = 0L;
     }
     org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto other = (org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto) obj;
 
-    if (hasBuildId() != other.hasBuildId()) return false;
-    if (hasBuildId()) {
-      if (!getBuildId()
-          .equals(other.getBuildId())) return false;
+    if (hasBuildName() != other.hasBuildName()) return false;
+    if (hasBuildName()) {
+      if (!getBuildName()
+          .equals(other.getBuildName())) return false;
+    }
+    if (hasBuildPath() != other.hasBuildPath()) return false;
+    if (hasBuildPath()) {
+      if (!getBuildPath()
+          .equals(other.getBuildPath())) return false;
     }
     if (hasProjectPath() != other.hasProjectPath()) return false;
     if (hasProjectPath()) {
@@ -267,9 +349,13 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    if (hasBuildId()) {
-      hash = (37 * hash) + BUILD_ID_FIELD_NUMBER;
-      hash = (53 * hash) + getBuildId().hashCode();
+    if (hasBuildName()) {
+      hash = (37 * hash) + BUILD_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getBuildName().hashCode();
+    }
+    if (hasBuildPath()) {
+      hash = (37 * hash) + BUILD_PATH_FIELD_NUMBER;
+      hash = (53 * hash) + getBuildPath().hashCode();
     }
     if (hasProjectPath()) {
       hash = (37 * hash) + PROJECT_PATH_FIELD_NUMBER;
@@ -407,12 +493,14 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      buildId_ = "";
+      buildName_ = "";
       bitField0_ = (bitField0_ & ~0x00000001);
-      projectPath_ = "";
+      buildPath_ = "";
       bitField0_ = (bitField0_ & ~0x00000002);
-      projectName_ = "";
+      projectPath_ = "";
       bitField0_ = (bitField0_ & ~0x00000004);
+      projectName_ = "";
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -444,13 +532,17 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         to_bitField0_ |= 0x00000001;
       }
-      result.buildId_ = buildId_;
+      result.buildName_ = buildName_;
       if (((from_bitField0_ & 0x00000002) != 0)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.projectPath_ = projectPath_;
+      result.buildPath_ = buildPath_;
       if (((from_bitField0_ & 0x00000004) != 0)) {
         to_bitField0_ |= 0x00000004;
+      }
+      result.projectPath_ = projectPath_;
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        to_bitField0_ |= 0x00000008;
       }
       result.projectName_ = projectName_;
       result.bitField0_ = to_bitField0_;
@@ -502,18 +594,23 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto other) {
       if (other == org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto.getDefaultInstance()) return this;
-      if (other.hasBuildId()) {
+      if (other.hasBuildName()) {
         bitField0_ |= 0x00000001;
-        buildId_ = other.buildId_;
+        buildName_ = other.buildName_;
+        onChanged();
+      }
+      if (other.hasBuildPath()) {
+        bitField0_ |= 0x00000002;
+        buildPath_ = other.buildPath_;
         onChanged();
       }
       if (other.hasProjectPath()) {
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000004;
         projectPath_ = other.projectPath_;
         onChanged();
       }
       if (other.hasProjectName()) {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         projectName_ = other.projectName_;
         onChanged();
       }
@@ -544,20 +641,25 @@ private static final long serialVersionUID = 0L;
               done = true;
               break;
             case 10: {
-              buildId_ = input.readStringRequireUtf8();
+              buildName_ = input.readStringRequireUtf8();
               bitField0_ |= 0x00000001;
               break;
             } // case 10
             case 18: {
               projectPath_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000002;
+              bitField0_ |= 0x00000004;
               break;
             } // case 18
             case 26: {
               projectName_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000004;
+              bitField0_ |= 0x00000008;
               break;
             } // case 26
+            case 34: {
+              buildPath_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -575,85 +677,216 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private java.lang.Object buildId_ = "";
+    private java.lang.Object buildName_ = "";
     /**
-     * <code>optional string build_id = 1;</code>
-     * @return Whether the buildId field is set.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @return Whether the buildName field is set.
      */
-    public boolean hasBuildId() {
+    public boolean hasBuildName() {
       return ((bitField0_ & 0x00000001) != 0);
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @return The buildId.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @return The buildName.
      */
-    public java.lang.String getBuildId() {
-      java.lang.Object ref = buildId_;
+    public java.lang.String getBuildName() {
+      java.lang.Object ref = buildName_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        buildId_ = s;
+        buildName_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @return The bytes for buildId.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @return The bytes for buildName.
      */
     public com.google.protobuf.ByteString
-        getBuildIdBytes() {
-      java.lang.Object ref = buildId_;
+        getBuildNameBytes() {
+      java.lang.Object ref = buildName_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        buildId_ = b;
+        buildName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @param value The buildId to set.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @param value The buildName to set.
      * @return This builder for chaining.
      */
-    public Builder setBuildId(
+    public Builder setBuildName(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-      buildId_ = value;
+      buildName_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string build_id = 1;</code>
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
      * @return This builder for chaining.
      */
-    public Builder clearBuildId() {
+    public Builder clearBuildName() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      buildId_ = getDefaultInstance().getBuildId();
+      buildName_ = getDefaultInstance().getBuildName();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @param value The bytes for buildId to set.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @param value The bytes for buildName to set.
      * @return This builder for chaining.
      */
-    public Builder setBuildIdBytes(
+    public Builder setBuildNameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       bitField0_ |= 0x00000001;
-      buildId_ = value;
+      buildName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object buildPath_ = "";
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @return Whether the buildPath field is set.
+     */
+    public boolean hasBuildPath() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @return The buildPath.
+     */
+    public java.lang.String getBuildPath() {
+      java.lang.Object ref = buildPath_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        buildPath_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @return The bytes for buildPath.
+     */
+    public com.google.protobuf.ByteString
+        getBuildPathBytes() {
+      java.lang.Object ref = buildPath_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        buildPath_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @param value The buildPath to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBuildPath(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+      buildPath_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearBuildPath() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      buildPath_ = getDefaultInstance().getBuildPath();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @param value The bytes for buildPath to set.
+     * @return This builder for chaining.
+     */
+    public Builder setBuildPathBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      bitField0_ |= 0x00000002;
+      buildPath_ = value;
       onChanged();
       return this;
     }
@@ -664,7 +897,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the projectPath field is set.
      */
     public boolean hasProjectPath() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>optional string project_path = 2;</code>
@@ -709,7 +942,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000004;
       projectPath_ = value;
       onChanged();
       return this;
@@ -719,7 +952,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearProjectPath() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       projectPath_ = getDefaultInstance().getProjectPath();
       onChanged();
       return this;
@@ -735,7 +968,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      bitField0_ |= 0x00000002;
+      bitField0_ |= 0x00000004;
       projectPath_ = value;
       onChanged();
       return this;
@@ -747,7 +980,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the projectName field is set.
      */
     public boolean hasProjectName() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>optional string project_name = 3;</code>
@@ -792,7 +1025,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000004;
+  bitField0_ |= 0x00000008;
       projectName_ = value;
       onChanged();
       return this;
@@ -802,7 +1035,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearProjectName() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       projectName_ = getDefaultInstance().getProjectName();
       onChanged();
       return this;
@@ -818,7 +1051,7 @@ private static final long serialVersionUID = 0L;
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
       projectName_ = value;
       onChanged();
       return this;

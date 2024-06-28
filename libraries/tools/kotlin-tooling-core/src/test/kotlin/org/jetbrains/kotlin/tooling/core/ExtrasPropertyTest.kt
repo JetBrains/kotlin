@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.tooling.core
 
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class ExtrasPropertyTest {
-
 
     class Subject : HasMutableExtras {
         override val extras: MutableExtras = mutableExtrasOf()
@@ -18,6 +19,7 @@ class ExtrasPropertyTest {
 
     private val keyA = extrasKeyOf<Int>("a")
     private val keyB = extrasKeyOf<Int>("b")
+    private val keyANullable = extrasKeyOf<Int?>("a")
 
     private val Subject.readA: Int? by keyA.readProperty
     private val Subject.readB: Int? by keyB.readProperty
@@ -170,5 +172,40 @@ class ExtrasPropertyTest {
         assertEquals("OK", subject2.lazyNullableString)
         assertEquals("OK", subject2.lazyNullableString)
         assertEquals(listOf(subject1, subject2), lazyNullableStringInvocations)
+    }
+
+    @Test
+    fun `test - lazyProperty - with nullable key`() {
+        val subject = Subject()
+        val invocationCounter = AtomicInteger(0)
+
+        with(object {
+            val Subject.lazyProperty by keyANullable.lazyProperty {
+                assertEquals(0, invocationCounter.getAndIncrement())
+                null
+            }
+        }) {
+            assertNull(subject.lazyProperty)
+            assertNull(subject.lazyProperty)
+            assertEquals(1, invocationCounter.get())
+
+            invocationCounter.set(0)
+            assertEquals(null, Subject().lazyProperty)
+            assertEquals(1, invocationCounter.get())
+        }
+    }
+
+    @Test
+    fun `test - lazyProperty - with nullable key - set key to null manually`() {
+        with(object {
+            val Subject.lazyProperty by keyANullable.lazyProperty {
+                fail("Unexpected call to factory function")
+            }
+        }) {
+            val subject = Subject()
+            subject.extras[keyANullable] = null
+            assertNull(subject.lazyProperty)
+            assertTrue(keyANullable in subject.extras)
+        }
     }
 }

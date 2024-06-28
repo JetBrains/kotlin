@@ -1,0 +1,52 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(items: Iterator<Int>) {
+    // a group around while is needed here, but the function body group will suffice
+    while (items.hasNext()) {
+        val i = items.next()
+        val j = i
+        P(i)
+        if (i == 0) {
+            break
+        }
+        P(j)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@NonRestartableComposable
+@Composable
+fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "C(Example):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "*<P(i)>,<P(j)>")
+  while (items.hasNext()) {
+    val i = items.next()
+    val j = i
+    P(i, %composer, 0)
+    if (i == 0) {
+      break
+    }
+    P(j, %composer, 0)
+  }
+  %composer.endReplaceGroup()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+}

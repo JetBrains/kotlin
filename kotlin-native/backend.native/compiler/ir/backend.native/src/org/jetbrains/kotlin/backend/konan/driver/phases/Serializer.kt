@@ -5,68 +5,70 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.library.SerializedIrModule
-import org.jetbrains.kotlin.library.SerializedMetadata
 
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
         val psiToIrOutput: PsiToIrOutput.ForKlib?,
+        val produceHeaderKlib: Boolean,
 )
 
-data class SerializerOutput(
-        val serializedMetadata: SerializedMetadata?,
-        val serializedIr: SerializedIrModule?,
-        val dataFlowGraph: ByteArray?,
-        val neededLibraries: List<KonanLibrary>
-)
+typealias SerializerOutput = org.jetbrains.kotlin.backend.common.serialization.SerializerOutput<KonanLibrary>
 
 internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerInput, SerializerOutput>(
         "Serializer", "IR serializer",
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
-    val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
-    val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-    val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
-    val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
 
     val serializedIr = input.psiToIrOutput?.let {
         val ir = it.irModule
         KonanIrModuleSerializer(
-                messageLogger, ir.irBuiltins, it.expectDescriptorToSymbol,
-                skipExpects = !expectActualLinker,
-                compatibilityMode = CompatibilityMode.CURRENT,
-                normalizeAbsolutePaths = normalizeAbsolutePaths,
-                sourceBaseDirs = relativePathBase,
-                languageVersionSettings = config.languageVersionSettings,
+            KtDiagnosticReporterWithImplicitIrBasedContext(
+                DiagnosticReporterFactory.createPendingReporter(),
+                config.languageVersionSettings
+            ),
+            ir.irBuiltins,
+            compatibilityMode = CompatibilityMode.CURRENT,
+            normalizeAbsolutePaths = config.configuration.getBoolean(KlibConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+            sourceBaseDirs = config.configuration.getList(KlibConfigurationKeys.KLIB_RELATIVE_PATH_BASES),
+            languageVersionSettings = config.languageVersionSettings,
+            bodiesOnlyForInlines = input.produceHeaderKlib,
+            publicAbiOnly = input.produceHeaderKlib,
         ).serializedIrModule(ir)
     }
 
     val serializer = KlibMetadataMonolithicSerializer(
-            config.configuration.languageVersionSettings,
-            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-            config.project,
+            languageVersionSettings = config.configuration.languageVersionSettings,
+            metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+            project = config.project,
             exportKDoc = context.shouldExportKDoc(),
-            !expectActualLinker, includeOnlyModuleContent = true)
+            skipExpects = !config.metadataKlib,
+            includeOnlyModuleContent = true,
+            produceHeaderKlib = input.produceHeaderKlib
+    )
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
-        moduleDescriptor: ModuleDescriptor,
-        psiToIrResult: PsiToIrOutput.ForKlib?,
+    moduleDescriptor: ModuleDescriptor,
+    psiToIrResult: PsiToIrOutput.ForKlib?,
+    produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
-    val input = SerializerInput(moduleDescriptor, psiToIrResult)
+    val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib)
     return this.runPhase(SerializerPhase, input)
 }

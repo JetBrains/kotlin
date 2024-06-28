@@ -1,5 +1,5 @@
-// The old backend gets the local variables for finally blocks wrong.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -29,7 +29,7 @@ fun box() {
     compute()
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:29 box:
 // test.kt:7 compute:
 // test.kt:8 compute: result:java.lang.String="":java.lang.String

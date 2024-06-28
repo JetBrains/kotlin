@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])
 annotation class Ann2(vararg val a: Int = [1, 2])
@@ -30,6 +30,9 @@ fun test5() {}
 
 @Ann6(*[])
 fun test6() {}
+
+@Ann7(1, 2)
+fun test7() {}
 
 annotation class AnnArray(val a: Array<String>)
 

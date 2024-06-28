@@ -71,9 +71,9 @@ class PersistentImplicitReceiverStack private constructor(
         )
     }
 
-    override operator fun get(name: String?): ImplicitReceiverValue<*>? {
-        if (name == null) return stack.lastOrNull()
-        return receiversPerLabel[Name.identifier(name)].lastOrNull()
+    override operator fun get(name: String?): Set<ImplicitReceiverValue<*>> {
+        if (name == null) return stack.lastOrNull()?.let(::setOf).orEmpty()
+        return receiversPerLabel[Name.identifier(name)]
     }
 
     override fun lastDispatchReceiver(): ImplicitDispatchReceiverValue? {
@@ -98,6 +98,10 @@ class PersistentImplicitReceiverStack private constructor(
         return originalTypes[index]
     }
 
+    fun getType(index: Int): ConeKotlinType {
+        return stack[index].type
+    }
+
     // This method is only used from DFA and it's in some sense breaks persistence contracts of the data structure
     // But it's ok since DFA handles everything properly yet, but still may be it should be rewritten somehow
     @OptIn(ImplicitReceiverValue.ImplicitReceiverInternals::class)
@@ -106,9 +110,9 @@ class PersistentImplicitReceiverStack private constructor(
         stack[index].updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(): PersistentImplicitReceiverStack {
+    fun createSnapshot(keepMutable: Boolean): PersistentImplicitReceiverStack {
         return PersistentImplicitReceiverStack(
-            stack.map { it.createSnapshot() }.toPersistentList(),
+            stack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
             receiversPerLabel,
             indexesPerSymbol,
             originalTypes

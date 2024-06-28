@@ -16,8 +16,8 @@
 
 package kotlinx.cinterop
 
-import org.jetbrains.kotlin.konan.util.NativeMemoryAllocator
-import org.jetbrains.kotlin.konan.util.ThreadSafeDisposableHelper
+import org.jetbrains.kotlin.utils.NativeMemoryAllocator
+import org.jetbrains.kotlin.utils.ThreadSafeDisposableHelper
 import sun.misc.Unsafe
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer

@@ -23,8 +23,8 @@ open class MyGenericClass<T>(t : T) : MyTrait<T>, MyAbstractClass<T>(), MyProps<
 class MyChildClass() : MyGenericClass<Int>(1) {}
 class MyChildClass1<T>(t : T) : MyGenericClass<T>(t) {}
 class MyChildClass2<T>(t : T) : MyGenericClass<T>(t) {
-    fun foo(t: T) = t
-    val pr : T = t
+    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(t: T) = t
+    val <!VIRTUAL_MEMBER_HIDDEN!>pr<!> : T = t
     override fun bar(t: T) = t
     override val p : T = t
 }

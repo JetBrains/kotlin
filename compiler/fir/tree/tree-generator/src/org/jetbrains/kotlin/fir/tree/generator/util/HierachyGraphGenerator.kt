@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.util
 
-import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.Model
+import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import java.io.File
 
-fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
-    fun Implementation.Kind.toColor(): String = when (this) {
-        Implementation.Kind.Interface -> "green"
+// It's used to generate a graph in dot format (it's useful for debugging)
+@Suppress("unused")
+fun printHierarchyGraph(model: Model) {
+    fun ImplementationKind.toColor(): String = when (this) {
+        ImplementationKind.Interface -> "green"
         else -> "red"
     }
 
-    val elements = builder.elements
+    val elements = model.elements
 
     data class Edge(val from: String, val to: String) {
         override fun toString(): String {
@@ -23,7 +25,7 @@ fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
         }
     }
 
-    val (interfaces, classes) = elements.partition { it.kind == Implementation.Kind.Interface }
+    val (interfaces, classes) = elements.partition { it.kind == ImplementationKind.Interface }
     println("Interfaces: ${interfaces.size}")
     println("Classes: ${classes.size}")
 
@@ -31,13 +33,13 @@ fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
         with(printer) {
             println("digraph FirTree {")
             elements.forEach {
-                println("    ${it.type} [color=${it.kind!!.toColor()}]")
+                println("    ${it.typeName} [color=${it.kind!!.toColor()}]")
             }
             println()
             val edges = mutableSetOf<Edge>()
             elements.forEach { element ->
                 element.allParents.forEach { parent ->
-                    edges += Edge(parent.type, element.type)
+                    edges += Edge(parent.typeName, element.typeName)
                 }
             }
             edges.forEach {

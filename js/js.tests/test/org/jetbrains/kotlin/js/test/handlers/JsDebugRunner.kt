@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.defaultDirectives
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
@@ -140,7 +141,8 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
             mainModule.frontendKind,
             mainModule.targetBackend ?: TargetBackend.JS_IR,
             originalFile,
-            loggedItems
+            loggedItems,
+            testServices.defaultDirectives
         )
     }
 
@@ -351,24 +353,6 @@ private fun URI.withAuthority(newAuthority: String?) =
     URI(scheme, newAuthority, path, query, fragment)
 
 private fun Debugger.Location.toCodePosition() = CodePosition(lineNumber, columnNumber ?: -1)
-
-private fun SourceMap.segmentForGeneratedLocation(lineNumber: Int, columnNumber: Int?): SourceMapSegment? {
-
-    val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
-    return if (columnNumber == null || columnNumber <= group.segments[0].generatedColumnNumber) {
-        group.segments[0]
-    } else {
-        val candidateIndex = group.segments.indexOfFirst {
-            columnNumber <= it.generatedColumnNumber
-        }
-        if (candidateIndex < 0)
-            null
-        else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
-            group.segments[candidateIndex]
-        else
-            group.segments[candidateIndex - 1]
-    }
-}
 
 @Serializable
 private class ValueDescription(val isNull: Boolean, val isReferenceType: Boolean, val valueDescription: String, val typeName: String) {

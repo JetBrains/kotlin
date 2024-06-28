@@ -11,12 +11,19 @@ import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
-import kotlin.reflect.KClass
 
 fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
 ): TestGroupSuite {
     return TestGroupSuite(DefaultTargetBackendComputer).apply(init)
+}
+
+fun TestGroupSuite.forEachTestClassParallel(f: (TestGroup.TestClass) -> Unit) {
+    testGroups
+        .parallelStream()
+        .flatMap { it.testClasses.stream() }
+        .sorted(compareByDescending { it.testModels.sumOf { it.methods.size } })
+        .forEach(f)
 }
 
 class TestGroupSuite(val targetBackendComputer: TargetBackendComputer) {
@@ -59,13 +66,13 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         noinline init: TestClass.() -> Unit
     ) {
-        val testKClass = T::class
-        testClass(testKClass, testKClass.java.name, suiteTestClassName, useJunit4, annotations, init)
+        val testKClass = T::class.java
+        testClass(testKClass, testKClass.name, suiteTestClassName, useJunit4, annotations, init)
     }
 
     fun testClass(
-        testKClass: KClass<*>,
-        baseTestClassName: String = testKClass.java.name,
+        testKClass: Class<*>,
+        baseTestClassName: String = testKClass.name,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
         useJunit4: Boolean,
         annotations: List<AnnotationModel> = emptyList(),
@@ -75,7 +82,7 @@ class TestGroup(
     }
 
     inner class TestClass(
-        val testKClass: KClass<*>,
+        val testKClass: Class<*>,
         val baseTestClassName: String,
         val suiteTestClassName: String,
         val useJunit4: Boolean,
@@ -95,7 +102,7 @@ class TestGroup(
         }
 
         fun model(
-            relativeRootPath: String,
+            relativeRootPath: String = "",
             recursive: Boolean = true,
             excludeParentDirs: Boolean = false,
             extension: String? = "kt", // null string means dir (name without dot)

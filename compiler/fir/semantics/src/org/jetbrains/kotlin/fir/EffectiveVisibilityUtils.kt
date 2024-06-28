@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirLookupTagEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 fun Visibility.toEffectiveVisibility(
     ownerSymbol: FirClassLikeSymbol<*>?,
@@ -23,18 +25,8 @@ fun Visibility.toEffectiveVisibility(
     owner: ConeClassLikeLookupTag?,
     forClass: Boolean = false,
     ownerIsPublishedApi: Boolean = false
-): EffectiveVisibility {
-    customEffectiveVisibility()?.let { return it }
-    return when (this.normalize()) {
-        Visibilities.PrivateToThis, Visibilities.InvisibleFake -> EffectiveVisibility.PrivateInClass
-        Visibilities.Private -> if (owner == null && forClass) EffectiveVisibility.PrivateInFile else EffectiveVisibility.PrivateInClass
-        Visibilities.Protected -> EffectiveVisibility.Protected(owner)
-        Visibilities.Internal -> when (ownerIsPublishedApi) {
-            true -> EffectiveVisibility.Public
-            false -> EffectiveVisibility.Internal
+): EffectiveVisibility =
+    toEffectiveVisibilityOrNull(owner, forClass, ownerIsPublishedApi)
+        ?: errorWithAttachment("Unknown visibility: $this") {
+            withFirLookupTagEntry("owner", owner)
         }
-        Visibilities.Public -> EffectiveVisibility.Public
-        Visibilities.Local -> EffectiveVisibility.Local
-        else -> error("Unknown visibility: $this")
-    }
-}

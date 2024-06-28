@@ -81,11 +81,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val EXPECT_ACTUAL_LINKER by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val SPLIT_PER_MODULE by directive(
         description = "",
         applicability = DirectiveApplicability.Global
@@ -99,12 +94,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val SKIP_MANGLE_VERIFICATION by directive(
         description = "",
         applicability = DirectiveApplicability.Global
-    )
-
-    val ERROR_POLICY by enumDirective<ErrorTolerancePolicy>(
-        description = "",
-        applicability = DirectiveApplicability.Global,
-        additionalParser = { ErrorTolerancePolicy.resolvePolicy(it) }
     )
 
     val PROPERTY_LAZY_INITIALIZATION by directive(

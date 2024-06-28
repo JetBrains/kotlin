@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.PackagePartsCacheData
+import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -31,6 +28,8 @@ class OptionalAnnotationClassesProvider(
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
+
+    private val annotationDeserializer = MetadataBasedAnnotationDeserializer(session)
 
     private val optionalAnnotationClassesAndPackages by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val optionalAnnotationClasses = mutableMapOf<ClassId, ClassData>()
@@ -71,10 +70,11 @@ class OptionalAnnotationClassesProvider(
         return ClassMetadataFindResult.Metadata(
             optionalAnnotationClass.nameResolver,
             optionalAnnotationClass.classProto,
-            null,
+            annotationDeserializer,
             moduleDataProvider.allModuleData.last(),
             null,
-            classPostProcessor = null
+            classPostProcessor = null,
+            FirTypeDeserializer.FlexibleTypeFactory.Default,
         )
     }
 
@@ -84,4 +84,28 @@ class OptionalAnnotationClassesProvider(
 
     override fun getPackage(fqName: FqName): FqName? =
         if (optionalAnnotationClassesAndPackages.second.contains(fqName.asString())) fqName else null
+
+    companion object {
+        /**
+         * Creates a new [OptionalAnnotationClassesProvider] if [packagePartProvider] has any optional annotation classes. Otherwise, the
+         * symbol provider does not need to be created because it would provide no symbols.
+         */
+        fun createIfNeeded(
+            session: FirSession,
+            moduleDataProvider: ModuleDataProvider,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+            packagePartProvider: PackagePartProvider,
+            defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+        ): OptionalAnnotationClassesProvider? {
+            if (!packagePartProvider.mayHaveOptionalAnnotationClasses()) return null
+
+            return OptionalAnnotationClassesProvider(
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                packagePartProvider,
+                defaultDeserializationOrigin,
+            )
+        }
+    }
 }

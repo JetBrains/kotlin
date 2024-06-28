@@ -1,4 +1,4 @@
-interface Module2Interface {
+interface Module1Interface {
     public fun testFunction2() = 20
     public fun testFunction22() = 220
 

@@ -1,19 +1,25 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.concurrent
 
 import kotlin.native.internal.*
+import kotlinx.cinterop.ExperimentalForeignApi
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_create")
+@ObsoleteWorkersApi
+@Escapes(0b01) // value escapes into stable ref.
 external private fun createWorkerBoundReference(value: Any): NativePtr
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_deref")
+@ObsoleteWorkersApi
 external private fun derefWorkerBoundReference(ref: NativePtr): Any?
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_describe")
+@ObsoleteWorkersApi
 external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**
@@ -31,6 +37,8 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
 @HasFinalizer
 @HasFreezeHook
 @FreezingIsDeprecated
+@ObsoleteWorkersApi
+@OptIn(ExperimentalForeignApi::class)
 public class WorkerBoundReference<out T : Any>(value: T) {
 
     private var ptr = NativePtr.NULL
@@ -44,19 +52,19 @@ public class WorkerBoundReference<out T : Any>(value: T) {
      * The referenced value.
      * @throws IncorrectDereferenceException if referred object is not frozen and current worker is different from the one created [this].
      */
-    val value: T
+    public val value: T
         get() = valueOrNull ?: throw IncorrectDereferenceException("illegal attempt to access non-shared $valueDescription bound to `$ownerName` from `${Worker.current.name}`")
 
     /**
      * The referenced value or null if referred object is not frozen and current worker is different from the one created [this].
      */
-    val valueOrNull: T?
+    public val valueOrNull: T?
         get() = valueBeforeFreezing ?: @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
 
     /**
      * Worker that [value] is bound to.
      */
-    val worker: Worker = Worker.current
+    public val worker: Worker = Worker.current
 
     @ExportForCppRuntime("Kotlin_WorkerBoundReference_freezeHook")
     private fun freezeHook() {

@@ -59,7 +59,6 @@ class ModulesApiHistoryAndroidTest {
         }
 
         val info = IncrementalModuleInfo(
-            projectRoot = projectRoot,
             rootProjectBuildDir = projectRoot.resolve("build"),
             dirToModule = mapOf(appKotlinDestination to appEntry, libKotlinDestination to libEntry),
             nameToModules = mapOf("app" to setOf(appEntry), "lib" to setOf(libEntry)),
@@ -68,7 +67,7 @@ class ModulesApiHistoryAndroidTest {
             jarToAbiSnapshot = mapOf()
         )
 
-        androidHistory = ModulesApiHistoryAndroid(info)
+        androidHistory = ModulesApiHistoryAndroid(projectRoot, info)
     }
 
     @Test

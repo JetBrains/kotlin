@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 class PrimitiveConeNumericComparisonInfo(
     val comparisonType: ConeClassLikeType,
@@ -24,14 +24,18 @@ val FirComparisonExpression.left: FirExpression
 val FirComparisonExpression.right: FirExpression
     get() = compareToCall.arguments.getOrNull(0) ?: error("There should be a first arg for ${compareToCall.render()}")
 
-fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveConeNumericComparisonInfo? =
-    inferPrimitiveNumericComparisonInfo(left, right)
+fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(c: Fir2IrComponents): PrimitiveConeNumericComparisonInfo? =
+    inferPrimitiveNumericComparisonInfo(left, right, c)
 
-fun inferPrimitiveNumericComparisonInfo(left: FirExpression, right: FirExpression): PrimitiveConeNumericComparisonInfo? {
-    val leftType = left.typeRef.coneType
-    val rightType = right.typeRef.coneType
-    val leftPrimitiveOrNullableType = leftType.getPrimitiveTypeOrSupertype() ?: return null
-    val rightPrimitiveOrNullableType = rightType.getPrimitiveTypeOrSupertype() ?: return null
+fun inferPrimitiveNumericComparisonInfo(
+    left: FirExpression,
+    right: FirExpression,
+    c: Fir2IrComponents,
+): PrimitiveConeNumericComparisonInfo? {
+    val leftType = left.resolvedType
+    val rightType = right.resolvedType
+    val leftPrimitiveOrNullableType = leftType.getPrimitiveTypeOrSupertype(c) ?: return null
+    val rightPrimitiveOrNullableType = rightType.getPrimitiveTypeOrSupertype(c) ?: return null
     val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)
 
     return PrimitiveConeNumericComparisonInfo(leastCommonType, leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)
@@ -57,16 +61,18 @@ private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLike
         else -> error("Primitive number type expected: $this")
     }
 
-private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
+private fun ConeKotlinType.getPrimitiveTypeOrSupertype(c: Fir2IrComponents): ConeClassLikeType? =
     when {
         this is ConeTypeParameterType ->
             this.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
-                it.coneType.getPrimitiveTypeOrSupertype()
+                it.coneType.getPrimitiveTypeOrSupertype(c)
             }
         this is ConeClassLikeType && isPrimitiveNumberType() ->
             this
         this is ConeFlexibleType ->
-            this.lowerBound.getPrimitiveTypeOrSupertype()
+            this.lowerBound.getPrimitiveTypeOrSupertype(c)
+        this is ConeCapturedType ->
+            this.approximateForIrOrSelf(c).getPrimitiveTypeOrSupertype(c)
         else ->
             null
     }

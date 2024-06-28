@@ -8,84 +8,79 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import com.android.build.gradle.LibraryExtension
-import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
-import org.jetbrains.kotlin.gradle.plugin.runMissingAndroidTargetProjectConfigurationHealthCheck
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
-import org.jetbrains.kotlin.gradle.util.propertiesExtension
+import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.assertNull
+import kotlin.test.assertSame
 
 class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
     @Test
     fun `test android plugin without android target`() {
-        project.plugins.apply("kotlin-multiplatform")
-        project.plugins.apply("android-library")
-
-        /* Arbitrary minimal Android setup */
-        val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
-
-        kotlin.jvm()
-
+        defaultSetupWithoutAndroidTarget()
         /* Previously failed with 'Collection is empty.' */
         assertNull(project.findAndroidTarget())
-        assertSame(kotlin.android(), project.findAndroidTarget())
+        assertSame(kotlin.androidTarget(), project.findAndroidTarget())
     }
 
     @Test
-    fun `test runMissingAndroidTargetProjectConfigurationHealthCheck`() {
-        project.plugins.apply("kotlin-multiplatform")
-        project.plugins.apply("android-library")
-
-        /* Arbitrary minimal Android setup */
-        val android = project.extensions.getByName("android") as LibraryExtension
-        android.compileSdk = 31
-
-        kotlin.jvm()
+    fun `test runMissingAndroidTargetProjectConfigurationHealthCheck - warning`() {
+        defaultSetupWithoutAndroidTarget()
 
         // Missing android target -> expect warning message
-        var warningMessage: String? = null
-        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
-        assertNotNull(warningMessage, "Expected warning message to be logged")
-
-        // Present android target -> expect no warning message anymore
-        kotlin.android()
-        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = {
-            fail("Expected no warning message to be logged. Received: $it")
-        })
+        project.evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.AndroidTargetIsMissing)
     }
 
     @Test
-    fun `test kotlin-mpp-absentAndroidTarget-nowarn flag`() {
+    fun `test runMissingAndroidTargetProjectConfigurationHealthCheck - no warning`() {
+        defaultSetupWithoutAndroidTarget()
+        kotlin.androidTarget()
+
+        // Present android target -> expect no warning message anymore
+        project.evaluate()
+        project.assertNoDiagnostics()
+    }
+
+    @Test
+    fun `test kotlin-mpp-absentAndroidTarget-nowarn flag set to true`() {
+        defaultSetupWithoutAndroidTarget()
         project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = "true"
+
+        project.evaluate()
+        project.assertNoDiagnostics()
+    }
+
+    @Test
+    fun `test kotlin-mpp-absentAndroidTarget-nowarn flag set to false`() {
+        defaultSetupWithoutAndroidTarget()
+        project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = null
+
+        project.evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.AndroidTargetIsMissing)
+    }
+
+    @Test
+    fun `test kotlin-mpp-absentAndroidTarget-nowarn flag set to null`() {
+        defaultSetupWithoutAndroidTarget()
+        project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = null
+
+        project.evaluate()
+        project.assertContainsDiagnostic(KotlinToolingDiagnostics.AndroidTargetIsMissing)
+    }
+
+    private fun defaultSetupWithoutAndroidTarget() {
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
         /* Arbitrary minimal Android setup */
         val android = project.extensions.getByName("android") as LibraryExtension
         android.compileSdk = 31
-
         kotlin.jvm()
 
-        project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = {
-            fail("Expected no warning message to be logged. Received $it")
-        })
-
-        // Test when nowarn is set to false
-        run {
-            var warningMessage: String? = null
-            project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = "false"
-            project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
-            assertNotNull(warningMessage, "Expected warning message to be logged")
-        }
-
-        // Test when nowarn is set to null
-        run {
-            var warningMessage: String? = null
-            project.propertiesExtension["kotlin.mpp.absentAndroidTarget.nowarn"] = null
-            project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = { warningMessage = it })
-            assertNotNull(warningMessage, "Expected warning message to be logged")
-        }
+        project.setMultiplatformAndroidSourceSetLayoutVersion(2)
     }
 }

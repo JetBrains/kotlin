@@ -1,4 +1,4 @@
-// !LANGUAGE: +StrictJavaNullabilityAssertions
+// LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K1: JVM, JVM_IR
 // WITH_STDLIB

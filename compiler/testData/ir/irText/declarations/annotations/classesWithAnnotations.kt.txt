@@ -1,13 +1,42 @@
 open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: String
-    field = x
-    get
+}
+
+@TestAnn(x = "annotation")
+open annotation class TestAnnotation : Annotation {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Host {
+  @TestAnn(x = "companion")
+  companion object TestCompanion {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -21,9 +50,25 @@ class TestClass {
 
 }
 
+@TestAnn(x = "enum")
+enum class TestEnum : Enum<TestEnum> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestEnum>()
+    /* <init>() */
+
+  }
+
+  fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
+
+  val entries: EnumEntries<TestEnum>
+    get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
 @TestAnn(x = "interface")
 interface TestInterface {
-
 }
 
 @TestAnn(x = "object")
@@ -36,48 +81,3 @@ object TestObject {
 
 }
 
-class Host {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  @TestAnn(x = "companion")
-  companion object TestCompanion {
-    private constructor() /* primary */ {
-      super/*Any*/()
-      /* <init>() */
-
-    }
-
-  }
-
-}
-
-@TestAnn(x = "enum")
-enum class TestEnum : Enum<TestEnum> {
-  private constructor() /* primary */ {
-    super/*Enum*/<TestEnum>()
-    /* <init>() */
-
-  }
-
-  fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
-
-  fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
-
-  val entries: EnumEntries<TestEnum>
-    get(): EnumEntries<TestEnum> /* Synthetic body for ENUM_ENTRIES */
-
-}
-
-@TestAnn(x = "annotation")
-open annotation class TestAnnotation : Annotation {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}

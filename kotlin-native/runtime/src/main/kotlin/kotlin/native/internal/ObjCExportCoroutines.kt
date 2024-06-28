@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.native.internal.*
@@ -29,7 +31,7 @@ private object EmptyCompletion : Continuation<Any?> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     override fun resumeWith(result: Result<Any?>) {
         val exception = result.exceptionOrNull() ?: return
         processUnhandledException(exception)

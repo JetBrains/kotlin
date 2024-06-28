@@ -96,4 +96,10 @@ class FirAllModifierRenderer : FirModifierRenderer() {
             renderModifier("external")
         }
     }
+
+    override fun renderModifiers(anonymousFunction: FirAnonymousFunction) {
+        if (anonymousFunction.isSuspend) {
+            renderModifier("suspend")
+        }
+    }
 }

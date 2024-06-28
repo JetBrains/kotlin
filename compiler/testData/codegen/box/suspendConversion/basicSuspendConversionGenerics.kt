@@ -2,8 +2,8 @@
 //  ^ TODO: get rid of T::class.java
 // IGNORE_BACKEND: JVM
 
-// !LANGUAGE: +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // WITH_STDLIB
 
 class C

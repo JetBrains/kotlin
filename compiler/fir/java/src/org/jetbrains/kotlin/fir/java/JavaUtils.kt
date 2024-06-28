@@ -5,26 +5,34 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.createArrayType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal val JavaModifierListOwner.modality: Modality
@@ -51,56 +59,79 @@ val JavaClass.classKind: ClassKind
         else -> ClassKind.CLASS
     }
 
-internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
-    return createConstantIfAny(session) ?: buildErrorExpression {
+fun JavaClass.hasMetadataAnnotation(): Boolean =
+    annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) }
+
+internal fun Any?.createConstantOrError(session: FirSession, expectedConeType: ConeKotlinType? = null): FirExpression {
+    val value = if (this is Int && expectedConeType != null) {
+        // special case for Java literals in annotation default values:
+        // literal value is always integer, but an expected parameter type can be any other number type
+        when {
+            expectedConeType.isByte -> this.toByte()
+            expectedConeType.isShort -> this.toShort()
+            expectedConeType.isLong -> this.toLong()
+            else -> this
+        }
+    } else this
+    return value.createConstantIfAny(session) ?: buildErrorExpression {
         diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
     }
 }
 
-internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
+internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = false): FirExpression? {
     return when (this) {
-        is Byte -> buildConstExpression(null, ConstantValueKind.Byte, this).setProperType(session)
-        is Short -> buildConstExpression(null, ConstantValueKind.Short, this).setProperType(session)
-        is Int -> buildConstExpression(null, ConstantValueKind.Int, this).setProperType(session)
-        is Long -> buildConstExpression(null, ConstantValueKind.Long, this).setProperType(session)
-        is Char -> buildConstExpression(null, ConstantValueKind.Char, this).setProperType(session)
-        is Float -> buildConstExpression(null, ConstantValueKind.Float, this).setProperType(session)
-        is Double -> buildConstExpression(null, ConstantValueKind.Double, this).setProperType(session)
-        is Boolean -> buildConstExpression(null, ConstantValueKind.Boolean, this).setProperType(session)
-        is String -> buildConstExpression(null, ConstantValueKind.String, this).setProperType(session)
-        is ByteArray -> toList().createArrayOfCall(session, ConstantValueKind.Byte)
-        is ShortArray -> toList().createArrayOfCall(session, ConstantValueKind.Short)
-        is IntArray -> toList().createArrayOfCall(session, ConstantValueKind.Int)
-        is LongArray -> toList().createArrayOfCall(session, ConstantValueKind.Long)
-        is CharArray -> toList().createArrayOfCall(session, ConstantValueKind.Char)
-        is FloatArray -> toList().createArrayOfCall(session, ConstantValueKind.Float)
-        is DoubleArray -> toList().createArrayOfCall(session, ConstantValueKind.Double)
-        is BooleanArray -> toList().createArrayOfCall(session, ConstantValueKind.Boolean)
-        null -> buildConstExpression(null, ConstantValueKind.Null, null).setProperType(session)
+        is Byte -> buildLiteralExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte, this, setType = true
+        )
+        is Short -> buildLiteralExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short, this, setType = true
+        )
+        is Int -> buildLiteralExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int, this, setType = true
+        )
+        is Long -> buildLiteralExpression(
+            null, if (unsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long, this, setType = true
+        )
+        is Char -> buildLiteralExpression(
+            null, ConstantValueKind.Char, this, setType = true
+        )
+        is Float -> buildLiteralExpression(
+            null, ConstantValueKind.Float, this, setType = true
+        )
+        is Double -> buildLiteralExpression(
+            null, ConstantValueKind.Double, this, setType = true
+        )
+        is Boolean -> buildLiteralExpression(
+            null, ConstantValueKind.Boolean, this, setType = true
+        )
+        is String -> buildLiteralExpression(
+            null, ConstantValueKind.String, this, setType = true
+        )
+        is ByteArray -> toList().createArrayLiteral(session, ConstantValueKind.Byte)
+        is ShortArray -> toList().createArrayLiteral(session, ConstantValueKind.Short)
+        is IntArray -> toList().createArrayLiteral(session, ConstantValueKind.Int)
+        is LongArray -> toList().createArrayLiteral(session, ConstantValueKind.Long)
+        is CharArray -> toList().createArrayLiteral(session, ConstantValueKind.Char)
+        is FloatArray -> toList().createArrayLiteral(session, ConstantValueKind.Float)
+        is DoubleArray -> toList().createArrayLiteral(session, ConstantValueKind.Double)
+        is BooleanArray -> toList().createArrayLiteral(session, ConstantValueKind.Boolean)
+        null -> buildLiteralExpression(
+            null, ConstantValueKind.Null, null, setType = true
+        )
 
         else -> null
     }
 }
 
-private fun <T> List<T>.createArrayOfCall(session: FirSession, kind: ConstantValueKind<T>): FirArrayOfCall {
-    return buildArrayOfCall {
+private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind): FirArrayLiteral {
+    return buildArrayLiteral {
         argumentList = buildArgumentList {
-            for (element in this@createArrayOfCall) {
+            for (element in this@createArrayLiteral) {
                 arguments += element.createConstantOrError(session)
             }
         }
-        typeRef = buildResolvedTypeRef {
-            type = kind.expectedConeType(session).createArrayType()
-        }
+        coneTypeOrNull = kind.expectedConeType(session).createArrayType()
     }
-}
-
-private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstExpression<*> {
-    val typeRef = buildResolvedTypeRef {
-        type = kind.expectedConeType(session)
-    }
-    replaceTypeRef(typeRef)
-    return this
 }
 
 // For now, it's supported only for RxJava3 annotations, see KT-53041
@@ -108,3 +139,30 @@ fun extractNullabilityAnnotationOnBoundedWildcard(wildcardType: JavaWildcardType
     require(wildcardType.bound != null) { "Nullability annotations on unbounded wildcards aren't supported" }
     return wildcardType.annotations.find { annotation -> RXJAVA3_ANNOTATIONS.any { annotation.classId?.asSingleFqName() == it } }
 }
+
+fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
+    backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
+
+fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
+    toAnnotationClassId(session) == JvmStandardClassIds.Annotations.JvmField
+
+// The implementation is different from `FirAnnotationContainer.getAnnotationsByClassId` because it doesn't expand typealiases
+// The reason is that some usesites do not have access to the session. For the intended use for main function detection it seems fine
+// for now, but we may need to reimplement it in the future. See KT-67634
+// See also the comment in the body, relevant for the use in the const evaluator.
+private fun FirDeclaration.findAnnotationByClassId(classId: ClassId): FirAnnotation? {
+    return annotations.firstOrNull {
+        // Access to type must be through `coneTypeOrNull`.
+        // Even if `JvmName` is in the list of annotations that must be resoled for compilation, we still could try to access some user
+        // annotations that could be not resolved.
+        it.annotationTypeRef.coneTypeOrNull?.classId == classId
+    }
+}
+
+fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? = findAnnotationByClassId(JvmStandardClassIds.Annotations.JvmName)
+fun FirDeclaration.findJvmStaticAnnotation(): FirAnnotation? = findAnnotationByClassId(JvmStandardClassIds.Annotations.JvmStatic)
+
+fun FirDeclaration.findJvmNameValue(): String? =
+    findJvmNameAnnotation()?.findArgumentByName(StandardNames.NAME)?.let {
+        (it as? FirLiteralExpression)?.value as? String
+    }

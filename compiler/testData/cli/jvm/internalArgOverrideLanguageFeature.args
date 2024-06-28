@@ -1,5 +1,5 @@
-$TESTDATA_DIR$/inlineClass.kt
+$TESTDATA_DIR$/languageVersion.kt
 -d
 $TEMP_DIR$
--XXLanguage\:-InlineClasses
--XXLanguage\:+InlineClasses
+-XXLanguage\:-SuspendFunctionAsSupertype
+-XXLanguage\:+SuspendFunctionAsSupertype

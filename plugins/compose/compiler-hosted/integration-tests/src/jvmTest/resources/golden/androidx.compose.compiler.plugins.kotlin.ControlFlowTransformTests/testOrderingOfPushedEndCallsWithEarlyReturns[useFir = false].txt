@@ -1,0 +1,80 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@Composable
+fun Example(items: Iterator<Int>) {
+    while (items.hasNext()) {
+        val i = items.next()
+        val j = i
+        val k = i
+        val l = i
+        P(i)
+        if (i == 0) {
+            P(j)
+            return
+        } else {
+            P(k)
+        }
+        P(l)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)*<P(i)>,<P(l)>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(items)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    while (items.hasNext()) {
+      val i = items.next()
+      val j = i
+      val k = i
+      val l = i
+      P(i, %composer, 0)
+      if (i == 0) {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<P(j)>")
+        P(j, %composer, 0)
+        %composer.endReplaceGroup()
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+        %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+          Example(items, %composer, updateChangedFlags(%changed or 0b0001))
+        }
+        return
+      } else {
+        %composer.startReplaceGroup(<>)
+        sourceInformation(%composer, "<P(k)>")
+        P(k, %composer, 0)
+        %composer.endReplaceGroup()
+      }
+      P(l, %composer, 0)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(items, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

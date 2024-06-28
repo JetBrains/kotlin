@@ -34,9 +34,6 @@ import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.nio.file.Files
-import java.util.*
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashSet
 
 const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
 
@@ -143,7 +140,34 @@ data class DirtyData(
     val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
 )
 
-fun ChangesCollector.getDirtyData(
+/**
+ * Returns changed symbols from the changes collected by this [ChangesCollector].
+ *
+ * If impacted symbols are also needed, use [getChangedAndImpactedSymbols].
+ */
+fun ChangesCollector.getChangedSymbols(reporter: ICReporter): DirtyData {
+    // Caches are used to compute impacted symbols. Set `caches = emptyList()` so that we get changed symbols only, not impacted ones.
+    return changes().getChangedAndImpactedSymbols(caches = emptyList(), reporter)
+}
+
+/**
+ * Returns changed and impacted symbols from the changes collected by this [ChangesCollector].
+ *
+ * For example, if `Subclass` extends `Superclass` and `Superclass` has changed, `Subclass` will be impacted.
+ */
+fun ChangesCollector.getChangedAndImpactedSymbols(
+    caches: Iterable<IncrementalCacheCommon>,
+    reporter: ICReporter
+): DirtyData {
+    return changes().getChangedAndImpactedSymbols(caches, reporter)
+}
+
+/**
+ * Returns changed and impacted symbols from this list of changes.
+ *
+ * For example, if `Subclass` extends `Superclass` and `Superclass` has changed, `Subclass` will be impacted.
+ */
+fun List<ChangeInfo>.getChangedAndImpactedSymbols(
     caches: Iterable<IncrementalCacheCommon>,
     reporter: ICReporter
 ): DirtyData {
@@ -152,7 +176,7 @@ fun ChangesCollector.getDirtyData(
 
     val sealedParents = HashSet<FqName>()
 
-    for (change in changes()) {
+    for (change in this) {
         reporter.debug { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {

@@ -63,7 +63,7 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         val classFinder = createClassFinder(project)
 
         val className = "test.A.B.C"
-        val classId = ClassId(FqName("test"), FqName("A.B.C"), false)
+        val classId = ClassId(FqName("test"), FqName("A.B.C"), isLocal = false)
         val found = classFinder.findClass(classId)
         assertNotNull(found, "Class not found for $className")
 
@@ -89,7 +89,7 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         javaSearchScopeField.set(this, GlobalSearchScope.allScope(project))
     }
 
-    private fun createEnvironment(tmpdir: File?, files: List<File> = emptyList()): KotlinCoreEnvironment {
+    private fun createEnvironment(tmpdir: File, files: List<File> = emptyList()): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),

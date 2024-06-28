@@ -1,10 +1,10 @@
 compiler/testData/compileKotlinAgainstCustomBinaries/anonymousObjectTypeMetadata/anonymousObjectTypeMetadata.kt:11:10: error: cannot access 'o3': it is private in file
 val e1 = o3
-         ^
+         ^^
 compiler/testData/compileKotlinAgainstCustomBinaries/anonymousObjectTypeMetadata/anonymousObjectTypeMetadata.kt:12:12: error: cannot access 'o7': it is private in 'W'
 val e2 = w.o7
-           ^
+           ^^
 compiler/testData/compileKotlinAgainstCustomBinaries/anonymousObjectTypeMetadata/anonymousObjectTypeMetadata.kt:13:12: error: cannot access 'o10': it is private in 'O'
 val e3 = O.o10
-           ^
+           ^^^
 COMPILATION_ERROR

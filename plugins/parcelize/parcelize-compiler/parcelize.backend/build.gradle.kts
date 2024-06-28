@@ -18,6 +18,8 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
+optInToUnsafeDuringIrConstructionAPI()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

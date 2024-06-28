@@ -1,0 +1,24 @@
+<caret_1>:
+  KDocName(167,182): 'FooAlias.fooExt'
+    KDocReference:
+      (in test) fun test.Foo.fooExt()
+
+<caret_2>:
+  KDocName(191,206): 'Foo.fooAliasExt'
+    KDocReference:
+      (in test) fun test.FooAlias /* = test.Foo */.fooAliasExt()
+
+<caret_3>:
+  KDocName(212,232): 'FooAlias.fooAliasExt'
+    KDocReference:
+      (in test) fun test.FooAlias /* = test.Foo */.fooAliasExt()
+
+<caret_4>:
+  KDocName(241,256): 'FooAlias.anyExt'
+    KDocReference:
+      (in test) fun kotlin.Any.anyExt()
+
+<caret_5>:
+  KDocName(262,279): 'FooAlias.otherExt'
+    KDocReference:
+      Nothing (Unresolved reference)

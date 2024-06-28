@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import kotlin.metadata.*
+import kotlin.metadata.internal.common.KmModuleFragment
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
@@ -77,7 +77,7 @@ internal fun CirClass.serializeClass(
     nestedFunctions: Collection<KmFunction>,
     nestedProperties: Collection<KmProperty>
 ): KmClass = KmClass().also { clazz ->
-    clazz.flags = classFlags(isExpect = context.isCommon)
+    clazz.modifiersFrom(this, context.isCommon)
     annotations.mapTo(clazz.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = clazz.typeParameters)
     clazz.name = className
@@ -89,7 +89,7 @@ internal fun CirClass.serializeClass(
     directNestedClasses.forEach { directNestedClass ->
         val shortClassName = directNestedClass.name.substringAfterLast('.')
 
-        if (Flag.Class.IS_ENUM_ENTRY(directNestedClass.flags)) {
+        if (directNestedClass.kind == ClassKind.ENUM_ENTRY) {
             clazz.enumEntries += shortClassName
             clazz.klibEnumEntries += KlibEnumEntry(name = shortClassName, annotations = directNestedClass.annotations)
         } else {
@@ -126,9 +126,8 @@ internal fun linkSealedClassesWithSubclasses(packageName: CirPackageName, classC
 
 internal fun CirClassConstructor.serializeConstructor(
     context: CirTreeSerializationContext
-): KmConstructor = KmConstructor(
-    flags = classConstructorFlags()
-).also { constructor ->
+): KmConstructor = KmConstructor().also { constructor ->
+    constructor.modifiersFrom(this)
     annotations.mapTo(constructor.annotations) { it.serializeAnnotation() }
     // TODO: nowhere to write constructor type parameters
     valueParameters.mapTo(constructor.valueParameters) { it.serializeValueParameter(context) }
@@ -137,9 +136,9 @@ internal fun CirClassConstructor.serializeConstructor(
 internal fun CirTypeAlias.serializeTypeAlias(
     context: CirTreeSerializationContext
 ): KmTypeAlias = KmTypeAlias(
-    flags = typeAliasFlags(),
     name = name.name
 ).also { typeAlias ->
+    typeAlias.modifiersFrom(this)
     annotations.mapTo(typeAlias.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = typeAlias.typeParameters)
     typeAlias.underlyingType = underlyingType.serializeType(context, expansion = ONLY_ABBREVIATIONS)
@@ -148,12 +147,10 @@ internal fun CirTypeAlias.serializeTypeAlias(
 
 internal fun CirProperty.serializeProperty(
     context: CirTreeSerializationContext,
-): KmProperty = KmProperty(
-    flags = propertyFlags(isExpect = context.isCommon && !isLiftedUp),
-    name = name.name,
-    getterFlags = getter?.propertyAccessorFlags(this, this) ?: NO_FLAGS,
-    setterFlags = setter?.let { setter -> setter.propertyAccessorFlags(setter, this) } ?: NO_FLAGS
-).also { property ->
+): KmProperty = KmProperty(name = name.name).also { property ->
+    property.modifiersFrom(this, isExpect = context.isCommon && !isLiftedUp)
+    this.getter?.let { property.getter.modifiersFrom(it, this, this) }
+    property.setter = this.setter?.let { KmPropertyAccessorAttributes().apply { modifiersFrom(it, it, this@serializeProperty) } }
     annotations.mapTo(property.annotations) { it.serializeAnnotation() }
     getter?.annotations?.mapTo(property.getterAnnotations) { it.serializeAnnotation() }
     setter?.annotations?.mapTo(property.setterAnnotations) { it.serializeAnnotation() }
@@ -181,9 +178,9 @@ internal fun CirProperty.serializeProperty(
 internal fun CirFunction.serializeFunction(
     context: CirTreeSerializationContext,
 ): KmFunction = KmFunction(
-    flags = functionFlags(isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED),
     name = name.name
 ).also { function ->
+    function.modifiersFrom(this, isExpect = context.isCommon && kind != CallableMemberDescriptor.Kind.SYNTHESIZED)
     annotations.mapTo(function.annotations) { it.serializeAnnotation() }
     typeParameters.serializeTypeParameters(context, output = function.typeParameters)
     valueParameters.mapTo(function.valueParameters) { it.serializeValueParameter(context) }
@@ -242,9 +239,9 @@ private fun CirConstantValue.serializeConstantValue(): KmAnnotationArgument? = w
 private fun CirValueParameter.serializeValueParameter(
     context: CirTreeSerializationContext
 ): KmValueParameter = KmValueParameter(
-    flags = valueParameterFlags(),
     name = name.name
 ).also { parameter ->
+    parameter.modifiersFrom(this)
     annotations.mapTo(parameter.annotations) { it.serializeAnnotation() }
     parameter.type = returnType.serializeType(context)
     varargElementType?.let { varargElementType ->
@@ -258,11 +255,11 @@ private fun List<CirTypeParameter>.serializeTypeParameters(
 ) {
     mapIndexedTo(output) { index, cirTypeParameter ->
         KmTypeParameter(
-            flags = cirTypeParameter.typeParameterFlags(),
             name = cirTypeParameter.name.name,
             id = context.typeParameterIndexOffset + index,
             variance = cirTypeParameter.variance.serializeVariance()
         ).also { parameter ->
+            parameter.isReified = cirTypeParameter.isReified
             cirTypeParameter.upperBounds.mapTo(parameter.upperBounds) { it.serializeType(context) }
             cirTypeParameter.annotations.mapTo(parameter.annotations) { it.serializeAnnotation() }
         }
@@ -287,14 +284,16 @@ private fun CirType.serializeType(
 }
 
 private fun CirTypeParameterType.serializeTypeParameterType(): KmType =
-    KmType(typeFlags()).also { type ->
+    KmType().also { type ->
+        applyTypeFlagsTo(type)
         type.classifier = KmClassifier.TypeParameter(index)
     }
 
 private fun CirClassType.serializeClassType(
     context: CirTreeSerializationContext,
     expansion: TypeAliasExpansion = FOR_TOP_LEVEL_TYPE
-): KmType = KmType(typeFlags()).also { type ->
+): KmType = KmType().also { type ->
+    applyTypeFlagsTo(type)
     type.classifier = KmClassifier.Class(classifierId.toString())
     arguments.mapTo(type.arguments) { it.serializeArgument(context, expansion) }
     outerType?.let { type.outerType = it.serializeClassType(context, expansion) }
@@ -318,7 +317,7 @@ private fun CirTypeAliasType.serializeAbbreviationType(
     context: CirTreeSerializationContext,
     expansion: TypeAliasExpansion
 ): KmType {
-    val abbreviationType = KmType(typeFlags())
+    val abbreviationType = KmType().also { applyTypeFlagsTo(it) }
     abbreviationType.classifier = KmClassifier.TypeAlias(classifierId.toString())
     arguments.mapTo(abbreviationType.arguments) { it.serializeArgument(context, expansion) }
     return abbreviationType

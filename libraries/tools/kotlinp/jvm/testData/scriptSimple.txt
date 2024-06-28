@@ -1,0 +1,52 @@
+// ScriptSimple.class
+// ------------------------------------------
+public final class ScriptSimple {
+
+  // signature: foo(LScriptSimple$A;)Ljava/lang/String;
+  public final fun A.foo(): kotlin/String
+
+  // field: a:I
+  // getter: getA()I
+  public final val a: kotlin/Int /* = ... */
+    public final get
+
+  // nested class: A
+
+  // nested class: B
+
+  // module name: test-module
+}
+// ScriptSimple$A.class
+// ------------------------------------------
+public final class A : kotlin/Any {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public constructor(p: kotlin/String)
+
+  // field: p:Ljava/lang/String;
+  // getter: getP()Ljava/lang/String;
+  public final val p: kotlin/String
+    public final get
+
+  // module name: test-module
+}
+// ScriptSimple$B.class
+// ------------------------------------------
+public final class B<T#0 /* T */> : kotlin/Any {
+
+  // requires language version 1.7.0 (level=ERROR)
+  // signature: <init>(Ljava/lang/Object;)V
+  public constructor(v: T#0 & Any)
+
+  // requires language version 1.7.0 (level=ERROR)
+  // field: v:Ljava/lang/Object;
+  // getter: getV()Ljava/lang/Object;
+  public final val v: T#0 & Any
+    public final get
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

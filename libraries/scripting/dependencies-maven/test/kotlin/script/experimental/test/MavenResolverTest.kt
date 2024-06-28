@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Ignore
 import java.io.File
+import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -22,6 +23,7 @@ import kotlin.script.experimental.dependencies.impl.makeExternalDependenciesReso
 import kotlin.script.experimental.dependencies.impl.set
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.dependencies.maven.impl.createMavenSettings
+import kotlin.system.measureTimeMillis
 
 @ExperimentalContracts
 class MavenResolverTest : ResolversTestBase() {
@@ -181,6 +183,41 @@ class MavenResolverTest : ResolversTestBase() {
             ),
             messages
         )
+    }
+
+    fun testMultipleDependencies() {
+        val resolver = MavenDependenciesResolver()
+        val sourceOptions = buildOptions(
+            DependenciesResolverOptionsName.PARTIAL_RESOLUTION to "true",
+            DependenciesResolverOptionsName.CLASSIFIER to "sources",
+            DependenciesResolverOptionsName.EXTENSION to "jar",
+        )
+        val multipleDependencies = listOf(
+            "commons-io:commons-io:2.11.0",
+            "org.jetbrains.kotlin:kotlin-reflect:1.8.20",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20",
+        ).map { ArtifactWithLocation(it, null) }
+
+        val result = TreeSet<String>()
+        fun addToResult(resultFiles: ResultWithDiagnostics<List<File>>) {
+            if (resultFiles is ResultWithDiagnostics.Success) {
+                for (file in resultFiles.value) {
+                    result.add(file.absolutePath)
+                }
+            }
+        }
+
+        val timeMs = measureTimeMillis {
+            runBlocking {
+                addToResult(resolver.resolve(multipleDependencies))
+                addToResult(resolver.resolve(multipleDependencies, sourceOptions))
+            }
+        }
+        println("Test time: $timeMs ms")
+        println("Deps size: ${result.size}")
+        println(result.joinToString("\n"))
+
+        assertEquals(14, result.size)
     }
 
     @Ignore("ignored because spark is a very heavy dependency")

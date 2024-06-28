@@ -26,6 +26,10 @@ fun FirSession.doUnify(
     val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
     val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
 
+    if (typeWithParameters is ConeErrorType) {
+        return true // Return true to avoid loosing `result` substitution
+    }
+
     if (originalType is ConeIntersectionType) {
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
         for (intersectedType in originalType.intersectedTypes) {
@@ -57,8 +61,8 @@ fun FirSession.doUnify(
     // Foo? ~ X?  =>  Foo ~ X
     if (originalType?.nullability == ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
         return doUnify(
-            originalTypeProjection.removeQuestionMark(typeContext),
-            typeWithParametersProjection.removeQuestionMark(typeContext),
+            originalTypeProjection.removeQuestionMark(this),
+            typeWithParametersProjection.removeQuestionMark(this),
             targetTypeParameters, result,
         )
     }
@@ -78,7 +82,11 @@ fun FirSession.doUnify(
     }
 
     // Foo ~ X? => fail
-    if (originalType?.nullability != ConeNullability.NULLABLE && typeWithParameters?.nullability == ConeNullability.NULLABLE) {
+    if (
+        originalTypeProjection !is ConeStarProjection &&
+        originalType?.nullability != ConeNullability.NULLABLE &&
+        typeWithParameters?.nullability == ConeNullability.NULLABLE
+    ) {
         return true
     }
 
@@ -115,13 +123,13 @@ fun FirSession.doUnify(
     return true
 }
 
-private fun ConeTypeProjection.removeQuestionMark(typeContext: ConeTypeContext): ConeTypeProjection {
-    val type = type
+private fun ConeTypeProjection.removeQuestionMark(session: FirSession): ConeTypeProjection {
+    val type = type?.fullyExpandedType(session)
     require(type != null && type.nullability.isNullable) {
         "Expected nullable type, got $type"
     }
 
-    return replaceType(type.withNullability(ConeNullability.NOT_NULL, typeContext))
+    return replaceType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext))
 }
 
 private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypeProjection =

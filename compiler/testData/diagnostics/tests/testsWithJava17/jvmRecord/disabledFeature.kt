@@ -1,5 +1,5 @@
-// !API_VERSION: 1.5
-// !LANGUAGE: -JvmRecordSupport
+// API_VERSION: 1.5
+// LANGUAGE: -JvmRecordSupport
 // SKIP_TXT
 // FILE: JRecord.java
 public record JRecord(int x, CharSequence y) {}

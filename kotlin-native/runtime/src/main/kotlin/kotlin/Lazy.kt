@@ -6,7 +6,6 @@
 package kotlin
 
 import kotlin.native.concurrent.*
-import kotlin.native.internal.FixmeConcurrency
 import kotlin.reflect.KProperty
 import kotlin.native.isExperimentalMM
 
@@ -20,11 +19,7 @@ import kotlin.native.isExperimentalMM
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
 @OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
-public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
-        if (isExperimentalMM())
-            SynchronizedLazyImpl(initializer)
-        else
-            FreezeAwareLazyImpl(initializer)
+public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 
 /**
@@ -37,12 +32,11 @@ public actual fun <T> lazy(initializer: () -> T): Lazy<T> =
  * to synchronize on. Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 @OptIn(kotlin.ExperimentalStdlibApi::class, FreezingIsDeprecated::class)
 public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
-            LazyThreadSafetyMode.SYNCHRONIZED -> if (isExperimentalMM()) SynchronizedLazyImpl(initializer) else throw UnsupportedOperationException()
-            LazyThreadSafetyMode.PUBLICATION -> if (isExperimentalMM()) SafePublicationLazyImpl(initializer) else FreezeAwareLazyImpl(initializer)
+            LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
+            LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
             LazyThreadSafetyMode.NONE -> UnsafeLazyImpl(initializer)
         }
 
@@ -57,6 +51,7 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  * in this case do not synchronize from external code on the returned instance as it may cause accidental deadlock.
  * Also this behavior can be changed in the future.
  */
-@FixmeConcurrency
 @Suppress("UNUSED_PARAMETER")
+@Deprecated("Synchronization on Any? object is not supported.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(errorSince = "1.9")
 public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = throw UnsupportedOperationException()

@@ -1,8 +1,8 @@
 fun foo(x: Int) {
   { // BLOCK
-    val tmp0_subject: Int = x
+    val tmp_0: Int = x
     when {
-      EQEQ(arg0 = tmp0_subject, arg1 = 0) -> 0 /*~> Unit */
+      EQEQ(arg0 = tmp_0, arg1 = 0) -> 0 /*~> Unit */
     }
   }
 }

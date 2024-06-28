@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -26,13 +25,20 @@ fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
 }
 
+fun ClassFileFactory.getKotlinModuleFile(): OutputFile? = asList().filter { it.relativePath.endsWith(".kotlin_module") }.run {
+    when (size) {
+        0 -> null
+        1 -> single()
+        else -> error("Module has non-unique .kotlin_metadata file")
+    }
+}
+
 fun List<OutputFile>.filterClassFiles(): List<OutputFile> {
     return filter { it.relativePath.endsWith(".class") }
 }
 
-fun JvmModuleProtoBuf.Module.Builder.addDataFromCompiledModule(
-    registry: PackagePartRegistry, stringTable: StringTableImpl, state: GenerationState
-) {
+fun JvmModuleProtoBuf.Module.Builder.addDataFromCompiledModule(stringTable: StringTableImpl, state: GenerationState) {
+    val registry = state.factory.packagePartRegistry
     for (part in registry.parts.values.addCompiledPartsAndSort(state)) {
         part.addTo(this)
     }
@@ -51,7 +57,7 @@ fun JvmModuleProtoBuf.Module.Builder.addDataFromCompiledModule(
                 }.orEmpty()
 
     val serializer = DescriptorSerializer.createTopLevel(
-        JvmOptionalAnnotationSerializerExtension(stringTable), state.configuration.languageVersionSettings,
+        JvmOptionalAnnotationSerializerExtension(stringTable), state.config.languageVersionSettings,
     )
     for (descriptor in optionalAnnotationClassDescriptors) {
         addOptionalAnnotationClass(serializer.classProto(descriptor))
@@ -67,7 +73,7 @@ class JvmOptionalAnnotationSerializerExtension(
     override fun shouldUseTypeTable(): Boolean = true
 }
 
-private fun Iterable<PackageParts>.addCompiledPartsAndSort(state: GenerationState): List<PackageParts> =
+fun Iterable<PackageParts>.addCompiledPartsAndSort(state: GenerationState): List<PackageParts> =
     addCompiledParts(state).sortedBy { it.packageFqName }
 
 private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): List<PackageParts> {
@@ -87,7 +93,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
         }
 }
 
-private fun GenerationState.loadCompiledModule(): ModuleMapping? {
+fun GenerationState.loadCompiledModule(): ModuleMapping? {
     val moduleMappingData = incrementalCacheForThisTarget?.getModuleMappingData() ?: return null
     return ModuleMapping.loadModuleMapping(moduleMappingData, "<incremental>", deserializationConfiguration) { version ->
         throw IllegalStateException("Version of the generated module cannot be incompatible: $version")

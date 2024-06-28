@@ -1,0 +1,28 @@
+KT element: KtWhenConditionInRange
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/MyClass.MyClass|().R|/contains|<R|MyClass|>($subj$)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] whenConditionInRangeInverted.kt
+    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final operator [ResolvedTo(STATUS)] fun contains([ResolvedTo(STATUS)] str: R|kotlin/String|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+    }
+    public final operator [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> R|T|.contains([ResolvedTo(CONTRACTS)] int: R|kotlin/Int|): R|kotlin/Boolean| {
+        ^contains Boolean(true)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage(): R|kotlin/Unit| {
+        when ([ResolvedTo(BODY_RESOLVE)] lval f: R|kotlin/Int| = Int(3)) {
+            R|/MyClass.MyClass|().R|/contains|<R|MyClass|>($subj$).R|kotlin/Boolean.not|() ->  {
+                Boolean(false)
+            }
+        }
+
+    }

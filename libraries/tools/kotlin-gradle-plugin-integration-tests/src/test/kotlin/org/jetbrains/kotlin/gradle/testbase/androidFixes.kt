@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.jetbrains.kotlin.gradle.util.modify
-import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.createFile
@@ -25,75 +23,5 @@ internal fun Path.applyAndroidTestFixes() {
         """.trimMargin()
     )
 
-    val pathFile = toFile()
-
-    pathFile.walkTopDown()
-        .filter { it.name == "build.gradle" || it.name == "build.gradle.kts" }
-        .forEach { file ->
-            when (file.name) {
-                "build.gradle" -> file.updateBuildGradle()
-                "build.gradle.kts" -> file.updateBuildGradleKts()
-            }
-        }
-}
-
-private fun File.updateBuildGradle() {
-    modify {
-        if (it.contains("plugins {")) {
-            """
-            |${it.substringBefore("plugins {")}
-            |plugins {
-            |    id "org.jetbrains.kotlin.test.fixes.android"
-            |${it.substringAfter("plugins {")}
-            """.trimMargin()
-        } else if (it.contains("apply plugin:")) {
-            it.modifyBuildScript().run {
-                """
-                |${substringBefore("apply plugin:")}
-                |apply plugin: 'org.jetbrains.kotlin.test.fixes.android'
-                |apply plugin:${substringAfter("apply plugin:")}
-                """.trimMargin()
-            }
-        } else {
-            it.modifyBuildScript()
-        }
-    }
-}
-
-private fun String.modifyBuildScript(isKts: Boolean = false): String =
-    if (contains("buildscript {") &&
-        contains("classpath")
-    ) {
-        val kotlinVersionStr = if (isKts) "${'$'}{property(\"test_fixes_version\")}" else "${'$'}test_fixes_version"
-        """
-        |${substringBefore("classpath")}
-        |classpath("org.jetbrains.kotlin:android-test-fixes:$kotlinVersionStr")
-        |classpath${substringAfter("classpath")}
-        """.trimMargin()
-    } else {
-        this
-    }
-
-
-private fun File.updateBuildGradleKts() {
-    modify {
-        if (it.contains("plugins {")) {
-            """
-            |${it.substringBefore("plugins {")}
-            |plugins {
-            |    id("org.jetbrains.kotlin.test.fixes.android")
-            |${it.substringAfter("plugins {")}
-            """.trimMargin()
-        } else if (it.contains("apply(plugin")) {
-            it.modifyBuildScript(true).run {
-                """
-                |${substringBefore("apply(plugin")}
-                |apply(plugin = "org.jetbrains.kotlin.test.fixes.android")
-                |apply(plugin${substringAfter("apply(plugin")}
-                """.trimMargin()
-            }
-        } else {
-            it.modifyBuildScript(true)
-        }
-    }
+    applyPlugin("org.jetbrains.kotlin.test.fixes.android", "org.jetbrains.kotlin:android-test-fixes", "test_fixes_version")
 }

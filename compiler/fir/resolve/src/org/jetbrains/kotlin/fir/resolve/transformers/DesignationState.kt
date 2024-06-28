@@ -50,7 +50,7 @@ class DesignationState private constructor(
     }
 
     private var currentElement: FirDeclaration? = null
-    var classLocated = false
+    var classLocated: Boolean = false
         private set
 
     fun shouldSkipClass(declaration: FirDeclaration): Boolean {

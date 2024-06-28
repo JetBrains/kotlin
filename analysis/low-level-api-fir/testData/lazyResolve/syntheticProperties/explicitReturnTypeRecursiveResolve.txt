@@ -1,0 +1,130 @@
+STATUS:
+TARGET: public open override [<synthetic> STATUS] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public open override [<synthetic> EXPECT_ACTUAL_MATCHING] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+TARGET: public open override [<synthetic> CONTRACTS] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+TARGET: public open override [<synthetic> CONSTANT_EVALUATION] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
+BODY_RESOLVE:
+TARGET: public open override [<synthetic> BODY_RESOLVE] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+        ^getSomething String(42)
+    }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+    }

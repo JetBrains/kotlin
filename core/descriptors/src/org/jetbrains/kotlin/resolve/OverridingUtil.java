@@ -258,8 +258,6 @@ public class OverridingUtil {
                 case OVERRIDABLE:
                     wasSuccess = true;
                     break;
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case UNKNOWN:
@@ -280,8 +278,6 @@ public class OverridingUtil {
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
-                case CONFLICT:
-                    return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
                     return OverrideCompatibilityInfo.incompatible("External condition");
                 case OVERRIDABLE:
@@ -805,7 +801,7 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
+    public static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
             @NotNull final ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> toFilter
     ) {
@@ -1030,6 +1026,11 @@ public class OverridingUtil {
         @NotNull
         public String getDebugMessage() {
             return debugMessage;
+        }
+
+        @Override
+        public String toString() {
+            return overridable + ": " + debugMessage;
         }
     }
 }

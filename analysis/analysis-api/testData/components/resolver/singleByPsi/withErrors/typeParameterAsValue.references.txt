@@ -1,0 +1,7 @@
+KtNameReferenceExpression(88,89): 'T'
+  KtSimpleNameReference:
+    (in <local>: test) T
+
+KtCallExpression(80,90): 'println(T)'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)

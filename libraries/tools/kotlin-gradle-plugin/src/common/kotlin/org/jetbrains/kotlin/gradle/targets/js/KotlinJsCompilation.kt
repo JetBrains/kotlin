@@ -3,16 +3,22 @@
 * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
 */
 
-@file:Suppress("PackageDirectoryMismatch")
+@file:Suppress("PackageDirectoryMismatch", "DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION")
 
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.Action
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.DeprecatedHasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
@@ -22,14 +28,19 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import javax.inject.Inject
 
 open class KotlinJsCompilation @Inject internal constructor(
-    compilation: KotlinCompilationImpl
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation) {
+    compilation: KotlinCompilationImpl,
+) : DeprecatedAbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(compilation),
+    HasBinaries<KotlinJsBinaryContainer> {
 
-    @Suppress("UNCHECKED_CAST")
-    final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
-        get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
+    @Deprecated(
+        "To configure compilation compiler options use 'compileTaskProvider':\ncompilation.compileTaskProvider.configure{\n" +
+                "    compilerOptions {}\n}"
+    )
+    @Suppress("UNCHECKED_CAST", "DEPRECATION")
+    final override val compilerOptions: DeprecatedHasCompilerOptions<KotlinJsCompilerOptions>
+        get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinJsCompilerOptions>
 
-    val binaries: KotlinJsBinaryContainer =
+    override val binaries: KotlinJsBinaryContainer =
         compilation.target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             compilation.target,
@@ -53,6 +64,16 @@ open class KotlinJsCompilation @Inject internal constructor(
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 
+    val npmAggregatedConfigurationName
+        get() = compilation.disambiguateName("npmAggregated")
+
+    val publicPackageJsonConfigurationName
+        get() = compilation.disambiguateName("publicPackageJsonConfiguration")
+
+    override fun getAttributes(): AttributeContainer {
+        return compilation.attributes
+    }
+
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))
     override val compileKotlinTask: Kotlin2JsCompile
@@ -67,9 +88,9 @@ open class KotlinJsCompilation @Inject internal constructor(
     override val compileTaskProvider: TaskProvider<Kotlin2JsCompile>
         get() = compilation.compileTaskProvider as TaskProvider<Kotlin2JsCompile>
 
-    internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
+    internal val packageJsonHandlers = mutableListOf<Action<PackageJson>>()
 
-    fun packageJson(handler: PackageJson.() -> Unit) {
+    fun packageJson(handler: Action<PackageJson>) {
         packageJsonHandlers.add(handler)
     }
 
@@ -79,3 +100,24 @@ open class KotlinJsCompilation @Inject internal constructor(
         }
     }
 }
+
+val KotlinJsCompilation.fileExtension: Provider<String>
+    get() {
+        val isWasm = platformType == KotlinPlatformType.wasm
+        @Suppress("DEPRECATION")
+        return compilerOptions.options.moduleKind
+            .orElse(
+                compilerOptions.options.target.map {
+                    if (it == K2JsArgumentConstants.ES_2015) {
+                        JsModuleKind.MODULE_ES
+                    } else JsModuleKind.MODULE_UMD
+                }
+            )
+            .map { moduleKind ->
+                if (isWasm || moduleKind == JsModuleKind.MODULE_ES) {
+                    "mjs"
+                } else {
+                    "js"
+                }
+            }
+    }

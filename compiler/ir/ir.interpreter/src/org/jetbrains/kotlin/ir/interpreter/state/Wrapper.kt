@@ -20,8 +20,6 @@ import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
 
 internal class Wrapper(val value: Any, override val irClass: IrClass, environment: IrInterpreterEnvironment) : Complex {
     override val fields: Fields = mutableMapOf()
@@ -64,7 +62,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
-        val propertyName = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asString()
+        val propertyName = irFunction.property?.name?.asString()
         val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalizeAsciiOnly()}")
             .firstOrNull { receiverClass.methods.any { method -> method.name == it } }
 
@@ -100,6 +98,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             "kotlin.text.RegexOption", "kotlin.text.Regex", "kotlin.text.Regex.Companion", "kotlin.text.MatchGroup",
         )
 
+        private val intrinsicJavaClasses = setOf(
+            "java.lang.StringBuilder", "java.util.ArrayList",
+            "java.util.LinkedHashMap", "java.util.LinkedHashSet",
+            "java.lang.Exception", "java.util.NoSuchElementException", "java.lang.NullPointerException",
+            "java.lang.IllegalArgumentException", "java.lang.ArithmeticException", "java.lang.UnsupportedOperationException",
+        )
+
         private val intrinsicFunctionToHandler = mapOf(
             "Array.kotlin.collections.asList()" to "kotlin.collections.ArraysKt",
             "kotlin.collections.mutableListOf(Array)" to "kotlin.collections.CollectionsKt",
@@ -111,8 +116,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         private val ranges = setOf("kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange")
 
-        private fun IrFunction.getSignature(): String {
-            val fqName = this.fqName
+        private fun IrFunction.getSignature(fqName: String = this.fqName): String {
             val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
             return this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
         }
@@ -122,11 +126,11 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            if (declaration is IrFunction) return declaration.getSignature() in intrinsicFunctionToHandler
             val fqName = declaration.fqName
             return when {
-                fqName in ranges && (declaration as IrClass).primaryConstructor!!.body == null -> true
-                else -> fqName in intrinsicClasses || fqName.startsWith("java")
+                declaration is IrFunction -> declaration.getSignature(fqName) in intrinsicFunctionToHandler
+                fqName in ranges && (declaration as IrClass).primaryConstructor?.body == null -> true
+                else -> fqName in intrinsicClasses || fqName in intrinsicJavaClasses
             }
         }
 
@@ -135,7 +139,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             val methodType = irFunction.getMethodType()
             val methodName = when (irFunction) {
                 is IrSimpleFunction -> {
-                    val property = irFunction.correspondingPropertySymbol?.owner
+                    val property = irFunction.property
                     when {
                         property?.getter == irFunction -> "get${property.name.asString().capitalizeAsciiOnly()}"
                         property?.setter == irFunction -> "set${property.name.asString().capitalizeAsciiOnly()}"
@@ -198,6 +202,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             }
         }
 
+        private fun Int?.getCorrespondingFunction(): Class<*> {
+            return when {
+                this == null || this >= BuiltInFunctionArity.BIG_ARITY -> Class.forName("kotlin.jvm.functions.FunctionN")
+                else -> Class.forName("kotlin.jvm.functions.Function$this")
+            }
+        }
+
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val owner = this.classOrNull?.owner
             val fqName = owner?.fqName
@@ -221,15 +232,12 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
                 notNullType.isThrowable() -> Throwable::class.java
                 notNullType.isIterable() -> Iterable::class.java
 
-                notNullType.isKFunction() -> Class.forName("kotlin.reflect.KFunction")
+                notNullType.isKFunction() || notNullType.isKSuspendFunction() -> Class.forName("kotlin.reflect.KFunction")
                 notNullType.isFunction() -> {
                     val arity = fqName?.removePrefix("kotlin.Function")?.toIntOrNull()
-                    return when {
-                        arity == null || arity >= BuiltInFunctionArity.BIG_ARITY -> Class.forName("kotlin.jvm.functions.FunctionN")
-                        else -> Class.forName("kotlin.jvm.functions.${fqName.removePrefix("kotlin.")}")
-                    }
+                    return arity.getCorrespondingFunction()
                 }
-                //notNullType.isSuspendFunction() || notNullType.isKSuspendFunction() -> throw AssertionError() //TODO
+                notNullType.isSuspendFunction() -> error("Interpretation of $fqName is not supported")
 
                 fqName == "kotlin.Enum" -> Enum::class.java
                 fqName == "kotlin.collections.Collection" || fqName == "kotlin.collections.MutableCollection" -> Collection::class.java

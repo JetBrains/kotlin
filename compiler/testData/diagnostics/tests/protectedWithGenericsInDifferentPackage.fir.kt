@@ -26,9 +26,9 @@ package foo
 
 fun test(s: bar.Sub<String>) {
     s.<!INVISIBLE_REFERENCE!>name<!>
-    s.<!INVISIBLE_REFERENCE, INVISIBLE_SETTER!>name<!> = ""
+    s.<!INVISIBLE_REFERENCE!>name<!> = ""
     s.name2
-    s.<!INVISIBLE_SETTER!>name2<!> = ""
+    s.name2 = ""
     s.<!INVISIBLE_REFERENCE!>doSomething<!>()
     s.doSomething2()
     val s2: Super<String> = s

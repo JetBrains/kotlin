@@ -759,7 +759,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generate(expression: FirConstExpression<*>) {
+    private fun FlowContent.generate(expression: FirLiteralExpression) {
         val value = expression.value
         if (value == null && expression.kind != ConstantValueKind.Null) {
             return error {
@@ -849,7 +849,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     simpleName(type.lookupTag.name)
                 }
             }
-            is ConeTypeVariableType -> resolved { +type.lookupTag.name.asString() }
+            is ConeTypeVariableType -> resolved { +type.typeConstructor.name.asString() }
             is ConeFlexibleType -> resolved { generate(type) }
             is ConeCapturedType -> inlineUnsupported(type)
             is ConeDefinitelyNotNullType -> resolved {
@@ -1469,7 +1469,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(unitExpression: FirUnitExpression) {
-        generate(unitExpression.typeRef)
+        generate(unitExpression.resolvedType)
     }
 
     private fun FlowContent.generate(breakExpression: FirBreakExpression) {
@@ -1530,7 +1530,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(expression: FirExpression) {
-        exprType(expression.typeRef) {
+        exprType(expression.resolvedType.toFirResolvedTypeRef()) {
             when (expression) {
                 is FirBlock -> generateBlockIfAny(expression)
                 is FirGetClassCall -> generate(expression)
@@ -1545,7 +1545,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirElseIfTrueCondition -> generate(expression)
                 is FirWhenExpression -> generate(expression, isStatement = false)
                 is FirTryExpression -> generate(expression, isStatement = false)
-                is FirConstExpression<*> -> generate(expression)
+                is FirLiteralExpression -> generate(expression)
                 is FirReturnExpression -> {
                     span("return-label") {
                         symbolRef(expression.target.labeledElement.symbol) {
@@ -1572,11 +1572,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     +"*"
                     generate(expression.expression)
 
-                }
-                is FirLambdaArgumentExpression -> {
-                    keyword("lambda")
-                    +" = "
-                    generate(expression.expression)
                 }
                 is FirTypeOperatorCall -> generate(expression)
                 is FirEqualityOperatorCall -> generate(expression)

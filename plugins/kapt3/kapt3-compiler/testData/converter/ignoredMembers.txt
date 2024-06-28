@@ -1,4 +1,3 @@
-@kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String ignoredProperty = "";

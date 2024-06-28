@@ -19,6 +19,8 @@ public class Array<T> {
      *
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
+     *
+     * @throws RuntimeException if the specified [size] is negative.
      */
     public inline constructor(size: Int, init: (Int) -> T)
 

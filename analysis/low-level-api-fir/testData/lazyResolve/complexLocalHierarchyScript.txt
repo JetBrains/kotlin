@@ -1,0 +1,299 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(RAW_FIR)] class A : B {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<B>()
+                }
+
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<<implicit>>()
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<A>()
+                    }
+
+                }
+
+            }
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(RAW_FIR)] class A : B {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<B>()
+                }
+
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<<implicit>>()
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<A>()
+                    }
+
+                }
+
+            }
+
+        }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(RAW_FIR)] class A : B {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<B>()
+                }
+
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<<implicit>>()
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<A>()
+                    }
+
+                }
+
+            }
+
+        }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(RAW_FIR)] class A : B {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<B>()
+                }
+
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<<implicit>>()
+                }
+
+                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<A>()
+                    }
+
+                }
+
+            }
+
+        }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public abstract [ResolvedTo(STATUS)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Symbol not found for B> {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<<ERROR TYPE REF: Symbol not found for B>>()
+                }
+
+            }
+
+            local final [ResolvedTo(BODY_RESOLVE)] class B : R|one/NonLocalInterface| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|<local>/A| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<R|<local>/A|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] complexLocalHierarchyScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-complexLocalHierarchyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLocalInterface : R|kotlin/Any| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Symbol not found for B> {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<<ERROR TYPE REF: Symbol not found for B>>()
+                }
+
+            }
+
+            local final [ResolvedTo(BODY_RESOLVE)] class B : R|one/NonLocalInterface| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|<local>/B| {
+                    super<R|kotlin/Any|>()
+                }
+
+                local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|<local>/A| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] <local>/B.constructor(): R|<local>/B.C| {
+                        super<R|<local>/A|>()
+                    }
+
+                }
+
+            }
+
+        }
+

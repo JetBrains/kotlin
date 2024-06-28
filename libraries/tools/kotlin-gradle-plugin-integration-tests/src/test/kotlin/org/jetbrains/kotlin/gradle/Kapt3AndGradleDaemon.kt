@@ -46,6 +46,10 @@ class Kapt3AndGradleDaemon : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("Annotation processor class should be loaded only once")
+    // Since Gradle 8.0 toolchain is always configured.
+    // Which forces Kapt tasks to run using workers with process isolation,
+    // which is not compatible with classloaders caching.
+    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testAnnotationProcessorClassIsLoadedOnce(gradleVersion: GradleVersion) {
         project(

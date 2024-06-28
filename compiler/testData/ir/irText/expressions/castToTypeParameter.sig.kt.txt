@@ -1,0 +1,117 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+class Host<T : Any?> {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#castGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any?>}0:0
+  //   Public signature: /Host.castGenericMemberExtFun|-1526087761761488718[0]
+  //   Public signature debug description: castGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any?>}0:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#castGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any?>}
+  //   Public signature: /Host.castGenericMemberExtFun|-4690922237571156264[0]
+  //   Public signature debug description: castGenericMemberExtFun@kotlin.Any(){0§<kotlin.Any?>}
+  fun <TF : Any?> Any.castGenericMemberExtFun(): TF
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#castGenericMemberFun(kotlin.Any){0§<kotlin.Any?>}0:0
+  //   Public signature: /Host.castGenericMemberFun|-1392782893551809351[0]
+  //   Public signature debug description: castGenericMemberFun(kotlin.Any){0§<kotlin.Any?>}0:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#castGenericMemberFun(kotlin.Any){0§<kotlin.Any?>}
+  //   Public signature: /Host.castGenericMemberFun|-4509731927562399444[0]
+  //   Public signature debug description: castGenericMemberFun(kotlin.Any){0§<kotlin.Any?>}
+  fun <TF : Any?> castGenericMemberFun(x: Any): TF
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#castMemberExtFun@kotlin.Any(){}1:0
+  //   Public signature: /Host.castMemberExtFun|-5532394822767782605[0]
+  //   Public signature debug description: castMemberExtFun@kotlin.Any(){}1:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#castMemberExtFun@kotlin.Any(){}
+  //   Public signature: /Host.castMemberExtFun|5384958774215550302[0]
+  //   Public signature debug description: castMemberExtFun@kotlin.Any(){}
+  fun Any.castMemberExtFun(): T
+
+  // CHECK JVM_IR:
+  //   Mangled name: Host#castMemberFun(kotlin.Any){}1:0
+  //   Public signature: /Host.castMemberFun|2134838373810955115[0]
+  //   Public signature debug description: castMemberFun(kotlin.Any){}1:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Host#castMemberFun(kotlin.Any){}
+  //   Public signature: /Host.castMemberFun|6787179251543517018[0]
+  //   Public signature debug description: castMemberFun(kotlin.Any){}
+  fun castMemberFun(x: Any): T
+
+  // CHECK:
+  //   Mangled name: Host@0:0{0§<kotlin.Any?>}castGenericMemberExtVal
+  //   Public signature: /Host.castGenericMemberExtVal|-3234774000451781478[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}castGenericMemberExtVal
+  val <TV : Any?> TV.castGenericMemberExtVal: TV
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-castGenericMemberExtVal>@0:0(){0§<kotlin.Any?>}0:0
+    //   Public signature: /Host.castGenericMemberExtVal.<get-castGenericMemberExtVal>|7589356697377818796[0]
+    //   Public signature debug description: <get-castGenericMemberExtVal>@0:0(){0§<kotlin.Any?>}0:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-castGenericMemberExtVal>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Host.castGenericMemberExtVal.<get-castGenericMemberExtVal>|4479089431798055620[0]
+    //   Public signature debug description: <get-castGenericMemberExtVal>@0:0(){0§<kotlin.Any?>}
+    get(): TV
+
+  // CHECK:
+  //   Mangled name: Host@kotlin.Any{}castMemberExtVal
+  //   Public signature: /Host.castMemberExtVal|-3747833166603208627[0]
+  //   Public signature debug description: @kotlin.Any{}castMemberExtVal
+  val Any.castMemberExtVal: T
+    // CHECK JVM_IR:
+    //   Mangled name: Host#<get-castMemberExtVal>@kotlin.Any(){}1:0
+    //   Public signature: /Host.castMemberExtVal.<get-castMemberExtVal>|2557829452396081481[0]
+    //   Public signature debug description: <get-castMemberExtVal>@kotlin.Any(){}1:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Host#<get-castMemberExtVal>@kotlin.Any(){}
+    //   Public signature: /Host.castMemberExtVal.<get-castMemberExtVal>|3750750251852948973[0]
+    //   Public signature debug description: <get-castMemberExtVal>@kotlin.Any(){}
+    get(): T
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #castExtFun@kotlin.Any(){0§<kotlin.Any?>}0:0
+//   Public signature: /castExtFun|-8988515931245067967[0]
+//   Public signature debug description: castExtFun@kotlin.Any(){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #castExtFun@kotlin.Any(){0§<kotlin.Any?>}
+//   Public signature: /castExtFun|8616851465893920757[0]
+//   Public signature debug description: castExtFun@kotlin.Any(){0§<kotlin.Any?>}
+fun <T : Any?> Any.castExtFun(): T
+
+// CHECK JVM_IR:
+//   Mangled name: #castFun(kotlin.Any){0§<kotlin.Any?>}0:0
+//   Public signature: /castFun|8452838661195068745[0]
+//   Public signature debug description: castFun(kotlin.Any){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #castFun(kotlin.Any){0§<kotlin.Any?>}
+//   Public signature: /castFun|-352412518169718568[0]
+//   Public signature debug description: castFun(kotlin.Any){0§<kotlin.Any?>}
+fun <T : Any?> castFun(x: Any): T
+
+// CHECK:
+//   Mangled name: @0:0{0§<kotlin.Any?>}castExtVal
+//   Public signature: /castExtVal|-2827941227832238214[0]
+//   Public signature debug description: @0:0{0§<kotlin.Any?>}castExtVal
+val <T : Any?> T.castExtVal: T
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-castExtVal>@0:0(){0§<kotlin.Any?>}0:0
+  //   Public signature: /castExtVal.<get-castExtVal>|-7034055135715887678[0]
+  //   Public signature debug description: <get-castExtVal>@0:0(){0§<kotlin.Any?>}0:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-castExtVal>@0:0(){0§<kotlin.Any?>}
+  //   Public signature: /castExtVal.<get-castExtVal>|8519438336102468076[0]
+  //   Public signature debug description: <get-castExtVal>@0:0(){0§<kotlin.Any?>}
+  get(): T
+

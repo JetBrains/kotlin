@@ -1,0 +1,6 @@
+public final object SomeObject : R|kotlin/Any| {
+    public final fun test(a: R|kotlin/Int|): R|kotlin/Int|
+
+    private constructor(): R|test/SomeObject|
+
+}

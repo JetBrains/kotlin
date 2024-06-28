@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // SKIP_TXT
 // WITH_COROUTINES
 import kotlin.coroutines.*
@@ -16,10 +16,10 @@ suspend inline fun test(c: () -> Unit) {
     c()
     val o = object: Runnable {
         override fun run() {
-            c()
+            <!NON_LOCAL_RETURN_NOT_ALLOWED!>c<!>()
         }
     }
-    val l = { c() }
+    val l = { <!NON_LOCAL_RETURN_NOT_ALLOWED!>c<!>() }
     <!USAGE_IS_NOT_INLINABLE!>c<!>.startCoroutine(EmptyContinuation)
 }
 

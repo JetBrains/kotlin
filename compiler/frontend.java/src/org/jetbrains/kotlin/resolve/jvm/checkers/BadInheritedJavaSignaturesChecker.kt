@@ -36,9 +36,9 @@ object BadInheritedJavaSignaturesChecker : DeclarationChecker {
 
             val renderedDescriptor = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(badSignatureOverriddenDescriptor)
             context.trace.report(
-                Errors.UNSUPPORTED.on(
+                Errors.UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION.on(
                     reportOn,
-                    "Inheritance of a Java member referencing '${JavaToKotlinClassMap.FUNCTION_N_FQ_NAME}': $renderedDescriptor"
+                    renderedDescriptor
                 )
             )
         }

@@ -5,113 +5,43 @@
 
 #include "GCImpl.hpp"
 
+#include <memory>
+
+#include "ConcurrentMarkAndSweep.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"
-#include "ThreadSuspension.hpp"
-#include "std_support/Memory.hpp"
+#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
-namespace {
-
-ALWAYS_INLINE void SafePointRegular(gc::GC::ThreadData& threadData, size_t weight) noexcept {
-    threadData.impl().gcScheduler().OnSafePointRegular(weight);
-    mm::SuspendIfRequested();
-}
-
-} // namespace
-
-gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : impl_(std_support::make_unique<Impl>(gc, threadData)) {}
+gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : impl_(std::make_unique<Impl>(gc, threadData)) {}
 
 gc::GC::ThreadData::~ThreadData() = default;
-
-ALWAYS_INLINE void gc::GC::ThreadData::SafePointFunctionPrologue() noexcept {
-    SafePointRegular(*this, GCSchedulerThreadData::kFunctionPrologueWeight);
-}
-
-ALWAYS_INLINE void gc::GC::ThreadData::SafePointLoopBody() noexcept {
-    SafePointRegular(*this, GCSchedulerThreadData::kLoopBodyWeight);
-}
-
-void gc::GC::ThreadData::Schedule() noexcept {
-    impl_->gc().Schedule();
-}
-
-void gc::GC::ThreadData::ScheduleAndWaitFullGC() noexcept {
-    impl_->gc().ScheduleAndWaitFullGC();
-}
-
-void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
-    impl_->gc().ScheduleAndWaitFullGCWithFinalizers();
-}
-
-void gc::GC::ThreadData::Publish() noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->objectFactoryThreadQueue().Publish();
-#endif
-}
-
-void gc::GC::ThreadData::ClearForTests() noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    impl_->objectFactoryThreadQueue().ClearForTests();
-#endif
-}
-
-ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
-#else
-    return impl_->alloc().CreateObject(typeInfo);
-#endif
-}
-
-ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
-#else
-    return impl_->alloc().CreateArray(typeInfo, elements);
-#endif
-}
-
-void gc::GC::ThreadData::OnStoppedForGC() noexcept {
-    impl_->gcScheduler().OnStoppedForGC();
-}
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept {
     impl_->gc().OnSuspendForGC();
 }
 
-gc::GC::GC() noexcept : impl_(std_support::make_unique<Impl>()) {}
+void gc::GC::ThreadData::safePoint() noexcept {
+    impl_->gc().safePoint();
+}
+
+void gc::GC::ThreadData::onThreadRegistration() noexcept {
+    impl_->gc().onThreadRegistration();
+}
+
+ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {
+    impl().gc().barriers().onAllocation(object);
+}
+
+gc::GC::GC(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
+    impl_(std::make_unique<Impl>(allocator, gcScheduler)) {}
 
 gc::GC::~GC() = default;
 
-// static
-size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-    return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
-}
-
-
-size_t gc::GC::GetHeapObjectsCountUnsafe() const noexcept {
-    return impl_->objectFactory().GetObjectsCountUnsafe();
-}
-size_t gc::GC::GetTotalHeapObjectsSizeUnsafe() const noexcept {
-    return impl_->objectFactory().GetTotalObjectsSizeUnsafe();
-}
-size_t gc::GC::GetExtraObjectsCountUnsafe() const noexcept {
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
-}
-size_t gc::GC::GetTotalExtraObjectsSizeUnsafe() const noexcept {
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetTotalObjectsSizeUnsafe();
-}
-
-gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
-    return impl_->gcScheduler().config();
-}
-
 void gc::GC::ClearForTests() noexcept {
     impl_->gc().StopFinalizerThreadIfRunning();
-    impl_->objectFactory().ClearForTests();
     GCHandle::ClearForTests();
 }
 
@@ -129,15 +59,61 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 
 // static
 ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
-    gc::internal::processObjectInMark<gc::internal::MarkTraits>(state, object);
+    gc::internal::processObjectInMark<gc::mark::ConcurrentMark::MarkTraits>(state, object);
 }
 
 // static
 ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    gc::internal::processArrayInMark<gc::internal::MarkTraits>(state, array);
+    gc::internal::processArrayInMark<gc::mark::ConcurrentMark::MarkTraits>(state, array);
+}
+
+int64_t gc::GC::Schedule() noexcept {
+    return impl_->gc().state().schedule();
+}
+
+void gc::GC::WaitFinished(int64_t epoch) noexcept {
+    impl_->gc().state().waitEpochFinished(epoch);
+}
+
+void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
+    impl_->gc().state().waitEpochFinalized(epoch);
+}
+
+void gc::GC::configureMainThreadFinalizerProcessor(std::function<void(alloc::RunLoopFinalizerProcessorConfig&)> f) noexcept {
+    impl_->gc().mainThreadFinalizerProcessor().withConfig(std::move(f));
+}
+
+bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
+    return impl_->gc().mainThreadFinalizerProcessor().available();
+}
+
+ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+    barriers::beforeHeapRefUpdate(ref, value);
+}
+
+ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
+    RETURN_OBJ(gc::barriers::weakRefReadBarrier(weakReferee));
+}
+
+bool gc::isMarked(ObjHeader* object) noexcept {
+    return alloc::objectDataForObject(object).marked();
+}
+
+ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
+    return objectData.tryResetMark();
 }
 
 // static
-ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {
-    gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
+ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
+    return sizeof(gc::GC::ObjectData);
+}
+
+// static
+ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignment() noexcept {
+    return alignof(gc::GC::ObjectData);
+}
+
+// static
+ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
+    return new (ptr) gc::GC::ObjectData();
 }

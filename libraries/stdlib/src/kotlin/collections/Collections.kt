@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:kotlin.js.JsFileName("CollectionsKt")
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
-@file:OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@file:OptIn(kotlin.experimental.ExperimentalTypeInference::class, kotlin.js.ExperimentalJsFileName::class)
 
 package kotlin.collections
 
@@ -75,6 +76,16 @@ public fun <T> emptyList(): List<T> = EmptyList
  * @sample samples.collections.Collections.Lists.readOnlyList
  */
 public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
+
+/**
+ * Returns a new read-only list containing only the specified object [element].
+ *
+ * The returned list is serializable (JVM).
+ *
+ * @sample samples.collections.Collections.Lists.singletonReadOnlyList
+ */
+@SinceKotlin("1.9")
+public expect fun <T> listOf(element: T): List<T>
 
 /**
  * Returns an empty read-only list.  The returned list is serializable (JVM).
@@ -267,8 +278,12 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R =
-    if (isEmpty()) defaultValue() else this
+public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : Collection<*>, C : R {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
+    return if (isEmpty()) defaultValue() else this
+}
 
 
 /**
@@ -468,3 +483,43 @@ internal fun throwIndexOverflow() { throw ArithmeticException("Index overflow ha
 @SinceKotlin("1.3")
 internal fun throwCountOverflow() { throw ArithmeticException("Count overflow has happened.") }
 
+
+internal fun collectionToArrayCommonImpl(collection: Collection<*>): Array<Any?> {
+    if (collection.isEmpty()) return emptyArray<Any?>()
+
+    val destination = arrayOfNulls<Any>(collection.size)
+
+    val iterator = collection.iterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        destination[index++] = iterator.next()
+    }
+
+    return destination
+}
+
+internal fun <T> collectionToArrayCommonImpl(collection: Collection<*>, array: Array<T>): Array<T> {
+    if (collection.isEmpty()) return terminateCollectionToArray(0, array)
+
+    val destination = if (array.size < collection.size) {
+        arrayOfNulls(array, collection.size)
+    } else {
+        array
+    }
+
+    val iterator = collection.iterator()
+    var index = 0
+    while (iterator.hasNext()) {
+        @Suppress("UNCHECKED_CAST")
+        destination[index++] = iterator.next() as T
+    }
+
+    return terminateCollectionToArray(collection.size, destination)
+}
+
+/**
+ * In JVM if the size of [array] is bigger than [collectionSize], sets `array[collectionSize] = null`.
+ * In other platforms does nothing.
+ * Returns the given [array].
+ */
+internal expect fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T>

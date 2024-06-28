@@ -60,3 +60,5 @@ internal fun Appendable.appendLine(value: Any?): Appendable =
 
 internal fun Appendable.appendLine(): Appendable =
     append('\n')
+
+internal fun String.removingTrailingNewline(): String = this.dropLastWhile { it == '\n' }

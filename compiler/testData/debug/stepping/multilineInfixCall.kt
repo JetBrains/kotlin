@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 
 fun box() {
@@ -8,14 +9,20 @@ fun box() {
 infix fun Int.foo(i: Int) {
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:4 box
+// EXPECTATIONS JVM_IR
 // test.kt:5 box
-// test.kt:4 box
-// test.kt:9 foo
 // test.kt:6 box
+// test.kt:5 box
+// test.kt:10 foo
+// test.kt:7 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 box
-// test.kt:9 foo
-// test.kt:6 box
+// test.kt:5 box
+// test.kt:10 foo
+// test.kt:7 box
+
+// EXPECTATIONS WASM
+// test.kt:5 $box (4, 4)
+// test.kt:6 $box
+// test.kt:10 $foo
+// test.kt:7 $box

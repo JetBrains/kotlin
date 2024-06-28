@@ -12,5 +12,5 @@ import kotlin.native.internal.ExportTypeInfo
  */
 @ExportTypeInfo("theUnitTypeInfo")
 public object Unit {
-    override fun toString() = "kotlin.Unit"
+    override fun toString(): String = "kotlin.Unit"
 }

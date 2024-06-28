@@ -1,0 +1,16 @@
+KtNameReferenceExpression(55,61): 'values'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<test.E>
+          symbol = test/E.values(): kotlin.Array<test.E>
+          valueParameters = []
+          callableId = test/E.values
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true

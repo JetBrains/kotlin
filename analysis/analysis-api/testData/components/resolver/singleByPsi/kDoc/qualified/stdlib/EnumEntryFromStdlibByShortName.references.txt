@@ -1,0 +1,3 @@
+KDocName(44,76): 'LazyThreadSafetyMode.PUBLICATION'
+  KDocReference:
+    (in kotlin.LazyThreadSafetyMode) PUBLICATION

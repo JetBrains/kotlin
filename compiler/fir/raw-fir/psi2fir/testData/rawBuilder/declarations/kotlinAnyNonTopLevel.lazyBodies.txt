@@ -1,0 +1,15 @@
+FILE: kotlinAnyNonTopLevel.kt
+    public final? class Owner : R|kotlin/Any| {
+        public? constructor(): R|kotlin/Owner| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final? class Any : R|kotlin/Any| {
+            public? constructor(): R|kotlin/Owner.Any| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+    }
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

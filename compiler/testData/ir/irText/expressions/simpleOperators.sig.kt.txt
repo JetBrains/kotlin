@@ -1,0 +1,110 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test1|-7697640899277328116[0]
+//   Public signature debug description: test1(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(kotlin.Int;kotlin.Int){}
+//   Public signature: /test1|-6134767217751638375[0]
+//   Public signature debug description: test1(kotlin.Int;kotlin.Int){}
+fun test1(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test1x(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test1x|-5498284681962390624[0]
+//   Public signature debug description: test1x(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1x(kotlin.Int;kotlin.Int){}
+//   Public signature: /test1x|-6406641760254042927[0]
+//   Public signature debug description: test1x(kotlin.Int;kotlin.Int){}
+fun test1x(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test2|5359184932542830643[0]
+//   Public signature debug description: test2(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(kotlin.Int;kotlin.Int){}
+//   Public signature: /test2|-1200247296907510564[0]
+//   Public signature debug description: test2(kotlin.Int;kotlin.Int){}
+fun test2(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test2x(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test2x|-5033054795170644611[0]
+//   Public signature debug description: test2x(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2x(kotlin.Int;kotlin.Int){}
+//   Public signature: /test2x|-5135897409521978624[0]
+//   Public signature debug description: test2x(kotlin.Int;kotlin.Int){}
+fun test2x(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test3|113160628592048958[0]
+//   Public signature debug description: test3(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(kotlin.Int;kotlin.Int){}
+//   Public signature: /test3|1510814219519386190[0]
+//   Public signature debug description: test3(kotlin.Int;kotlin.Int){}
+fun test3(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test3x(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test3x|-1387842059076164098[0]
+//   Public signature debug description: test3x(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3x(kotlin.Int;kotlin.Int){}
+//   Public signature: /test3x|1722805008522433651[0]
+//   Public signature debug description: test3x(kotlin.Int;kotlin.Int){}
+fun test3x(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test4|-3915516577528979463[0]
+//   Public signature debug description: test4(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(kotlin.Int;kotlin.Int){}
+//   Public signature: /test4|-490448388534816120[0]
+//   Public signature debug description: test4(kotlin.Int;kotlin.Int){}
+fun test4(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test4x(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test4x|7349060524077498643[0]
+//   Public signature debug description: test4x(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4x(kotlin.Int;kotlin.Int){}
+//   Public signature: /test4x|4214384274819330783[0]
+//   Public signature debug description: test4x(kotlin.Int;kotlin.Int){}
+fun test4x(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test5(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test5|-1250205450627939858[0]
+//   Public signature debug description: test5(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test5(kotlin.Int;kotlin.Int){}
+//   Public signature: /test5|2321095467793921266[0]
+//   Public signature debug description: test5(kotlin.Int;kotlin.Int){}
+fun test5(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test5x(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Public signature: /test5x|6043197125676702572[0]
+//   Public signature debug description: test5x(kotlin.Int;kotlin.Int){}kotlin.Int
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test5x(kotlin.Int;kotlin.Int){}
+//   Public signature: /test5x|3967859070339155556[0]
+//   Public signature debug description: test5x(kotlin.Int;kotlin.Int){}
+fun test5x(a: Int, b: Int): Int
+
+// CHECK JVM_IR:
+//   Mangled name: #test6(kotlin.Int;kotlin.Int){}kotlin.ranges.IntRange
+//   Public signature: /test6|4933738173333996909[0]
+//   Public signature debug description: test6(kotlin.Int;kotlin.Int){}kotlin.ranges.IntRange
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test6(kotlin.Int;kotlin.Int){}
+//   Public signature: /test6|-1980698528780914991[0]
+//   Public signature debug description: test6(kotlin.Int;kotlin.Int){}
+fun test6(a: Int, b: Int): IntRange
+

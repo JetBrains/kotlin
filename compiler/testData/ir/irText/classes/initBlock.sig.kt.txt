@@ -1,0 +1,87 @@
+// CHECK:
+//   Mangled name: Test1
+//   Public signature: /Test1|null[0]
+class Test1 {
+  // CHECK:
+  //   Mangled name: Test1#<init>(){}
+  //   Public signature: /Test1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test2
+//   Public signature: /Test2|null[0]
+class Test2 {
+  // CHECK:
+  //   Mangled name: Test2{}x
+  //   Public signature: /Test2.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-x>(){}kotlin.Int
+    //   Public signature: /Test2.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-x>(){}
+    //   Public signature: /Test2.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test2#<init>(kotlin.Int){}
+  //   Public signature: /Test2.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(x: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test3
+//   Public signature: /Test3|null[0]
+class Test3 {
+  // CHECK:
+  //   Mangled name: Test3#<init>(){}
+  //   Public signature: /Test3.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor()
+
+}
+
+// CHECK:
+//   Mangled name: Test4
+//   Public signature: /Test4|null[0]
+class Test4 {
+  // CHECK:
+  //   Mangled name: Test4#<init>(){}
+  //   Public signature: /Test4.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor()
+
+}
+
+// CHECK:
+//   Mangled name: Test5
+//   Public signature: /Test5|null[0]
+class Test5 {
+  // CHECK:
+  //   Mangled name: Test5.TestInner
+  //   Public signature: /Test5.TestInner|null[0]
+  inner class TestInner {
+    // CHECK:
+    //   Mangled name: Test5.TestInner#<init>(){}
+    //   Public signature: /Test5.TestInner.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Test5#<init>(){}
+  //   Public signature: /Test5.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

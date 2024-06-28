@@ -35,41 +35,41 @@ internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<
 /** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFails")
-fun assertFailsNoInline(block: () -> Unit): Throwable = assertFails(block)
+public fun assertFailsNoInline(block: () -> Unit): Throwable = assertFails(block)
 
 /** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFails")
-fun assertFailsNoInline(message: String?, block: () -> Unit): Throwable = assertFails(message, block)
+public fun assertFailsNoInline(message: String?, block: () -> Unit): Throwable = assertFails(message, block)
 
 /** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFailsWith")
-fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, block)
+public fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, block)
 
 /** @suppress */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFailsWith")
-fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
+public fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     assertFailsWith(exceptionClass, message, block)
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertTrue")
-fun assertTrueNoInline(message: String? = null, block: () -> Boolean) {
+public fun assertTrueNoInline(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertTrue(block(), message)
 }
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertFalse")
-fun assertFalseNoInline(message: String? = null, block: () -> Boolean) {
+public fun assertFalseNoInline(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertFalse(block(), message)
 }
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("assertNotNull")
-fun <T : Any, R> assertNotNullNoInline(actual: T?, message: String? = null, block: (T) -> R) {
+public fun <T : Any, R> assertNotNullNoInline(actual: T?, message: String? = null, block: (T) -> R) {
     contract { returns() implies (actual != null) }
     asserter.assertNotNull(message, actual)
     if (actual != null) {
@@ -79,14 +79,14 @@ fun <T : Any, R> assertNotNullNoInline(actual: T?, message: String? = null, bloc
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("expect")
-fun <T> expectNoInline(expected: T, block: () -> T) {
+public fun <T> expectNoInline(expected: T, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block())
 }
 
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 @JvmName("expect")
-fun <T> expectNoInline(expected: T, message: String?, block: () -> T) {
+public fun <T> expectNoInline(expected: T, message: String?, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block(), message)
 }
@@ -98,7 +98,7 @@ fun <T> expectNoInline(expected: T, message: String?, block: () -> T) {
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @InlineOnly
-actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
+public actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
     println("TODO at " + currentStackTrace()[0])
 }
 
@@ -109,7 +109,7 @@ actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
  */
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @InlineOnly
-inline fun currentStackTrace() = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (java.lang.Exception() as java.lang.Throwable).stackTrace
+public inline fun currentStackTrace(): Array<StackTraceElement> = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (java.lang.Exception() as java.lang.Throwable).stackTrace
 
 
 /** Platform-specific construction of AssertionError with cause */

@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun test_1(b: Boolean) {
     if (b || false) {
         1

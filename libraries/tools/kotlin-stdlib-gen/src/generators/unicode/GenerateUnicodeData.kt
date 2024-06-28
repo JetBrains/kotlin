@@ -121,29 +121,18 @@ fun main(args: Array<String>) {
             addRangesGenerators(jsGeneratedDir, KotlinTarget.JS)
             oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsGeneratedDir.resolve("_TitlecaseMappings.kt")))
 
-            val jsIrGeneratedDir = baseDir.resolve("libraries/stdlib/js-ir/src/generated/")
-            addRangesGenerators(jsIrGeneratedDir, KotlinTarget.JS_IR)
-            oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsIrGeneratedDir.resolve("_TitlecaseMappings.kt")))
-
-            val nativeGeneratedDir = baseDir.resolve("kotlin-native/runtime/src/main/kotlin/generated/")
-            addRangesGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            addOneToOneMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            addOneToManyMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)
-            stringUppercaseGenerators.add(StringUppercaseGenerator(nativeGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines))
+            val nativeWasmGeneratedDir = baseDir.resolve("libraries/stdlib/native-wasm/src/generated/")
+            addRangesGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            addOneToOneMappingsGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            addOneToManyMappingsGenerators(nativeWasmGeneratedDir, KotlinTarget.Native)
+            stringUppercaseGenerators.add(
+                StringUppercaseGenerator(nativeWasmGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines, KotlinTarget.Native)
+            )
             stringLowercaseGenerators.add(
-                StringLowercaseGenerator(nativeGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.Native)
+                StringLowercaseGenerator(nativeWasmGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.Native)
             )
 
-            val wasmGeneratedDir = baseDir.resolve("libraries/stdlib/wasm/src/generated/")
-            addRangesGenerators(wasmGeneratedDir, KotlinTarget.WASM)
-            addOneToOneMappingsGenerators(wasmGeneratedDir, KotlinTarget.WASM)
-            addOneToManyMappingsGenerators(wasmGeneratedDir, KotlinTarget.WASM)
-            stringUppercaseGenerators.add(StringUppercaseGenerator(wasmGeneratedDir.resolve("_StringUppercase.kt"), unicodeDataLines))
-            stringLowercaseGenerators.add(
-                StringLowercaseGenerator(wasmGeneratedDir.resolve("_StringLowercase.kt"), unicodeDataLines, KotlinTarget.WASM)
-            )
-
-            val nativeTestDir = baseDir.resolve("kotlin-native/backend.native/tests/stdlib_external/text")
+            val nativeTestDir = baseDir.resolve("kotlin-native/runtime/test/text")
             stringCasingTestGenerator = StringCasingTestGenerator(nativeTestDir)
 
             // For debugging. To see the file content

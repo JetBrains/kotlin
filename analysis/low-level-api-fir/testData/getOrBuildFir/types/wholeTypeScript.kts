@@ -1,0 +1,1 @@
+fun x(): <expr> Map<String, List<Int>> </expr> = 1

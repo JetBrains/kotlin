@@ -1,0 +1,15 @@
+KtNameReferenceExpression(100,109): 'parameter'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleVariableAccessCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaVariableSignature:
+          name = parameter
+          receiverType = null
+          returnType = kotlin.Any
+          symbol = parameter: kotlin.Any
+          callableId = null
+      simpleAccess = Read
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

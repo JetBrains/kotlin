@@ -1,13 +1,13 @@
 open annotation class TestAnn : Annotation {
+  val x: String
+    field = x
+    get
+
   constructor(x: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: String
-    field = x
-    get
 
 }
 
@@ -17,3 +17,4 @@ fun foo() {
   @TestAnn(x = "foo/testVar")
   var testVar: String = "testVar"
 }
+

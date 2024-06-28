@@ -7,19 +7,15 @@ package org.jetbrains.kotlin.fir
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -32,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.readSourceFileWithMapping
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.io.File
 import java.io.PrintStream
 import java.text.DecimalFormat
 import kotlin.math.max
@@ -114,7 +109,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
     private val errorTypesReports = mutableMapOf<String, ErrorTypeReport>()
 
     fun buildFiles(
-        builder: RawFirBuilder,
+        builder: PsiRawFirBuilder,
         files: Collection<KtPsiSourceFile>
     ): List<FirFile> {
         listener?.before()
@@ -279,16 +274,13 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                     }
 
                     override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                        val typeRef = functionCall.typeRef
                         val callee = functionCall.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeErrorType) {
-                                errorFunctionCallTypes++
-                                val psi = callee.psi
-                                if (callee.isError() && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
-                                }
+                        val type = functionCall.resolvedType
+                        if (type is ConeErrorType) {
+                            errorFunctionCallTypes++
+                            val psi = callee.psi
+                            if (callee.isError() && psi != null) {
+                                reportProblem(callee.diagnostic.reason, psi)
                             }
                         }
 
@@ -296,16 +288,13 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                     }
 
                     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-                        val typeRef = qualifiedAccessExpression.typeRef
                         val callee = qualifiedAccessExpression.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeErrorType) {
-                                errorQualifiedAccessTypes++
-                                val psi = callee.psi
-                                if (callee.isError() && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
-                                }
+                        val type = qualifiedAccessExpression.resolvedType
+                        if (type is ConeErrorType) {
+                            errorQualifiedAccessTypes++
+                            val psi = callee.psi
+                            if (callee.isError() && psi != null) {
+                                reportProblem(callee.diagnostic.reason, psi)
                             }
                         }
 
@@ -320,7 +309,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         unresolvedTypes++
 
                         if (typeRef.psi != null) {
-                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is ConeStubDiagnostic) {
+                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is ConeUnreportedDuplicateDiagnostic) {
                                 return
                             }
                             val psi = typeRef.psi!!
@@ -338,7 +327,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         val type = resolvedTypeRef.type
                         if (type is ConeErrorType || type is ConeErrorType) {
                             errorTypes++
-                            if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeStubDiagnostic) {
+                            if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeUnreportedDuplicateDiagnostic) {
                                 return
                             }
                             val psi = resolvedTypeRef.psi ?: return

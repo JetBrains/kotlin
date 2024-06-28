@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class base
 
 @base class My {

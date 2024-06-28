@@ -1,4 +1,4 @@
-// !LANGUAGE: +FunctionTypesWithBigArity
+// LANGUAGE: +FunctionTypesWithBigArity
 
 class A {
     fun foo(

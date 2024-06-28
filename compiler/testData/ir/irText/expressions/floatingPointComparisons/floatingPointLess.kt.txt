@@ -2,9 +2,20 @@ fun test1d(x: Double, y: Double): Boolean {
   return less(arg0 = x, arg1 = y)
 }
 
+fun test1f(x: Float, y: Float): Boolean {
+  return less(arg0 = x, arg1 = y)
+}
+
 fun test2d(x: Double, y: Any): Boolean {
   return when {
     y is Double -> less(arg0 = x, arg1 = y /*as Double */)
+    else -> false
+  }
+}
+
+fun test2f(x: Float, y: Any): Boolean {
+  return when {
+    y is Float -> less(arg0 = x, arg1 = y /*as Float */)
     else -> false
   }
 }
@@ -19,23 +30,22 @@ fun test3d(x: Any, y: Any): Boolean {
   }
 }
 
-fun test1f(x: Float, y: Float): Boolean {
-  return less(arg0 = x, arg1 = y)
-}
-
-fun test2f(x: Float, y: Any): Boolean {
-  return when {
-    y is Float -> less(arg0 = x, arg1 = y /*as Float */)
-    else -> false
-  }
-}
-
 fun test3f(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Float -> y is Float
       else -> false
     } -> less(arg0 = x /*as Float */, arg1 = y /*as Float */)
+    else -> false
+  }
+}
+
+fun testDF(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Double -> y is Float
+      else -> false
+    } -> less(arg0 = x /*as Double */, arg1 = y /*as Float */.toDouble())
     else -> false
   }
 }
@@ -50,12 +60,3 @@ fun testFD(x: Any, y: Any): Boolean {
   }
 }
 
-fun testDF(x: Any, y: Any): Boolean {
-  return when {
-    when {
-      x is Double -> y is Float
-      else -> false
-    } -> less(arg0 = x /*as Double */, arg1 = y /*as Float */.toDouble())
-    else -> false
-  }
-}

@@ -53,5 +53,5 @@ val Type.classId: ClassId
         val packageFQN = if (lastDotIndex >= 0) FqName(className.substring(0, lastDotIndex)) else FqName.ROOT
         val classRelativeNameWithDollars = if (lastDotIndex >= 0) className.substring(lastDotIndex + 1) else className
         val classFQN = FqName(classRelativeNameWithDollars.replace('$', '.'))
-        return ClassId(packageFQN, classFQN, false)
+        return ClassId(packageFQN, classFQN, isLocal = false)
     }

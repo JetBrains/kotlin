@@ -1,4 +1,4 @@
-// !LANGUAGE: +FunctionReferenceWithDefaultValueAsOtherType
+// LANGUAGE: +FunctionReferenceWithDefaultValueAsOtherType
 // TARGET_BACKEND: JVM
 
 // WITH_REFLECT

@@ -1,5 +1,3 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54517
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
 // MODULE: lib
 // FILE: l1.kt
 package ann
@@ -27,7 +25,7 @@ import ann.*
 @Test1<ARG>(42)
 @Test2<String, String>(38)
 @Test3<String, C<String>>(Test1(39))
-@Test4([Test3(Test1(40)), Test3(Test1(50)), Test3(Test1(60))])
+@Test4([Test3<Int, C<Int>>(Test1(40)), Test3<Int, C<Int>>(Test1(50)), Test3<Int, C<Int>>(Test1(60))])
 //@Test5<ARG>(*arrayOf(Test3(Test1(70))), *arrayOf(Test3(Test1(80)))) <-- KT-45414
 class O {
     fun test(): String = "O"
@@ -41,7 +39,7 @@ import ann.*
 @Test1<ARG>(24)
 @Test2<String, String>(83)
 @Test3<String, C<String>>(Test1(93))
-@Test4([Test3(Test1(44)), Test3(Test1(55)), Test3(Test1(66))])
+@Test4([Test3<Int, C<Int>>(Test1(44)), Test3<Int, C<Int>>(Test1(55)), Test3<Int, C<Int>>(Test1(66))])
 //@Test5<ARG>(*arrayOf(Test3(Test1(77))), *arrayOf(Test3(Test1(88)))) <-- KT-45414
 class K {
     fun test(): String = "K"

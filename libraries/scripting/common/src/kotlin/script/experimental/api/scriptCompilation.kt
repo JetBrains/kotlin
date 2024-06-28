@@ -81,6 +81,13 @@ val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key
 val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.key<String>()
 
 /**
+ * Additional (to the filename extension) RegEx pattern with that the script file name is checked
+ * Preserved for historical reasons for supporting legacy [ScriptTemplateDefinition] annotation parameter
+ */
+@Deprecated("use filePathPattern property instead", level = DeprecationLevel.ERROR)
+val ScriptCompilationConfigurationKeys.fileNamePattern by PropertiesCollection.key<String>()
+
+/**
  * The superclass for target script class
  */
 val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>(KotlinType(Any::class)) // script base class

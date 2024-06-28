@@ -33,7 +33,7 @@ fun buildDecompiledTextForClassFile(
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(
         classHeader.packageNameWithFallback,
-        declarations, decompilerRendererForClassFiles, listOf(ByDescriptorIndexer, BySignatureIndexer)
+        declarations, decompilerRendererForClassFiles
     )
 
     return when (classHeader.kind) {

@@ -1,11 +1,11 @@
 $TMP_DIR$/dependency2.jar: warning: the root is ignored because a module with the same name 'dependency' has been found earlier on the module path at: $TMP_DIR$/dependency1.jar
 compiler/testData/javaModules/severalModulesWithTheSameName/main/usage.kt:2:8: error: unresolved reference: bar
 import bar.Bar
-       ^
+       ^^^
 compiler/testData/javaModules/severalModulesWithTheSameName/main/usage.kt:6:12: error: unresolved reference: Bar
     val b: Bar = Bar()
-           ^
+           ^^^
 compiler/testData/javaModules/severalModulesWithTheSameName/main/usage.kt:6:18: error: unresolved reference: Bar
     val b: Bar = Bar()
-                 ^
+                 ^^^
 COMPILATION_ERROR

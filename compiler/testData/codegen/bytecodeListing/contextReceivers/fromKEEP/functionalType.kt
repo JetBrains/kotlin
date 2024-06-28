@@ -1,7 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// IGNORE_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: different order of function annotations
 
 class Param
 class O {

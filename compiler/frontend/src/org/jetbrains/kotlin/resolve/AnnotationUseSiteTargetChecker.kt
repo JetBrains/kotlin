@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
@@ -23,7 +25,7 @@ object AnnotationUseSiteTargetChecker {
         trace: BindingTrace,
         languageVersionSettings: LanguageVersionSettings
     ) {
-        trace.checkDeclaration(annotated, descriptor)
+        trace.checkDeclaration(annotated, languageVersionSettings, descriptor)
 
         if (annotated is KtCallableDeclaration) {
             annotated.receiverTypeReference?.let { trace.checkTypeReference(it, languageVersionSettings, isReceiver = true) }
@@ -35,7 +37,7 @@ object AnnotationUseSiteTargetChecker {
                 if (parameter.hasValOrVar()) continue
                 val parameterDescriptor = trace.bindingContext[BindingContext.VALUE_PARAMETER, parameter] ?: continue
 
-                trace.checkDeclaration(parameter, parameterDescriptor)
+                trace.checkDeclaration(parameter, languageVersionSettings, parameterDescriptor)
                 parameter.typeReference?.let { trace.checkTypeReference(it, languageVersionSettings, isReceiver = false) }
             }
         }
@@ -75,7 +77,11 @@ object AnnotationUseSiteTargetChecker {
         }
     }
 
-    private fun BindingTrace.checkDeclaration(annotated: KtAnnotated, descriptor: DeclarationDescriptor) {
+    private fun BindingTrace.checkDeclaration(
+        annotated: KtAnnotated,
+        languageVersionSettings: LanguageVersionSettings,
+        descriptor: DeclarationDescriptor
+    ) {
         for (annotation in annotated.annotationEntries) {
             val useSiteTarget = annotation.useSiteTarget
             val target = useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
@@ -83,8 +89,14 @@ object AnnotationUseSiteTargetChecker {
             when (target) {
                 AnnotationUseSiteTarget.FIELD -> checkIfHasBackingField(annotated, descriptor, annotation)
                 AnnotationUseSiteTarget.PROPERTY,
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> {
-                }
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(
+                    annotated,
+                    annotation,
+                    when (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUseSiteGetTargetAnnotations)) {
+                        true -> INAPPLICABLE_TARGET_ON_PROPERTY
+                        false -> INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
+                    }
+                )
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> checkIfDelegatedProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
@@ -129,7 +141,7 @@ object AnnotationUseSiteTargetChecker {
         useSiteTarget?.getAnnotationUseSiteTarget()?.renderName ?: "unknown target" // should not happen
 
     private fun BindingTrace.checkIfMutableProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry) {
-        if (!checkIfProperty(annotated, annotation)) return
+        if (!checkIfProperty(annotated, annotation, INAPPLICABLE_TARGET_ON_PROPERTY)) return
 
         val isMutable = when (annotated) {
             is KtProperty -> annotated.isVar
@@ -142,14 +154,18 @@ object AnnotationUseSiteTargetChecker {
         }
     }
 
-    private fun BindingTrace.checkIfProperty(annotated: KtAnnotated, annotation: KtAnnotationEntry): Boolean {
+    private fun BindingTrace.checkIfProperty(
+        annotated: KtAnnotated,
+        annotation: KtAnnotationEntry,
+        diagnosticFactory: DiagnosticFactory1<PsiElement, String>
+    ): Boolean {
         val isProperty = when (annotated) {
             is KtProperty -> !annotated.isLocal
             is KtParameter -> annotated.hasValOrVar()
             else -> false
         }
 
-        if (!isProperty) report(INAPPLICABLE_TARGET_ON_PROPERTY.on(annotation, annotation.useSiteDescription()))
+        if (!isProperty) report(diagnosticFactory.on(annotation, annotation.useSiteDescription()))
         return isProperty
     }
 }

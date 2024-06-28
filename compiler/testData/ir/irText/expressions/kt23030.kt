@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 operator fun Int.compareTo(c: Char) = 0
 
 fun testOverloadedCompareToCall(x: Int, y: Char) =

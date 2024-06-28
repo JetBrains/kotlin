@@ -15,7 +15,7 @@ object IntrinsicShouldHaveBeenLowered : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         error("Intrinsic should have been lowered: '${expression.symbol.owner.render()}'")
     }
 }

@@ -1,0 +1,167 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun RowColumnImpl(
+  orientation: LayoutOrientation,
+  modifier: Modifier = Modifier,
+  arrangement: Arrangement.Vertical = Arrangement.Top,
+  crossAxisAlignment: Alignment.Horizontal = Alignment.Start,
+  crossAxisSize: SizeMode = SizeMode.Wrap,
+  content: @Composable() ()->Unit
+) {
+    used(orientation)
+    used(modifier)
+    used(arrangement)
+    used(crossAxisAlignment)
+    used(crossAxisSize)
+    content()
+}
+
+@Composable
+fun Column(
+    modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    horizontalGravity: Alignment.Horizontal = Alignment.Start,
+    content: @Composable() ()->Unit
+) {
+  RowColumnImpl(
+    orientation = LayoutOrientation.Vertical,
+    arrangement = verticalArrangement,
+    crossAxisAlignment = horizontalGravity,
+    crossAxisSize = SizeMode.Wrap,
+    modifier = modifier,
+    content = content
+  )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(RowColumnImpl)P(5,4!1,2,3)<conten...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(orientation)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(modifier)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(arrangement)) 0b000100000000 else 0b10000000
+  }
+  if (%default and 0b1000 != 0) {
+    %dirty = %dirty or 0b110000000000
+  } else if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(crossAxisAlignment)) 0b100000000000 else 0b010000000000
+  }
+  if (%default and 0b00010000 != 0) {
+    %dirty = %dirty or 0b0110000000000000
+  } else if (%changed and 0b0110000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(crossAxisSize)) 0b0100000000000000 else 0b0010000000000000
+  }
+  if (%default and 0b00100000 != 0) {
+    %dirty = %dirty or 0b00110000000000000000
+  } else if (%changed and 0b00110000000000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b00100000000000000000 else 0b00010000000000000000
+  }
+  if (%dirty and 0b00010010010010010011 != 0b00010010010010010010 || !%composer.skipping) {
+    if (%default and 0b0010 != 0) {
+      modifier = Companion
+    }
+    if (%default and 0b0100 != 0) {
+      arrangement = Top
+    }
+    if (%default and 0b1000 != 0) {
+      crossAxisAlignment = Companion.Start
+    }
+    if (%default and 0b00010000 != 0) {
+      crossAxisSize = SizeMode.Wrap
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(orientation)
+    used(modifier)
+    used(arrangement)
+    used(crossAxisAlignment)
+    used(crossAxisSize)
+    content(%composer, 0b1110 and %dirty shr 0b1111)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    RowColumnImpl(orientation, modifier, arrangement, crossAxisAlignment, crossAxisSize, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}
+@Composable
+@ComposableInferredTarget(scheme = "[0[0]]")
+fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Column)P(2,3,1)<RowCol...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(modifier)) 0b0100 else 0b0010
+  }
+  if (%default and 0b0010 != 0) {
+    %dirty = %dirty or 0b00110000
+  } else if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%composer.changed(verticalArrangement)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(horizontalGravity)) 0b000100000000 else 0b10000000
+  }
+  if (%default and 0b1000 != 0) {
+    %dirty = %dirty or 0b110000000000
+  } else if (%changed and 0b110000000000 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(content)) 0b100000000000 else 0b010000000000
+  }
+  if (%dirty and 0b010010010011 != 0b010010010010 || !%composer.skipping) {
+    if (%default and 0b0001 != 0) {
+      modifier = Companion
+    }
+    if (%default and 0b0010 != 0) {
+      verticalArrangement = Top
+    }
+    if (%default and 0b0100 != 0) {
+      horizontalGravity = Companion.Start
+    }
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    val tmp0_orientation = LayoutOrientation.Vertical
+    val tmp1_crossAxisSize = SizeMode.Wrap
+    RowColumnImpl(tmp0_orientation, modifier, verticalArrangement, horizontalGravity, tmp1_crossAxisSize, content, %composer, 0b0110000000000110 or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0011 or 0b0001110000000000 and %dirty shl 0b0011 or 0b01110000000000000000 and %dirty shl 0b0110, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Column(modifier, verticalArrangement, horizontalGravity, content, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

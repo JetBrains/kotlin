@@ -5,6 +5,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.Executable
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -44,7 +45,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 val applicationName = benchmark.applicationName
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
                 val jvmCompileTime = getJvmCompileTime(project, applicationName)
-                val benchContents = buildDir.resolve(jvmBenchResults).readText()
+                val benchContents = layout.buildDirectory.file(jvmBenchResults).get().asFile.readText()
 
                 val properties: Map<String, Any> = commonBenchmarkProperties + mapOf(
                         "type" to "jvm",
@@ -55,7 +56,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 )
 
                 val output = createJsonReport(properties)
-                buildDir.resolve(jvmJson).writeText(output)
+                layout.buildDirectory.file(jvmJson).get().asFile.writeText(output)
             }
 
             jvmRun.finalizedBy(this)
@@ -78,7 +79,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 args("-p", "${benchmark.applicationName}::")
                 warmupCount = jvmWarmup
                 repeatCount = attempts
-                outputFileName = buildDir.resolve(jvmBenchResults).absolutePath
+                outputFileName = layout.buildDirectory.file(jvmBenchResults).get().asFile.absolutePath
                 repeatingType = benchmark.repeatingType
             }
         }
@@ -133,11 +134,12 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     private fun Project.configureJVMTarget() {
         kotlin.jvm {
             compilations.all {
-                @Suppress("DEPRECATION")
-                compileKotlinTask.kotlinOptions {
-                    jvmTarget = "1.8"
-                    suppressWarnings = true
-                    freeCompilerArgs = project.benchmark.compilerOpts + project.compilerArgs
+                compileTaskProvider.configure {
+                    compilerOptions {
+                        jvmTarget.set(JvmTarget.JVM_1_8)
+                        suppressWarnings.set(true)
+                        freeCompilerArgs.set(project.benchmark.compilerOpts + project.compilerArgs)
+                    }
                 }
             }
         }

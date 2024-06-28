@@ -1,0 +1,9 @@
+Classifier names:
+  Nested
+
+Callable names:
+  <init>
+  equals
+  hashCode
+  materialize
+  toString

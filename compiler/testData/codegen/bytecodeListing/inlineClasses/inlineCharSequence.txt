@@ -2,7 +2,7 @@
 @kotlin.Metadata
 public final class InlineCharSequence {
     // source: 'inlineCharSequence.kt'
-    private final field cs: java.lang.CharSequence
+    private final @org.jetbrains.annotations.NotNull field cs: java.lang.CharSequence
     private synthetic method <init>(p0: java.lang.CharSequence): void
     public synthetic final static method box-impl(p0: java.lang.CharSequence): InlineCharSequence
     public bridge final method charAt(p0: int): char
@@ -16,7 +16,7 @@ public final class InlineCharSequence {
     public static method getLength-impl(p0: java.lang.CharSequence): int
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.CharSequence): int
-    public bridge final method length(): int
+    public synthetic bridge method length(): int
     public @org.jetbrains.annotations.NotNull method subSequence(p0: int, p1: int): java.lang.CharSequence
     public static @org.jetbrains.annotations.NotNull method subSequence-impl(p0: java.lang.CharSequence, p1: int, p2: int): java.lang.CharSequence
     public method toString(): java.lang.String

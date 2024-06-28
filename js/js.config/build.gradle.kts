@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":core:deserialization"))
     api(project(":compiler:config"))
     compileOnly(intellijCore())
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class In<in I>
 
 fun <S> select(x: S, y: S): S = x

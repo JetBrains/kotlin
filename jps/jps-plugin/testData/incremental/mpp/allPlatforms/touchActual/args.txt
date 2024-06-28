@@ -1,0 +1,2 @@
+-language-version 1.9
+-Xexpect-actual-classes

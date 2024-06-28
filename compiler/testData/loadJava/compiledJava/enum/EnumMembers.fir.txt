@@ -1,6 +1,6 @@
 public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers!>| {
-    public final static enum entry FIRST: R|@EnhancedNullability test/EnumMembers|
-    public final static enum entry SECOND: R|@EnhancedNullability test/EnumMembers|
+    public final static enum entry FIRST: R|test/EnumMembers|
+    public final static enum entry SECOND: R|test/EnumMembers|
     public final field isFirst: R|kotlin/Boolean|
 
     public open fun first(): R|kotlin/Boolean|

@@ -1,22 +1,14 @@
-// FIR_IDENTICAL
-// !DIAGNOSTICS: -PLATFORM_CLASS_MAPPED_TO_KOTLIN -UNUSED_PARAMETER -ABSTRACT_MEMBER_NOT_IMPLEMENTED -USELESS_CAST
+// DIAGNOSTICS: -PLATFORM_CLASS_MAPPED_TO_KOTLIN -UNUSED_PARAMETER -ABSTRACT_MEMBER_NOT_IMPLEMENTED -USELESS_CAST
 import java.lang.CharSequence as JCS
 
 class JSub: JCS
 class Sub: CharSequence
 
-fun test(
-  s: Sub,
-  js: JSub,
-  cs: CharSequence,
-  jcs: JCS
-) {
-  // js as CharSequence // - this case is not supported due to limitation in PlatformToKotlinClassMap
-  js as JCS
+fun test1(js: JSub) = js <!CAST_NEVER_SUCCEEDS!>as<!> CharSequence
+fun test2(js: JSub) = js as JCS
 
-  s as CharSequence
-  s as JCS
+fun test3(s: Sub) = s as CharSequence
+fun test4(s: Sub) = s as JCS
 
-  js <!CAST_NEVER_SUCCEEDS!>as<!> Sub
-  s <!CAST_NEVER_SUCCEEDS!>as<!> JSub
-}
+fun test5(js: JSub) = js <!CAST_NEVER_SUCCEEDS!>as<!> Sub
+fun test6(s: Sub) = s <!CAST_NEVER_SUCCEEDS!>as<!> JSub

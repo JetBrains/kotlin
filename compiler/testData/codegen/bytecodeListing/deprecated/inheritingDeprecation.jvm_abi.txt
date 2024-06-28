@@ -1,0 +1,37 @@
+MODULE main
+	CLASS Delegated.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				extProp
+			K1
+				getExtProp(Ljava/lang/String;)Ljava/lang/String;
+			K2
+				---
+			K1
+				getProp()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				prop
+	CLASS Delegated2.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				extProp
+			K1
+				getExtProp(Ljava/lang/String;)Ljava/lang/String;
+			K2
+				---
+			K1
+				getProp()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				prop

@@ -1,9 +1,9 @@
 fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, Unit>): Unit? {
   return { // BLOCK
-    val tmp0_safe_receiver: Any? = receiver
+    val tmp_0: Any? = receiver
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> fn.invoke(p1 = tmp0_safe_receiver, p2 = 42, p3 = "Hello")
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> fn.invoke(p1 = tmp_0, p2 = 42, p3 = "Hello")
     }
   }
 }

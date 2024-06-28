@@ -101,15 +101,16 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
 
         val kPropertiesField =
             context.irFactory.createField(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                IrFieldSymbolImpl(),
-                Name.identifier("\$KPROPERTIES"),
-                kPropertiesFieldType,
-                DescriptorVisibilities.PRIVATE,
+                startOffset = SYNTHETIC_OFFSET,
+                endOffset = SYNTHETIC_OFFSET,
+                origin = DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
+                name = Name.identifier("\$KPROPERTIES"),
+                visibility = DescriptorVisibilities.PRIVATE,
+                symbol = IrFieldSymbolImpl(),
+                type = kPropertiesFieldType,
                 isFinal = true,
-                isExternal = false,
                 isStatic = true,
+                isExternal = false,
             ).apply {
                 parent = irFile
             }
@@ -203,12 +204,12 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             val returnType = expression.getter?.owner?.returnType ?: expression.field!!.owner.type
 
             val getterCallableReference = expression.getter?.owner?.let { getter ->
-                getter.extensionReceiverParameter.let {
-                    if (it != null && expression.extensionReceiver == null)
-                        receiverTypes.add(it.type)
-                }
                 getter.dispatchReceiverParameter.let {
                     if (it != null && expression.dispatchReceiver == null)
+                        receiverTypes.add(it.type)
+                }
+                getter.extensionReceiverParameter.let {
+                    if (it != null && expression.extensionReceiver == null)
                         receiverTypes.add(it.type)
                 }
                 val getterKFunctionType = this@WasmPropertyReferenceLowering.context.irBuiltIns.getKFunctionType(
@@ -309,5 +310,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
         return type.classifier == expectedClass
     }
 
-    private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION : IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
+    companion object {
+        val DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION = IrDeclarationOriginImpl("KPROPERTIES_FOR_DELEGATION")
+    }
 }

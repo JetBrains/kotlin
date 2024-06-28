@@ -1,8 +1,8 @@
 FILE: stringConstructors.kt
     public final val sRef: R|kotlin/reflect/KFunction0<kotlin/String>| = ::R|kotlin/String.String|
         public get(): R|kotlin/reflect/KFunction0<kotlin/String>|
-    public final val s: R|java/lang/String| = R|java/lang/String.String|(R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3))), Int(4), Int(5), Int(6))
-        public get(): R|java/lang/String|
+    public final val s: R|kotlin/String| = R|kotlin/text/String<Inapplicable(INAPPLICABLE): kotlin/text/String>#|(R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3))), Int(4), Int(5), Int(6))
+        public get(): R|kotlin/String|
     public final val s2: R|java/lang/String| = Q|java/lang|.R|java/lang/String.String|(R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3))), Int(4), Int(5), Int(6))
         public get(): R|java/lang/String|
     public final val s3: R|kotlin/String| = R|kotlin/text/String|(R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3))), Int(4), Int(5))

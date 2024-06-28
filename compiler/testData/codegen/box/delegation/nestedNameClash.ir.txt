@@ -1,0 +1,109 @@
+FILE fqName:second fileName:/nestedNameClash.kt
+  CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[second.Base<second.Base<kotlin.Int>>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.MyClass
+    PROPERTY name:prop visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base<second.Base<kotlin.Int>> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'prop: second.Base<second.Base<kotlin.Int>> declared in second.MyClass.<init>' type=second.Base<second.Base<kotlin.Int>> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop> visibility:public modality:FINAL <> ($this:second.MyClass) returnType:second.Base<second.Base<kotlin.Int>>
+        correspondingProperty: PROPERTY name:prop visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:second.MyClass
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-prop> (): second.Base<second.Base<kotlin.Int>> declared in second.MyClass'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base<second.Base<kotlin.Int>> visibility:private [final]' type=second.Base<second.Base<kotlin.Int>> origin=null
+              receiver: GET_VAR '<this>: second.MyClass declared in second.MyClass.<get-prop>' type=second.MyClass origin=null
+    CLASS INTERFACE name:Base modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.MyClass.Base
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (prop:second.Base<second.Base<kotlin.Int>>) returnType:second.MyClass [primary]
+      VALUE_PARAMETER name:prop index:0 type:second.Base<second.Base<kotlin.Int>>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[second.Base<second.Base<kotlin.Int>>]'
+    FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:second.MyClass) returnType:kotlin.String
+      overridden:
+        public open fun foo (): kotlin.String declared in second.Base
+      $this: VALUE_PARAMETER name:<this> type:second.MyClass
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in second.MyClass'
+          CALL 'public open fun foo (): kotlin.String declared in second.Base' type=kotlin.String origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop type:second.Base<second.Base<kotlin.Int>> visibility:private [final]' type=second.Base<second.Base<kotlin.Int>> origin=null
+              receiver: GET_VAR '<this>: second.MyClass declared in second.MyClass.foo' type=second.MyClass origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in second.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in second.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in second.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:Base modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.Base<A of second.Base>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:second.Base<A of second.Base>) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:second.Base<A of second.Base>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in second.Base'
+          CONST String type=kotlin.String value="OK"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:data type:second.MyClass [val]
+        CONSTRUCTOR_CALL 'public constructor <init> (prop: second.Base<second.Base<kotlin.Int>>) declared in second.MyClass' type=second.MyClass origin=null
+          prop: BLOCK type=second.box.<no name provided> origin=OBJECT_LITERAL
+            CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[second.Base<second.Base<kotlin.Int>>]
+              $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:second.box.<no name provided>
+              CONSTRUCTOR visibility:public <> () returnType:second.box.<no name provided> [primary]
+                BLOCK_BODY
+                  DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+                  INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[second.Base<second.Base<kotlin.Int>>]'
+              FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+                overridden:
+                  public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in second.Base
+                $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+                VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+              FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:second.Base<second.Base<kotlin.Int>>) returnType:kotlin.String [fake_override]
+                overridden:
+                  public open fun foo (): kotlin.String declared in second.Base
+                $this: VALUE_PARAMETER name:<this> type:second.Base<second.Base<kotlin.Int>>
+              FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+                overridden:
+                  public open fun hashCode (): kotlin.Int declared in second.Base
+                $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+              FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+                overridden:
+                  public open fun toString (): kotlin.String declared in second.Base
+                $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+            CONSTRUCTOR_CALL 'public constructor <init> () declared in second.box.<no name provided>' type=second.box.<no name provided> origin=OBJECT_LITERAL
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in second'
+        CALL 'public open fun foo (): kotlin.String declared in second.MyClass' type=kotlin.String origin=null
+          $this: GET_VAR 'val data: second.MyClass declared in second.box' type=second.MyClass origin=null

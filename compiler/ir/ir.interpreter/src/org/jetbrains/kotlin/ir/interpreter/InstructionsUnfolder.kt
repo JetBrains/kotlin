@@ -8,23 +8,22 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-internal fun IrExpression.handleAndDropResult(callStack: CallStack, dropOnlyUnit: Boolean = false) {
-    val dropResult = fun() {
-        if (!dropOnlyUnit && !this.type.isUnit() || callStack.peekState().isUnit()) callStack.popState()
-    }
+internal fun IrExpression.handleAndDropResult(callStack: CallStack) {
+    val dropResult = fun() { callStack.popState() }
     callStack.pushInstruction(CustomInstruction(dropResult))
     callStack.pushCompoundInstruction(this)
 }
@@ -112,6 +111,18 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
 
 private fun unfoldValueParameters(expression: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
+    val irFunction = expression.symbol.owner
+
+    if (irFunction.name.asString() == "<get-name>" && expression.dispatchReceiver is IrGetEnumValue) {
+        // this optimization allow us to avoid creation of enum object when we try to interpret simple `name` call; see KT-53480
+        callStack.pushSimpleInstruction(expression)
+        callStack.pushSimpleInstruction(irFunction.dispatchReceiverParameter!!)
+
+        val enumEntry = (expression.dispatchReceiver as IrGetEnumValue).symbol.owner
+        callStack.pushState(enumEntry.toState(environment.irBuiltIns))
+        return
+    }
+
     val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
     if (hasDefaults) {
         environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
@@ -166,7 +177,6 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         ).owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
         callStack.pushCompoundInstruction(callToDefault)
     } else {
-        val irFunction = expression.symbol.owner
         callStack.pushSimpleInstruction(expression)
 
         fun IrValueParameter.schedule(arg: IrExpression?) {
@@ -199,6 +209,7 @@ private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceIni
     val toInitialize = irClass.declarations.filter { it is IrProperty || it is IrAnonymousInitializer }
     val state = irClass.thisReceiver?.symbol?.let { callStack.loadState(it) } // try to avoid recalculation of properties
 
+    callStack.pushSimpleInstruction(instanceInitializerCall)
     toInitialize.reversed().forEach {
         when {
             it is IrAnonymousInitializer -> callStack.pushCompoundInstruction(it.body)
@@ -221,6 +232,15 @@ private fun unfoldBody(body: IrBody, callStack: CallStack) {
 }
 
 private fun unfoldBlock(block: IrBlock, callStack: CallStack) {
+    if (block is IrReturnableBlock) {
+        val inlinedDeclaration = block.inlineFunction?.originalFunction?.let { it.property ?: it }
+        if (inlinedDeclaration != null && inlinedDeclaration.hasAnnotation(intrinsicConstEvaluationAnnotation)) {
+            val inlinedBlock = block.statements.single() as IrInlinedFunctionBlock
+            callStack.pushCompoundInstruction(inlinedBlock.inlineCall)
+            return
+        }
+    }
+
     callStack.newSubFrame(block)
     callStack.pushSimpleInstruction(block)
     unfoldStatements(block.statements, callStack)
@@ -236,7 +256,7 @@ private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack
             is IrExpression ->
                 when {
                     i.isLastIndex() -> callStack.pushCompoundInstruction(statement)
-                    else -> statement.handleAndDropResult(callStack, dropOnlyUnit = true)
+                    else -> statement.handleAndDropResult(callStack)
                 }
             else -> callStack.pushCompoundInstruction(statement)
         }
@@ -276,14 +296,6 @@ private fun unfoldGetObjectValue(expression: IrGetObjectValue, environment: IrIn
 private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
     environment.mapOfEnums[expression.symbol]?.let { return callStack.pushState(it) }
-
-    val frameOwner = callStack.currentFrameOwner
-    if (frameOwner is IrCall && frameOwner.dispatchReceiver is IrGetEnumValue && frameOwner.symbol.owner.name.asString() == "<get-name>") {
-        // this optimization allow us to avoid creation of enum object when we try to interpret simple `name` call; see KT-53480
-        val enumEntry = (frameOwner.dispatchReceiver as IrGetEnumValue).symbol.owner
-        callStack.pushState(enumEntry.toState(environment.irBuiltIns))
-        return
-    }
 
     callStack.pushSimpleInstruction(expression)
     val enumEntry = expression.symbol.owner
@@ -389,6 +401,16 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
     // this callback is used to check the need for an explicit toString call
     val explicitToStringCheck = fun() {
         when (val state = callStack.peekState()) {
+            is Primitive<*> -> {
+                // This block is not really needed, but this way it is easier to handle `toString` for JS.
+                callStack.popState()
+                val toStringCall = IrCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    if (state.isNull()) environment.irBuiltIns.extensionToString else environment.irBuiltIns.memberToString
+                )
+                callStack.pushSimpleInstruction(toStringCall)
+                callStack.pushState(state)
+            }
             is Common -> {
                 callStack.popState()
                 // TODO this check can be dropped after serialization introduction
@@ -411,7 +433,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
 private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
     when (element.origin) {
         IrStatementOrigin.DESTRUCTURING_DECLARATION, IrStatementOrigin.DO_WHILE_LOOP, null -> // is null for body of do while loop
-            element.statements.reversed().forEach { callStack.pushCompoundInstruction(it) }
+            unfoldStatements(element.statements, callStack)
         else -> TODO("${element.origin} not implemented")
     }
 }

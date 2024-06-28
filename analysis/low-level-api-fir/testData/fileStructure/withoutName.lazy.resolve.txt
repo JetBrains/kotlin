@@ -1,0 +1,37 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] withoutName.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
+        ^<no name provided> String(str)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <no name provided>: R|kotlin/Int| = Int(4)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] var <no name provided>: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(4)
+        }
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
+            ^<no name provided> String(str)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val <no name provided>: R|kotlin/Int| = Int(4)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] var <no name provided>: R|kotlin/Boolean|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
+                ^ Boolean(true)
+            }
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Boolean|): R|kotlin/Unit| {
+            }
+
+    }

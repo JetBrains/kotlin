@@ -27,6 +27,7 @@ data class ExportedModule(
 class ExportedNamespace(
     val name: String,
     val declarations: List<ExportedDeclaration>,
+    val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
 data class ExportedFunction(
@@ -100,7 +101,7 @@ data class ExportedObject(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,
-    val irGetter: IrSimpleFunction
+    val irGetter: IrSimpleFunction? = null
 ) : ExportedClass()
 
 class ExportedParameter(
@@ -113,6 +114,7 @@ sealed class ExportedType {
     sealed class Primitive(val typescript: kotlin.String) : ExportedType() {
         object Boolean : Primitive("boolean")
         object Number : Primitive("number")
+        object BigInt : Primitive("bigint")
         object ByteArray : Primitive("Int8Array")
         object ShortArray : Primitive("Int16Array")
         object IntArray : Primitive("Int32Array")
@@ -121,11 +123,14 @@ sealed class ExportedType {
         object String : Primitive("string")
         object Throwable : Primitive("Error")
         object Any : Primitive("any")
-        object Unknown : Primitive("unknown")
         object Undefined : Primitive("undefined")
         object Unit : Primitive("void")
         object Nothing : Primitive("never")
         object UniqueSymbol : Primitive("unique symbol")
+        object Unknown : Primitive("unknown") {
+            override fun withNullability(nullable: kotlin.Boolean) =
+                if (nullable) this else NonNullable(this)
+        }
     }
 
     sealed class LiteralType<T : Any>(val value: T) : ExportedType() {
@@ -142,6 +147,7 @@ sealed class ExportedType {
     class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass) : ExportedType()
     class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
+    class NonNullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
     class TypeOf(val name: String) : ExportedType()
 

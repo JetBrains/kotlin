@@ -8,20 +8,25 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
-fun <D> FirBasedSymbol<out D>.isCompiledToJvmDefault(
+fun <D> FirBasedSymbol<D>.isCompiledToJvmDefault(
     session: FirSession,
-    jvmDefaultMode: JvmDefaultMode?
+    jvmDefaultMode: JvmDefaultMode,
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
-    // TODO: Fix support for all cases
-    if (getAnnotationByClassId(StandardClassIds.Annotations.JvmDefault, session) != null) return true
+    if (getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmDefault, session) != null) return true
 
-    // jvmDefaultMode is null only on common metadata compilation
-    // TODO: it's unclear what should be returned here if jvmDefaultMode is null, KT-57079
-    return jvmDefaultMode?.forAllMethodsWithBody ?: true
+    val container = getContainingClassSymbol(session)
+    if (container !is FirRegularClassSymbol || container.origin.fromSource) return jvmDefaultMode.isEnabled
+
+    // Opt-in is fine here because this flag is only possible for deserialized declarations, and it's set during deserialization.
+    @OptIn(SymbolInternals::class)
+    return container.fir.isNewPlaceForBodyGeneration == true
 }
-

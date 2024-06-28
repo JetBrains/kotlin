@@ -1,0 +1,12 @@
+FILE: 1.kt
+    package kotlinx.coroutines.sync
+
+    public abstract interface Semaphore : R|kotlin/Any| {
+    }
+    public final fun Semaphore(arg0: R|kotlin/Int|, arg: R|kotlin/Int| = Int(0)): R|kotlin/Int| {
+        ^Semaphore Int(1)
+    }
+FILE: test.kt
+    public final fun test(): R|kotlin/Int| {
+        ^test R|kotlinx/coroutines/sync/Semaphore|(Int(1))
+    }

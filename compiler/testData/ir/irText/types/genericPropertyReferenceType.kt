@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 import kotlin.reflect.KMutableProperty
 
 class C<T>(var x: T)

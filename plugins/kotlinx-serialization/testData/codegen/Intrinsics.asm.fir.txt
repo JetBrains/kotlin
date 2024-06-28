@@ -5,9 +5,7 @@ public final class Box$$serializer : java/lang/Object, kotlinx/serialization/int
 
     private void <init>()
 
-    private void <init>(kotlinx.serialization.KSerializer typeSerial0)
-
-    public void <init>(kotlinx.serialization.KSerializer typeSerial0, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+    public void <init>(kotlinx.serialization.KSerializer typeSerial0)
 
     public final kotlinx.serialization.KSerializer[] childSerializers()
 
@@ -61,7 +59,7 @@ public final class Box : java/lang/Object {
 
     public java.lang.String toString()
 
-    public final static void write$Self(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
+    public final static void write$Self$main(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
 }
 
 public final class IntrinsicsKt : java/lang/Object {
@@ -190,18 +188,6 @@ public final class IntrinsicsKt : java/lang/Object {
     }
 }
 
-final class SerializableObject$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static SerializableObject$1 INSTANCE
-
-    static void <clinit>()
-
-    void <init>()
-
-    public final kotlinx.serialization.KSerializer invoke()
-
-    public java.lang.Object invoke()
-}
-
 public final class SerializableObject : java/lang/Object {
     private final static kotlin.Lazy $cachedSerializer$delegate
 
@@ -210,6 +196,8 @@ public final class SerializableObject : java/lang/Object {
     static void <clinit>()
 
     private void <init>()
+
+    private final static kotlinx.serialization.KSerializer _init_$_anonymous_()
 
     private final kotlinx.serialization.KSerializer get$cachedSerializer()
 
@@ -265,5 +253,5 @@ public final class Simple : java/lang/Object {
 
     public final java.lang.String getLastName()
 
-    public final static void write$Self(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+    public final static void write$Self$main(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
 }

@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnrestrictedBuilderInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
+// LANGUAGE: +UnrestrictedBuilderInference
+// DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
 
 // FILE: Test.java
@@ -53,7 +53,7 @@ fun test() {
 
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select4(id(Test.foo(get())), getOut())<!>
 
-        build2 {
+        <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build2<!> {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(this@build.get(), getOut())<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select1(get(), Test.foo(this@build.getOut()))<!>

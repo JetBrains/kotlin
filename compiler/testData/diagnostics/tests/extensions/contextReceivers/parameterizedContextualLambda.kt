@@ -1,6 +1,7 @@
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +ContextReceivers
+// LANGUAGE: +ContextReceivers
 
 fun <T> test(action: context(T) () -> Unit) {}
 

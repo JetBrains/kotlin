@@ -1,0 +1,3 @@
+KtNameReferenceExpression(130,131): 'm'
+  KtSimpleNameReference:
+    m: MyMap<kotlin.String, kotlin.Int>

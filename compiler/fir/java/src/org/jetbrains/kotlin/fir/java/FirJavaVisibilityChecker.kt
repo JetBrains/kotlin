@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
@@ -31,7 +30,7 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
         symbol: FirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        dispatchReceiver: ReceiverValue?,
+        dispatchReceiver: FirExpression?,
         session: FirSession,
         isCallToPropertySetter: Boolean,
         supertypeSupplier: SupertypeSupplier
@@ -76,12 +75,12 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
     }
 
     override fun platformOverrideVisibilityCheck(
-        candidateInDerivedClass: FirBasedSymbol<*>,
+        packageNameOfDerivedClass: FqName,
         symbolInBaseClass: FirBasedSymbol<*>,
         visibilityInBaseClass: Visibility,
     ): Boolean = when (visibilityInBaseClass) {
         JavaVisibilities.ProtectedAndPackage, JavaVisibilities.ProtectedStaticVisibility -> true
-        JavaVisibilities.PackageVisibility -> symbolInBaseClass.isInPackage(candidateInDerivedClass.packageFqName())
+        JavaVisibilities.PackageVisibility -> symbolInBaseClass.isInPackage(packageNameOfDerivedClass)
         else -> true
     }
 

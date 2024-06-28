@@ -7,8 +7,18 @@ package test.io.encoding
 
 import kotlin.test.*
 import kotlin.io.encoding.Base64
+import kotlin.io.encoding.Base64.PaddingOption.*
 
 class Base64Test {
+
+    private fun Base64.PaddingOption.isPresentOnEncode(): Boolean =
+        this == PRESENT || this == PRESENT_OPTIONAL
+
+    private fun Base64.PaddingOption.isOptionalOnDecode(): Boolean =
+        this == PRESENT_OPTIONAL || this == ABSENT_OPTIONAL
+
+    private fun Base64.PaddingOption.isAllowedOnDecode(): Boolean =
+        this == PRESENT || isOptionalOnDecode()
 
     private fun testEncode(codec: Base64, bytes: ByteArray, expected: String) {
         assertEquals(expected, codec.encode(bytes))
@@ -132,52 +142,137 @@ class Base64Test {
 
     @Test
     fun common() {
-        fun testEncode(bytes: ByteArray, symbols: String) {
-            testEncode(Base64, bytes, symbols)
-            testEncode(Base64.UrlSafe, bytes, symbols)
-            testEncode(Base64.Mime, bytes, symbols)
+        fun testEncode(codec: Base64, bytes: String, symbols: String) {
+            if (codec.paddingOption.isPresentOnEncode()) {
+                testEncode(codec, bytes.encodeToByteArray(), symbols)
+            } else {
+                testEncode(codec, bytes.encodeToByteArray(), symbols.trimEnd('='))
+            }
         }
 
-        fun testDecode(symbols: String, bytes: ByteArray) {
-            testDecode(Base64, symbols, bytes)
-            testDecode(Base64.UrlSafe, symbols, bytes)
-            testDecode(Base64.Mime, symbols, bytes)
+        fun testDecode(codec: Base64, symbols: String, bytes: String) {
+            if (codec.paddingOption.isAllowedOnDecode()) {
+                testDecode(codec, symbols, bytes.encodeToByteArray())
+                if (codec.paddingOption.isOptionalOnDecode()) {
+                    testDecode(codec, symbols.trimEnd('='), bytes.encodeToByteArray())
+                }
+            } else {
+                testDecode(codec, symbols.trimEnd('='), bytes.encodeToByteArray())
+            }
         }
 
-        fun testCoding(text: String, symbols: String) {
-            val bytes = text.encodeToByteArray()
-            testEncode(bytes, symbols)
-            testDecode(symbols, bytes)
+        fun testCoding(codec: Base64, bytes: String, symbols: String) {
+            testEncode(codec, bytes, symbols)
+            testDecode(codec, symbols, bytes)
         }
-
-        testCoding("", "")
-        testCoding("f", "Zg==")
-        testCoding("fo", "Zm8=")
-        testCoding("foo", "Zm9v")
-        testCoding("foob", "Zm9vYg==")
-        testCoding("fooba", "Zm9vYmE=")
-        testCoding("foobar", "Zm9vYmFy")
-
-        // the padded bits are allowed to be non-zero
-        testDecode("Zm9=", "fo".encodeToByteArray())
-
-        // paddings not required
-        testDecode("Zg", "f".encodeToByteArray())
-        testDecode("Zm9vYmE", "fooba".encodeToByteArray())
 
         for ((codec, scheme) in codecs) {
-            // dangling single symbol at the end that does not have bits even for a byte
-            val lastDandlingSymbol = listOf("Z", "Z=", "Z==", "Z===", "Zm9vZ", "Zm9vZ=", "Zm9vZ==", "Zm9vZ===")
-            for (symbols in lastDandlingSymbol) {
-                assertFailsWith<IllegalArgumentException>("$scheme <$symbols>") { codec.decode(symbols) }
+            // By default, padding option is set to PRESENT
+            assertSame(codec, codec.withPadding(Base64.PaddingOption.PRESENT))
+
+            for (paddingOption in Base64.PaddingOption.entries) {
+                val configuredCodec = codec.withPadding(paddingOption)
+                testCoding(configuredCodec, "", "")
+                testCoding(configuredCodec, "f", "Zg==")
+                testCoding(configuredCodec, "fo", "Zm8=")
+                testCoding(configuredCodec, "foo", "Zm9v")
+                testCoding(configuredCodec, "foob", "Zm9vYg==")
+                testCoding(configuredCodec, "fooba", "Zm9vYmE=")
+                testCoding(configuredCodec, "foobar", "Zm9vYmFy")
+
+                val configuredScheme = "$scheme.withPadding(${paddingOption.name})"
+
+                // at least two symbols are required
+                val oneSymbol = listOf("Z", "=", "@")
+                for (symbol in oneSymbol) {
+                    assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbol>") {
+                        configuredCodec.decode(symbol)
+                    }.also { exception ->
+                        assertContains(exception.message!!, "Input should have at least 2 symbols for Base64 decoding")
+                    }
+                }
+
+                // dangling single symbol at the end that does not have bits even for a byte
+                val lastDanglingSymbol = listOf("Z=", "Z==", "Z===", "Zm9vZ", "Zm9vZ=", "Zm9vZ==", "Zm9vZ===")
+                for (symbols in lastDanglingSymbol) {
+                    assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                        configuredCodec.decode(symbols)
+                    }.also { exception ->
+                        assertEquals("The last unit of input does not have enough bits", exception.message)
+                    }
+                }
+
+                // incorrect padding
+
+                val redundantPadChar = listOf("Zm9v=", "Zm9vYmFy=")
+                for (symbols in redundantPadChar) {
+                    assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                        configuredCodec.decode(symbols)
+                    }.also { exception ->
+                        assertEquals("Redundant pad character at index ${symbols.lastIndex}", exception.message)
+                    }
+                }
+
+                val missingOnePadChar = listOf("Zg=", "Zg=a", "Zm9vYg=", "Zm9vYg=\u0000")
+                for (symbols in missingOnePadChar) {
+                    val errorMessage = if (paddingOption == Base64.PaddingOption.ABSENT)
+                        "The padding option is set to ABSENT"
+                    else
+                        "Missing one pad character"
+
+                    assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                        configuredCodec.decode(symbols)
+                    }.also { exception ->
+                        assertContains(exception.message!!, errorMessage)
+                    }
+                }
+
+                if (paddingOption == Base64.PaddingOption.ABSENT) {
+                    val withPadding = listOf("Zg==", "Zm8=", "Zm9vYg==", "Zm9vYmE=")
+                    for (symbols in withPadding) {
+                        assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                            configuredCodec.decode(symbols)
+                        }.also { exception ->
+                            assertContains(exception.message!!, "The padding option is set to ABSENT")
+                        }
+                    }
+                }
+
+                if (paddingOption == Base64.PaddingOption.PRESENT) {
+                    val withoutPadding = listOf("Zg", "Zm8", "Zm9vYg", "Zm9vYmE")
+                    for (symbols in withoutPadding) {
+                        assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                            configuredCodec.decode(symbols)
+                        }.also { exception ->
+                            assertEquals(
+                                "The padding option is set to PRESENT, but the input is not properly padded",
+                                exception.message
+                            )
+                        }
+                    }
+                }
+
+                if (paddingOption.isAllowedOnDecode()) {
+                    val symbolAfterPadding = listOf("Zg==Zg==", "Zg===", "Zm9vYmE==", "Zm9vYmE=a")
+                    for (symbols in symbolAfterPadding) {
+                        assertFailsWith<IllegalArgumentException>("$configuredScheme <$symbols>") {
+                            configuredCodec.decode(symbols)
+                        }.also { exception ->
+                            assertContains(exception.message!!, "prohibited after the pad character")
+                        }
+                    }
+                }
+
+                // the LSBs at positions 1, 2, 3, 4 are not zero, respectively
+                val nonZeroPadBits = listOf("Zm9=", "Zm9vYmG=", "Zk==", "Zm9vYo==")
+                for (symbols in nonZeroPadBits) {
+                    assertFailsWith<IllegalArgumentException>(("$configuredScheme <$symbols>")) {
+                        codec.decode(symbols)
+                    }.also { exception ->
+                        assertEquals("The pad bits must be zeros", exception.message)
+                    }
+                }
             }
-
-            // incorrect padding
-            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zg=") }
-            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zm9vYmE==") }
-
-            // padding in the middle
-            assertFailsWith<IllegalArgumentException>(scheme) { codec.decode("Zg==Zg==") }
         }
     }
 
@@ -271,5 +366,189 @@ class Base64Test {
         // inserts line separator, but not to the end of the output
         val expected = "Zm9vYmFy".repeat(76).chunked(76).joinToString(separator = "\r\n")
         testEncode(Base64.Mime, "foobar".repeat(76).encodeToByteArray(), expected)
+    }
+
+    @Test
+    fun encodeSize() {
+        for ((codec, _) in codecs) {
+            val lineSeparatorChars = if (codec.isMimeScheme) 2 else 0
+
+            val paddingPresent = Base64.PaddingOption.entries.filter { it.isPresentOnEncode() }
+            for (paddingOption in paddingPresent) {
+                val configuredCodec = codec.withPadding(paddingOption)
+
+                // One line in all schemes
+
+                assertEquals(0, configuredCodec.encodeSize(0))
+                assertEquals(4, configuredCodec.encodeSize(1))
+                assertEquals(4, configuredCodec.encodeSize(2))
+                assertEquals(4, configuredCodec.encodeSize(3))
+                assertEquals(8, configuredCodec.encodeSize(4))
+                assertEquals(8, configuredCodec.encodeSize(5))
+                assertEquals(8, configuredCodec.encodeSize(6))
+                assertEquals(12, configuredCodec.encodeSize(7))
+                assertEquals(12, configuredCodec.encodeSize(8))
+                assertEquals(12, configuredCodec.encodeSize(9))
+
+                // Two lines in mime scheme
+
+                assertEquals(76, configuredCodec.encodeSize(57))
+                assertEquals(80 + lineSeparatorChars, configuredCodec.encodeSize(58)) // line separator
+                assertEquals(80 + lineSeparatorChars, configuredCodec.encodeSize(59))
+
+                // Three lines in mime scheme
+
+                assertEquals(152 + lineSeparatorChars, configuredCodec.encodeSize(114))
+                assertEquals(156 + 2 * lineSeparatorChars, configuredCodec.encodeSize(115)) // line separator
+                assertEquals(156 + 2 * lineSeparatorChars, configuredCodec.encodeSize(116))
+
+                // The maximum number of bytes that we can encode
+
+                if (codec.isMimeScheme) {
+                    val limit = 1_651_910_496 // lines = 21_17_83_39
+                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit - 1))
+                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit))
+                    assertFailsWith<IllegalArgumentException> {
+                        configuredCodec.encodeSize(limit + 1) // Int.MAX_VALUE + 3
+                    }.also { exception ->
+                        assertEquals("Input is too big", exception.message)
+                    }
+                } else {
+                    val limit = 1_610_612_733
+                    assertEquals(2_147_483_644, configuredCodec.encodeSize(limit))
+                    assertFailsWith<IllegalArgumentException> {
+                        configuredCodec.encodeSize(limit + 1) // Int.MAX_VALUE + 1
+                    }.also { exception ->
+                        assertEquals("Input is too big", exception.message)
+                    }
+                }
+
+                assertFailsWith<IllegalArgumentException> {
+                    configuredCodec.encodeSize(Int.MAX_VALUE)
+                }.also { exception ->
+                    assertEquals("Input is too big", exception.message)
+                }
+            }
+
+            val paddingAbsent = Base64.PaddingOption.entries - paddingPresent.toSet()
+            for (paddingOption in paddingAbsent) {
+                val configuredCodec = codec.withPadding(paddingOption)
+
+                // One line in all schemes
+
+                assertEquals(0, configuredCodec.encodeSize(0))
+                assertEquals(2, configuredCodec.encodeSize(1))
+                assertEquals(3, configuredCodec.encodeSize(2))
+                assertEquals(4, configuredCodec.encodeSize(3))
+                assertEquals(6, configuredCodec.encodeSize(4))
+                assertEquals(7, configuredCodec.encodeSize(5))
+                assertEquals(8, configuredCodec.encodeSize(6))
+                assertEquals(10, configuredCodec.encodeSize(7))
+                assertEquals(11, configuredCodec.encodeSize(8))
+                assertEquals(12, configuredCodec.encodeSize(9))
+
+                // Two lines in mime scheme
+
+                assertEquals(76, configuredCodec.encodeSize(57))
+                assertEquals(78 + lineSeparatorChars, configuredCodec.encodeSize(58)) // line separator
+                assertEquals(79 + lineSeparatorChars, configuredCodec.encodeSize(59))
+
+                // Three lines in mime scheme
+
+                assertEquals(152 + lineSeparatorChars, configuredCodec.encodeSize(114))
+                assertEquals(154 + 2 * lineSeparatorChars, configuredCodec.encodeSize(115)) // line separator
+                assertEquals(155 + 2 * lineSeparatorChars, configuredCodec.encodeSize(116))
+
+                // The maximum number of bytes that we can encode
+
+                if (codec.isMimeScheme) {
+                    val limit = 1_651_910_496 // lines = 21_17_83_39
+                    assertEquals(2_147_483_645, configuredCodec.encodeSize(limit - 1))
+                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit))
+                    assertFailsWith<IllegalArgumentException> {
+                        configuredCodec.encodeSize(limit + 1) // Int.MAX_VALUE + 1
+                    }.also { exception ->
+                        assertEquals("Input is too big", exception.message)
+                    }
+                } else {
+                    val limit = 1_610_612_733
+                    assertEquals(2_147_483_644, configuredCodec.encodeSize(limit))
+                    assertEquals(2_147_483_646, configuredCodec.encodeSize(limit + 1))
+                    assertEquals(2_147_483_647, configuredCodec.encodeSize(limit + 2)) // Int.MAX_VALUE
+                    assertFailsWith<IllegalArgumentException> {
+                        configuredCodec.encodeSize(limit + 3) // Int.MAX_VALUE + 1
+                    }.also { exception ->
+                        assertEquals("Input is too big", exception.message)
+                    }
+                }
+
+                assertFailsWith<IllegalArgumentException> {
+                    configuredCodec.encodeSize(Int.MAX_VALUE)
+                }.also { exception ->
+                    assertEquals("Input is too big", exception.message)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun decodeSize() {
+        fun testDecodeSize(codec: Base64, symbols: String, expectedSize: Int) {
+            assertEquals(expectedSize, codec.decodeSize(symbols.encodeToByteArray(), 0, symbols.length))
+            assertEquals(
+                expectedSize,
+                codec.decodeSize(
+                    if (symbols.isEmpty())
+                        ByteArray(10)
+                    else
+                        ByteArray(symbols.length + 10) { symbols[(it - 5).coerceIn(0, symbols.lastIndex)].code.toByte() },
+                    startIndex = 5,
+                    endIndex = symbols.length + 5
+                )
+            )
+        }
+
+        for ((codec, _) in codecs) {
+            assertFailsWith<IllegalArgumentException> {
+                codec.decode(ByteArray(1), 0, 1)
+            }.also { exception ->
+                assertEquals("Input should have at least 2 symbols for Base64 decoding, startIndex: 0, endIndex: 1", exception.message)
+            }
+            assertFailsWith<IllegalArgumentException> {
+                codec.decode(ByteArray(11), 5, 6)
+            }.also { exception ->
+                assertEquals("Input should have at least 2 symbols for Base64 decoding, startIndex: 5, endIndex: 6", exception.message)
+            }
+
+            testDecodeSize(codec, "", 0)
+            testDecodeSize(codec, "Zg==", 1)
+            testDecodeSize(codec, "Zg=", 1)
+            testDecodeSize(codec, "Zg", 1)
+            testDecodeSize(codec, "Zm8=", 2)
+            testDecodeSize(codec, "Zm8", 2)
+            testDecodeSize(codec, "Zm9v", 3)
+            testDecodeSize(codec, "Zm9vYg==", 4)
+            testDecodeSize(codec, "Zm9vYg=", 4)
+            testDecodeSize(codec, "Zm9vYg", 4)
+            testDecodeSize(codec, "Zm9vYmE=", 5)
+            testDecodeSize(codec, "Zm9vYmE", 5)
+            testDecodeSize(codec, "Zm9vYmFy", 6)
+
+            val longSymbols = "Zm9vYmFy".repeat(76)
+            testDecodeSize(codec, longSymbols, 6 * 76)
+            testDecodeSize(codec, longSymbols + "Zg==", 6 * 76 + 1)
+            testDecodeSize(codec, longSymbols + "Zg=", 6 * 76 + 1)
+            testDecodeSize(codec, longSymbols + "Zg", 6 * 76 + 1)
+
+            if (codec.isMimeScheme) {
+                testDecodeSize(codec, "Zg==" + longSymbols, 1)
+                testDecodeSize(codec, "Zg=" + longSymbols, 1)
+                testDecodeSize(codec, "Zg" + longSymbols, 1 + 6 * 76)
+            } else {
+                testDecodeSize(codec, "Zg==" + longSymbols, 3 + 6 * 76)
+                testDecodeSize(codec, "Zg=" + longSymbols, 2 + 6 * 76)
+                testDecodeSize(codec, "Zg" + longSymbols, 1 + 6 * 76)
+            }
+        }
     }
 }

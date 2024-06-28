@@ -1,0 +1,6 @@
+/unstableSmartCastOnInvokeReceiver.kt:8:19: error: reference has a nullable type '(() -> Int)?', use explicit '?.invoke()' to make a function-like call instead
+    someInterface.interfaceMethod()
+                  ^^^^^^^^^^^^^^^
+/unstableSmartCastOnInvokeReceiver.kt:11:23: error: reference has a nullable type '(() -> Int)?', use explicit '?.invoke()' to make a function-like call instead
+        someInterface.interfaceMethod()
+                      ^^^^^^^^^^^^^^^

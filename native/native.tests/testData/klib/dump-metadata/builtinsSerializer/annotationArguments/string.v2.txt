@@ -1,0 +1,53 @@
+library {
+  // module name: <string.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/C1
+    // class name: test/C2
+    // class name: test/JustString
+    // class name: test/StringArray
+
+    // signature: test/C1|null[0]
+    @test/JustString(string = "kotlin")
+    @test/StringArray(stringArray = [])
+    public final class test/C1 : kotlin/Any {
+
+      // signature: test/C1.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/C2|null[0]
+    @test/StringArray(stringArray = ["java", ""])
+    public final class test/C2 : kotlin/Any {
+
+      // signature: test/C2.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: test/JustString|null[0]
+    public final annotation class test/JustString : kotlin/Annotation {
+
+      // signature: test/JustString.<init>|<init>(kotlin.String){}[0]
+      public constructor(string: kotlin/String)
+
+      // signature: test/JustString.string|{}string[0]
+      public final val string: kotlin/String
+        // signature: test/JustString.string.<get-string>|<get-string>(){}[0]
+        public final get
+    }
+
+    // signature: test/StringArray|null[0]
+    public final annotation class test/StringArray : kotlin/Annotation {
+
+      // signature: test/StringArray.<init>|<init>(kotlin.Array<kotlin.String>){}[0]
+      public constructor(stringArray: kotlin/Array<kotlin/String>)
+
+      // signature: test/StringArray.stringArray|{}stringArray[0]
+      public final val stringArray: kotlin/Array<kotlin/String>
+        // signature: test/StringArray.stringArray.<get-stringArray>|<get-stringArray>(){}[0]
+        public final get
+    }
+  }
+}

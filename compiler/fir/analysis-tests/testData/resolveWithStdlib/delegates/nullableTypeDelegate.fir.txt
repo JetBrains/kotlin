@@ -19,10 +19,10 @@ FILE: nullableTypeDelegate.kt
 
         public final var other: R|MyClassSome?|by this@R|/MyClassSome|.R|/directed|<R|MyClassSome|, R|MyClassSome|>(<getClass>(Q|MyClassSome|).R|kotlin/jvm/java|<R|MyClassSome|>)
             public get(): R|MyClassSome?| {
-                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(_Target)?|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|)
+                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.getValue: R|MyClassSome?|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|)
             }
             public set(<set-?>: R|MyClassSome?|): R|kotlin/Unit| {
-                this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|, R|<local>/other|)
+                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|, R|<local>/other|)
             }
 
         public final fun set(link: R|MyClassSome?|): R|kotlin/Unit| {

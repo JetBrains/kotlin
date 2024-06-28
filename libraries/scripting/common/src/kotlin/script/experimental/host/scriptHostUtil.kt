@@ -108,7 +108,7 @@ open class StringScriptSource(val source: String, override val name: String? = n
 
     override val text: String get() = source
 
-    override val locationId: String? = null
+    override val locationId: String? get() = name
 
     override fun equals(other: Any?): Boolean =
         this === other || (other as? StringScriptSource)?.let { text == it.text && name == it.name && locationId == it.locationId } == true

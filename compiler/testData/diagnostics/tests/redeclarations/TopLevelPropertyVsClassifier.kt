@@ -1,3 +1,5 @@
+// FILE: a.kt
+
 val <!REDECLARATION!>Test1<!> = null
 class <!REDECLARATION!>Test1<!>
 
@@ -11,3 +13,11 @@ val <!PACKAGE_OR_CLASSIFIER_REDECLARATION, REDECLARATION!>Test4<!> = null
 class <!PACKAGE_OR_CLASSIFIER_REDECLARATION, REDECLARATION!>Test4<!>
 interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
 object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Test4<!>
+
+val <!REDECLARATION!>Test5<!> = null
+class <!REDECLARATION!>Test6<!>
+
+// FILE: b.kt
+
+class <!REDECLARATION!>Test5<!>
+val <!REDECLARATION!>Test6<!> = null

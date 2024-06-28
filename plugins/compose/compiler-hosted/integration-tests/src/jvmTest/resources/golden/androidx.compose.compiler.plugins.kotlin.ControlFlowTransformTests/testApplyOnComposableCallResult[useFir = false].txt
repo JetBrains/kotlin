@@ -1,0 +1,45 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.State
+
+@Composable
+fun <T> provided(value: T): State<T> = remember { mutableStateOf(value) }.apply {
+    this.value = value
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
+  sourceInformationMarkerStart(%composer, <>, "C(provided)*<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+  val tmp1_group = %composer.cache(false) {
+    mutableStateOf(
+      value = value
+    )
+  }
+  sourceInformationMarkerEnd(%composer)
+  tmp1_group.apply {
+    %this%apply.value = value
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

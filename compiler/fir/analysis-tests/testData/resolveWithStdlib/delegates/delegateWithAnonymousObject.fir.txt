@@ -41,10 +41,10 @@ FILE: delegateWithAnonymousObject.kt
         }
         )
             public get(): R|IssueListView| {
-                ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(_Target)|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)
+                ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)
             }
             public set(<set-?>: R|IssueListView|): R|kotlin/Unit| {
-                this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)
+                ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)
             }
 
     }

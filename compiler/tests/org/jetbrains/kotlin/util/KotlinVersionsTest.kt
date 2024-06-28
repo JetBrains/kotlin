@@ -29,17 +29,19 @@ import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
+import kotlin.test.Ignore
 
 @WithMutedInDatabaseRunTest
+@Ignore("Enable when KT-69280 is fixed")
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
-        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
+        val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
 
         data class Version(val major: Int, val minor: Int, val patch: Int?, val versionString: String, val source: String) {
             fun isConsistentWith(other: Version): Boolean {
                 return major == other.major &&
-                       minor == other.minor &&
-                       (patch == null || other.patch == null || patch == other.patch)
+                        minor == other.minor &&
+                        (patch == null || other.patch == null || patch == other.patch)
             }
         }
 
@@ -50,39 +52,47 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         }
 
         fun String.toVersion(source: String): Version =
-                toVersionOrNull(source) ?: error("Version ($source) is in an unknown format: $this")
+            toVersionOrNull(source) ?: error("Version ($source) is in an unknown format: $this")
 
         val versions = arrayListOf<Version>()
 
         // This version is null in case of a local build when KotlinCompilerVersion.VERSION = "@snapshot@"
         versions.addIfNotNull(
-                KotlinCompilerVersion.VERSION.substringBefore('-').toVersionOrNull("KotlinCompilerVersion.VERSION")
+            KotlinCompilerVersion.VERSION.substringBefore('-').toVersionOrNull("KotlinCompilerVersion.VERSION")
         )
 
         versions.add(
-                ForTestCompileRuntime.runtimeJarClassLoader().loadClass(KotlinVersion::class.qualifiedName!!)
-                        .getDeclaredField(KotlinVersion.Companion::CURRENT.name)
-                        .get(null)
-                        .toString()
-                        .toVersion("KotlinVersion.CURRENT")
+            ForTestCompileRuntime.runtimeJarClassLoader().loadClass(KotlinVersion::class.qualifiedName!!)
+                .getDeclaredField(KotlinVersion.Companion::CURRENT.name)
+                .get(null)
+                .toString()
+                .toVersion("KotlinVersion.CURRENT")
         )
 
         versions.add(
-                loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
-                        ?.toVersion("version in pom.xml")
+            loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
+                ?.toVersion("version in pom.xml")
                 ?: error("No version in libraries/pom.xml")
         )
 
-        versions.add(
-                LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
-        )
+        val latestStableVersion = LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
+        // Note: comment the next line before a language version update
+        versions.add(latestStableVersion)
 
         if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {
             Assert.fail(
-                    "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
-                    versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
+                "Some versions are inconsistent. Please change the versions so that they are consistent:\n\n" +
+                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
             )
         }
+
+        // Note: uncomment this fragment before a language version update
+//        if (versions.any { it.isConsistentWith(latestStableVersion) }) {
+//            Assert.fail(
+//                "Some versions are consistent with LATEST_STABLE ${latestStableVersion.versionString}. Please edit KotlinVersionsTest accordingly:\n\n" +
+//                        versions.joinToString(separator = "\n") { with(it) { "$versionString ($source)" } }
+//            )
+//        }
     }
 
     fun testMavenProjectVersionsAreEqual() {
@@ -103,14 +113,14 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         }
 
         Assert.assertTrue(
-                "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure",
-                poms.size > 10
+            "Too few (<= 10) pom.xml files found. Something must be wrong in the test or in the project structure",
+            poms.size > 10
         )
 
         if (!poms.map(Pom::version).areEqual()) {
             Assert.fail(
-                    "Some versions in pom.xml files are different. Please change the versions so that they are equal:\n\n" +
-                    poms.joinToString(separator = "\n") { (path, version) -> "$version $path" }
+                "Some versions in pom.xml files are different. Please change the versions so that they are equal:\n\n" +
+                        poms.joinToString(separator = "\n") { (path, version) -> "$version $path" }
             )
         }
     }

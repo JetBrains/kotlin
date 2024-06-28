@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-51759
 
 fun testBreak(b: Boolean, s: String?) {

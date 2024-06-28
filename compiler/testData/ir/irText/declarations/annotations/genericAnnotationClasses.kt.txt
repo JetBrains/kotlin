@@ -1,50 +1,37 @@
 package ann
 
 open annotation class Test1<T : Any?> : Annotation {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+open annotation class Test2<T1 : Any, T2 : Any?> : Annotation {
   val x: Int
     field = x
     get
 
-}
-
-open annotation class Test2<T1 : Any, T2 : Any?> : Annotation {
   constructor(x: Int = 0) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
-}
-
-interface I<T : Any?> {
-
 }
 
 open annotation class Test3<T1 : Any?, T2 : I<T1>> : Annotation {
-  constructor(x: Test1<I<T2>>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: Test1<I<T2>>
     field = x
     get
 
-}
-
-class C<T : Any?> : I<T> {
-  constructor() /* primary */ {
+  constructor(x: Test1<I<T2>>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
@@ -53,15 +40,28 @@ class C<T : Any?> : I<T> {
 }
 
 open annotation class Test4 : Annotation {
+  val x: Array<Test3<Int, C<Int>>>
+    field = x
+    get
+
   constructor(x: Array<Test3<Int, C<Int>>>) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Array<Test3<Int, C<Int>>>
-    field = x
+}
+
+open annotation class Test5<T : Any?> : Annotation {
+  val xs: Array<out Test3<T, C<T>>>
+    field = xs
     get
+
+  constructor(vararg xs: Test3<T, C<T>>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
@@ -74,16 +74,12 @@ class ARG {
 
 }
 
-open annotation class Test5<T : Any?> : Annotation {
-  constructor(vararg xs: Test3<T, C<T>>) /* primary */ {
+class C<T : Any?> : I<T> {
+  constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val xs: Array<out Test3<T, C<T>>>
-    field = xs
-    get
 
 }
 
@@ -100,3 +96,7 @@ class CC {
   }
 
 }
+
+interface I<T : Any?> {
+}
+

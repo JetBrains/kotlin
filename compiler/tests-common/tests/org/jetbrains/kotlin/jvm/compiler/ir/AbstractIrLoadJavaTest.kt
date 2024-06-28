@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.jvm.compiler.ir
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaWithPsiClassReadingTest
+import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrLoadJavaTest : AbstractLoadJavaWithPsiClassReadingTest() {
-    override fun updateConfiguration(configuration: CompilerConfiguration) = configuration.put(JVMConfigurationKeys.IR, true)
+    override val backend: TargetBackend
+        get() = TargetBackend.JVM_IR
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,18 +8,16 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnvironment
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
-import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import java.nio.ByteBuffer
 import java.util.*
-import java.util.ArrayDeque
 
-fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragment {
-    return JsIrAstDeserializer(input).readFragment()
+fun deserializeJsIrProgramFragment(input: ByteArray): JsIrProgramFragments {
+    return JsIrAstDeserializer(input).readFragments()
 }
 
 private class JsIrAstDeserializer(private val source: ByteArray) {
@@ -80,8 +78,12 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return if (readBoolean()) then() else null
     }
 
+    fun readFragments(): JsIrProgramFragments {
+        return JsIrProgramFragments(readFragment(), ifTrue { readFragment() })
+    }
+
     fun readFragment(): JsIrProgramFragment {
-        return JsIrProgramFragment(readString()).apply {
+        return JsIrProgramFragment(readString(), readString()).apply {
             readRepeated {
                 importedModules += JsImportedModule(
                     externalName = stringTable[readInt()],
@@ -90,10 +92,11 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                 )
             }
 
-            readRepeated { imports[stringTable[readInt()]] = readExpression() }
+            readRepeated { imports[stringTable[readInt()]] = readStatement() }
 
             readRepeated { declarations.statements += readStatement() }
             readRepeated { initializers.statements += readStatement() }
+            readRepeated { eagerInitializers.statements += readStatement() }
             readRepeated { exports.statements += readStatement() }
             readRepeated { polyfills.statements += readStatement() }
 
@@ -101,10 +104,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { optionalCrossModuleImports.add(stringTable[readInt()]) }
             readRepeated { classes[nameTable[readInt()]] = readIrIcClassModel() }
 
-            ifTrue { testFunInvocation = readStatement() }
-            ifTrue { mainFunction = readStatement() }
+            ifTrue { mainFunctionTag = readString() }
+            ifTrue { testEnvironment = readTestEnvironment() }
             ifTrue { dts = TypeScriptFragment(readString()) }
-            ifTrue { suiteFn = nameTable[readInt()] }
 
             readRepeated { definitions += stringTable[readInt()] }
         }
@@ -115,6 +117,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { preDeclarationBlock.statements += readStatement() }
             readRepeated { postDeclarationBlock.statements += readStatement() }
         }
+    }
+
+    private fun readTestEnvironment(): JsIrProgramTestEnvironment {
+        return JsIrProgramTestEnvironment(stringTable[readInt()], stringTable[readInt()])
     }
 
     private fun readStatement(): JsStatement {
@@ -219,6 +225,39 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                                 ifTrue { readBlock() }
                             )
                         }
+                        EXPORT -> {
+                            JsExport(
+                                when (val type = readByte().toInt()) {
+                                    ExportType.ALL -> JsExport.Subject.All
+                                    ExportType.ITEMS -> JsExport.Subject.Elements(readList {
+                                        JsExport.Element(
+                                            nameTable[readInt()].makeRef(),
+                                            ifTrue { nameTable[readInt()] }
+                                        )
+                                    })
+                                    else -> error("Unknown JsExport type $type")
+                                },
+                                ifTrue { readString() }
+                            )
+                        }
+                        IMPORT -> {
+                            JsImport(
+                                readString(),
+                                when (val type = readByte().toInt()) {
+                                    ImportType.EFFECT -> JsImport.Target.Effect
+                                    ImportType.ALL -> JsImport.Target.All(nameTable[readInt()].makeRef())
+                                    ImportType.DEFAULT -> JsImport.Target.Default(nameTable[readInt()].makeRef())
+                                    ImportType.ITEMS -> JsImport.Target.Elements(readList {
+                                        JsImport.Element(
+                                            nameTable[readInt()],
+                                            ifTrue { nameTable[readInt()].makeRef() }
+                                        )
+
+                                    }.toMutableList())
+                                    else -> error("Unknown JsImport type $type")
+                                }
+                            )
+                        }
                         EMPTY -> {
                             JsEmpty
                         }
@@ -237,10 +276,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val sideEffectKindValues = SideEffectKind.values()
-    private val jsBinaryOperatorValues = JsBinaryOperator.values()
-    private val jsUnaryOperatorValues = JsUnaryOperator.values()
-    private val jsFunctionModifiersValues = JsFunction.Modifier.values()
+    private val sideEffectKindValues get() = SideEffectKind.entries
+    private val jsBinaryOperatorValues get() = JsBinaryOperator.entries
+    private val jsUnaryOperatorValues get() = JsUnaryOperator.entries
+    private val jsFunctionModifiersValues get() = JsFunction.Modifier.entries
 
     private fun readExpression(): JsExpression {
         return withComments {
@@ -292,7 +331,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         CLASS -> {
                             JsClass(
                                 ifTrue { nameTable[readInt()] },
-                                ifTrue { nameTable[readInt()].makeRef() },
+                                ifTrue { readExpression() },
                                 ifTrue { readFunction() },
                             ).apply {
                                 readRepeated { members += readFunction() }
@@ -351,6 +390,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         NEW -> {
                             JsNew(readExpression(), readList { readExpression() })
                         }
+                        YIELD -> {
+                            JsYield(ifTrue { readExpression() })
+                        }
                         else -> error("Unknown expression id: $id")
                     }
                 }
@@ -408,7 +450,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val specialFunctionValues = SpecialFunction.values()
+    private val specialFunctionValues get() = SpecialFunction.entries
 
     private fun readName(): JsName {
         val identifier = stringTable[readInt()]
@@ -417,6 +459,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         } ?: JsDynamicScope.declareName(identifier)
         ifTrue { name.localAlias = readLocalAlias() }
         ifTrue { name.imported = true }
+        ifTrue { name.constant = true }
         ifTrue { name.specialFunction = specialFunctionValues[readInt()] }
         return name
     }

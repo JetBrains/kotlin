@@ -12,6 +12,7 @@ More fine-grained test tasks exist covering different parts of Gradle plugins:
 - `kgpJsTests` - runs all tests for Kotlin Gradle Plugin/Js platform (parallel execution)
 - `kgpAndroidTests` - runs all tests for Kotlin Gradle Plugin/Android platform (parallel execution)
 - `kgpMppTests` - run all tests for Kotlin Gradle Multiplatform plugin (parallel execution)
+- `kgpNativeTests` - run all tests for Kotlin Gradle Plugin with K/N (parallel execution)
 - `kgpDaemonTests` - runs all tests for Gradle and Kotlin daemons (sequential execution)
 - `kgpOtherTests` - run all tests for support Gradle plugins, such as kapt, allopen, etc (parallel execution)
 - `kgpAllParallelTests` - run all tests for all platforms except daemons tests (parallel execution)
@@ -30,7 +31,20 @@ also require the Gradle plugin marker artifacts to be installed:
 
 If you want to run only one test class, you need to append `--tests` flag with value of test class, which you want to run
 ```shell
-./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllTests --tests <class-name-with-package>
+./gradlew :kotlin-gradle-plugin-integration-tests:kgpAllParallelTests --tests <class-name-with-package>
+```
+
+#### How to Run Using Kotlin Native from Master
+
+Currently, Kotlin Native from master involves three configurations: `kgpMppTests`, `kgpNativeTests`, and `kgpOtherTests`. 
+Depending on your development environment, there are a few different ways you can run this.
+* **On Local Environment** In the case of Local Environment builds, you have two options, which you can add in your `local.properties` file:  
+  * `kotlin.native.enabled=true` - this property adds building Kotlin Native full bundle step before Integration Tests, then this bundle will be used in the Integration Tests.
+  * `kotlin.native.local.distribution.for.tests.enabled=false` - include this line if you need to disable running Integration Tests with Kotlin/Native from master, even when `kotlin.native.enabled` is set to true.
+* **On TeamCity** In the case of TeamCity builds, no extra setting is necessary. The mentioned configurations depend on the `full bundle`, which stores its artifacts in the `-DkonanDataDirForIntegrationTests` directory.
+Also, you can specify the konan directory for test by providing `-DkonanDataDirForIntegrationTests`, for example:
+```bash
+ ./gradlew :kotlin-gradle-plugin-integration-tests:kgpNativeTests -DkonanDataDirForIntegrationTests=/tmp/.konan
 ```
 
 #### How to work with the tests
@@ -47,12 +61,24 @@ compile tests and run them. This should reduce test execution time.
 a lot of output, that slows down test execution.
 - Add `@DisplayName(...)` with meaningful description both for test class and methods inside. This will allow developers easier 
 to understand what test is about.
+- Add to test related Kotlin tag. For example for Kotlin/Jvm tests - `@JvmGradlePluginTests`. Other available tags are located nearby 
+`@JvmGradlePluginTests` - check yourself what suites best for the test. You could add tag onto test suite once, but then all tests 
+in test suite should be for the related tag. Preferably add tag for each test.
 - Consider using [Gradle Plugin DSL](https://docs.gradle.org/current/userguide/plugins.html#sec:plugins_block) while adding new/modifying 
 existing test projects.
 
 Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_kit.html) and may reuse already active Gradle TestKit daemon.
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
 You could clean it locally by running `cleanTestKitCache` task.
+
+#### How to debug Kotlin daemon
+
+1. Create `Remote JVM debug` configuration in IDEA. 
+   1. Modify debug port to be `5005`. 
+   2. In `Debugger mode` floating menu select `Listen to remote JVM`. 
+   3. (Optional) You can check `Auto restart` to automatically restart configuration after each debug session.
+2. Specify correct debug port in `build` call arguments `kotlinDaemonDebugPort = 5005`.
+3. Run newly created configuration in `Debug` mode and after that run test in simple `Run` mode.
 
 ##### Adding new test suite
 
@@ -90,10 +116,10 @@ add a new assertion, add as a reviewer someone from Kotlin build tools team.
 
 ##### Additional test helpers
 
-- Whenever you need to test combination of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
+- Whenever you need to test combinations of different JDKs and Gradle versions - you could use `@GradleWithJdkTest` instead of `@GradleTest`. 
 Then test method will receive requires JDKs as a second parameter:
 ```kotlin
-@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_17])
+@JdkVersions(version = [JavaVersion.VERSION_11, JavaVersion.VERSION_21])
 @GradleWithJdkTest
 fun someTest(
     gradleVersion: GradleVersion, 

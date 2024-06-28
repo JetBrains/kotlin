@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationTopLevel.kt
+    [ResolvedTo(BODY_RESOLVE)] @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>

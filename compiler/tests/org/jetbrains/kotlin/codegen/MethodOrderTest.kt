@@ -24,8 +24,8 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-class MethodOrderTest : CodegenTestCase() {
-    fun testDelegatedMethod() {
+open class MethodOrderTest : CodegenTestCase() {
+    open fun testDelegatedMethod() {
         doTest(
             """
                 interface Trait {
@@ -48,7 +48,7 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    fun testLambdaClosureOrdering() {
+    open fun testLambdaClosureOrdering() {
         doTest(
             """
                 class Klass {
@@ -66,7 +66,7 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    fun testAnonymousObjectClosureOrdering() {
+    open fun testAnonymousObjectClosureOrdering() {
         doTest(
             """
                 class Klass {
@@ -84,7 +84,7 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    fun testMemberAccessor() {
+    open fun testMemberAccessor() {
         doTest(
             """
                 class Outer(private val a: Int, private var b: String) {
@@ -111,7 +111,7 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    fun testDeterministicDefaultMethodImplOrder() {
+    open fun testDeterministicDefaultMethodImplOrder() {
         doTest(
             """
                 interface Base<K, V> {
@@ -147,7 +147,7 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    fun testBridgeOrder() {
+    open fun testBridgeOrder() {
         doTest(
             """
                 interface IrElement
@@ -174,11 +174,12 @@ class MethodOrderTest : CodegenTestCase() {
         )
     }
 
-    private fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
+    protected fun doTest(sourceText: String, classSuffix: String, expectedOrder: List<String>) {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
         myFiles = CodegenTestFiles.create("file.kt", sourceText, myEnvironment!!.project)
 
-        val classFileForObject = generateClassesInFile().asList().first { it.relativePath.endsWith("$classSuffix.class") }
+        val classFileForObject = generateClassesInFile().asList().firstOrNull { it.relativePath.endsWith("$classSuffix.class") }
+        checkNotNull(classFileForObject) { "class ending on $classSuffix was not generated" }
         val classReader = ClassReader(classFileForObject.asByteArray())
 
         val methodNames = ArrayList<String>()

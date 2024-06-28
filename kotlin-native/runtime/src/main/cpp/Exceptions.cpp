@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <cstdlib>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 
@@ -25,7 +25,8 @@
 #include "Exceptions.h"
 #include "ExecFormat.h"
 #include "Memory.h"
-#include "Mutex.hpp"
+#include <std_support/Atomic.hpp>
+#include "concurrent/Mutex.hpp"
 #include "Porting.h"
 #include "Types.h"
 #include "Utils.hpp"
@@ -36,44 +37,34 @@ extern "C" void Kotlin_runUnhandledExceptionHook(KRef exception);
 extern "C" void ReportUnhandledException(KRef exception);
 
 void ThrowException(KRef exception) {
-  RuntimeAssert(exception != nullptr && IsInstance(exception, theThrowableTypeInfo),
+  RuntimeAssert(exception != nullptr && IsInstanceInternal(exception, theThrowableTypeInfo),
                 "Throwing something non-throwable");
-#if KONAN_NO_EXCEPTIONS
-  PrintThrowable(exception);
-  RuntimeCheck(false, "Exceptions unsupported");
-#else
   ExceptionObjHolder::Throw(exception);
-#endif
 }
 
 void HandleCurrentExceptionWhenLeavingKotlinCode() {
-#if KONAN_NO_EXCEPTIONS
-  RuntimeCheck(false, "Exceptions unsupported");
-#else
   try {
       std::rethrow_exception(std::current_exception());
   } catch (ExceptionObjHolder& e) {
       std::terminate();  // Terminate when it's a kotlin exception.
   }
-#endif
 }
 
 namespace {
 
-#if !KONAN_NO_EXCEPTIONS
 class {
     /**
      * Timeout 5 sec for concurrent (second) terminate attempt to give a chance the first one to finish.
      * If the terminate handler hangs for 5 sec it is probably fatally broken, so let's do abnormal _Exit in that case.
      */
     unsigned int timeoutSec = 5;
-    int terminatingFlag = 0;
+    std::atomic<int> terminatingFlag = 0;
   public:
     template <class Fun> RUNTIME_NORETURN void operator()(Fun block) {
-      if (compareAndSet(&terminatingFlag, 0, 1)) {
+      if (kotlin::std_support::atomic_compare_exchange_strong(terminatingFlag, 0, 1)) {
         block();
         // block() is supposed to be NORETURN, otherwise go to normal abort()
-        konan::abort();
+        std::abort();
       } else {
         kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         sleep(timeoutSec);
@@ -82,47 +73,32 @@ class {
       _Exit(EXIT_FAILURE); // force exit
     }
 } concurrentTerminateWrapper;
-#endif
 
 void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
-#if KONAN_NO_EXCEPTIONS
-    RuntimeCheck(false, "Exceptions unsupported");
-#else
     concurrentTerminateWrapper([exception]() {
         ReportUnhandledException(exception);
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
         ReportBacktraceToIosCrashLog(exception);
 #endif
-        konan::abort();
+        std::abort();
     });
-#endif
 }
 
 void processUnhandledException(KRef exception) noexcept {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
-#if KONAN_NO_EXCEPTIONS
-    terminateWithUnhandledException(exception);
-#else
     try {
         Kotlin_runUnhandledExceptionHook(exception);
     } catch (ExceptionObjHolder& e) {
         terminateWithUnhandledException(e.GetExceptionObject());
     }
-#endif
 }
 
 } // namespace
 
 ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
-#if !KONAN_NO_EXCEPTIONS
     RETURN_OBJ(static_cast<ExceptionObjHolder*>(holder)->GetExceptionObject());
-#else
-    RETURN_OBJ(nullptr);
-#endif
 }
-
-#if !KONAN_NO_EXCEPTIONS
 
 namespace {
 // Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
@@ -190,14 +166,6 @@ public:
 void SetKonanTerminateHandler() {
   TerminateHandler::install();
 }
-
-#else // !KONAN_NO_EXCEPTIONS
-
-void SetKonanTerminateHandler() {
-  // Nothing to do.
-}
-
-#endif // !KONAN_NO_EXCEPTIONS
 
 extern "C" void RUNTIME_NORETURN Kotlin_terminateWithUnhandledException(KRef exception) {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);

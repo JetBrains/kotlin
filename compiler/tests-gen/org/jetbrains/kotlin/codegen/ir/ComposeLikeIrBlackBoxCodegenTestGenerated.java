@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,26 +22,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ComposeLikeIrBlackBoxCodegenTestGenerated extends AbstractComposeLikeIrBlackBoxCodegenTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInComposeLike() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLike"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
+  public void testAllFilesPresentInComposeLike() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/composeLike"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+  }
 
-    @TestMetadata("default.kt")
-    public void testDefault() throws Exception {
-        runTest("compiler/testData/codegen/composeLike/default.kt");
-    }
+  @TestMetadata("default.kt")
+  public void testDefault() {
+    runTest("compiler/testData/codegen/composeLike/default.kt");
+  }
 
-    @TestMetadata("defaultInline.kt")
-    public void testDefaultInline() throws Exception {
-        runTest("compiler/testData/codegen/composeLike/defaultInline.kt");
-    }
+  @TestMetadata("defaultInline.kt")
+  public void testDefaultInline() {
+    runTest("compiler/testData/codegen/composeLike/defaultInline.kt");
+  }
 
-    @TestMetadata("defaultLocal.kt")
-    public void testDefaultLocal() throws Exception {
-        runTest("compiler/testData/codegen/composeLike/defaultLocal.kt");
-    }
+  @TestMetadata("defaultLocal.kt")
+  public void testDefaultLocal() {
+    runTest("compiler/testData/codegen/composeLike/defaultLocal.kt");
+  }
 }

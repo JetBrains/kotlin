@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
-import java.io.File
 
 internal class KotlinTestReportCompatibilityHelperG70(
     private val objectFactory: ObjectFactory
@@ -17,8 +18,8 @@ internal class KotlinTestReportCompatibilityHelperG70(
     override fun getDestinationDirectory(kotlinTestReport: KotlinTestReport): DirectoryProperty =
         objectFactory.directoryProperty().fileValue(kotlinTestReport.destinationDir)
 
-    override fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: File) {
-        kotlinTestReport.destinationDir = directory
+    override fun setDestinationDirectory(kotlinTestReport: KotlinTestReport, directory: Provider<Directory>) {
+        kotlinTestReport.destinationDir = directory.get().asFile
     }
 
     override fun addTestResultsFrom(kotlinTestReport: KotlinTestReport, task: AbstractTestTask) {

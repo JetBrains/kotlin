@@ -24,9 +24,14 @@ import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
-fun evalFile(scriptFile: File, cacheDir: File? = null): ResultWithDiagnostics<EvaluationResult> =
+fun evalFile(
+    scriptFile: File,
+    cacheDir: File? = null,
+    compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ResultWithDiagnostics<EvaluationResult> =
     withProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY, cacheDir?.absolutePath ?: "") {
-        evalFileWithConfigurations(scriptFile)
+        evalFileWithConfigurations(scriptFile, compilation, evaluation)
     }
 
 fun evalFileWithConfigurations(
@@ -59,6 +64,12 @@ val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from m
 class MainKtsTest {
 
     @Test
+    fun testEmptyFile() {
+        val res = evalFile(File("$TEST_DATA_ROOT/empty.main.kts"))
+        assertSucceeded(res)
+    }
+
+    @Test
     fun testResolveJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-resolve-junit.main.kts"))
         assertSucceeded(res)
@@ -72,7 +83,7 @@ class MainKtsTest {
         val resErr = evalFile(File("$TEST_DATA_ROOT/resolve-error-hamcrest-via-junit.main.kts"))
         Assert.assertTrue(
             resErr is ResultWithDiagnostics.Failure &&
-                    resErr.reports.any { it.message == "Unresolved reference: hamcrest" }
+                    resErr.reports.any { it.message.contains("Unresolved reference") && it.message.contains("hamcrest") }
         )
     }
 
@@ -109,7 +120,7 @@ class MainKtsTest {
     @Test
     fun testUnresolvedJunit() {
         val res = evalFile(File("$TEST_DATA_ROOT/hello-unresolved-junit.main.kts"))
-        assertFailed("Unresolved reference: junit", res)
+        assertFailed("Unresolved reference 'junit'.", res)
     }
 
     @Test
@@ -156,7 +167,8 @@ class MainKtsTest {
     fun testCyclicImportError() {
         val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
-        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", res = res)
+        // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
+        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
     }
 
     @Test
@@ -246,15 +258,13 @@ class MainKtsTest {
     @Test
     fun testHelloSerialization() {
         // the embeddable plugin is needed for this test, because embeddable compiler is used.
-        // furtunately appropriate gradle plugin can serve as an embeddable compiler plugin now
-        // so, the path to it is prepared in the build file
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         val out = captureOut {
-            val res = evalFileWithConfigurations(
+            val res = evalFile(
                 File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts"),
                 compilation = {
                     compilerOptions(
-                        "-Xplugin", serializationPluginClasspath
+                        "-Xplugin=$serializationPluginClasspath"
                     )
                 }
             )
@@ -272,6 +282,18 @@ class MainKtsTest {
         Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
         val res = evalFile(File(scriptPath))
         assertSucceeded(res)
+    }
+
+    @Test
+    fun testUseSlf4j() {
+        val err = captureOutAndErr {
+            val res = evalFile(File("$TEST_DATA_ROOT/use-slf4j.main.kts"))
+            assertSucceeded(res)
+        }.second
+        Assert.assertTrue(
+            "Expect info log line with \"test-slf4j\" text, got:\n$err",
+            err.contains("INFO  - test-slf4j")
+        )
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
@@ -301,8 +323,13 @@ class MainKtsTest {
             "test failed - expecting a failure$expected but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${reports.joinToString("\n  ")}",
-            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.contains(it) } }
+            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.containsIgnoringPunctuation(it) } }
         )
+    }
+
+    private val regexNonWord = "\\W".toRegex()
+    private fun String.containsIgnoringPunctuation(it: String): Boolean {
+        return this.replace(regexNonWord, "").contains(it.replace(regexNonWord, ""))
     }
 
     private fun evalSuccessWithOut(scriptFile: File, cacheDir: File? = null): List<String> =
@@ -398,17 +425,24 @@ class CacheDirectoryDetectorTest {
     private val directories = Directories(systemProperties, environment)
 }
 
-internal fun captureOut(body: () -> Unit): String {
+internal fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
+
+internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()
+    val errStream = ByteArrayOutputStream()
     val prevOut = System.out
+    val prevErr = System.err
     System.setOut(PrintStream(outStream))
+    System.setErr(PrintStream(errStream))
     try {
         body()
     } finally {
         System.out.flush()
+        System.err.flush()
         System.setOut(prevOut)
+        System.setErr(prevErr)
     }
-    return outStream.toString().trim()
+    return outStream.toString().trim() to errStream.toString().trim()
 }
 
 internal fun <T> withProperty(name: String, value: String?, body: () -> T): T {

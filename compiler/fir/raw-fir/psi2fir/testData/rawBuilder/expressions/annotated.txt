@@ -1,5 +1,5 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#) @Retention(AnnotationRetention#.SOURCE#) public final? annotation class Ann : R|kotlin/Annotation| {
         public? [ContainingClassKey=Ann] constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }
@@ -20,22 +20,22 @@ FILE: annotated.kt
 
         ^foo IntegerLiteral(42)
     }
-    public? final? data class Two : R|kotlin/Any| {
+    public final? data class Two : R|kotlin/Any| {
         public? [ContainingClassKey=Two] constructor([CorrespondingProperty=/Two.x] x: Int, [CorrespondingProperty=/Two.y] y: Int): R|Two| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+        public? final? [ComponentFunctionSymbolKey=/Two.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? [ContainingClassKey=Two] get(): Int
 
-        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+        public? final? [ComponentFunctionSymbolKey=/Two.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? [ContainingClassKey=Two] get(): Int
 
-        public final operator fun component1(): Int
+        public? final operator fun component1(): Int
 
-        public final operator fun component2(): Int
+        public? final operator fun component2(): Int
 
-        public final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
+        public? final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
 
     }
     public? final? fun bar(two: Two): R|kotlin/Unit| {

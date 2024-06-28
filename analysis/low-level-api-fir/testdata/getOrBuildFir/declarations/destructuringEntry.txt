@@ -1,6 +1,0 @@
-KT element: KtDestructuringDeclarationEntry
-FIR element: FirPropertyImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()

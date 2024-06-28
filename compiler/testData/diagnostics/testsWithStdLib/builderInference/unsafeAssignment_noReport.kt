@@ -1,4 +1,5 @@
-// !LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
+// LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
+// FIR_DUMP
 
 class Foo<T : Any> {
     fun doSmthng(arg: T) {}

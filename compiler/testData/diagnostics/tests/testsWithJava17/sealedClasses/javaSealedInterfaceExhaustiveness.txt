@@ -3,8 +3,10 @@ package
 public fun test_error_1(/*0*/ base: Base): kotlin.Unit
 public fun test_error_2(/*0*/ base: Base): kotlin.Unit
 public fun test_error_3(/*0*/ base: Base): kotlin.Unit
+public fun test_error_4(/*0*/ sameFile: SameFile): kotlin.Unit
 public fun test_ok_1(/*0*/ base: Base): kotlin.Unit
 public fun test_ok_2(/*0*/ base: Base): kotlin.Unit
+public fun test_ok_3(/*0*/ sameFile: SameFile): kotlin.Unit
 
 public interface A : Base {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -59,3 +61,24 @@ public final enum class E : kotlin.Enum<E!>, Base {
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
+
+public sealed interface SameFile {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class A : SameFile {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class B : SameFile {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

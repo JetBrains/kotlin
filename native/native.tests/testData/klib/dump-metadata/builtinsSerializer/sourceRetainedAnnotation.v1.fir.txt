@@ -1,0 +1,50 @@
+library {
+  // module name: <sourceRetainedAnnotation.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+    // class name: test/Enum
+    // class name: test/Klass
+
+    // signature: test/A|null[0]
+    @kotlin/annotation/Retention(value = kotlin/annotation/AnnotationRetention.SOURCE)
+    @kotlin/annotation/Target(allowedTargets = [kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY, kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.TYPE, kotlin/annotation/AnnotationTarget.TYPE_PARAMETER])
+    public final annotation class test/A : kotlin/Annotation {
+
+      // signature: test/A.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Enum|null[0]
+    public final enum class test/Enum : kotlin/Enum<test/Enum> {
+
+      // signature: test/Enum.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/Enum.ENTRY|null[0]
+      ENTRY,
+
+      // has Enum.entries
+    }
+
+    // signature: test/Klass|null[0]
+    public final class test/Klass : kotlin/Any {
+
+      // signature: test/Klass.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: test/function|5623997416410866984[0]
+      public final fun <T#0 /* T */> function(param: kotlin/Unit): kotlin/Unit
+
+      // signature: test/property|4634558160746314112[0]
+      public final val property: kotlin/Unit
+        // signature: test/property.<get-property>|4838831487146901942[0]
+        public final get
+    }
+  }
+}

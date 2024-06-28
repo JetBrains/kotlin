@@ -1,0 +1,20 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/Outer$Annotations$EffectivelyPrivateAnnotation {
+    // source: 'annotation.kt'
+    private final inner class test/Outer$Annotations
+    public inner class test/Outer$Annotations$EffectivelyPrivateAnnotation
+}
+@kotlin.Metadata
+final class test/Outer$Annotations {
+    // source: 'annotation.kt'
+    private final inner class test/Outer$Annotations
+    public inner class test/Outer$Annotations$EffectivelyPrivateAnnotation
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.Outer$Annotations
+}
+@kotlin.Metadata
+public final class test/Outer {
+    // source: 'annotation.kt'
+    private final inner class test/Outer$Annotations
+    public method <init>(): void
+}

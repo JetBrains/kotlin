@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -15,10 +14,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
+@Suppress("DEPRECATION")
 open class KotlinCommonCompilation @Inject internal constructor(compilation: KotlinCompilationImpl) :
-    AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
+    @Suppress("DEPRECATION") AbstractKotlinCompilation<KotlinCommonOptions>(compilation),
     KotlinMetadataCompilation<KotlinCommonOptions> {
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))

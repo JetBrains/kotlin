@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 
 @OptIn(ObsoleteTestInfrastructure::class)
-class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
-    fun testEnumMapping() {
+open class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
+    open fun testEnumMapping() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
         myFiles = CodegenTestFiles.create(
             "whenMappingOrder.kt",
@@ -46,13 +46,13 @@ class CustomBytecodeTextTest : AbstractBytecodeTextTest() {
         val text = generateToText()
         val getstatics = text.lines().filter { it.contains("GETSTATIC MyEnum.") }.map { it.trim() }
         KtUsefulTestCase.assertOrderedEquals(
-            "actual bytecode:\n$text", listOf(
+            "actual bytecode:\n$text", getstatics, listOf(
                 "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY4 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;"
-            ), getstatics
+            )
         )
     }
 }

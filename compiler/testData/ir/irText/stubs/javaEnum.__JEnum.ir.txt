@@ -1,9 +1,9 @@
 CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>]
   $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.JEnum
-  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.JEnum [primary]
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:ONE
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TWO
   ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:THREE
+  CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> () returnType:<root>.JEnum [primary]
   FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Any [fake_override]
     overridden:
       protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -18,6 +18,14 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
       public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Unit [fake_override]
+    overridden:
+      protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.JEnum?>? [fake_override]
+    overridden:
+      public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
   FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Int [fake_override]
     overridden:
       public final fun hashCode (): kotlin.Int declared in kotlin.Enum
@@ -26,19 +34,17 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Enum
     $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
-  FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.JEnum?>? [fake_override]
-    overridden:
-      public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
-  FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Unit [fake_override]
-    overridden:
-      protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.JEnum
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String
+  FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.JEnum>
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.JEnum>
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name visibility:public modality:FINAL [fake_override,val]
     annotations:
       IntrinsicConstEvaluation
     overridden:
-      public final name: kotlin.String [val]
+      public final name: kotlin.String [val] declared in kotlin.Enum
     FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.String [fake_override]
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:name visibility:public modality:FINAL [fake_override,val]
       overridden:
@@ -46,15 +52,9 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
   PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal visibility:public modality:FINAL [fake_override,val]
     overridden:
-      public final ordinal: kotlin.Int [val]
+      public final ordinal: kotlin.Int [val] declared in kotlin.Enum
     FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>) returnType:kotlin.Int [fake_override]
       correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:ordinal visibility:public modality:FINAL [fake_override,val]
       overridden:
         public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Enum<@[FlexibleNullability] <root>.JEnum?>
-  FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.JEnum
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String
-  FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.JEnum>
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.JEnum>
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]

@@ -23,8 +23,9 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-private val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
+private val STATIC_THIS_PARAMETER by IrDeclarationOriginImpl
 
 class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -59,12 +60,14 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             visibility = newVisibility
         }.also {
             it.parent = function.parent
+            it.annotations = function.annotations
         }
 
-        staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
+        staticFunction.typeParameters =
+            staticFunction.typeParameters memoryOptimizedPlus function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
 
         staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
-        staticFunction.valueParameters += buildValueParameter(staticFunction) {
+        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus buildValueParameter(staticFunction) {
             origin = STATIC_THIS_PARAMETER
             name = Name.identifier("\$this")
             index = 0
@@ -73,7 +76,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         function.correspondingStatic = staticFunction
 
-        staticFunction.valueParameters += function.valueParameters.map {
+        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus function.valueParameters.map {
             // TODO better way to avoid copying default value
             it.copyTo(staticFunction, index = it.index + 1, defaultValue = null)
         }
@@ -102,9 +105,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
             parameterMapping[it]?.apply {
                 it.defaultValue?.let { originalDefault ->
-                    defaultValue = context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                        expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression
-                    }
+                    defaultValue = context.irFactory.createExpressionBody(
+                        startOffset = it.startOffset,
+                        endOffset = it.endOffset,
+                        expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression,
+                    )
                 }
             }
         }
@@ -114,9 +119,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                 is IrBlockBody -> context.irFactory.createBlockBody(it.startOffset, it.endOffset) {
                     statements += (it.copyWithParameters() as IrBlockBody).statements
                 }
-                is IrExpressionBody -> context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
-                    expression = (it.copyWithParameters() as IrExpressionBody).expression
-                }
+                is IrExpressionBody -> context.irFactory.createExpressionBody(
+                    startOffset = it.startOffset,
+                    endOffset = it.endOffset,
+                    expression = (it.copyWithParameters() as IrExpressionBody).expression,
+                )
                 is IrSyntheticBody -> it
                 else -> compilationException(
                     "Unexpected body kind",

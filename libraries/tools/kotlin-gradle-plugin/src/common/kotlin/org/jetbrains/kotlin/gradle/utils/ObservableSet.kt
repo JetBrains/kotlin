@@ -40,10 +40,12 @@ internal class MutableObservableSetImpl<T>(vararg elements: T) : MutableObservab
     }
 
     override fun add(element: T): Boolean {
-        return underlying.add(element).also {
+        val added = underlying.add(element)
+        if (added) {
             whenObjectAddedActions.toTypedArray().forEach { action -> action(element) }
             forAllActions.toTypedArray().forEach { action -> action(element) }
         }
+        return added
     }
 
     override fun isEmpty(): Boolean {

@@ -1,0 +1,186 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(COMPANION_GENERATION)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(SUPER_TYPES)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(TYPES)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(STATUS)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(CONTRACTS)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(CONSTANT_EVALUATION)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(STATUS)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] initWithProvidedProperties.test.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-initWithProvidedProperties.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(BODY_RESOLVE)] lval fileParameter: R|java/io/File|
+
+        [ResolvedTo(BODY_RESOLVE)] init {
+            this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        }
+

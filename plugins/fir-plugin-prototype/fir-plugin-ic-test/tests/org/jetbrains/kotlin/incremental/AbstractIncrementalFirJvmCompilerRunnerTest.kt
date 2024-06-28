@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.junit.jupiter.api.fail
 import java.io.File
-import java.io.FilenameFilter
 
-abstract class AbstractIncrementalFirJvmWithPluginCompilerRunnerTest : AbstractIncrementalFirJvmCompilerRunnerTest() {
+abstract class AbstractIncrementalK2JvmWithPluginCompilerRunnerTest : AbstractIncrementalK2JvmCompilerRunnerTest() {
     companion object {
         private const val ANNOTATIONS_JAR_DIR = "plugins/fir-plugin-prototype/plugin-annotations/build/libs/"
         private const val ANNOTATIONS_JAR_NAME = "plugin-annotations"

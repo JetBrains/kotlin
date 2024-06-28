@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -20,14 +20,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-
-// Used from the IntelliJ IDEA Kotlin Debugger Plug-In
-@Suppress("unused")
-val fragmentSharedVariablesLowering = makeIrModulePhase(
-    ::FragmentSharedVariablesLowering,
-    name = "FragmentSharedVariablesLowering",
-    description = "Promotes captured variables that are modified by the fragment to shared variables"
-)
 
 // This lowering is a preprocessor for IR in order to support the compilation
 // scheme used by the "Evaluate Expression..." mechanism of the IntelliJ plug-in
@@ -55,7 +47,11 @@ val fragmentSharedVariablesLowering = makeIrModulePhase(
 //
 // See `FragmentDeclarationGenerator.kt:declareParameter` for the front half
 // of this logic.
-class FragmentSharedVariablesLowering(
+@PhaseDescription(
+    name = "FragmentSharedVariablesLowering",
+    description = "Promotes captured variables that are modified by the fragment to shared variables"
+)
+internal class FragmentSharedVariablesLowering(
     val context: JvmBackendContext
 ) : IrElementTransformerVoidWithContext(), FileLoweringPass {
 

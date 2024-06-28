@@ -10,7 +10,6 @@ import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
 import kotlin.math.sign
-import kotlin.native.concurrent.SharedImmutable
 import kotlin.random.Random
 
 
@@ -18,7 +17,6 @@ fun createString(content: String): CharSequence = content
 fun createStringBuilder(content: String): CharSequence = StringBuilder((content as Any).toString()) // required for Rhino JS
 
 
-@SharedImmutable
 val charSequenceBuilders = listOf(::createString, ::createStringBuilder)
 
 fun withOneCharSequenceArg(f: ((String) -> CharSequence) -> Unit) {
@@ -117,24 +115,25 @@ class StringTest {
     @Test
     fun toCharArray() {
         val s = "hello"
+        val destination = CharArray(5) { '.' }
         assertArrayContentEquals(charArrayOf('h', 'e', 'l', 'l', 'o'), s.toCharArray())
         assertArrayContentEquals(charArrayOf('e', 'l'), s.toCharArray(1, 3))
+        assertSame(destination, s.toCharArray(destination, 2, 1, 3))
+        assertArrayContentEquals(charArrayOf('.', '.', 'e', 'l', '.'), destination)
 
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(-1) }
         assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(0, 6) }
         assertFailsWith<IllegalArgumentException> { s.toCharArray(3, 1) }
+        assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(destination, -1, 1, 3) }
+        assertFailsWith<IndexOutOfBoundsException> { s.toCharArray(destination, 4, 1, 3) }
 
         // Array modifications must not affect original string
         val a = s.toCharArray()
-        for (i in a.indices) {
-            a[i] = ' '
-        }
-        assertContentEquals(charArrayOf(' ', ' ', ' ', ' ', ' '), a)
+        a.fill(' ')
         val a13 = s.toCharArray(1, 3)
-        for (i in a13.indices) {
-            a13[i] = ' '
-        }
-        assertContentEquals(charArrayOf(' ', ' '), a13)
+        a13.fill(' ')
+        assertSame(destination, s.toCharArray(destination))
+        destination.fill(' ')
         assertEquals("hello", s)
     }
 
@@ -1855,5 +1854,18 @@ ${"    "}
         assertFalse("sample".contentEquals(null, ignoreCase = true))
         assertTrue(null.contentEquals(null, ignoreCase = true))
         assertTrue(null.contentEquals(null, ignoreCase = false))
+    }
+
+    @Test
+    fun indexOfRespectsCharBoundary() {
+        withOneCharSequenceArg("\u003a\u3b3c\u003d") { input ->
+            assertEquals(-1, input.indexOf("\u3c00"))
+            assertEquals(-1, input.indexOf("\u3d3b"))
+            assertEquals(-1, input.indexOf("\u3c00\u3d3b"))
+        }
+
+        // KT-56637
+        assertEquals("買っ", "買っ".replace("掌", "X"))
+        assertEquals("買", "買".replace("掌", "X"))
     }
 }

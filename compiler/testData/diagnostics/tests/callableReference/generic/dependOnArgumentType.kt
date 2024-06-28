@@ -1,5 +1,5 @@
-// !LANGUAGE: +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +SamConversionPerArgument +ProhibitVarargAsArrayAfterSamArgument
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 // FILE: A.java
 

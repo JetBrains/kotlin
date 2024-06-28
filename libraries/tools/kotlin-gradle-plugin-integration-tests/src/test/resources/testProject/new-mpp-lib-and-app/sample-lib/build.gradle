@@ -1,52 +1,40 @@
-group 'com.example'
-version '1.0'
-
-buildscript {
-	repositories {
-		mavenLocal()
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-	}
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+    //id("org.jetbrains.kotlin.plugin.allopen")
+    //id("org.jetbrains.kotlin.plugin.noarg")
+    //id("io.github.goooler.shadow")
+    //id("application")
+    //id("org.jetbrains.kotlin.kapt")
 }
 
-apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
+group = "com.example"
+version = "1.0"
 
 def shouldBeJs = true
 
 kotlin {
-	// Check the new preset functions:
-	jvm('jvm6') { }
-    if (shouldBeJs) {
-        js('nodeJs') {
-            nodejs {
-
-            }
-        }
-        wasm()
-    }
+    // Check the new preset functions:
+    jvm("jvm6") {}
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
 
+    if (shouldBeJs) {
+        js("nodeJs") {
+            nodejs()
+        }
+        wasmJs()
+    }
+
     targets {
-    	// Also check that the old DSL (fromPreset) works:
+        // Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
-
-        // We use this library in the cinterop test which includes a Windows x86 target.
-        fromPreset(presets.mingwX86, 'mingw86')
-
-        fromPreset(presets.linuxMipsel32, 'linuxMipsel32')
+        fromPreset(presets.macosArm64, 'macosArm64')
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
-        	println "Configuring $targetName"
+            println "Configuring $targetName"
             compilations.main {
                 kotlinOptions {
                     println "jvmTarget = " + jvmTarget
@@ -60,64 +48,52 @@ kotlin {
         all {
             mavenPublication {
                 pom.withXml {
-                    asNode().appendNode('name', 'Sample MPP library')
+                    asNode().appendNode("name", "Sample MPP library")
                 }
             }
         }
     }
 
     sourceSets {
-        commonMain {
-            dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-            }
-        }
         commonTest {
             dependencies {
-                implementation kotlin("test-common")
-                implementation kotlin("test-annotations-common")
+                implementation(kotlin("test"))
             }
         }
         jvm6Main {
             dependencies {
-                api 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4")
             }
         }
         jvm6Test {
             dependencies {
-                implementation kotlin("test-junit")
-            }
-        }
-        if (shouldBeJs) {
-            nodeJsMain {
-                dependencies {
-                    api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                }
+                implementation(kotlin("test-junit"))
             }
         }
 
         nativeMain { dependsOn commonMain }
         linux64Main { dependsOn nativeMain }
         macos64Main { dependsOn nativeMain }
+        macosArm64Main { dependsOn nativeMain }
     }
 }
 
-kotlin.sourceSets.each { println it.kotlin.srcDirs }
-
-apply plugin: 'maven-publish'
-
-publishing {
-	repositories {
-		maven { url "file://${projectDir.absolutePath.replace('\\', '/')}/repo" }
-	}
-}
+kotlin.sourceSets.each { println(it.kotlin.srcDirs) }
 
 // Check that a compilation may be created after project evaluation, KT-28896:
 afterEvaluate {
     kotlin {
-        jvm('jvm6').compilations.create('benchmark') {
-            assemble.dependsOn compileKotlinTask
+        jvm("jvm6").compilations.create("benchmark") {
+            tasks.named("assemble") { dependsOn(compileKotlinTask) }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "LocalRepo"
+            url = uri("<localRepo>")
         }
     }
 }

@@ -1,0 +1,160 @@
+// CHECK:
+//   Mangled name: {}x
+//   Public signature: /x|-8060530855978347579[0]
+//   Public signature debug description: {}x
+val x: Int
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-x>(){}kotlin.Int
+  //   Public signature: /x.<get-x>|4966956098150895696[0]
+  //   Public signature debug description: <get-x>(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-x>(){}
+  //   Public signature: /x.<get-x>|1482705010654679335[0]
+  //   Public signature debug description: <get-x>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test1
+//   Public signature: /test1|6005685442305498193[0]
+//   Public signature debug description: {}test1
+val test1: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test1>(){}kotlin.String
+  //   Public signature: /test1.<get-test1>|-7403750508378492770[0]
+  //   Public signature debug description: <get-test1>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test1>(){}
+  //   Public signature: /test1.<get-test1>|-5735092642142423279[0]
+  //   Public signature debug description: <get-test1>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test2
+//   Public signature: /test2|2517758057000911509[0]
+//   Public signature debug description: {}test2
+val test2: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test2>(){}kotlin.String
+  //   Public signature: /test2.<get-test2>|-8062412501290172814[0]
+  //   Public signature debug description: <get-test2>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test2>(){}
+  //   Public signature: /test2.<get-test2>|-5218942532816206869[0]
+  //   Public signature debug description: <get-test2>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test3
+//   Public signature: /test3|7677556066983021166[0]
+//   Public signature debug description: {}test3
+val test3: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test3>(){}kotlin.String
+  //   Public signature: /test3.<get-test3>|-2084248125648281731[0]
+  //   Public signature debug description: <get-test3>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test3>(){}
+  //   Public signature: /test3.<get-test3>|-7333791615083236686[0]
+  //   Public signature debug description: <get-test3>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test4
+//   Public signature: /test4|-9115637610245762085[0]
+//   Public signature debug description: {}test4
+val test4: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test4>(){}kotlin.String
+  //   Public signature: /test4.<get-test4>|5046196083583551233[0]
+  //   Public signature debug description: <get-test4>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test4>(){}
+  //   Public signature: /test4.<get-test4>|4166854324968284003[0]
+  //   Public signature debug description: <get-test4>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test5
+//   Public signature: /test5|4734809624271551895[0]
+//   Public signature debug description: {}test5
+val test5: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test5>(){}kotlin.String
+  //   Public signature: /test5.<get-test5>|-4328606172995874356[0]
+  //   Public signature debug description: <get-test5>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test5>(){}
+  //   Public signature: /test5.<get-test5>|-839819880171293643[0]
+  //   Public signature debug description: <get-test5>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test6
+//   Public signature: /test6|-2606527149405855403[0]
+//   Public signature debug description: {}test6
+val test6: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test6>(){}kotlin.String
+  //   Public signature: /test6.<get-test6>|-6697119911909222618[0]
+  //   Public signature debug description: <get-test6>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test6>(){}
+  //   Public signature: /test6.<get-test6>|2028965735388282488[0]
+  //   Public signature debug description: <get-test6>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test7
+//   Public signature: /test7|1362036650170262859[0]
+//   Public signature debug description: {}test7
+val test7: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test7>(){}kotlin.String
+  //   Public signature: /test7.<get-test7>|3397337933130018237[0]
+  //   Public signature debug description: <get-test7>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test7>(){}
+  //   Public signature: /test7.<get-test7>|-4463638325142628163[0]
+  //   Public signature debug description: <get-test7>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test8
+//   Public signature: /test8|5640428216506241852[0]
+//   Public signature debug description: {}test8
+val test8: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test8>(){}kotlin.String
+  //   Public signature: /test8.<get-test8>|-2649216934894616359[0]
+  //   Public signature debug description: <get-test8>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test8>(){}
+  //   Public signature: /test8.<get-test8>|-4670710835380513070[0]
+  //   Public signature debug description: <get-test8>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}test9
+//   Public signature: /test9|2260604978975893973[0]
+//   Public signature debug description: {}test9
+val test9: String
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test9>(){}kotlin.String
+  //   Public signature: /test9.<get-test9>|5350098084251804677[0]
+  //   Public signature debug description: <get-test9>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-test9>(){}
+  //   Public signature: /test9.<get-test9>|-4967207149018192355[0]
+  //   Public signature debug description: <get-test9>(){}
+  get
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(){}kotlin.String
+//   Public signature: /foo|485335955883620819[0]
+//   Public signature debug description: foo(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): String
+

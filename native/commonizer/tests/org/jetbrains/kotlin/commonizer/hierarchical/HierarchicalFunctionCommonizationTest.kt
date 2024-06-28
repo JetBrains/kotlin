@@ -135,4 +135,37 @@ class HierarchicalFunctionCommonizationTest : AbstractInlineSourcesCommonization
         result.assertCommonized("(a, b)", "expect fun x(): ABCD")
         result.assertCommonized("((a,b), c)", "expect fun x(): ABCD")
     }
+
+    fun `test function with simple annotation`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            registerDependency("a", "b", "(a, b)") { source("annotation class FooAnnotation") }
+            simpleSingleSourceTarget("a", "@FooAnnotation fun x() = Unit")
+            simpleSingleSourceTarget("b", "@FooAnnotation fun x() = Unit")
+        }
+
+        result.assertCommonized("(a, b)", "@FooAnnotation expect fun x()")
+    }
+
+    fun `test function with non-simple annotation - 1`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            registerDependency("a", "b", "(a, b)") { source("annotation class FooAnnotation(val param: String)") }
+            simpleSingleSourceTarget("a", """@FooAnnotation("a") fun x() = Unit""")
+            simpleSingleSourceTarget("b", """@FooAnnotation("b") fun x() = Unit""")
+        }
+
+        result.assertCommonized("(a, b)", "expect fun x()")
+    }
+
+    fun `test function with non-simple annotation - 2`() {
+        val result = commonize {
+            outputTarget("(a, b)")
+            registerDependency("a", "b", "(a, b)") { source("annotation class FooAnnotation<T: Any>(val param: String)") }
+            simpleSingleSourceTarget("a", """@FooAnnotation<Unit>("a") fun x() = Unit""")
+            simpleSingleSourceTarget("b", """@FooAnnotation<Unit>("b") fun x() = Unit""")
+        }
+
+        result.assertCommonized("(a, b)", "expect fun x()")
+    }
 }

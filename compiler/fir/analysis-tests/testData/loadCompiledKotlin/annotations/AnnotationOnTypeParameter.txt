@@ -1,9 +1,0 @@
-public final class Convert<@R|test/Schema|() T, C> : R|kotlin/Any| {
-    public constructor<@R|test/Schema|() T, C>(): R|test/Convert<T, C>|
-
-}
-
-@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final annotation class Schema : R|kotlin/Annotation| {
-    public constructor(): R|test/Schema|
-
-}

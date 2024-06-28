@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,91 +21,91 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidSyntheticPropertyDescriptorTestGenerated extends AbstractAndroidSyntheticPropertyDescriptorTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInDescriptors() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/descriptors"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  public void testAllFilesPresentInDescriptors() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/descriptors"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @TestMetadata("escapedLayoutName")
-    public void testEscapedLayoutName() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/escapedLayoutName/");
-    }
+  @TestMetadata("escapedLayoutName")
+  public void testEscapedLayoutName() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/escapedLayoutName/");
+  }
 
-    @TestMetadata("fqNameInAttr")
-    public void testFqNameInAttr() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/fqNameInAttr/");
-    }
+  @TestMetadata("fqNameInAttr")
+  public void testFqNameInAttr() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/fqNameInAttr/");
+  }
 
-    @TestMetadata("fqNameInTag")
-    public void testFqNameInTag() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/fqNameInTag/");
-    }
+  @TestMetadata("fqNameInTag")
+  public void testFqNameInTag() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/fqNameInTag/");
+  }
 
-    @TestMetadata("layoutVariants")
-    public void testLayoutVariants() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/layoutVariants/");
-    }
+  @TestMetadata("layoutVariants")
+  public void testLayoutVariants() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/layoutVariants/");
+  }
 
-    @TestMetadata("multiFile")
-    public void testMultiFile() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/multiFile/");
-    }
+  @TestMetadata("multiFile")
+  public void testMultiFile() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/multiFile/");
+  }
 
-    @TestMetadata("noIds")
-    public void testNoIds() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/noIds/");
-    }
+  @TestMetadata("noIds")
+  public void testNoIds() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/noIds/");
+  }
 
-    @TestMetadata("nonLatinNames")
-    public void testNonLatinNames() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/nonLatinNames/");
-    }
+  @TestMetadata("nonLatinNames")
+  public void testNonLatinNames() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/nonLatinNames/");
+  }
 
-    @TestMetadata("sameIds")
-    public void testSameIds() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/sameIds/");
-    }
+  @TestMetadata("sameIds")
+  public void testSameIds() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/sameIds/");
+  }
 
-    @TestMetadata("severalResDirs")
-    public void testSeveralResDirs() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/severalResDirs/");
-    }
+  @TestMetadata("severalResDirs")
+  public void testSeveralResDirs() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/severalResDirs/");
+  }
 
-    @TestMetadata("singleFile")
-    public void testSingleFile() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/singleFile/");
-    }
+  @TestMetadata("singleFile")
+  public void testSingleFile() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/singleFile/");
+  }
 
-    @TestMetadata("specialTags")
-    public void testSpecialTags() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/specialTags/");
-    }
+  @TestMetadata("specialTags")
+  public void testSpecialTags() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/specialTags/");
+  }
 
-    @TestMetadata("supportSingleFile")
-    public void testSupportSingleFile() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/supportSingleFile/");
-    }
+  @TestMetadata("supportSingleFile")
+  public void testSupportSingleFile() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/supportSingleFile/");
+  }
 
-    @TestMetadata("supportSpecialTags")
-    public void testSupportSpecialTags() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/supportSpecialTags/");
-    }
+  @TestMetadata("supportSpecialTags")
+  public void testSupportSpecialTags() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/supportSpecialTags/");
+  }
 
-    @TestMetadata("unresolvedFqName")
-    public void testUnresolvedFqName() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/unresolvedFqName/");
-    }
+  @TestMetadata("unresolvedFqName")
+  public void testUnresolvedFqName() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/unresolvedFqName/");
+  }
 
-    @TestMetadata("unresolvedWidget")
-    public void testUnresolvedWidget() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/unresolvedWidget/");
-    }
+  @TestMetadata("unresolvedWidget")
+  public void testUnresolvedWidget() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/unresolvedWidget/");
+  }
 
-    @TestMetadata("viewStub")
-    public void testViewStub() throws Exception {
-        runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/viewStub/");
-    }
+  @TestMetadata("viewStub")
+  public void testViewStub() {
+    runTest("plugins/android-extensions/android-extensions-compiler/testData/descriptors/viewStub/");
+  }
 }

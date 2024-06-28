@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: canInspectClasses.txt
+// FIR_IDENTICAL
 fun main(args: Array<String>) {
     val point = Point(1, 2)
     val person = Person()

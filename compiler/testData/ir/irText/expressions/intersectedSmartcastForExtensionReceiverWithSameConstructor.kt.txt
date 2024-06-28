@@ -1,0 +1,41 @@
+class Bar<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun <T : Any?> Bar<T>.parameterizedExt() {
+}
+
+fun Bar<Int>.specificExt() {
+}
+
+fun test_1_1(x: Any) {
+  x as Bar<String> /*~> Unit */
+  x /*as Bar<String> */ as Bar<Int> /*~> Unit */
+  x /*as Bar<Int> */.specificExt()
+}
+
+fun test_1_2(x: Any) {
+  x as Bar<Int> /*~> Unit */
+  x /*as Bar<Int> */ as Bar<String> /*~> Unit */
+  x /*as Bar<Int> */.specificExt()
+}
+
+fun test_2_1(x: Any) {
+  x as Bar<String> /*~> Unit */
+  x /*as Bar<String> */ as Bar<Int> /*~> Unit */
+  x /*as Bar<String> */.parameterizedExt<String>()
+  x /*as Bar<Int> */.parameterizedExt<Int>()
+}
+
+fun test_2_2(x: Any) {
+  x as Bar<Int> /*~> Unit */
+  x /*as Bar<Int> */ as Bar<String> /*~> Unit */
+  x /*as Bar<String> */.parameterizedExt<String>()
+  x /*as Bar<Int> */.parameterizedExt<Int>()
+}
+

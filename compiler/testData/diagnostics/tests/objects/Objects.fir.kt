@@ -1,4 +1,3 @@
-// COMPARE_WITH_LIGHT_TREE
 package toplevelObjectDeclarations
 
 open class Foo(y: Int) {
@@ -7,17 +6,17 @@ open class Foo(y: Int) {
 
 class T : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
-<!NO_VALUE_FOR_PARAMETER{LT}!>object A : <!NO_VALUE_FOR_PARAMETER{PSI}, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
+object A : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x: Int = 2
 
     fun test(): Int {
         return x + foo()
     }
-}<!>
+}
 
 object B : <!SINGLETON_IN_SUPERTYPE!>A<!> {}
 
-val c = <!NO_VALUE_FOR_PARAMETER{LT}!>object : <!NO_VALUE_FOR_PARAMETER{PSI}, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
+val c = object : <!NO_VALUE_FOR_PARAMETER, SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}
 
 val x = A.foo()
 

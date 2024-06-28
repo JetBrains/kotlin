@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: -NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess
+// LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 
 open class Foo {
     lateinit var bar: String

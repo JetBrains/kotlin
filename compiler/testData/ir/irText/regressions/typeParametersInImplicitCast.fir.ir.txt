@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
     VALUE_PARAMETER name:lss index:0 type:kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun problematic <T> (lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>>): kotlin.collections.List<T of <root>.problematic> declared in <root>'
-        CALL 'public final fun flatMap <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.flatMap, kotlin.collections.Iterable<R of kotlin.collections.CollectionsKt.flatMap>>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.flatMap> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?> origin=null
+        CALL 'public final fun flatMap <T, R> (transform: kotlin.Function1<T of kotlin.collections.flatMap, kotlin.collections.Iterable<R of kotlin.collections.flatMap>>): kotlin.collections.List<R of kotlin.collections.flatMap> declared in kotlin.collections' type=kotlin.collections.List<@[FlexibleNullability] T of <root>.problematic?> origin=null
           <T>: kotlin.collections.List<T of <root>.problematic>
           <R>: @[FlexibleNullability] T of <root>.problematic?
           $receiver: GET_VAR 'lss: kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> declared in <root>.problematic' type=kotlin.collections.List<kotlin.collections.List<T of <root>.problematic>> origin=null
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/typeParametersInImplicitCast.kt
               VALUE_PARAMETER name:it index:0 type:kotlin.collections.List<T of <root>.problematic>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.collections.List<T of <root>.problematic>): kotlin.collections.Iterable<@[FlexibleNullability] T of <root>.problematic?> declared in <root>.problematic'
-                  TYPE_OP type=kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?>
-                    CALL 'public/*package*/ open fun id <T> (v: @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?>?): @[EnhancedNullability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?> declared in <root>.ListId' type=@[EnhancedNullability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=null
+                  TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?>
+                    CALL 'public/*package*/ open fun id <T> (v: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?>?): @[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.ListId.id?> declared in <root>.ListId' type=@[EnhancedNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[FlexibleNullability] T of <root>.problematic?> origin=null
                       <T>: @[FlexibleNullability] T of <root>.problematic?
                       v: GET_VAR 'it: kotlin.collections.List<T of <root>.problematic> declared in <root>.problematic.<anonymous>' type=kotlin.collections.List<T of <root>.problematic> origin=null

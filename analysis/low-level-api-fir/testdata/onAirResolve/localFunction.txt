@@ -1,3 +1,0 @@
-local final [BODY_RESOLVE] fun x(): R|kotlin/Int| {
-    ^x R|<local>/x|
-}

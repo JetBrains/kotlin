@@ -64,43 +64,43 @@ FILE: first.kt
     }
     public final fun withLocals(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
             private final fun bar(): R|kotlin/Unit|
 
             public final fun baz(): R|kotlin/Unit| {
-                this@R|/Local|.R|<local>/bar|()
-                this@R|/Local|.R|/Local.Inner.Inner|()
+                this@R|<local>/Local|.R|<local>/bar|()
+                this@R|<local>/Local|.R|<local>/Local.Inner.Inner|()
             }
 
             local final inner class Inner : R|kotlin/Any| {
-                public Local.constructor(): R|Local.Inner| {
+                public <local>/Local.constructor(): R|<local>/Local.Inner| {
                     super<R|kotlin/Any|>()
                 }
 
                 public final fun foo(): R|kotlin/Unit| {
-                    this@R|/Local|.R|<local>/bar|()
+                    this@R|<local>/Local|.R|<local>/bar|()
                 }
 
             }
 
         }
 
-        R|/Local.Local|().R|<local>/baz|()
-        R|/Local.Local|().R|<local>/bar<HIDDEN: <local>/bar is invisible>#|()
+        R|<local>/Local.Local|().R|<local>/baz|()
+        R|<local>/Local.Local|().R|<local>/bar<HIDDEN: <local>/bar is invisible>#|()
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|()
         R|/Private.Private|().R|/Private.baz|()
         R|/Private.Private|().R|/Private.Inner.Inner|()
         R|/Private.Private|().R|/Private.bar<HIDDEN: /Private.bar is invisible>#|()
-        Q|Private|.R|/Private.Nested.Nested<HIDDEN: /Private.Nested.Nested is invisible>#|()
+        Q|Private|.R|/Private.Nested.Nested<HIDDEN: Private.Nested is invisible>#|()
         Q|Private|.R|/Private.Companion.fromCompanion<HIDDEN: /Private.Companion.fromCompanion is invisible>#|()
     }
 FILE: second.kt
     public final fun secondTest(): R|kotlin/Unit| {
         R|/foo<HIDDEN: /foo is invisible>#|()
-        R|/Private.Private<HIDDEN: /Private.Private is invisible>#|()
+        R|/Private.Private<HIDDEN: Private is invisible>#|()
     }

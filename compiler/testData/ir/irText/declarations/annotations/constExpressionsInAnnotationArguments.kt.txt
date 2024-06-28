@@ -1,17 +1,13 @@
-const val ONE: Int
-  field = 1
-  get
-
 open annotation class A : Annotation {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  val x: Int
-    field = x
-    get
 
 }
 
@@ -22,3 +18,8 @@ fun test1() {
 @A(x = 2)
 fun test2() {
 }
+
+const val ONE: Int
+  field = 1
+  get
+

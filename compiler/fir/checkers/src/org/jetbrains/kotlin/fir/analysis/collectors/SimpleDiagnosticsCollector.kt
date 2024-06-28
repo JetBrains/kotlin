@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.MutableCheckerContext
-import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 
@@ -21,7 +20,7 @@ class SimpleDiagnosticsCollector(
         return CheckerRunningDiagnosticCollectorVisitor(
             MutableCheckerContext(
                 this,
-                ReturnTypeCalculatorForFullBodyResolve
+                ReturnTypeCalculatorForFullBodyResolve.Default
             ),
             components
         )

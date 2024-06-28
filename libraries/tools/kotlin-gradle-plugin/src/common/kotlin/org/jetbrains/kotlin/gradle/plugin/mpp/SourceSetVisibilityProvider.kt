@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import java.io.File
 
 private typealias KotlinSourceSetName = String
@@ -29,12 +31,12 @@ internal data class SourceSetVisibilityResult(
      * For some of the [visibleSourceSetNames], additional artifacts may be present that
      * the consumer should read the compiled source set metadata from.
      */
-    val hostSpecificMetadataArtifactBySourceSet: Map<String, File>
+    val hostSpecificMetadataArtifactBySourceSet: Map<String, File>,
 )
 
-private val Project.allPlatformCompilationData: List<PlatformCompilationData>
-    get() = extraProperties
-    .getOrPut("all${PlatformCompilationData::class.java.simpleName}") { collectAllPlatformCompilationData() }
+private val Project.allPlatformCompilationData: List<PlatformCompilationData> by projectStoredProperty {
+    collectAllPlatformCompilationData()
+}
 
 private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilationData> {
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyList()
@@ -63,7 +65,7 @@ internal class SourceSetVisibilityProvider(
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfiguration,
-        val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?
+        val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?,
     )
 
     /**
@@ -82,50 +84,61 @@ internal class SourceSetVisibilityProvider(
         visibleFromSourceSet: KotlinSourceSetName,
         resolvedRootMppDependency: ResolvedDependencyResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
-        resolvedToOtherProject: Boolean
+        resolvedToOtherProject: Boolean,
     ): SourceSetVisibilityResult {
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
 
-        val visiblePlatformVariantNames: Set<String?> = platformCompilations
+        val visiblePlatformVariantNames: List<Set<String>> = platformCompilations
             .filter { visibleFromSourceSet in it.allSourceSets }
-            .map { platformCompilationData ->
-                val resolvedPlatformDependency = platformCompilationData
+            .mapNotNull { platformCompilationData ->
+                val resolvedPlatformDependencies = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
-                    .find { it.selected.id == resolvedRootMppDependencyId }
-                /*
-                Returning null if we can't find the given dependency in a certain platform compilations dependencies.
-                This is not expected, since this means the dependency does not support the given targets which will
-                lead to a dependency resolution error.
+                    .filter { it.selected.id isEqualsIgnoringVersion resolvedRootMppDependencyId }
+                    /*
+                    Returning null if we can't find the given dependency in a certain platform compilations dependencies.
+                    This is not expected, since this means the dependency does not support the given targets which will
+                    lead to a dependency resolution error.
 
-                Esoteric cases can still get into this branch: e.g. broken publications (or broken .m2 and mavenLocal()).
-                In this case we just return null, effectively ignoring this situation for this algorithm.
+                    Esoteric cases can still get into this branch: e.g. broken publications (or broken .m2 and mavenLocal()).
+                    In this case we just return null, effectively ignoring this situation for this algorithm.
 
-                Ignoring this will still lead to a more graceful behaviour in the IDE.
-                A broken publication will potentially lead to 'too many' source sets being visible, which is
-                more desirable than having none.
-                 */ ?: return@map null
+                    Ignoring this will still lead to a more graceful behaviour in the IDE.
+                    A broken publication will potentially lead to 'too many' source sets being visible, which is
+                    more desirable than having none.
+                    */
+                    .ifEmpty { return@mapNotNull null }
 
-                val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
-                    resolvedPlatformDependency.resolvedVariant.displayName
-                )
+                resolvedPlatformDependencies.map { resolvedPlatformDependency ->
+                    val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
+                        resolvedPlatformDependency.resolvedVariant.displayName
+                    )
 
-                if (resolvedVariant !in platformCompilationsByResolvedVariantName) {
-                    platformCompilationsByResolvedVariantName[resolvedVariant] = platformCompilationData
-                }
+                    if (resolvedVariant !in platformCompilationsByResolvedVariantName) {
+                        platformCompilationsByResolvedVariantName[resolvedVariant] = platformCompilationData
+                    }
 
-                resolvedVariant
-            }.toSet()
+                    resolvedVariant
+                }.toSet()
+            }
 
         if (visiblePlatformVariantNames.isEmpty()) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 
-        val visibleSourceSetNames = dependencyProjectStructureMetadata.sourceSetNamesByVariantName
-            .filterKeys { it in visiblePlatformVariantNames }
-            .values.let { if (it.isEmpty()) emptySet() else it.reduce { acc, item -> acc intersect item } }
+        val visibleSourceSetNames = visiblePlatformVariantNames
+            .mapNotNull { platformVariants ->
+                platformVariants
+                    .map { dependencyProjectStructureMetadata.sourceSetNamesByVariantName[it].orEmpty() }
+                    // join together visible source sets from multiple variants of the same platform
+                    .fold(emptySet<String>()) { acc, item -> acc union item }
+                    .ifEmpty { null }
+            }
+            // intersect visible variants from different platforms
+            .ifEmpty { listOf(emptySet()) } // to avoid calling reduce on an empty list
+            .reduce { acc, item -> acc intersect item }
 
         val hostSpecificArtifactBySourceSet: Map<String, File> =
             if (resolvedToOtherProject) {
@@ -170,16 +183,94 @@ internal class SourceSetVisibilityProvider(
                         ?.singleOrNull()
                         ?: return@mapNotNull null
 
+                    // It can happen that host-specific artifact is mentioned in resolve but it doesn't exist physically
+                    // then again gracefully return null
+                    val metadataArtifactFile = metadataArtifact.file
+                    if (!metadataArtifactFile.exists()) return@mapNotNull null
+
                     sourceSetName to metadataArtifact.file
                 }.toMap()
             }
 
-        return SourceSetVisibilityResult(
+        /**
+         * Sort from more to less target specific source sets.
+         * So that actuals will be first in the library path.
+         * e.g. linuxMain, nativeMain, commonMain.
+         */
+        val sortedVisibleSourceSets = sortSourceSetsByDependsOnRelation(
             visibleSourceSetNames,
+            dependencyProjectStructureMetadata.sourceSetsDependsOnRelation
+        )
+
+        return SourceSetVisibilityResult(
+            sortedVisibleSourceSets.toSet(),
             hostSpecificArtifactBySourceSet
         )
     }
 }
 
+/**
+ * Sorts the source sets based on the dependsOn relation from [KotlinProjectStructureMetadata]
+ *
+ * @param sourceSetsDependsOnRelation should contain direct dependsOn edges.
+ *
+ * For example, given this "dependsOn" closure: linuxMain -> nativeMain -> commonMain
+ * [sourceSetsDependsOnRelation] would have the following values:
+ *
+ * ```kotlin
+ * mapOf(
+ *   linuxMain to setOf(nativeMain),
+ *   nativeMain to setOf(commonMain),
+ *   commonMain to emptySet()
+ * )
+ * ```
+ *
+ * Then calling [sortSourceSetsByDependsOnRelation] with [sourceSets] as listOf(nativeMain, commonMain, linuxMain) should
+ * result to listOf(linuxMain, nativeMain, commonMain)
+ *
+ * And for [sortSourceSetsByDependsOnRelation] with this structure: jvmAndJs -> commonMain; linuxMain -> nativeMain -> commonMain;
+ * the result can be one of the following lists:
+ * * linuxMain, nativeMain, jvmAndJs, commonMain
+ * * linuxMain, jvmAndJs, nativeMain, commonMain
+ * * jvmAndJs, linuxMain, nativeMain, commonMain
+ *
+ * Because jvmAndJs has no dependsOn relation with linuxMain and nativeMain they can be treated equally.
+ *
+ * Implementation uses an algorithm for Topological Sorting with DFS.
+ */
+internal fun sortSourceSetsByDependsOnRelation(
+    sourceSets: Set<String>,
+    sourceSetsDependsOnRelation: Map<String, Set<String>>,
+): List<String> {
+    val visited = mutableSetOf<String>()
+    val result = mutableListOf<String>()
+    for (sourceSet in sourceSets) {
+        if (!visited.add(sourceSet)) continue
+
+        fun dfs(sourceSet: String) {
+            val children = sourceSetsDependsOnRelation[sourceSet].orEmpty()
+            for (child in children) {
+                if (!visited.add(child)) continue
+                dfs(child)
+            }
+            // We're only interested in input source sets
+            if (sourceSet in sourceSets) result.add(sourceSet)
+        }
+        dfs(sourceSet)
+    }
+
+    return result.reversed()
+}
+
 internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
+
+/**
+ * Returns true when two components identifiers are from the same maven module (group + name)
+ * Gradle projects can't be resolved into multiple versions since there is only one version of a project in gradle build
+ */
+private infix fun ComponentIdentifier.isEqualsIgnoringVersion(that: ComponentIdentifier): Boolean {
+    if (this is ProjectComponentIdentifier && that is ProjectComponentIdentifier) return this == that
+    if (this is ModuleComponentIdentifier && that is ModuleComponentIdentifier) return this.moduleIdentifier == that.moduleIdentifier
+    return false
+}

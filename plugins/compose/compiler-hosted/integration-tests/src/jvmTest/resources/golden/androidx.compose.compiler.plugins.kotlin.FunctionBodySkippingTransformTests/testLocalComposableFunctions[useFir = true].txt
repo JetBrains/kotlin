@@ -1,0 +1,56 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Example(a: Int) {
+    @Composable fun Inner() {
+        A(a)
+    }
+    Inner()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(a: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<Inner(...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    @Composable
+    fun Inner(%composer: Composer?, %changed: Int) {
+      sourceInformationMarkerStart(%composer, <>, "C(Inner)<A(a)>:Test.kt")
+      if (isTraceInProgress()) {
+        traceEventStart(<>, %changed, -1, <>)
+      }
+      A(a, %composer, 0)
+      if (isTraceInProgress()) {
+        traceEventEnd()
+      }
+      sourceInformationMarkerEnd(%composer)
+    }
+    Inner(%composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(a, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

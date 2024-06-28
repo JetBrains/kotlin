@@ -1,4 +1,5 @@
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
+// ISSUE: KT-63065
 // MODULE: m1
 // FILE: a.kt
 
@@ -23,16 +24,16 @@ class A {
 import p1.*
 import p2.*
 
-fun test(a: <!OVERLOAD_RESOLUTION_AMBIGUITY!>A<!>) {
+<!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {
     a.<!UNRESOLVED_REFERENCE!>m1<!>()
-    a.<!UNRESOLVED_REFERENCE!>m2<!>()
+    a.m2()
 }
 
 // FILE: explicitlyImportP1.kt
-import p1.A
+import p1.<!API_NOT_AVAILABLE!>A<!>
 import p2.*
 
-fun test(a: A) {
-    a.m1()
-    a.<!UNRESOLVED_REFERENCE!>m2<!>()
+<!CONFLICTING_OVERLOADS!>fun test(a: A)<!> {
+    a.<!UNRESOLVED_REFERENCE!>m1<!>()
+    a.m2()
 }

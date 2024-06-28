@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -11,6 +12,8 @@
  */
 
 // TESTCASE NUMBER: 1, 2, 3
+package sometest
+
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 

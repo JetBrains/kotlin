@@ -1,2 +1,2 @@
-expression: String
-ktType: kotlin.String
+KtTypeReference: String
+KaType: kotlin.String

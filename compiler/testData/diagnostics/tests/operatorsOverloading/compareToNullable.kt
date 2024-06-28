@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(c: C): Int? = null

@@ -1228,11 +1228,7 @@ public actual inline val Int.absoluteValue: Int get() = nativeMath.abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Int.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public actual val Int.sign: Int get() = Integer.signum(this)
 
 
 
@@ -1281,11 +1277,7 @@ public actual inline val Long.absoluteValue: Long get() = nativeMath.abs(this)
  *   - `1` if the value is positive
  */
 @SinceKotlin("1.2")
-public actual val Long.sign: Int get() = when {
-    this < 0 -> -1
-    this > 0 -> 1
-    else -> 0
-}
+public actual val Long.sign: Int get() = java.lang.Long.signum(this)
 
 
 // endregion

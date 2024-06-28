@@ -35,25 +35,22 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         private const val TO_BUILDER = "toBuilder"
     }
 
-    context(LazyJavaResolverContext)
     @Suppress("IncorrectFormatting") // KTIJ-22227
-    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder) {
+    override fun contribute(classDescriptor: ClassDescriptor, partsBuilder: SyntheticPartsBuilder, c: LazyJavaResolverContext) {
         if (classDescriptor is SyntheticJavaClassDescriptor) {
             val builderData = classDescriptor.attributes[BUILDER_DATA] as? BuilderData ?: return
             contributeToBuilderClass(classDescriptor, builderData.constructingClass, builderData.builder, partsBuilder)
         } else {
             val builder = Builder.getIfAnnotated(classDescriptor, config) ?: return
-            contributeToAnnotatedClass(classDescriptor, builder, partsBuilder)
+            c.contributeToAnnotatedClass(classDescriptor, builder, partsBuilder)
         }
     }
 
-    context(LazyJavaResolverContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
-    private fun contributeToAnnotatedClass(classDescriptor: ClassDescriptor, builder: Builder, partsBuilder: SyntheticPartsBuilder) {
+    private fun LazyJavaResolverContext.contributeToAnnotatedClass(classDescriptor: ClassDescriptor, builder: Builder, partsBuilder: SyntheticPartsBuilder) {
         val builderName = Name.identifier(builder.builderClassName.replace("*", classDescriptor.name.asString()))
         val visibility = builder.visibility.toDescriptorVisibility()
         val builderDescriptor = SyntheticJavaClassDescriptor(
-            outerContext = this@LazyJavaResolverContext,
+            outerContext = this,
             name = builderName,
             outerClass = classDescriptor,
             classKind = ClassKind.CLASS,

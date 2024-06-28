@@ -10,7 +10,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
@@ -25,7 +24,7 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     override fun resolveFriendPaths(compilation: InternalKotlinCompilation<*>): Iterable<FileCollection> {
         return mutableListOf<FileCollection>().apply {
-            compilation.associateWithClosure.forEach {
+            compilation.allAssociatedCompilations.forEach {
                 add(it.output.classesDirs)
                 // Adding classes that could be produced to non-default destination for JVM target
                 // Check KotlinSourceSetProcessor for details
@@ -69,7 +68,7 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
         }
 
         private fun resolveFriendArtifactsTask(compilation: InternalKotlinCompilation<*>): TaskProvider<AbstractArchiveTask>? {
-            if (compilation.associateWithClosure.none { it.isMain() }) return null
+            if (compilation.allAssociatedCompilations.none { it.isMain() }) return null
             val archiveTasks = compilation.project.tasks.withType(AbstractArchiveTask::class.java)
             if (compilation.target.artifactsTaskName !in archiveTasks.names) return null
             return archiveTasks.named(compilation.target.artifactsTaskName)

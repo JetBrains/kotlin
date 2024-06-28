@@ -9,19 +9,17 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -51,12 +48,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -99,7 +97,7 @@ fun IrSimpleFunction.isCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boo
         }
         is IrMaybeDeserializedClass -> return klass.isNewPlaceForBodyGeneration
     }
-    return jvmDefaultMode.forAllMethodsWithBody
+    return jvmDefaultMode.isEnabled
 }
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
@@ -267,11 +265,7 @@ val IrDeclaration.isStaticValueClassReplacement: Boolean
 
 // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
 // See `TypeTranslator.translateTypeAnnotations`.
-private fun JvmBackendContext.makeRawTypeAnnotation() =
-    IrConstructorCallImpl.fromSymbolOwner(
-        generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
-        generatorExtensions.rawTypeAnnotationConstructor!!.symbol
-    )
+private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotationCall()!!
 
 fun IrClass.rawType(context: JvmBackendContext): IrType =
     defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
@@ -316,7 +310,7 @@ fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
         !isStaticValueClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
-        parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+        parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
         attributeOwnerId as IrSimpleFunction
     else this
@@ -416,13 +410,15 @@ fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean, jvmDe
     return current
 }
 
+fun IrMemberAccessExpression<*>.getIntConstArgumentOrNull(i: Int) = getValueArgument(i)?.let {
+    if (it is IrConst<*> && it.kind == IrConstKind.Int)
+        it.value as Int
+    else
+        null
+}
+
 fun IrMemberAccessExpression<*>.getIntConstArgument(i: Int): Int =
-    getValueArgument(i)?.let {
-        if (it is IrConst<*> && it.kind == IrConstKind.Int)
-            it.value as Int
-        else
-            null
-    } ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
+    getIntConstArgumentOrNull(i) ?: throw AssertionError("Value argument #$i should be an Int const: ${dump()}")
 
 fun IrMemberAccessExpression<*>.getStringConstArgument(i: Int): String =
     getValueArgument(i)?.let {
@@ -441,38 +437,31 @@ fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
     } ?: throw AssertionError("Value argument #$i should be a Boolean const: ${dump()}")
 
 val IrDeclaration.fileParent: IrFile
-    get() {
-        return when (val myParent = parent) {
-            is IrFile -> myParent
-            else -> (myParent as IrDeclaration).fileParent
-        }
+    get() = fileParentOrNull ?: error("No file parent: $this")
+
+@Suppress("RecursivePropertyAccessor")
+val IrDeclaration.fileParentOrNull: IrFile?
+    get() = when (val myParent = parent) {
+        is IrFile -> myParent
+        is IrDeclaration -> myParent.fileParentOrNull
+        else -> null
     }
 
-private val RETENTION_PARAMETER_NAME = Name.identifier("value")
-
-fun IrClass.getAnnotationRetention(): KotlinRetention? {
-    val retentionArgument =
-        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
-                as? IrGetEnumValue ?: return null
-    val retentionArgumentValue = retentionArgument.symbol.owner
-    return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
-}
-
-// To be generalized to IrMemberAccessExpression as soon as properties get symbols.
-fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
-    val index = symbol.owner.valueParameters.find { it.name == name }?.index ?: return null
-    return getValueArgument(index)
-}
-
 val IrMemberWithContainerSource.parentClassId: ClassId?
-    get() = ((this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this).let { directMember ->
-        (directMember.containerSource as? JvmPackagePartSource)?.classId ?: (directMember.parent as? IrClass)?.classId
+    get() {
+        val directMember = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
+
+        return when (val containerSource = directMember.containerSource) {
+            is JvmPackagePartSource -> containerSource.classId
+            is FacadeClassSource -> ClassId.topLevel(containerSource.className.fqNameForClassNameWithoutDollars)
+            else -> (directMember.parent as? IrClass)?.classId
+        }
     }
 
 // Translated into IR-based terms from classifierDescriptor?.classId
 private val IrClass.classId: ClassId?
     get() = when (val parent = parent) {
-        is IrExternalPackageFragment -> ClassId(parent.fqName, name)
+        is IrExternalPackageFragment -> ClassId(parent.packageFqName, name)
         // TODO: there's `context.classNameOverride`; theoretically it's only relevant for top-level members,
         //       where `containerSource` is a `JvmPackagePartSource` anyway, but I'm not 100% sure.
         is IrClass -> parent.classId?.createNestedClassId(name)
@@ -510,8 +499,8 @@ val IrDeclaration.psiElement: PsiElement?
 val IrMemberAccessExpression<*>.psiElement: PsiElement?
     get() = (symbol.descriptor.original as? DeclarationDescriptorWithSource)?.psiElement
 
-fun IrFunction.extensionReceiverName(state: GenerationState): String {
-    if (!state.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+fun IrFunction.extensionReceiverName(config: JvmBackendConfig): String {
+    if (!config.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
         return AsmUtil.RECEIVER_PARAMETER_NAME
     }
 
@@ -529,3 +518,35 @@ fun IrFunction.extensionReceiverName(state: GenerationState): String {
 
 fun IrFunction.isBridge(): Boolean =
     origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+
+// Enum requires external implementation of entries if it's either a Java enum, or a Kotlin enum compiled with pre-1.8 LV/AV.
+fun IrClass.isEnumClassWhichRequiresExternalEntries(): Boolean =
+    isEnumClass && (isFromJava() || !hasEnumEntriesFunction())
+
+private fun IrClass.hasEnumEntriesFunction(): Boolean {
+    // Enums from the current module will have a property `entries` if they are unlowered yet (i.e. enum is declared in another file
+    // which will be lowered after the file with the call site), or a function `<get-entries>` if they are already lowered.
+    // Enums from other modules have `entries` if and only if the flag `hasEnumEntries` is true.
+    return if (isInCurrentModule())
+        functions.any { it.isGetEntries() } || properties.any { it.getter?.isGetEntries() == true }
+    else hasEnumEntries
+}
+
+private fun IrSimpleFunction.isGetEntries(): Boolean =
+    name.toString() == "<get-entries>"
+            && dispatchReceiverParameter == null
+            && extensionReceiverParameter == null
+            && valueParameters.isEmpty()
+
+fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction = functions.single {
+    it.name.toString() == "values"
+            && it.dispatchReceiverParameter == null
+            && it.extensionReceiverParameter == null
+            && it.valueParameters.isEmpty()
+            && it.returnType.isBoxedArray
+            && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
+}
+
+val IrValueParameter.isSkippedInGenericSignature: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
+            origin == JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER

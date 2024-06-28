@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.daemon
 
-import gnu.trove.THashMap
-import gnu.trove.THashSet
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
@@ -35,7 +35,7 @@ class RemoteLookupTrackerClient(
     private val isDoNothing = profiler.withMeasure(this) { facade.lookupTracker_isDoNothing() }
 
     // Map: FileName -> (ScopeFqName -> Set<Name[String] | LookupInfo>)
-    private val lookups = THashMap<String, MutableMap<String, MutableSet<Any>>>()
+    private val lookups = Object2ObjectOpenHashMap<String, MutableMap<String, MutableSet<Any>>>()
     private val interner = createStringInterner()
 
     override val requiresPosition: Boolean = profiler.withMeasure(this) { facade.lookupTracker_requiresPosition() }
@@ -51,8 +51,7 @@ class RemoteLookupTrackerClient(
                 LookupInfo(filePath, position, scopeFqName, scopeKind, name)
             else
                 internedName
-
-        lookups.getOrPut(filePath, ::THashMap).getOrPut(internedSymbolFqName, ::THashSet).add(objectToPut)
+        lookups.getOrPut(filePath, ::Object2ObjectOpenHashMap).getOrPut(internedSymbolFqName, ::ObjectOpenHashSet).add(objectToPut)
     }
 
     override fun clear() {
@@ -64,7 +63,7 @@ class RemoteLookupTrackerClient(
     }
 
     private fun flush() {
-        if (isDoNothing || lookups.isEmpty) return
+        if (isDoNothing || lookups.isEmpty()) return
 
         profiler.withMeasure(this) {
             facade.lookupTracker_record(

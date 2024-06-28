@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.utils.Printer
 abstract class MethodGenerator<in T : MethodModel> {
     companion object {
         fun generateDefaultSignature(method: MethodModel, p: Printer) {
-            p.print("public void ${method.name}() throws Exception")
+            p.print("public void ${method.name}()")
         }
     }
 

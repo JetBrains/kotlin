@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 class LanguageFeatureMessageRenderer @JvmOverloads constructor(
@@ -18,7 +19,7 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
 
     enum class Type {
         UNSUPPORTED,
-        WARNING
+        WARNING,
     }
 
     override fun render(obj: Pair<LanguageFeature, LanguageVersionSettings>, renderingContext: RenderingContext): String {
@@ -31,6 +32,8 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
         when (type) {
             Type.UNSUPPORTED ->
                 when {
+                    settings.supportsFeature(feature) && settings.languageVersion < LanguageVersion.KOTLIN_2_0 ->
+                        sb.append("not supported in language versions 1.*, please use version 2.0 or later")
                     since == null ->
                         sb.append("experimental and should be enabled explicitly")
                     since > settings.languageVersion ->

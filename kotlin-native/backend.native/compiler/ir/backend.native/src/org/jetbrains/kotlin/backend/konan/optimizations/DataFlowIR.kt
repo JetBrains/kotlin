@@ -6,19 +6,24 @@
 package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
+import org.jetbrains.kotlin.backend.konan.ir.implementedInterfaces
+import org.jetbrains.kotlin.backend.konan.ir.isAbstract
+import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
+import org.jetbrains.kotlin.backend.konan.ir.isFrozen
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -26,7 +31,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -104,7 +109,7 @@ internal object DataFlowIR {
         }
     }
 
-    class Module(val descriptor: ModuleDescriptor) {
+    class Module {
         var numberOfFunctions = 0
         var numberOfClasses = 0
     }
@@ -479,9 +484,10 @@ internal object DataFlowIR {
             }, data = null)
         }
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         fun mapClassReferenceType(irClass: IrClass): Type {
             // Do not try to devirtualize ObjC classes.
-            if (irClass.module.name == Name.special("<forward declarations>") || irClass.isObjCClass())
+            if (irClass.module.name == FORWARD_DECLARATIONS_MODULE_NAME || irClass.isObjCClass())
                 return Type.Virtual
 
             val isFinal = irClass.isFinalClass
@@ -506,7 +512,7 @@ internal object DataFlowIR {
                 type.vtable += layoutBuilder.vtableEntries.map {
                     val implementation = it.getImplementation(context)
                             ?: error(
-                                    irClass.getContainingFile(),
+                                    irClass.fileOrNull,
                                     irClass,
                                     """
                                         no implementation found for ${it.overriddenFunction.render()}
@@ -521,7 +527,7 @@ internal object DataFlowIR {
                     type.itable[iface.classId] = iface.interfaceVTableEntries.map {
                         val implementation = layoutBuilder.overridingOf(it)
                                 ?: error(
-                                        irClass.getContainingFile(),
+                                        irClass.fileOrNull,
                                         irClass,
                                         """
                                             no implementation found for ${it.render()}
@@ -599,6 +605,7 @@ internal object DataFlowIR {
             if (returnsNothing)
                 attributes = attributes or FunctionAttributes.RETURNS_NOTHING
             if (it.hasAnnotation(RuntimeNames.exportForCppRuntime)
+                    || it.hasAnnotation(RuntimeNames.exportedBridge)
                     || it.getExternalObjCMethodInfo() != null // TODO-DCE-OBJC-INIT
                     || it.hasAnnotation(RuntimeNames.objCMethodImp)) {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED
@@ -622,7 +629,7 @@ internal object DataFlowIR {
                     val irClass = it.parent as? IrClass
                     val bridgeTarget = it.bridgeTarget
                     val isSpecialBridge = bridgeTarget.let {
-                        it != null && BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(it.descriptor) != null
+                        it != null && it.getDefaultValueForOverriddenBuiltinFunction() != null
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val placeToFunctionsTable = !isAbstract && it !is IrConstructor && irClass != null

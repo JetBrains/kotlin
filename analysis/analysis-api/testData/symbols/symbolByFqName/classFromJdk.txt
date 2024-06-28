@@ -1,42 +1,46 @@
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: java/lang/String
+KaNamedClassSymbol:
+  annotations: []
+  classId: java/lang/String
   classKind: CLASS
   companionObject: null
+  compilerVisibility: Public
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
   isInner: false
+  location: TOP_LEVEL
   modality: FINAL
   name: String
-  origin: JAVA
+  origin: JAVA_LIBRARY
   superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/Any
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: java/io/Serializable
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtFlexibleType:
-          annotationsList: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: [
+        KaFlexibleType:
+          annotations: []
           type: kotlin/String!
       ]
       type: kotlin/Comparable<kotlin/String!>
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
+    KaUsualClassType:
+      annotations: []
+      typeArguments: []
       type: kotlin/CharSequence
   ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
-  visibility: Public
-  getContainingModule: KtSdkModule "SDK jdk"
+  visibility: PUBLIC
+  getContainingFileSymbol: null
+  getContainingModule: KaLibraryModule "SDK jdk"
   annotationApplicableTargets: null
   deprecationStatus: null

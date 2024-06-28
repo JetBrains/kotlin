@@ -1,0 +1,50 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable fun Bar.CanSkip(b: Foo = Foo()) {
+    print("Hello World")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Bar.CanSkip(b: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(CanSkip):Test.kt")
+  val %dirty = %changed
+  if (%dirty and 0b0001 != 0 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        b = Foo()
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0001 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    print("Hello World")
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    CanSkip(b, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

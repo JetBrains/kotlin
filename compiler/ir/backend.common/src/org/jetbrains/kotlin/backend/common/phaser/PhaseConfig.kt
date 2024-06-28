@@ -33,6 +33,10 @@ class PhaseConfigBuilder(private val compoundPhase: CompilerPhase<*, *, *>) {
     )
 }
 
+/**
+ * Phase configuration that defines and configures [CompilerPhase]s that the compiler should execute.
+ * It is defined before compilation and can't be modified in the process.
+ */
 class PhaseConfig(
     private val compoundPhase: CompilerPhase<*, *, *>,
     private val phases: Map<String, AnyNamedPhase> = compoundPhase.toPhaseMap(),

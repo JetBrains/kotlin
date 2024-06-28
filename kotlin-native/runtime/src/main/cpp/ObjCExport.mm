@@ -10,16 +10,14 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <cstdlib>
+#include <map>
 #import <mutex>
+#include <string>
+#include <unordered_set>
+#include <vector>
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSValue.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSMethodSignature.h>
-#import <Foundation/NSError.h>
-#import <Foundation/NSException.h>
-#import <Foundation/NSDecimalNumber.h>
-#import <Foundation/NSDictionary.h>
+#import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <objc/objc-exception.h>
@@ -30,14 +28,9 @@
 #import "ObjCExportPrivate.h"
 #import "ObjCMMAPI.h"
 #import "Runtime.h"
-#import "Mutex.hpp"
+#import "concurrent/Mutex.hpp"
 #import "Exceptions.h"
 #import "Natives.h"
-#include "std_support/CStdlib.hpp"
-#include "std_support/Map.hpp"
-#include "std_support/String.hpp"
-#include "std_support/UnorderedSet.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -45,7 +38,7 @@ namespace {
 
 template <typename T>
 inline T* konanAllocArray(size_t length) {
-    return reinterpret_cast<T*>(std_support::calloc(length, sizeof(T)));
+    return reinterpret_cast<T*>(std::calloc(length, sizeof(T)));
 }
 
 }
@@ -99,33 +92,18 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 
 namespace {
 
-ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject, ReleaseMode mode) {
-  auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd, ReleaseMode mode)>(&objc_msgSend);
-  msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector, mode);
+ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
+  auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd)>(&objc_msgSend);
+  msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector);
 }
 
 } // namespace
 
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kRelease);
-  }
-}
-
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAndReleaseAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetachAndRelease);
-  }
-}
-
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    // Switching to Native state is not required, because detach is fast and can't call user code.
-    // Also switching is not possible, because this is called from GC.
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetach);
-  }
+  RuntimeAssert(associatedObject != nullptr, "Kotlin_ObjCExport_releaseAssociatedObject(nullptr)");
+  // May already be in the native state if was scheduled on the main queue.
+  NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
+  send_releaseAsAssociatedObject(associatedObject);
 }
 
 extern "C" id Kotlin_ObjCExport_convertUnitToRetained(ObjHeader* unitInstance) {
@@ -250,13 +228,27 @@ extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForProtocol(Protocol* p
 
 static const TypeInfo* getOrCreateTypeInfo(Class clazz);
 
+extern "C" const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(clazz != nullptr, "Cannot be null");
+  return getOrCreateTypeInfo(*clazz);
+}
+
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
+  if (kotlin::mm::IsCurrentThreadRegistered()) {
+    // ObjC runtime might have taken a lock in Runnable context on the way here. Safe-points are unwelcome in the code below.
+    // We can't make it all the way in a Runnable state as well, because some of the operations below might take a while.
+    AssertThreadState(kotlin::ThreadState::kNative);
+  }
+
   const ObjCTypeAdapter* typeAdapter = findClassAdapter(clazz);
   if (typeAdapter == nullptr) {
     getOrCreateTypeInfo(clazz);
     return;
   }
 
+  // We aren't really sure we've checked all the cases when initialize is called, and guarded them with a switch to native.
+  // If panic asserts above are disabled, let's ensure the native state here,
+  // to avoid potentially more frequent deadlock cases.
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   const TypeInfo* typeInfo = typeAdapter->kotlinTypeInfo;
@@ -300,7 +292,7 @@ static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
 static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode);
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
 
 static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
   for (int index = 0; index < count; ++index) {
@@ -344,12 +336,20 @@ static void Kotlin_ObjCExport_initializeImpl() {
   BOOL added = class_addMethod(nsBlockClass, toKotlinSelector, (IMP)blockToKotlinImp, toKotlinTypeEncoding);
   RuntimeAssert(added, "Unable to add 'toKotlin:' method to NSBlock class");
 
-  // Note: __NSCFBoolean is not visible to linker, so this case can't be handled with a category too.
-  Class booleanClass = objc_getClass("__NSCFBoolean");
-  RuntimeAssert(booleanClass != nullptr, "__NSCFBoolean class not found");
+  // Note: the boolean class is not visible to linker, so this case can't be handled with a category too.
+  // Referring it directly is also undesirable, because this is "private API" (see e.g. KT-62091).
+  // Get the class from an object instead:
+  Class booleanClass = [[NSNumber numberWithBool:YES] class];
+  RuntimeAssert(booleanClass != nullptr, "The NS boolean class not found");
 
-  added = class_addMethod(booleanClass, toKotlinSelector, (IMP)boxedBooleanToKotlinImp, toKotlinTypeEncoding);
-  RuntimeAssert(added, "Unable to add 'toKotlin:' method to __NSCFBoolean class");
+  if (booleanClass != [[NSNumber numberWithInt:1] class]) {
+    added = class_addMethod(booleanClass, toKotlinSelector, (IMP)boxedBooleanToKotlinImp, toKotlinTypeEncoding);
+    RuntimeAssert(added, "Unable to add 'toKotlin:' method to the NS boolean class");
+  } else {
+    // Shouldn't really happen unless something changed in the implementation.
+    // Play safe in that case, don't botch the numbers case.
+    RuntimeAssert(false, "NSNumber uses the same class for booleans and numbers: %s", class_getName(booleanClass));
+  }
 
   for (const char* swiftRootClassName : { "SwiftObject", "_TtCs12_SwiftObject" }) {
     Class swiftRootClass = objc_getClass(swiftRootClassName);
@@ -361,7 +361,7 @@ static void Kotlin_ObjCExport_initializeImpl() {
         swiftRootClass, releaseAsAssociatedObjectSelector,
         (IMP)SwiftObject_releaseAsAssociatedObjectImp, releaseAsAssociatedObjectTypeEncoding
       );
-      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject:' method to SwiftObject class");
+      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject' method to SwiftObject class");
     }
   }
 }
@@ -381,9 +381,7 @@ static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode) {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd) {
   objc_release(self);
 }
 
@@ -580,7 +578,7 @@ static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
   return convertToRetained(obj);
 }
 
-static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables) {
+static void buildITable(TypeInfo* result, const std::map<ClassId, std::vector<VTableElement>>& interfaceVTables) {
   // Check if can use fast optimistic version - check if the size of the itable could be 2^k and <= 32.
   bool useFastITable;
   int itableSize = 1;
@@ -614,7 +612,7 @@ static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_su
     }
   } else {
     // Otherwise: conservative version.
-    // The table will be sorted since we're using std_support::map.
+    // The table will be sorted since we're using std::map.
     int index = 0;
     for (auto& pair : interfaceVTables) {
       auto interfaceId = pair.first;
@@ -640,18 +638,18 @@ static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_su
 static const TypeInfo* createTypeInfo(
   const char* className,
   const TypeInfo* superType,
-  const std_support::vector<const TypeInfo*>& superInterfaces,
-  const std_support::vector<VTableElement>& vtable,
-  const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables,
+  const std::vector<const TypeInfo*>& superInterfaces,
+  const std::vector<VTableElement>& vtable,
+  const std::map<ClassId, std::vector<VTableElement>>& interfaceVTables,
   const InterfaceTableRecord* superItable,
   int superItableSize,
   bool itableEqualsSuper,
   const TypeInfo* fieldsInfo
 ) {
-  TypeInfo* result = (TypeInfo*)std_support::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
+  TypeInfo* result = (TypeInfo*)std::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
-  result->flags_ = TF_OBJC_DYNAMIC;
+  result->flags_ = TF_OBJC_DYNAMIC | TF_REFLECTION_SHOW_REL_NAME;
 
   result->superType_ = superType;
   if (fieldsInfo == nullptr) {
@@ -673,10 +671,10 @@ static const TypeInfo* createTypeInfo(
 
   result->classId_ = superType->classId_;
 
-  std_support::vector<const TypeInfo*> implementedInterfaces(
+  std::vector<const TypeInfo*> implementedInterfaces(
     superType->implementedInterfaces_, superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
-  std_support::unordered_set<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
+  std::unordered_set<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
 
   for (const TypeInfo* interface : superInterfaces) {
     if (usedInterfaces.insert(interface).second) {
@@ -702,14 +700,14 @@ static const TypeInfo* createTypeInfo(
 
   result->packageName_ = nullptr;
   result->relativeName_ = CreatePermanentStringFromCString(className);
-  result->writableInfo_ = (WritableTypeInfo*)std_support::calloc(1, sizeof(WritableTypeInfo));
+  result->writableInfo_ = (WritableTypeInfo*)std::calloc(1, sizeof(WritableTypeInfo));
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];
 
   return result;
 }
 
-static void addDefinedSelectors(Class clazz, std_support::unordered_set<SEL>& result) {
+static void addDefinedSelectors(Class clazz, std::unordered_set<SEL>& result) {
   unsigned int objcMethodCount;
   Method* objcMethods = class_copyMethodList(clazz, &objcMethodCount);
 
@@ -720,10 +718,10 @@ static void addDefinedSelectors(Class clazz, std_support::unordered_set<SEL>& re
   if (objcMethods != nullptr) free(objcMethods);
 }
 
-static std_support::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
-  std_support::vector<const TypeInfo*> result;
-  std_support::unordered_set<Protocol*> handledProtocols;
-  std_support::vector<Protocol*> protocolsToHandle;
+static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
+  std::vector<const TypeInfo*> result;
+  std::unordered_set<Protocol*> handledProtocols;
+  std::vector<Protocol*> protocolsToHandle;
 
   {
     unsigned int protocolCount;
@@ -781,7 +779,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
-  std_support::unordered_set<SEL> definedSelectors;
+  std::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
 
   const ObjCTypeAdapter* superTypeAdapter = getTypeAdapter(superType);
@@ -804,7 +802,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   if (superVtable == nullptr) superVtable = superType->vtable();
 
-  std_support::vector<const void*> vtable(
+  std::vector<const void*> vtable(
         superVtable,
         superVtable + superVtableSize
   );
@@ -813,7 +811,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     superITable = superType->interfaceTable_;
     superITableSize = superType->interfaceTableSize_;
   }
-  std_support::map<ClassId, std_support::vector<VTableElement>> interfaceVTables;
+  std::map<ClassId, std::vector<VTableElement>> interfaceVTables;
   if (superITable != nullptr) {
     int actualItableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
     for (int i = 0; i < actualItableSize; ++i) {
@@ -821,16 +819,16 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       auto interfaceId = record.id;
       if (interfaceId == kInvalidInterfaceId) continue;
       int vtableSize = record.vtableSize;
-      std_support::vector<VTableElement> interfaceVTable(vtableSize);
+      std::vector<VTableElement> interfaceVTable(vtableSize);
       for (int j = 0; j < vtableSize; ++j)
         interfaceVTable[j] = record.vtable[j];
       interfaceVTables.emplace(interfaceId, std::move(interfaceVTable));
     }
   }
 
-  std_support::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
+  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
 
-  std_support::vector<const TypeInfo*> supers(
+  std::vector<const TypeInfo*> supers(
         superType->implementedInterfaces_,
         superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
@@ -855,7 +853,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     auto interfaceVTablesIt = interfaceVTables.find(interfaceId);
     if (interfaceVTablesIt == interfaceVTables.end()) {
       itableEqualsSuper = false;
-      interfaceVTables.emplace(interfaceId, std_support::vector<VTableElement>(itableSize));
+      interfaceVTables.emplace(interfaceId, std::vector<VTableElement>(itableSize));
     } else {
       auto const& interfaceVTable = interfaceVTablesIt->second;
       RuntimeAssert(interfaceVTable.size() == static_cast<size_t>(itableSize), "");
@@ -972,7 +970,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   int classIndex = (anonymousClassNextId++);
-  std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();
+  std::string className = Kotlin_ObjCInterop_getUniquePrefix();
   className += "_kobjcc";
   className += std::to_string(classIndex);
 
@@ -992,7 +990,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
     }
   }
 
-  std_support::unordered_set<const TypeInfo*> superImplementedInterfaces(
+  std::unordered_set<const TypeInfo*> superImplementedInterfaces(
           typeInfo->superType_->implementedInterfaces_,
           typeInfo->superType_->implementedInterfaces_ + typeInfo->superType_->implementedInterfacesCount_
   );
@@ -1018,6 +1016,18 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   return result;
 }
 
+static void setClassEnsureInitialized(const TypeInfo* typeInfo, Class cls) {
+  RuntimeAssert(cls != nullptr, "");
+
+  // ObjC runtime calls +initialize under a global lock on the first access to an object.
+  // `[result self]` below will ensure ahead of time initialization
+  // we only have to make it happen in the native state
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(true);
+  [cls self];
+
+  typeInfo->writableInfo_->objCExport.objCClass = cls;
+}
+
 static Class getOrCreateClass(const TypeInfo* typeInfo) {
   Class result = typeInfo->writableInfo_->objCExport.objCClass;
   if (result != nullptr) {
@@ -1027,8 +1037,7 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
   if (typeAdapter != nullptr) {
     result = objc_getClass(typeAdapter->objCName);
-    RuntimeAssert(result != nullptr, "");
-    typeInfo->writableInfo_->objCExport.objCClass = result;
+    setClassEnsureInitialized(typeInfo, result);
   } else {
     Class superClass = getOrCreateClass(typeInfo->superType_);
 
@@ -1036,9 +1045,10 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
 
     result = typeInfo->writableInfo_->objCExport.objCClass; // double-checking.
     if (result == nullptr) {
-      result = createClass(typeInfo, superClass);
-      RuntimeAssert(result != nullptr, "");
-      typeInfo->writableInfo_->objCExport.objCClass = result;
+        result = createClass(typeInfo, superClass);
+        // Don't have to be a release store –
+        // the operations above are synchronized and thus might not be reordered after this store.
+        setClassEnsureInitialized(typeInfo, result);
     }
   }
 
@@ -1073,6 +1083,11 @@ extern "C" ALWAYS_INLINE void* Kotlin_Interop_refToObjC(ObjHeader* obj) {
 extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, void* obj) {
   RuntimeAssert(false, "Unavailable operation");
   RETURN_OBJ(nullptr);
+}
+
+extern "C" ALWAYS_INLINE const TypeInfo* Kotlin_ObjCInterop_getTypeInfoForObjCClassPtr(Class* clazz) {
+  RuntimeAssert(false, "Unavailable operation");
+  return nullptr;
 }
 
 #endif // KONAN_OBJC_INTEROP

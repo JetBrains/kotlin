@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
-class ThrowException(val exceptionClass: Type) : IntrinsicMethod() {
+class ThrowException(private val exceptionClass: Type) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         with(codegen) {
             mv.anew(exceptionClass)
@@ -24,4 +24,3 @@ class ThrowException(val exceptionClass: Type) : IntrinsicMethod() {
         }
     }
 }
-

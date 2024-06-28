@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kotlin-project</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>2.0.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -105,40 +105,38 @@
 
                     <plugin>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>2.0.0</version>
+                        <version>3.5.1</version>
                         <configuration>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
                             <properties>
                                 <kotlin.version>${project.version}</kotlin.version>
-                                <kotlin.js.compiler.legacy.force_enabled>true</kotlin.js.compiler.legacy.force_enabled>
                             </properties>
                             <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
                             <extraArtifacts>
+                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-lombok:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-sam-with-receiver:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-maven:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}:klib</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}:pom</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}:pom</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-junit:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-junit5:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-testng:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-script-util:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}:klib</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-bom:${project.version}:pom</artifact>
                             </extraArtifacts>
                             <showErrors>true</showErrors>
@@ -155,6 +153,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                 </configuration>
                                 <!--<phase>package</phase>-->
                                 <goals>
@@ -163,7 +162,19 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java9</id>
+                                <id>integration-test-java8-only</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java8</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java8</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
+                                </configuration>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>integration-test-java9-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
@@ -175,7 +186,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java17</id>
+                                <id>integration-test-java17-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java17</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java17</cloneProjectsTo>
@@ -191,6 +202,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it-k2</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                     <pomExcludes>
                                         <!-- exclude kapt -->
                                         <pomExclude>test-dagger-maven-example/pom.xml</pomExclude>
@@ -199,14 +211,6 @@
                                         <pomExclude>test-enable-extensions/pom.xml</pomExclude>
                                         <pomExclude>test-kapt-allopen/pom.xml</pomExclude>
                                         <pomExclude>test-lombok-with-kapt/pom.xml</pomExclude>
-                                        <!-- exclude js and mpp -->
-                                        <pomExclude>test-js-moduleKind/pom.xml</pomExclude>
-                                        <pomExclude>test-js-accessToInternal/pom.xml</pomExclude>
-                                        <pomExclude>test-js-suppressWarnings/pom.xml</pomExclude>
-                                        <pomExclude>test-js-sourceMap/pom.xml</pomExclude>
-                                        <pomExclude>test-js-extraArguments/pom.xml</pomExclude>
-                                        <pomExclude>test-js-sourceMapEmbedSources/pom.xml</pomExclude>
-                                        <pomExclude>test-multiplatform/pom.xml</pomExclude>
                                         <!-- exclude kts -->
                                         <pomExclude>test-helloworld-kts/pom.xml</pomExclude>
                                         <!-- exclude test, that depends on lv as they will be automatically fixed, when current lv goes to 2.0 -->

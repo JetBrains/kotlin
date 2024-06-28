@@ -1,0 +1,70 @@
+// CHECK:
+//   Mangled name: State
+//   Public signature: /State|null[0]
+open annotation class State : Annotation {
+  // CHECK:
+  //   Mangled name: State{}name
+  //   Public signature: /State.name|4231860309499509769[0]
+  //   Public signature debug description: {}name
+  val name: String
+    // CHECK JVM_IR:
+    //   Mangled name: State#<get-name>(){}kotlin.String
+    //   Public signature: /State.name.<get-name>|-8006111524522882650[0]
+    //   Public signature debug description: <get-name>(){}kotlin.String
+    get
+
+  // CHECK:
+  //   Mangled name: State{}storages
+  //   Public signature: /State.storages|6878252279913860320[0]
+  //   Public signature debug description: {}storages
+  val storages: Array<Storage>
+    // CHECK JVM_IR:
+    //   Mangled name: State#<get-storages>(){}kotlin.Array<Storage>
+    //   Public signature: /State.storages.<get-storages>|3736036355422962101[0]
+    //   Public signature debug description: <get-storages>(){}kotlin.Array<Storage>
+    get
+
+  // CHECK:
+  //   Mangled name: State#<init>(kotlin.String;kotlin.Array<Storage>){}
+  //   Public signature: /State.<init>|-8165230928430738910[0]
+  //   Public signature debug description: <init>(kotlin.String;kotlin.Array<Storage>){}
+  constructor(name: String, storages: Array<Storage>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Storage
+//   Public signature: /Storage|null[0]
+open annotation class Storage : Annotation {
+  // CHECK:
+  //   Mangled name: Storage{}value
+  //   Public signature: /Storage.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  val value: String
+    // CHECK JVM_IR:
+    //   Mangled name: Storage#<get-value>(){}kotlin.String
+    //   Public signature: /Storage.value.<get-value>|-7202092821145242726[0]
+    //   Public signature debug description: <get-value>(){}kotlin.String
+    get
+
+  // CHECK:
+  //   Mangled name: Storage#<init>(kotlin.String){}
+  //   Public signature: /Storage.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(value: String) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+@State(name = "1", storages = [Storage(value = "HELLO")])
+class Test {
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 /**
  * That class is expected to work just the same as FirStandardOverrideChecker for regular members,
@@ -20,7 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
  * while in Java class they would be treated equally.
  */
 class FirIntersectionScopeOverrideChecker(session: FirSession) : FirOverrideChecker {
-    private val standardOverrideChecker = FirStandardOverrideChecker(session)
+    private val standardOverrideChecker = session.firOverrideChecker
     private val platformSpecificOverridabilityRules = session.platformSpecificOverridabilityRules
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
@@ -31,5 +33,13 @@ class FirIntersectionScopeOverrideChecker(session: FirSession) : FirOverrideChec
     override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
         platformSpecificOverridabilityRules?.isOverriddenProperty(overrideCandidate, baseDeclaration)?.let { return it }
         return standardOverrideChecker.isOverriddenProperty(overrideCandidate, baseDeclaration)
+    }
+
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility {
+        platformSpecificOverridabilityRules?.chooseIntersectionVisibility(overrides, dispatchClassSymbol)?.let { return it }
+        return standardOverrideChecker.chooseIntersectionVisibility(overrides, dispatchClassSymbol)
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.js.naming.NameSuggestion
+import org.jetbrains.kotlin.js.naming.WasmNameSuggestion
 import org.jetbrains.kotlin.js.resolve.ExtensionFunctionToExternalIsInlinable
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
@@ -19,16 +19,19 @@ import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 
 // TODO: Review the list of used K/JS checkers.
 //       Refactor useful checkers into common module.
-object WasmPlatformConfigurator : PlatformConfiguratorBase(
+//       KT-56848
+object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker, WasmExternalInheritanceChecker,
+        WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker,
         WasmExternalDeclarationChecker,
         WasmImportAnnotationChecker,
         WasmJsFunAnnotationChecker,
+        WasmJsInteropTypesChecker,
+        WasmJsExportChecker,
+        FirWasmJsAssociatedObjectChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
@@ -37,11 +40,44 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
-        container.useInstance(NameSuggestion())
         container.useImpl<WasmJsCallChecker>()
-        container.useImpl<JsNameClashChecker>()
-        container.useImpl<JsNameCharsChecker>()
+        container.useImpl<WasmNameClashChecker>()
+        container.useImpl<WasmNameCharsChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
+        container.useImpl<JsReflectionAPICallChecker>()
+        container.useImpl<JsNativeRttiChecker>()
+        container.useImpl<JsReifiedNativeChecker>()
+        container.useInstance(ExtensionFunctionToExternalIsInlinable)
+        container.useInstance(JsQualifierChecker)
+        container.useInstance(WasmDiagnosticSuppressor)
+        container.useInstance(JsExternalChecker(allowCompanionInInterface = false, allowUnsignedTypes = true))
+        container.useInstance(JsExportDeclarationChecker(allowCompanionInInterface = false, includeUnsignedNumbers = true))
+    }
+
+    override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        super.configureModuleDependentCheckers(container)
+        container.useImpl<ExpectedActualDeclarationChecker>()
+    }
+}
+
+
+// TODO: Review the list of used K/JS checkers.
+//       Refactor useful checkers into common module.
+//       KT-56848
+object WasmWasiPlatformConfigurator : PlatformConfiguratorBase(
+    additionalDeclarationCheckers = listOf(
+        JsRuntimeAnnotationChecker,
+        WasmImportAnnotationChecker,
+        WasmWasiExportChecker,
+        WasmWasiExternalDeclarationChecker,
+    ),
+    additionalCallCheckers = listOf(
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+    ),
+) {
+    override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useImpl<WasmNameClashChecker>()
+        container.useImpl<WasmNameCharsChecker>()
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()
         container.useImpl<JsReifiedNativeChecker>()

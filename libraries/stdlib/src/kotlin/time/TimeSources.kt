@@ -5,12 +5,9 @@
 
 package kotlin.time
 
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.nanoseconds
-import kotlin.time.Duration.Companion.seconds
+import kotlin.math.sign
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal expect object MonotonicTimeSource : TimeSource.WithComparableMarks {
     override fun markNow(): TimeSource.Monotonic.ValueTimeMark
     fun elapsedFrom(timeMark: TimeSource.Monotonic.ValueTimeMark): Duration
@@ -21,66 +18,73 @@ internal expect object MonotonicTimeSource : TimeSource.WithComparableMarks {
 /**
  * An abstract class used to implement time sources that return their readings as [Long] values in the specified [unit].
  *
+ * Time marks returned by this time source can be compared for difference with other time marks
+ * obtained from the same time source.
+ *
  * @property unit The unit in which this time source's readings are expressed.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) : TimeSource.WithComparableMarks {
     /**
      * This protected method should be overridden to return the current reading of the time source expressed as a [Long] number
      * in the unit specified by the [unit] property.
+     *
+     * Note that the value returned by this method when [markNow] is called the first time is used as "zero" reading
+     * and the difference from this "zero" reading is calculated for subsequent values.
+     * Therefore, it's not recommended to return values farther than `±Long.MAX_VALUE` from the first returned reading
+     * as this will cause this time source flip over future/past boundary for the returned time marks.
      */
     protected abstract fun read(): Long
 
+    private val zero by lazy { read() }
+    private fun adjustedRead(): Long = read() - zero
+
     private class LongTimeMark(private val startedAt: Long, private val timeSource: AbstractLongTimeSource, private val offset: Duration) : ComparableTimeMark {
-        override fun elapsedNow(): Duration = if (offset.isInfinite()) -offset else (timeSource.read() - startedAt).toDuration(timeSource.unit) - offset
-        override fun plus(duration: Duration): ComparableTimeMark = LongTimeMark(startedAt, timeSource, offset + duration)
+        override fun elapsedNow(): Duration =
+            saturatingOriginsDiff(timeSource.adjustedRead(), startedAt, timeSource.unit) - offset
+
+        override fun plus(duration: Duration): ComparableTimeMark {
+            val unit = timeSource.unit
+            if (duration.isInfinite()) {
+                val newValue = saturatingAdd(startedAt, unit, duration)
+                return LongTimeMark(newValue, timeSource, Duration.ZERO)
+            }
+            val durationInUnit = duration.truncateTo(unit)
+            val rest = (duration - durationInUnit) + offset
+            var sum = saturatingAdd(startedAt, unit, durationInUnit)
+            val restInUnit = rest.truncateTo(unit)
+            sum = saturatingAdd(sum, unit, restInUnit)
+            var restUnderUnit = rest - restInUnit
+            val restUnderUnitNs = restUnderUnit.inWholeNanoseconds
+            if (sum != 0L && restUnderUnitNs != 0L && (sum xor restUnderUnitNs) < 0L) {
+                // normalize offset to be the same sign as new startedAt
+                val correction = restUnderUnitNs.sign.toDuration(unit)
+                sum = saturatingAdd(sum, unit, correction)
+                restUnderUnit -= correction
+            }
+            val newValue = sum
+            val newOffset = if (newValue.isSaturated()) Duration.ZERO else restUnderUnit
+            return LongTimeMark(newValue, timeSource, newOffset)
+        }
+
         override fun minus(other: ComparableTimeMark): Duration {
             if (other !is LongTimeMark || this.timeSource != other.timeSource)
                 throw IllegalArgumentException("Subtracting or comparing time marks from different time sources is not possible: $this and $other")
 
-//            val thisValue = this.effectiveDuration()
-//            val otherValue = other.effectiveDuration()
-//            if (thisValue == otherValue && thisValue.isInfinite()) return Duration.ZERO
-//            return thisValue - otherValue
-            if (this.offset == other.offset && this.offset.isInfinite()) return Duration.ZERO
-            val offsetDiff = this.offset - other.offset
-            val startedAtDiff = (this.startedAt - other.startedAt).toDuration(timeSource.unit)
-//            println("$startedAtDiff, $offsetDiff")
-            return if (startedAtDiff == -offsetDiff) Duration.ZERO else startedAtDiff + offsetDiff
+            val startedAtDiff = saturatingOriginsDiff(this.startedAt, other.startedAt, timeSource.unit)
+            return startedAtDiff + (offset - other.offset)
         }
 
         override fun equals(other: Any?): Boolean =
             other is LongTimeMark && this.timeSource == other.timeSource && (this - other) == Duration.ZERO
 
-        internal fun effectiveDuration(): Duration {
-            if (offset.isInfinite()) return offset
-            val unit = timeSource.unit
-            if (unit >= DurationUnit.MILLISECONDS) {
-                return startedAt.toDuration(unit) + offset
-            }
-            val scale = convertDurationUnit(1L, DurationUnit.MILLISECONDS, unit)
-            val startedAtMillis = startedAt / scale
-            val startedAtRem = startedAt % scale
+        override fun hashCode(): Int = offset.hashCode() * 37 + startedAt.hashCode()
 
-            return offset.toComponents { offsetSeconds, offsetNanoseconds ->
-                val offsetMillis = offsetNanoseconds / NANOS_IN_MILLIS
-                val offsetRemNanos = offsetNanoseconds % NANOS_IN_MILLIS
-
-                // add component-wise
-                (startedAtRem.toDuration(unit) + offsetRemNanos.nanoseconds) +
-                        (startedAtMillis + offsetMillis).milliseconds +
-                        offsetSeconds.seconds
-            }
-
-        }
-
-        override fun hashCode(): Int = effectiveDuration().hashCode()
-
-        override fun toString(): String = "LongTimeMark($startedAt${timeSource.unit.shortName()} + $offset (=${effectiveDuration()}), $timeSource)"
+        override fun toString(): String = "LongTimeMark($startedAt${timeSource.unit.shortName()} + $offset, $timeSource)"
     }
 
-    override fun markNow(): ComparableTimeMark = LongTimeMark(read(), this, Duration.ZERO)
+    override fun markNow(): ComparableTimeMark = LongTimeMark(adjustedRead(), this, Duration.ZERO)
 }
 
 /**
@@ -137,14 +141,21 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
  * timeSource += 10.seconds
  * ```
  *
+ * Time marks returned by this time source can be compared for difference with other time marks
+ * obtained from the same time source.
+ *
  * Implementation note: the current reading value is stored as a [Long] number of nanoseconds,
  * thus it's capable to represent a time range of approximately ±292 years.
  * Should the reading value overflow as the result of [plusAssign] operation, an [IllegalStateException] is thrown.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSECONDS) {
     private var reading: Long = 0L
+
+    init {
+        markNow() // fix zero reading in the super time source
+    }
 
     override fun read(): Long = reading
 
@@ -159,17 +170,25 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
      */
     public operator fun plusAssign(duration: Duration) {
         val longDelta = duration.toLong(unit)
-        reading = if (longDelta != Long.MIN_VALUE && longDelta != Long.MAX_VALUE) {
+        if (!longDelta.isSaturated()) {
             // when delta fits in long, add it as long
             val newReading = reading + longDelta
             if (reading xor longDelta >= 0 && reading xor newReading < 0) overflow(duration)
-            newReading
+            reading = newReading
         } else {
-            val delta = duration.toDouble(unit)
-            // when delta is greater than long, add it as double
-            val newReading = reading + delta
-            if (newReading > Long.MAX_VALUE || newReading < Long.MIN_VALUE) overflow(duration)
-            newReading.toLong()
+            val half = duration / 2
+            if (!half.toLong(unit).isSaturated()) {
+                val readingBefore = reading
+                try {
+                    plusAssign(half)
+                    plusAssign(duration - half)
+                } catch (e: IllegalStateException) {
+                    reading = readingBefore
+                    throw e
+                }
+            } else {
+                overflow(duration)
+            }
         }
     }
 

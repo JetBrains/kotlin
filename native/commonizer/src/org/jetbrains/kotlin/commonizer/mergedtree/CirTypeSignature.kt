@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import gnu.trove.TIntHashSet
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.utils.CommonizerIntSet
 import org.jetbrains.kotlin.commonizer.utils.Interner
 import org.jetbrains.kotlin.types.Variance
 
@@ -191,7 +191,7 @@ private class TypeParameterTypeSignatureBuildingContext(
     private val functionOrPropertyOrConstructor: CirHasTypeParameters
 ) : SignatureBuildingContext {
 
-    private val alreadyVisitedParameterTypeIndices = TIntHashSet()
+    private val alreadyVisitedParameterTypeIndices = CommonizerIntSet()
 
     fun isVisitedFirstTime(typeParameterIndex: Int): Boolean {
         return alreadyVisitedParameterTypeIndices.add(typeParameterIndex)

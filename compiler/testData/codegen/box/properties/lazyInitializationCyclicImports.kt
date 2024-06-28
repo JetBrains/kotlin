@@ -1,6 +1,3 @@
-// Fails on native with legacy memory manager. To reproduce, run with
-//   -Pkotlin.internal.native.test.memoryModel=LEGACY -Pkotlin.internal.native.test.cacheMode=NO
-// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS
 // PROPERTY_LAZY_INITIALIZATION
 

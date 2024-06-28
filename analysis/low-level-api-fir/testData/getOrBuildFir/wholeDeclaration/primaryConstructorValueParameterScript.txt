@@ -1,0 +1,19 @@
+KT element: KtParameter
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorValueParameterScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorValueParameterScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|X| {
+                super<R|kotlin/Any|>()
+            }
+
+        }

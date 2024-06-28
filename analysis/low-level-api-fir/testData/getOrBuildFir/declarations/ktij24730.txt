@@ -1,0 +1,12 @@
+KT element: KtDestructuringDeclarationEntry
+FIR element: FirErrorPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] ktij24730.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T : Any, [ResolvedTo(RAW_FIR)] Z> createTuple([ResolvedTo(RAW_FIR)] a: T, [ResolvedTo(RAW_FIR)] b: ZAny): Pair<T, ZAny> { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit|
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>

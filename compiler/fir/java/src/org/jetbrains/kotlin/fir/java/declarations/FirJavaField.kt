@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
@@ -36,19 +34,29 @@ class FirJavaField @FirImplementationDetail constructor(
     override val origin: FirDeclarationOrigin.Java,
     override val symbol: FirFieldSymbol,
     override val name: Name,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override var returnTypeRef: FirTypeRef,
     override var status: FirDeclarationStatus,
     override val isVar: Boolean,
     annotationBuilder: () -> List<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    private var lazyInitializer: Lazy<FirExpression?>,
+    lazyInitializer: Lazy<FirExpression?>,
+    lazyHasConstantInitializer: Lazy<Boolean>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
 ) : FirField() {
+    internal var lazyInitializer: Lazy<FirExpression?> = lazyInitializer
+        private set
+
+    internal var lazyHasConstantInitializer: Lazy<Boolean> = lazyHasConstantInitializer
+        private set
+
     init {
+        @OptIn(FirImplementationDetail::class)
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val receiverParameter: FirReceiverParameter? get() = null
@@ -62,6 +70,9 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val initializer: FirExpression?
         get() = lazyInitializer.value
+
+    override val hasConstantInitializer: Boolean
+        get() = lazyHasConstantInitializer.value
 
     override val deprecationsProvider: DeprecationsProvider by lazy {
         annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
@@ -95,10 +106,6 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirField {
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -141,6 +148,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {}
     override val delegate: FirExpression?
         get() = null
 
@@ -174,12 +182,10 @@ class FirJavaField @FirImplementationDetail constructor(
 
 @FirBuilderDsl
 internal class FirJavaFieldBuilder : FirFieldBuilder() {
-    var modality: Modality? = null
-    lateinit var visibility: Visibility
-    var isStatic: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var lazyInitializer: Lazy<FirExpression?>? = null
+    lateinit var lazyHasConstantInitializer: Lazy<Boolean>
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -198,6 +204,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             annotationBuilder,
             typeParameters,
             lazyInitializer ?: lazyOf(initializer),
+            lazyHasConstantInitializer,
             dispatchReceiverType,
             attributes,
         )

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import kotlin.script.experimental.api.SourceCode
 
@@ -25,7 +24,7 @@ interface ScriptDefinitionProvider {
 
     companion object {
         fun getInstance(project: Project): ScriptDefinitionProvider? =
-            ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
+            project.getService(ScriptDefinitionProvider::class.java)
 
         fun getServiceIfCreated(project: Project): ScriptDefinitionProvider? =
             project.getServiceIfCreated(ScriptDefinitionProvider::class.java)

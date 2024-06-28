@@ -24,4 +24,4 @@ package c
 import a.*
 import b.*
 
-fun test(): <!OVERLOAD_RESOLUTION_AMBIGUITY!>x<!> = d().x()
+fun test(): <!OVERLOAD_RESOLUTION_AMBIGUITY!>x<!> = d().<!MISSING_DEPENDENCY_CLASS!>x<!>()

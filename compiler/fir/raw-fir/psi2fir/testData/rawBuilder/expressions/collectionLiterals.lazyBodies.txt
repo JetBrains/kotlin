@@ -1,5 +1,5 @@
 FILE: collectionLiterals.kt
-    public? final? annotation class Ann1 : R|kotlin/Annotation| {
+    public final? annotation class Ann1 : R|kotlin/Annotation| {
         public? constructor(arr: IntArray): R|Ann1| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -8,7 +8,7 @@ FILE: collectionLiterals.kt
             public? get(): IntArray
 
     }
-    public? final? annotation class Ann2 : R|kotlin/Annotation| {
+    public final? annotation class Ann2 : R|kotlin/Annotation| {
         public? constructor(arr: DoubleArray): R|Ann2| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -17,7 +17,7 @@ FILE: collectionLiterals.kt
             public? get(): DoubleArray
 
     }
-    public? final? annotation class Ann3 : R|kotlin/Annotation| {
+    public final? annotation class Ann3 : R|kotlin/Annotation| {
         public? constructor(arr: Array<String>): R|Ann3| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -26,25 +26,25 @@ FILE: collectionLiterals.kt
             public? get(): Array<String>
 
     }
-    @Ann1(LAZY_EXPRESSION) @Ann2(LAZY_EXPRESSION) @Ann3(LAZY_EXPRESSION) public? final? class Zero : R|kotlin/Any| {
+    @Ann1(LAZY_EXPRESSION) @Ann2(LAZY_EXPRESSION) @Ann3(LAZY_EXPRESSION) public final? class Zero : R|kotlin/Any| {
         public? constructor(): R|Zero| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @Ann1(LAZY_EXPRESSION) public? final? class First : R|kotlin/Any| {
+    @Ann1(LAZY_EXPRESSION) public final? class First : R|kotlin/Any| {
         public? constructor(): R|First| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @Ann2(LAZY_EXPRESSION) public? final? class Second : R|kotlin/Any| {
+    @Ann2(LAZY_EXPRESSION) public final? class Second : R|kotlin/Any| {
         public? constructor(): R|Second| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    @Ann3(LAZY_EXPRESSION) public? final? class Third : R|kotlin/Any| {
+    @Ann3(LAZY_EXPRESSION) public final? class Third : R|kotlin/Any| {
         public? constructor(): R|Third| {
             LAZY_super<R|kotlin/Any|>
         }

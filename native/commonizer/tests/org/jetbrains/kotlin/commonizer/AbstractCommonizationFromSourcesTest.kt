@@ -27,8 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
-import org.jetbrains.kotlin.library.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -79,8 +77,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         assertEquals(sharedTarget, results.sharedTarget)
 
         val sharedModuleAsExpected: SerializedMetadata = analyzedModules.commonizedModules.getValue(sharedTarget)
-        val sharedModuleByCommonizer: SerializedMetadata =
-            (results.modulesByTargets.getValue(sharedTarget).single() as ModuleResult.Commonized).metadata
+        val sharedModuleByCommonizer: SerializedMetadata = results.modulesByTargets.getValue(sharedTarget).single().metadata
 
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, sharedTarget)
     }
@@ -392,7 +389,6 @@ private object PatchingTestDescriptorVisitor : DeclarationDescriptorVisitorEmpty
         fun recurse(packageFqName: FqName) {
             val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)
                 .asSequence()
-                .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
                 .map { it.getMemberScope() }
                 .filter { it != MemberScope.Empty }
                 .toList()

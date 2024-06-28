@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 interface OnlyInputTypeConstraintPosition
@@ -24,9 +25,9 @@ abstract class InjectedAnotherStubTypeConstraintPosition<T>(private val builderI
     override fun toString(): String = "Injected from $builderInferenceLambdaOfInjectedStubType builder inference call"
 }
 
-abstract class BuilderInferenceSubstitutionConstraintPosition<L, I>(
+abstract class BuilderInferenceSubstitutionConstraintPosition<L>(
     private val builderInferenceLambda: L,
-    val initialConstraint: I,
+    val initialConstraint: InitialConstraint,
     val isFromNotSubstitutedDeclaredUpperBound: Boolean = false
 ) : ConstraintPosition(), OnlyInputTypeConstraintPosition {
     override fun toString(): String = "Incorporated builder inference constraint $initialConstraint " +
@@ -53,21 +54,24 @@ abstract class ReceiverConstraintPosition<T>(val argument: T) : ConstraintPositi
     override fun toString(): String = "Receiver $argument"
 }
 
+/**
+ * The idea of this position is that sometimes we want to reserve the variable type, but it's not yet the moment when we call
+ * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext.fixVariable], for example, we need to take
+ * a look into a member scope of a type variable, but it's too early for fixation time because current result type may still contain
+ * some other not fixed type variables, like `List<OtherTv>`.
+ *
+ * Currently, only used inside PCLA
+ */
+abstract class SemiFixVariableConstraintPosition(val variable: TypeVariableMarker) : ConstraintPosition() {
+    override fun toString(): String = "Preliminary variable $variable fixation"
+}
+
 abstract class FixVariableConstraintPosition<T>(val variable: TypeVariableMarker, val resolvedAtom: T) : ConstraintPosition() {
     override fun toString(): String = "Fix variable $variable"
 }
 
 abstract class KnownTypeParameterConstraintPosition<T : KotlinTypeMarker>(val typeArgument: T) : ConstraintPosition() {
     override fun toString(): String = "TypeArgument $typeArgument"
-}
-
-abstract class LHSArgumentConstraintPosition<T, R>(
-    val argument: T,
-    val receiver: R
-) : ConstraintPosition() {
-    override fun toString(): String {
-        return "LHS receiver $receiver"
-    }
 }
 
 abstract class LambdaArgumentConstraintPosition<T>(val lambda: T) : ConstraintPosition() {
@@ -93,7 +97,9 @@ object BuilderInferencePosition : ConstraintPosition() {
     override fun toString(): String = "For builder inference call"
 }
 
-// TODO: should be used only in SimpleConstraintSystemImpl
+data object ProvideDelegateFixationPosition : ConstraintPosition()
+
+// TODO: should be used only in SimpleConstraintSystemImpl, KT-59675
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 // ------------------------------------------------ Errors ------------------------------------------------
@@ -170,6 +176,11 @@ class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : Constrain
 
 class LowerPriorityToPreserveCompatibility(val needToReportWarning: Boolean) :
     ConstraintSystemError(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
+
+open class MultiLambdaBuilderInferenceRestriction<T>(
+    val anonymous: T,
+    val typeParameter: TypeParameterMarker
+) : ConstraintSystemError(RESOLVED_WITH_ERROR)
 
 fun Constraint.isExpectedTypePosition() =
     position.from is ExpectedTypeConstraintPosition<*> || position.from is DelegatedPropertyConstraintPosition<*>

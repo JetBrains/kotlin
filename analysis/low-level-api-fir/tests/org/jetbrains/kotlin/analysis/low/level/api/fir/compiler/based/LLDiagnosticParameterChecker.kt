@@ -15,11 +15,14 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
-            val diagnostics = part.firAnalyzerFacade.runCheckers().values.flatten()
+            val facade = part.firAnalyzerFacade as LowLevelFirAnalyzerFacade
+            val diagnostics = facade.runCheckers().values.flatten()
 
             for (diagnostic in diagnostics) {
                 checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
@@ -56,7 +59,9 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
         is KtPsiDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
         is KtPsiDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
         is KtPsiSimpleDiagnostic -> emptyList()
-        else -> error("Unexpected diagnostic $this")
+        else -> errorWithAttachment("Unexpected diagnostic ${this::class}, $factoryName") {
+            withPsiEntry("onElement", psiElement)
+        }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

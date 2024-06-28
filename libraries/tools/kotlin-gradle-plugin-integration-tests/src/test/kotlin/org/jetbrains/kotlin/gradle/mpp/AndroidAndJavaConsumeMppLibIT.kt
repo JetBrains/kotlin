@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
@@ -26,17 +25,14 @@ import java.io.File
 import java.util.*
 import java.lang.Boolean as RefBoolean
 
-class AndroidAndJavaConsumeMppLibBuiltByGradle69IT : AndroidAndJavaConsumeMppLibIT() {
-    override val producerAgpVersion: AGPVersion = AGPVersion.v4_2_0
-    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.Exact(
-        TestVersions.Gradle.G_6_9
-    )
-}
 
+// Tests are not working with AGP >= 7.1.0. See KT-57351 for details
+@Ignore("TODO: update this test via KT-58298")
 class AndroidAndJavaConsumeMppLibBuiltByGradle7IT : AndroidAndJavaConsumeMppLibIT() {
-    override val producerAgpVersion: AGPVersion = AGPVersion.v7_0_0
-    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast(
-        TestVersions.Gradle.G_7_0
+    override val producerAgpVersion: AGPVersion = AGPVersion.v7_1_0
+    override val producerGradleVersion: GradleVersionRequired = GradleVersionRequired.InRange(
+        TestVersions.Gradle.G_7_1,
+        TestVersions.Gradle.G_7_6
     )
 }
 
@@ -72,9 +68,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         @Parameterized.Parameters(name = "Consumer(AGP={3}, Gradle={4}), flavors={0}, debugOnly={1}, published={2}")
         fun testCases(): List<Array<Any>> {
             val consumers = listOf(
-                AGPVersion.v4_2_0 to GradleVersionRequired.Exact(TestVersions.Gradle.G_6_9),
-                AGPVersion.v4_2_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
-                AGPVersion.v7_0_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0),
+                AGPVersion.v7_1_0 to GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_6),
             )
             val buildParams = listOf(
                 /* useFlavors, isAndroidPublishDebugOnly, isPublishedLibrary */
@@ -126,16 +120,12 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
         val producerBuildOptions: BuildOptions
 
         dependencyProject = Project("new-mpp-android", producerGradleVersion, minLogLevel = LogLevel.INFO).apply {
-            val usedProducerGradleVersion = chooseWrapperVersionOrFinishTest()
+            chooseWrapperVersionOrFinishTest()
             producerBuildOptions = defaultBuildOptions().copy(
                 javaHome = jdk11Home,
                 androidHome = KtTestUtil.findAndroidSdk(),
                 androidGradlePluginVersion = producerAgpVersion,
-            ).suppressDeprecationWarningsOn(
-                "AGP relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty which has been deprecated (Gradle 7.4)"
-            ) { options ->
-                GradleVersion.version(usedProducerGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_4) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_1_0
-            }
+            )
             producerBuildOptions.androidHome?.let { acceptAndroidSdkLicenses(it) }
             projectDir.deleteRecursively()
             setupWorkingDir()
@@ -152,9 +142,9 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                         if (useFlavors) {
                             it + "\n" + """
                             android { 
-                                flavorDimensions "myFlavor"
+                                flavorDimensions("myFlavor")
                                 productFlavors {
-                                    flavor1 { dimension "myFlavor" }
+                                    create("flavor1") { dimension = "myFlavor" }
                                 }
                             }
                             """.trimIndent()
@@ -163,7 +153,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                         // Simulate the behavior with user-defined consumable configuration added with no proper attributes:
                         it + "\n" + """
                         configurations.create("legacyConfiguration") {
-                            def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                            val bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String::class.java)
                             attributes.attribute(bundlingAttribute, "external")
                         }
                         """.trimIndent()
@@ -232,7 +222,8 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
                     "\ninclude(\":${dependencyProject.projectName}:lib\")"
                 )
             }
-            setupWorkingDir()
+
+            setupWorkingDir(applyLanguageVersion = withKotlinVersion != oldKotlinVersion)
 
             gradleBuildScript("Lib").apply {
                 writeText(
@@ -301,7 +292,11 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
             "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5)"
         ) { options ->
             // looks a bit messy :/
-            (!isPublishedLibrary && (withKotlinVersion != null || options.safeAndroidGradlePluginVersion >= AGPVersion.v7_0_0) || isPublishedLibrary && withKotlinVersion == oldKotlinVersion) &&
+            (!isPublishedLibrary &&
+                    (withKotlinVersion != null || options.safeAndroidGradlePluginVersion >= AGPVersion.v7_1_0) ||
+                    isPublishedLibrary &&
+                    withKotlinVersion == oldKotlinVersion
+                    ) &&
                     GradleVersion.version(usedConsumerGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) &&
                     options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
         }
@@ -313,7 +308,7 @@ abstract class AndroidAndJavaConsumeMppLibIT : BaseGradleIT() {
              *  This test asserts the existing incorrect behavior for older Gradle versions
              *  in the absence of the Kotlin Gradle plugin, in order to detect unintentional changes
              */
-            val expectedVariant = if (consumerAgpVersion < AGPVersion.v7_0_0 && withKotlinVersion == null && !isPublishedLibrary) {
+            val expectedVariant = if (withKotlinVersion == null && !isPublishedLibrary) {
                 "jvmLibApiElements"
             } else expected
 
@@ -380,7 +375,7 @@ class ResolvedVariantChecker {
         }
     }
 
-    fun getResolvedVariantsBatch(
+    private fun getResolvedVariantsBatch(
         project: BaseGradleIT.Project,
         requests: Iterable<ResolvedVariantRequest>,
         buildOptions: BaseGradleIT.BuildOptions = project.testCase.defaultBuildOptions()

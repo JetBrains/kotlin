@@ -1,2 +1,2 @@
-expression: _
-ktType: kotlin.Int
+KtTypeReference: _
+KaType: kotlin.Int

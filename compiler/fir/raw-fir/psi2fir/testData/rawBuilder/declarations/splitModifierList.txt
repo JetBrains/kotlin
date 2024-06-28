@@ -1,23 +1,23 @@
 FILE: splitModifierList.kt
-    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public? final? annotation class A : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public final? annotation class A : R|kotlin/Annotation| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
     }
-    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public? final? annotation class B : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.TYPE#, AnnotationTarget#.TYPE_PARAMETER#) public final? annotation class B : R|kotlin/Annotation| {
         public? [ContainingClassKey=B] constructor(): R|B| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public? final typealias Test0 = @A() @B() Int
-    public? final typealias Test1 = @A() @A() Int
-    public? final typealias Test2 = @A() @B() Int
-    public? final typealias Test3 = @A() ( (@A() Int) -> Int )
-    public? final typealias Test4 = @A() @B() Int?
-    public? final typealias Test5 = @A() @B() Int?
-    public? final typealias Test6 = @A() @B() Int
-    public? final typealias Test7 = @A() @B() Int?
-    public? final typealias Test8 = @A() @B() Int?
-    public? final typealias Test9 = @A() @B() Int?
+    public final typealias Test0 = @A() @B() Int
+    public final typealias Test1 = @A() @A() Int
+    public final typealias Test2 = @A() @B() Int
+    public final typealias Test3 = @A() ( (@A() Int) -> Int )
+    public final typealias Test4 = @A() @B() Int?
+    public final typealias Test5 = @A() @B() Int?
+    public final typealias Test6 = @A() @B() Int
+    public final typealias Test7 = @A() @B() Int?
+    public final typealias Test8 = @A() @B() Int?
+    public final typealias Test9 = @A() @B() Int?

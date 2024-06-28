@@ -17,11 +17,14 @@ class KtSecondaryConstructorElementType(debugName: String) :
         nameRef: StringRef?,
         hasBody: Boolean,
         isDelegatedCallToThis: Boolean,
+        isExplicitDelegationCall: Boolean,
     ): KotlinConstructorStub<KtSecondaryConstructor> {
         return KotlinConstructorStubImpl(
-            parentStub, KtStubElementTypes.SECONDARY_CONSTRUCTOR, nameRef, hasBody, isDelegatedCallToThis
+            parentStub, KtStubElementTypes.SECONDARY_CONSTRUCTOR, nameRef, hasBody, isDelegatedCallToThis, isExplicitDelegationCall
         )
     }
 
     override fun isDelegatedCallToThis(constructor: KtSecondaryConstructor) = constructor.getDelegationCallOrNull()?.isCallToThis ?: true
+
+    override fun isExplicitDelegationCall(constructor: KtSecondaryConstructor) = constructor.getDelegationCallOrNull()?.isImplicit == false
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader.AnnotationsContainerWithConstants
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -74,7 +73,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             property = true,
             field = true,
             isConst = Flags.IS_CONST.get(proto.flags),
-            isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
+            isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto),
+            kotlinClassFinder = kotlinClassFinder, jvmMetadataVersion = jvmMetadataVersion
         )
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
 
@@ -160,11 +160,5 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         val normalClass = containerKClassValue.value as? KClassValue.Value.NormalClass ?: return false
         return isImplicitRepeatableContainer(normalClass.classId)
     }
-
-    class AnnotationsContainerWithConstants<out A, out C>(
-        override val memberAnnotations: Map<MemberSignature, List<A>>,
-        val propertyConstants: Map<MemberSignature, C>,
-        val annotationParametersDefaultValues: Map<MemberSignature, C>
-    ) : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>()
 }
 

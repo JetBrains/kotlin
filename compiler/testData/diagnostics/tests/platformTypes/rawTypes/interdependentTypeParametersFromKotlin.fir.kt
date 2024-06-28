@@ -8,5 +8,5 @@ class Foo<P1 : Boo<P2, P3, P4>, P2 : Boo<P1, P3, P4>, P3 : Boo<P1, P2, P4>, P4 :
 
 // FILE: main.kt
 fun main() {
-    val x = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Boo<*, *, *>, Boo<*, *, *>, Boo<*, *, *>, Boo<*, *, *>>..Foo<*, *, *, *>?!")!>Boo.test1()<!>
+    val x = <!DEBUG_INFO_EXPRESSION_TYPE("Foo<Boo<Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>, Boo<*, *, Boo<*, *, *>>, Boo<*, *, *>>..Foo<*, *, *, *>?!")!>Boo.test1()<!>
 }

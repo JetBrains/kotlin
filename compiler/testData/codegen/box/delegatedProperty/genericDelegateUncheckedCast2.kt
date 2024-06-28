@@ -1,3 +1,5 @@
+// See the end of KT-8135 description: The same problem appears when using delegating properties with unchecked casts inside
+// Test fail reason: ClassCastException is not thrown when using delegating properties with unchecked casts inside
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
@@ -38,7 +40,7 @@ fun box(): String {
     val c = A().B()
 
     (del as Delegate<String?>).inner = null
-    asFailsWithCCE { c.prop }  // does not fail in JVM, JS due KT-8135.
+    asFailsWithCCE { c.prop }  // throws AssertionError due to KT-8135.
 
     return "OK"
 }

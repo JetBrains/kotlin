@@ -1,7 +1,0 @@
-KT element: KtWhileExpression
-FIR element: FirWhileLoopImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-while(Boolean(true)) {
-}

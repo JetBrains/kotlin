@@ -1,0 +1,50 @@
+library {
+  // module name: <TopLevelPropertiesWithClassesRootPackage.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: Bar
+    // class name: Foo
+
+    // signature: /Bar|null[0]
+    public final object Bar : kotlin/Any {
+
+      // signature: /Bar.<init>|<init>(){}[0]
+      private constructor()
+    }
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    package {
+
+      // signature: /v1|{}v1[0]
+      public final val v1: kotlin/Int /* = 1 */
+        // signature: /v1.<get-v1>|<get-v1>(){}[0]
+        public final get
+
+      // signature: /v2|{}v2[0]
+      public final val v2: kotlin/String /* = "hello" */
+        // signature: /v2.<get-v2>|<get-v2>(){}[0]
+        public final get
+
+      // signature: /v3|{}v3[0]
+      public final val v3: kotlin/Function1<kotlin/String, kotlin/Int>
+        // signature: /v3.<get-v3>|<get-v3>(){}[0]
+        public final get
+
+      // signature: /v4|{}v4[0]
+      public final val v4: kotlin/Function1<kotlin/String, kotlin/Int> /* = MyTransformer^ */
+        // signature: /v4.<get-v4>|<get-v4>(){}[0]
+        public final get
+
+      // signature: /MyTransformer|null[0]
+      public typealias MyTransformer = kotlin/Function1<kotlin/String, kotlin/Int> /* = kotlin/Function1<kotlin/String, kotlin/Int> */
+    }
+  }
+}

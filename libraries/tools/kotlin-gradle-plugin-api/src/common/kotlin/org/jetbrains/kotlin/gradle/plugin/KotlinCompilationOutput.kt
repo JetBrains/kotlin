@@ -9,9 +9,33 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import java.io.File
 
+/**
+ * Represents the outputs of a Kotlin source set compilation.
+ */
 interface KotlinCompilationOutput {
+
+    /**
+     * @suppress
+     */
     var resourcesDirProvider: Any
+
+    /**
+     * The directory where the resources are located.
+     */
     val resourcesDir: File
+
+    /**
+     * The collection of directories where the compiled code is located.
+     *
+     * For example, in the case of JVM target compilation,
+     * this will be directories containing class files for Java and Kotlin sources compilations.
+     */
     val classesDirs: ConfigurableFileCollection
+
+    /**
+     * The collection of all output directories produced by the compilation.
+     *
+     * Usually combines all output directories from [classesDirs] and [resourcesDir].
+     */
     val allOutputs: FileCollection
 }

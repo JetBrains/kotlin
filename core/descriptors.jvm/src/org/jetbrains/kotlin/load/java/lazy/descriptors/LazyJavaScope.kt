@@ -306,7 +306,7 @@ abstract class LazyJavaScope(
             emptyList()
         )
         (ownerDescriptor as? ClassDescriptor)?.let { classDescriptor ->
-            propertyDescriptor = with(c) { c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor) }
+            propertyDescriptor = c.components.syntheticPartsProvider.modifyField(classDescriptor, propertyDescriptor, c)
         }
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {

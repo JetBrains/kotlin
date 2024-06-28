@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.ExperimentalUnsignedTypes
+// OPT_IN: kotlin.ExperimentalUnsignedTypes
 // WITH_STDLIB
 // IGNORE_BACKEND: JVM
 

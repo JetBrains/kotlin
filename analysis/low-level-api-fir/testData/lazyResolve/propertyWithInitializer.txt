@@ -1,0 +1,95 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
+        receive#(property#)
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): Int
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        <Unresolved name: receive>#(R|/property|)
+    }
+    public final [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int| = IntegerLiteral(10)
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithInitializer.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        <Unresolved name: receive>#(R|/property|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = Int(10)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

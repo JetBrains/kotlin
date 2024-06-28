@@ -1,0 +1,5 @@
+fun foo(): kotlin.Int
+
+val bar: kotlin.String
+
+constructor()

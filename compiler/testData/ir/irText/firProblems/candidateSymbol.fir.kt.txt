@@ -1,47 +1,46 @@
-class Candidate {
-  constructor(symbol: AbstractFirBasedSymbol<*>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val symbol: AbstractFirBasedSymbol<*>
-    field = symbol
+abstract class AbstractFirBasedSymbol<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
+  lateinit var fir: E
     get
+    set
 
-}
-
-abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  lateinit var fir: E
+}
+
+class Candidate {
+  val symbol: AbstractFirBasedSymbol<*>
+    field = symbol
     get
-    set
+
+  constructor(symbol: AbstractFirBasedSymbol<*>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
 
 }
 
-interface FirDeclaration {
-
-}
-
-interface FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
-  abstract val symbol: AbstractFirBasedSymbol<E>
-    abstract get
-
-}
-
-interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirSymbolOwner<F>, FirDeclaration {
+interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirDeclaration, FirSymbolOwner<F> {
   abstract override val symbol: AbstractFirBasedSymbol<F>
     abstract override get
 
 }
 
+interface FirDeclaration {
+}
+
+interface FirSymbolOwner<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
+  abstract val symbol: AbstractFirBasedSymbol<E>
+    abstract get
+
+}
+
 fun foo(candidate: Candidate) {
-  val me: FirSymbolOwner<*> = candidate.<get-symbol>().<get-fir>()
+  val me: Any = candidate.<get-symbol>().<get-fir>()
   when {
     when {
       me is FirCallableMemberDeclaration<*> -> EQEQ(arg0 = me /*as FirCallableMemberDeclaration<*> */.<get-symbol>(), arg1 = null).not()
@@ -50,3 +49,4 @@ fun foo(candidate: Candidate) {
     }
   }
 }
+

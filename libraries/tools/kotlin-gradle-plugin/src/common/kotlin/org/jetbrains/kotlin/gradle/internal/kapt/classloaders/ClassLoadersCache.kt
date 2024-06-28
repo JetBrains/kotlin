@@ -30,6 +30,7 @@ class ClassLoadersCache(
             .maximumSize(size.toLong())
             .expireAfterAccess(ttl)
             .removalListener<CacheKey, URLClassLoader> { (key, cl) ->
+                check(key != null && cl != null)
                 logger.info("Removing classloader from cache: ${key.entries.map { it.path }}")
                 cl.close()
             }

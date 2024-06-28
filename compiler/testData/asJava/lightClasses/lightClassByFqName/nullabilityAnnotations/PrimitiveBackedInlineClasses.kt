@@ -9,5 +9,3 @@
 
 @JvmInline value class InlineClass(val data: Int)
 
-
-// FIR_COMPARISON

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.toFirResolvedTypeRef
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -88,7 +88,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
             symbol = FirValueParameterSymbol(name)
             if (valueParameter.hasDefaultValue) {
                 // TODO: check how it will actually work in fir2ir
-                defaultValue = buildExpressionStub { typeRef = session.builtinTypes.nothingType }
+                defaultValue = buildExpressionStub { coneTypeOrNull = session.builtinTypes.nothingType.type }
             }
             this.containingFunctionSymbol = containingFunctionSymbol
             isCrossinline = valueParameter.isCrossinline

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -150,7 +150,7 @@ object GenerateSteppedRangesCodegenTestData {
         function: Function,
         extraCode: String? = null,
         subdir: String? = null
-    ) = generateTestsForFunction(fileName, Type.values().associate { it to builder }, function, extraCode, subdir)
+    ) = generateTestsForFunction(fileName, Type.entries.associate { it to builder }, function, extraCode, subdir)
 
     private fun generateTestsForFunction(
         fileName: String,
@@ -186,7 +186,7 @@ object GenerateSteppedRangesCodegenTestData {
                 }
                 if (function == Function.RANGE_UNTIL) { // until 1.8
                     println("// DONT_TARGET_EXACT_BACKEND: JVM")
-                    println("// !LANGUAGE: +RangeUntilOperator")
+                    println("// LANGUAGE: +RangeUntilOperator")
                     println("@file:OptIn(ExperimentalStdlibApi::class)")
                 }
                 println("import kotlin.test.*")

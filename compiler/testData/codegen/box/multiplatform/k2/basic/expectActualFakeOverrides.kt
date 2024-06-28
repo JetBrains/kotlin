@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: commonMain.kt
@@ -15,9 +15,8 @@ fun test(s: String): String {
     return a.foo(s) + a.bar
 }
 
-// MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 open class B {
     fun foo(s: String) = s

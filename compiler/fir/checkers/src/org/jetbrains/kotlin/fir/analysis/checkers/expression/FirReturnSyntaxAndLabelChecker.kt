@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
-object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
+object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirReturnExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val source = expression.source
         if (source?.kind is KtFakeSourceElementKind.ImplicitReturn) return
@@ -36,15 +37,14 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
         if (targetSymbol is FirAnonymousFunctionSymbol) {
             val label = targetSymbol.label
             if (label?.source?.kind !is KtRealSourceElementKind) {
-                val functionCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.asReversed().find {
+                val functionCall = context.callsOrAssignments.asReversed().find {
                     it is FirFunctionCall &&
-                            (it.calleeReference.toResolvedFunctionSymbol())?.callableId ==
+                            (it.calleeReference.toResolvedNamedFunctionSymbol())?.callableId ==
                             FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID
                 }
                 if (functionCall is FirFunctionCall &&
                     functionCall.arguments.any {
-                        it is FirLambdaArgumentExpression &&
-                                (it.expression as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol == targetSymbol
+                        it is FirAnonymousFunctionExpression && it.anonymousFunction.symbol == targetSymbol
                     }
                 ) {
                     reporter.reportOn(source, FirErrors.RETURN_FOR_BUILT_IN_SUSPEND, context)
@@ -62,6 +62,9 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
     }
 
     private fun isReturnAllowed(targetSymbol: FirFunctionSymbol<*>, context: CheckerContext): Boolean {
+        if (context.containingDeclarations.lastOrNull() is FirValueParameter) {
+            return false
+        }
         for (containingDeclaration in context.containingDeclarations.asReversed()) {
             when (containingDeclaration) {
                 // return from member of local class or anonymous object

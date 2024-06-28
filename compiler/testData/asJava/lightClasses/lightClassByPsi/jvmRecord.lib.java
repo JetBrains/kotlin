@@ -16,5 +16,4 @@ public final class MyRec /* pkg.MyRec*/ {
   public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
   public int hashCode();//  hashCode()
-
 }

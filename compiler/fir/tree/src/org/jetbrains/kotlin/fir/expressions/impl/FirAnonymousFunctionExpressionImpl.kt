@@ -9,16 +9,24 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.expressions.RawFirApi
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirAnonymousFunctionExpressionImpl(
     override val source: KtSourceElement?,
-    override var anonymousFunction: FirAnonymousFunction
+    override var anonymousFunction: FirAnonymousFunction,
+    override var isTrailingLambda: Boolean,
 ) : FirAnonymousFunctionExpression() {
-    override val typeRef: FirTypeRef
-        get() = anonymousFunction.typeRef
+
+    @UnresolvedExpressionTypeAccess
+    override val coneTypeOrNull: ConeKotlinType?
+        get() = anonymousFunction.typeRef.coneTypeOrNull
 
     override val annotations: List<FirAnnotation>
         get() = anonymousFunction.annotations
@@ -35,6 +43,11 @@ internal class FirAnonymousFunctionExpressionImpl(
         anonymousFunction.replaceAnnotations(newAnnotations)
     }
 
+    @RawFirApi
+    override fun replaceIsTrailingLambda(newIsTrailingLambda: Boolean) {
+        isTrailingLambda = newIsTrailingLambda
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionExpressionImpl {
         return this
     }
@@ -44,7 +57,7 @@ internal class FirAnonymousFunctionExpressionImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        anonymousFunction.replaceTypeRef(newTypeRef)
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        shouldNotBeCalled("anonymousFunction.replaceTypeRef() should be called instead")
     }
 }

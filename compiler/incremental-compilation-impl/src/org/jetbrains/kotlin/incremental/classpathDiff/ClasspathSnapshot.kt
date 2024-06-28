@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -133,34 +132,8 @@ class JavaElementSnapshot(
 /**
  * [ClassSnapshot] of an inaccessible class.
  *
- * For example, a local class is inaccessible as it can't be referenced from other source files and therefore any changes in a local class
- * will not require recompilation of other source files.
+ * A class is inaccessible if it can't be referenced from other source files (and therefore any changes in an inaccessible class will not
+ * require recompilation of other source files).
  */
-object InaccessibleClassSnapshot : ClassSnapshot()
+data object InaccessibleClassSnapshot : ClassSnapshot()
 
-/**
- * The granularity of a [ClassSnapshot].
- *
- * There are currently two granularity levels:
- *   - [CLASS_LEVEL]) (coarse-grained): The size of the snapshot will be smaller, but we will have coarse-grained classpath changes, which
- *     means more source files will be recompiled.
- *   - [CLASS_MEMBER_LEVEL] (fine-grained): The size of the snapshot will be larger, but we will have fine-grained classpath changes, which
- *     means fewer source files will be recompiled.
- *
- * Therefore, [CLASS_LEVEL] is typically suitable for classes that are infrequently changed (e.g., external libraries), whereas
- * [CLASS_MEMBER_LEVEL] is suitable for classes that are frequently changed (e.g., classes produced by the current project).
- */
-enum class ClassSnapshotGranularity {
-
-    /**
-     * Snapshotting level that allows tracking whether a .class file has changed without tracking what specific parts of the .class file
-     * (e.g., fields or methods) have changed.
-     */
-    CLASS_LEVEL,
-
-    /**
-     * Snapshotting level that allows tracking not only whether a .class file has changed but also what specific parts of the .class file
-     * (e.g., fields or methods) have changed.
-     */
-    CLASS_MEMBER_LEVEL
-}

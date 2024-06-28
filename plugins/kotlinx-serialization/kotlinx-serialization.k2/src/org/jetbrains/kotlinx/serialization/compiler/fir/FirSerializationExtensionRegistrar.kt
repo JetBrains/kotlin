@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
+import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationCheckersComponent
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.ContextualSerializersProvider
@@ -17,7 +18,8 @@ class FirSerializationExtensionRegistrar : FirExtensionRegistrar() {
         +::SerializationFirResolveExtension
         +::SerializationFirSupertypesExtension
         +::FirSerializationCheckersComponent
-        +::SerializationFirDeclarationsForMetadataProvider
+        @OptIn(FirExtensionApiInternals::class)
+        +::FirSerializationMetadataSerializerPlugin
 
         // services
         +::DependencySerializationInfoProvider

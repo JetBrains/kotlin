@@ -56,6 +56,9 @@ private val FILTER_OUT_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch
 
     when (mismatch) {
         is Mismatch.MissingEntity -> when (mismatch.kind) {
+            EntityKind.TypeKind.INLINE_CLASS_UNDERLYING, EntityKind.InlineClassUnderlyingProperty -> {
+                isAcceptableMismatch = true
+            }
             EntityKind.TypeKind.ABBREVIATED -> {
                 val usefulPath = mismatch.path
                     .dropWhile { it !is PathElement.Package }

@@ -1,0 +1,40 @@
+// CHECK JVM_IR:
+//   Mangled name: #testDD(kotlin.Double?;kotlin.Double?){}kotlin.Boolean
+//   Public signature: /testDD|6324676724672008011[0]
+//   Public signature debug description: testDD(kotlin.Double?;kotlin.Double?){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDD(kotlin.Double?;kotlin.Double?){}
+//   Public signature: /testDD|6448090919849267088[0]
+//   Public signature debug description: testDD(kotlin.Double?;kotlin.Double?){}
+fun testDD(x: Double?, y: Double?): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testDF(kotlin.Double?;kotlin.Any?){}kotlin.Boolean
+//   Public signature: /testDF|9116951022031676909[0]
+//   Public signature debug description: testDF(kotlin.Double?;kotlin.Any?){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDF(kotlin.Double?;kotlin.Any?){}
+//   Public signature: /testDF|8975597351648058215[0]
+//   Public signature debug description: testDF(kotlin.Double?;kotlin.Any?){}
+fun testDF(x: Double?, y: Any?): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testDI(kotlin.Double?;kotlin.Any?){}kotlin.Boolean
+//   Public signature: /testDI|-2518117290397712484[0]
+//   Public signature debug description: testDI(kotlin.Double?;kotlin.Any?){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDI(kotlin.Double?;kotlin.Any?){}
+//   Public signature: /testDI|-2492360038280217235[0]
+//   Public signature debug description: testDI(kotlin.Double?;kotlin.Any?){}
+fun testDI(x: Double?, y: Any?): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #testDI2(kotlin.Any?;kotlin.Any?){}kotlin.Boolean
+//   Public signature: /testDI2|5408730355929274743[0]
+//   Public signature debug description: testDI2(kotlin.Any?;kotlin.Any?){}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testDI2(kotlin.Any?;kotlin.Any?){}
+//   Public signature: /testDI2|-1156893754545330465[0]
+//   Public signature debug description: testDI2(kotlin.Any?;kotlin.Any?){}
+fun testDI2(x: Any?, y: Any?): Boolean
+

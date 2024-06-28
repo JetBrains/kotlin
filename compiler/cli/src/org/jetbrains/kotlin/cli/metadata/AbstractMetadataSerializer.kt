@@ -26,7 +26,7 @@ abstract class AbstractMetadataSerializer<T>(
         val destDir = environment.destDir
         if (destDir == null) {
             val configuration = environment.configuration
-            val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
             return
         }

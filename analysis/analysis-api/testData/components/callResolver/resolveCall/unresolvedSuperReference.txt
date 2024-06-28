@@ -1,3 +1,0 @@
-KtErrorCallInfo:
-  candidateCalls = []
-  diagnostic = ERROR<null: Erroneous delegated constructor call>

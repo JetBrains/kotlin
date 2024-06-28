@@ -1,6 +1,6 @@
 
 ERR:
-hello.kt:4:5: error: unresolved reference: a
+hello.kt:4:5: error: unresolved reference 'a'.
     a
     ^
 

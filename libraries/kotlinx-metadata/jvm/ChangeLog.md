@@ -1,8 +1,66 @@
 # kotlinx-metadata-jvm
 
+## 2.0.0 and higher
+
+Starting with Kotlin 2.0, kotlin-metadata-jvm library is promoted to stable, and is a part of Kotlin distribution now. 
+It means that it has the same versioning as Kotlin compiler and Kotlin standard library, and the same release cycle.
+To achieve this, coordinates of the library were changed: it is now in `org.jetbrains.kotlin` group with `kotlin-metadata-jvm` id (notice
+the drop of `X` from the coordinates).
+This also means that the root package was changed from `kotlinx.metadata` to `kotlin.metadata`.
+
+Among other noticeable changes, all previously deprecated declarations were removed from the library.
+In case you need to perform a migration with aid, migrate your project to 0.9.0 version first using [migration guide](Migration.md).
+
+This is the last entry of this changelog. General changelog for Kotlin's `Libraries` subsystem is available in the `ChangeLog.md` at the repository root.
+
+## 0.9.0
+
+The main purpose of this release is to promote all previous deprecations to ERROR level if they were not already.
+Please refer to the [migration guide](Migration.md) if you are using deprecated functions.
+Also, this release includes several bugfixes. It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Add missing documentation to `KmVersionRequirement.toString`
+- Raise all deprecations in kotlinx-metadata-jvm to ERROR ([KT-63157](https://youtrack.jetbrains.com/issue/KT-63157))
+- Do not allow writing metadata versions that are too high ([KT-64230](https://youtrack.jetbrains.com/issue/KT-64230))
+- Add `KmVersionRequirementKind.UNKNOWN` ([KT-60870](https://youtrack.jetbrains.com/issue/KT-60870))
+
+## 0.8.0
+
+This release concludes our API overhaul: it features last significant API changes, as well as raised deprecations to ERROR level almost everywhere.
+To help with migration, we've prepared a special [guide](Migration.md#migrating-from-070-to-080). 
+It still uses Kotlin 1.9, but is able to read or write metadata of version 2.0.
+
+- Provide a separate class for representing metadata version in kotlinx-metadata: `JvmMetadataVersion`
+- Unify write() method and make it a member of `KotlinClassMetadata` (also `KotlinModuleMetadata`)
+- Split `KotlinClassMetadata.read` into `readStrict` and `readLenient`
+- Promote most deprecations in kotlinx-metadata-jvm to ERROR, including Flags API and Visitors API.
+- Deprecate `KmProperty.hasGetter(hasSetter)` in favor of `KmProperty.getter(setter)`
+- Add missing delegation in `KmDeclarationContainerVisitor.visitExtensions` for consistency
+
+## 0.7.0
+
+This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-06x-to-070).
+
+- Update to Kotlin 1.9 with metadata version 1.9, support reading/writing metadata of version 2.0 which will be used in Kotlin 2.0
+- Rework flags API (see [migration from Flags API to Attributes API](Migration.md#migration-from-flags-api-to-attributes-api)).
+- Restructure `KotlinClass(Module)Metadata.write/read` (see [changes in reading and writing API](Migration.md#changes-in-reading-and-writing-api)).
+- Add `@JvmStatic` + `@JvmOverloads` to writing functions in `KotlinClassMetadata`
+- Deprecate `KmModule.annotations` for removal because it is always empty and should not be used.
+- Move `KmModuleFragment` to an `kotlinx.metadata.internal.common` package. This class is intended for internal use only. If you have use-cases for it, please report an issue to YouTrack.
+- Improve `toString()` for `KmAnnotationArgument`
+- Add missing deprecation for `KmExtensionType` and experimentality for `KmConstantValue`.
+- Enhance kotlinx-metadata-jvm KDoc and set up Dokka.
+
+## 0.6.2
+
+This release uses Kotlin 1.8.20 with metadata version 1.8, and as a special case, is able to read metadata of version 2.0. 
+This is done as an incentive to test K2 compiler and 2.0 language version. 
+No other changes were made and no migration is needed.
+Note: 0.6.1 was released with an incorrect fix for this problem. Do not use 0.6.1.
+
 ## 0.6.0
 
-This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md).
+This release features several significant API changes. To help with migration, we've prepared a special [guide](Migration.md#migrating-from-050-to-06x).
 
 - Update to Kotlin 1.8 with metadata version 1.8, support reading/writing metadata of version 1.9 which will be used in Kotlin 1.9
 - Deprecate Visitors API

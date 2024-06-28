@@ -20,6 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,16 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
     }
 
     @Override
-    protected void doTest(@NotNull String path) throws IOException {
+    protected void doTest(@NotNull String path) {
+        try {
+            doTestImpl(path);
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
+    private void doTestImpl(@NotNull String path) throws IOException {
         loadFileByFullPath(path);
 
         File file = new File(path);

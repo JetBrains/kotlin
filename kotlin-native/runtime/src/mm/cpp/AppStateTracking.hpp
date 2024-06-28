@@ -6,9 +6,9 @@
 #pragma once
 
 #include <atomic>
+#include <memory>
 
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin::mm {
 
@@ -33,7 +33,7 @@ private:
 
     // TODO: The initial value might be incorrect.
     std::atomic<State> state_ = State::kForeground;
-    std_support::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
 };
 
 } // namespace kotlin::mm

@@ -1,0 +1,104 @@
+@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirNamedFunctionSymbol second/AbstractClass.explicitType]
+
+@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+
+TARGET: @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var resolveMe: R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?|
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] get(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?|
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SubClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>>?|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] implicitPropertyUnavailable.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+            LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type param: ), <Unresolved name: constant>#))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type param: ), <Unresolved name: constant>#))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type param: ), <Unresolved name: constant>#))  kotlin/String>>>|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>?| {
+            ^explicitType Null(null)
+        }
+
+        @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol second/AbstractClass.explicitType]] var resolveMe: R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>?| = this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>?|
+            @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AbstractClass] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: R|@R|second/Anno|(position = <strcat>(String(explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), this@R|second/AbstractClass.Companion|.R|second/AbstractClass.Companion.constant|))  T>>?|): R|kotlin/Unit|
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/AbstractClass.Companion| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+                private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
+
+        }
+
+    }

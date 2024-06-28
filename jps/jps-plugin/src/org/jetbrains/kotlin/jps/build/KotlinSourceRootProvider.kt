@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.util.io.FileFilters
 import org.jetbrains.jps.builders.AdditionalRootsProviderService
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
@@ -25,7 +26,7 @@ import java.io.File
 class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDescriptor>(JavaModuleBuildTargetType.ALL_TYPES) {
     override fun getAdditionalRoots(
         target: BuildTarget<JavaSourceRootDescriptor>,
-        dataPaths: BuildDataPaths?
+        dataPaths: BuildDataPaths,
     ): List<JavaSourceRootDescriptor> {
         val moduleBuildTarget = target as? ModuleBuildTarget ?: return listOf()
         val module = moduleBuildTarget.module
@@ -47,7 +48,8 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
                     false,
                     false,
                     it.properties.packagePrefix,
-                    setOf()
+                    setOf(),
+                    FileFilters.EVERYTHING,
                 )
             )
         }
@@ -109,4 +111,4 @@ class KotlinIncludedModuleSourceRoot(
     isTemp: Boolean,
     packagePrefix: String,
     excludes: Set<File>
-) : JavaSourceRootDescriptor(root, target, isGenerated, isTemp, packagePrefix, excludes)
+) : JavaSourceRootDescriptor(root, target, isGenerated, isTemp, packagePrefix, excludes, FileFilters.EVERYTHING)

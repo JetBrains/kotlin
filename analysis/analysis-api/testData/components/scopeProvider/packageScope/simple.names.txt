@@ -1,0 +1,8 @@
+Classifier names:
+  C
+  I
+  O
+
+Callable names:
+  testFunction
+  testValue

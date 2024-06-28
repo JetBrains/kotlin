@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
+@OptIn(UnresolvedExpressionTypeAccess::class)
 class FirSingleExpressionBlock(
     var statement: FirStatement
 ) : FirBlock() {
@@ -27,12 +30,13 @@ class FirSingleExpressionBlock(
         get() = statement.source?.fakeElement(KtFakeSourceElementKind.SingleExpressionBlock)
     override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
     override val statements: List<FirStatement> get() = listOf(statement)
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+
+    @UnresolvedExpressionTypeAccess
+    override var coneTypeOrNull: ConeKotlinType? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         statement.accept(visitor, data)
-        typeRef.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSingleExpressionBlock {
@@ -41,8 +45,8 @@ class FirSingleExpressionBlock(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlock {
@@ -52,7 +56,6 @@ class FirSingleExpressionBlock(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlock {
         transformAnnotations(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
         return this
     }
 

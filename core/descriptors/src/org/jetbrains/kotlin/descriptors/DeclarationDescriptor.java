@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker;
 
-public interface DeclarationDescriptor extends Annotated, Named, ValidateableDescriptor {
+public interface DeclarationDescriptor extends Annotated, Named, ValidateableDescriptor, DeclarationSymbolMarker {
     /**
      * @return The descriptor that corresponds to the original declaration of this element.
      *         A descriptor can be obtained from its original by substituting type arguments (of the declaring class

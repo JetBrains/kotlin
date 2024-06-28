@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class LockTest {
+    // source: 'LockTest.kt'
+    private synthetic final static field inProgressLock$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field inProgressLock$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getInProgressLock$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getInProgressLock$volatile(): int
+    private synthetic final method setInProgressLock$volatile(p0: int): void
+    public final method testLock(): void
+}
+
+@kotlin.Metadata
+public final class LockTestKt {
+    // source: 'LockTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method reflectionTest(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.util.Map): java.util.List
+    private synthetic final static method tryAcquire$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): boolean
+    private synthetic final static method tryAcquire$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): boolean
+}

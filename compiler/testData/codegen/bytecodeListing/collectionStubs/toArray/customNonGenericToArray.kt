@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63828
 class InternalToArray(d: Collection<Any>): Collection<Any> by d {
     internal fun toArray(): Array<Int> = null!!
 }

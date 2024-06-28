@@ -30,11 +30,14 @@ public class TestBasic {
 @kotlin.Metadata
 public final enum class TestEnum {
     // source: 'inlineClassTypeParametersInConstructor.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: TestEnum[]
     public final enum static field ANSWER: TestEnum
     private final field z: int
+    private synthetic final static method $values(): TestEnum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public final method getZ-a_XrcN0(): int
     public static method valueOf(p0: java.lang.String): TestEnum
     public static method values(): TestEnum[]

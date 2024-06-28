@@ -1,12 +1,5 @@
-import org.jetbrains.kotlin.pill.PillExtension
-
 plugins {
     id("gradle-plugin-common-configuration")
-    id("jps-compatible")
-}
-
-pill {
-    variant = PillExtension.Variant.FULL
 }
 
 dependencies {
@@ -14,8 +7,6 @@ dependencies {
 
     compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly(project(":kotlin-compiler-embeddable"))
-
-    embedded(project(":kotlinx-atomicfu-compiler-plugin")) { isTransitive = false }
 }
 
 gradlePlugin {

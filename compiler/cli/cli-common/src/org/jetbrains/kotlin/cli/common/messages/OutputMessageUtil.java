@@ -44,6 +44,12 @@ public class OutputMessageUtil {
                SOURCE_FILES_PREFIX + "\n" + StringUtil.join(sourceFiles, "\n");
     }
 
+    @NotNull
+    public static String formatOutputMessage(Collection<String> sourceFilePaths, String outputFilePath) {
+        return OUTPUT_FILES_PREFIX + "\n" + outputFilePath + "\n" +
+               SOURCE_FILES_PREFIX + "\n" + StringUtil.join(sourceFilePaths, "\n");
+    }
+
     @Nullable
     public static Output parseOutputMessage(@NotNull String message) {
         String[] strings = message.split("\n");

@@ -1,15 +1,16 @@
 /main.kt:22:11: warning: type parameter 'V' has nullable upper bounds while non-nullable version is expected. This warning will become an error soon. See https://youtrack.jetbrains.com/issue/KT-36770 for details
     takeV(value)
-          ^
+          ^^^^^
 /main.kt:23:15: warning: type parameter 'V' has nullable upper bounds while non-nullable version is expected. This warning will become an error soon. See https://youtrack.jetbrains.com/issue/KT-36770 for details
     takeVList(l)
               ^
 /main.kt:25:11: warning: type parameter 'V' has nullable upper bounds while non-nullable version is expected. This warning will become an error soon. See https://youtrack.jetbrains.com/issue/KT-36770 for details
     takeE(value)
-          ^
+          ^^^^^
 /main.kt:26:15: warning: type parameter 'V' has nullable upper bounds while non-nullable version is expected. This warning will become an error soon. See https://youtrack.jetbrains.com/issue/KT-36770 for details
     takeEList(l)
               ^
 /main.kt:27:11: warning: type parameter 'V' has nullable upper bounds while non-nullable version is expected. This warning will become an error soon. See https://youtrack.jetbrains.com/issue/KT-36770 for details
     takeE(id(value))
-          ^
+          ^^^^^^^^^
+

@@ -4,7 +4,6 @@ plugins {
     id("java-gradle-plugin")
     id("org.jetbrains.kotlin.jvm")
     id("com.gradle.plugin-publish")
-    id("jps-compatible")
     id("maven-publish")
 }
 
@@ -13,18 +12,12 @@ repositories {
     mavenCentral()
 }
 
-pill {
-    variant = 'FULL'
-}
-
 dependencies {
     api project(':kotlin-gradle-plugin-api')
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    api project(':kotlin-test:kotlin-test-junit')
-
-    compileOnly kotlinStdlib()
+    compileOnly RepoDependencies.kotlinStdlib(project)
     compileOnly project(':compiler')
     compileOnly project(':compiler:plugin-api')
     compileOnly project(':compiler:cli-common')
@@ -35,7 +28,7 @@ dependencies {
     compileOnly project(':dependencies:intellij-core')
 }
 
-GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false)
+GradleCommonKt.configureCommonPublicationSettingsForGradle(project, false, false)
 GradleCommonKt.configureKotlinCompileTasksGradleCompatibility(project)
 GradleCommonKt.excludeGradleCommonDependencies(project, sourceSets.main)
 TasksKt.optInToExperimentalCompilerApi(project)
@@ -48,17 +41,20 @@ extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 //}
 
 def sourceSet = sourceSets.main
-def jarTask = tasks.named(sourceSet.jarTaskName, Jar)
+def jarTask = tasks.named(sourceSet.jarTaskName, Jar) {
+    archiveClassifier.set("unshaded")
+}
 def shadowJarTask = EmbeddableKt.embeddableCompilerDummyForDependenciesRewriting(
     project,
     "${EmbeddableKt.EMBEDDABLE_COMPILER_TASK_NAME}${sourceSet.jarTaskName.capitalize()}"
 ) {
-    ArtifactsKt.setupPublicJar(
+    def emptyClassifier = provider { "" }
+    RepoArtifacts.setupPublicJar(
         it,
         jarTask.flatMap { it.archiveBaseName },
-        jarTask.flatMap { it.archiveClassifier }
+        jarTask.flatMap { emptyClassifier }
     )
-    ArtifactsKt.addEmbeddedRuntime(it)
+    RepoArtifacts.addEmbeddedRuntime(it)
     it.from(sourceSet.output)
 
     // When Gradle traverses the inputs, reject the shaded compiler JAR,
@@ -72,11 +68,9 @@ configurations[sourceSet.runtimeElementsConfigurationName].artifacts.removeAll {
 configurations[sourceSet.apiElementsConfigurationName].artifacts.removeAll { true }
 
 // Adding instead artifact from shadow jar task
-configurations {
-    artifacts {
-        add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
-        add(sourceSet.apiElementsConfigurationName, shadowJarTask)
-    }
+artifacts {
+    add(sourceSet.runtimeElementsConfigurationName, shadowJarTask)
+    add(sourceSet.apiElementsConfigurationName, shadowJarTask)
 }
 
 publishing {

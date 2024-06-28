@@ -1,0 +1,29 @@
+KtNameReferenceExpression(35,46): 'invokeLater'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = javax/swing/SwingUtilities.invokeLater(p0: java.lang.Runnable!): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = p0
+              receiverType = null
+              returnType = java.lang.Runnable!
+              symbol = p0: java.lang.Runnable!
+              callableId = null
+          ]
+          callableId = javax/swing/SwingUtilities.invokeLater
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        {  } -> (KaVariableSignature:
+          name = p0
+          receiverType = null
+          returnType = java.lang.Runnable!
+          symbol = p0: java.lang.Runnable!
+          callableId = null)
+      }

@@ -1,0 +1,45 @@
+public? open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/String|): R|kotlin/Unit| {
+    ^foo Q|kotlin/Unit|
+}
+
+public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverrideFunctionSymbol second/B.foo), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/B.foo] fun foo([ResolvedTo(STATUS)] x: R|@R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String|): <implicit>
+
+public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=CallableCopyIntersection(mostSpecific=[FirNamedFunctionSymbol second/B.foo, FirNamedFunctionSymbol second/B.foo]), IntersectionOverrideOriginalKey=second/B.foo, SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(STATUS)] x: R|T|): <implicit>
+
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> T}, baseSymbol=FirNamedFunctionSymbol second/C.foo), SubstitutedOverrideOriginalKey=second/C.foo] fun foo([ResolvedTo(STATUS)] x: R|T|): <implicit>
+
+public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|T| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={F -> T}, baseSymbol=FirNamedFunctionSymbol second/D.foo), SubstitutedOverrideOriginalKey=second/D.foo] fun foo([ResolvedTo(STATUS)] x: R|T|): <implicit>
+
+public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] x: R|F| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
+
+public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(str = <strcat>(String(object ), R|second/constant|))  kotlin/String}, baseSymbol=FirIntersectionOverridePropertySymbol second/B.bar), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/B.bar] var bar: <implicit>
+
+
+
+public? open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=CallableCopyIntersection(mostSpecific=[FirPropertySymbol second/B.bar, FirPropertySymbol second/B.bar]), IntersectionOverrideOriginalKey=second/B.bar, SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
+
+
+
+public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> T}, baseSymbol=FirPropertySymbol second/C.bar), SubstitutedOverrideOriginalKey=second/C.bar] var bar: <implicit>
+
+
+
+public open [ResolvedTo(STATUS)] var bar: <implicit> = LAZY_EXPRESSION
+    public [ResolvedTo(STATUS)] [ContainingClassKey=C] get(): <implicit>
+    public [ResolvedTo(STATUS)] [ContainingClassKey=C] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+
+@R|second/Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={F -> T}, baseSymbol=FirPropertySymbol second/D.bar), SubstitutedOverrideOriginalKey=second/D.bar] var bar: <implicit>
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): <implicit>
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=B] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit|
+
+@R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var bar: <implicit> = LAZY_EXPRESSION
+    @PROPERTY_GETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] get(): <implicit>
+    @PROPERTY_SETTER:R|second/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=D] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|second/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit|
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

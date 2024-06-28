@@ -1,32 +1,19 @@
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
 interface Test {
-    @JvmDefault
-    fun test(): String {
-        return "O"
-    }
-
-    fun delegatedTest(): String {
-        return "fail"
-    }
+    fun test(): String = "Fail"
 }
 
 class Delegate : Test {
-    override fun test(): String {
-        return "Fail"
-    }
-
-    override fun delegatedTest(): String {
-        return "K"
-    }
+    override fun test(): String = "OK"
 }
 
 class TestClass(val foo: Test) : Test by foo
 
 fun box(): String {
     val testClass = TestClass(Delegate())
-    return testClass.test() + testClass.delegatedTest()
+    return testClass.test()
 }

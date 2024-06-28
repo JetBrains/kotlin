@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.generated.ca
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AnalysisApiFirStandaloneModeTestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.standalone.fir.test.configurators.AnalysisApiFirStandaloneModeTestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,45 +27,45 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/substitutors/typeSubstitution")
 @TestDataPath("$PROJECT_ROOT")
 public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSubstitutorsTestGenerated extends AbstractAnalysisApiSubstitutorsTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fir,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Standalone
-            )
-        );
-    }
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFirStandaloneModeTestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fir,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Standalone
+      )
+    );
+  }
 
-    @Test
-    public void testAllFilesPresentInTypeSubstitution() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/substitutors/typeSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInTypeSubstitution() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/substitutors/typeSubstitution"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("directSubstitution.kt")
-    public void testDirectSubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/directSubstitution.kt");
-    }
+  @Test
+  @TestMetadata("directSubstitution.kt")
+  public void testDirectSubstitution() {
+    runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/directSubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("emptySubstitution.kt")
-    public void testEmptySubstitution() throws Exception {
-        runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/emptySubstitution.kt");
-    }
+  @Test
+  @TestMetadata("emptySubstitution.kt")
+  public void testEmptySubstitution() {
+    runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/emptySubstitution.kt");
+  }
 
-    @Test
-    @TestMetadata("notApplicableSubstitutor.kt")
-    public void testNotApplicableSubstitutor() throws Exception {
-        runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/notApplicableSubstitutor.kt");
-    }
+  @Test
+  @TestMetadata("notApplicableSubstitutor.kt")
+  public void testNotApplicableSubstitutor() {
+    runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/notApplicableSubstitutor.kt");
+  }
 
-    @Test
-    @TestMetadata("substitutionWithTypeParams.kt")
-    public void testSubstitutionWithTypeParams() throws Exception {
-        runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/substitutionWithTypeParams.kt");
-    }
+  @Test
+  @TestMetadata("substitutionWithTypeParams.kt")
+  public void testSubstitutionWithTypeParams() {
+    runTest("analysis/analysis-api/testData/substitutors/typeSubstitution/substitutionWithTypeParams.kt");
+  }
 }

@@ -5,7 +5,6 @@
 import kotlin.coroutines.startCoroutine
 import kotlin.reflect.full.callSuspend
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import helpers.*
 
 inline class Z(val value: Int)
@@ -32,33 +31,27 @@ private fun run0(f: suspend () -> Int): Int {
 fun box(): String {
     val c = C()
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nonNullConsume.callSuspend(c, Z(1))
-            C::nonNullProduce.callSuspend(c).value
-        }.let { assertEquals(1, it) }
-    }
+    run0 {
+        C::nonNullConsume.callSuspend(c, Z(1))
+        C::nonNullProduce.callSuspend(c).value
+    }.let { assertEquals(1, it) }
 
     run0 {
         C::nullableConsume.callSuspend(c, Z(2))
         C::nullableProduce.callSuspend(c)!!.value
     }.let { assertEquals(2, it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nonNull_nonNullConsumeAndProduce.callSuspend(c, Z(3)).value
-        }.let { assertEquals(3, it) }
-    }
+    run0 {
+        C::nonNull_nonNullConsumeAndProduce.callSuspend(c, Z(3)).value
+    }.let { assertEquals(3, it) }
 
     run0 {
         C::nonNull_nullableConsumeAndProduce.callSuspend(c, Z(4))!!.value
     }.let { assertEquals(4, it) }
 
-    assertFailsWith<IllegalArgumentException>("Remove assertFailsWith and try again, as this problem may have been fixed.") {
-        run0 {
-            C::nullable_nonNullConsumeAndProduce.callSuspend(c, Z(5)).value
-        }.let { assertEquals(5, it) }
-    }
+    run0 {
+        C::nullable_nonNullConsumeAndProduce.callSuspend(c, Z(5)).value
+    }.let { assertEquals(5, it) }
 
     run0 {
         C::nullable_nullableConsumeAndProduce.callSuspend(c, Z(6))!!.value

@@ -1,4 +1,4 @@
-// FILE: A.java
+// FILE: base/A.java
 
 package base;
 
@@ -23,5 +23,5 @@ public class C extends B {}
 // FILE: test.kt
 
 fun box(): String {
-    return C().f
+    return C().<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>f<!>
 }

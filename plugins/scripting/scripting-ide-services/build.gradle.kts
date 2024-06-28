@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Scripting Compiler extension providing code completion and static analysis"
 
@@ -31,11 +32,13 @@ sourceSets {
     "test" { }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xskip-metadata-version-check"
-        freeCompilerArgs += "-Xallow-kotlin-package"
-    }
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.addAll(
+        listOf(
+            "-Xskip-metadata-version-check",
+            "-Xallow-kotlin-package",
+        )
+    )
 }
 
 standardPublicJars()

@@ -82,7 +82,7 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmAnyRef
+                WasmRefNullrefType
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->
@@ -101,7 +101,7 @@ class WasmTypeTransformer(
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef
                         "eqref" -> WasmEqRef
-                        "dataref" -> WasmRefNullType(WasmHeapType.Simple.Data)
+                        "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
                         "i31ref" -> WasmI31Ref
                         "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
                         else -> error("Unknown reference type $name")

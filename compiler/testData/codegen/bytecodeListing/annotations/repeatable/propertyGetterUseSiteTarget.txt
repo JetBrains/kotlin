@@ -25,6 +25,8 @@ public final class PropertyGetterUseSiteTargetKt {
     public final static @A$Container(value=[A(v="a"), A(v="b")]) method getAb(): int
     public final static @A$Container(value=[A(v="c"), A(v="d")]) method getCd(): int
     public final static @A$Container(value=[A(v="e"), A(v="f")]) method getEf(): int
-    public final static @A$Container(value=[A(v="g"), A(v="h")]) method getGhi(): int
+    public final static @A$Container(value=[A(v="g"), A(v="h")]) method getGh(): int
+    public final static method getIj(): int
+    public final static @A$Container(value=[A(v="i"), A(v="j")]) method setIj(p0: int): void
     public inner class A$Container
 }

@@ -1,0 +1,45 @@
+MODULE main
+	CLASS IC1.class
+		CLASS METADATA
+			K1
+				getSize-impl(Ljava/util/List;)I
+			K2
+				---
+			K1
+				---
+			K2
+				size
+	CLASS IC3.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				entries
+			K1
+				getEntries-impl(Ljava/util/Map;)Ljava/util/Set;
+			K2
+				---
+			K1
+				getKeys-impl(Ljava/util/Map;)Ljava/util/Set;
+			K2
+				---
+			K1
+				getSize-impl(Ljava/util/Map;)I
+			K2
+				---
+			K1
+				getValues-impl(Ljava/util/Map;)Ljava/util/Collection;
+			K2
+				---
+			K1
+				---
+			K2
+				keys
+			K1
+				---
+			K2
+				size
+			K1
+				---
+			K2
+				values

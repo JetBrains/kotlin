@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.api.AndroidSourceSet
 import com.android.builder.model.SourceProvider
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
@@ -14,7 +13,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.utils.findByType
+import org.jetbrains.kotlin.gradle.utils.*
 
 @ExperimentalKotlinGradlePluginApi
 val KotlinSourceSet.androidSourceSetInfoOrNull: KotlinAndroidSourceSetInfo?
@@ -27,15 +26,18 @@ var KotlinSourceSet.androidSourceSetInfo: KotlinAndroidSourceSetInfo
         (this as ExtensionAware).extensions.add("androidSourceSetInfo", value)
     }
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
 @ExperimentalKotlinGradlePluginApi
-fun Project.findAndroidSourceSet(kotlinSourceSet: KotlinSourceSet): AndroidSourceSet? {
+fun Project.findAndroidSourceSet(kotlinSourceSet: KotlinSourceSet): DeprecatedAndroidSourceSet? {
     val androidSourceSetInfo = kotlinSourceSet.androidSourceSetInfoOrNull ?: return null
     val android = extensions.findByType<BaseExtension>() ?: return null
     return android.sourceSets.getByName(androidSourceSetInfo.androidSourceSetName)
 }
 
 @ExperimentalKotlinGradlePluginApi
-fun Project.findKotlinSourceSet(androidSourceSet: AndroidSourceSet): KotlinSourceSet? {
+fun Project.findKotlinSourceSet(
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+): KotlinSourceSet? {
     return findKotlinSourceSet(androidSourceSet.name)
 }
 

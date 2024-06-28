@@ -1,0 +1,35 @@
+KtNameReferenceExpression(183,194): 'suspendHere'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = KaImplicitReceiverValue:
+            symbol = KaReceiverParameterSymbol:
+              annotations: []
+              location: LOCAL
+              origin: SOURCE
+              owningCallableSymbol: KaAnonymousFunctionSymbol(<local>/<no name provided>)
+              type: KaUsualClassType:
+                annotations: []
+                typeArguments: []
+                type: Controller
+            type = Controller
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Unit
+            symbol = /Controller.suspendHere(<dispatch receiver>: Controller, x: ERROR_TYPE): kotlin.Unit
+            valueParameters = [
+              KaVariableSignature:
+                name = x
+                receiverType = null
+                returnType = ERROR_TYPE
+                symbol = x: ERROR_TYPE
+                callableId = null
+            ]
+            callableId = /Controller.suspendHere
+        typeArgumentsMapping = {}
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'x'>

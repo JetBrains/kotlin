@@ -1,63 +1,131 @@
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.prepareNativeSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
-internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
+@OptIn(SessionConfiguration::class)
+internal inline fun <F> PhaseContext.firFrontend(
+        input: KotlinCoreEnvironment,
+        files: List<F>,
+        fileHasSyntaxErrors: (F) -> Boolean,
+        noinline isCommonSource: (F) -> Boolean,
+        noinline fileBelongsToModule: (F, String) -> Boolean,
+        buildResolveAndCheckFir: (FirSession, List<F>, BaseDiagnosticsCollector) -> ModuleCompilerAnalyzedOutput,
+): FirOutput {
     val configuration = input.configuration
-    val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+
     // FIR
     val extensionRegistrars = FirExtensionRegistrar.getInstances(input.project)
     val mainModuleName = Name.special("<${config.moduleId}>")
-    val ktFiles = input.getSourceFiles()
-    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
-    }
-    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices)
+    val syntaxErrors = files.fold(false) { errorsFound, file -> fileHasSyntaxErrors(file) or errorsFound }
+    val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-        dependencies(config.resolvedLibraries.getFullList().map { it.libraryFile.absolutePath })
+        val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isCInteropLibrary() }
+        dependencies(regularLibs.map { it.libraryFile.absolutePath })
+        if (interopLibs.isNotEmpty()) {
+            val interopModuleData =
+                    BinaryModuleData.createDependencyModuleData(
+                            Name.special("<regular interop dependencies of $mainModuleName>"),
+                            CommonPlatforms.defaultCommonPlatform,
+                            FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
+                    )
+            dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+        }
         friendDependencies(config.friendModuleFiles.map { it.absolutePath })
+        dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
     val resolvedLibraries: List<KotlinResolvedLibrary> = config.resolvedLibraries.getFullResolvedList()
 
     val sessionsWithSources = prepareNativeSessions(
-            ktFiles, configuration, mainModuleName, resolvedLibraries, dependencyList,
-            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
+            files,
+            configuration,
+            mainModuleName,
+            resolvedLibraries,
+            dependencyList,
+            extensionRegistrars,
+            metadataCompilationMode = config.metadataKlib,
+            isCommonSource = isCommonSource,
+            fileBelongsToModule = fileBelongsToModule,
     )
 
     val outputs = sessionsWithSources.map { (session, sources) ->
         buildResolveAndCheckFir(session, sources, diagnosticsReporter).also {
             if (shouldPrintFiles()) {
-                it.fir.forEach { println(it.render()) }
+                it.fir.forEach { file -> println(file.render()) }
             }
         }
     }
 
+    outputs.runPlatformCheckers(diagnosticsReporter)
+
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
-        FirOutput.ShouldNotGenerateCode
+        throw KonanCompilationException("Compilation failed: there were frontend errors")
     } else {
         FirOutput.Full(FirResult(outputs))
     }
+}
+
+internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirOutput {
+    val configuration = input.configuration
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    // FIR
+
+    val ktFiles = input.getSourceFiles()
+    return firFrontend(
+            input,
+            ktFiles,
+            fileHasSyntaxErrors = {
+                AnalyzerWithCompilerReport.reportSyntaxErrors(it, messageCollector).isHasErrors
+            },
+            isCommonSource = isCommonSourceForPsi,
+            fileBelongsToModule = fileBelongsToModuleForPsi,
+            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
+            },
+    )
+}
+
+internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment): FirOutput {
+    val configuration = input.configuration
+    val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    // FIR
+
+    val groupedSources = collectSources(configuration, input.project, messageCollector)
+
+    val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
+        addAll(groupedSources.commonSources)
+        addAll(groupedSources.platformSources)
+    }
+
+    return firFrontend(
+            input,
+            ktSourceFiles,
+            fileHasSyntaxErrors = { false },
+            isCommonSource = { groupedSources.isCommonSourceForLt(it) },
+            fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
+            buildResolveAndCheckFir = { session, files, diagnosticsReporter ->
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
+            },
+    )
 }

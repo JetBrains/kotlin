@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun String.check(): Boolean = true
 
 fun test_1(s: String?) {

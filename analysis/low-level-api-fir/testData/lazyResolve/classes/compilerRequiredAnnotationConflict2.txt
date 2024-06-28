@@ -1,0 +1,277 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(RAW_FIR)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPANION_GENERATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(SUPER_TYPES)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(SUPER_TYPES)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final? [ResolvedTo(TYPES)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(TYPES)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONTRACTS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(CONSTANT_EVALUATION)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final const [ResolvedTo(STATUS)] val FIELD: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Some] get(): <implicit>
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirPropertySymbol /Some.FIELD
+        >#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val FIELD: R|kotlin/String| = String()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirPropertySymbol /Some.FIELD
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val FIELD: R|kotlin/String| = String()
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationConflict2.kt
+    public final [ResolvedTo(BODY_RESOLVE)] object Some : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(this@R|/Some|.<
+            Annotation symbol resolved differently on compiler annotation and symbols stages:
+              - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.FIELD
+              - compiler arguments stage: FirPropertySymbol /Some.FIELD
+        >#)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val FIELD: R|kotlin/String| = String()
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Some] get(): R|kotlin/String|
+
+    }

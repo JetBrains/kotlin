@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.*
  *
  * If there are no annotated classes then AllOpenGenerated class is not generated
  */
+@OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
 class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val FOO_PACKAGE = FqName.topLevel(Name.identifier("foo"))

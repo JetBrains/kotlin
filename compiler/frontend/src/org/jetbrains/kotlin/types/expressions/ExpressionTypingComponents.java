@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PlatformSpecificCastChecker;
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
@@ -36,6 +37,7 @@ public class ExpressionTypingComponents {
     public ExpressionTypingServices expressionTypingServices;
     public CallResolver callResolver;
     public PlatformToKotlinClassMapper platformToKotlinClassMapper;
+    public PlatformSpecificCastChecker platformSpecificCastChecker;
     public ControlStructureTypingUtils controlStructureTypingUtils;
     public ForLoopConventionsChecker forLoopConventionsChecker;
     public FakeCallResolver fakeCallResolver;
@@ -98,6 +100,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setPlatformToKotlinClassMap(@NotNull PlatformToKotlinClassMapper platformToKotlinClassMapper) {
         this.platformToKotlinClassMapper = platformToKotlinClassMapper;
+    }
+
+    @Inject
+    public void setPlatformToKotlinClassMap(@NotNull PlatformSpecificCastChecker platformSpecificCastChecker) {
+        this.platformSpecificCastChecker = platformSpecificCastChecker;
     }
 
     @Inject

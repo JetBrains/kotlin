@@ -90,7 +90,12 @@ public inline fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentif
 public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
 
 /**
- * Determines whether a character is whitespace according to the Unicode standard.
+ * Determines whether a character is whitespace.
+ *
+ * A character is considered whitespace if either its Unicode [category][Char.category]
+ * is one of [CharCategory.SPACE_SEPARATOR], [CharCategory.LINE_SEPARATOR], [CharCategory.PARAGRAPH_SEPARATOR],
+ * or it is a [CharCategory.CONTROL] character in range `U+0009..U+000D` or `U+001C..U+001F`.
+ *
  * Returns `true` if the character is whitespace.
  *
  * @sample samples.text.Chars.isWhitespace

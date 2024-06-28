@@ -1,4 +1,4 @@
-// !API_VERSION: 1.0
+// API_VERSION: 1.0
 
 val v1: String
     @SinceKotlin("1.1")

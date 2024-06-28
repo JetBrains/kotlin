@@ -1,0 +1,6 @@
+ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
+    with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+    R|kotlin/String|
+ExtensionReceiver[name: with; isMutated: false; displayText: this@with]
+    with@fun R|Foo|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>
+    R|Foo|

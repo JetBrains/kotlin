@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,16 +15,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.property
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.property]
  */
-abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
-        IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer,
-        IrMemberWithContainerSource {
+abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableDeclaration<IrPropertySymbol>, IrMetadataSourceOwner, IrAttributeContainer, IrMemberWithContainerSource {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
 
     abstract override val symbol: IrPropertySymbol
+
+    abstract override var overriddenSymbols: List<IrPropertySymbol>
 
     abstract var isVar: Boolean
 
@@ -35,8 +34,6 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
     abstract var isDelegated: Boolean
 
     abstract var isExpect: Boolean
-
-    abstract override var isFakeOverride: Boolean
 
     abstract var backingField: IrField?
 

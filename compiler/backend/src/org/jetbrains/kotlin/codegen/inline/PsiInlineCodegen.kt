@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
@@ -12,11 +13,13 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -43,7 +46,7 @@ class PsiInlineCodegen(
     codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
         typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn), codegen.typeSystem,
-        state.languageVersionSettings, state.unifiedNullChecks
+        state.languageVersionSettings, state.config.unifiedNullChecks
     ),
 ), CallGenerator {
     override fun generateAssertField() =
@@ -57,8 +60,12 @@ class PsiInlineCodegen(
     ) {
         (sourceCompiler as PsiSourceCompilerForInline).callDefault = callDefault
         assert(hiddenParameters.isEmpty()) { "putHiddenParamsIntoLocals() should be called after processHiddenParameters()" }
-        if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, resolvedCall?.call?.callElement)) {
-            generateStub(resolvedCall?.call?.callElement?.text ?: "<no source>", codegen)
+        val psiElement = resolvedCall?.call?.callElement
+        val element = psiElement?.let(::PsiInlineFunctionSource)
+        if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, element) { reportOn, callee ->
+                state.diagnostics.report(Errors.INLINE_CALL_CYCLE.on((reportOn as PsiInlineFunctionSource).psi, callee))
+            }) {
+            generateStub(psiElement?.text ?: "<no source>", codegen)
             return
         }
         try {
@@ -185,6 +192,15 @@ class PsiInlineCodegen(
         putCapturedToLocalVal(stackValue, activeLambda!!.capturedVars[paramIndex], stackValue.kotlinType)
 
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
+
+    override fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
+        val caller = this.codegen.context.functionDescriptor
+        if (!caller.isInline) return false
+        val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
+        return callerPackage.fqName.asString().startsWith("kotlin.")
+    }
+
+    private class PsiInlineFunctionSource(val psi: PsiElement) : GlobalInlineContext.InlineFunctionSource()
 }
 
 private val FunctionDescriptor.explicitParameters

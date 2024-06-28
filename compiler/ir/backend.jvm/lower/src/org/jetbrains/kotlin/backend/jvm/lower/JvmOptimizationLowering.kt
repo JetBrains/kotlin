@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractVariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.loops.isInductionVariable
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
@@ -31,13 +31,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
-    ::JvmOptimizationLowering,
+@PhaseDescription(
     name = "JvmOptimizationLowering",
     description = "Optimize code for JVM code generation"
 )
-
-class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
+internal class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
     private companion object {
         private fun isNegation(expression: IrExpression): Boolean =
             expression is IrCall && expression.symbol.owner.let { not ->
@@ -114,7 +112,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
         private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
-            val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            val accessor = expression.symbol.owner
             if (accessor.modality != Modality.FINAL || accessor.isExternal) return expression
             val property = accessor.correspondingPropertySymbol?.owner ?: return expression
             if (property.isLateinit) return expression
@@ -136,8 +134,11 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 } else {
                     +irGetField(receiver.takeUnless { backingField.isStatic }, backingField)
                 }
-            }
+            }.unwrapSingleExpressionBlock()
         }
+
+        private fun IrExpression.unwrapSingleExpressionBlock(): IrExpression =
+            (this as? IrBlock)?.statements?.singleOrNull() as? IrExpression ?: this
 
         override fun visitWhen(expression: IrWhen, data: IrDeclaration?): IrExpression {
             val isCompilerGenerated = expression.origin == null
@@ -357,9 +358,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             when (statement) {
                 is IrDoWhileLoop -> {
                     // Expecting counter loop
-                    val doWhileLoop = statement as? IrDoWhileLoop ?: return null
-                    if (doWhileLoop.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
-                    val doWhileLoopBody = doWhileLoop.body as? IrComposite ?: return null
+                    if (statement.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
+                    val doWhileLoopBody = statement.body as? IrComposite ?: return null
                     if (doWhileLoopBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return null
                     val iterationInitialization = doWhileLoopBody.statements[0] as? IrComposite ?: return null
                     val loopVariableIndex = iterationInitialization.statements.indexOfFirst { it.isLoopVariable() }
@@ -440,7 +440,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     if (!hasSameLineNumber(argument, expression)) {
                         return null
                     }
-                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
+                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin == IrStatementOrigin.MINUSEQ)
                 }
                 IrStatementOrigin.EQ -> {
                     val value = expression.value

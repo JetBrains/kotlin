@@ -14,16 +14,22 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
-    val DUMP_CFG by directive(
+    val DUMP_CFG by stringDirective(
         description = """
             Dumps control flow graphs of all declarations to `testName.dot` file
-            This directive may be applied only to all modules
+            This directive may be applied only to all modules.
+            Syntax: DUMP_CFG(: [OPTIONS])
+            
+            Additional options may be enabled :
+             - ${DumpCfgOption.LEVELS}: Render levels of nodes in CFG dump.
+             - ${DumpCfgOption.FLOW}: Include data analysis variable information in CFG dump for debugging purposes.
         """.trimIndent(),
-        applicability = Global
     )
 
-    val RENDERER_CFG_LEVELS by directive(
-        description = "Render leves of nodes in CFG dump",
+    val DUMP_VFIR by directive(
+        description = """
+            Dumps verbose FIR representation to `testName.vfir` file
+        """.trimIndent(),
         applicability = Global
     )
 
@@ -41,6 +47,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val FIR_PARSER by enumDirective<FirParser>(
         description = "Defines which parser should be used for FIR compiler"
+    )
+
+    val RENDER_DIAGNOSTICS_MESSAGES by directive(
+        description = "Forces diagnostic arguments to be rendered"
     )
 
     val FIR_DISABLE_LAZY_RESOLVE_CHECKS by directive(
@@ -77,6 +87,24 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Directive must contain description of ignoring in argument
         """.trimIndent()
     )
+
+    val PLATFORM_DEPENDANT_METADATA by directive(
+        description = """
+            Generate separate dumps for JVM and JS load compiled kotlin tests
+            See AbstractLoadedMetadataDumpHandler
+        """
+    )
+
+    val RENDER_FIR_DECLARATION_ATTRIBUTES by directive(
+        description = """
+            Prints declaration attributes to dumps in load compiled kotlin tests
+        """
+    )
+}
+
+object DumpCfgOption {
+    const val LEVELS = "LEVELS"
+    const val FLOW = "FLOW"
 }
 
 fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {

@@ -18,9 +18,9 @@ FILE: externalSerializers.kt
         public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
             public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-        public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/Data|): R|kotlin/Unit|
+        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/Data|): R|kotlin/Unit|
 
-        public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/Data|
+        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/Data|
 
     }
     @R|kotlinx/serialization/Serializer|(forClass = <getClass>(Q|com/example/Data|)) public final class ClassSerializer : R|kotlin/Any|, R|kotlinx/serialization/KSerializer<com/example/Data>| {
@@ -31,9 +31,9 @@ FILE: externalSerializers.kt
         public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
             public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-        public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/Data|): R|kotlin/Unit|
+        public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/Data|): R|kotlin/Unit|
 
-        public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/Data|
+        public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/Data|
 
     }
     public final fun box(): R|kotlin/String| {

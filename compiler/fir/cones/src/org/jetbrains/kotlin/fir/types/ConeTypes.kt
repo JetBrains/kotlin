@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithNullability
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -43,6 +44,7 @@ class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLike
 class ConeErrorType(
     val diagnostic: ConeDiagnostic,
     val isUninferredParameter: Boolean = false,
+    val delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
     override val attributes: ConeAttributes = ConeAttributes.Empty
 ) : ConeClassLikeType() {
@@ -50,9 +52,11 @@ class ConeErrorType(
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val nullability: ConeNullability
-        get() = ConeNullability.UNKNOWN
+        get() = if (diagnostic is ConeDiagnosticWithNullability) {
+            if (diagnostic.isNullable) ConeNullability.NULLABLE else ConeNullability.NOT_NULL
+        } else ConeNullability.UNKNOWN
 
-    override fun equals(other: Any?) = this === other
+    override fun equals(other: Any?): Boolean = this === other
     override fun hashCode(): Int = System.identityHashCode(this)
 }
 
@@ -114,6 +118,10 @@ fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
     }
 }
 
+fun ConeKotlinType.unwrapFlexibleAndDefinitelyNotNull(): ConeKotlinType {
+    return lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+}
+
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,
@@ -141,7 +149,7 @@ data class ConeCapturedType(
     )
 
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = EMPTY_ARRAY
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -197,7 +205,7 @@ class ConeRawType private constructor(
             val lowerBoundToUse = if (!lowerBound.attributes.contains(CompilerConeAttributes.RawType)) {
                 ConeClassLikeTypeImpl(
                     lowerBound.lookupTag, lowerBound.typeArguments, lowerBound.isNullable,
-                    lowerBound.attributes + CompilerConeAttributes.RawType
+                    lowerBound.attributes.add(CompilerConeAttributes.RawType)
                 )
             } else {
                 lowerBound
@@ -208,21 +216,36 @@ class ConeRawType private constructor(
     }
 }
 
-/*
- * Contract of the intersection type: it is flat. It means that
- *   intersection type can not contains another intersection types
- *   inside it. To keep this contract construct new intersection types
- *   only via ConeTypeIntersector
+/**
+ * This class represents so-called intersection type like T1&T2&T3 [intersectedTypes] = listOf(T1, T2, T3).
+ *
+ * Contract of the intersection type: it is flat. It means that an intersection type can not contain another intersection type inside it.
+ * To comply with this contract, construct new intersection types only via [org.jetbrains.kotlin.fir.types.ConeTypeIntersector].
+ *
+ * Except for T&Any types, [org.jetbrains.kotlin.fir.types.ConeIntersectionType] is non-denotable.
+ * Moreover, it does not have an IR counterpart.
+ * This means that approximation is often required, and normally a common supertype of [intersectedTypes] is used for this purpose.
+ * In a situation with constraints like A <: T, B <: T, T <: C, [org.jetbrains.kotlin.fir.types.ConeIntersectionType]
+ * and commonSupertype(A, B) </: C, an intersection type A&B is created,
+ * C is stored as [upperBoundForApproximation] and used when approximation is needed.
+ * Without it, we can violate a constraint system while doing intersection type approximation.
+ * See also [org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver.specialResultForIntersectionType]
+ *
+ * @param intersectedTypes collection of types to be intersected. None of them is allowed to be another intersection type.
+ * @param upperBoundForApproximation a super-type (upper bound), if it's known, to be used as an approximation.
  */
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,
-    val alternativeType: ConeKotlinType? = null,
+    val upperBoundForApproximation: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+
+    val effectiveNullability: ConeNullability
+        get() = intersectedTypes.maxOf { it.nullability }
 
     override val attributes: ConeAttributes = intersectedTypes.foldMap(
         { it.attributes },

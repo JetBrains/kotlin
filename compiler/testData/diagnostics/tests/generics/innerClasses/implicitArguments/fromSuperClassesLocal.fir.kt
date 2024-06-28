@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER -TOPLEVEL_TYPEALIASES_ONLY
 
 class A<R1, R2, R3, R4>
 
@@ -9,12 +9,12 @@ private fun <E> foobar() = {
             fun a() = A<E, X, Y, Z>()
         }
 
-        typealias LocalAlias<W> = A<E, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
+        typealias LocalAlias<W> = A<E, X, Y, W>
     }
 
     class Derived : LocalOuter<Double, Short>() {
         fun foo(): LocalInner<Long> = null!!
-        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<Char><!> = null!!
+        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<!><Char> = null!!
     }
 
     Derived()
@@ -26,12 +26,12 @@ private fun noParameters() = {
             fun a() = A<Any, X, Y, Z>()
         }
 
-        typealias LocalAlias2<W> = A<Any, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, W>
+        typealias LocalAlias2<W> = A<Any, X, Y, W>
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {
         fun foo(): LocalInner2<Long> = null!!
-        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<Char><!> = null!!
+        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<!><Char> = null!!
     }
 
     Derived2()
@@ -42,7 +42,7 @@ fun test() {
     x = foobar<String>()
 
     x().foo().a() checkType { _<A<String, Double, Short, Long>>() }
-    x().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<String, Double, Short, Char>>() }
+    x().bar() <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>A<String, Double, Short, Char><!>>() }
 
     x = <!ASSIGNMENT_TYPE_MISMATCH!>foobar<Int>()<!>
 
@@ -50,5 +50,5 @@ fun test() {
     y = noParameters()
 
     y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
-    y().bar() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<A<Any, Double, Short, Char>>() }
+    y().bar() <!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>A<Any, Double, Short, Char><!>>() }
 }

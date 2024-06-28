@@ -46,7 +46,7 @@ public class MappingClassesForWhenByEnumCodegen {
         ClassBuilder cb = state.getFactory().newVisitor(JvmDeclarationOrigin.NO_ORIGIN, mappingsClass, srcFile);
         cb.defineClass(
                 srcFile,
-                state.getClassFileVersion(),
+                state.getConfig().getClassFileVersion(),
                 ACC_PUBLIC | ACC_FINAL | ACC_SUPER | ACC_SYNTHETIC,
                 mappingsClass.getInternalName(),
                 null,
@@ -58,9 +58,9 @@ public class MappingClassesForWhenByEnumCodegen {
         generateInitialization(cb, mappings);
 
         boolean publicAbi = mappings.stream().anyMatch(WhenByEnumsMapping::isPublicAbi);
-        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, state, publicAbi);
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cb, state.getConfig(), publicAbi);
 
-        cb.done(state.getGenerateSmapCopyToAnnotation());
+        cb.done(state.getConfig().getGenerateSmapCopyToAnnotation());
     }
 
     private static void generateFields(@NotNull ClassBuilder cb, @NotNull List<WhenByEnumsMapping> mappings) {

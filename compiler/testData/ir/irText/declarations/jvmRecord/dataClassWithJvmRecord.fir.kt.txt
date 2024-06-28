@@ -1,14 +1,14 @@
 @JvmRecord
 data class MyRec : Record {
+  val name: String
+    field = name
+    get
+
   constructor(name: String) /* primary */ {
     super/*Record*/()
     /* <init>() */
 
   }
-
-  val name: String
-    field = name
-    get
 
   operator fun component1(): String {
     return <this>.#name
@@ -18,16 +18,16 @@ data class MyRec : Record {
     return MyRec(name = name)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
     when {
       other !is MyRec -> return false
     }
-    val tmp0_other_with_cast: MyRec = other as MyRec
+    val tmp_0: MyRec = other as MyRec
     when {
-      EQEQ(arg0 = <this>.#name, arg1 = tmp0_other_with_cast.#name).not() -> return false
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
     }
     return true
   }
@@ -45,3 +45,4 @@ data class MyRec : Record {
 fun test(rec: MyRec) {
   rec.<get-name>() /*~> Unit */
 }
+

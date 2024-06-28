@@ -15,9 +15,16 @@ import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.ResultOfIntersection
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
-typealias SyntheticPropertiesCache = FirCache<Name, FirSyntheticPropertySymbol?, Pair<JavaClassUseSiteMemberScope, ResultOfIntersection<FirPropertySymbol>>>
+data class SyntheticPropertiesCacheKey(
+    val name: Name,
+    val receiverParameterType: ConeKotlinType?,
+    val contextReceiverTypes: List<ConeKotlinType>
+)
+
+typealias SyntheticPropertiesCache = FirCache<SyntheticPropertiesCacheKey, FirSyntheticPropertySymbol?, Pair<JavaClassUseSiteMemberScope, ResultOfIntersection<FirPropertySymbol>>>
 
 class FirSyntheticPropertiesStorage(session: FirSession) : FirSessionComponent {
     private val cachesFactory = session.firCachesFactory

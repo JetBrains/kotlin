@@ -7,26 +7,8 @@ package kotlin.native.concurrent
 
 // Only for compatibility with shared K/N stdlib code
 
-internal val Any?.isFrozen
+internal actual val Any?.isFrozen
     inline get() = false
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun <T> T.freeze(): T = this
-
-internal class AtomicReference<T>(public var value: T) {
-    public fun compareAndSwap(expected: T, new: T): T {
-        if (value == expected) {
-            val old = value
-            value = new
-            return old
-        }
-        return value
-    }
-    public fun compareAndSet(expected: T, new: T): Boolean {
-        if (value == expected) {
-            value = new
-            return true
-        }
-        return false
-    }
-}
+internal actual inline fun <T> T.freeze(): T = this

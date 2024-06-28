@@ -53,5 +53,5 @@ FILE: annotationOnDeclarationWithDifferentArguments.kt
         public get(): R|kotlin/Int|
     public final const val constString: R|kotlin/String| = String()
         public get(): R|kotlin/String|
-    @R|MyAnnotation|(intValue = Int(10), stringValue = R|/constString|, enumValue = Q|SomeEnum|.R|/SomeEnum.A|, kClasses = <implicitArrayOf>(<getClass>(Q|kotlin/String|), <getClass>(R|/constString|)), annotation = R|/MyOtherAnnotation.MyOtherAnnotation|(intValue = R|/constInt|, stringValue = String(hello))) public final fun foo(): R|kotlin/Unit| {
+    @R|MyAnnotation|(intValue = Int(10), stringValue = R|/constString|, enumValue = Q|SomeEnum|.R|/SomeEnum.A|, kClasses = <implicitArrayOf>(<getClass>(Q|kotlin/String|), <getClass>(R|/constString|)), annotation = R|/MyOtherAnnotation.MyOtherAnnotation|(R|/constInt|, String(hello))) public final fun foo(): R|kotlin/Unit| {
     }

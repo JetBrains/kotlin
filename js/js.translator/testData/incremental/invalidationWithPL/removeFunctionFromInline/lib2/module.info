@@ -1,0 +1,7 @@
+STEP 0:
+    dependencies: lib1
+    added file: l2.kt
+STEP 1..2:
+    dependencies: lib1
+    rebuild klib: false
+    updated imports: l2.kt

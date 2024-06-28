@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.sortedDiagnostics
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -47,7 +44,7 @@ class AnalyzerWithCompilerReport(
     override lateinit var analysisResult: AnalysisResult
 
     constructor(configuration: CompilerConfiguration) : this(
-        configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
+        configuration.messageCollector,
         configuration.languageVersionSettings,
         configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )
@@ -180,9 +177,23 @@ class AnalyzerWithCompilerReport(
             messageCollector: MessageCollector,
             renderInternalDiagnosticName: Boolean
         ): Boolean {
-            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName)
+            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName).also {
+                reportSpecialErrors(
+                    diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS },
+                    diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS },
+                    diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
+                    messageCollector,
+                )
+            }
+        }
 
-            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {
+        fun reportSpecialErrors(
+            hasIncompatibleClasses: Boolean,
+            hasPrereleaseClasses: Boolean,
+            hasUnstableClasses: Boolean,
+            messageCollector: MessageCollector,
+        ) {
+            if (hasIncompatibleClasses) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
@@ -190,7 +201,7 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (hasPrereleaseClasses) {
                 messageCollector.report(
                     ERROR,
                     "Pre-release classes were found in dependencies. " +
@@ -199,23 +210,13 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS }) {
+            if (hasUnstableClasses) {
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
                             "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
-
-            if (diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS }) {
-                messageCollector.report(
-                    ERROR,
-                    "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
-                )
-            }
-
-            return hasErrors
         }
 
         fun reportSyntaxErrors(file: PsiElement, reporter: DiagnosticMessageReporter): SyntaxErrorReport {

@@ -8,22 +8,20 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.native.checkers.FirNativeObjCRefinementOverridesChecker.check
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCallableDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
+object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppCheckerKind.Platform) {
 
-    val hidesFromObjCClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
-    val refinesInSwiftClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))
+    val hidesFromObjCClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.HidesFromObjC"))
+    val refinesInSwiftClassId: ClassId = ClassId.topLevel(FqName("kotlin.native.RefinesInSwift"))
 
     override fun check(declaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirSimpleFunction && declaration !is FirProperty) return
@@ -36,7 +34,15 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
         val containingClass = context.containingDeclarations.lastOrNull() as? FirClass
         if (containingClass != null) {
             val firTypeScope = containingClass.unsubstitutedScope(context)
-            check(firTypeScope, declaration.symbol, declaration, context, reporter, objCAnnotations, swiftAnnotations)
+            FirNativeObjCRefinementOverridesChecker.check(
+                firTypeScope,
+                declaration.symbol,
+                declaration,
+                context,
+                reporter,
+                objCAnnotations,
+                swiftAnnotations
+            )
         }
     }
 

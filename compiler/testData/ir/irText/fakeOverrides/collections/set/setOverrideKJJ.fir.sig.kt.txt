@@ -1,0 +1,394 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: A#clear(){}
+  //   Public signature: /A.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#clone(){}kotlin.Any{EnhancedNullability}
+  //   Public signature: /A.clone|178802004086941196[0]
+  //   Public signature debug description: clone(){}kotlin.Any{EnhancedNullability}
+  /* fake */ override fun clone(): @EnhancedNullability Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#compute(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.compute|6977469968988537776[0]
+  //   Public signature debug description: compute(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability Void?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void?, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#computeIfAbsent(java.lang.Void?{EnhancedNullability};java.util.function.Function<in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.computeIfAbsent|4329465547146554750[0]
+  //   Public signature debug description: computeIfAbsent(java.lang.Void?{EnhancedNullability};java.util.function.Function<in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Function<in @EnhancedNullability Void?, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#computeIfPresent(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.computeIfPresent|-1495361389801002146[0]
+  //   Public signature debug description: computeIfPresent(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#containsKey(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.containsKey|5181416443161121780[0]
+  //   Public signature debug description: containsKey(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun containsKey(p0: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#containsValue(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.containsValue|-151308053273026729[0]
+  //   Public signature debug description: containsValue(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun containsValue(p0: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
+
+  // CHECK:
+  //   Mangled name: A#forEach(java.util.function.BiConsumer<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /A.forEach|-3333728751129660461[0]
+  //   Public signature debug description: forEach(java.util.function.BiConsumer<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun forEach(p0: @EnhancedNullability BiConsumer<in @EnhancedNullability Void?, in @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#get(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.get|-5437480520979515156[0]
+  //   Public signature debug description: get(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override operator fun get(p0: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#getOrDefault(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.getOrDefault|-6692710645540676624[0]
+  //   Public signature debug description: getOrDefault(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun getOrDefault(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#hashCode(){}kotlin.Int
+  //   Public signature: /A.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#isEmpty(){}kotlin.Boolean
+  //   Public signature: /A.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#merge(java.lang.Void?{EnhancedNullability};java.lang.Void{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.merge|5869044834453664643[0]
+  //   Public signature debug description: merge(java.lang.Void?{EnhancedNullability};java.lang.Void{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void, p2: @EnhancedNullability BiFunction<in @EnhancedNullability Void, in @EnhancedNullability Void, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#put(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.put|7975374743396198264[0]
+  //   Public signature debug description: put(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun put(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK:
+  //   Mangled name: A#putAll(kotlin.collections.Map<out|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /A.putAll|4077071190905116058[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun putAll(p0: @EnhancedNullability Map<out @EnhancedNullability Void?, out @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#putIfAbsent(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.putIfAbsent|-4797474733036800888[0]
+  //   Public signature debug description: putIfAbsent(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#remove(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.remove|7116987399649470555[0]
+  //   Public signature debug description: remove(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun remove(p0: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#remove(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.remove|3824480146987966758[0]
+  //   Public signature debug description: remove(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun remove(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /A.replace|-8174378494123359813[0]
+  //   Public signature debug description: replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /A.replace|6897198642055141200[0]
+  //   Public signature debug description: replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun replace(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?, p2: @EnhancedNullability Void?): Boolean
+
+  // CHECK:
+  //   Mangled name: A#replaceAll(java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /A.replaceAll|4133981032225508162[0]
+  //   Public signature debug description: replaceAll(java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun replaceAll(p0: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void?, out @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toString(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /A.toString|7581629773206850948[0]
+  //   Public signature debug description: toString(){}kotlin.String{EnhancedNullability}
+  /* fake */ override fun toString(): @EnhancedNullability String
+
+  // CHECK:
+  //   Mangled name: A{}entries
+  //   Public signature: /A.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.entries.<get-entries>|-1449002387372962939[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
+
+  // CHECK:
+  //   Mangled name: A{}keys
+  //   Public signature: /A.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  /* fake */ override val keys: @EnhancedNullability MutableSet<@EnhancedNullability Void?>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.keys.<get-keys>|6266223291892564583[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability Void?>
+
+  // CHECK:
+  //   Mangled name: A{}size
+  //   Public signature: /A.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-size>(){}kotlin.Int
+    //   Public signature: /A.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: A{}values
+  //   Public signature: /A.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  /* fake */ override val values: @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /A.values.<get-values>|-4884439515124608116[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B{}size
+  //   Public signature: /B.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-size>(){}kotlin.Int
+    //   Public signature: /B.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: B#<init>(kotlin.Int){}
+  //   Public signature: /B.<init>|-5182794243525578284[0]
+  //   Public signature debug description: <init>(kotlin.Int){}
+  constructor(size: Int) /* primary */
+
+  // CHECK:
+  //   Mangled name: B#clear(){}
+  //   Public signature: /B.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#clone(){}kotlin.Any{EnhancedNullability}
+  //   Public signature: /B.clone|178802004086941196[0]
+  //   Public signature debug description: clone(){}kotlin.Any{EnhancedNullability}
+  /* fake */ override fun clone(): @EnhancedNullability Any
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#compute(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.compute|6977469968988537776[0]
+  //   Public signature debug description: compute(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability Void?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void?, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#computeIfAbsent(java.lang.Void?{EnhancedNullability};java.util.function.Function<in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.computeIfAbsent|4329465547146554750[0]
+  //   Public signature debug description: computeIfAbsent(java.lang.Void?{EnhancedNullability};java.util.function.Function<in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Function<in @EnhancedNullability Void?, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#computeIfPresent(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.computeIfPresent|-1495361389801002146[0]
+  //   Public signature debug description: computeIfPresent(java.lang.Void?{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#containsKey(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.containsKey|5181416443161121780[0]
+  //   Public signature debug description: containsKey(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun containsKey(p0: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#containsValue(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.containsValue|-151308053273026729[0]
+  //   Public signature debug description: containsValue(java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun containsValue(p0: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.equals|4126616015386471185[0]
+  //   Public signature debug description: equals(kotlin.Any?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override operator fun equals(p0: @EnhancedNullability Any?): Boolean
+
+  // CHECK:
+  //   Mangled name: B#forEach(java.util.function.BiConsumer<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /B.forEach|-3333728751129660461[0]
+  //   Public signature debug description: forEach(java.util.function.BiConsumer<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun forEach(p0: @EnhancedNullability BiConsumer<in @EnhancedNullability Void?, in @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#getOrDefault(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.getOrDefault|-6692710645540676624[0]
+  //   Public signature debug description: getOrDefault(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun getOrDefault(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#hashCode(){}kotlin.Int
+  //   Public signature: /B.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#isEmpty(){}kotlin.Boolean
+  //   Public signature: /B.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#merge(java.lang.Void?{EnhancedNullability};java.lang.Void{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.merge|5869044834453664643[0]
+  //   Public signature debug description: merge(java.lang.Void?{EnhancedNullability};java.lang.Void{EnhancedNullability};java.util.function.BiFunction<in|java.lang.Void{EnhancedNullability},in|java.lang.Void{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void, p2: @EnhancedNullability BiFunction<in @EnhancedNullability Void, in @EnhancedNullability Void, out @EnhancedNullability Void?>): @EnhancedNullability Void?
+
+  // CHECK:
+  //   Mangled name: B#putAll(kotlin.collections.Map<out|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /B.putAll|4077071190905116058[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun putAll(p0: @EnhancedNullability Map<out @EnhancedNullability Void?, out @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#putIfAbsent(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.putIfAbsent|-4797474733036800888[0]
+  //   Public signature debug description: putIfAbsent(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#remove(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.remove|7116987399649470555[0]
+  //   Public signature debug description: remove(java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun remove(p0: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#remove(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.remove|3824480146987966758[0]
+  //   Public signature debug description: remove(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun remove(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  //   Public signature: /B.replace|-8174378494123359813[0]
+  //   Public signature debug description: replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}java.lang.Void?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?): @EnhancedNullability Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /B.replace|6897198642055141200[0]
+  //   Public signature debug description: replace(java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability};java.lang.Void?{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun replace(p0: @EnhancedNullability Void?, p1: @EnhancedNullability Void?, p2: @EnhancedNullability Void?): Boolean
+
+  // CHECK:
+  //   Mangled name: B#replaceAll(java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /B.replaceAll|4133981032225508162[0]
+  //   Public signature debug description: replaceAll(java.util.function.BiFunction<in|java.lang.Void?{EnhancedNullability},in|java.lang.Void?{EnhancedNullability},out|java.lang.Void?{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun replaceAll(p0: @EnhancedNullability BiFunction<in @EnhancedNullability Void?, in @EnhancedNullability Void?, out @EnhancedNullability Void?>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toString(){}kotlin.String{EnhancedNullability}
+  //   Public signature: /B.toString|7581629773206850948[0]
+  //   Public signature debug description: toString(){}kotlin.String{EnhancedNullability}
+  /* fake */ override fun toString(): @EnhancedNullability String
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#get(java.lang.Void?){}java.lang.Void?
+  //   Public signature: /B.get|9121294653007435769[0]
+  //   Public signature debug description: get(java.lang.Void?){}java.lang.Void?
+  override operator fun get(key: Void?): Void?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#put(java.lang.Void?;java.lang.Void?){}java.lang.Void?
+  //   Public signature: /B.put|803515897900611974[0]
+  //   Public signature debug description: put(java.lang.Void?;java.lang.Void?){}java.lang.Void?
+  override fun put(key: Void?, value: Void?): Void?
+
+  // CHECK:
+  //   Mangled name: B{}entries
+  //   Public signature: /B.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  /* fake */ override val entries: @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.entries.<get-entries>|-1449002387372962939[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<java.lang.Void?{EnhancedNullability},java.lang.Void?{EnhancedNullability}>{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability MutableEntry<@EnhancedNullability Void?, @EnhancedNullability Void?>>
+
+  // CHECK:
+  //   Mangled name: B{}keys
+  //   Public signature: /B.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  /* fake */ override val keys: @EnhancedNullability MutableSet<@EnhancedNullability Void?>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.keys.<get-keys>|6266223291892564583[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableSet<@EnhancedNullability Void?>
+
+  // CHECK:
+  //   Mangled name: B{}values
+  //   Public signature: /B.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  /* fake */ override val values: @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
+    // CHECK JVM_IR:
+    //   Mangled name: B#<get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    //   Public signature: /B.values.<get-values>|-4884439515124608116[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<java.lang.Void?{EnhancedNullability}>{EnhancedNullability}
+    /* fake */ override get(): @EnhancedNullability MutableCollection<@EnhancedNullability Void?>
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B){}
+//   Public signature: /test|-2533013708701322011[0]
+//   Public signature debug description: test(A;B){}
+fun test(a: A, b: B): Unit
+

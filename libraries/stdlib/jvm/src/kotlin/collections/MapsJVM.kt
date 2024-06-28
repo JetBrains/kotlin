@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,16 +15,15 @@ import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.collections.builders.MapBuilder
 
-
 /**
- * Returns an immutable map, mapping only the specified key to the
+ * Returns a new read-only map, mapping only the specified key to the
  * specified value.
  *
  * The returned map is serializable.
  *
  * @sample samples.collections.Maps.Instantiation.mapFromPairs
  */
-public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
+public actual fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = java.util.Collections.singletonMap(pair.first, pair.second)
 
 @PublishedApi
 @SinceKotlin("1.3")

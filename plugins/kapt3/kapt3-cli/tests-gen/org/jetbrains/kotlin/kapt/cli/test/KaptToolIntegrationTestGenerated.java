@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,74 +18,92 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/integration")
 @TestDataPath("$PROJECT_ROOT")
 public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegrationTest {
-    @Test
-    public void testAllFilesPresentInIntegration() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
-    }
+  @Test
+  public void testAllFilesPresentInIntegration() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/integration"), Pattern.compile("^([^\\.]+)$"), null, false);
+  }
 
-    @Test
-    @TestMetadata("argfile")
-    public void testArgfile() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/argfile/");
-    }
+  @Test
+  @TestMetadata("aptError")
+  public void testAptError() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/aptError/");
+  }
 
-    @Test
-    @TestMetadata("correctErrorTypesOff")
-    public void testCorrectErrorTypesOff() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOff/");
-    }
+  @Test
+  @TestMetadata("argfile")
+  public void testArgfile() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/argfile/");
+  }
 
-    @Test
-    @TestMetadata("correctErrorTypesOn")
-    public void testCorrectErrorTypesOn() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOn/");
-    }
+  @Test
+  @TestMetadata("correctErrorTypesOff")
+  public void testCorrectErrorTypesOff() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOff/");
+  }
 
-    @Test
-    @TestMetadata("defaultPackage")
-    public void testDefaultPackage() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/defaultPackage/");
-    }
+  @Test
+  @TestMetadata("correctErrorTypesOn")
+  public void testCorrectErrorTypesOn() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/correctErrorTypesOn/");
+  }
 
-    @Test
-    @TestMetadata("kotlinFileGeneration")
-    public void testKotlinFileGeneration() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGeneration/");
-    }
+  @Test
+  @TestMetadata("defaultPackage")
+  public void testDefaultPackage() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/defaultPackage/");
+  }
 
-    @Test
-    @TestMetadata("kotlinFileGenerationCorrectErrorTypes")
-    public void testKotlinFileGenerationCorrectErrorTypes() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationCorrectErrorTypes/");
-    }
+  @Test
+  @TestMetadata("fallback")
+  public void testFallback() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/fallback/");
+  }
 
-    @Test
-    @TestMetadata("kotlinFileGenerationDefaultOutput")
-    public void testKotlinFileGenerationDefaultOutput() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationDefaultOutput/");
-    }
+  @Test
+  @TestMetadata("kotlinFileGeneration")
+  public void testKotlinFileGeneration() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGeneration/");
+  }
 
-    @Test
-    @TestMetadata("kt33800")
-    public void testKt33800() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/kt33800/");
-    }
+  @Test
+  @TestMetadata("kotlinFileGenerationCorrectErrorTypes")
+  public void testKotlinFileGenerationCorrectErrorTypes() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationCorrectErrorTypes/");
+  }
 
-    @Test
-    @TestMetadata("separateStubAptCompilation")
-    public void testSeparateStubAptCompilation() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/separateStubAptCompilation/");
-    }
+  @Test
+  @TestMetadata("kotlinFileGenerationDefaultOutput")
+  public void testKotlinFileGenerationDefaultOutput() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/kotlinFileGenerationDefaultOutput/");
+  }
 
-    @Test
-    @TestMetadata("simple")
-    public void testSimple() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/simple/");
-    }
+  @Test
+  @TestMetadata("kt33800")
+  public void testKt33800() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/kt33800/");
+  }
 
-    @Test
-    @TestMetadata("withoutService")
-    public void testWithoutService() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/integration/withoutService/");
-    }
+  @Test
+  @TestMetadata("multipass")
+  public void testMultipass() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/multipass/");
+  }
+
+  @Test
+  @TestMetadata("separateStubAptCompilation")
+  public void testSeparateStubAptCompilation() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/separateStubAptCompilation/");
+  }
+
+  @Test
+  @TestMetadata("simple")
+  public void testSimple() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/simple/");
+  }
+
+  @Test
+  @TestMetadata("withoutService")
+  public void testWithoutService() {
+    runTest("plugins/kapt3/kapt3-cli/testData/integration/withoutService/");
+  }
 }

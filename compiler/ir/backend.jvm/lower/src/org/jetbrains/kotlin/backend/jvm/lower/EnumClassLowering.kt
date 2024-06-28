@@ -5,23 +5,20 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.javaClassReference
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -29,15 +26,11 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -45,18 +38,14 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-internal val enumClassPhase = makeIrFilePhase(
-    ::EnumClassLowering,
+private const val VALUES_HELPER_FUNCTION_NAME = "\$values"
+private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
+
+@PhaseDescription(
     name = "EnumClass",
     description = "Handle enum classes"
 )
-
-private const val VALUES_HELPER_FUNCTION_NAME = "\$values"
-private const val ENTRIES_HELPER_FUNCTION_NAME = "\$entries"
-private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
-
-private class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-
+internal class EnumClassLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     /*
      * Example of codegen for
      * `enum class MyEnum { A }`
@@ -69,15 +58,14 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
      *     <clinit> {
      *         A = new MyEnum("A", 0);
      *         $VALUES = $values();
-     *         Function0<MyEnum[]> supplier = #invokedynamic ..args.. $entries;
-     *         $ENTRIES = new EnumEntriesList(supplier);
+     *         $ENTRIES = new EnumEntries($VALUES);
      *     }
      *
      *     public static MyEnum[] values() {
      *         return $VALUES.clone();
      *     }
      *
-     *     // Should be RO property from Kotlin standpoint
+     *     // Should be a read-only property from Kotlin's standpoint
      *     public static EnumEntries<MyEnum> getEntries() {
      *         return $ENTRIES;
      *     }
@@ -96,20 +84,20 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
     override fun lower(irClass: IrClass) {
         if (!irClass.isEnumClass) return
         // Also protected by API version check as it relies on EnumEntries in standard library
-        EnumClassTransformer(irClass, context.state.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)).run()
+        EnumClassTransformer(irClass, context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)).run()
     }
 
     private inner class EnumClassTransformer(private val irClass: IrClass, private val supportsEnumEntries: Boolean) {
         private val loweredEnumConstructors = hashMapOf<IrConstructorSymbol, IrConstructor>()
         private val loweredEnumConstructorParameters = hashMapOf<IrValueParameterSymbol, IrValueParameter>()
-        private val enumEntryOrdinals = TObjectIntHashMap<IrEnumEntry>()
+        private val enumEntryOrdinals = hashMapOf<IrEnumEntry, Int>()
         private val declarationToEnumEntry = mutableMapOf<IrDeclaration, IrEnumEntry>()
         private val enumArrayType = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType) // Enum[]
 
         fun run() {
             // Lower IrEnumEntry into IrField and IrClass members
             irClass.declarations.asSequence().filterIsInstance<IrEnumEntry>().withIndex().forEach { (index, enumEntry) ->
-                enumEntryOrdinals.put(enumEntry, index)
+                enumEntryOrdinals[enumEntry] = index
                 enumEntry.correspondingClass?.let { entryClass -> declarationToEnumEntry[entryClass] = enumEntry }
                 declarationToEnumEntry[buildEnumEntryField(enumEntry)] = enumEntry
             }
@@ -131,17 +119,8 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
                     error("The frontend must have checked if the feature is supported while emitting the IR")
                 }
                 else -> {
-                    // Constructs the synthetic $entries() function that returns plain $VALUES without copy
-                    val entriesHelperFunction = buildEntriesHelperFunction(valuesField)
-
-                    /*
-                     * Add synthetic $ENTRIES field and binds its initializer to
-                     * ```
-                     * val supplier: () -> E[] = indy LMF $entries
-                     * $ENTRIES = EnumEntries(supplier)
-                     * ```
-                     */
-                    buildEntriesField(entriesHelperFunction)
+                    // Add synthetic $ENTRIES field and bind its initializer to `EnumEntries($VALUES)`.
+                    buildEntriesField(valuesField)
                 }
             }
 
@@ -160,7 +139,9 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
             context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {
-                initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!.expression.patchDeclarationParents(this))
+                initializer = enumEntry.initializerExpression?.let {
+                    context.irFactory.createExpressionBody(it.expression.patchDeclarationParents(this))
+                }
                 annotations = annotations + enumEntry.annotations
             }
 
@@ -179,17 +160,6 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             }
         }
 
-        private fun buildEntriesHelperFunction(valuesField: IrField): IrFunction = irClass.addFunction {
-            name = Name.identifier(ENTRIES_HELPER_FUNCTION_NAME)
-            returnType = enumArrayType
-            visibility = DescriptorVisibilities.PRIVATE
-            origin = IrDeclarationOrigin.SYNTHETIC_HELPER_FOR_ENUM_VALUES
-        }.apply {
-            body = context.createJvmIrBuilder(symbol).run {
-                irExprBody(irGetField(null, valuesField))
-            }
-        }
-
         private fun buildValuesField(valuesHelperFunction: IrFunction): IrField = irClass.addField {
             name = Name.identifier(ImplementationBodyCodegen.ENUM_VALUES_FIELD_NAME)
             type = enumArrayType
@@ -205,7 +175,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             }
         }
 
-        private fun buildEntriesField(entriesHelper: IrFunction): IrField = irClass.addField {
+        private fun buildEntriesField(valuesField: IrField): IrField = irClass.addField {
             name = Name.identifier(ENTRIES_FIELD_NAME)
             type = context.ir.symbols.enumEntries.defaultType
             visibility = DescriptorVisibilities.PRIVATE
@@ -214,7 +184,11 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             isStatic = true
         }.apply {
             initializer = context.createJvmIrBuilder(symbol).run {
-                irCreateEnumEntriesIndy(entriesHelper, enumArrayType, this@EnumClassLowering.context)
+                irExprBody(
+                    irCall(this@EnumClassLowering.context.ir.symbols.createEnumEntries).apply {
+                        putValueArgument(0, irGetField(null, valuesField))
+                    }
+                )
             }
         }
 
@@ -330,7 +304,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
                 call.copyTypeArgumentsFrom(original)
                 if (enumEntry != null) {
                     call.putValueArgument(0, irString(enumEntry.name.asString()))
-                    call.putValueArgument(1, irInt(enumEntryOrdinals[enumEntry]))
+                    call.putValueArgument(1, irInt(enumEntryOrdinals[enumEntry]!!))
                 } else {
                     val constructor = currentScope!!.scope.scopeOwnerSymbol as IrConstructorSymbol
                     call.putValueArgument(0, irGet(constructor.owner.valueParameters[0]))
@@ -343,37 +317,3 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
         }
     }
 }
-
-internal fun IrBuilderWithScope.irCreateEnumEntriesIndy(
-    functionThatReturnsEnumArray: IrFunction, // values() or $entries()
-    enumArrayType: IrType,
-    jvmContext: JvmBackendContext
-) = irExprBody(irBlock {
-    val symbols = jvmContext.ir.symbols
-    val samClass = context.irBuiltIns.functionN(0)
-    val type = samClass.typeWith(enumArrayType)
-    val sam = type.getClass()!!.getSingleAbstractMethod()!!.symbol
-    /*
-     * Indy to LMF call:
-     * INVOKEDYNAMIC get()Lkotlin/jvm/functions/Function0; [
-     *    // handle kind 0x6 : INVOKESTATIC
-     *    java/lang/invoke/LambdaMetafactory.metafactory
-     *    // arguments:
-     *    ()Ljava/lang/Object;,
-     *    // handle kind 0x6 : INVOKESTATIC
-     *    $entries() [LEnum[, // or values()
-     *    ()Ljava/util/List;
-     *  ]
-     */
-    val indyCall = irCall(symbols.indyLambdaMetafactoryIntrinsic, type).apply {
-        putTypeArgument(0, type)
-        putValueArgument(0, irRawFunctionReference(context.irBuiltIns.anyType, sam))
-        putValueArgument(1, IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, functionThatReturnsEnumArray.symbol, 0, 0))
-        putValueArgument(2, irRawFunctionReference(context.irBuiltIns.anyType, sam))
-        putValueArgument(3, irVararg(context.irBuiltIns.anyType, emptyList()))
-        putValueArgument(4, irBoolean(false))
-    }
-    +irCall(symbols.createEnumEntries).apply {
-        putValueArgument(0, indyCall)
-    }
-})

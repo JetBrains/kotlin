@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import javax.inject.Inject
 
+interface HasBinaries<out T : DomainObjectSet<*>> {
+    val binaries: T
+}
+
 abstract class KotlinTargetWithBinaries<T : KotlinCompilation<*>, out R : DomainObjectSet<*>> @Inject constructor(
     project: Project,
     platformType: KotlinPlatformType
-) : KotlinOnlyTarget<T>(project, platformType) {
-    abstract val binaries: R
-
+) : KotlinOnlyTarget<T>(project, platformType), HasBinaries<R> {
     fun binaries(configure: R.() -> Unit) {
         binaries.configure()
     }

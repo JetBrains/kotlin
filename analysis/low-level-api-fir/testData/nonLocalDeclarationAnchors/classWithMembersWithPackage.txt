@@ -1,0 +1,18 @@
+package one/* anchor --> */
+
+/* anchor --> */class A /* anchor --> */constructor(/* anchor --> */a: Int/* <-- */)/* <-- */ {
+    /* anchor --> */fun boo() {
+        fun bar() {
+
+        }
+    }/* <-- */
+
+    /* anchor --> */val i: Int = 42/* <-- */
+
+    /* anchor --> */init {
+        fun foo() {
+
+        }
+    }/* <-- */
+}/* <-- */
+/* <-- */

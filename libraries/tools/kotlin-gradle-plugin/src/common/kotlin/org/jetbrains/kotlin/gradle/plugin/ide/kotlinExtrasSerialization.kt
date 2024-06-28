@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinBooleanExtrasSeriali
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer.Companion.javaIoSerializable
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.*
-import org.jetbrains.kotlin.gradle.kpm.idea.kotlinDebugKey
 
 @InternalKotlinGradlePluginApi
 val kotlinExtrasSerialization = IdeaKotlinExtrasSerializationExtension {
@@ -24,4 +23,5 @@ val kotlinExtrasSerialization = IdeaKotlinExtrasSerializationExtension {
     register(sourcesClasspathKey, IdeaKotlinClasspathSerializer)
     register(documentationClasspathKey, IdeaKotlinClasspathSerializer)
     register(projectArtifactsClasspathKey, IdeaKotlinClasspathSerializer)
+    register(isOpaqueFileDependencyKey, IdeaKotlinBooleanExtrasSerializer)
 }

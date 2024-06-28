@@ -1,4 +1,5 @@
-// !LANGUAGE: +ProhibitSmartcastsOnLocalDelegatedProperty
+// FIR_IDENTICAL
+// LANGUAGE: +ProhibitSmartcastsOnLocalDelegatedProperty
 
 class AlternatingDelegate {
     var counter: Int = 0

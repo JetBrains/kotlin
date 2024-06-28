@@ -1,5 +1,17 @@
 // SKIP_TXT
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, when-expression -> paragraph 2 -> sentence 2
+ * NUMBER: 3
+ * DESCRIPTION: 'When' without bound value and with Nothing in condition (subtype of Boolean).
+ * DISCUSSION
+ * ISSUES: KT-25948
+ * HELPERS: typesProvider
+ */
+
 // TESTCASE NUMBER: 1
 fun case_1(value_1: TypesProvider) {
     when {

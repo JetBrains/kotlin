@@ -1,0 +1,81 @@
+// TARGET_BACKEND: JVM
+// WITH_REFLECT
+
+import kotlin.reflect.full.instanceParameter
+import kotlin.reflect.full.memberFunctions
+
+data class DataCopyBug(
+    val f01: Int = 0,
+    val f02: Int = 0,
+    val f03: Int = 0,
+    val f04: Int = 0,
+    val f05: Int = 0,
+    val f06: Int = 0,
+    val f07: Int = 0,
+    val f08: Int = 0,
+    val f09: Int = 0,
+    val f10: Int = 0,
+    val f11: Int = 0,
+    val f12: Int = 0,
+    val f13: Int = 0,
+    val f14: Int = 0,
+    val f15: Int = 0,
+    val f16: Int = 0,
+    val f17: Int = 0,
+    val f18: Int = 0,
+    val f19: Int = 0,
+    val f20: Int = 0,
+    val f21: Int = 0,
+    val f22: Int = 0,
+    val f23: Int = 0,
+    val f24: Int = 0,
+    val f25: Int = 0,
+    val f26: Int = 0,
+    val f27: Int = 0,
+    val f28: Int = 0,
+    val f29: Int = 0,
+    val f30: Int = 0,
+    val f31: Int = 0,
+    val f32: Int = 0,
+    val f33: Int = 0,
+    val f34: Int = 0,
+    val f35: Int = 0,
+    val f36: Int = 0,
+    val f37: Int = 0,
+    val f38: Int = 0,
+    val f39: Int = 0,
+    val f40: Int = 0,
+    val f41: Int = 0,
+    val f42: String = "Fail",
+    val f43: Int = 0,
+    val f44: Int = 0,
+    val f45: Int = 0,
+    val f46: Int = 0,
+    val f47: Int = 0,
+    val f48: Int = 0,
+    val f49: Int = 0,
+    val f50: Int = 0,
+    val f51: Int = 0,
+    val f52: Int = 0,
+    val f53: Int = 0,
+    val f54: Int = 0,
+    val f55: Int = 0,
+    val f56: Int = 0,
+    val f57: Int = 0,
+    val f58: Int = 0,
+    val f59: Int = 0,
+    val f60: Int = 0,
+    val f61: Int = 0,
+    val f62: Int = 0,
+    val f63: Int = 0,
+    val f64: Int = 0,
+)
+
+fun box(): String {
+    val copyFun = DataCopyBug::class.memberFunctions.single { it.name == "copy" }
+    val result = copyFun.callBy(mapOf(
+        copyFun.instanceParameter!! to DataCopyBug(),
+        copyFun.parameters.single { it.name == "f42" } to "OK",
+    ))
+    return (result as DataCopyBug).f42
+}

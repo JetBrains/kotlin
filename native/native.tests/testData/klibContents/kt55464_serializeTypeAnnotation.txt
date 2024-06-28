@@ -1,2 +1,0 @@
-    class C constructor()
-    fun C.builder(c: C.() -> Unit)

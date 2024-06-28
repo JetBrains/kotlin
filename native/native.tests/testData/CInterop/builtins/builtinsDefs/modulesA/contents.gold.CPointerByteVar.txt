@@ -1,12 +1,26 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    var A: Int
-        @CCall(id = "knifunptr_pod10_A_getter") get
-        @CCall(id = "knifunptr_pod11_A_setter") set
-    var A_va_list: __builtin_va_list? /* = CPointer<ByteVar /* = ByteVarOf<Byte> */>? */
-        @CCall(id = "knifunptr_pod12_A_va_list_getter") get
-        @CCall(id = "knifunptr_pod13_A_va_list_setter") set
-    typealias __builtin_va_list = CPointer<ByteVar /* = ByteVarOf<Byte> */>
-    typealias __builtin_va_listVar = CPointerVarOf<__builtin_va_list /* = CPointer<ByteVar /* = ByteVarOf<Byte> */> */>
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      public final var A: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_A_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_A_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var A_va_list: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>? /* = pod1/__builtin_va_list^? */
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_A_va_list_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_A_va_list_setter")
+        public final /* non-default */ external set(value: kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */>? /* = pod1/__builtin_va_list^? */)
+
+      public typealias __builtin_va_list = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVar^> /* = kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> */
+
+      public typealias __builtin_va_listVar = kotlinx/cinterop/CPointerVarOf<pod1/__builtin_va_list^> /* = kotlinx/cinterop/CPointerVarOf<kotlinx/cinterop/CPointer<kotlinx/cinterop/ByteVarOf<kotlin/Byte> /* = kotlinx/cinterop/ByteVar^ */> /* = pod1/__builtin_va_list^ */> */
+    }
+  }
 }
-

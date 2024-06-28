@@ -1,0 +1,48 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class IC {
+    // source: 'mfvcAndIcInsideConstructorsOfEachOther.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): IC
+    public static method constructor-impl(p0: int): int
+    public static method constructor-impl(p0: int, p1: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class MFVC {
+    // source: 'mfvcAndIcInsideConstructorsOfEachOther.kt'
+    private final field x: int
+    private final field y: int
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): MFVC
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(p0: int): MFVC
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    public final method getX(): int
+    public final method getY(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
+}
+
+@kotlin.Metadata
+public final class MfvcAndIcInsideConstructorsOfEachOtherKt {
+    // source: 'mfvcAndIcInsideConstructorsOfEachOther.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

@@ -15,39 +15,12 @@ import kotlin.native.internal.GCUnsafeCall
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 @PublishedApi
-internal inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
+internal actual inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     // TODO: special case for size == 0?
     require(size >= 0) { "capacity must be non-negative." }
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     return Array<E>(size)
 }
-
-/**
- * Copies elements of the [collection] into the given [array].
- * If the array is too small, allocates a new one of collection.size size.
- * @return [array] with the elements copied from the collection.
- */
-internal fun <E, T> collectionToArray(collection: Collection<E>, array: Array<T>): Array<T> {
-    val toArray = if (collection.size > array.size) {
-        arrayOfUninitializedElements<T>(collection.size)
-    } else {
-        array
-    }
-    var i = 0
-    for (v in collection) {
-        @Suppress("UNCHECKED_CAST")
-        toArray[i] = v as T
-        i++
-    }
-    return toArray
-}
-
-/**
- * Creates an array of collection.size size and copies elements of the [collection] into it.
- * @return [array] with the elements copied from the collection.
- */
-internal fun <E> collectionToArray(collection: Collection<E>): Array<E>
-        = collectionToArray(collection, arrayOfUninitializedElements(collection.size))
 
 
 /**
@@ -56,7 +29,7 @@ internal fun <E> collectionToArray(collection: Collection<E>): Array<E>
  * Attempts to read _uninitialized_ value work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <E> Array<E>.resetAt(index: Int) {
+internal actual fun <E> Array<E>.resetAt(index: Int) {
     (@Suppress("UNCHECKED_CAST")(this as Array<Any?>))[index] = null
 }
 
@@ -105,7 +78,7 @@ internal fun checkRangeIndexes(fromIndex: Int, toIndex: Int, size: Int) {
  * Attempts to read _uninitialized_ values work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
+internal actual fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     arrayFill(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex, toIndex, null)
 }
 
@@ -137,18 +110,3 @@ internal external fun arrayCopy(array: DoubleArray, fromIndex: Int, destination:
 @GCUnsafeCall("Kotlin_BooleanArray_copyImpl")
 internal external fun arrayCopy(array: BooleanArray, fromIndex: Int, destination: BooleanArray, toIndex: Int, count: Int)
 
-
-internal fun <E> Collection<E>.collectionToString(): String {
-    val sb = StringBuilder(2 + size * 3)
-    sb.append("[")
-    var i = 0
-    val it = iterator()
-    while (it.hasNext()) {
-        if (i > 0) sb.append(", ")
-        val next = it.next()
-        if (next == this) sb.append("(this Collection)") else sb.append(next)
-        i++
-    }
-    sb.append("]")
-    return sb.toString()
-}

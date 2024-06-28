@@ -1,5 +1,7 @@
 $TESTDATA_DIR$/simple2js.kt
 -kotlin-home
 non-existing-path
--output
-$TEMP_DIR$/out.js
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

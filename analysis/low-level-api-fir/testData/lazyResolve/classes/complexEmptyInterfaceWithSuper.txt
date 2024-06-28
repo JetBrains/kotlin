@@ -1,0 +1,450 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : MarkerInterface1, MarkerInterface2, MarkerInterface3 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface2 : InterfaceWithMembers1 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface3 : InterfaceWithMembers2 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers1 : AnotherSuperInterface {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(RAW_FIR)] interface EmptyInterface : MarkerInterface1, MarkerInterface2, MarkerInterface3 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface2 : InterfaceWithMembers1 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface3 : InterfaceWithMembers2 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers1 : AnotherSuperInterface {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface EmptyInterface : MarkerInterface1, MarkerInterface2, MarkerInterface3 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface2 : InterfaceWithMembers1 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface3 : InterfaceWithMembers2 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers1 : AnotherSuperInterface {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] interface EmptyInterface : MarkerInterface1, MarkerInterface2, MarkerInterface3 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface2 : InterfaceWithMembers1 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface MarkerInterface3 : InterfaceWithMembers2 {
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers1 : AnotherSuperInterface {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(SUPER_TYPES)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public final? [ResolvedTo(TYPES)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(STATUS)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(CONTRACTS)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(CONSTANT_EVALUATION)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=InterfaceWithMembers1] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] complexEmptyInterfaceWithSuper.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface EmptyInterface : R|MarkerInterface1|, R|MarkerInterface2|, R|MarkerInterface3| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface MarkerInterface1 : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface MarkerInterface2 : R|InterfaceWithMembers1| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface MarkerInterface3 : R|InterfaceWithMembers2| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithMembers1 : R|AnotherSuperInterface| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=InterfaceWithMembers1] get(): R|kotlin/Int|
+
+        public open [ResolvedTo(BODY_RESOLVE)] fun functionWithDefaultImplementation([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Int| {
+            ^functionWithDefaultImplementation R|<local>/i|
+        }
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface InterfaceWithMembers2 : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+    }

@@ -1,0 +1,19 @@
+MODULE main
+	CLASS DFoo.class
+		CLASS METADATA
+			K1
+				getTestExtVal(Ljava/lang/String;)Ljava/lang/String;
+			K2
+				---
+			K1
+				getTestVal()Ljava/lang/String;
+			K2
+				---
+			K1
+				---
+			K2
+				testExtVal
+			K1
+				---
+			K2
+				testVal

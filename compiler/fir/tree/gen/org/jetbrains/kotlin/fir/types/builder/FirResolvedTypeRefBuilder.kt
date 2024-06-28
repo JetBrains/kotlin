@@ -1,9 +1,12 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode")
+// This file was generated automatically. See compiler/fir/tree/tree-generator/Readme.md.
+// DO NOT MODIFY IT MANUALLY.
+
+@file:Suppress("DuplicatedCode", "unused")
 
 package org.jetbrains.kotlin.fir.types.builder
 
@@ -18,12 +21,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
-
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
- */
 
 @FirBuilderDsl
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
@@ -31,7 +28,6 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var type: ConeKotlinType
     var delegatedTypeRef: FirTypeRef? = null
-    var isFromStubType: Boolean = false
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirResolvedTypeRef {
@@ -40,7 +36,6 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
             annotations.toMutableOrEmpty(),
             type,
             delegatedTypeRef,
-            isFromStubType,
         )
     }
 
@@ -49,7 +44,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedTypeRef(init: FirResolvedTypeRefBuilder.() -> Unit): FirResolvedTypeRef {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedTypeRefBuilder().apply(init).build()
 }
@@ -57,13 +52,12 @@ inline fun buildResolvedTypeRef(init: FirResolvedTypeRefBuilder.() -> Unit): Fir
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedTypeRefCopy(original: FirResolvedTypeRef, init: FirResolvedTypeRefBuilder.() -> Unit): FirResolvedTypeRef {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     val copyBuilder = FirResolvedTypeRefBuilder()
     copyBuilder.source = original.source
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.type = original.type
     copyBuilder.delegatedTypeRef = original.delegatedTypeRef
-    copyBuilder.isFromStubType = original.isFromStubType
     return copyBuilder.apply(init).build()
 }

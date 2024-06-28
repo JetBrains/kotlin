@@ -9,15 +9,13 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
+import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getJsPrimitiveType
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
-import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
-import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCallConstructor
@@ -27,10 +25,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import java.lang.StringBuilder
 
 /**
  * Lower complex external declarations to top-level functions:
@@ -96,8 +95,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (klass.kind == ClassKind.OBJECT)
             generateExternalObjectInstanceGetter(klass)
 
-        if (klass.kind != ClassKind.INTERFACE)
+        if (klass.kind != ClassKind.INTERFACE) {
             generateInstanceCheckForExternalClass(klass)
+            generateGetClassForExternalClass(klass)
+        }
     }
 
     fun processExternalProperty(property: IrProperty) {
@@ -156,6 +157,27 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     private fun StringBuilder.appendExternalClassReference(klass: IrClass) {
         val parent = klass.parent
         if (parent is IrClass) {
+
+            // This is hack to support Kotlin/JS like implementation of IDL string enums bindings
+            // with error suppression:
+            //
+            //    @JsName("null")
+            //    @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+            //    public external interface CanvasFillRule {
+            //        companion object
+            //    }
+            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+            //
+            // Kotlin/JS translates access to CanvasFillRule.Companion as `null` due to @JsName("null"),
+            // but Kotlin/Wasm fails to do this due to stricter null checks on interop boundary.
+            //
+            // Instead, as a temporary solution, we evaluate such companion object to an empty JS object.
+            // TODO: Optimize (KT-60661)
+            if (parent.isInterface) {
+                append("({})")
+                return
+            }
+
             appendExternalClassReference(parent)
             if (klass.isCompanion) {
                 // Reference to external companion object is reference to its parent class
@@ -316,7 +338,14 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (dispatchReceiver != null) {
             res.addValueParameter("_this", dispatchReceiver.type)
         }
-        function.valueParameters.forEach { res.addValueParameter(it.name, it.type).apply { varargElementType = it.varargElementType } }
+        function.valueParameters.forEach {
+            res.addValueParameter(
+                name = it.name,
+                type = if (it.type.isPrimitiveType(false)) it.type else it.type.makeNullable()
+            ).apply {
+                varargElementType = it.varargElementType
+            }
+        }
         // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
         repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         externalFunToTopLevelMapping[function] = res
@@ -340,12 +369,29 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             "_\$external_class_instanceof",
             resultType = context.irBuiltIns.booleanType,
             jsCode = buildString {
-                append("(x) => x instanceof ")
-                appendExternalClassReference(klass)
+                val jsPrimitiveType = klass.getJsPrimitiveType()
+                if (jsPrimitiveType != null) {
+                    append("(x) => typeof x === '$jsPrimitiveType'")
+                } else {
+                    append("(x) => x instanceof ")
+                    appendExternalClassReference(klass)
+                }
             }
         ).also {
             it.addValueParameter("x", context.irBuiltIns.anyType)
         }
+    }
+
+    fun generateGetClassForExternalClass(klass: IrClass) {
+        context.mapping.wasmGetJsClass[klass] = createExternalJsFunction(
+            klass.name,
+            "_\$external_class_get",
+            resultType = context.wasmSymbols.jsRelatedSymbols.jsAnyType.makeNullable(),
+            jsCode = buildString {
+                append("() => ")
+                appendExternalClassReference(klass)
+            }
+        )
     }
 
     private fun createExternalJsFunction(
@@ -361,22 +407,21 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     private fun referenceTopLevelExternalDeclaration(declaration: IrDeclarationWithName): String {
-        var name = declaration.getJsNameOrKotlinName().identifier
+        var name: String? = declaration.getJsNameOrKotlinName().identifier
 
         val qualifier = currentFile.getJsQualifier()
 
         val module = currentFile.getJsModule()
             ?: declaration.getJsModule()?.also {
-                // JsModule on top level declarations imports "default"
-                name = "default"
+                name = if (declaration is IrClass && declaration.isObject) null else "default"
             }
 
         if (qualifier == null && module == null)
-            return name
+            return name!!
 
         val qualifieReference = JsModuleAndQualifierReference(module, qualifier)
         context.jsModuleAndQualifierReferences += qualifieReference
-        return qualifieReference.jsVariableName + "." + name
+        return qualifieReference.jsVariableName + name?.let { ".$it" }.orEmpty()
     }
 }
 
@@ -393,7 +438,7 @@ fun createExternalJsFunction(
         isExternal = true
     }
     val builder = context.createIrBuilder(res.symbol)
-    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
         it.putValueArgument(0, builder.irString(jsCode))
     }
     return res
@@ -427,7 +472,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
 
         private fun process(container: IrDeclarationContainer) {
             container.declarations.transformFlat { member ->
-                if (nestedExternalToNewTopLevelFunctions.keys.contains(member)) {
+                if (member is IrFunction && nestedExternalToNewTopLevelFunctions[member] != null) {
                     emptyList()
                 } else {
                     member.acceptVoid(this)
@@ -481,6 +526,18 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
                     IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
                 )
             }
+
+            // Add default argument values if needed
+            for (i in 0 until newFun.valueParameters.size) {
+                val parameter = newFun.valueParameters[i]
+                if (parameter.isVararg) continue // Handled with WasmVarargExpressionLowering
+                if (newCall.getValueArgument(i) != null) continue
+                newCall.putValueArgument(
+                    i,
+                    IrConstImpl.defaultValueForType(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                )
+            }
+
             return newCall
         }
     }

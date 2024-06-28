@@ -41,3 +41,24 @@ val isCommonizedKey = extrasKeyOf<Boolean>("isCommonized")
  * Marks dependencies produced by the commonizer
  */
 var IdeaKotlinBinaryDependency.isCommonized by isCommonizedKey.readWriteProperty.notNull(false)
+
+
+/**
+ * @see isOpaqueFileDependencyKey
+ */
+val isOpaqueFileDependencyKey = extrasKeyOf<Boolean>("isOpaqueFileDependencyKey")
+
+/**
+ * Marks a dependency as 'opaque' (meaning that we cannot really know about the actual binary coordiantes)
+ *
+ * Example: File dependencies are 'opaque'
+ * ```kotlin
+ *    kotlin {
+ *        sourceSets.jvmMain.dependencies {
+ *            implementation(files("libs/foo.jar")) // <- OPAQUE
+ *            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2") // <- NOT OPAQUE
+ *        }
+ *    }
+ * ```
+ */
+var IdeaKotlinBinaryDependency.isOpaqueFileDependency by isOpaqueFileDependencyKey.readWriteProperty.notNull(false)

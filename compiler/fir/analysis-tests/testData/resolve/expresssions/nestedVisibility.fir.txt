@@ -53,7 +53,7 @@ FILE: nestedVisibility.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            Q|Outer|.R|/Outer.PrivateNested.PrivateNested<HIDDEN: /Outer.PrivateNested.PrivateNested is invisible>#|()
+            Q|Outer|.R|/Outer.PrivateNested.PrivateNested<HIDDEN: Outer.PrivateNested is invisible>#|()
             this@R|/Derived|.super<R|Outer|>.R|/Outer.PrivateInner.PrivateInner<HIDDEN: /Outer.PrivateInner.PrivateInner is invisible>#|()
             Q|Outer|.R|/Outer.ProtectedNested.ProtectedNested|()
             this@R|/Derived|.super<R|Outer|>.R|/Outer.ProtectedInner.ProtectedInner|()
@@ -63,9 +63,9 @@ FILE: nestedVisibility.kt
 
     }
     public final fun foo(): R|kotlin/Unit| {
-        Q|Outer|.R|/Outer.PrivateNested.PrivateNested<HIDDEN: /Outer.PrivateNested.PrivateNested is invisible>#|()
+        Q|Outer|.R|/Outer.PrivateNested.PrivateNested<HIDDEN: Outer.PrivateNested is invisible>#|()
         R|/Outer.Outer|().R|/Outer.PrivateInner.PrivateInner<HIDDEN: /Outer.PrivateInner.PrivateInner is invisible>#|()
-        Q|Outer|.R|/Outer.ProtectedNested.ProtectedNested<HIDDEN: /Outer.ProtectedNested.ProtectedNested is invisible>#|()
+        Q|Outer|.R|/Outer.ProtectedNested.ProtectedNested<HIDDEN: Outer.ProtectedNested is invisible>#|()
         R|/Outer.Outer|().R|/Outer.ProtectedInner.ProtectedInner<HIDDEN: /Outer.ProtectedInner.ProtectedInner is invisible>#|()
         Q|Outer|.R|/Outer.PublicNested.PublicNested|()
         R|/Outer.Outer|().R|/Outer.PublicInner.PublicInner|()

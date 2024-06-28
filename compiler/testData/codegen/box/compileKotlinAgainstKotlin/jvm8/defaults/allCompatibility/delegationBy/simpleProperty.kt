@@ -1,26 +1,18 @@
-// !JVM_DEFAULT_MODE: all-compatibility
+// JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 
+// JVM_ABI_K1_K2_DIFF: KT-63828, KT-63871
+
 // MODULE: lib
 // FILE: 1.kt
 interface Test {
-    @JvmDefault
-    val test: String
-        get() = "O"
-
-    val testDelegated: String
-        get() = "fail"
-
+    val test: String get() = "Fail"
 }
 
 class Delegate : Test {
-    override val test: String
-        get() = "fail"
-
-    override val testDelegated: String
-        get() = "K"
+    override val test: String get() = "OK"
 }
 
 // MODULE: main(lib)
@@ -29,5 +21,5 @@ class TestClass(val foo: Test) : Test by foo
 
 fun box(): String {
     val testClass = TestClass(Delegate())
-    return testClass.test + testClass.testDelegated
+    return testClass.test
 }

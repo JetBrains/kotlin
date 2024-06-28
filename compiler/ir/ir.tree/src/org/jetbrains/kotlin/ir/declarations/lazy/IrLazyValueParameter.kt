@@ -37,8 +37,6 @@ class IrLazyValueParameter(
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrValueParameter(), IrLazyDeclarationBase {
-    override lateinit var parent: IrDeclarationParent
-
     override var defaultValue: IrExpressionBody? = null
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()

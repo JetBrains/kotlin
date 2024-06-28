@@ -8,10 +8,9 @@
 package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.util.enableCompatibilityMetadataVariant
-import org.jetbrains.kotlin.gradle.util.kotlin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +18,11 @@ class KT55730CommonMainDependsOnAnotherSourceSet {
     @Test
     fun `legacy metadata compilation should have commonMain with its depends on closure`() {
         val project = buildProject {
-            enableCompatibilityMetadataVariant()
+            propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT, "true")
+            propertiesExtension.set(
+                PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS,
+                KotlinToolingDiagnostics.PreHMPPFlagsError.id
+            )
             applyMultiplatformPlugin()
             kotlin {
                 val grandCommonMain = sourceSets.create("grandCommonMain")

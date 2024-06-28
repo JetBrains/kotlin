@@ -28,5 +28,3 @@ interface I2 {
     @Anno("S")
     fun bar() = "bar"
 }
-
-// FIR_COMPARISON

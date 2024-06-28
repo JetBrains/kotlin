@@ -1,14 +1,13 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:2:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
+compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:3:9: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
     fun `<get-x>`(): Int defined in Foo
     fun getX(): Int defined in Foo
     fun getY(): Int defined in Foo
-    val x: Int
-    ^
+        get() = 42
+        ^^^^^^^^^^
 compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
     fun `<get-x>`(): Int defined in Foo
     fun getX(): Int defined in Foo
     fun getY(): Int defined in Foo
     @JvmName("getX")
-    ^
+    ^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

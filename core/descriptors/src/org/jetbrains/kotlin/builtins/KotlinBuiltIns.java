@@ -354,6 +354,12 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByFqName(FqNames.kClass.toSafe());
     }
 
+
+    @NotNull
+    public ClassDescriptor getKType() {
+        return getBuiltInClassByFqName(FqNames.kType.toSafe());
+    }
+
     @NotNull
     public ClassDescriptor getKCallable() {
         return getBuiltInClassByFqName(FqNames.kCallable.toSafe());
@@ -948,6 +954,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isString(@Nullable KotlinType type) {
         return type != null && isNotNullConstructedFromGivenClass(type, FqNames.string);
+    }
+
+    public static boolean isUnsignedNumber(@Nullable KotlinType type) {
+        return type != null && (isUByte(type) || isUShort(type) || isUInt(type) || isULong(type));
     }
 
     public static boolean isCharSequenceOrNullableCharSequence(@Nullable KotlinType type) {

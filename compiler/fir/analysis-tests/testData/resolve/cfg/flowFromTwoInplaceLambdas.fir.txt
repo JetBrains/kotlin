@@ -83,8 +83,8 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ Int(123)
         }
         )
-        R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
-        R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
+        R|<local>/p|.<Unresolved name: length>#
+        R|<local>/p|?.{ $subj$.<Unresolved name: length># }
     }
     public abstract interface I1 : R|kotlin/Any| {
         public abstract val x: R|kotlin/Int|
@@ -110,8 +110,8 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ Int(123)
         }
         )
-        R|<local>/x|.R|/I1.x|
-        R|<local>/x|.R|/I2.y|
+        R|<local>/x|.<Unresolved name: x>#
+        R|<local>/x|.<Unresolved name: y>#
     }
     public final fun test5(x: R|kotlin/Any?|, q: R|kotlin/String?|): R|kotlin/Unit| {
         lvar p: R|kotlin/Any?| = R|<local>/x|
@@ -125,8 +125,8 @@ FILE: flowFromTwoInplaceLambdas.kt
             ^ R|/n|<R|kotlin/Int?|>()
         }
         )
-        R|<local>/p|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
-        R|<local>/p|?.{ $subj$.R|kotlin/String.length| }
+        R|<local>/p|.<Unresolved name: length>#
+        R|<local>/p|?.{ $subj$.<Unresolved name: length># }
     }
     public final fun test6(): R|kotlin/Unit| {
         lval x: R|kotlin/String|

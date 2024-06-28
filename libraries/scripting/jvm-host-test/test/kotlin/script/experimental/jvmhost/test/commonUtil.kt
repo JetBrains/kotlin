@@ -5,6 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import java.io.File
 import java.nio.file.Files
 
@@ -17,5 +18,17 @@ internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R) {
     } finally {
         tempDir.deleteRecursively()
     }
+}
+
+fun expectTestToFailOnK2(test: () -> Unit) {
+    val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
+    var testFailure: Throwable? = null
+    try {
+        test()
+    } catch (e: Throwable) {
+        testFailure = e
+    }
+    if (isK2 && testFailure == null) throw AssertionError("The test is expected to fail on K2")
+    else if (!isK2 && testFailure != null) throw testFailure
 }
 

@@ -69,8 +69,6 @@ public actual enum class RegexOption(override val value: Int, override val mask:
  *
  * @param value The value of captured group.
  * @param range The range of indices in the input string where group was captured.
- *
- * The [range] property is available on JVM only.
  */
 public actual data class MatchGroup(public actual val value: String, public val range: IntRange)
 
@@ -80,6 +78,7 @@ public actual data class MatchGroup(public actual val value: String, public val 
  *
  * For pattern syntax reference see [Pattern].
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual class Regex
 @PublishedApi
 internal constructor(private val nativePattern: Pattern) : Serializable {
@@ -314,7 +313,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
         private fun readResolve(): Any = Regex(Pattern.compile(pattern, flags))
     }
 
-    actual companion object {
+    public actual companion object {
         /**
          * Returns a regular expression that matches the specified [literal] string literally.
          * No characters of that string will have special meaning when searching for an occurrence of the regular expression.

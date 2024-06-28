@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/internalArgDisableLanguageFeature.kt
 -d
 $TEMP_DIR$
+-language-version
+1.9
 -XXLanguage\:-SealedInterfaces

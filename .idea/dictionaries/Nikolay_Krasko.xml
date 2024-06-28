@@ -2,6 +2,7 @@
   <dictionary name="Nikolay.Krasko">
     <words>
       <w>accessors</w>
+      <w>codeowners</w>
       <w>coroutines</w>
       <w>crossinline</w>
       <w>fqname</w>

@@ -1,0 +1,337 @@
+STATUS:
+TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(STATUS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>} then {F -> F}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|.resolveMe([ResolvedTo(STATUS)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| { LAZY_BLOCK }
+
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  T>>|.resolveMe([ResolvedTo(STATUS)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  T>>|): <implicit> { LAZY_BLOCK }
+
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>} then {F -> F}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| { LAZY_BLOCK }
+
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  T>>|.resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  T>>|): <implicit> { LAZY_BLOCK }
+
+        }
+
+
+CONTRACTS:
+TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(CONTRACTS)] [DeferredCallableCopyReturnTypeKey=DeferredReturnTypeOfSubstitution(substitutor={T -> @R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>} then {F -> F}, baseSymbol=FirNamedFunctionSymbol second/AbstractClass.resolveMe), SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|.resolveMe([ResolvedTo(CONTRACTS)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] fun explicitType(): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| { LAZY_BLOCK }
+
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  T>>|.resolveMe([ResolvedTo(CONTRACTS)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  T>>|): <implicit> { LAZY_BLOCK }
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| {
+                ^explicitType Null(null)
+            }
+
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol second/AbstractClass.explicitType]] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  T>>|.resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  T>>|): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| {
+                ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            }
+
+        }
+
+
+CONSTANT_EVALUATION:
+TARGET: @R|second/Anno|[Types](LAZY_EXPRESSION) public final override [ResolvedTo(CONSTANT_EVALUATION)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>|): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  @R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>>?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public abstract [ResolvedTo(STATUS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(<strcat>(String(type argument: ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested type argument: ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested type argument: ), constant#))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| {
+                ^explicitType Null(null)
+            }
+
+            @R|second/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol second/AbstractClass.explicitType]] fun <@R|second/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] F : R|@R|second/Anno|(<strcat>(String(bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested bound type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested bound type ), constant#))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](LAZY_EXPRESSION) R|@R|second/Anno|(<strcat>(String(receiver type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested receiver type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested receiver type ), constant#))  T>>|.resolveMe([ResolvedTo(CONSTANT_EVALUATION)] @R|second/Anno|[Types](LAZY_EXPRESSION) param: R|@R|second/Anno|(<strcat>(String(param type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested param type ), constant#))  kotlin/collections/Collection<@R|second/Anno|(<strcat>(String(nested nested param type ), constant#))  T>>|): R|@R|second/Anno|(<strcat>(String(explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested explicit type ), constant#))  kotlin/collections/List<@R|second/Anno|(<strcat>(String(nested nested explicit type ), constant#))  T>>?| {
+                ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            }
+
+        }
+
+
+ANNOTATION_ARGUMENTS:
+TARGET: @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public final override [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^explicitType Null(null)
+            }
+
+            @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  T>>|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  T>>|): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            }
+
+        }
+
+
+BODY_RESOLVE:
+TARGET: @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public final override [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|.resolveMe([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>?|
+
+FILE: [ResolvedTo(IMPORTS)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^explicitType Null(null)
+            }
+
+            @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  T>>|.resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  T>>|): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            }
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] implicitFunctionScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-implicitFunctionScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>|>()
+            }
+
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] class AbstractClass<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|second/AbstractClass<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^explicitType Null(null)
+            }
+
+            @R|second/Anno|[Types](position = <strcat>(String(function ), R|second/constant|)) public final [ResolvedTo(BODY_RESOLVE)] fun <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|second/Anno|(position = <strcat>(String(bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested bound type ), R|second/constant|))  kotlin/String>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) R|@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested receiver type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested receiver type ), R|second/constant|))  T>>|.resolveMe([ResolvedTo(BODY_RESOLVE)] @R|second/Anno|[Types](position = <strcat>(String(param ), R|second/constant|)) param: R|@R|second/Anno|(position = <strcat>(String(param type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested param type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested param type ), R|second/constant|))  T>>|): R|@R|second/Anno|(position = <strcat>(String(explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested explicit type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested explicit type ), R|second/constant|))  T>>?| {
+                ^resolveMe this@R|second/AbstractClass|.R|second/AbstractClass.explicitType|()
+            }
+
+        }
+

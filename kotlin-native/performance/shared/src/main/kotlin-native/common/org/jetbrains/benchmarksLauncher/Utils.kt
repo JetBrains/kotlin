@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2023 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 package org.jetbrains.benchmarksLauncher
 
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import platform.posix.*
 import kotlinx.cinterop.*
 
@@ -30,6 +31,7 @@ actual fun writeToFile(fileName: String, text: String) {
 }
 
 // Wrapper for assert funtion in stdlib
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 actual fun assert(value: Boolean) {
     kotlin.assert(value)
 }
@@ -39,6 +41,7 @@ actual inline fun measureNanoTime(block: () -> Unit): Long {
     return kotlin.system.measureNanoTime(block)
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 actual fun cleanup() {
     GC.collect()
 }

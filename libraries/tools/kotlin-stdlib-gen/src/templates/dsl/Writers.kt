@@ -105,6 +105,7 @@ fun List<MemberBuilder>.writeTo(file: File, targetedSource: TargetedSourceFile) 
             }
         }
         if (target.platform == Platform.Common) {
+            writer.appendLine("import kotlin.contracts.*")
             writer.appendLine("import kotlin.random.*")
         }
         if (sourceFile.packageName == "kotlin.collections") {

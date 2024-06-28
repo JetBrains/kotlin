@@ -1,0 +1,65 @@
+@kotlin.Metadata
+final class UncheckedCastTest$Box {
+    // source: 'UncheckedCastTest.kt'
+    private final field b: int
+    public method <init>(p0: int): void
+    public final method component1(): int
+    public synthetic static method copy$default(p0: UncheckedCastTest$Box, p1: int, p2: int, p3: java.lang.Object): UncheckedCastTest$Box
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int): UncheckedCastTest$Box
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getB(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    private final inner class UncheckedCastTest$Box
+}
+
+@kotlin.Metadata
+synthetic final class UncheckedCastTest$VolatileWrapper$atomicfu$private {
+    // source: 'UncheckedCastTest.kt'
+    private synthetic final static field topLevelS$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field topLevelS$volatile: java.lang.Object
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$getTopLevelS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final static method getTopLevelS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getTopLevelS$volatile(): java.lang.Object
+    private synthetic final method setTopLevelS$volatile(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class UncheckedCastTest {
+    // source: 'UncheckedCastTest.kt'
+    private synthetic final field a: java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final static field bs$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field bs$volatile: java.lang.Object
+    private synthetic final static field s$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field s$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final method getA(): java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final static method getBs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getBs$volatile(): java.lang.Object
+    private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method getS$volatile(): java.lang.Object
+    private synthetic final method getString$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): java.lang.String
+    private synthetic final method getString$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater): java.lang.String
+    private synthetic final method setBs$volatile(p0: java.lang.Object): void
+    private synthetic final method setS$volatile(p0: java.lang.Object): void
+    public final method testArrayValueUncheckedCast(): void
+    public final method testArrayValueUncheckedCastInlineFunc(): void
+    public final method testAtomicValUncheckedCast(): void
+    public final method testInlineFunc(): void
+    public final method testTopLevelValUnchekedCast(): void
+    private final inner class UncheckedCastTest$Box
+}
+
+@kotlin.Metadata
+public final class UncheckedCastTestKt {
+    // source: 'UncheckedCastTest.kt'
+    private synthetic final static field uncheckedCastTest$VolatileWrapper$atomicfu$private: UncheckedCastTest$VolatileWrapper$atomicfu$private
+    static method <clinit>(): void
+    public synthetic final static method access$getUncheckedCastTest$VolatileWrapper$atomicfu$private(): UncheckedCastTest$VolatileWrapper$atomicfu$private
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getUncheckedCastTest$VolatileWrapper$atomicfu$private(): UncheckedCastTest$VolatileWrapper$atomicfu$private
+}

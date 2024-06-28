@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.name
 
+import org.jetbrains.kotlin.builtins.StandardNames
+
 object StandardClassIds {
     val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
@@ -12,12 +14,22 @@ object StandardClassIds {
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
+    val BASE_JVM_FUNCTIONS_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("functions"))
     val BASE_ANNOTATION_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotation"))
     val BASE_INTERNAL_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("internal"))
     val BASE_INTERNAL_IR_PACKAGE = BASE_INTERNAL_PACKAGE.child(Name.identifier("ir"))
     val BASE_COROUTINES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("coroutines"))
     val BASE_ENUMS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("enums"))
     val BASE_CONTRACTS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("contracts"))
+    val BASE_CONCURRENT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent"))
+    val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
+
+    val builtInsPackagesWithDefaultNamedImport = setOf(
+        BASE_KOTLIN_PACKAGE,
+        BASE_COLLECTIONS_PACKAGE,
+        BASE_RANGES_PACKAGE,
+        BASE_ANNOTATION_PACKAGE,
+    )
 
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
@@ -67,6 +79,7 @@ object StandardClassIds {
     val KFunction = "KFunction".reflectId()
     val KClass = "KClass".reflectId()
     val KCallable = "KCallable".reflectId()
+    val KType = "KType".reflectId()
 
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()
@@ -77,6 +90,7 @@ object StandardClassIds {
     fun reflectByName(name: String) = name.reflectId()
 
     val primitiveTypes = setOf(Boolean, Char, Byte, Short, Int, Long, Float, Double)
+    val signedIntegerTypes = setOf(Byte, Short, Int, Long)
 
     val primitiveArrayTypeByElementType = primitiveTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()
@@ -149,26 +163,31 @@ object StandardClassIds {
         val ContextFunctionTypeParams = "ContextFunctionTypeParams".baseId()
         val Deprecated = "Deprecated".baseId()
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
+        val RequireKotlin = "RequireKotlin".internalId()
+
+        val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
+        val ExposedCopyVisibility = "ExposedCopyVisibility".baseId()
 
         val HidesMembers = "HidesMembers".internalId()
         val DynamicExtension = "DynamicExtension".internalId()
+        val IntrinsicConstEvaluation = "IntrinsicConstEvaluation".internalId()
 
         val Retention = "Retention".annotationId()
         val Target = "Target".annotationId()
         val Repeatable = "Repeatable".annotationId()
         val MustBeDocumented = "MustBeDocumented".annotationId()
 
-        val JvmStatic = "JvmStatic".jvmId()
-        val JvmName = "JvmName".jvmId()
-        val JvmField = "JvmField".jvmId()
-        val JvmDefault = "JvmDefault".jvmId()
-        val JvmRepeatable = "JvmRepeatable".jvmId()
-        val JvmRecord = "JvmRecord".jvmId()
-        val Throws = "Throws".jvmId()
+        val Volatile = "Volatile".concurrentId()
+
+        val Test = "Test".testId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
+        val FlexibleMutability = "FlexibleMutability".internalIrId()
+        val FlexibleArrayElementVariance = "FlexibleArrayElementVariance".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
+
+        val FunctionN = "FunctionN".jvmFunctionsId()
 
         val InlineOnly = "InlineOnly".internalId()
 
@@ -180,22 +199,23 @@ object StandardClassIds {
 
         val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
-        object Java {
-            val Deprecated = "Deprecated".javaLangId()
-            val Repeatable = "Repeatable".javaAnnotationId()
-            val Retention = "Retention".javaAnnotationId()
-            val Documented = "Documented".javaAnnotationId()
-            val Target = "Target".javaAnnotationId()
-            val ElementType = "ElementType".javaAnnotationId()
-            val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
-        }
+        val OptionalExpectation = "OptionalExpectation".baseId()
+        val ImplicitlyActualizedByJvmDeclaration = "ImplicitlyActualizedByJvmDeclaration".jvmId()
+
+        val jvmStatic = "JvmStatic".jvmId()
+
+        val AssociatedObjectKey = "AssociatedObjectKey".reflectId()
+        val ExperimentalAssociatedObjects = "ExperimentalAssociatedObjects".reflectId()
+
+        val associatedObjectAnnotations = hashSetOf(AssociatedObjectKey, ExperimentalAssociatedObjects)
+
+        val ActualizeByJvmBuiltinProvider = "ActualizeByJvmBuiltinProvider".internalId()
 
         object ParameterNames {
             val value = Name.identifier("value")
 
             val retentionValue = value
             val targetAllowedTargets = Name.identifier("allowedTargets")
-            val jvmNameName = Name.identifier("name")
 
             val sinceKotlinVersion = Name.identifier("version")
 
@@ -206,7 +226,9 @@ object StandardClassIds {
             val deprecatedSinceKotlinErrorSince = Name.identifier("errorSince")
             val deprecatedSinceKotlinHiddenSince = Name.identifier("hiddenSince")
 
-            val parameterNameName = jvmNameName
+            val suppressNames = Name.identifier("names")
+
+            val parameterNameName = StandardNames.NAME
         }
     }
 
@@ -219,10 +241,6 @@ object StandardClassIds {
         val not = "not".callableId(Boolean)
 
         val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
-    }
-
-    object Java {
-        val Record = "Record".javaLangId()
     }
 
     object Collections {
@@ -240,6 +258,8 @@ object StandardClassIds {
         val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
             baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
+
+    val allBuiltinTypes = primitiveTypes + unsignedTypes + this.String + this.Unit + this.Any + this.Enum
 }
 
 private fun String.baseId() = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier(this))
@@ -251,18 +271,16 @@ private fun String.rangesId() = ClassId(StandardClassIds.BASE_RANGES_PACKAGE, Na
 private fun String.annotationId() = ClassId(StandardClassIds.BASE_ANNOTATION_PACKAGE, Name.identifier(this))
 private fun String.jvmId() = ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier(this))
 private fun String.jvmInternalId() = ClassId(StandardClassIds.BASE_JVM_INTERNAL_PACKAGE, Name.identifier(this))
+private fun String.jvmFunctionsId() = ClassId(StandardClassIds.BASE_JVM_FUNCTIONS_PACKAGE, Name.identifier(this))
 private fun String.internalId() = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier(this))
 private fun String.internalIrId() = ClassId(StandardClassIds.BASE_INTERNAL_IR_PACKAGE, Name.identifier(this))
 private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PACKAGE, Name.identifier(this))
 private fun String.enumsId() = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier(this))
+private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
+
+private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
 private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))
-
-private val JAVA_LANG_PACKAGE = FqName("java.lang")
-private val JAVA_LANG_ANNOTATION_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("annotation"))
-
-private fun String.javaLangId() = ClassId(JAVA_LANG_PACKAGE, Name.identifier(this))
-private fun String.javaAnnotationId() = ClassId(JAVA_LANG_ANNOTATION_PACKAGE, Name.identifier(this))
 
 private fun <K, V> Map<K, V>.inverseMap(): Map<V, K> = entries.associate { (k, v) -> v to k }

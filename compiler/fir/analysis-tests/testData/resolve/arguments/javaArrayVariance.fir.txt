@@ -4,7 +4,7 @@ FILE: main.kt
     public final fun takeOutA(array: R|kotlin/Array<out A>|): R|kotlin/Unit| {
     }
     public final fun test(array: R|kotlin/Array<B>|): R|kotlin/Unit| {
-        Q|A|.R|/A.take|(R|<local>/array|)
+        Q|A|.R|/A.take*s|(R|<local>/array|)
         R|/takeA<Inapplicable(INAPPLICABLE): /takeA>#|(R|<local>/array|)
         R|/takeOutA|(R|<local>/array|)
     }

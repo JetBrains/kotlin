@@ -1,0 +1,38 @@
+Module: common
+/common.kt:8:1: error: Conflicting overloads:
+fun foo(): Int
+
+/common.kt:8:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
+    fun foo(): kotlin.Int defined in root package
+    fun foo(): kotlin.String defined in root package
+
+/common.kt:11:1: error: Conflicting overloads:
+fun bar(x: B): Int
+
+/common.kt:11:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
+    fun bar(x: B): kotlin.Int defined in root package
+    fun bar(x: B): kotlin.Int defined in root package
+
+/common.kt:13:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/common.kt:13:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
+    fun `<get-param>`(): kotlin.Int defined in root package
+    fun `<get-param>`(): kotlin.Int defined in root package
+Module: platform
+/platform.kt:18:1: error: Platform declaration clash: The following functions have the same IR signature (/foo|foo(){}[0]):
+    fun foo(): kotlin.Int defined in root package
+    fun foo(): kotlin.String defined in root package
+
+/platform.kt:22:1: error: Platform declaration clash: The following functions have the same IR signature (/bar|bar(B){}[0]):
+    fun bar(x: B): kotlin.Int defined in root package
+    fun bar(x: B): kotlin.Int defined in root package
+
+/platform.kt:24:1: error: Platform declaration clash: The following properties have the same IR signature (/param|{}param[0]):
+    val param: kotlin.Int defined in root package
+    val param: kotlin.Int defined in root package
+
+/platform.kt:24:1: error: Platform declaration clash: The following functions have the same IR signature (/param.<get-param>|<get-param>(){}[0]):
+    fun `<get-param>`(): kotlin.Int defined in root package
+    fun `<get-param>`(): kotlin.Int defined in root package

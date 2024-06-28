@@ -1,4 +1,4 @@
-// !LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
+// LANGUAGE: +ReadDeserializedContracts +UseCallsInPlaceEffect
 // See also KT-5198 / KT-10186
 
 inline fun doCall(f: () -> Unit) = f()

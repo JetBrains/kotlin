@@ -1,7 +1,7 @@
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode +ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated
-// !DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
+// DIAGNOSTICS: -UNUSED_PARAMETER -CAST_NEVER_SUCCEEDS
 // SKIP_TXT
 // MUTE_FOR_PSI_CLASS_FILES_READING
+// ^ KT-68389
 
 // FILE: ValueParameter.java
 
@@ -31,32 +31,32 @@ fun getArrayOfNullableString() = null as Array<String?>
 fun <K: Any> getArrayOfNotNullK() = null as Array<K>
 fun <K> getArrayOfNullableK() = null as Array<K?>
 
-fun <R> main(a: ValueParameter<R>) {
-    a.foo1(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo1(getNullableStringAndKNullable())
-    a.foo1(<!TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo1(<!TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+fun <R> main(vp: ValueParameter<R>) {
+    vp.foo1(<!TYPE_MISMATCH("ValueParameter.A<String?, R?>!; ValueParameter.A<String, ???>")!>getNotNullStringAndKNullable()<!>)
+    vp.foo1(getNullableStringAndKNullable())
+    vp.foo1(<!TYPE_MISMATCH("ValueParameter.A<String?, R?>!; ValueParameter.A<String, ???>")!>getNotNullStringAndNotNullK()<!>)
+    vp.foo1(<!TYPE_MISMATCH("Any; R?")!>getNullableStringAndNotNullK()<!>)
 
-    a.foo2(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo2(<!TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo2(<!TYPE_MISMATCH!>getNotNullStringAndNotNullK()<!>)
-    a.foo2(getNullableStringAndNotNullK())
+    vp.foo2(<!TYPE_MISMATCH("ValueParameter.A<String?, R & Any>!; ValueParameter.A<String, ???>")!>getNotNullStringAndKNullable()<!>)
+    vp.foo2(<!TYPE_MISMATCH("ValueParameter.A<String?, R & Any>!; ValueParameter.A<String?, R?>")!>getNullableStringAndKNullable()<!>)
+    vp.foo2(<!TYPE_MISMATCH("ValueParameter.A<String?, R & Any>!; ValueParameter.A<String, ???>")!>getNotNullStringAndNotNullK()<!>)
+    vp.foo2(getNullableStringAndNotNullK())
 
-    a.foo3(<!TYPE_MISMATCH!>getNotNullStringAndKNullable()<!>)
-    a.foo3(<!TYPE_MISMATCH!>getNullableStringAndKNullable()<!>)
-    a.foo3(getNotNullStringAndNotNullK())
-    a.foo3(<!TYPE_MISMATCH!>getNullableStringAndNotNullK()<!>)
+    vp.foo3(<!TYPE_MISMATCH("ValueParameter.A<String, R & Any>!; ValueParameter.A<String, R?>")!>getNotNullStringAndKNullable()<!>)
+    vp.foo3(<!TYPE_MISMATCH("ValueParameter.A<String, R & Any>!; ValueParameter.A<String?, ???>")!>getNullableStringAndKNullable()<!>)
+    vp.foo3(getNotNullStringAndNotNullK())
+    vp.foo3(<!TYPE_MISMATCH("ValueParameter.A<String, R & Any>!; ValueParameter.A<String?, ???>")!>getNullableStringAndNotNullK()<!>)
 
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNotNullString()<!>)
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNullableString()<!>)
-    a.foo4(getArrayOfNotNullK())
-    a.foo4(<!TYPE_MISMATCH!>getArrayOfNullableK()<!>)
+    vp.foo4(<!TYPE_MISMATCH("Array<(out) R & Any>!; Array<String>")!>getArrayOfNotNullString()<!>)
+    vp.foo4(<!TYPE_MISMATCH("Array<(out) R & Any>!; Array<String?>")!>getArrayOfNullableString()<!>)
+    vp.foo4(getArrayOfNotNullK())
+    vp.foo4(<!TYPE_MISMATCH("Array<(out) R & Any>!; Array<R?>")!>getArrayOfNullableK()<!>)
 
-    a.foo5(getArrayOfNotNullString())
-    a.foo5(getArrayOfNullableString())
-    a.foo5(getArrayOfNotNullK())
-    a.foo5(getArrayOfNullableK())
+    vp.foo5(getArrayOfNotNullString())
+    vp.foo5(getArrayOfNullableString())
+    vp.foo5(getArrayOfNotNullK())
+    vp.foo5(getArrayOfNullableK())
 
-    a.foo41(getNotNullString())
-    a.foo411(<!TYPE_MISMATCH!>getNotNullString()<!>)
+    vp.foo41(getNotNullString())
+    vp.foo411(<!TYPE_MISMATCH("R!; String")!>getNotNullString()<!>)
 }

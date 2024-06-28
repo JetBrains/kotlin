@@ -1,0 +1,48 @@
+// CHECK:
+//   Mangled name: In
+//   Public signature: /In|null[0]
+class In<in I : Any?> {
+  // CHECK:
+  //   Mangled name: In#<init>(){}
+  //   Public signature: /In.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>;kotlin.Array<In<0:0>>){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /foo|-198761928253014648[0]
+//   Public signature debug description: foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>;kotlin.Array<In<0:0>>){0§<kotlin.Any?>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>;kotlin.Array<In<0:0>>){0§<kotlin.Any?>}
+//   Public signature: /foo|-2320221976933961665[0]
+//   Public signature debug description: foo(kotlin.Array<In<0:0>>;kotlin.Array<In<kotlin.String>>;kotlin.Array<In<0:0>>){0§<kotlin.Any?>}
+fun <T : Any?> foo(a: Array<In<(T & Any)>>, b: Array<In<String>>, c: Array<In<T>>): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}kotlin.Boolean
+//   Public signature: /ofType|2383203766625380016[0]
+//   Public signature debug description: ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}kotlin.Boolean
+// CHECK JS_IR NATIVE:
+//   Mangled name: #ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}
+//   Public signature: /ofType|-4707862451809276934[0]
+//   Public signature debug description: ofType@In<0:0>(kotlin.Any?){0§<kotlin.Any?>}
+inline fun <reified K : Any?> In<K>.ofType(y: Any?): Boolean
+
+// CHECK JVM_IR:
+//   Mangled name: #select(0:0;0:0;0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /select|-2119556969989927038[0]
+//   Public signature debug description: select(0:0;0:0;0:0){0§<kotlin.Any?>}0:0
+// CHECK JS_IR NATIVE:
+//   Mangled name: #select(0:0;0:0;0:0){0§<kotlin.Any?>}
+//   Public signature: /select|-3805572863006559463[0]
+//   Public signature debug description: select(0:0;0:0;0:0){0§<kotlin.Any?>}
+fun <S : Any?> select(x: S, y: S, z: S): S
+
+// CHECK:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+

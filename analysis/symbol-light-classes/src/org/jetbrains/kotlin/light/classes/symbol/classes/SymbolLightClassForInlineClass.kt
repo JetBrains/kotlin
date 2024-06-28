@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,26 +7,27 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject {
     constructor(
         classOrObject: KtClassOrObject,
-        ktModule: KtModule,
+        ktModule: KaModule,
     ) : this(
         classOrObjectDeclaration = classOrObject,
-        classOrObjectSymbolPointer = classOrObject.symbolPointerOfType(),
+        classSymbolPointer = classOrObject.symbolPointerOfType(),
         ktModule = ktModule,
         manager = classOrObject.manager,
     ) {
@@ -35,24 +36,24 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
-        classOrObjectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
-        ktModule: KtModule,
+        classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
+        ktModule: KaModule,
         manager: PsiManager,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classOrObjectSymbolPointer = classOrObjectSymbolPointer,
+        classSymbolPointer = classSymbolPointer,
         ktModule = ktModule,
         manager = manager,
     )
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassSymbol { classSymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = classOrObjectSymbol.getDeclaredMemberScope()
-            val applicableDeclarations = declaredMemberScope.getCallableSymbols()
+            val declaredMemberScope = classSymbol.declaredMemberScope
+            val applicableDeclarations = declaredMemberScope.callables
                 .filter {
-                    (it as? KtPropertySymbol)?.isOverride == true || (it as? KtFunctionSymbol)?.isOverride == true
+                    (it as? KaPropertySymbol)?.isOverride == true || (it as? KaNamedFunctionSymbol)?.isOverride == true
                 }
                 .filterNot {
                     it.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN
@@ -60,14 +61,14 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
 
             createMethods(applicableDeclarations, result, suppressStatic = false)
 
-            val inlineClassParameterSymbol = declaredMemberScope.getConstructors()
+            val inlineClassParameterSymbol = declaredMemberScope.constructors
                 .singleOrNull { it.isPrimary }
                 ?.valueParameters
                 ?.singleOrNull()
 
             if (inlineClassParameterSymbol != null) {
-                val propertySymbol = declaredMemberScope.getCallableSymbols { it == inlineClassParameterSymbol.name }
-                    .singleOrNull { it is KtPropertySymbol && it.isFromPrimaryConstructor } as? KtPropertySymbol
+                val propertySymbol = declaredMemberScope.callables(inlineClassParameterSymbol.name)
+                    .singleOrNull { it is KaPropertySymbol && it.isFromPrimaryConstructor } as? KaPropertySymbol
 
                 if (propertySymbol != null) {
                     // (inline or) value class primary constructor must have only final read-only (val) property parameter
@@ -83,13 +84,13 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
     }
 
     override fun getOwnFields(): List<KtLightField> = cachedValue {
-        withClassOrObjectSymbol { classOrObjectSymbol ->
+        withClassSymbol { classSymbol ->
             mutableListOf<KtLightField>().apply {
-                addPropertyBackingFields(this, classOrObjectSymbol)
+                addPropertyBackingFields(this, classSymbol, SymbolLightField.FieldNameGenerator())
             }
         }
     }
 
     override fun copy(): SymbolLightClassForInlineClass =
-        SymbolLightClassForInlineClass(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
+        SymbolLightClassForInlineClass(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
 }

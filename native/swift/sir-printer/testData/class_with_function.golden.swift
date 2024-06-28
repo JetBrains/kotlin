@@ -1,0 +1,21 @@
+public class Foo {
+    public func foo(
+        arg1: Swift.Bool,
+        arg2: Swift.Int8,
+        arg3: Swift.Int16,
+        arg4: Swift.Int32,
+        arg5: Swift.Int64,
+        arg6: Swift.Double,
+        arg7: Swift.Float
+    ) -> Swift.Bool {
+        stub()
+    }
+    public func bar(
+        arg1: Swift.UInt8,
+        arg2: Swift.UInt16,
+        arg3: Swift.UInt32,
+        arg4: Swift.UInt64
+    ) -> Swift.Bool {
+        stub()
+    }
+}

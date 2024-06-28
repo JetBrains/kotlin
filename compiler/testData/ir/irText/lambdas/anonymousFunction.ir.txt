@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN LOCAL_FUNCTION name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+              CALL 'public final fun println (): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>
       correspondingProperty: PROPERTY name:anonymous visibility:public modality:FINAL [val]
       BLOCK_BODY

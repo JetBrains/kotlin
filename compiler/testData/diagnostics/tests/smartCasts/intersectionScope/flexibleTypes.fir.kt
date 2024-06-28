@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 // FILE: A.java
 public interface A {
     String foo();

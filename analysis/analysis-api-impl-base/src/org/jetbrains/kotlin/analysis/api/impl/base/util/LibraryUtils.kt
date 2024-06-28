@@ -6,17 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.io.URLUtil
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
-import java.nio.file.Files
 import java.nio.file.Path
-import java.util.Properties
+import java.nio.file.Paths
 
 object LibraryUtils {
     /**
@@ -38,7 +37,7 @@ object LibraryUtils {
             ?.let { getAllVirtualFilesFromRoot(it, includeRoot) } ?: emptySet()
     }
 
-    fun getAllPsiFilesFromTheJar(
+    fun getAllPsiFilesFromJar(
         jar: Path,
         project: Project,
         jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
@@ -87,45 +86,10 @@ object LibraryUtils {
         return files
     }
 
-    // Copied (and adjusted) from JavaSdkImpl#readModulesFromReleaseFile
-    private fun readModulesFromReleaseFile(jrtBaseDir: Path): List<String?>? {
-        Files.newInputStream(jrtBaseDir.resolve("release")).use { stream ->
-            val p = Properties()
-            p.load(stream)
-            val modules = p.getProperty("MODULES")
-            if (modules != null) {
-                return StringUtil.split(StringUtil.unquoteString(modules), " ")
-            }
+    fun findClassesFromJdkHome(jdkHome: Path, isJre: Boolean): List<Path> {
+        return JdkClassFinder.findClasses(jdkHome, isJre).map { rawPath ->
+            val path = URLUtil.extractPath(rawPath).removeSuffix("/").removeSuffix("!")
+            Paths.get(path)
         }
-        return null
-    }
-
-    // Copied from JdkUtil#isModularRuntime
-    private fun isModularRuntime(homePath: Path): Boolean {
-        return Files.isRegularFile(homePath.resolve("lib/jrt-fs.jar")) || isExplodedModularRuntime(homePath)
-    }
-
-    // Copied from JdkUtil#isExplodedModularRuntime
-    private fun isExplodedModularRuntime(homePath: Path): Boolean {
-        return Files.isDirectory(homePath.resolve("modules/java.base"))
-    }
-
-    // Copied (and adjusted) from JavaSdkImpl#findClasses
-    // Currently, handle modular runtime only
-    fun findClassesFromJdkHome(jdkHome: Path): List<String> {
-        val result = mutableListOf<String>()
-
-        if (isModularRuntime(jdkHome)) {
-            val jrtBaseUrl: String = StandardFileSystems.JRT_PROTOCOL_PREFIX + jdkHome.toString() + JAR_SEPARATOR
-            val modules = readModulesFromReleaseFile(jdkHome)
-            if (modules != null) {
-                for (module in modules) {
-                    result.add(jrtBaseUrl + module)
-                }
-            }
-        }
-
-        result.sort()
-        return result
     }
 }

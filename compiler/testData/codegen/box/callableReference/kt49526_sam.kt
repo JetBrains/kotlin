@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 
 // JVM_IR it this case has an approximated type 'KFun<out Any>', which has a projected top-level argument.
 

@@ -18,3 +18,22 @@ FILE: longElvisChain.kt
         ) } ?: ^test_2 Unit
         throw R|<local>/a|
     }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval a: R|kotlin/Throwable?| = Null(null)
+        lval b: R|kotlin/Unit?| = Null(null)
+        lval c: R|kotlin/Throwable| = R|<local>/b|?.{ $subj$.R|kotlin/let|<R|kotlin/Unit|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Unit|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^test_3 R|<local>/it|
+        }
+        ) } ?: R|<local>/a| ?: ^test_3 Unit
+        R|<local>/c|!!
+        throw R|<local>/a|
+    }
+    public final fun test_4(): R|kotlin/Unit| {
+        lval a: R|kotlin/Throwable?| = Null(null)
+        lval b: R|kotlin/Unit?| = Null(null)
+        lval c: R|kotlin/Throwable| = R|<local>/b|?.{ $subj$.R|kotlin/let|<R|kotlin/Unit|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|kotlin/Unit|): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^test_4 R|<local>/it|
+        }
+        ) } ?: R|<local>/a| ?: ^test_4 Unit
+        throw R|<local>/a|
+    }

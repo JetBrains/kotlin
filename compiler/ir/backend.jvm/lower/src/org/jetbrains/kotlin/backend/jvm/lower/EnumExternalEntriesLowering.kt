@@ -8,30 +8,29 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
+import org.jetbrains.kotlin.backend.jvm.ir.isEnumClassWhichRequiresExternalEntries
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-
-internal val enumExternalEntriesPhase = makeIrFilePhase(
-    ::EnumExternalEntriesLowering,
-    name = "EnumExternalEntries",
-    description = "Replaces '.entries' on Java and pre-compiled Kotlin enums with access to entries in generated \$EntriesMapping "
-)
 
 /**
  * When this lowering encounters call to `Enum.entries` where `Enum` is either Java enum or enum pre-compiled
@@ -56,11 +55,17 @@ internal val enumExternalEntriesPhase = makeIrFilePhase(
  * // F.kt
  * FKt$EntriesMappings.entries$1
  * ```
+ *
+ * There's similar code which handles the `enumEntries<Enum>()` intrinsic code generation in `EnumEntriesIntrinsicMappingsCacheImpl`.
  */
-class EnumExternalEntriesLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-
+@PhaseDescription(
+    name = "EnumExternalEntries",
+    description = "Replaces '.entries' on Java and pre-compiled Kotlin enums with access to entries in generated \$EntriesMapping "
+)
+internal class EnumExternalEntriesLowering(private val context: JvmBackendContext) :
+    FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) {
-        if (!context.state.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+        if (!context.config.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
             return
         }
         irFile.transformChildrenVoid(this)
@@ -93,26 +98,12 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val owner = expression.symbol.owner as? IrSimpleFunction
-        val parentClass = owner?.parent as? IrClass ?: return super.visitCall(expression)
-        /*
-         * Candidates for lowering:
-         * * Java enums
-         * * Kotlin enums that have no 'getEntries' function (thus compiled with pre-1.8 LV/AV)
-         */
-        val shouldBeLowered = parentClass.isEnumClass &&
-                owner.name == SpecialNames.ENUM_GET_ENTRIES &&
-                (parentClass.isFromJava() || !parentClass.hasEnumEntriesFunction())
+        val owner = expression.symbol.owner
+        val parentClass = owner.parent as? IrClass ?: return super.visitCall(expression)
+        val shouldBeLowered = owner.name == SpecialNames.ENUM_GET_ENTRIES && parentClass.isEnumClassWhichRequiresExternalEntries()
         if (!shouldBeLowered) return super.visitCall(expression)
         val field = state!!.getEntriesFieldForEnum(parentClass)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type)
-    }
-
-    private fun IrClass.hasEnumEntriesFunction() = functions.any {
-        it.name.toString() == "<get-entries>"
-                && it.dispatchReceiverParameter == null
-                && it.extensionReceiverParameter == null
-                && it.valueParameters.isEmpty()
     }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
@@ -123,9 +114,14 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
 
         for ((enum, field) in mappingState.mappings) {
             val enumValues = enum.findEnumValuesFunction(context)
-            val enumArrayType = field.type
-            val builder = context.createIrBuilder(field.symbol)
-            field.initializer = builder.irCreateEnumEntriesIndy(enumValues, enumArrayType, context)
+            field.initializer =
+                context.createIrBuilder(field.symbol).run {
+                    irExprBody(
+                        irCall(this@EnumExternalEntriesLowering.context.ir.symbols.createEnumEntries).apply {
+                            putValueArgument(0, irCall(enumValues))
+                        }
+                    )
+                }
         }
 
         if (mappingState.mappings.isNotEmpty()) {

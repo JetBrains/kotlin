@@ -20,7 +20,7 @@ enum class OwnerKind {
         fun getMemberOwnerKind(descriptor: DeclarationDescriptor): OwnerKind = when (descriptor) {
             is PackageFragmentDescriptor -> PACKAGE
             is ClassDescriptor -> IMPLEMENTATION
-            else -> throw AssertionError("Unexpected declaration container: $this")
+            else -> throw AssertionError("Unexpected declaration container: $descriptor")
         }
     }
 }

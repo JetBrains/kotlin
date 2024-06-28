@@ -1,0 +1,27 @@
+KT element: KtWhenExpression
+FIR element: FirWhenExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+when (R|<local>/x|) {
+    ($subj$ is R|kotlin/String|) ->  {
+        String(1)
+    }
+    else ->  {
+        String(2)
+    }
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] whenExpression.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/String| {
+        ^foo when (R|<local>/x|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                String(1)
+            }
+            else ->  {
+                String(2)
+            }
+        }
+
+    }

@@ -1,72 +1,64 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            useDirectives(Directives)
-        }
-    }
+abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(mainFile, mainModule) as KtElement
 
-    override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val selectedElement = getElementOfType(ktFile, moduleStructure, testServices) as KtElement
-
-        val actual = resolveWithClearCaches(ktFile) { state ->
-            val fir = selectedElement.getOrBuildFir(state)
-            """|KT element: ${selectedElement::class.simpleName}
-               |FIR element: ${fir?.let { it::class.simpleName }}
-               |FIR source kind: ${fir?.source?.kind?.let { it::class.simpleName }}
-               |
-               |FIR element rendered:
-               |${render(fir)}""".trimMargin()
+        val actual = resolveWithClearCaches(mainFile) { session ->
+            renderActualFir(
+                fir = selectedElement.getOrBuildFir(session),
+                ktElement = selectedElement,
+                firFile = mainFile.getOrBuildFirFile(session),
+            )
         }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
+}
 
-    private fun getElementOfType(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices): PsiElement {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
-        val expectedType = moduleStructure.allDirectives[Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE].firstOrNull() ?: return selectedElement
-        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
-        if (expectedClass.isInstance(selectedElement)) return selectedElement
+fun renderActualFir(
+    fir: FirElement?,
+    ktElement: KtElement,
+    renderKtText: Boolean = false,
+    firFile: FirFile? = null,
+): String = """
+       |KT element: ${ktElement::class.simpleName}${if (renderKtText) "\nKT element text:\n" + ktElement.text else ""}
+       |FIR element: ${fir?.let { it::class.simpleName }}
+       |FIR source kind: ${fir?.source?.kind?.let { it::class.simpleName }}
+       |
+       |FIR element rendered:
+       |${render(fir).trimEnd()}${if (firFile != null) "\n\nFIR FILE:\n${render(firFile).trimEnd()}" else ""}""".trimMargin()
 
-        return listOfNotNull(
-            PsiTreeUtil.getChildOfType(selectedElement, expectedClass),
-        ).single { it.textRange == selectedElement.textRange }
-    }
-
-    private fun render(firElement: FirElement?): String = when (firElement) {
-        null -> "null"
-        is FirImport -> "import ${firElement.importedFqName}"
-        else -> FirRenderer(packageDirectiveRenderer = FirPackageDirectiveRenderer()).renderElementAsString(firElement)
-    }
-
-    private object Directives : SimpleDirectivesContainer() {
-        val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
-    }
+private fun render(firElement: FirElement?): String = when (firElement) {
+    null -> "null"
+    is FirImport -> "import ${firElement.importedFqName}"
+    else -> FirRenderer(
+        packageDirectiveRenderer = FirPackageDirectiveRenderer(),
+        resolvePhaseRenderer = FirResolvePhaseRenderer(),
+        declarationRenderer = FirDeclarationRendererWithFilteredAttributes(),
+    ).renderElementAsString(firElement)
 }
 
 abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
@@ -74,5 +66,9 @@ abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
 }
 
 abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override val configurator = AnalysisApiFirScriptTestConfigurator(analyseInDependentSession = false)
 }

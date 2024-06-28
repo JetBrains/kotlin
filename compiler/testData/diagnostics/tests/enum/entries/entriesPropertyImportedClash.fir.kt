@@ -1,4 +1,4 @@
-// !LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries
 // WITH_STDLIB
 
 package foo
@@ -14,7 +14,7 @@ enum class A {
 }
 
 fun test() {
-    A.<!OPT_IN_USAGE_ERROR!>entries<!>
+    <!DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY!>A.entries<!>
 
     with(A) {
         entries

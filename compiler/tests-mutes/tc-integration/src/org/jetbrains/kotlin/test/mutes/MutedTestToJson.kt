@@ -18,12 +18,9 @@ data class MuteTestJson(
     val resolution: JsonNode
 )
 
-internal fun createMuteTestJson(testName: String, description: String, scopeId: String, isBuildType: Boolean): MuteTestJson {
+internal fun createMuteTestJson(testName: String, description: String, scopeId: String): MuteTestJson {
     val assignmentJson = """{ "text" : "$TAG $description" }"""
-    val scopeJson = if (isBuildType)
-        """{"buildTypes":{"buildType":[{"id":"$scopeId"}]}}"""
-    else
-        """{"project":{"id":"$scopeId"}}"""
+    val scopeJson = """{"project":{"id":"$scopeId"}}"""
     val targetJson = """{ "tests" : { "test" : [ { "name" : "$testName" } ] } }"""
     val resolutionJson = """{ "type" : "manually" }"""
 
@@ -36,17 +33,9 @@ internal fun createMuteTestJson(testName: String, description: String, scopeId: 
     )
 }
 
-internal fun filterMutedTestsByScope(muteTestJson: List<MuteTestJson>, scopeId: String, isBuildType: Boolean): Map<String, MuteTestJson> {
+internal fun filterMutedTestsByScope(muteTestJson: List<MuteTestJson>, scopeId: String): Map<String, MuteTestJson> {
     val filterCondition = { testJson: MuteTestJson ->
-        if (isBuildType) {
-            val buildTypes = testJson.scope.get("buildTypes")
-            val buildTypeIds = buildTypes?.get("buildType")?.toList()?.map {
-                it.get("id").textValue()
-            } ?: listOf()
-            buildTypeIds.contains(scopeId)
-        } else {
-            testJson.scope.get("project")?.get("id")?.textValue() == scopeId
-        }
+        testJson.scope.get("project")?.get("id")?.textValue() == scopeId
     }
 
     return muteTestJson.filter(filterCondition)
@@ -59,12 +48,12 @@ internal fun filterMutedTestsByScope(muteTestJson: List<MuteTestJson>, scopeId: 
         .toMap()
 }
 
-internal fun transformMutedTestsToJson(flakyTests: List<MutedTest>?, scopeId: String, isBuildType: Boolean): Map<String, MuteTestJson> {
+internal fun transformMutedTestsToJson(flakyTests: List<MutedTest>?, scopeId: String): Map<String, MuteTestJson> {
     val mutedMap = mutableMapOf<String, MuteTestJson>()
     if (flakyTests != null) {
         for (muted in flakyTests) {
             val testName = formatClassnameWithInnerClasses(muted.key)
-            mutedMap[testName] = createMuteTestJson(testName, muted.issue ?: "", scopeId, isBuildType)
+            mutedMap[testName] = createMuteTestJson(testName, muted.issue ?: "", scopeId)
         }
     }
     return mutedMap

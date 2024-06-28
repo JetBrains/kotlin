@@ -85,6 +85,7 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
         if (container == null || container is PackageFragmentDescriptor) break
         container = container.containingDeclaration
     }
+    @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
     require(container is PackageFragmentDescriptor?)
     return container?.fqName
 }
@@ -106,3 +107,8 @@ fun FunctionDescriptor.isTypedEqualsInValueClass(): Boolean {
 fun FunctionDescriptor.overridesEqualsFromAny(): Boolean = name == OperatorNameConventions.EQUALS
         && valueParameters.size == 1 && valueParameters[0].type.isNullableAny()
         && contextReceiverParameters.isEmpty() && extensionReceiverParameter == null
+
+tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
+    return if (this is PackageFragmentDescriptor) this
+    else this.containingDeclaration!!.findPackage()
+}

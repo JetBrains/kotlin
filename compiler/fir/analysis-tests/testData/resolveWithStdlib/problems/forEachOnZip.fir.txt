@@ -1,0 +1,12 @@
+FILE: forEachOnZip.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval l: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+        R|<local>/l|.R|kotlin/collections/zip|<R|kotlin/String|, R|kotlin/String|>(R|<local>/l|).R|kotlin/collections/forEach|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = forEach@fun <anonymous>(left: R|kotlin/Pair<kotlin/String, kotlin/String>|, right: <ERROR TYPE REF: Lambda or anonymous function has more parameters than expected>): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            ^@forEach Unit
+        }
+        )
+        R|<local>/l|.R|kotlin/collections/zip|<R|kotlin/String|, R|kotlin/String|>(R|<local>/l|).R|kotlin/collections/forEach<Inapplicable(INAPPLICABLE): kotlin/collections/forEach>#|<R|kotlin/Pair<kotlin/String, kotlin/String>|>(<L> = forEach@fun <anonymous>(left: R|kotlin/Pair<kotlin/String, kotlin/String>|, right: <ERROR TYPE REF: Cannot infer type for parameter right>): R|kotlin/Unit| <inline=Unknown, kind=UNKNOWN>  {
+            ^@forEach Unit
+        }
+        )
+    }

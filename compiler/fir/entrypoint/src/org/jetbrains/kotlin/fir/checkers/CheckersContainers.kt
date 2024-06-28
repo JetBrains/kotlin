@@ -13,18 +13,22 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.*
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 fun FirSessionConfigurator.registerCommonCheckers() {
     useCheckers(CommonDeclarationCheckers)
     useCheckers(CommonExpressionCheckers)
     useCheckers(CommonTypeCheckers)
+    useCheckers(CommonLanguageVersionSettingsCheckers)
 }
 
 fun FirSessionConfigurator.registerExtendedCommonCheckers() {
     useCheckers(ExtendedExpressionCheckers)
     useCheckers(ExtendedDeclarationCheckers)
     useCheckers(ExtendedTypeCheckers)
+    useCheckers(ExtendedLanguageVersionSettingsCheckers)
 }
 
 fun FirSessionConfigurator.registerJvmCheckers() {
@@ -41,4 +45,20 @@ fun FirSessionConfigurator.registerJsCheckers() {
 fun FirSessionConfigurator.registerNativeCheckers() {
     useCheckers(NativeDeclarationCheckers)
     useCheckers(NativeExpressionCheckers)
+}
+
+fun FirSessionConfigurator.registerWasmCheckers(target: WasmTarget) {
+    useCheckers(WasmBaseDeclarationCheckers)
+    useCheckers(WasmBaseExpressionCheckers)
+    useCheckers(WasmBaseTypeCheckers)
+
+    when (target) {
+        WasmTarget.JS -> {
+            useCheckers(WasmJsDeclarationCheckers)
+            useCheckers(WasmJsExpressionCheckers)
+        }
+        WasmTarget.WASI -> {
+            useCheckers(WasmWasiDeclarationCheckers)
+        }
+    }
 }

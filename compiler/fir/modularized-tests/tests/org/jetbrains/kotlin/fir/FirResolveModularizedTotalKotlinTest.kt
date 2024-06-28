@@ -9,22 +9,21 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
-import com.sun.jna.Library
-import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.analysis.collectors.components.DiagnosticComponentsFactory
+import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -35,12 +34,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import sun.management.ManagementFactoryHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
-import java.text.DecimalFormat
 
 
 private const val FAIL_FAST = true
@@ -58,33 +55,7 @@ private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false")
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "true").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
-private interface CLibrary : Library {
-    fun getpid(): Int
-    fun gettid(): Int
 
-    companion object {
-        val INSTANCE = Native.load("c", CLibrary::class.java) as CLibrary
-    }
-}
-
-internal fun isolate() {
-    val isolatedList = System.getenv("DOCKER_ISOLATED_CPUSET")
-    val othersList = System.getenv("DOCKER_CPUSET")
-    println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
-    if (othersList != null) {
-        println("Will move others affinity to '$othersList'")
-        ProcessBuilder().command("bash", "-c", "ps -ae -o pid= | xargs -n 1 taskset -cap $othersList ").inheritIO().start().waitFor()
-    }
-    if (isolatedList != null) {
-        val selfPid = CLibrary.INSTANCE.getpid()
-        val selfTid = CLibrary.INSTANCE.gettid()
-        println("Will pin self affinity, my pid: $selfPid, my tid: $selfTid")
-        ProcessBuilder().command("taskset", "-cp", isolatedList, "$selfTid").inheritIO().start().waitFor()
-    }
-    if (othersList == null && isolatedList == null) {
-        println("No affinity specified")
-    }
-}
 
 class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
@@ -127,7 +98,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
-                it + FirCheckersResolveProcessor(session, scopeSession)
+                it + FirCheckersResolveProcessor(session, scopeSession, MppCheckerKind.Common)
             } else {
                 it
             }
@@ -139,7 +110,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
             bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+            val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
             bench.buildFiles(builder, sourceFiles.map { it as KtPsiSourceFile })
         }
 
@@ -183,17 +154,21 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
-        val disposable = Disposer.newDisposable()
-        val configuration = createDefaultConfiguration(moduleData)
-        configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
-        val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val disposable = Disposer.newDisposable("Disposable for ${FirResolveModularizedTotalKotlinTest::class.simpleName}.processModule")
 
-        PsiElementFinder.EP.getPoint(environment.project)
-            .unregisterExtension(JavaElementFinder::class.java)
+        try {
+            val configuration = createDefaultConfiguration(moduleData)
+            configureLanguageVersionSettings(configuration, moduleData, LanguageVersion.fromVersionString(LANGUAGE_VERSION_K2)!!)
+            val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        runAnalysis(moduleData, environment)
+            PsiElementFinder.EP.getPoint(environment.project)
+                .unregisterExtension(JavaElementFinder::class.java)
 
-        Disposer.dispose(disposable)
+            runAnalysis(moduleData, environment)
+        } finally {
+            Disposer.dispose(disposable)
+        }
+
         if (bench.hasFiles && FAIL_FAST) return ProcessorAction.STOP
         return ProcessorAction.NEXT
     }
@@ -258,7 +233,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     }
 
     private fun beforeAllPasses() {
-        isolate()
+        pinCurrentThreadToIsolatedCpu()
     }
 
     fun testTotalKotlin() {
@@ -294,9 +269,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
 class FirCheckersResolveProcessor(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    mppCheckerKind: MppCheckerKind
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
-    val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
+    val diagnosticCollector: AbstractDiagnosticCollector = DiagnosticComponentsFactory.create(session, scopeSession, mppCheckerKind)
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
 }

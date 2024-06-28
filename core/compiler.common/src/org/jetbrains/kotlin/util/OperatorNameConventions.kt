@@ -70,6 +70,14 @@ object OperatorNameConventions {
     @JvmField val PLUS_ASSIGN = Name.identifier("plusAssign")
     @JvmField val MINUS_ASSIGN = Name.identifier("minusAssign")
 
+    @JvmField val TO_DOUBLE = Name.identifier("toDouble")
+    @JvmField val TO_FLOAT = Name.identifier("toFloat")
+    @JvmField val TO_LONG = Name.identifier("toLong")
+    @JvmField val TO_INT = Name.identifier("toInt")
+    @JvmField val TO_CHAR = Name.identifier("toChar")
+    @JvmField val TO_SHORT = Name.identifier("toShort")
+    @JvmField val TO_BYTE = Name.identifier("toByte")
+
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
     @JvmField
@@ -82,7 +90,13 @@ object OperatorNameConventions {
     val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM, RANGE_TO, RANGE_UNTIL)
 
     @JvmField
+    val SIMPLE_BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, REM)
+
+    @JvmField
     val BITWISE_OPERATION_NAMES = setOf(AND, OR, XOR, INV, SHL, SHR, USHR)
+
+    @JvmField
+    val SIMPLE_BITWISE_OPERATION_NAMES = setOf(AND, OR, XOR, SHL, SHR, USHR)
 
     @JvmField
     val ALL_BINARY_OPERATION_NAMES = BINARY_OPERATION_NAMES + BITWISE_OPERATION_NAMES + setOf(EQUALS, CONTAINS, COMPARE_TO)
@@ -98,4 +112,27 @@ object OperatorNameConventions {
 
     @JvmField
     val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS
+
+    @JvmField
+    val NUMBER_CONVERSIONS = setOf(TO_DOUBLE, TO_FLOAT, TO_LONG, TO_INT, TO_SHORT, TO_BYTE, TO_CHAR)
+
+    val TOKENS_BY_OPERATOR_NAME = mapOf(
+        INC to "++",
+        DEC to "--",
+        UNARY_PLUS to "+",
+        UNARY_MINUS to "-",
+        NOT to "!",
+        TIMES to "*",
+        PLUS to "+",
+        MINUS to "-",
+        DIV to "/",
+        REM to "%",
+        RANGE_TO to "..",
+        RANGE_UNTIL to "..<",
+    )
+
+    fun isComponentN(name: Name): Boolean {
+        val identifier = name.identifierOrNullIfSpecial ?: return false
+        return COMPONENT_REGEX.matches(identifier)
+    }
 }

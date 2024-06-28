@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
-import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.utils.atMostOne
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -35,6 +35,8 @@ interface JsCommonBackendContext : CommonBackendContext {
 
     val coroutineSymbols: JsCommonCoroutineSymbols
 
+    val jsPromiseSymbol: IrClassSymbol?
+
     val catchAllThrowableType: IrType
         get() = irBuiltIns.throwableType
 
@@ -47,12 +49,12 @@ interface JsCommonBackendContext : CommonBackendContext {
     val enumEntries: IrClassSymbol
     val createEnumEntries: IrSimpleFunctionSymbol
 
-    fun createTestContainerFun(irFile: IrFile): IrSimpleFunction
+    fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction
 
 }
 
 // TODO: investigate if it could be removed
-internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
+internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy(LazyThreadSafetyMode.NONE) { irFactory.stageController.withInitialIr(fn) }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsCommonCoroutineSymbols(
@@ -64,25 +66,25 @@ class JsCommonCoroutineSymbols(
     val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val coroutineImpl =
-        symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
+        symbolTable.descriptorExtension.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
 
-    val coroutineImplLabelPropertyGetter by lazy { coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy { coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy { coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy { coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy { coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy { coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val continuationClass = symbolTable.referenceClass(
+    val continuationClass = symbolTable.descriptorExtension.referenceClass(
         coroutinePackage.memberScope.getContributedClassifier(
             CONTINUATION_NAME,
             NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor
     )
 
-    val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
+    val coroutineSuspendedGetter = symbolTable.descriptorExtension.referenceSimpleFunction(
         coroutineIntrinsicsPackage.memberScope.getContributedVariables(
             COROUTINE_SUSPENDED_NAME,
             NoLookupLocation.FROM_BACKEND

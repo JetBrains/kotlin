@@ -1,0 +1,55 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+
+@Composable
+fun StrongSkippingState() {
+    val state by remember { mutableStateOf("") }; // <-- this is a load bearing ;
+    { state }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun StrongSkippingState(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val state by {
+      val state%delegate = remember({
+        mutableStateOf(
+          value = ""
+        )
+      }, %composer, 0)
+      get() {
+        return state%delegate.getValue(null, ::state%delegate)
+      }
+    }
+    %composer.cache(%composer.changed(state%delegate)) {
+      {
+        <get-state>()
+      }
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    StrongSkippingState(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -127,4 +127,5 @@ public final class TestFoo3 {
     public method toString(): java.lang.String
     public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
+    public final inner class KFoo3$DefaultImpls
 }

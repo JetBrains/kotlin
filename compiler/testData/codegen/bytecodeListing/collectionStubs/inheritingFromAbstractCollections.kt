@@ -11,4 +11,3 @@ abstract class ASetD : AbstractSet<Double>()
 abstract class AMSetD : AbstractMutableSet<Double>()
 
 abstract class AListD : AbstractList<Double>()
-

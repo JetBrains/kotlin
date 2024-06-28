@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import com.google.common.collect.ImmutableMap
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.ModificationTracker
@@ -64,6 +65,10 @@ class CompositeBindingContext private constructor(
 
     override fun addOwnDataTo(trace: BindingTrace, commitDiagnostics: Boolean) {
         // Do nothing
+    }
+
+    override fun getProject(): Project? {
+        return delegates.firstOrNull()?.project
     }
 
     private class CompositeDiagnostics(

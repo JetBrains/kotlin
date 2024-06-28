@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FIR_DIFFERENCE: KT-55234
 // FILE: 1.kt
 package k
@@ -21,7 +21,7 @@ fun all(a: String) {}
 
 // FILE: 2.kt
 
-import k.zero
+import k.<!INVISIBLE_REFERENCE!>zero<!>
 import k.one
 import k.two
 import k.all

@@ -5,7 +5,7 @@ expect abstract class Base {
     abstract fun foo()
 }
 
-expect class DerivedImplicit : Base
+expect <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED{METADATA}!>class DerivedImplicit<!> : Base
 
 expect class DerivedExplicit : Base {
     override fun foo()
@@ -31,5 +31,5 @@ actual class DerivedExplicit : Base() {
 }
 
 actual class DerivedExplicitCheck : Base() {
-    override fun foo() {}
+    override fun <!ACTUAL_MISSING!>foo<!>() {}
 }

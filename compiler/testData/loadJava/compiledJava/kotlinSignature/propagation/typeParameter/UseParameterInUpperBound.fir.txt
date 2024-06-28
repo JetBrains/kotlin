@@ -1,10 +1,10 @@
 public abstract interface UseParameterInUpperBound : R|kotlin/Any| {
     public abstract interface Sub : R|test/UseParameterInUpperBound.Super| {
-        public abstract fun <B : R|kotlin/Any!|, A : R|ft<kotlin/collections/MutableList<ft<B & Any, B?>>, kotlin/collections/List<ft<B & Any, B?>>?>|> foo(b: R|ft<B & Any, B?>|, a: R|ft<A & Any, A?>|): R|kotlin/Unit|
+        public abstract fun <B : R|kotlin/Any!|, A : R|ft<kotlin/collections/MutableList<B!>, kotlin/collections/List<B!>?>|> foo(b: R|B!|, a: R|A!|): R|kotlin/Unit|
 
     }
     public abstract interface Super : R|kotlin/Any| {
-        public abstract fun <A : R|kotlin/Any!|, B : R|ft<kotlin/collections/MutableList<ft<A & Any, A?>>, kotlin/collections/List<ft<A & Any, A?>>?>|> foo(a: R|ft<A & Any, A?>|, b: R|ft<B & Any, B?>|): R|kotlin/Unit|
+        public abstract fun <A : R|kotlin/Any!|, B : R|ft<kotlin/collections/MutableList<A!>, kotlin/collections/List<A!>?>|> foo(a: R|A!|, b: R|B!|): R|kotlin/Unit|
 
     }
 }

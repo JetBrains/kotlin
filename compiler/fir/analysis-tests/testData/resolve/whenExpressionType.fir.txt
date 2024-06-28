@@ -149,7 +149,7 @@ FILE: whenExpressionType.kt
     }
     public final fun case9(): R|kotlin/Unit| {
         lval flag: R|kotlin/Any| = Q|A|.R|/A.A1|
-        lval l1: R|kotlin/Unit| = when (R|<local>/flag|) {
+        lval l1: R|B| = when (R|<local>/flag|) {
             ==($subj$, Q|A|.R|/A.A1|) ->  {
                 R|/B.B|()
             }
@@ -158,5 +158,5 @@ FILE: whenExpressionType.kt
             }
         }
 
-        lval x1: R|C| = R|/C.C<Inapplicable(INAPPLICABLE): /C.C>#|(R|<local>/l1|)
+        lval x1: R|C| = R|/C.C|(R|<local>/l1|)
     }

@@ -1,3 +1,0 @@
-/kt45461_11.kt:6:25: warning: parameter 'foo' is never used
-    fun <S : T> takeFoo(foo: Foo<in S>) {}
-                        ^

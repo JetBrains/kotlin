@@ -44,12 +44,10 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                     }
                 }
 
-                val isDelegatingCall =
-                    expression.isSyntheticDelegatingReplacement && currentFunction != null && currentFunction.parentAsClass != irClass
+                val isDelegatingCall = expression.isSyntheticDelegatingReplacement && currentFunction != null
 
                 val factoryFunctionCall = JsIrBuilder.buildCall(
                     factoryFunction.symbol,
-                    superQualifierSymbol = irClass.symbol.takeIf { isDelegatingCall },
                     origin = if (isDelegatingCall) ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT else JsStatementOrigins.SYNTHESIZED_STATEMENT
                 ).apply {
                     copyValueArgumentsFrom(expression, factoryFunction)

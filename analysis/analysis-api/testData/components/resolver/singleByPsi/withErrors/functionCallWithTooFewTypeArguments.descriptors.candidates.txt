@@ -1,0 +1,21 @@
+KtCallExpression(45,70): 'generic<String, String>()'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with generic>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /generic(): kotlin.Unit
+          valueParameters = []
+          callableId = /generic
+      typeArgumentsMapping = {
+        A -> (ERROR_TYPE),
+        B -> (ERROR_TYPE),
+        C -> (ERROR_TYPE)
+      }
+      argumentMapping = {}
+    isInBestCandidates = true

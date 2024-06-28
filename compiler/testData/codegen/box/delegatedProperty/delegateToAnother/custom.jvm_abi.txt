@@ -1,0 +1,9 @@
+MODULE main
+	CLASS CustomKt.class
+		PACKAGE METADATA
+			PROPERTY getX()Ljava/lang/String;
+				Property: class.metadata.property.setterValueParameter
+					K1
+						<anonymous parameter 0>: kotlin/String
+					K2
+						_: kotlin/String

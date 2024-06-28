@@ -1,0 +1,86 @@
+// CHECK:
+//   Mangled name: Cell
+//   Public signature: /Cell|null[0]
+class Cell<T : Any?> {
+  // CHECK:
+  //   Mangled name: Cell{}value
+  //   Public signature: /Cell.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  var value: T
+    // CHECK JVM_IR:
+    //   Mangled name: Cell#<get-value>(){}1:0
+    //   Public signature: /Cell.value.<get-value>|3167862337988859752[0]
+    //   Public signature debug description: <get-value>(){}1:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Cell#<get-value>(){}
+    //   Public signature: /Cell.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
+    get
+    // CHECK:
+    //   Mangled name: Cell#<set-value>(1:0){}
+    //   Public signature: /Cell.value.<set-value>|-5529925203468114125[0]
+    //   Public signature debug description: <set-value>(1:0){}
+    set
+
+  // CHECK:
+  //   Mangled name: Cell#<init>(1:0){}
+  //   Public signature: /Cell.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(value: T) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Outer
+//   Public signature: /Outer|null[0]
+class Outer<T1 : Any?> {
+  // CHECK:
+  //   Mangled name: Outer.Inner
+  //   Public signature: /Outer.Inner|null[0]
+  inner class Inner<T2 : Any?> {
+    // CHECK:
+    //   Mangled name: Outer.Inner#<init>(){}
+    //   Public signature: /Outer.Inner.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    constructor() /* primary */
+
+    // CHECK:
+    //   Mangled name: Outer.Inner#use(2:0;1:0){}
+    //   Public signature: /Outer.Inner.use|-2113682455784255522[0]
+    //   Public signature debug description: use(2:0;1:0){}
+    fun use(x1: T1, x2: T2): Unit
+
+  }
+
+  // CHECK:
+  //   Mangled name: Outer#<init>(){}
+  //   Public signature: /Outer.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #testFunction(kotlin.Any;kotlin.Any){}
+//   Public signature: /testFunction|1721354410514870848[0]
+//   Public signature debug description: testFunction(kotlin.Any;kotlin.Any){}
+fun testFunction(a: Any, b: Any): Unit
+
+// CHECK:
+//   Mangled name: #testInnerClass(kotlin.Any;kotlin.Any;kotlin.Any){}
+//   Public signature: /testInnerClass|-18420625986104617[0]
+//   Public signature debug description: testInnerClass(kotlin.Any;kotlin.Any;kotlin.Any){}
+fun testInnerClass(a: Any, b: Any, c: Any): Unit
+
+// CHECK:
+//   Mangled name: #testNonSubstitutedTypeParameter(kotlin.Any;kotlin.Any){0§<kotlin.Any?>}
+//   Public signature: /testNonSubstitutedTypeParameter|-8973853282846964778[0]
+//   Public signature debug description: testNonSubstitutedTypeParameter(kotlin.Any;kotlin.Any){0§<kotlin.Any?>}
+fun <T : Any?> testNonSubstitutedTypeParameter(a: Any, b: Any): Unit
+
+// CHECK:
+//   Mangled name: #testProperty(kotlin.Any;kotlin.Any){}
+//   Public signature: /testProperty|7115185479066573300[0]
+//   Public signature debug description: testProperty(kotlin.Any;kotlin.Any){}
+fun testProperty(a: Any, b: Any): Unit
+

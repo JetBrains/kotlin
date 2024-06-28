@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-abstract class FirTypeChecker<in T : FirTypeRef> {
+abstract class FirTypeChecker<in T : FirTypeRef>(final override val mppKind: MppCheckerKind) : FirCheckerWithMppKind {
     /**
      * [FirTypeChecker] should only be used when the check can be performed independent of the context of the type refs. That is,
      * you should NOT be examining containing declarations, qualified accesses, etc. when writing a FirTypeChecker.

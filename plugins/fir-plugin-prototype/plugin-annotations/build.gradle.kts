@@ -1,10 +1,26 @@
 plugins {
-    kotlin("jvm")
-    id("jps-compatible")
+    kotlin("multiplatform")
 }
 
-dependencies {
-    api(kotlinStdlib())
+kotlin {
+    jvm()
+    js {
+        binaries.executable()
+    }
+
+    @Suppress("UNUSED_VARIABLE")
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlinStdlib())
+            }
+        }
+        val jvmMain by getting {
+        }
+
+        val jsMain by getting {
+        }
+    }
 }
 
 sourceSets {
@@ -12,4 +28,6 @@ sourceSets {
     "test" { none() }
 }
 
-runtimeJar()
+tasks.register("distAnnotations") {
+    dependsOn("jvmJar", "jsJar")
+}

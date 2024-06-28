@@ -1,4 +1,4 @@
-@0:0..22:11 FILE fqName:<root> fileName:/classes.kt
+@0:0..23:0 FILE fqName:<root> fileName:/classes.kt
   @0:0..11 CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     @0:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test1 [primary]
       @0:0..11 BLOCK_BODY
@@ -14,7 +14,7 @@
     @0:0..11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
   @3:0..4:11 CLASS CLASS name:Test2 modality:FINAL visibility:internal superTypes:[kotlin.Any]
     @4:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test2 [primary]
-      @3:0..4:11 BLOCK_BODY
+      @4:0..11 BLOCK_BODY
         @3:0..4:11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @3:0..4:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:internal superTypes:[kotlin.Any]'
     @4:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -44,7 +44,7 @@
         @13:10..22 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           @13:10..22 CONST String type=kotlin.String value="UNUSED_VAR"
     @14:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test4 [primary]
-      @13:0..14:11 BLOCK_BODY
+      @14:0..11 BLOCK_BODY
         @13:0..14:11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @13:0..14:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @14:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -57,7 +57,7 @@
     @13:0..14:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4
   @17:0..18:11 CLASS ENUM_CLASS name:Test5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test5>]
     @18:0..11 CONSTRUCTOR visibility:private <> () returnType:<root>.Test5 [primary]
-      @17:0..18:11 BLOCK_BODY
+      @18:0..11 BLOCK_BODY
         @17:0..18:11 ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
         @17:0..18:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Test5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.Test5>]'
     @17:0..18:11 PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
@@ -95,7 +95,7 @@
     @17:0..18:11 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test5
   @21:0..22:11 CLASS ANNOTATION_CLASS name:Test6 modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     @22:0..11 CONSTRUCTOR visibility:public <> () returnType:<root>.Test6 [primary]
-      @21:0..22:11 BLOCK_BODY
+      @22:0..11 BLOCK_BODY
         @21:0..22:11 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @21:0..22:11 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:Test6 modality:OPEN visibility:public superTypes:[kotlin.Annotation]'
     @22:0..11 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

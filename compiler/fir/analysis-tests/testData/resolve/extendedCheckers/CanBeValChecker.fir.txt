@@ -70,7 +70,10 @@ FILE: CanBeValChecker.kt
             lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
-                R|kotlin/io/print|(R|<local>/i|)
+                 {
+                    R|kotlin/io/print|(R|<local>/i|)
+                }
+
             }
 
         }

@@ -1,0 +1,12 @@
+// CHECK:
+//   Mangled name: #bar(){}
+//   Public signature: /bar|496682602797471549[0]
+//   Public signature debug description: bar(){}
+fun bar(): Unit
+
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): Unit
+

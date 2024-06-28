@@ -1,4 +1,3 @@
-
 class B
 
 class A {
@@ -10,10 +9,10 @@ val B.a: () -> Int  get() = { 5 }
 fun test(a: A, b: B) {
     val x: Int = b.a()
 
-    b.(a)()
+    b.(<!UNRESOLVED_REFERENCE!>a<!>)()
 
-    with(b) {
+    <!CANNOT_INFER_PARAMETER_TYPE!>with<!>(b) {
         val y: Int = a()
-        (a)()
+        (<!UNRESOLVED_REFERENCE!>a<!>)()
     }
 }

@@ -12,7 +12,6 @@ data class Jsr305Settings(
     val migrationLevel: ReportLevel? = null,
     val userDefinedLevelForSpecificAnnotation: Map<FqName, ReportLevel> = emptyMap()
 ) {
-    @OptIn(ExperimentalStdlibApi::class)
     val description by lazy {
         buildList {
             add(globalLevel.description)

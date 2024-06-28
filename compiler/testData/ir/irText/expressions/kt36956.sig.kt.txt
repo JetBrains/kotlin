@@ -1,0 +1,73 @@
+// CHECK:
+//   Mangled name: {}aFloat
+//   Public signature: /aFloat|4391422460504083106[0]
+//   Public signature debug description: {}aFloat
+val aFloat: A<Float>
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-aFloat>(){}A<kotlin.Float>
+  //   Public signature: /aFloat.<get-aFloat>|-8376703976384589815[0]
+  //   Public signature debug description: <get-aFloat>(){}A<kotlin.Float>
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-aFloat>(){}
+  //   Public signature: /aFloat.<get-aFloat>|627878515739608177[0]
+  //   Public signature debug description: <get-aFloat>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}aInt
+//   Public signature: /aInt|-6794586520969567401[0]
+//   Public signature debug description: {}aInt
+val aInt: Float
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-aInt>(){}kotlin.Float
+  //   Public signature: /aInt.<get-aInt>|-2970752737551036436[0]
+  //   Public signature debug description: <get-aInt>(){}kotlin.Float
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-aInt>(){}
+  //   Public signature: /aInt.<get-aInt>|-5118867187575203172[0]
+  //   Public signature debug description: <get-aInt>(){}
+  get
+
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A<T : Any?> {
+  // CHECK:
+  //   Mangled name: A{}value
+  //   Public signature: /A.value|1987073854177347439[0]
+  //   Public signature debug description: {}value
+  private val value: T
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-value>(){}1:0
+    //   Public signature: /A.value.<get-value>|3167862337988859752[0]
+    //   Public signature debug description: <get-value>(){}1:0
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-value>(){}
+    //   Public signature: /A.value.<get-value>|3260093555963109437[0]
+    //   Public signature debug description: <get-value>(){}
+    private get
+
+  // CHECK:
+  //   Mangled name: A#<init>(1:0){}
+  //   Public signature: /A.<init>|-8731461708390519279[0]
+  //   Public signature debug description: <init>(1:0){}
+  constructor(value: T) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#get(kotlin.Int){}1:0
+  //   Public signature: /A.get|4109019764351174315[0]
+  //   Public signature debug description: get(kotlin.Int){}1:0
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: A#get(kotlin.Int){}
+  //   Public signature: /A.get|-1406503945102116889[0]
+  //   Public signature debug description: get(kotlin.Int){}
+  operator fun get(i: Int): T
+
+  // CHECK:
+  //   Mangled name: A#set(kotlin.Int;1:0){}
+  //   Public signature: /A.set|366827667513302185[0]
+  //   Public signature debug description: set(kotlin.Int;1:0){}
+  operator fun set(i: Int, v: T): Unit
+
+}
+

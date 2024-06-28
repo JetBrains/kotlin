@@ -1,6 +1,4 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
-
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
@@ -14,9 +12,8 @@ fun test(): String {
     return func() + prop
 }
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual fun func(): String = "O"
 

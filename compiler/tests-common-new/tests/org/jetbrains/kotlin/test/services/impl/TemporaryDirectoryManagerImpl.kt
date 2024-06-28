@@ -5,40 +5,45 @@
 
 package org.jetbrains.kotlin.test.services.impl
 
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.NioFiles
 import org.jetbrains.kotlin.test.services.TemporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.testInfo
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.nio.file.Paths
 import java.util.*
 
 class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirectoryManager(testServices) {
     private val cache = mutableMapOf<String, File>()
-    private val rootTempDir: File = run {
+    private val rootTempDir = lazy {
         val testInfo = testServices.testInfo
         val className = testInfo.className
         val methodName = testInfo.methodName
-        if (!onWindows) return@run KtTestUtil.tmpDirForTest(className, methodName)
+        if (!onWindows && className.length + methodName.length < 255) {
+            return@lazy KtTestUtil.tmpDirForTest(className, methodName)
+        }
 
         // This code will simplify directory name for windows. This is needed because there can occur errors due to long name
         val lastDot = className.lastIndexOf('.')
-        val packageName = className.substring(0, lastDot + 1)
         val simplifiedClassName = className.substring(lastDot + 1).getOnlyUpperCaseSymbols()
         val simplifiedMethodName = methodName.getOnlyUpperCaseSymbols()
-        KtTestUtil.tmpDirForTest(packageName + simplifiedClassName, "test$simplifiedMethodName")
+        KtTestUtil.tmpDirForTest(simplifiedClassName, simplifiedMethodName)
     }
 
     override val rootDir: File
-        get() = rootTempDir
+        get() = rootTempDir.value
 
     override fun getOrCreateTempDirectory(name: String): File {
-        return cache.getOrPut(name) { KtTestUtil.tmpDir(rootTempDir, name) }
+        return cache.getOrPut(name) { KtTestUtil.tmpDir(rootDir, name) }
     }
 
     override fun cleanupTemporaryDirectories() {
         cache.clear()
-        FileUtil.delete(rootTempDir)
+
+        if (rootTempDir.isInitialized()) {
+            NioFiles.deleteRecursively(Paths.get(rootDir.path))
+        }
     }
 
     companion object {

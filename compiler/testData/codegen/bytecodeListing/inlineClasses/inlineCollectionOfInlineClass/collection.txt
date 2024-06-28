@@ -19,7 +19,7 @@ public final class InlineCollection {
     // source: 'collection.kt'
     private final field c: java.util.Collection
     private synthetic method <init>(p0: java.util.Collection): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add-jHY5zpA(p0: int): boolean
     public method addAll(p0: java.util.Collection): boolean
     public synthetic final static method box-impl(p0: java.util.Collection): InlineCollection
@@ -44,7 +44,7 @@ public final class InlineCollection {
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public method toString(): java.lang.String

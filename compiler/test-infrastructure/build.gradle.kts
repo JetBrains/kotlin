@@ -12,7 +12,7 @@ dependencies {
 
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
 
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
 
 optInToExperimentalCompilerApi()

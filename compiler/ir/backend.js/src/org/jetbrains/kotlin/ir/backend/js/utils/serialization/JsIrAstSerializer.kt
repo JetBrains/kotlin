@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.OutputStream
 import java.util.*
-import java.util.ArrayDeque
 
-fun JsIrProgramFragment.serializeTo(output: OutputStream) {
+fun JsIrProgramFragments.serializeTo(output: OutputStream) {
     JsIrAstSerializer().append(this).saveTo(output)
 }
 
@@ -91,8 +90,14 @@ private class JsIrAstSerializer {
     private val fileStack: Deque<String> = ArrayDeque()
     private val importedNames = mutableSetOf<JsName>()
 
+    fun append(fragments: JsIrProgramFragments): JsIrAstSerializer {
+        append(fragments.mainFragment)
+        fragmentSerializer.ifNotNull(fragments.exportFragment, ::append)
+        return this
+    }
+
     fun append(fragment: JsIrProgramFragment): JsIrAstSerializer {
-        importedNames += fragment.imports.map { fragment.nameBindings[it.key]!! }
+        importedNames += fragment.imports.map { fragment.nameBindings[it.key] ?: error("No binding for tag ${it.key}") }
         fragmentSerializer.writeFragment(fragment)
         return this
     }
@@ -110,6 +115,7 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeFragment(fragment: JsIrProgramFragment) {
+        writeString(fragment.name)
         writeString(fragment.packageFqn)
 
         writeCollection(fragment.importedModules) {
@@ -120,13 +126,14 @@ private class JsIrAstSerializer {
             }
         }
 
-        writeCollection(fragment.imports.entries) { (signatureId, expression) ->
+        writeCollection(fragment.imports.entries) { (signatureId, statement) ->
             writeInt(internalizeString(signatureId))
-            writeExpression(expression)
+            writeStatement(statement)
         }
 
         writeCompositeBlock(fragment.declarations)
         writeCompositeBlock(fragment.initializers)
+        writeCompositeBlock(fragment.eagerInitializers)
         writeCompositeBlock(fragment.exports)
         writeCompositeBlock(fragment.polyfills)
 
@@ -144,20 +151,17 @@ private class JsIrAstSerializer {
             writeIrIcModel(model)
         }
 
-        ifNotNull(fragment.testFunInvocation) {
-            writeStatement(it)
+        ifNotNull(fragment.mainFunctionTag) {
+            writeString(it)
         }
 
-        ifNotNull(fragment.mainFunction) {
-            writeStatement(it)
+        ifNotNull(fragment.testEnvironment) {
+            writeInt(internalizeString(it.testFunctionTag))
+            writeInt(internalizeString(it.suiteFunctionTag))
         }
 
         ifNotNull(fragment.dts) {
             writeString(it.raw)
-        }
-
-        ifNotNull(fragment.suiteFn) {
-            writeInt(internalizeName(it))
         }
 
         writeCollection(fragment.definitions) {
@@ -301,6 +305,49 @@ private class JsIrAstSerializer {
                 ifNotNull(x.finallyBlock) { writeBlock(it) }
             }
 
+            override fun visitExport(export: JsExport) {
+                writeByte(StatementIds.EXPORT)
+
+                when (val subject = export.subject) {
+                    is JsExport.Subject.All -> writeByte(ExportType.ALL)
+                    is JsExport.Subject.Elements -> {
+                        writeByte(ExportType.ITEMS)
+                        writeCollection(subject.elements) {
+                            writeInt(internalizeName(it.name.name!!))
+                            ifNotNull(it.alias) { writeInt(internalizeName(it)) }
+                        }
+                    }
+                }
+
+                ifNotNull(export.fromModule) { writeString(it) }
+            }
+
+            override fun visitImport(import: JsImport) {
+                writeByte(StatementIds.IMPORT)
+                writeString(import.module)
+
+                when (val target = import.target) {
+                    is JsImport.Target.Effect -> {
+                        writeByte(ImportType.EFFECT)
+                    }
+                    is JsImport.Target.All -> {
+                        writeByte(ImportType.ALL)
+                        writeInt(internalizeName(target.alias.name!!))
+                    }
+                    is JsImport.Target.Default -> {
+                        writeByte(ImportType.DEFAULT)
+                        writeInt(internalizeName(target.name.name!!))
+                    }
+                    is JsImport.Target.Elements -> {
+                        writeByte(ImportType.ITEMS)
+                        writeCollection(target.elements) {
+                            writeInt(internalizeName(it.name))
+                            ifNotNull(it.alias) { writeInt(internalizeName(it.name!!)) }
+                        }
+                    }
+                }
+            }
+
             override fun visitEmpty(x: JsEmpty) {
                 writeByte(StatementIds.EMPTY)
             }
@@ -399,9 +446,8 @@ private class JsIrAstSerializer {
                 ifNotNull(x.name) {
                     writeInt(internalizeName(it))
                 }
-                // TODO: add more complex JsNameRef parsing in future when we will support `class` expressions inside a `js` call
-                ifNotNull(x.baseClass?.name) {
-                    writeInt(internalizeName(it))
+                ifNotNull(x.baseClass) {
+                    writeExpression(it)
                 }
                 ifNotNull(x.constructor) {
                     writeFunction(it)
@@ -491,6 +537,11 @@ private class JsIrAstSerializer {
                 writeExpression(x.constructorExpression)
                 writeCollection(x.arguments) { writeExpression(it) }
             }
+
+            override fun visitYield(x: JsYield) {
+                writeByte(ExpressionIds.YIELD)
+                ifNotNull(x.expression) { writeExpression(it) }
+            }
         }
 
         withComments(expression) {
@@ -554,6 +605,7 @@ private class JsIrAstSerializer {
             writeBoolean(name.isTemporary)
             ifNotNull(name.localAlias) { writeLocalAlias(it) }
             writeBoolean(name.imported && name !in importedNames)
+            writeBoolean(name.constant)
             ifNotNull(name.specialFunction) { writeByte(it.ordinal) }
         }
         nameMap.size

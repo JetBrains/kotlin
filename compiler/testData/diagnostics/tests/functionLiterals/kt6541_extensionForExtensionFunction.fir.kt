@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Foo
 fun (Foo.() -> Unit).invoke(b : Foo.() -> Unit)  {}

@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/apiVersionGreaterThanLanguageSuppress.kt
+-d
+$TEMP_DIR$
+-api-version
+2.0
+-language-version
+2.0
+-Xsuppress-api-version-greater-than-language-version-error

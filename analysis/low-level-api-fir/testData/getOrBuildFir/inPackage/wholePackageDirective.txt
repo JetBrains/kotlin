@@ -1,0 +1,10 @@
+KT element: KtPackageDirective
+FIR element: FirPackageDirectiveImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+package a.b.c
+
+FIR FILE:
+FILE: [ResolvedTo(RAW_FIR)] wholePackageDirective.kt
+    package a.b.c

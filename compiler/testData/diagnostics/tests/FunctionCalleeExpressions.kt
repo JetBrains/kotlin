@@ -1,5 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
-// !CHECK_TYPE
+// CHECK_TYPE
 
 package foo
 

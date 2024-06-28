@@ -20,6 +20,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven { setUrl(rootProject.projectDir.resolve("repo")) }
+        maven { setUrl("<localRepo>") }
     }
 }

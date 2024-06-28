@@ -1,0 +1,35 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java1 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.String
+  //   Public signature: /B.bar|1214702899383694193[0]
+  //   Public signature debug description: bar(){}kotlin.String
+  fun bar(): String
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.String){}
+  //   Public signature: /B.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  fun foo(t: String): Unit
+
+}

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
@@ -46,12 +47,12 @@ class BuiltInsSerializer(
             dependOnOldBuiltIns: Boolean,
             onComplete: (totalSize: Int, totalFiles: Int) -> Unit
         ) {
-            val rootDisposable = Disposer.newDisposable()
+            val rootDisposable = Disposer.newDisposable("Disposable for ${BuiltInsSerializer::class.simpleName}.analyzeAndSerialize")
             val messageCollector = createMessageCollector()
             val performanceManager = object : CommonCompilerPerformanceManager(presentableName = "test") {}
             try {
                 val configuration = CompilerConfiguration().apply {
-                    put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+                    this.messageCollector = messageCollector
 
                     addKotlinSourceRoots(srcDirs.map { it.path })
                     addJvmClasspathRoots(extraClassPath)
@@ -76,7 +77,8 @@ class BuiltInsSerializer(
 
         private fun createMessageCollector() = object : GroupingMessageCollector(
             PrintingMessageCollector(System.err, MessageRenderer.PLAIN_RELATIVE_PATHS, false),
-            false
+            false,
+            false,
         ) {
             override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
                 // Only report diagnostics without a particular location because there's plenty of errors in built-in sources

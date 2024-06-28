@@ -92,7 +92,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                     javaSourceSet.resources.srcDirs,
                     destinationDirectory.get().asFile,
                     javaSourceSet.output.resourcesDir!!,
-                    createCompilerArguments()
+                    buildCompilerArguments()
                 )
             } else null
         }
@@ -118,11 +118,12 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
                 resources,
                 destinationDirectory.get().asFile,
                 compilation.output.resourcesDir,
-                createCompilerArguments()
+                buildCompilerArguments()
             )
         }
 
-        private fun AbstractKotlinCompile<*>.createCompilerArguments(): CompilerArguments {
+        @Suppress("DEPRECATION_ERROR")
+        private fun AbstractKotlinCompile<*>.buildCompilerArguments(): CompilerArguments {
             return CompilerArgumentsImpl(
                 serializedCompilerArguments,
                 defaultSerializedCompilerArguments,

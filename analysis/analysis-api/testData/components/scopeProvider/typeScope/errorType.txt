@@ -1,7 +1,7 @@
-expression: o
-KtType: AAA
+Expression: o
+KaType: AAA
 
-KtTypeScope:
+KaTypeScope:
 NO_SCOPE
 
 Declaration Scope:

@@ -1,0 +1,83 @@
+FILE: a.kt
+    package a
+
+    public final val y: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+FILE: b.kt
+    package b
+
+    public final val z: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+FILE: c.kt
+    package c
+
+    public final val x: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+    public final enum class Foo : R|kotlin/Enum<c/Foo>| {
+        private constructor(): R|c/Foo| {
+            super<R|kotlin/Enum<c/Foo>|>()
+        }
+
+        public final static enum entry A: R|c/Foo|
+        public final static enum entry B: R|c/Foo|
+        public final static enum entry C: R|c/Foo|
+        public final static fun values(): R|kotlin/Array<c/Foo>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|c/Foo| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<c/Foo>|
+            public get(): R|kotlin/enums/EnumEntries<c/Foo>|
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|, y: R|kotlin/String|, z: R|kotlin/String|, w: R|kotlin/String|, entries: R|kotlin/String|): R|c/Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+        public final val z: R|kotlin/String| = R|<local>/z|
+            public get(): R|kotlin/String|
+
+        public final val w: R|kotlin/String| = R|<local>/w|
+            public get(): R|kotlin/String|
+
+        public final val entries: R|kotlin/String| = R|<local>/entries|
+            public get(): R|kotlin/String|
+
+    }
+    public final class Baz : R|kotlin/Any| {
+        public constructor(w: R|kotlin/Int|): R|c/Baz| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val w: R|kotlin/Int| = R|<local>/w|
+            public get(): R|kotlin/Int|
+
+    }
+    context(R|c/Bar|)
+    public final fun test1(): R|kotlin/Int| {
+        ^test1 R|c/x|
+    }
+    context(R|c/Bar|)
+    public final fun test2(): R|kotlin/Int| {
+        ^test2 R|a/y|
+    }
+    context(R|c/Bar|)
+    public final fun test3(): R|kotlin/Int| {
+        ^test3 R|b/z|
+    }
+    context(R|c/Bar|)
+    public final fun test4(): R|kotlin/String| {
+        ^test4 this@R|c/test4|.R|c/Bar.entries|
+    }
+    context(R|c/Bar|)
+    public final fun R|c/Baz|.test5(): R|kotlin/Int| {
+        ^test5 this@R|c/test5|.R|c/Baz.w|
+    }

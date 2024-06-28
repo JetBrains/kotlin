@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testToUByte visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin.UByteKt' type=kotlin.UByte origin=null
+        CALL 'public final fun toUByte (): kotlin.UByte declared in kotlin' type=kotlin.UByte origin=null
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUByte> visibility:public modality:FINAL <> () returnType:kotlin.UByte
       correspondingProperty: PROPERTY name:testToUByte visibility:public modality:FINAL [val]
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testToUShort visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin.UShortKt' type=kotlin.UShort origin=null
+        CALL 'public final fun toUShort (): kotlin.UShort declared in kotlin' type=kotlin.UShort origin=null
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUShort> visibility:public modality:FINAL <> () returnType:kotlin.UShort
       correspondingProperty: PROPERTY name:testToUShort visibility:public modality:FINAL [val]
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testToUInt visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+        CALL 'public final fun toUInt (): kotlin.UInt declared in kotlin' type=kotlin.UInt origin=null
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToUInt> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:testToUInt visibility:public modality:FINAL [val]
@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testToULong visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+        CALL 'public final fun toULong (): kotlin.ULong declared in kotlin' type=kotlin.ULong origin=null
           $receiver: CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testToULong> visibility:public modality:FINAL <> () returnType:kotlin.ULong
       correspondingProperty: PROPERTY name:testToULong visibility:public modality:FINAL [val]

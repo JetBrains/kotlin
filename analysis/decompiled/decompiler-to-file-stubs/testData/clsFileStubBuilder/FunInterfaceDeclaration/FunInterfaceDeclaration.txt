@@ -4,7 +4,7 @@ PsiJetFileStubImpl[package=test]
   IMPORT_LIST
   CLASS[classId=test/FunInterfaceDeclaration, fqName=test.FunInterfaceDeclaration, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FunInterfaceDeclaration, superNames=[]]
     MODIFIER_LIST[public final]
-    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=FunInterfaceDeclaration]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, name=FunInterfaceDeclaration]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY

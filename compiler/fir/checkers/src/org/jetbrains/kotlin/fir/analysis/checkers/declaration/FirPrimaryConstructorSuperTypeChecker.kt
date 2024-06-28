@@ -8,23 +8,26 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.isEnumEntry
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.primaryConstructorSuperTypePlatformSupport
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.utils.isErrorPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 /** Checker on super type declarations in the primary constructor of a class declaration. */
-object FirPrimaryConstructorSuperTypeChecker : FirClassChecker() {
+object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.isInterface) {
             with(SourceNavigator.forElement(declaration)) {
@@ -41,7 +44,7 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker() {
 
         val primaryConstructorSymbol = declaration.primaryConstructorIfAny(context.session)
 
-        if (primaryConstructorSymbol == null) {
+        if (primaryConstructorSymbol == null || primaryConstructorSymbol.isErrorPrimaryConstructor) {
             checkSupertypeInitializedWithoutPrimaryConstructor(declaration, reporter, context)
         } else {
             checkSuperTypeNotInitialized(primaryConstructorSymbol, declaration, context, reporter)
@@ -78,7 +81,9 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker() {
         }
         val delegatedCallSource = delegatedConstructorCall.source ?: return
         if (delegatedCallSource.kind !is KtFakeSourceElementKind) return
-        if (superClassSymbol.classId == StandardClassIds.Enum || superClassSymbol.classId == StandardClassIds.Java.Record) return
+        val supertypesToSkip = context.session.primaryConstructorSuperTypePlatformSupport
+            .supertypesThatDontNeedInitializationInSubtypesConstructors
+        if (superClassSymbol.classId in supertypesToSkip) return
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
             reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED, context)
         }

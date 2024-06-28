@@ -6,14 +6,14 @@ public final class A /* A*/ {
 
     public static final class I /* A.B.I*/ {
       @org.jetbrains.annotations.NotNull()
-      public static final A.B.I INSTANCE;
+      public static final @org.jetbrains.annotations.NotNull() A.B.I INSTANCE;
 
       private  I();//  .ctor()
     }
 
     public static final class II /* A.B.II*/ {
       @org.jetbrains.annotations.NotNull()
-      public static final A.B.II INSTANCE;
+      public static final @org.jetbrains.annotations.NotNull() A.B.II INSTANCE;
 
       private  II();//  .ctor()
     }
@@ -21,19 +21,19 @@ public final class A /* A*/ {
 
   public static final class C /* A.C*/ {
     @org.jetbrains.annotations.NotNull()
-    public static final A.C INSTANCE;
+    public static final @org.jetbrains.annotations.NotNull() A.C INSTANCE;
 
     private  C();//  .ctor()
 
     public static final class D /* A.C.D*/ {
       @org.jetbrains.annotations.NotNull()
-      public static final A.C.D INSTANCE;
+      public static final @org.jetbrains.annotations.NotNull() A.C.D INSTANCE;
 
       private  D();//  .ctor()
 
       public static final class G /* A.C.D.G*/ {
         @org.jetbrains.annotations.NotNull()
-        public static final A.C.D.G INSTANCE;
+        public static final @org.jetbrains.annotations.NotNull() A.C.D.G INSTANCE;
 
         private  G();//  .ctor()
       }

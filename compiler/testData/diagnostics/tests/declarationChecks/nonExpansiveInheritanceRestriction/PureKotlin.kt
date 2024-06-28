@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UPPER_BOUND_VIOLATED
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UPPER_BOUND_VIOLATED
 
 interface A<T>
 interface B<T> : A<A<*>>
@@ -26,3 +27,7 @@ interface F2<T> : F0<F1<out F2<*>, T>>
 interface G0<T>
 interface G1<T : U, U : G2<*>>
 interface G2<T> : G0<G1<out G2<*>, T>>
+
+abstract class H0<X> {
+    inner abstract class H1<Y> : H0<H1<Y>>() // Outer(X) should not be reported as non-expansive
+}

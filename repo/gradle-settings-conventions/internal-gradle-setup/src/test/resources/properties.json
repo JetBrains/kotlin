@@ -1,0 +1,7 @@
+{
+  "properties": {
+    "newProperty1": "someValue",
+    "newProperty2": "someOtherValue",
+    "alreadySetProperty": "newValue"
+  }
+}

@@ -5,14 +5,14 @@ FILE: kt53819.kt
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            public constructor(x: R|kotlin/Int|): R|Foo| {
+            public constructor(x: R|kotlin/Int|): R|<local>/Foo| {
                 super<R|kotlin/Any|>()
-                this@R|/Foo|.R|<local>/_x| = R|<local>/x|
+                this@R|<local>/Foo|.R|<local>/_x| = R|<local>/x|
             }
 
             public final val x: R|kotlin/Int|
                 public get(): R|kotlin/Int| {
-                    ^ this@R|/Foo|.R|<local>/_x|
+                    ^ this@R|<local>/Foo|.R|<local>/_x|
                 }
 
         }

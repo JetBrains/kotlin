@@ -1,2 +1,0 @@
-Resolved to:
-KtNamedFunction:add(element)

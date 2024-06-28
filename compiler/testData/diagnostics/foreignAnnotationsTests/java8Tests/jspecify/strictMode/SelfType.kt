@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 
 // FILE: SelfType.java
@@ -42,8 +43,7 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ak.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    akn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    akn.foo(null)
 
     bk.foo(bk)
     // jspecify_nullness_mismatch
@@ -53,6 +53,5 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ck.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
-    // jspecify_nullness_mismatch
-    ckn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    ckn.foo(null)
 }

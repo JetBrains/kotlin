@@ -1,0 +1,207 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  //   Public signature: /A.bar|-1979132587545372662[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  /* fake */ override fun bar(): MutableList<out Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  //   Public signature: /A.bar2|-522329858505142422[0]
+  //   Public signature debug description: bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  /* fake */ override fun bar2(): MutableList<in Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar3(){}kotlin.collections.MutableList<*>?
+  //   Public signature: /A.bar3|-2809894317317056685[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableList<*>?
+  /* fake */ override fun bar3(): MutableList<*>?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  //   Public signature: /A.foo|8895686115223778012[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  /* fake */ override fun foo(a: MutableList<out Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  //   Public signature: /A.foo2|-3601545727248628174[0]
+  //   Public signature debug description: foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  /* fake */ override fun foo2(a: MutableList<in Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: A#foo3(kotlin.collections.MutableList<*>?){}
+  //   Public signature: /A.foo3|4448794496598723802[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableList<*>?){}
+  /* fake */ override fun foo3(a: MutableList<*>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  //   Public signature: /B.bar|-1979132587545372662[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  /* fake */ override fun bar(): MutableList<out Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  //   Public signature: /B.bar2|-522329858505142422[0]
+  //   Public signature debug description: bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  /* fake */ override fun bar2(): MutableList<in Number?>?
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  //   Public signature: /B.foo|8895686115223778012[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  /* fake */ override fun foo(a: MutableList<out Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: B#foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  //   Public signature: /B.foo2|-3601545727248628174[0]
+  //   Public signature debug description: foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  /* fake */ override fun foo2(a: MutableList<in Number?>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar3(){}kotlin.collections.MutableList<*>
+  //   Public signature: /B.bar3|6150215183582372563[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableList<*>
+  override fun bar3(): MutableList<*>
+
+  // CHECK:
+  //   Mangled name: B#foo3(kotlin.collections.MutableList<*>?){}
+  //   Public signature: /B.foo3|4448794496598723802[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableList<*>?){}
+  override fun foo3(a: MutableList<*>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  //   Public signature: /C.bar|-1979132587545372662[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  @Override
+  /* fake */ override fun bar(): MutableList<out Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  //   Public signature: /C.bar2|-522329858505142422[0]
+  //   Public signature debug description: bar2(){}kotlin.collections.MutableList<in|kotlin.Number?>?
+  @Override
+  /* fake */ override fun bar2(): MutableList<in Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar3(){}kotlin.collections.MutableList<*>?
+  //   Public signature: /C.bar3|-2809894317317056685[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableList<*>?
+  @Override
+  /* fake */ override fun bar3(): MutableList<*>?
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  //   Public signature: /C.foo|8895686115223778012[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  @Override
+  /* fake */ override fun foo(a: MutableList<out Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  //   Public signature: /C.foo2|-3601545727248628174[0]
+  //   Public signature debug description: foo2(kotlin.collections.MutableList<in|kotlin.Number?>?){}
+  @Override
+  /* fake */ override fun foo2(a: MutableList<in Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo3(kotlin.collections.MutableList<*>?){}
+  //   Public signature: /C.foo3|4448794496598723802[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableList<*>?){}
+  @Override
+  /* fake */ override fun foo3(a: MutableList<*>?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java3 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  //   Public signature: /D.bar|-1979132587545372662[0]
+  //   Public signature debug description: bar(){}kotlin.collections.MutableList<out|kotlin.Number?>?
+  @Override
+  /* fake */ override fun bar(): MutableList<out Number?>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar3(){}kotlin.collections.MutableList<*>?
+  //   Public signature: /D.bar3|-2809894317317056685[0]
+  //   Public signature debug description: bar3(){}kotlin.collections.MutableList<*>?
+  @Override
+  /* fake */ override fun bar3(): MutableList<*>?
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  //   Public signature: /D.foo|8895686115223778012[0]
+  //   Public signature debug description: foo(kotlin.collections.MutableList<out|kotlin.Number?>?){}
+  @Override
+  /* fake */ override fun foo(a: MutableList<out Number?>?): Unit
+
+  // CHECK:
+  //   Mangled name: D#foo3(kotlin.collections.MutableList<*>?){}
+  //   Public signature: /D.foo3|4448794496598723802[0]
+  //   Public signature debug description: foo3(kotlin.collections.MutableList<*>?){}
+  @Override
+  /* fake */ override fun foo3(a: MutableList<*>?): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar2(){}kotlin.collections.MutableList<in|kotlin.Number>
+  //   Public signature: /D.bar2|-1184869326883952177[0]
+  //   Public signature debug description: bar2(){}kotlin.collections.MutableList<in|kotlin.Number>
+  override fun bar2(): MutableList<in Number>
+
+  // CHECK:
+  //   Mangled name: D#foo2(kotlin.collections.MutableList<in|kotlin.Number>){}
+  //   Public signature: /D.foo2|-4029435458904947429[0]
+  //   Public signature debug description: foo2(kotlin.collections.MutableList<in|kotlin.Number>){}
+  override fun foo2(a: MutableList<in Number>): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D){}
+//   Public signature: /test|7656439746344069424[0]
+//   Public signature debug description: test(A;B;C;D){}
+fun test(a: A, b: B, c: C, d: D): Unit

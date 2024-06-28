@@ -1,9 +1,28 @@
+fun box(): String {
+  var result: String = ""
+  result = result.plus(other = { // BLOCK
+    val tmp_0: String? = test_1(value = 1)
+    when {
+      EQEQ(arg0 = tmp_0, arg1 = null) -> return "fail 1"
+      else -> tmp_0
+    }
+  })
+  result = result.plus(other = { // BLOCK
+    val tmp_1: String? = test_2(value = 1)
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> return "fail 2"
+      else -> tmp_1
+    }
+  })
+  return result
+}
+
 fun test_1(value: Any?): String? {
   return { // BLOCK
-    val tmp0_safe_receiver: Any? = value
+    val tmp_2: Any? = value
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
         return "O"
       }
 )
@@ -14,10 +33,10 @@ fun test_1(value: Any?): String? {
 fun test_2(value: Any?): String? {
   return run<String?>(block = local fun <anonymous>(): String? {
     return { // BLOCK
-      val tmp1_safe_receiver: Any? = value
+      val tmp_3: Any? = value
       when {
-        EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-        else -> tmp1_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+        EQEQ(arg0 = tmp_3, arg1 = null) -> null
+        else -> tmp_3.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
           return "K"
         }
 )
@@ -27,21 +46,3 @@ fun test_2(value: Any?): String? {
 )
 }
 
-fun box(): String {
-  var result: String = ""
-  result = result.plus(other = { // BLOCK
-    val <elvis>: String? = test_1(value = 1)
-    when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> return "fail 1"
-      else -> <elvis>
-    }
-  })
-  result = result.plus(other = { // BLOCK
-    val <elvis>: String? = test_2(value = 1)
-    when {
-      EQEQ(arg0 = <elvis>, arg1 = null) -> return "fail 2"
-      else -> <elvis>
-    }
-  })
-  return result
-}

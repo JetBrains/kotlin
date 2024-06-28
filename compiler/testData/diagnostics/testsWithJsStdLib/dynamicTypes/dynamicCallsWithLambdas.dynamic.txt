@@ -1,6 +1,7 @@
 public final fun foo(/*0*/ p0: () -> dynamic): dynamic
 public final fun foo(/*0*/ p0: () -> dynamic): dynamic
 public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
+public final fun bar(): dynamic
 public final fun foo(/*0*/ p0: (dynamic) -> dynamic): dynamic
 public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic
 public final fun foo(/*0*/ p0: (dynamic, dynamic) -> dynamic): dynamic

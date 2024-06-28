@@ -1,11 +1,25 @@
+library {
+  // module name: <pod1.def>
 
-package pod1 {
-    var A: Int
-        @CCall(id = "knifunptr_pod11_A_getter") get
-        @CCall(id = "knifunptr_pod12_A_setter") set
-    @CCall(id = "knifunptr_pod10_AAA") external fun AAA(): Int
-    var B: Int
-        @CCall(id = "knifunptr_pod13_B_getter") get
-        @CCall(id = "knifunptr_pod14_B_setter") set
+  library fragment {
+    // package name: pod1
+
+    package {
+
+      @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod10_AAA")
+      public final external fun AAA(): kotlin/Int
+
+      public final var A: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod11_A_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod12_A_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+
+      public final var B: kotlin/Int
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod13_B_getter")
+        public final /* non-default */ external get
+        @kotlinx/cinterop/internal/CCall(id = "knifunptr_pod14_B_setter")
+        public final /* non-default */ external set(value: kotlin/Int)
+    }
+  }
 }
-

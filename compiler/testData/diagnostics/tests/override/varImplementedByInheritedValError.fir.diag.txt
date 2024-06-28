@@ -1,0 +1,21 @@
+/varImplementedByInheritedValError.fir.kt:(345,353): error: Class 'C1' must override 'a' because it inherits multiple interface methods for it.
+
+/varImplementedByInheritedValError.fir.kt:(374,382): error: Class 'C2' overrides 'var' property 'var a: String' defined in '/IVar' with inherited 'val' property 'val a: String' defined in '/CVal'.
+
+/varImplementedByInheritedValError.fir.kt:(398,406): error: Cannot infer visibility for 'a'. Please specify it explicitly.
+
+/varImplementedByInheritedValError.fir.kt:(398,406): error: Class 'C3' must override 'a' because it inherits multiple implementations for it.
+
+/varImplementedByInheritedValError.fir.kt:(429,437): error: Cannot infer visibility for 'a'. Please specify it explicitly.
+
+/varImplementedByInheritedValError.fir.kt:(429,437): error: Class 'C4' must override 'a' because it inherits multiple implementations for it.
+
+/varImplementedByInheritedValError.fir.kt:(490,498): error: Cannot infer visibility for 'a'. Please specify it explicitly.
+
+/varImplementedByInheritedValError.fir.kt:(490,498): error: Class 'C6' must override 'a' because it inherits multiple implementations for it.
+
+/varImplementedByInheritedValError.fir.kt:(521,529): error: Cannot infer visibility for 'a'. Please specify it explicitly.
+
+/varImplementedByInheritedValError.fir.kt:(521,529): error: Class 'C7' must override 'a' because it inherits multiple implementations for it.
+
+/varImplementedByInheritedValError.fir.kt:(558,566): error: 'val' property 'val a: String' defined in '/C8' implicitly overrides a 'var' property 'var a: String' defined in '/IVar' by delegation.

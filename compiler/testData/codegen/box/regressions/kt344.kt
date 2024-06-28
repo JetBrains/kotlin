@@ -1,10 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
 // WITH_STDLIB
 
 fun s0() : Boolean {
@@ -41,7 +34,6 @@ fun t1() : Boolean {
     foo()
 
     x += "bbb"
-    System.out?.println(x)
     return x == "4511122aaabbb"
 }
 
@@ -56,7 +48,6 @@ fun t2() : Boolean {
     }
     foo()
     x -= 55
-    System.out?.println(x)
     return x == 200
 }
 
@@ -79,7 +70,6 @@ fun t4() : Boolean {
         Unit
     }
     foo()
-    System.out?.println(x)
     return x == 440.toFloat()
 }
 
@@ -92,7 +82,6 @@ fun t5() : Boolean {
         Unit
     }
     foo()
-    System.out?.println(x)
     return x == 400.toDouble()
 }
 
@@ -106,7 +95,6 @@ fun t6() : Boolean {
         Unit
     }
     foo()
-    System.out?.println(x)
     return x == 83.toByte()
 }
 
@@ -117,7 +105,6 @@ fun t7() : Boolean {
         Unit
     }
     foo()
-    System.out?.println(x)
     return x == 'b'
 }
 
@@ -171,19 +158,6 @@ fun t11(x0: Int) : Int {
     return x
 }
 
-fun t12(x: Int) : Int {
-    var y = x
-    val runnable = object : Runnable {
-        override fun run () {
-            y = y + 1
-        }
-    }
-    while(y < 100) {
-       runnable.run()
-    }
-    return y
-}
-
 fun box(): String {
     if (!s0()) return "s0 fail"
     if (!s1()) return "s1 fail"
@@ -198,7 +172,6 @@ fun box(): String {
     if (!t9(0)) return "t9 fail"
     if (!t10()) return "t10 fail"
     if (t11(1) != 101) return "t11 fail"
-    if (t12(0) != 100) return "t12 fail"
 
     return "OK"
 }

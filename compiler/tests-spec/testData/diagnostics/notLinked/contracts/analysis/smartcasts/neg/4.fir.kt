@@ -1,4 +1,12 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 4
+ * DESCRIPTION: Smartcasts using Returns effects with simple type checking and not-null conditions on receiver inside contract.
+ */
 
 // FILE: contracts.kt
 
@@ -139,13 +147,13 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     value_1.case_1()
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number) {
     value_1.case_2()
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+    println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -166,18 +174,18 @@ fun case_4(value_1: String?, value_2: String?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Any?) {
-    if (value_1.case_5_1()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (!value_1.case_5_2()) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (value_1.case_5_3() != null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-    if (value_1.case_5_4() == null) <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_5_1()) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (!value_1.case_5_2()) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_5_3() != null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_5_4() == null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Number) {
-    when { value_1.case_6_1() -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { !value_1.case_6_2() -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { value_1.case_6_3() != null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
-    when { value_1.case_6_4() != null -> <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_6_1() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { !value_1.case_6_2() -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_6_3() != null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
+    when { value_1.case_6_4() != null -> println(value_1.<!UNRESOLVED_REFERENCE!>inv<!>()) }
 }
 
 // TESTCASE NUMBER: 7

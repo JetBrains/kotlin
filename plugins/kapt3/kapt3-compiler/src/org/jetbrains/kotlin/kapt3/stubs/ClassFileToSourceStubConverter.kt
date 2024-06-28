@@ -25,7 +25,6 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
-import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
@@ -65,6 +63,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.replaceAnonymousTypeWithSuperType
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
@@ -124,8 +123,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
-    private val isIrBackend = kaptContext.generationState.isIrBackend
-
     val bindings: Map<String, KaptJavaFileObject>
         get() = mutableBindings
 
@@ -135,13 +132,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val kdocCommentKeeper = if (keepKdocComments) KDocCommentKeeper(kaptContext) else null
+    private val kdocCommentKeeper = if (keepKdocComments) Kapt3DocCommentKeeper(kaptContext) else null
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
     private val compiledClassByName = kaptContext.compiledClasses.associateBy { it.name!! }
 
     private var done = false
+
+    private val treeMakerImportMethod = TreeMaker::class.java.declaredMethods.single { it.name == "Import" }
 
     fun convert(): List<KaptStub> {
         if (kaptContext.logger.isVerbose) {
@@ -314,13 +313,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
             imports += if (importDirective.isAllUnder) {
-                treeMaker.Import(treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false)
+                treeMakerImportMethod.invoke(
+                    treeMaker, treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false
+                ) as JCImport
             } else {
                 if (!importedShortNames.add(importedFqName.shortName().asString())) {
                     continue
                 }
 
-                treeMaker.Import(importedExpr, false)
+                treeMakerImportMethod.invoke(treeMaker, importedExpr, false) as JCImport
             }
         }
 
@@ -340,8 +341,16 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor ?: return null
-        val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
-        val isInner = isNested && (descriptor as? ClassDescriptor)?.isInner ?: false
+
+        val isNested: Boolean
+        val isInner: Boolean
+        if (descriptor is ClassDescriptor) {
+            isNested = descriptor.isNested
+            isInner = isNested && descriptor.isInner
+        } else {
+            isNested = false
+            isInner = false
+        }
 
         val flags = getClassAccessFlags(clazz, descriptor, isInner, isNested)
 
@@ -465,52 +474,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             superTypes.interfaces,
             enumValues + sortedFields + sortedMethods + nestedClasses
         ).keepKdocCommentsIfNecessary(clazz)
-    }
-
-    private class MemberData(val name: String, val descriptor: String, val position: KotlinPosition?)
-
-    /**
-     * Sort class members. If the source file for the class is unknown, just sort using name and descriptor. Otherwise:
-     * - all members in the same source file as the class come first (members may come from other source files)
-     * - members from the class are sorted using their position in the source file
-     * - members from other source files are sorted using their name and descriptor
-     *
-     * More details: Class methods and fields are currently sorted at serialization (see DescriptorSerializer.sort) and at deserialization
-     * (see DeserializedMemberScope.OptimizedImplementation#addMembers). Therefore, the contents of the generated stub files are sorted in
-     * incremental builds but not in clean builds.
-     * The consequence is that the contents of the generated stub files may not be consistent across a clean build and an incremental
-     * build, making the build non-deterministic and dependent tasks run unnecessarily (see KT-40882).
-     */
-    private class MembersPositionComparator(val classSource: KotlinPosition?, val memberData: Map<JCTree, MemberData>) :
-        Comparator<JCTree> {
-        override fun compare(o1: JCTree, o2: JCTree): Int {
-            val data1 = memberData.getValue(o1)
-            val data2 = memberData.getValue(o2)
-            classSource ?: return compareDescriptors(data1, data2)
-
-            val position1 = data1.position
-            val position2 = data2.position
-
-            return if (position1 != null && position1.path == classSource.path) {
-                if (position2 != null && position2.path == classSource.path) {
-                    val positionCompare = position1.pos.compareTo(position2.pos)
-                    if (positionCompare != 0) positionCompare
-                    else compareDescriptors(data1, data2)
-                } else {
-                    -1
-                }
-            } else if (position2 != null && position2.path == classSource.path) {
-                1
-            } else {
-                compareDescriptors(data1, data2)
-            }
-        }
-
-        private fun compareDescriptors(m1: MemberData, m2: MemberData): Int {
-            val nameComparison = m1.name.compareTo(m2.name)
-            if (nameComparison != 0) return nameComparison
-            return m1.descriptor.compareTo(m2.descriptor)
-        }
     }
 
     private class ClassSupertypes(val superClass: JCExpression?, val interfaces: JavacList<JCExpression>)
@@ -719,15 +682,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
-        val fieldAnnotations = when {
-            !isIrBackend && descriptor is PropertyDescriptor -> descriptor.backingField?.annotations
-            else -> descriptor?.annotations
-        } ?: Annotations.EMPTY
-
         val modifiers = convertModifiers(
             containingClass,
             field.access, ElementKind.FIELD, packageFqName,
-            field.visibleAnnotations, field.invisibleAnnotations, fieldAnnotations
+            field.visibleAnnotations, field.invisibleAnnotations,
+            descriptor?.annotations ?: Annotations.EMPTY,
         )
 
         val name = field.name
@@ -835,7 +794,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun getConstantValue(expression: KtExpression, expectedType: KotlinType): ConstantValue<*>? {
         val moduleDescriptor = kaptContext.generationState.module
         val languageVersionSettings = kaptContext.generationState.languageVersionSettings
-        val evaluator = ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, kaptContext.project)
+        val evaluator = ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings)
         val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
         val const = evaluator.evaluateExpression(expression, trace, expectedType)
         if (const == null || const.isError || !const.canBeUsedInAnnotations || const.usesNonConstValAsConstant) {
@@ -1086,7 +1045,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                             val parameterDescriptor = valueParametersFromDescriptor[index - offset]
                             val sourceElement = when {
                                 psiElement is KtFunction -> psiElement
-                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
+                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> {
+                                    (psiElement as? KtClassOrObject)?.primaryConstructor
+                                        ?: ((psiElement as? KtParameterList)?.parent as? KtFunction)
+                                }
                                 else -> null
                             }
                             getNonErrorMethodParameterType(parameterDescriptor) {
@@ -1262,6 +1224,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     ): JCAnnotation? {
         val annotationType = Type.getType(annotation.desc)
         val fqName = treeMaker.getQualifiedName(annotationType)
+        reportIfIllegalTypeUsage(containingClass, annotationType)
 
         if (filtered) {
             if (BLACKLISTED_ANNOTATIONS.any { fqName.startsWith(it) }) return null

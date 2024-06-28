@@ -1,3 +1,31 @@
+/**
+ * public final class TypeHook : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: receiverFunction(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   public final fun error/NonExistentClass.receiverFunction(): error/NonExistentClass
+ *
+ *   // getter: getCustomProperty()Lerror/NonExistentClass;
+ *   // setter: setCustomProperty(Lerror/NonExistentClass;)V
+ *   public final var customProperty: error/NonExistentClass
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: error/NonExistentClass)
+ *
+ *   // getter: getReceiverProperty(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   // setter: setReceiverProperty(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+ *   public final var error/NonExistentClass.receiverProperty: error/NonExistentClass
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: error/NonExistentClass)
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TypeHook {
@@ -34,6 +62,21 @@ public final class TypeHook {
         return null;
     }
 
+    /**
+     * public final companion object TypeHook.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // getter: getExtensionProperty(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+     *   // setter: setExtensionProperty(Lerror/NonExistentClass;Lerror/NonExistentClass;)V
+     *   public final var error/NonExistentClass.extensionProperty: error/NonExistentClass
+     *     public final (* non-default *) get
+     *     public final (* non-default *) set(value: error/NonExistentClass)
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion {
 

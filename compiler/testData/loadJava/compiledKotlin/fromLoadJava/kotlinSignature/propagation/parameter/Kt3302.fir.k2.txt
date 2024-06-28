@@ -1,0 +1,21 @@
+public abstract interface Kt3302 : R|kotlin/Any| {
+    public abstract interface BSONObject : R|kotlin/Any| {
+        public abstract fun put(p0: R|kotlin/String|, p1: R|kotlin/Any|): R|kotlin/Any?|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface LinkedHashMap<K, V> : R|kotlin/Any| {
+        public abstract fun put(key: R|K|, value: R|V|): R|V?|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface BasicBSONObject : R|test/Kt3302.LinkedHashMap<kotlin/String, kotlin/Any>|, R|test/Kt3302.BSONObject| {
+        public abstract fun put(key: R|kotlin/String|, value: R|kotlin/Any|): R|kotlin/Any?|
+
+    }
+
+}

@@ -1,0 +1,92 @@
+@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>
+  context -> FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>
+  context -> FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int
+  context -> FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>
+  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>
+  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int
+  context -> FirValueParameterSymbol <local>/propertyToResolve from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol /propertyToResolve
+  anchor -> [FirNamedFunctionSymbol /Delegate.getValue]
+
+@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol /propertyToResolve
+  anchor -> [FirPropertySymbol /propertyToResolve]
+
+@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol /propertyToResolve
+  anchor -> [FirPropertySymbol /propertyToResolve]
+
+@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String
+  context -> FirTypeParameterSymbol F from FirPropertySymbol /propertyToResolve
+  anchor -> [FirPropertySymbol /propertyToResolve]
+
+FILE: [ResolvedTo(IMPORTS)] propertyWithExplicitType.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.position] position: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] class Delegate : <ERROR TYPE REF: Symbol not found for ReadWriteProperty> {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Delegate] constructor(): R|Delegate| {
+            LAZY_super<<implicit>>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^getValue IntegerLiteral(1)
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] fun setValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|, [ResolvedTo(CONTRACTS)] value: R|@R|Anno|(<strcat>(String(setValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(setValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+        }
+
+    }
+    @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirNamedFunctionSymbol /Delegate.getValue]] var <@R|Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F : R|@R|Anno|(<strcat>(String(bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested bound ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(nested nested bound ), prop#))  kotlin/String>>|> @RECEIVER:R|Anno|[Types](LAZY_EXPRESSION) R|F|.propertyToResolve: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|by R|/Delegate.Delegate|()
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>| {
+            ^ D|/propertyToResolve|.R|/Delegate.getValue<Inapplicable(CONVENTION_ERROR): /Delegate.getValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|)
+        }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|@R|Anno|(<strcat>(String(getValue type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested type ref ), prop#))  kotlin/collections/List<@R|Anno|(<strcat>(String(getValue nested nested type ref ), prop#))  kotlin/Int>>|): R|kotlin/Unit| {
+            ^ D|/propertyToResolve|.R|/Delegate.setValue<Inapplicable(CONVENTION_ERROR): /Delegate.setValue>#|(this@R|/propertyToResolve|, ::R|/propertyToResolve|, R|<local>/propertyToResolve|)
+        }

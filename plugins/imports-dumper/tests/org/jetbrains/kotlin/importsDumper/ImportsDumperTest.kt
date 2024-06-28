@@ -57,6 +57,8 @@ class ImportsDumperTest : TestCaseWithTmpdir() {
                 testDataDir.absolutePath,
                 "-d",
                 tmpDir.path,
+                "-language-version",
+                "1.9",
                 "-Xplugin=${importsDumperJarInDist.path}",
                 "-P",
                 "plugin:${ImportsDumperCommandLineProcessor.PLUGIN_ID}:" +
@@ -64,7 +66,7 @@ class ImportsDumperTest : TestCaseWithTmpdir() {
             )
         )
 
-        return getNormalizedCompilerOutput(output, exitCode, testDataDir.path)
+        return getNormalizedCompilerOutput(output, exitCode, testDataDir.path, tmpDir.absolutePath)
     }
 }
 

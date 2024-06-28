@@ -1,4 +1,4 @@
-// !CHECK_TYPE
+// CHECK_TYPE
 
 fun foo(arr: Array<Int>?) {
     for (x in arr!!) {

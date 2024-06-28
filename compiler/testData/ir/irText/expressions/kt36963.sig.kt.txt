@@ -1,0 +1,16 @@
+// CHECK:
+//   Mangled name: #foo(){}
+//   Public signature: /foo|-1041209573719867811[0]
+//   Public signature debug description: foo(){}
+fun foo(): Unit
+
+// CHECK JVM_IR:
+//   Mangled name: #test(){}kotlin.reflect.KFunction0<kotlin.Unit>
+//   Public signature: /test|-7541901321398002849[0]
+//   Public signature debug description: test(){}kotlin.reflect.KFunction0<kotlin.Unit>
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test(){}
+//   Public signature: /test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): KFunction0<Unit>
+

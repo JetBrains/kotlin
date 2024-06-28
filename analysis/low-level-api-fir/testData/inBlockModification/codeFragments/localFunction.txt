@@ -1,0 +1,14 @@
+BEFORE MODIFICATION:
+CODE FRAGMENT: {
+    local final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Unit| {
+    }
+
+    local final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit| {
+        R|/foo|(Int(1), String(foo))
+    }
+
+    R|/bar|()
+}
+
+AFTER MODIFICATION:
+CODE FRAGMENT: { LAZY_BLOCK }

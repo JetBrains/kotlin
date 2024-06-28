@@ -132,21 +132,15 @@ class RepeatableAnnotationChecker(
                 && isRepeatableAnnotation(classDescriptor)
                 && classDescriptor.getAnnotationRetention() != KotlinRetention.SOURCE
             ) {
-                when {
-                    jvmTarget == JvmTarget.JVM_1_6 -> {
-                        trace.report(ErrorsJvm.REPEATED_ANNOTATION_TARGET6.on(entry))
+                if (languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)) {
+                    // It's not allowed to have both a repeated annotation (applied more than once) and its container
+                    // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
+                    val explicitContainer = resolveContainerAnnotation(classDescriptor)
+                    if (explicitContainer != null && annotations.any { it.descriptor.fqName == explicitContainer }) {
+                        trace.report(ErrorsJvm.REPEATED_ANNOTATION_WITH_CONTAINER.on(entry, fqName, explicitContainer))
                     }
-                    languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) -> {
-                        // It's not allowed to have both a repeated annotation (applied more than once) and its container
-                        // on the same element. See https://docs.oracle.com/javase/specs/jls/se16/html/jls-9.html#jls-9.7.5.
-                        val explicitContainer = resolveContainerAnnotation(classDescriptor)
-                        if (explicitContainer != null && annotations.any { it.descriptor.fqName == explicitContainer }) {
-                            trace.report(ErrorsJvm.REPEATED_ANNOTATION_WITH_CONTAINER.on(entry, fqName, explicitContainer))
-                        }
-                    }
-                    else -> {
-                        trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
-                    }
+                } else {
+                    trace.report(ErrorsJvm.NON_SOURCE_REPEATED_ANNOTATION.on(entry))
                 }
             }
 

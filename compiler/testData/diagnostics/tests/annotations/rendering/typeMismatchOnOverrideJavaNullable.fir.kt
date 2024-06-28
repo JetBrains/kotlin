@@ -1,15 +1,18 @@
-// !RENDER_DIAGNOSTICS_MESSAGES
+// RENDER_DIAGNOSTICS_MESSAGES
 // SKIP_JAVAC
 
-// FILE: A.java
+// FILE: MyTypeQualifier.java
 
-import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @javax.annotation.meta.TypeQualifier
 public @interface MyTypeQualifier {}
+
+// FILE: A.java
+
+import org.jetbrains.annotations.NotNull;
 
 @An
 public interface A {
@@ -27,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 annotation class An
 
 class B : A {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; 'fun foo(): @An() String' defined in '/A'")!>String?<!> = null
 }
 
 @An
@@ -38,5 +41,5 @@ public interface C {
 }
 
 class D : C {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE("foo; 'fun foo(): String' defined in '/C'")!>String?<!> = null
 }

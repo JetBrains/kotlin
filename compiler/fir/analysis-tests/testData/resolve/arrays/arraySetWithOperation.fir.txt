@@ -46,6 +46,7 @@ FILE: arraySetWithOperation.kt
     }
     public final fun test_1(a: R|A<B>|): R|kotlin/Unit| {
         R|<local>/a|.R|SubstitutionOverride</A.get: R|B|>|(Int(0)).R|/B.plusAssign|(R|/B.B|())
+        Unit
     }
     public final fun test_2(a: R|A<C>|): R|kotlin/Unit| {
          {
@@ -54,10 +55,13 @@ FILE: arraySetWithOperation.kt
             R|<local>/<array>|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</A.get: R|C|>|(R|<local>/<index_0>|).R|/C.plus|(R|/C.C|()))
         }
 
+        Unit
     }
     public final fun test_3(a: R|A<D>|): R|kotlin/Unit| {
         R|<local>/a|.R|SubstitutionOverride</A.get: R|D|>|(Int(0)).<Operator overload ambiguity. Compatible candidates: [/D.plusAssign, /A.set]>#(R|/D.D|())
+        Unit
     }
     public final fun test_4(b: R|B|): R|kotlin/Unit| {
         R|<local>/b|.<Unresolved name: get>#(Int(0)).<Unresolved name: +=>#(R|/B.B|())
+        Unit
     }

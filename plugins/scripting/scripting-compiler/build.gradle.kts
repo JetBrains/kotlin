@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
@@ -12,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
+    compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
@@ -31,10 +34,10 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
 
     testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(libs.kotlinx.coroutines.core)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
@@ -45,9 +48,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        progressiveMode.set(false)
+        freeCompilerArgs.add("-Xskip-metadata-version-check")
     }
 }
 
@@ -62,22 +66,21 @@ testsJar()
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-old-backend")
+    val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
+    doFirst {
+        systemProperty("kotlin.test.script.classpath", scriptClasspath)
+    }
 }
 
-projectTest(taskName = "testWithIr", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
-}
+    val scriptClasspath = testSourceSet.output.classesDirs.joinToString(File.pathSeparator)
 
-projectTest(taskName = "testWithK2", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-k2")
-    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-k2")
+    doFirst {
+        systemProperty("kotlin.test.script.classpath", scriptClasspath)
+        systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }
 

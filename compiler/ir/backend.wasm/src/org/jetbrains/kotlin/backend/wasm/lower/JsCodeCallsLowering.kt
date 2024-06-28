@@ -9,16 +9,24 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.copyTo
+import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 
 /**
  * Lower calls to `js(code)` into `@JsFun(code) external` functions.
  */
 class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
+    private val jsRelatedSymbols get() = context.wasmSymbols.jsRelatedSymbols
+
     override fun lower(irFile: IrFile) {
+        if (!context.isWasmJsTarget) return
         irFile.transformDeclarationsFlat { declaration ->
             when (declaration) {
                 is IrSimpleFunction -> transformFunction(declaration)
@@ -81,7 +89,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         }
 
         val builder = context.createIrBuilder(function.symbol)
-        function.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        function.annotations += builder.irCallConstructor(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
             it.putValueArgument(0, builder.irString(jsFunCode))
         }
         function.body = null
@@ -106,7 +114,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
 
     private fun IrExpression.getJsCode(): String? {
         val call = this as? IrCall ?: return null
-        if (call.symbol != context.wasmSymbols.jsCode) return null
+        if (call.symbol != jsRelatedSymbols.jsCode) return null
         @Suppress("UNCHECKED_CAST")
         return (call.getValueArgument(0) as IrConst<String>).value
     }

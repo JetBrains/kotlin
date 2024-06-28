@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateCollector
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.CandidateFactory
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 internal class CandidateFactoriesAndCollectors(
     // Common calls
@@ -45,7 +49,11 @@ internal class TowerLevelHandler {
             CallKind.VariableAccess -> {
                 processResult += towerLevel.processPropertiesByName(info, processor)
 
-                if (!collector.isSuccess && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
+                // Top-level properties win over objects. Therefore, if we find properties, we don't want to look for objects here.
+                // However, this only applies if the best current candidate applicability has shouldStopResolve == true. Exceptions to this
+                // are candidates from dynamic scopes or properties with @LowPriorityInOverloadResolution (from earlier or the same level),
+                // therefore we check for collector.shouldStopResolve and not collector.isSuccess.
+                if (!collector.shouldStopResolve && towerLevel is ScopeTowerLevel && !towerLevel.areThereExtensionReceiverOptions()) {
                     processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
@@ -73,27 +81,23 @@ private class TowerScopeLevelProcessor(
 ) : TowerScopeLevel.TowerScopeLevelProcessor<FirBasedSymbol<*>> {
     override fun consumeCandidate(
         symbol: FirBasedSymbol<*>,
-        dispatchReceiverValue: ReceiverValue?,
-        givenExtensionReceiverOptions: List<ReceiverValue>,
+        dispatchReceiver: FirExpression?,
+        givenExtensionReceiverOptions: List<FirExpression>,
         scope: FirScope,
         objectsByName: Boolean,
-        isFromOriginalTypeInPresenceOfSmartCast: Boolean
-    ) {
-        resultCollector.consumeCandidate(
+        isFromOriginalTypeInPresenceOfSmartCast: Boolean,
+    ): CandidateApplicability {
+        return resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
                 callInfo,
                 symbol,
                 explicitReceiverKind,
                 scope,
-                dispatchReceiverValue,
+                dispatchReceiver,
                 givenExtensionReceiverOptions,
                 objectsByName,
                 isFromOriginalTypeInPresenceOfSmartCast
             ), candidateFactory.context
         )
-    }
-
-    companion object {
-        val defaultPackage = Name.identifier("kotlin")
     }
 }

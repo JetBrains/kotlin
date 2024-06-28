@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -108,9 +109,7 @@ class JvmRuntimeTypes(
 
         if (descriptor.isSuspend) {
             return mutableListOf<KotlinType>().apply {
-                if (actualFunctionDescriptor.extensionReceiverParameter?.type
-                        ?.isRestrictsSuspensionReceiver() == true
-                ) {
+                if (actualFunctionDescriptor.isRestrictedSuspendFunction()) {
                     if (descriptor.isSuspendLambdaOrLocalFunction()) {
                         add(restrictedSuspendLambda.defaultType)
                     } else {

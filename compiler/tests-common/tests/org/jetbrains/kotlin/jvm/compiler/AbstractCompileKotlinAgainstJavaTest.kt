@@ -37,13 +37,14 @@ import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAnd
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.FrontendBackendConfiguration
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
 import java.lang.annotation.Retention
 
-abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
+abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir(), FrontendBackendConfiguration {
 
     protected fun doTestWithoutAPT(ktFilePath: String) {
         doTest(ktFilePath, aptMode = false)
@@ -125,7 +126,9 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         return JavacWrapper.getInstance(environment.project).use { it.compile(outDir) }
     }
 
-    open fun updateConfiguration(configuration: CompilerConfiguration) {}
+    open fun updateConfiguration(configuration: CompilerConfiguration) {
+        configureIrFir(configuration)
+    }
 
     companion object {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,

@@ -1,5 +1,4 @@
 // ISSUE: KT-52677
-
 // MODULE: lib
 // FILE: lib.kt
 

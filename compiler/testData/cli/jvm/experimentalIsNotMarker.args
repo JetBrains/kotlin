@@ -1,4 +1,6 @@
 $TESTDATA_DIR$/experimentalIsNotMarker.kt
 -d
 $TEMP_DIR$
+-language-version
+2.0
 -opt-in=org.test.NotAMarker

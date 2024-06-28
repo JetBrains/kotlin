@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -27,14 +29,17 @@ internal interface UsesKonanPropertiesBuildService : Task {
     val konanPropertiesService: Property<KonanPropertiesBuildService>
 }
 
+internal val Project.konanPropertiesBuildService
+    get() = KonanPropertiesBuildService.registerIfAbsent(this)
+
 abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildService.Parameters> {
 
     internal interface Parameters : BuildServiceParameters {
-        val konanHome: Property<String>
+        val konanHome: DirectoryProperty
     }
 
     private val properties: Properties by lazy {
-        Distribution(parameters.konanHome.get()).properties
+        Distribution(parameters.konanHome.get().asFile.absolutePath).properties
     }
 
     private val cacheableTargets: List<KonanTarget> by lazy {
@@ -62,26 +67,16 @@ abstract class KonanPropertiesBuildService : BuildService<KonanPropertiesBuildSe
     internal fun additionalCacheFlags(target: KonanTarget): List<String> =
         properties.resolvablePropertyList("additionalCacheFlags", target.visibleName)
 
-    internal val compilerVersion: String? by lazy {
-        properties["compilerVersion"]?.toString()
-    }
-
     companion object {
-        fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> =
-            project.gradle.sharedServices.registerIfAbsent(serviceName, KonanPropertiesBuildService::class.java) { service ->
-                service.parameters.konanHome.set(project.rootProject.konanHome)
+        fun registerIfAbsent(project: Project): Provider<KonanPropertiesBuildService> = project.gradle
+            .registerClassLoaderScopedBuildService(KonanPropertiesBuildService::class) {
+                it.parameters.konanHome.fileProvider(project.nativeProperties.actualNativeHomeDirectory).disallowChanges()
             }.also { serviceProvider ->
                 SingleActionPerProject.run(project, UsesKonanPropertiesBuildService::class.java.name) {
                     project.tasks.withType<UsesKonanPropertiesBuildService>().configureEach { task ->
                         task.usesService(serviceProvider)
                     }
                 }
-            }
-
-        private val serviceName: String
-            get() {
-                val clazz = KonanPropertiesBuildService::class.java
-                return "${clazz}_${clazz.classLoader.hashCode()}"
             }
     }
 }

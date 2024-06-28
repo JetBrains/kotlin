@@ -4,7 +4,6 @@ fun interface IFoo {
 }
 
 fun interface IFoo2 : IFoo {
-
 }
 
 object A {
@@ -29,56 +28,60 @@ operator fun A.get(i: IFoo): Int {
   return 1
 }
 
-operator fun A.set(i: IFoo, newValue: Int) {
-}
-
 operator fun B.get(i: IFoo): Int {
   return 1
+}
+
+operator fun A.set(i: IFoo, newValue: Int) {
 }
 
 operator fun B.set(i: IFoo2, newValue: Int) {
 }
 
-fun withVararg(vararg xs: Int): Int {
-  return 42
-}
-
 fun test1() {
   { // BLOCK
-    val <array>: A = A
-    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0])
-    }
+    val tmp_0: A = A
+    val tmp_1: Function1<Int, Unit> = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
 
-    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
+      ::withVararg
+    }
+    tmp_0.set(i = tmp_1 /*-> IFoo */, newValue = tmp_0.get(i = tmp_1 /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test2() {
   { // BLOCK
-    val <array>: B = B
-    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0])
-    }
+    val tmp_2: B = B
+    val tmp_3: Function1<Int, Unit> = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0]) /*~> Unit */
+      }
 
-    <array>.set(i = <index_0> /*-> IFoo2 */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
+      ::withVararg
+    }
+    tmp_2.set(i = tmp_3 /*-> IFoo2 */, newValue = tmp_2.get(i = tmp_3 /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
-    val <array>: A = A
-    val <index_0>: Function1<Int, Unit> = fn
-    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
+    val tmp_4: A = A
+    val tmp_5: Function1<Int, Unit> = fn
+    tmp_4.set(i = tmp_5 /*-> IFoo */, newValue = tmp_4.get(i = tmp_5 /*-> IFoo */).plus(other = 1))
   }
 }
 
 fun test4(fn: Function1<Int, Unit>) {
   when {
     fn is IFoo -> { // BLOCK
-      val <array>: A = A
-      val <index_0>: IFoo = fn /*as IFoo */
-      <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
+      { // BLOCK
+        val tmp_6: A = A
+        val tmp_7: Any = fn
+        tmp_6.set(i = tmp_7, newValue = tmp_6.get(i = tmp_7).plus(other = 1))
+      }
     }
   }
 }
@@ -86,9 +89,9 @@ fun test4(fn: Function1<Int, Unit>) {
 fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
-    val <array>: A = A
-    val <index_0>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
+    val tmp_8: A = A
+    val tmp_9: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    tmp_8.set(i = tmp_9 /*-> IFoo */, newValue = tmp_8.get(i = tmp_9 /*-> IFoo */).plus(other = 1))
   }
 }
 
@@ -96,8 +99,13 @@ fun test6(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   a /*as Function1<Int, Unit> */ as IFoo /*~> Unit */
   { // BLOCK
-    val <array>: A = A
-    val <index_0>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
+    val tmp_10: A = A
+    val tmp_11: Any = a
+    tmp_10.set(i = tmp_11, newValue = tmp_10.get(i = tmp_11).plus(other = 1))
   }
 }
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+

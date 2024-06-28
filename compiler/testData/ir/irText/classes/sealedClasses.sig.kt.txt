@@ -1,0 +1,93 @@
+// CHECK:
+//   Mangled name: Expr
+//   Public signature: /Expr|null[0]
+sealed class Expr {
+  // CHECK:
+  //   Mangled name: Expr.Const
+  //   Public signature: /Expr.Const|null[0]
+  class Const : Expr {
+    // CHECK:
+    //   Mangled name: Expr.Const{}number
+    //   Public signature: /Expr.Const.number|-3213756739435629896[0]
+    //   Public signature debug description: {}number
+    val number: Double
+      // CHECK JVM_IR:
+      //   Mangled name: Expr.Const#<get-number>(){}kotlin.Double
+      //   Public signature: /Expr.Const.number.<get-number>|5647242881292479325[0]
+      //   Public signature debug description: <get-number>(){}kotlin.Double
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Expr.Const#<get-number>(){}
+      //   Public signature: /Expr.Const.number.<get-number>|-7703103523096162843[0]
+      //   Public signature debug description: <get-number>(){}
+      get
+
+    // CHECK:
+    //   Mangled name: Expr.Const#<init>(kotlin.Double){}
+    //   Public signature: /Expr.Const.<init>|575075696928934302[0]
+    //   Public signature debug description: <init>(kotlin.Double){}
+    constructor(number: Double) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Expr.Sum
+  //   Public signature: /Expr.Sum|null[0]
+  class Sum : Expr {
+    // CHECK:
+    //   Mangled name: Expr.Sum{}e1
+    //   Public signature: /Expr.Sum.e1|3620889417967928691[0]
+    //   Public signature debug description: {}e1
+    val e1: Expr
+      // CHECK JVM_IR:
+      //   Mangled name: Expr.Sum#<get-e1>(){}Expr
+      //   Public signature: /Expr.Sum.e1.<get-e1>|-1591404437553568512[0]
+      //   Public signature debug description: <get-e1>(){}Expr
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Expr.Sum#<get-e1>(){}
+      //   Public signature: /Expr.Sum.e1.<get-e1>|-5200592901549843691[0]
+      //   Public signature debug description: <get-e1>(){}
+      get
+
+    // CHECK:
+    //   Mangled name: Expr.Sum{}e2
+    //   Public signature: /Expr.Sum.e2|6967693203503644767[0]
+    //   Public signature debug description: {}e2
+    val e2: Expr
+      // CHECK JVM_IR:
+      //   Mangled name: Expr.Sum#<get-e2>(){}Expr
+      //   Public signature: /Expr.Sum.e2.<get-e2>|3855595078682840918[0]
+      //   Public signature debug description: <get-e2>(){}Expr
+      // CHECK JS_IR NATIVE:
+      //   Mangled name: Expr.Sum#<get-e2>(){}
+      //   Public signature: /Expr.Sum.e2.<get-e2>|-59208052664646912[0]
+      //   Public signature debug description: <get-e2>(){}
+      get
+
+    // CHECK:
+    //   Mangled name: Expr.Sum#<init>(Expr;Expr){}
+    //   Public signature: /Expr.Sum.<init>|-2872031821614483406[0]
+    //   Public signature debug description: <init>(Expr;Expr){}
+    constructor(e1: Expr, e2: Expr) /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Expr.NotANumber
+  //   Public signature: /Expr.NotANumber|null[0]
+  object NotANumber : Expr {
+    // CHECK:
+    //   Mangled name: Expr.NotANumber#<init>(){}
+    //   Public signature: /Expr.NotANumber.<init>|-5645683436151566731[0]
+    //   Public signature debug description: <init>(){}
+    private constructor() /* primary */
+
+  }
+
+  // CHECK:
+  //   Mangled name: Expr#<init>(){}
+  //   Public signature: /Expr.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  protected constructor() /* primary */
+
+}
+

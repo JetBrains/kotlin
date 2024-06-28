@@ -11,16 +11,10 @@ dependencies {
     compileOnly(intellijCore())
 }
 
+optInToUnsafeDuringIrConstructionAPI()
+optInToObsoleteDescriptorBasedAPI()
+
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-tasks {
-    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        }
-    }
-}
-

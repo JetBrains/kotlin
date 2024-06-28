@@ -1,0 +1,78 @@
+library {
+  // module name: <Objects.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: B
+    // class name: B.C
+    // class name: B.Companion
+    // class name: D
+    // class name: D.E
+
+    // signature: /A|null[0]
+    public final object A : kotlin/Any {
+
+      // signature: /A.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: /A.a|-4432112437378250461[0]
+      public final fun a(): kotlin/Unit
+    }
+
+    // signature: /B|null[0]
+    public final class B : kotlin/Any {
+
+      // signature: /B.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // companion object: Companion
+
+      // nested class: Companion
+
+      // nested class: C
+    }
+
+    // signature: /B.C|null[0]
+    public final object B.C : kotlin/Any {
+
+      // signature: /B.C.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: /B.C.c|-2724918380551733646[0]
+      public final fun c(): kotlin/Unit
+    }
+
+    // signature: /B.Companion|null[0]
+    public final companion object B.Companion : kotlin/Any {
+
+      // signature: /B.Companion.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: /B.Companion.b|4789657038926421504[0]
+      public final fun b(): kotlin/Unit
+    }
+
+    // signature: /D|null[0]
+    public final class D : kotlin/Any {
+
+      // signature: /D.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // companion object: E
+
+      // nested class: E
+    }
+
+    // signature: /D.E|null[0]
+    public final companion object D.E : kotlin/Any {
+
+      // signature: /D.E.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: /D.E.e|-4971306249673273083[0]
+      public final fun e(): kotlin/Unit
+    }
+  }
+}

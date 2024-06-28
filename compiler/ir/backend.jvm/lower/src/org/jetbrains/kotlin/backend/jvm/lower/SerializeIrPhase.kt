@@ -6,23 +6,18 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.expectDeclarationsRemovingPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 
-internal val serializeIrPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, irModule -> SerializeIrPhase(context).lower(irModule) },
+@PhaseDescription(
     name = "SerializeIr",
     description = "If specified by compiler options, save serialized IR in class annotations",
-    prerequisite = setOf(expectDeclarationsRemovingPhase),
+    prerequisite = [JvmExpectDeclarationRemover::class],
 )
-
-class SerializeIrPhase(val context: JvmBackendContext) : FileLoweringPass {
+internal class SerializeIrPhase(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         context.irSerializer?.let { irSerializer ->
             (irFile.metadata as? MetadataSource.File)?.serializedIr = irSerializer.serializeIrFile(irFile)

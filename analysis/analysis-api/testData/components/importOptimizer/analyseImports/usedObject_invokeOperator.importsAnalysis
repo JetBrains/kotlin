@@ -1,0 +1,9 @@
+USED DECLARATIONS:
+
+Declaration: dependency.MyObject
+By names: [MyObject]
+
+Declaration: dependency.MyObject.invoke
+By names: [invoke]
+
+UNRESOLVED NAMES:

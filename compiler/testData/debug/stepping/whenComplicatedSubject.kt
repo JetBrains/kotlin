@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 
 fun foo(x: Int) {
@@ -18,52 +19,49 @@ fun box() {
     foo(2)
 }
 
-// The JVM_IR backend optimizes the inner when to a switch and therefore goes directly to the
-// right case without stepping through evaluation of each condition.
-
-// EXPECTATIONS JVM JVM_IR
-// test.kt:16 box
-// test.kt:5 foo
-// test.kt:6 foo
-// test.kt:4 foo
-// test.kt:11 foo
-// test.kt:13 foo
+// EXPECTATIONS JVM_IR
 // test.kt:17 box
-// test.kt:5 foo
-// EXPECTATIONS JVM
 // test.kt:6 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:7 foo
-// test.kt:4 foo
-// test.kt:13 foo
+// test.kt:5 foo
+// test.kt:12 foo
+// test.kt:14 foo
 // test.kt:18 box
-// test.kt:5 foo
-// EXPECTATIONS JVM
 // test.kt:6 foo
-// test.kt:7 foo
-// EXPECTATIONS JVM JVM_IR
 // test.kt:8 foo
-// test.kt:4 foo
-// test.kt:10 foo
-// test.kt:13 foo
+// test.kt:5 foo
+// test.kt:14 foo
 // test.kt:19 box
+// test.kt:6 foo
+// test.kt:9 foo
+// test.kt:5 foo
+// test.kt:11 foo
+// test.kt:14 foo
+// test.kt:20 box
 
 // EXPECTATIONS JS_IR
-// test.kt:16 box
-// test.kt:5 foo
-// test.kt:6 foo
-// test.kt:10 foo
-// test.kt:11 foo
-// test.kt:13 foo
 // test.kt:17 box
-// test.kt:5 foo
+// test.kt:6 foo
 // test.kt:7 foo
-// test.kt:10 foo
-// test.kt:11 foo
-// test.kt:13 foo
+// test.kt:14 foo
 // test.kt:18 box
-// test.kt:5 foo
+// test.kt:6 foo
 // test.kt:8 foo
-// test.kt:10 foo
-// test.kt:13 foo
+// test.kt:14 foo
 // test.kt:19 box
+// test.kt:6 foo
+// test.kt:9 foo
+// test.kt:14 foo
+// test.kt:20 box
+
+// EXPECTATIONS WASM
+// test.kt:17 $box (8, 4)
+// test.kt:7 $foo (13, 23, 13, 13)
+// test.kt:11 $foo (7, 7, 7, 12)
+// test.kt:12 $foo (7, 12, 7)
+// test.kt:14 $foo (1, 1, 1)
+// test.kt:18 $box (8, 4)
+// test.kt:8 $foo
+// test.kt:19 $box (8, 4)
+// test.kt:9 $foo
+// test.kt:20 $box

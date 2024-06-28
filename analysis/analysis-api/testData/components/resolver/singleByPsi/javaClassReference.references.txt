@@ -1,0 +1,3 @@
+KtNameReferenceExpression(31,36): 'Array'
+  KtSimpleNameReference:
+    (in kotlin) class Array<T> : kotlin.Cloneable, java.io.Serializable

@@ -1,6 +1,5 @@
-// !LANGUAGE: +EnumEntries
+// LANGUAGE: +EnumEntries
 // IGNORE_BACKEND: JS, JVM
-// IGNORE_LIGHT_ANALYSIS
 // FULL_JDK
 // WITH_STDLIB
 

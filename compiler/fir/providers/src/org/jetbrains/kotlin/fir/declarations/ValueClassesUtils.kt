@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,23 +42,19 @@ internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: F
 
 fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession): ValueClassRepresentation<ConeSimpleKotlinType>? {
     val parameters = klass.getValueClassUnderlyingParameters(session)?.takeIf { it.isNotEmpty() } ?: return null
-    val fields = parameters.map { it.name to it.returnTypeRef.coneType as ConeSimpleKotlinType }
+    val fields = parameters.map { it.name to it.symbol.resolvedReturnType as ConeSimpleKotlinType }
     fields.singleOrNull()?.let { (name, type) ->
         if (isRecursiveSingleFieldValueClass(type, session, mutableSetOf(type))) { // escape stack overflow
             return InlineClassRepresentation(name, type)
         }
     }
+
     return createValueClassRepresentation(session.typeContext, fields)
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
     if (!isInline) return null
-
-    val primaryConstructorIfAny = primaryConstructorIfAny(session) ?: return null
-    // FIXME: ATM we cannot lazy-resolve value parameters individually because of KT-53573
-    primaryConstructorIfAny.lazyResolveToPhase(FirResolvePhase.TYPES)
-
-    return primaryConstructorIfAny.fir.valueParameters
+    return primaryConstructorIfAny(session)?.fir?.valueParameters
 }
 
 private fun isRecursiveSingleFieldValueClass(
@@ -74,11 +70,9 @@ private fun ConeSimpleKotlinType.valueClassRepresentationTypeMarkersList(session
     val symbol = this.toSymbol(session) as? FirRegularClassSymbol ?: return null
     if (!symbol.fir.isInline) return null
     symbol.fir.valueClassRepresentation?.let { return it.underlyingPropertyNamesToTypes }
-    symbol.lazyResolveToPhase(FirResolvePhase.TYPES)
+
     val constructorSymbol = symbol.fir.primaryConstructorIfAny(session) ?: return null
-    return constructorSymbol.valueParameterSymbols
-        .onEach { it.lazyResolveToPhase(FirResolvePhase.TYPES) }
-        .map { it.name to it.resolvedReturnType as ConeSimpleKotlinType }
+    return constructorSymbol.valueParameterSymbols.map { it.name to it.resolvedReturnType as ConeSimpleKotlinType }
 }
 
 fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
@@ -88,7 +82,10 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
             contextReceivers.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
-                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
+                    && returnTypeRef.coneType.fullyExpandedType(session).let {
+                it.isBoolean || it.isNothing
+            } && valueParameters[0].returnTypeRef.coneType.let {
+                it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection
+            }
         }
-    } ?: false
+    } == true

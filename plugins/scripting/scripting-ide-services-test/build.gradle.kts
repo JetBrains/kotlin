@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -19,15 +20,15 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(commonDependency("junit"))
+    allTestsRuntime(libs.junit4)
     testApi(kotlinStdlib("jdk8"))
     testApi(project(":kotlin-scripting-ide-services-unshaded"))
     testApi(project(":kotlin-scripting-compiler"))
     testApi(project(":kotlin-scripting-dependencies-maven"))
     testApi(project(":compiler:cli"))
 
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    testImplementation(libs.kotlinx.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
@@ -43,8 +44,8 @@ dependencies {
     embeddableTestRuntime(project(":kotlin-scripting-dependencies-maven-all"))
     embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)
-    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    embeddableTestRuntime(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
+    embeddableTestRuntime(libs.kotlinx.coroutines.core)
+    embeddableTestRuntime(libs.kotlinx.coroutines.core.jvm)
 }
 
 sourceSets {
@@ -52,13 +53,16 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
 projectTest(parallel = true) {
     dependsOn(":kotlin-compiler:distKotlinc")
     workingDir = rootDir
+    doFirst {
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
@@ -69,4 +73,7 @@ projectTest(taskName = "embeddableTest", parallel = true) {
     classpath = embeddableTestRuntime
 
     exclude("**/JvmReplIdeTest.class")
+    doFirst {
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }

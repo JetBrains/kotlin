@@ -9,34 +9,38 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.relativeTo
 
-@DisabledOnOs(
-    OS.WINDOWS,
-    disabledReason = "Compiler plugin is leaking file descriptor preventing cleaning the project"
+@OsCondition(
+    supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS],
+    enabledOnCI = [OS.LINUX], // Compiler plugin is leaking file descriptor preventing cleaning the project on Windows
 )
 @DisplayName("Scripting plugin")
 @OtherGradlePluginTests
 @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3) // workaround for a Gradle synchronization bug: https://github.com/gradle/gradle/issues/23450
-class ScriptingIT : KGPBaseTest() {
+abstract class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("basic script is working")
     @GradleTest
-    fun testScripting(gradleVersion: GradleVersion) {
+    open fun testScripting(gradleVersion: GradleVersion) {
         project("scripting", gradleVersion) {
+            val appSubProject = subProject("app")
+            val scriptTemplateSubProject = subProject("script-template")
+            appSubProject.disableLightTreeIfNeeded()
+            scriptTemplateSubProject.disableLightTreeIfNeeded()
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertCompiledKotlinSources(
                     listOf(
-                        subProject("app").kotlinSourcesDir().resolve("world.greet.kts").relativeTo(projectPath),
-                        subProject("script-template").kotlinSourcesDir().resolve("GreetScriptTemplate.kt").relativeTo(projectPath)
+                        appSubProject.kotlinSourcesDir().resolve("world.greet.kts").relativeTo(projectPath),
+                        scriptTemplateSubProject.kotlinSourcesDir().resolve("GreetScriptTemplate.kt").relativeTo(projectPath)
                     ),
                     output
                 )
                 assertFileExists(
-                    subProject("app").kotlinClassesDir().resolve("World_greet.class")
+                    appSubProject.kotlinClassesDir().resolve("World_greet.class")
                 )
             }
         }
@@ -50,13 +54,13 @@ class ScriptingIT : KGPBaseTest() {
 
     @DisplayName("With custom file extension compiled incremental")
     @GradleTest
-    fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
+    open fun testScriptingCustomExtensionIncremental(gradleVersion: GradleVersion) {
         testScriptingCustomExtensionImpl(gradleVersion, withIC = true)
     }
 
     private fun testScriptingCustomExtensionImpl(
         gradleVersion: GradleVersion,
-        withIC: Boolean
+        withIC: Boolean,
     ) {
         project(
             "scriptingCustomExtension",
@@ -67,6 +71,7 @@ class ScriptingIT : KGPBaseTest() {
             )
         ) {
             val appSubproject = subProject("app")
+            appSubproject.disableLightTreeIfNeeded()
             val bobGreetSource = appSubproject.kotlinSourcesDir().resolve("bob.greet")
             val bobGreet = bobGreetSource.relativeTo(projectPath)
             val aliceGreet = appSubproject.kotlinSourcesDir().resolve("alice.greet").relativeTo(projectPath)
@@ -110,4 +115,29 @@ class ScriptingIT : KGPBaseTest() {
         }
     }
 
+    open fun GradleProject.disableLightTreeIfNeeded() {
+
+    }
+}
+
+@DisplayName("K1 Scripting plugin")
+class ScriptingK1IT : ScriptingIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
+}
+
+@DisplayName("K2 Scripting plugin")
+class ScriptingK2IT : ScriptingIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    override fun GradleProject.disableLightTreeIfNeeded() {
+        buildGradle.append(
+            """
+            tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configure {
+                compilerOptions {
+                    freeCompilerArgs.add("-Xuse-fir-lt=false") // Scripts are not yet supported with K2 in LightTree mode
+                }
+            }            
+            """.trimIndent()
+        )
+    }
 }

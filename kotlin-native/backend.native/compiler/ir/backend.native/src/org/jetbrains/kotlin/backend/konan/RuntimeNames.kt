@@ -1,14 +1,16 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 object RuntimeNames {
-    val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
-    val cnameAnnotation = FqName("kotlin.native.CName")
+    val symbolNameAnnotation = NativeRuntimeNames.Annotations.symbolNameClassId.asSingleFqName()
+    val cnameAnnotation = NativeRuntimeNames.Annotations.cNameClassId.asSingleFqName()
     val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
-    val exportForCppRuntime = FqName("kotlin.native.internal.ExportForCppRuntime")
-    val exportForCompilerAnnotation = FqName("kotlin.native.internal.ExportForCompiler")
-    val exportTypeInfoAnnotation = FqName("kotlin.native.internal.ExportTypeInfo")
+    val exportForCppRuntime = NativeRuntimeNames.Annotations.exportForCppRuntimeClassId.asSingleFqName()
+    val exportedBridge = NativeRuntimeNames.Annotations.exportedBridgeClassId.asSingleFqName()
+    val exportForCompilerAnnotation = NativeRuntimeNames.Annotations.exportForCompilerClassId.asSingleFqName()
+    val exportTypeInfoAnnotation = NativeRuntimeNames.Annotations.exportTypeInfoClassId.asSingleFqName()
     val cCall = FqName("kotlinx.cinterop.internal.CCall")
     val cStructMemberAt = FqName("kotlinx.cinterop.internal.CStruct.MemberAt")
     val cStructArrayMemberAt = FqName("kotlinx.cinterop.internal.CStruct.ArrayMemberAt")
@@ -22,8 +24,9 @@ object RuntimeNames {
     val independent = FqName("kotlin.native.internal.Independent")
     val filterExceptions = FqName("kotlin.native.internal.FilterExceptions")
     val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
+    val kotlinxCInteropInternalPackageName = FqName.fromSegments(listOf("kotlinx", "cinterop", "internal"))
     val kotlinNativeCoroutinesInternalPackageName = FqName.fromSegments(listOf("kotlin", "coroutines", "native", "internal"))
     val associatedObjectKey = FqName("kotlin.reflect.AssociatedObjectKey")
     val typedIntrinsicAnnotation = FqName("kotlin.native.internal.TypedIntrinsic")
-    val cleaner = FqName("kotlin.native.internal.Cleaner")
+    val cleaner = FqName("kotlin.native.ref.Cleaner")
 }

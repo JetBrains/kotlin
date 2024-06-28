@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,16 +21,16 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SamWithReceiverScriptTestGenerated extends AbstractSamWithReceiverScriptTest {
-    private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-    }
+  private void runTest(String testDataFilePath) {
+    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+  }
 
-    public void testAllFilesPresentInScript() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
-    }
+  public void testAllFilesPresentInScript() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/sam-with-receiver/testData/script"), Pattern.compile("^(.+)\\.kts$"), null, true);
+  }
 
-    @TestMetadata("samConversionSimple.kts")
-    public void testSamConversionSimple() throws Exception {
-        runTest("plugins/sam-with-receiver/testData/script/samConversionSimple.kts");
-    }
+  @TestMetadata("samConversionSimple.kts")
+  public void testSamConversionSimple() {
+    runTest("plugins/sam-with-receiver/testData/script/samConversionSimple.kts");
+  }
 }

@@ -9,17 +9,15 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.impl.ApplicationInfoImpl;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ReflectionUtil;
@@ -28,11 +26,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.PeekableIterator;
 import com.intellij.util.containers.PeekableIteratorWrapper;
 import com.intellij.util.lang.CompoundRuntimeException;
-import gnu.trove.Equality;
-import gnu.trove.THashSet;
-import junit.framework.AssertionFailedError;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import junit.framework.TestCase;
-import org.jdom.Element;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,19 +36,21 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker;
 import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.FileInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Supplier;
+
+import static org.jetbrains.kotlin.test.testFramework.Cleanup.cleanupSwingDataStructures;
 
 @SuppressWarnings("ALL")
 public abstract class KtUsefulTestCase extends TestCase {
@@ -78,18 +75,9 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private String myTempDir;
 
-    private static final String DEFAULT_SETTINGS_EXTERNALIZED;
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
-
-        try {
-            Element oldS = new Element("temp");
-            DEFAULT_SETTINGS_EXTERNALIZED = JDOMUtil.writeElement(oldS);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         // -- KOTLIN ADDITIONAL START --
 
@@ -159,7 +147,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
 
         boolean isStressTest = isStressTest();
-        ApplicationInfoImpl.setInStressTest(isStressTest);
+        ApplicationManagerEx.setInStressTest(isStressTest);
         Registry.getInstance().markAsLoaded();
         // turn off Disposer debugging for performance tests
         Disposer.setDebugMode(!isStressTest);
@@ -260,15 +248,6 @@ public abstract class KtUsefulTestCase extends TestCase {
                 }
             }
         }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private static void cleanupSwingDataStructures() throws Exception {
-        Object manager = ReflectionUtil.getDeclaredMethod(Class.forName("javax.swing.KeyboardManager"), "getCurrentManager").invoke(null);
-        Map<?, ?> componentKeyStrokeMap = ReflectionUtil.getField(manager.getClass(), manager, Hashtable.class, "componentKeyStrokeMap");
-        componentKeyStrokeMap.clear();
-        Map<?, ?> containerMap = ReflectionUtil.getField(manager.getClass(), manager, Hashtable.class, "containerMap");
-        containerMap.clear();
     }
 
     @NotNull
@@ -396,8 +375,8 @@ public abstract class KtUsefulTestCase extends TestCase {
 
         final StringBuilder builder = new StringBuilder();
         for (final Object o : collection) {
-            if (o instanceof THashSet) {
-                builder.append(new TreeSet<>((THashSet<?>)o));
+            if (o instanceof ObjectOpenHashSet) {
+                builder.append(new TreeSet<>((ObjectOpenHashSet<?>)o));
             }
             else {
                 builder.append(o);
@@ -450,7 +429,12 @@ public abstract class KtUsefulTestCase extends TestCase {
     public static <T> void assertOrderedEquals(@NotNull String errorMsg,
             @NotNull Iterable<? extends T> actual,
             @NotNull Iterable<? extends T> expected) {
-        assertOrderedEquals(errorMsg, actual, expected, Equality.CANONICAL);
+        assertOrderedEquals(errorMsg, actual, expected, new Equality<T>() {
+            @Override
+            public boolean equals(T o1, T o2) {
+                return Objects.equals(o1, o2);
+            }
+        });
     }
 
     public static <T> void assertOrderedEquals(@NotNull String errorMsg,
@@ -565,7 +549,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     @NotNull
     public static String toString(@NotNull Collection<?> collection, @NotNull String separator) {
-        List<String> list = ContainerUtil.map2List(collection, String::valueOf);
+        List<String> list = ContainerUtil.map(collection, String::valueOf);
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
         boolean flag = false;
@@ -608,7 +592,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         if (collection.size() != checkers.length) {
             Assert.fail(toString(collection));
         }
-        Set<Consumer<T>> checkerSet = ContainerUtil.set(checkers);
+        Set<Consumer<T>> checkerSet = ContainerUtil.newHashSet(checkers);
         int i = 0;
         Throwable lastError = null;
         for (final T actual : collection) {
@@ -813,7 +797,11 @@ public abstract class KtUsefulTestCase extends TestCase {
         String expected = StringUtil.convertLineSeparators(trimBeforeComparing ? fileText.trim() : fileText);
         String actual = StringUtil.convertLineSeparators(trimBeforeComparing ? actualText.trim() : actualText);
         if (!Objects.equals(expected, actual)) {
-            throw new FileComparisonFailure(messageProducer == null ? null : messageProducer.get(), expected, actual, filePath);
+            throw new AssertionFailedError(
+                    messageProducer == null ? null : messageProducer.get(),
+                    new FileInfo(filePath, expected.getBytes(StandardCharsets.UTF_8)),
+                    actual
+            );
         }
     }
 
@@ -866,24 +854,6 @@ public abstract class KtUsefulTestCase extends TestCase {
             throwableName = thr.getClass().getName();
         }
         assertNull(throwableName);
-    }
-
-    protected boolean annotatedWith(@NotNull Class<? extends Annotation> annotationClass) {
-        Class<?> aClass = getClass();
-        String methodName = "test" + getTestName(false);
-        boolean methodChecked = false;
-        while (aClass != null && aClass != Object.class) {
-            if (aClass.getAnnotation(annotationClass) != null) return true;
-            if (!methodChecked) {
-                Method method = ReflectionUtil.getDeclaredMethod(aClass, methodName);
-                if (method != null) {
-                    if (method.getAnnotation(annotationClass) != null) return true;
-                    methodChecked = true;
-                }
-            }
-            aClass = aClass.getSuperclass();
-        }
-        return false;
     }
 
     @NotNull

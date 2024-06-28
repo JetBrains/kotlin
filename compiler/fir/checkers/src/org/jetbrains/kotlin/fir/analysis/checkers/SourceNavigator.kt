@@ -11,16 +11,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.diagnostics.getAncestors
 import org.jetbrains.kotlin.diagnostics.nameIdentifier
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
+import org.jetbrains.kotlin.util.getChildren
 
 /**
  * Service to answer source-related questions in generic fashion.
@@ -40,6 +42,27 @@ interface SourceNavigator {
 
     fun FirTypeRef.isRedundantNullable(): Boolean
 
+    /**
+     * Returns whether this [FirEnumEntry] has a body in source, or `null` if the entry does not have a source.
+     *
+     * Returns `false` if entry has a constructor call, but doesn't have a body:
+     * ```kotlin
+     * enum class E(i: Int) { FOO(42) }
+     * ```
+     *
+     * We have to go down to source level, since this cannot be checked only by FIR element. This is because in FIR all enum entries
+     * with constructor calls have a fake [FirEnumEntry.initializer] with an anonymous object, regardless of whether the entry had
+     * body originally.
+     */
+    fun FirEnumEntry.hasBody(): Boolean?
+
+    /**
+     * Returns whether this [FirEnumEntry] has an initializer in source, or `null` if the entry does not have a source.
+     *
+     * Reason of implementing this in [SourceNavigator] and not in FIR is same as in [hasBody] method.
+     */
+    fun FirEnumEntry.hasInitializer(): Boolean?
+
     companion object {
 
         private val lightTreeInstance = LightTreeSourceNavigator()
@@ -53,12 +76,10 @@ interface SourceNavigator {
         }
 
         inline fun <R> FirElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this.source), block)
-
-        inline fun <R> KtSourceElement.withNavigator(block: SourceNavigator.() -> R): R = with(forSource(this), block)
     }
 }
 
-open class LightTreeSourceNavigator : SourceNavigator {
+private open class LightTreeSourceNavigator : SourceNavigator {
 
     private fun <T> FirElement.withSource(f: (KtSourceElement) -> T): T? =
         source?.let { f(it) }
@@ -109,10 +130,22 @@ open class LightTreeSourceNavigator : SourceNavigator {
         parent?.let { parent = source.treeStructure.getParent(it) }
         return parent
     }
+
+    override fun FirEnumEntry.hasBody(): Boolean? {
+        val source = source ?: return null
+        val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
+        return childNodes.any { it.tokenType == KtNodeTypes.CLASS_BODY }
+    }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val source = source ?: return null
+        val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
+        return childNodes.any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
+    }
 }
 
 //by default psi tree can reuse light tree manipulations
-object PsiSourceNavigator : LightTreeSourceNavigator() {
+private object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? = source?.psi()
@@ -150,5 +183,15 @@ object PsiSourceNavigator : LightTreeSourceNavigator() {
         val typeReference = (source.psi as? KtTypeReference) ?: return false
         val typeElement = typeReference.typeElement as? KtNullableType ?: return false
         return typeElement.innerType is KtNullableType
+    }
+
+    override fun FirEnumEntry.hasBody(): Boolean? {
+        val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
+        return enumEntryPsi.body != null
+    }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
+        return enumEntryPsi.initializerList != null
     }
 }

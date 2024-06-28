@@ -1,0 +1,3 @@
+ForeignValue[name: foo_DebugLabel; isMutated: false; displayText: foo_DebugLabel]
+    lval foo_DebugLabel: R|kotlin/String!|
+    R|kotlin/String!|

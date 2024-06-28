@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.getFakeDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -927,19 +928,19 @@ class ControlFlowProcessor(
 
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
-            val skipInlineFunctions = languageVersionSettings.supportsFeature(BreakContinueInInlineLambdas)
-            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctions)
-            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctions)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = false)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = false)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||
                     // Local class secondary constructors are handled differently
                     // They are the only local class element NOT included in owner pseudocode
                     // See generateInitializersForClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
-                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
+                    labelExprEnclosingFunc?.parentsWithSelf?.any { it is ConstructorDescriptor && !it.isPrimary } == true
                 ) {
-                    val dependsOnInlineLambdas = !skipInlineFunctions &&
-                            getEnclosingFunctionDescriptor(bindingContext, jumpExpression, true) == getEnclosingFunctionDescriptor(bindingContext, jumpTarget, true)
+                    val dependsOnInlineLambdas =
+                        getEnclosingFunctionDescriptor(bindingContext, jumpExpression, skipInlineFunctionLiterals = true) ==
+                                getEnclosingFunctionDescriptor(bindingContext, jumpTarget, skipInlineFunctionLiterals = true)
                     if (dependsOnInlineLambdas) {
                         trace.report(UNSUPPORTED_FEATURE.on(jumpExpression, BreakContinueInInlineLambdas to languageVersionSettings))
                     } else {

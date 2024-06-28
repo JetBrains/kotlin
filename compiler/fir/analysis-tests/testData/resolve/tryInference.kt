@@ -11,7 +11,7 @@ fun test() {
         } catch (e: Exception) {
             materialize()
         } finally {
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() // Should be an errror
+            <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>() // Should be an errror
         }
     )
 }

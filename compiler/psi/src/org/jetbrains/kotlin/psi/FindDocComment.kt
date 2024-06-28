@@ -19,9 +19,15 @@ package org.jetbrains.kotlin.psi.findDocComment
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationModifierList
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 fun findDocComment(declaration: KtDeclaration): KDoc? {
+    val containingFile = declaration.containingFile
+    if (containingFile is KtFile && containingFile.isCompiled) {
+        //can't use containingKtFile due to non-physical code fragments, e.g. ssr
+        return null
+    }
     return declaration.allChildren
         .flatMap {
             if (it is KtDeclarationModifierList) {

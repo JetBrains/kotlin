@@ -5,12 +5,15 @@
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Throws an [AssertionError] if the [value] is false
  * and runtime assertions have been enabled during compilation.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun assert(value: Boolean) {
+@ExperimentalNativeApi
+public actual inline fun assert(value: Boolean) {
     assert(value) { "Assertion failed" }
 }
 
@@ -18,7 +21,8 @@ public inline fun assert(value: Boolean) {
  * Throws an [AssertionError] calculated by [lazyMessage] if the [value] is false
  * and runtime assertions have been enabled during compilation.
  */
-public inline fun assert(value: Boolean, lazyMessage: () -> Any) {
+@ExperimentalNativeApi
+public actual inline fun assert(value: Boolean, lazyMessage: () -> Any) {
     if (!value) {
         val message = lazyMessage()
         throw AssertionError(message)

@@ -1,0 +1,34 @@
+class A {
+  val a: Int
+    field = 1
+    get
+
+  val b: Int
+    field = <this>.<get-a>().plus(other = 2)
+    get
+
+  val c: Int
+    field = 1
+    get
+
+  val d: Int
+    field = <this>.<get-c>().plus(other = 2)
+    get
+
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun rest() {
+    val aI: Int = A().<get-a>().plus(other = 10)
+    val bI: Int = A().<get-b>().plus(other = 20)
+  }
+
+}
+
+fun test() {
+  val bA: Int = A().<get-b>().plus(other = 20)
+}
+

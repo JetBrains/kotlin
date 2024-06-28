@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -16,9 +16,8 @@ open class FirBodyResolveTransformer(
     phase: FirResolvePhase,
     implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
-    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
+    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     outerBodyResolveContext: BodyResolveContext? = null,
-    firTowerDataContextCollector: FirTowerDataContextCollector? = null
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     phase,
@@ -26,8 +25,8 @@ open class FirBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
-    firTowerDataContextCollector
+    expandTypeAliases = true,
 ) {
-    final override val expressionsTransformer = FirExpressionsResolveTransformer(this)
-    final override val declarationsTransformer = FirDeclarationsResolveTransformer(this)
+    final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformer(this)
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsResolveTransformer(this)
 }

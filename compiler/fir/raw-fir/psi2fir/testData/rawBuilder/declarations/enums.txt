@@ -1,5 +1,5 @@
 FILE: enums.kt
-    public? final? enum class Order : R|kotlin/Enum<Order>| {
+    public final? enum class Order : R|kotlin/Enum<Order>| {
         private [ContainingClassKey=Order] constructor(): R|Order| {
             super<R|kotlin/Enum<Order>|>()
         }
@@ -17,7 +17,7 @@ FILE: enums.kt
             public get(): R|kotlin/enums/EnumEntries<Order>|
 
     }
-    public? final? enum class Planet : R|kotlin/Enum<Planet>| {
+    public final? enum class Planet : R|kotlin/Enum<Planet>| {
         private [ContainingClassKey=Planet] constructor([CorrespondingProperty=/Planet.m] m: Double, [CorrespondingProperty=/Planet.r] r: Double): R|Planet| {
             super<R|kotlin/Enum<Planet>|>()
         }
@@ -66,7 +66,7 @@ FILE: enums.kt
 
         public? abstract fun sayHello(): R|kotlin/Unit|
 
-        public? final? companion object Companion : R|kotlin/Any| {
+        public final? companion object Companion : R|kotlin/Any| {
             private [ContainingClassKey=Companion] constructor(): R|Planet.Companion| {
                 super<R|kotlin/Any|>()
             }
@@ -86,7 +86,7 @@ FILE: enums.kt
             public get(): R|kotlin/enums/EnumEntries<Planet>|
 
     }
-    public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
+    public final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
         private [ContainingClassKey=PseudoInsn] constructor([CorrespondingProperty=/PseudoInsn.signature] signature: String = String(()V)): R|PseudoInsn| {
             super<R|kotlin/Enum<PseudoInsn>|>()
         }

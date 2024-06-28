@@ -294,7 +294,7 @@ internal inline fun createContinuationArgumentFromCallback(
 }
 
 @PublishedApi
-internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>) =
+internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>): Continuation<T> =
         createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
 
 /**

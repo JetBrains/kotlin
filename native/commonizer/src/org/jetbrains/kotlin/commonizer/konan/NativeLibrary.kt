@@ -7,9 +7,9 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.UniqueLibraryName
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 interface NativeManifestDataProvider {
@@ -58,15 +58,17 @@ internal class CommonNativeManifestDataProvider(
         val rawManifests = manifests[libraryName] ?: error("Missing manifests for $libraryName")
         check(rawManifests.isNotEmpty()) { "No manifests for $libraryName" }
 
-        val isInterop = rawManifests.all { it.isInterop }
+        val isCInterop = rawManifests.all { it.isCInterop }
 
         return NativeSensitiveManifestData(
             uniqueName = libraryName,
             versions = rawManifests.first().versions,
             dependencies = rawManifests.map { it.dependencies }.reduce { acc, list -> acc.intersect(list).toList() },
-            isInterop = isInterop,
+            isCInterop = isCInterop,
             packageFqName = rawManifests.first().packageFqName,
-            exportForwardDeclarations = if (isInterop) rawManifests.map { it.exportForwardDeclarations }
+            exportForwardDeclarations = if (isCInterop) rawManifests.map { it.exportForwardDeclarations }
+                .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
+            includedForwardDeclarations = if (isCInterop) rawManifests.map { it.includedForwardDeclarations }
                 .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
             nativeTargets = rawManifests.flatMapTo(mutableSetOf()) { it.nativeTargets },
             shortName = rawManifests.first().shortName,
@@ -78,11 +80,11 @@ internal class CommonNativeManifestDataProvider(
 internal fun NativeManifestDataProvider(target: CommonizerTarget, libraries: List<NativeLibrariesToCommonize>): NativeManifestDataProvider {
     val manifestsByName = libraries
         .flatMap { it.libraries }
-        .groupByTo(THashMap()) { it.manifestData.uniqueName }
+        .groupByTo(CommonizerMap()) { it.manifestData.uniqueName }
         .mapValues { (_, libraries) -> libraries.map { it.manifestData } }
 
     return CommonNativeManifestDataProvider(target, manifestsByName)
 }
 
 private fun NativeLibrariesToCommonize.buildManifestIndex(): MutableMap<UniqueLibraryName, NativeSensitiveManifestData> =
-    libraries.map { it.manifestData }.associateByTo(THashMap()) { it.uniqueName }
+    libraries.map { it.manifestData }.associateByTo(CommonizerMap()) { it.uniqueName }

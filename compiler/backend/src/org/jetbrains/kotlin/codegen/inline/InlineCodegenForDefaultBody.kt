@@ -39,20 +39,15 @@ class InlineCodegenForDefaultBody(
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
         assert(!callDefault) { "inlining default stub into another default stub" }
         val (node, smap) = sourceCompilerForInline.compileInlineFunction(jvmSignature)
-        val childSourceMapper = SourceMapCopier(sourceMapper, smap)
 
-        val argsSize =
-            (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr 2) - if (callableMethod.isStaticCall()) 1 else 0
-        // `$default` is only for Kotlin use so it has no `$$forInline` version - this *is* what the inliner will use.
-        node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-        node.accept(object : MethodBodyVisitor(codegen.visitor) {
-            // The LVT was not generated at all, so move the start of parameters to the start of the method.
+        val argsSize = argumentsSize(jvmSignature.asmMethod.descriptor, callableMethod.isStaticCall())
+        val mv = object : MethodBodyVisitor(codegen.visitor) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) =
                 super.visitLocalVariable(name, desc, signature, if (index < argsSize) methodStartLabel else start, end, index)
-
-            override fun visitLineNumber(line: Int, start: Label) =
-                super.visitLineNumber(childSourceMapper.mapLineNumber(line), start)
-        })
+        }
+        // `$default` is only for Kotlin use so it has no `$$forInline` version - this *is* what the inliner will use.
+        node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+        node.accept(SourceMapCopyingMethodVisitor(sourceMapper, smap, mv))
     }
 
     override fun genValueAndPut(

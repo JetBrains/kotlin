@@ -1,0 +1,12 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    FUN name:PostCardSimple visibility:public modality:FINAL <> (navigateToArticle:kotlin.Function1<kotlin.String, kotlin.Unit>, isFavorite:kotlin.Boolean, onToggleFavorite:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+      annotations:
+        MyComposable
+      VALUE_PARAMETER name:navigateToArticle index:0 type:kotlin.Function1<kotlin.String, kotlin.Unit>
+      VALUE_PARAMETER name:isFavorite index:1 type:kotlin.Boolean
+      VALUE_PARAMETER name:onToggleFavorite index:2 type:kotlin.Function0<kotlin.Unit>
+      BLOCK_BODY
+        CALL 'public final fun BookmarkButton (isBookmarked: kotlin.Boolean, onClick: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in p3.JetnewsIconsKt' type=kotlin.Unit origin=null
+          isBookmarked: GET_VAR 'isFavorite: kotlin.Boolean declared in <root>.PostCardSimple' type=kotlin.Boolean origin=null
+          onClick: GET_VAR 'onToggleFavorite: kotlin.Function0<kotlin.Unit> declared in <root>.PostCardSimple' type=kotlin.Function0<kotlin.Unit> origin=null

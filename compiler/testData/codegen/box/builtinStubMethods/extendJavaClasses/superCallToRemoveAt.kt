@@ -3,6 +3,8 @@
 // SKIP_JDK6
 // FULL_JDK
 
+// JVM_ABI_K1_K2_DIFF: KT-63857
+
 // FILE: superCallToRemoveAt.kt
 class Test : IntArrayList() {
     override fun removeAt(index: Int): Int {

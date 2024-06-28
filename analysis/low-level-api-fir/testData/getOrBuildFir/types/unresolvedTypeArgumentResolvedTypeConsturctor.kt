@@ -1,0 +1,1 @@
+fun x(): <expr>List<UNRESOVLED></expr> = 1

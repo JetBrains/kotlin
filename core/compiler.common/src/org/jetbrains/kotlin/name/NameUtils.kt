@@ -20,6 +20,9 @@ object NameUtils {
     private val SANITIZE_AS_JAVA_INVALID_CHARACTERS = "[^\\p{L}\\p{Digit}]".toRegex()
 
     @JvmStatic
+    val CONTEXT_RECEIVER_PREFIX = "\$context_receiver"
+
+    @JvmStatic
     fun sanitizeAsJavaIdentifier(name: String): String {
         return SANITIZE_AS_JAVA_INVALID_CHARACTERS.replace(name, "_")
     }
@@ -64,5 +67,5 @@ object NameUtils {
 
     @JvmStatic
     fun contextReceiverName(index: Int): Name =
-        Name.identifier("_context_receiver_$index")
+        Name.identifier("${CONTEXT_RECEIVER_PREFIX}_$index")
 }

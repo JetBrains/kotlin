@@ -106,7 +106,7 @@ class PublishingIT : KGPBaseTest() {
             ) {
                 assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
                 val pomLines = projectPath.resolve("build/publications/myLibrary/pom-default.xml").readLines()
-                val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib-jdk8</artifactId>" in it } + 1
+                val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
                 val versionLine = pomLines[stdlibVersionLineNumber]
                 assertTrue { "<version>${buildOptions.kotlinVersion}</version>" in versionLine }
             }

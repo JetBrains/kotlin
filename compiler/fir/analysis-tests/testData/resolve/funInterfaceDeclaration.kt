@@ -1,4 +1,4 @@
-// !LANGUAGE: -SuspendFunctionsInFunInterfaces
+// LANGUAGE: -SuspendFunctionsInFunInterfaces
 
 <!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface Test1{
     fun foo()

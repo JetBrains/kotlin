@@ -1,0 +1,17 @@
+FILE fqName:<root> fileName:/dynamicElvisOperator.kt
+  FUN name:test visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:d index:0 type:dynamic
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test (d: dynamic): dynamic declared in <root>'
+        BLOCK type=dynamic origin=ELVIS
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:dynamic [val]
+            GET_VAR 'd: dynamic declared in <root>.test' type=dynamic origin=null
+          WHEN type=dynamic origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp_0: dynamic declared in <root>.test' type=dynamic origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST String type=kotlin.String value="other"
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: GET_VAR 'val tmp_0: dynamic declared in <root>.test' type=dynamic origin=null

@@ -5,11 +5,18 @@ plugins {
 
 repositories {
     mavenLocal()
+    google()
     mavenCentral()
 }
 
 android {
-    compileSdkVersion 33
+    namespace "com.example"
+
+    compileSdkVersion 34
+
+    kotlin {
+        jvmToolchain(8)
+    }
 
     defaultConfig {
         applicationId "com.example"
@@ -17,12 +24,6 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-    }
-
-    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
     }
 }
 

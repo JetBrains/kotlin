@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -REDUNDANT_PROJECTION
-// !LANGUAGE: +InferenceCompatibility
+// DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -REDUNDANT_PROJECTION
+// LANGUAGE: +InferenceCompatibility
 
 // FILE: Foo.java
 public class Foo<L> extends Bar<L> {

@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,13 +14,13 @@ repositories {
     mavenLocal()
     maven { url 'https://maven.google.com' }
     mavenCentral()
-    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    namespace "org.jetbrains.kotlin.gradle.test.android.libalfa"
     compileSdkVersion 23
 }
 

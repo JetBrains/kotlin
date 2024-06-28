@@ -11,13 +11,13 @@ import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxFun
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.ir.util.*
 
 /**
  * Add attributes to LLVM function declaration and its invocation.
@@ -106,6 +106,39 @@ private fun addDeclarationAttributesAtIndex(context: LLVMContextRef, function: L
     }
 }
 
+internal fun ContextUtils.getLlvmFunctionReturnType(function: IrFunction): LlvmRetType {
+    val returnType = when {
+        function is IrConstructor -> LlvmRetType(llvm.voidType)
+        function.isSuspend -> error("Suspend functions should be lowered out at this point, but ${function.render()} is still here")
+        function.returnType.isVoidAsReturnType() -> LlvmRetType(llvm.voidType)
+        else -> LlvmRetType(
+                function.returnType.toLLVMType(llvm),
+                argumentAbiInfo.defaultParameterAttributesForIrType(function.returnType),
+                isObjectType = function.returnType.binaryTypeIsReference()
+        )
+    }
+    return returnType
+}
+
+internal fun LlvmFunctionSignature(irFunction: IrFunction, contextUtils: ContextUtils): LlvmFunctionSignature {
+    val returnType = contextUtils.getLlvmFunctionReturnType(irFunction)
+    val parameterTypes = ArrayList(irFunction.allParameters.map {
+        LlvmParamType(it.type.toLLVMType(contextUtils.llvm), contextUtils.argumentAbiInfo.defaultParameterAttributesForIrType(it.type))
+    })
+
+    require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
+
+    if (returnType.isObjectType)
+        parameterTypes.add(LlvmParamType(contextUtils.kObjHeaderPtrPtr))
+
+    return LlvmFunctionSignature(
+            returnType = returnType,
+            parameterTypes = parameterTypes,
+            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
+            isVararg = false,
+    )
+}
+
 /**
  * LLVM function's signature, enriched with attributes.
  */
@@ -116,12 +149,7 @@ internal open class LlvmFunctionSignature(
         val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
 ) : LlvmFunctionAttributeProvider {
 
-    constructor(irFunction: IrFunction, contextUtils: ContextUtils) : this(
-            returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
-            parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
-            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
-            isVararg = false,
-    )
+    val returnsObjectType: Boolean get() = returnType.isObjectType
 
     val llvmFunctionType by lazy {
         functionType(returnType.llvmType, isVararg, parameterTypes.map { it.llvmType })
@@ -158,30 +186,34 @@ sealed class FunctionOrigin {
  * Prototype of a LLVM function that is not tied to a specific LLVM module.
  */
 internal class LlvmFunctionProto(
-        val name: String,
-        returnType: LlvmRetType,
-        parameterTypes: List<LlvmParamType> = emptyList(),
-        functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
-        val origin: FunctionOrigin,
-        isVararg: Boolean = false,
-        val independent: Boolean = false,
-) : LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes) {
-    constructor(
-            name: String,
-            signature: LlvmFunctionSignature,
-            origin: FunctionOrigin,
-            independent: Boolean = false,
-    ) : this(name, signature.returnType, signature.parameterTypes, signature.functionAttributes, origin, signature.isVararg, independent)
-
-    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils) : this(
+      val name: String,
+      val signature: LlvmFunctionSignature,
+      val origin: FunctionOrigin?,
+      val linkage: LLVMLinkage,
+      val independent: Boolean = false,
+) {
+    constructor(irFunction: IrFunction, symbolName: String, contextUtils: ContextUtils, linkage: LLVMLinkage) : this(
             name = symbolName,
-            returnType = contextUtils.getLlvmFunctionReturnType(irFunction),
-            parameterTypes = contextUtils.getLlvmFunctionParameterTypes(irFunction),
-            functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
+            signature = LlvmFunctionSignature(irFunction, contextUtils),
             origin = FunctionOrigin.OwnedBy(irFunction),
+            linkage = linkage,
             independent = irFunction.hasAnnotation(RuntimeNames.independent)
     )
+
+    fun createLlvmFunction(context: Context, llvmModule: LLVMModuleRef): LlvmCallable {
+        val function = LLVMAddFunction(llvmModule, name, signature.llvmFunctionType)!!
+        addDefaultLlvmFunctionAttributes(context, function)
+        addTargetCpuAndFeaturesAttributes(context, function)
+        signature.addFunctionAttributes(function)
+        LLVMSetLinkage(function, linkage)
+        return LlvmCallable(function, signature)
+    }
 }
+
+internal fun LlvmFunctionSignature.toProto(name: String, origin: FunctionOrigin?, linkage: LLVMLinkage, independent: Boolean = false) =
+        LlvmFunctionProto(name, this, origin, linkage, independent)
+
+
 
 private fun mustNotInline(context: Context, irFunction: IrFunction): Boolean {
     if (context.shouldContainLocationDebugInfo()) {
@@ -205,5 +237,8 @@ private fun inferFunctionAttributes(contextUtils: ContextUtils, irFunction: IrFu
             }
             if (mustNotInline(contextUtils.context, irFunction)) {
                 add(LlvmFunctionAttribute.NoInline)
+            }
+            if (irFunction.symbol.isBoxOrUnboxFun() && contextUtils.context.shouldInlineBoxing()) {
+                add(LlvmFunctionAttribute.AlwaysInline)
             }
         }

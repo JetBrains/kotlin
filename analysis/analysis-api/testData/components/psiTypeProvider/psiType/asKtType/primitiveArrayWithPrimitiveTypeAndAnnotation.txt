@@ -1,0 +1,2 @@
+PsiType: int @MyAnno("array") []
+KaType: @MyAnno(value = "array") kotlin.IntArray!

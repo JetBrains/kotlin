@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_EXPRESSION, -UNUSED_PARAMETER
 
 class A
 
@@ -17,7 +17,7 @@ fun test2() {
     fun foo() {}
 
     <!UNRESOLVED_REFERENCE!>Unresolved<!>::foo
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::foo)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
+    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::foo)
+    foo(<!UNRESOLVED_REFERENCE!>Unresolved<!>::unresolved)
     ::<!UNRESOLVED_REFERENCE!>unresolved<!>
 }

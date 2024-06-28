@@ -1,12 +1,11 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
-// (supported: JVM_IR, JS_IR(_E6))
+// (supported: JVM_IR, JS_IR(_ES6))
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
+// LANGUAGE: +InstantiationOfAnnotationClasses +MultiPlatformProjects
 
 // MODULE: lib
 // FILE: common.kt

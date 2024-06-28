@@ -1,5 +1,5 @@
 // NO_CHECK_LAMBDA_INLINING
-
+// IGNORE_INLINER: IR
 // FILE: 1.kt
 
 package builders

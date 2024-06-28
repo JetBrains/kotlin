@@ -1,11 +1,11 @@
 public open class PropertyComplexTypes<T : R|kotlin/Any!|> : R|kotlin/Any| {
-    public open field genericType: R|ft<T & Any, T?>|
+    public open field genericType: R|T!|
 
     public open field listDefinedGeneric: R|ft<java/util/ArrayList<kotlin/String!>, java/util/ArrayList<kotlin/String!>?>|
 
-    public open field listGeneric: R|ft<java/util/ArrayList<ft<T & Any, T?>>, java/util/ArrayList<ft<T & Any, T?>>?>|
+    public open field listGeneric: R|ft<java/util/ArrayList<T!>, java/util/ArrayList<T!>?>|
 
-    public open field listOfGenericList: R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T & Any, T?>>, java/util/ArrayList<ft<T & Any, T?>>?>>, java/util/ArrayList<ft<java/util/ArrayList<ft<T & Any, T?>>, java/util/ArrayList<ft<T & Any, T?>>?>>?>|
+    public open field listOfGenericList: R|ft<java/util/ArrayList<ft<java/util/ArrayList<T!>, java/util/ArrayList<T!>?>>, java/util/ArrayList<ft<java/util/ArrayList<T!>, java/util/ArrayList<T!>?>>?>|
 
     public constructor<T : R|kotlin/Any!|>(): R|test/PropertyComplexTypes<T>|
 

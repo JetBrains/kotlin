@@ -5,9 +5,9 @@ FILE fqName:<root> fileName:/javaAnnotation.kt
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      JavaAnn(value = 'abc', i = '123')
+      JavaAnn(value = "abc", i = 123)
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      JavaAnn(value = 'abc', i = '123')
+      JavaAnn(value = "abc", i = 123)
     BLOCK_BODY

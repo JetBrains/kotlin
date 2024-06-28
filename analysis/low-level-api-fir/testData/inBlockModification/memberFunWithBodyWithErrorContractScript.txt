@@ -1,0 +1,15 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit|
+    [Contract description] <
+        R|kotlin/contracts/contract|(R|<local>/l|)
+    >
+ {
+     {
+        R|kotlin/contracts/contract|(R|<local>/l|)
+    }
+
+    Int(42)
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|kotlin/contracts/ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

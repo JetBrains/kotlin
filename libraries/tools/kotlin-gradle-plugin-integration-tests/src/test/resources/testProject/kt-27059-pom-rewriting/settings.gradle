@@ -1,1 +1,3 @@
+rootProject.name = "kt-27059-pom-rewriting"
+
 include(":mpp-lib", ":jvm-app", ":js-app")

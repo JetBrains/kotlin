@@ -1,5 +1,5 @@
-// !LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// LANGUAGE: +UnitConversionsOnArbitraryExpressions +SuspendConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun interface SuspendRunnable {
     suspend fun run()

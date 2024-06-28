@@ -1,5 +1,5 @@
 // KIND: STANDALONE_LLDB
-// LLDB_TRACE: standalone_lldb_stepping.txt
+// FIR_IDENTICAL
 import kotlin.test.*
 
 fun main(args: Array<String>) {

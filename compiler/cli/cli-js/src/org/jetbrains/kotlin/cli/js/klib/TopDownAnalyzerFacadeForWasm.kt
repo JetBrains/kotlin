@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
+import org.jetbrains.kotlin.wasm.resolve.WasmJsPlatformAnalyzerServices
+import org.jetbrains.kotlin.wasm.resolve.WasmWasiPlatformAnalyzerServices
 
-object TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
-    override val analyzerServices: PlatformDependentAnalyzerServices = WasmPlatformAnalyzerServices
-    override val platform: TargetPlatform = WasmPlatforms.Default
-
+abstract class TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
     override fun loadIncrementalCacheMetadata(
         incrementalData: IncrementalDataProvider,
         moduleContext: ModuleContext,
@@ -36,4 +35,23 @@ object TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
             lookupTracker
         )
     }
+
+    companion object {
+        fun facadeFor(target: WasmTarget?): TopDownAnalyzerFacadeForWasm = when (target) {
+            WasmTarget.WASI -> TopDownAnalyzerFacadeForWasmWasi
+            else -> TopDownAnalyzerFacadeForWasmJs
+        }
+    }
+}
+
+object TopDownAnalyzerFacadeForWasmJs : TopDownAnalyzerFacadeForWasm() {
+    override val platform: TargetPlatform = WasmPlatforms.wasmJs
+
+    override val analyzerServices: PlatformDependentAnalyzerServices = WasmJsPlatformAnalyzerServices
+}
+
+object TopDownAnalyzerFacadeForWasmWasi : TopDownAnalyzerFacadeForWasm() {
+    override val platform: TargetPlatform = WasmPlatforms.wasmWasi
+
+    override val analyzerServices: PlatformDependentAnalyzerServices = WasmWasiPlatformAnalyzerServices
 }

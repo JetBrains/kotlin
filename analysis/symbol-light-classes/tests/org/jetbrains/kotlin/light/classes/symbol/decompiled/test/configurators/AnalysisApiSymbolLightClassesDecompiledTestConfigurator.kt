@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.fir.test.configurators.library.AnalysisApiFirLibraryBinaryTestConfigurator
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryDecompiledTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -21,18 +21,18 @@ object AnalysisApiSymbolLightClassesDecompiledTestConfigurator : AnalysisApiTest
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
-        AnalysisApiFirLibraryBinaryTestConfigurator.configureTest(builder, disposable)
+        AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.configureTest(builder, disposable)
     }
 
-    override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
-        get() = AnalysisApiFirLibraryBinaryTestConfigurator.serviceRegistrars +
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
+        get() = AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.serviceRegistrars +
                 AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar
 
     override fun createModules(
         moduleStructure: TestModuleStructure,
         testServices: TestServices,
         project: Project
-    ): KtModuleProjectStructure {
-        return AnalysisApiFirLibraryBinaryTestConfigurator.createModules(moduleStructure, testServices, project)
+    ): KtTestModuleStructure {
+        return AnalysisApiFirLibraryBinaryDecompiledTestConfigurator.createModules(moduleStructure, testServices, project)
     }
 }

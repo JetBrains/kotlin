@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 @CacheableTask
-open class KotlinJvmTest : Test(), UsesVariantImplementationFactories {
+abstract class KotlinJvmTest : Test(), UsesVariantImplementationFactories {
     @Input
     @Optional
     var targetName: String? = null

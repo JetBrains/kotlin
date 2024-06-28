@@ -1,0 +1,19 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] get(): R|kotlin/String|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] memberProperty.kt
+    public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] get(): R|kotlin/String|
+
+    }

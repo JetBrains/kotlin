@@ -1,0 +1,35 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+
+
+@Composable
+fun rememberFoo(a: Int, b: Int) = remember(a, b) { Foo(a, b) }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun rememberFoo(a: Int, b: Int, %composer: Composer?, %changed: Int): Foo {
+  sourceInformationMarkerStart(%composer, <>, "C(rememberFoo)<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = <block>{
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(b) || %changed and 0b00110000 == 0b00100000) {
+      Foo(a, b)
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

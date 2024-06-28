@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/requireKotlinCompilerVersion.kt
+-classpath
+$TESTDATA_DIR$/requireKotlinCompilerVersion
+-d
+$TEMP_DIR$
+-language-version
+2.0

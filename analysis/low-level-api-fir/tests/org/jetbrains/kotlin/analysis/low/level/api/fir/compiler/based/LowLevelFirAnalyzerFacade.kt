@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,14 +10,23 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
-import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.util.listMultimapOf
+import org.jetbrains.kotlin.fir.util.plusAssign
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.DiagnosticWithKmpCompilationMode
+import org.jetbrains.kotlin.test.frontend.fir.handlers.DiagnosticsMap
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.KmpCompilationMode
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.services.TestServices
 
-class LowLevelFirAnalyzerFacade(
+open class LowLevelFirAnalyzerFacade(
     val firResolveSession: LLFirResolveSession,
     val allFirFiles: Map<TestFile, FirFile>,
     private val diagnosticCheckerFilter: DiagnosticCheckerFilter,
@@ -25,7 +34,20 @@ class LowLevelFirAnalyzerFacade(
     override val scopeSession: ScopeSession
         get() = ScopeSession()
 
-    override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
+    override val result: FirResult
+        get() {
+            val output = ModuleCompilerAnalyzedOutput(firResolveSession.useSiteFirSession, scopeSession, allFirFiles.values.toList())
+            return FirResult(listOf(output))
+        }
+
+    private var resolved: Boolean = false
+
+    fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
+        if (!resolved) {
+            runResolution()
+            resolved = true
+        }
+
         return allFirFiles.values.associateWith { firFile ->
             val ktFile = firFile.psi as KtFile
             val diagnostics = ktFile.collectDiagnosticsForFile(firResolveSession, diagnosticCheckerFilter)
@@ -34,12 +56,19 @@ class LowLevelFirAnalyzerFacade(
         }
     }
 
-    override fun runResolution(): List<FirFile> = shouldNotBeCalled()
-    override fun convertToIr(
-        fir2IrExtensions: Fir2IrExtensions,
-        commonMemberStorage: Fir2IrCommonMemberStorage,
-        irBuiltIns: IrBuiltInsOverFir?
-    ): Fir2IrResult = shouldNotBeCalled()
+    override fun runResolution(): List<FirFile> = allFirFiles.values.toList()
 }
 
-private fun shouldNotBeCalled(): Nothing = error("Should not be called for LL test")
+class AnalysisApiFirDiagnosticCollectorService(testServices: TestServices) : FirDiagnosticCollectorService(testServices) {
+    override fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+        val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
+        for (part in info.partsForDependsOnModules) {
+            val facade = part.firAnalyzerFacade
+            require(facade is LowLevelFirAnalyzerFacade)
+            result += facade.runCheckers().mapValues { entry ->
+                entry.value.map { DiagnosticWithKmpCompilationMode(it, KmpCompilationMode.LOW_LEVEL_API) }
+            }
+        }
+        return result
+    }
+}

@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM_IR
 
 fun use2(c: suspend Long.(Double, String) -> Unit) {}
 fun use(c: suspend Long.(String) -> Unit) {}

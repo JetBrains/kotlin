@@ -1,0 +1,247 @@
+Expression: a
+KaType: A
+
+KaTypeScope:
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int!
+  symbol = /JavaClass.getValue(<dispatch receiver>: JavaClass): kotlin.Int!
+  valueParameters = []
+  callableId = /JavaClass.getValue
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  valueParameters = [
+    KaVariableSignature:
+      name = other
+      receiverType = null
+      returnType = kotlin.Any?
+      symbol = other: kotlin.Any?
+      callableId = null
+  ]
+  callableId = kotlin/Any.equals
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  valueParameters = []
+  callableId = kotlin/Any.hashCode
+KaFunctionSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
+  valueParameters = []
+  callableId = kotlin/Any.toString
+KaVariableSignature:
+  name = value
+  receiverType = null
+  returnType = kotlin.Int!
+  symbol = val value: kotlin.Int!
+  callableId = /JavaClass.value
+
+
+Declaration Scope:
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: /JavaClass.getValue
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: getValue
+  origin: JAVA_SOURCE
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/Int!
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.equals
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Public
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: other
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      visibility: PUBLIC
+  ]
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.hashCode
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaNamedFunctionSymbol:
+  annotations: []
+  callableId: kotlin/Any.toString
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+KaSyntheticJavaPropertySymbol:
+  annotations: []
+  backingFieldSymbol: null
+  callableId: /JavaClass.value
+  compilerVisibility: Public
+  contextReceivers: []
+  getter: KaPropertyGetterSymbol:
+    annotations: []
+    callableId: /JavaClass.getValue
+    compilerVisibility: Public
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isActual: false
+    isDefault: false
+    isExpect: false
+    isExtension: false
+    isInline: false
+    isOverride: false
+    location: PROPERTY
+    modality: OPEN
+    origin: JAVA_SYNTHETIC_PROPERTY
+    receiverParameter: null
+    returnType: KaFlexibleType:
+      annotations: []
+      type: kotlin/Int!
+    valueParameters: []
+    visibility: PUBLIC
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  javaGetterSymbol: KaNamedFunctionSymbol(/JavaClass.getValue)
+  javaSetterSymbol: null
+  location: CLASS
+  modality: OPEN
+  name: value
+  origin: JAVA_SYNTHETIC_PROPERTY
+  receiverParameter: null
+  returnType: KaFlexibleType:
+    annotations: []
+    type: kotlin/Int!
+  setter: null
+  typeParameters: []
+  visibility: PUBLIC
+

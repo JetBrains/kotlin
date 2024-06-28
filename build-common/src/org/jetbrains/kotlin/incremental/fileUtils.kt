@@ -22,7 +22,7 @@ import java.io.IOException
 fun File.isJavaFile() =
         extension.equals("java", ignoreCase = true)
 
-fun File.isKotlinFile(sourceFilesExtensions: List<String>): Boolean =
+fun File.isKotlinFile(sourceFilesExtensions: Collection<String>): Boolean =
     !isJavaFile() && sourceFilesExtensions.any { it.equals(extension, ignoreCase = true) }
 
 fun File.isClassFile(): Boolean =

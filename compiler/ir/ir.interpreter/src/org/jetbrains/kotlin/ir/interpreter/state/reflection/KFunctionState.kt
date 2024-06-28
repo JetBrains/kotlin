@@ -180,7 +180,7 @@ internal class KFunctionState(
             .toIntOrNull()
     }
 
-    private fun isLambda(): Boolean = irFunction.name.let { it == SpecialNames.ANONYMOUS || it == Name.special("<no name provided>") }
+    private fun isLambda(): Boolean = irFunction.name.let { it == SpecialNames.ANONYMOUS || it == SpecialNames.NO_NAME_PROVIDED }
 
     override fun toString(): String {
         return if (isLambda()) renderLambda(irFunction) else renderFunction(irFunction)

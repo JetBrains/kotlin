@@ -1,3 +1,3 @@
 FILE: main.kt
-    public final val enumMap: R|java/util/EnumMap<JavaEnum!, kotlin/String!>| = R|java/util/EnumMap.EnumMap|<R|JavaEnum!|, R|kotlin/String!|>(R|kotlin/collections/mapOf|<R|JavaEnum!|, R|kotlin/String|>(Q|JavaEnum|.R|/JavaEnum.A|.R|kotlin/to|<R|@EnhancedNullability JavaEnum|, R|kotlin/String|>(String(A))))
+    public final val enumMap: R|java/util/EnumMap<JavaEnum!, kotlin/String!>| = R|java/util/EnumMap.EnumMap|<R|JavaEnum!|, R|kotlin/String!|>(R|kotlin/collections/mapOf|<R|JavaEnum!|, R|kotlin/String|>(Q|JavaEnum|.R|/JavaEnum.A|.R|kotlin/to|<R|JavaEnum|, R|kotlin/String|>(String(A))))
         public get(): R|java/util/EnumMap<JavaEnum!, kotlin/String!>|

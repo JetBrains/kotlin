@@ -2,7 +2,7 @@
 
 fun test() {
    if (<!USELESS_IS_CHECK!>1 is Int<!>) {
-     if (1 is Boolean) {
+     if (<!USELESS_IS_CHECK!>1 is Boolean<!>) {
 
      }
    }

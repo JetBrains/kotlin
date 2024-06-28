@@ -19,7 +19,7 @@ class A
 infix operator fun A.plus(a : Any) {
 
   1.foo()
-  true.<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>foo()<!>
+  true.<!CANNOT_INFER_PARAMETER_TYPE!>foo<!><!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
 
   1
 }

@@ -1,0 +1,44 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:KtValueArgumentElementType modality:FINAL visibility:public superTypes:[<root>.StubSerializer]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtValueArgumentElementType<T of <root>.KtValueArgumentElementType>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.KtValueArgumentElementType<T of <root>.KtValueArgumentElementType> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtValueArgumentElementType modality:FINAL visibility:public superTypes:[<root>.StubSerializer]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.StubSerializer
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.StubSerializer
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.StubSerializer
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:deserialize visibility:public modality:OPEN <> ($this:<root>.KtValueArgumentElementType<T of <root>.KtValueArgumentElementType>, parentStub:<root>.StubElement<kotlin.Any>?) returnType:kotlin.String
+      overridden:
+        public abstract fun deserialize (parentStub: @[FlexibleNullability] @[RawType] <root>.StubElement<@[FlexibleNullability] kotlin.Any?>?): @[FlexibleNullability] kotlin.String? declared in <root>.StubSerializer
+      $this: VALUE_PARAMETER name:<this> type:<root>.KtValueArgumentElementType<T of <root>.KtValueArgumentElementType>
+      VALUE_PARAMETER name:parentStub index:0 type:<root>.StubElement<kotlin.Any>?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun deserialize (parentStub: <root>.StubElement<kotlin.Any>?): kotlin.String declared in <root>.KtValueArgumentElementType'
+          CONST String type=kotlin.String value="OK"
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:v type:<root>.KtValueArgumentElementType<kotlin.String> [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.KtValueArgumentElementType' type=<root>.KtValueArgumentElementType<kotlin.String> origin=null
+          <class: T>: kotlin.String
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun deserialize (parentStub: <root>.StubElement<kotlin.Any>?): kotlin.String declared in <root>.KtValueArgumentElementType' type=kotlin.String origin=null
+          $this: GET_VAR 'val v: <root>.KtValueArgumentElementType<kotlin.String> declared in <root>.box' type=<root>.KtValueArgumentElementType<kotlin.String> origin=null
+          parentStub: CONST Null type=kotlin.Nothing? value=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+          CALL 'public abstract fun deserialize (parentStub: @[FlexibleNullability] P of <root>.ObjectStubSerializer?): @[FlexibleNullability] kotlin.String? declared in <root>.ObjectStubSerializer' type=@[FlexibleNullability] kotlin.String? origin=null
+            $this: TYPE_OP type=<root>.ObjectStubSerializer<*> origin=CAST typeOperand=<root>.ObjectStubSerializer<*>
+              GET_VAR 'val v: <root>.KtValueArgumentElementType<kotlin.String> declared in <root>.box' type=<root>.KtValueArgumentElementType<kotlin.String> origin=null
+            parentStub: CONST Null type=kotlin.Nothing? value=null

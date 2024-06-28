@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER
 
 class Outer<E> {
     inner class Inner<F> {
@@ -31,7 +31,7 @@ fun main() {
     checkSubtype<Outer<*>.Inner<*>>(outer.Inner<Int>())
 
     checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!ARGUMENT_TYPE_MISMATCH!>outer.bar()<!>)
-    checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!ARGUMENT_TYPE_MISMATCH!>outer.Inner()<!>)
+    checkSubtype<Outer<CharSequence>.Inner<CharSequence>>(<!ARGUMENT_TYPE_MISMATCH!>outer.<!CANNOT_INFER_PARAMETER_TYPE!>Inner<!>()<!>)
 
     outer.set(outer.bar())
     outer.set(outer.Inner())

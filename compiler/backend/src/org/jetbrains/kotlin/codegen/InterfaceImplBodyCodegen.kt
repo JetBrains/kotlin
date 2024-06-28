@@ -20,7 +20,6 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.util.findImplementationFromInterface
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
@@ -48,9 +47,9 @@ class InterfaceImplBodyCodegen(
         val codegenFlags = ACC_PUBLIC or ACC_FINAL or ACC_SUPER
         val flags = if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) codegenFlags or ACC_STATIC else codegenFlags
         v.defineClass(
-                myClass.psiOrParent, state.classFileVersion, flags,
-                defaultImplType.internalName,
-                null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
+            myClass.psiOrParent, state.config.classFileVersion, flags,
+            defaultImplType.internalName,
+            null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.containingKtFile.name, null)
     }
@@ -141,7 +140,7 @@ class InterfaceImplBodyCodegen(
     override fun generateKotlinMetadataAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
 
-        writeSyntheticClassMetadata(v, state, false)
+        writeSyntheticClassMetadata(v, state.config, false)
     }
 
     override fun done() {
@@ -168,7 +167,7 @@ class InterfaceImplBodyCodegen(
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: JvmMethodExceptionTypes
+                exceptions: Array<out String>?
         ): MethodVisitor {
             if (shouldCount) {
                 isAnythingGenerated = true

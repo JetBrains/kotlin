@@ -1,0 +1,19 @@
+public final inline fun callsEffectExplicitUnknown(x: R|kotlin/Int|, block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        CallsInPlace(block, UNKNOWN)
+    >
+
+
+public final inline fun callsEffectImplicitUnknown(x: R|kotlin/Int|, y: R|kotlin/Int|, block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        CallsInPlace(block, UNKNOWN)
+    >
+
+
+public final fun <X, Y, Z, R> callsEffectWithKind(block: R|(X, Y, Z) -> R|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        CallsInPlace(block, EXACTLY_ONCE)
+    >

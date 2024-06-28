@@ -21,7 +21,14 @@
 #define RUNTIME_NORETURN __attribute__((noreturn))
 #define RUNTIME_CONST __attribute__((const))
 #define RUNTIME_PURE __attribute__((pure))
-#define RUNTIME_USED __attribute__((used))
+
+#if __has_attribute(retain)
+// See https://youtrack.jetbrains.com/issue/KT-68640
+#define RUNTIME_EXPORT __attribute__((used,retain))
+#else
+#define RUNTIME_EXPORT __attribute__((used))
+#endif
+
 #define RUNTIME_WEAK __attribute__((weak))
 #define RUNTIME_NODEBUG __attribute__((nodebug))
 
@@ -36,15 +43,9 @@
 #endif
 #define NO_INLINE __attribute__((noinline))
 
-#define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
-
 #define OPTNONE __attribute__((optnone))
 
-#if KONAN_NO_THREADS
-#define THREAD_LOCAL_VARIABLE
-#else
 #define THREAD_LOCAL_VARIABLE __thread
-#endif
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 

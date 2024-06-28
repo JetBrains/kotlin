@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -117,6 +119,7 @@ internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExportedElement(
         val kind: ElementKind,
         val scope: ExportedElementScope,
@@ -156,8 +159,8 @@ internal class ExportedElement(
 
     val irSymbol = when {
         isFunction -> owner.symbolTable.referenceFunction(declaration as FunctionDescriptor)
-        isClass -> owner.symbolTable.referenceClass(declaration as ClassDescriptor)
-        isEnumEntry -> owner.symbolTable.referenceEnumEntry(declaration as ClassDescriptor)
+        isClass -> owner.symbolTable.descriptorExtension.referenceClass(declaration as ClassDescriptor)
+        isEnumEntry -> owner.symbolTable.descriptorExtension.referenceEnumEntry(declaration as ClassDescriptor)
         else -> error("unexpected $kind element: $declaration")
     }
 
@@ -299,7 +302,7 @@ internal class ExportedElement(
             "${cname}_impl"
 
     private fun translateBody(cfunction: List<SignatureElement>): String {
-        val visibility = if (isTopLevelFunction) "RUNTIME_USED extern \"C\"" else "static"
+        val visibility = if (isTopLevelFunction) "RUNTIME_EXPORT extern \"C\"" else "static"
         val builder = StringBuilder()
         builder.append("$visibility ${typeTranslator.translateType(cfunction[0])} ${cnameImpl}(${cfunction.drop(1).
                 mapIndexed { index, it -> "${typeTranslator.translateType(it)} arg${index}" }.joinToString(", ")}) {\n")
@@ -394,6 +397,7 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
  */
 internal class CAdapterGenerator(
         private val context: PsiToIrContext,
+        private val configuration: CompilerConfiguration,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
     private val scopes = mutableListOf<ExportedElementScope>()
@@ -481,6 +485,19 @@ internal class CAdapterGenerator(
         val fragments = descriptor.module.getPackage(FqName.ROOT).fragments.filter {
             it.module in moduleDescriptors }
         visitChildren(fragments)
+
+        // K2 does not serialize empty package fragments, thus breaking the scope chain.
+        // The following traverse definitely reaches every subpackage fragment.
+        scopes.push(getPackageScope(FqName.ROOT))
+        val subfragments = descriptor.module.getSubPackagesOf(FqName.ROOT) { true }
+                .flatMap {
+                    descriptor.module.getPackage(it).fragments.filter {
+                        it.module in moduleDescriptors
+                    }
+                }
+        visitChildren(subfragments)
+        scopes.pop()
+
         return true
     }
 
@@ -508,23 +525,26 @@ internal class CAdapterGenerator(
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, ignored: Void?): Boolean {
         val fqName = descriptor.fqName
-        val packageScope = packageScopes.getOrPut(fqName) {
-            val name = if (fqName.isRoot) "root" else translateName(fqName.shortName())
-            val scope = ExportedElementScope(ScopeKind.PACKAGE, name)
-            scopes.last().scopes += scope
-            scope
-        }
+        val packageScope = getPackageScope(fqName)
         scopes.push(packageScope)
-        visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()))
+        if (!seenPackageFragments.contains(descriptor))
+            visitChildren(DescriptorUtils.getAllDescriptors(descriptor.getMemberScope()))
         for (currentPackageFragment in currentPackageFragments) {
             if (!seenPackageFragments.contains(currentPackageFragment) &&
                     currentPackageFragment.fqName.isChildOf(descriptor.fqName)) {
-                seenPackageFragments += currentPackageFragment
                 visitChildren(currentPackageFragment)
+                seenPackageFragments += currentPackageFragment
             }
         }
         scopes.pop()
         return true
+    }
+
+    private fun getPackageScope(fqName: FqName) = packageScopes.getOrPut(fqName) {
+        val name = if (fqName.isRoot) "root" else translateName(fqName.shortName())
+        val scope = ExportedElementScope(ScopeKind.PACKAGE, name)
+        scopes.last().scopes += scope
+        scope
     }
 
 

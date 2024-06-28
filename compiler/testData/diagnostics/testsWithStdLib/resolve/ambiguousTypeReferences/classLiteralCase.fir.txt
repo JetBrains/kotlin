@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun test(): R|kotlin/reflect/KClass<kotlin/collections/HashMap<*, *>>| {
+        ^test <getClass>(Q|kotlin/collections/HashMap|)
+    }

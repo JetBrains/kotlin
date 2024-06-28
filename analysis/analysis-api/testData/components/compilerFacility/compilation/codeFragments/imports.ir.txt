@@ -1,0 +1,15 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> () returnType:java.util.TreeSet<@[FlexibleNullability] kotlin.String?>
+        EXPRESSION_BODY
+          BLOCK type=java.util.TreeSet<@[FlexibleNullability] kotlin.String?> origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableCollection<out @[FlexibleNullability] E of java.util.TreeSet?>?) declared in java.util.TreeSet' type=java.util.TreeSet<@[FlexibleNullability] kotlin.String?> origin=null
+              <class: E>: @[FlexibleNullability] kotlin.String?
+              p0: CALL 'public final fun readLines (charset: java.nio.charset.Charset): kotlin.collections.List<kotlin.String> declared in kotlin.io' type=kotlin.collections.List<kotlin.String> origin=null
+                $receiver: CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.io.File' type=java.io.File origin=null
+                  p0: CONST String type=kotlin.String value="foo"

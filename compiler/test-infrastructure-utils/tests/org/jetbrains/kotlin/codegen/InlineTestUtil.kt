@@ -226,7 +226,7 @@ object InlineTestUtil {
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()
                 override fun toString(): String = throw UnsupportedOperationException()
             }
-        }!!
+        } ?: error("Generated class file has no @Metadata annotation: $file")
 
     private class InlineInfo(val inlineMethods: Set<MethodInfo>, val binaryClasses: Map<String, KotlinJvmBinaryClass>)
 

@@ -1,0 +1,70 @@
+KtFile: 'annotationsWithoutCall.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,11): 'package one'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,11): 'one'
+  NO_CANDIDATES
+
+KtImportList(11,11): ''
+  NO_CANDIDATES
+
+KtClass(13,34): 'annotation class Anno'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(13,23): 'annotation'
+  NO_CANDIDATES
+
+KtNamedFunction(36,54): '@Anno'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(36,41): '@Anno'
+  NO_CANDIDATES
+
+KtAnnotationEntry(36,41): '@Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtConstructorCalleeExpression(37,41): 'Anno'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = one.Anno
+          symbol = <constructor>(): one.Anno
+          valueParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+    isInBestCandidates = true
+
+KtTypeReference(37,41): 'Anno'
+  NO_CANDIDATES
+
+KtUserType(37,41): 'Anno'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(37,41): 'Anno'
+  NO_CANDIDATES
+
+KtParameterList(49,51): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(52,54): '{}'
+  NO_CANDIDATES

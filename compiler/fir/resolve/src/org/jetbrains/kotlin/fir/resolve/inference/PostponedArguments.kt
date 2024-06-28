@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
@@ -24,125 +21,3 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-fun Candidate.preprocessLambdaArgument(
-    csBuilder: ConstraintSystemBuilder,
-    argument: FirAnonymousFunctionExpression,
-    expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef?,
-    context: ResolutionContext,
-    sink: CheckerSink?,
-    duringCompletion: Boolean = false,
-    returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
-): PostponedResolvedAtom {
-    if (expectedType != null && expectedTypeRef != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
-        val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
-
-        if (expectedTypeVariableWithConstraints != null) {
-            val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
-                it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
-            }?.type as ConeKotlinType?
-
-            if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
-            }
-        }
-    }
-
-    val anonymousFunction = argument.anonymousFunction
-
-    val resolvedArgument =
-        extractLambdaInfoFromFunctionType(
-            expectedType,
-            expectedTypeRef,
-            anonymousFunction,
-            returnTypeVariable,
-            context.bodyResolveComponents,
-            this,
-            duringCompletion || sink == null
-        ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
-
-    if (expectedType != null) {
-        val parameters = resolvedArgument.parameters
-        val functionTypeKind = context.session.functionTypeService.extractSingleSpecialKindForFunction(anonymousFunction.symbol)
-            ?: resolvedArgument.expectedFunctionTypeKind?.nonReflectKind()
-            ?: FunctionTypeKind.Function
-        val lambdaType = createFunctionType(
-            functionTypeKind,
-            if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
-            resolvedArgument.receiver,
-            resolvedArgument.returnType,
-            contextReceivers = resolvedArgument.contextReceivers,
-        )
-
-        val position = ConeArgumentConstraintPosition(resolvedArgument.atom)
-        if (duringCompletion || sink == null) {
-            csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
-        } else {
-            if (!csBuilder.addSubtypeConstraintIfCompatible(lambdaType, expectedType, position)) {
-                sink.reportDiagnostic(
-                    ArgumentTypeMismatch(
-                        expectedType,
-                        lambdaType,
-                        argument,
-                        context.session.typeContext.isTypeMismatchDueToNullability(lambdaType, expectedType)
-                    )
-                )
-            }
-        }
-    }
-
-    return resolvedArgument
-}
-
-fun Candidate.preprocessCallableReference(
-    argument: FirCallableReferenceAccess,
-    expectedType: ConeKotlinType?,
-    context: ResolutionContext
-) {
-    val lhs = context.bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
-    postponedAtoms += ResolvedCallableReferenceAtom(argument, expectedType, lhs, context.session)
-}
-
-private fun extractLambdaInfo(
-    expectedType: ConeKotlinType?,
-    argument: FirAnonymousFunction,
-    csBuilder: ConstraintSystemBuilder,
-    session: FirSession,
-    candidate: Candidate?
-): ResolvedLambdaAtom {
-    val expectedFunctionKind = expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session)
-    val isFunctionSupertype = expectedFunctionKind != null
-
-    val typeVariable = ConeTypeVariableForLambdaReturnType(argument, "_L")
-
-    val receiverType = argument.receiverType
-    val returnType =
-        argument.returnType
-            ?: runIf(isFunctionSupertype) { (expectedType?.typeArguments?.singleOrNull() as? ConeKotlinTypeProjection)?.type }
-            ?: typeVariable.defaultType
-
-    val nothingType = session.builtinTypes.nothingType.type
-    val parameters = argument.valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
-    }
-
-    val contextReceivers = argument.contextReceivers.map {
-        it.typeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
-    }
-
-    val newTypeVariableUsed = returnType == typeVariable.defaultType
-    if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
-
-    return ResolvedLambdaAtom(
-        argument,
-        expectedType,
-        expectedFunctionKind,
-        receiverType,
-        contextReceivers,
-        parameters,
-        returnType,
-        typeVariable.takeIf { newTypeVariableUsed },
-        candidate,
-        coerceFirstParameterToExtensionReceiver = false
-    )
-}

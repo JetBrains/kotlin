@@ -1,15 +1,15 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun eat(value: Any) {}
 
 fun test(param: String) {
-    val a = ::<!UNSUPPORTED!>param<!>
+    val a = ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>param<!>
 
     val local = "local"
-    val b = ::<!UNSUPPORTED!>local<!>
+    val b = ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>local<!>
 
     val lambda = { -> }
-    val g = ::<!UNSUPPORTED!>lambda<!>
+    val g = ::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>lambda<!>
 
-    eat(::<!UNSUPPORTED!>param<!>)
+    eat(::<!UNSUPPORTED_REFERENCES_TO_VARIABLES_AND_PARAMETERS!>param<!>)
 }

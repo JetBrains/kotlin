@@ -1,1 +1,4 @@
+info: produce executable: $TESTDATA_DIR$/sourceMapRelativeRoot/main/out
+info: cache directory: null
+info: executable production duration: [time]
 OK

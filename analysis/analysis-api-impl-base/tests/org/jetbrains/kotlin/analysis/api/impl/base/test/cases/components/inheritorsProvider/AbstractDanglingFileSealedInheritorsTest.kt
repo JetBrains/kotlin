@@ -1,0 +1,20 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider
+
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.services.TestServices
+
+abstract class AbstractDanglingFileSealedInheritorsTest : AbstractSealedInheritorsTest() {
+    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
+        val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
+
+        doTestByKtFile(fakeKtFile, testServices)
+    }
+}

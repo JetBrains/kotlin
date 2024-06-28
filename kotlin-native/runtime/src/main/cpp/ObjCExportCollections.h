@@ -20,7 +20,7 @@
 #if KONAN_OBJC_INTEROP
 
 #import <objc/runtime.h>
-#import <Foundation/NSNull.h>
+#import <Foundation/Foundation.h>
 
 #import "Memory.h"
 #import "ObjCExport.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -35,8 +35,13 @@ class FirIntegerConstantOperatorScope(
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
         }.type
-        baseType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
-            ?: error("Scope for $baseType not found")
+
+        baseType.scope(
+            session,
+            scopeSession,
+            CallableCopyTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        ) ?: Empty
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()
@@ -76,7 +81,6 @@ class FirIntegerConstantOperatorScope(
             returnTypeRef = buildResolvedTypeRef {
                 type = ConeIntegerConstantOperatorTypeImpl(isUnsigned, ConeNullability.NOT_NULL)
             }
-
         }.also {
             it.originalForWrappedIntegerOperator = originalSymbol
             it.isUnsignedWrappedIntegerOperator = isUnsigned

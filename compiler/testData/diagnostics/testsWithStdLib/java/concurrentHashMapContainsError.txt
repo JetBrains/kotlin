@@ -295,7 +295,7 @@ public open class D</*0*/ K, /*1*/ V> : java.util.concurrent.ConcurrentHashMap<K
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V?, out V?>): V?
     public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: K, /*1*/ p1: java.util.function.Function<in K, out V>): V
-    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V, out V?>): V?
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: K, /*1*/ p1: java.util.function.BiFunction<in K, in V & Any, out V?>): V?
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ p0: kotlin.Any!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V): kotlin.Boolean
@@ -320,7 +320,7 @@ public open class D</*0*/ K, /*1*/ V> : java.util.concurrent.ConcurrentHashMap<K
     public open override /*1*/ /*fake_override*/ fun keySet(/*0*/ p0: V!): java.util.concurrent.ConcurrentHashMap.KeySetView<K!, V!>!
     public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<K!>!
     public open override /*1*/ /*fake_override*/ fun mappingCount(): kotlin.Long
-    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K, /*1*/ p1: V, /*2*/ p2: java.util.function.BiFunction<in V, in V, out V?>): V?
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: K, /*1*/ p1: V & Any, /*2*/ p2: java.util.function.BiFunction<in V & Any, in V & Any, out V?>): V?
     public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: K, /*1*/ value: V): V?
     public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K, V>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: K, /*1*/ p1: V): V?

@@ -9,92 +9,52 @@ package org.jetbrains.kotlin.gradle.regressionTests
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.targets.native.internal.isNativeDependencyPropagationEnabled
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.util.enableHierarchicalStructureByDefault
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class IdeImportPropertiesConsistencyTest {
 
     /*
-    IDE IMPORT SOURCE CODE:
-    https://youtrack.jetbrains.com/issue/KTIJ-19551
+    Since 233+ IDEA even bundled kotlin plugin do not relying on the "kotlin.mpp.enableGranularSourceSetsMetadata" property
+    and HMPP enabled in IDE by default. But for previous IDE versions with bundled Kotlin plugin we have the code that
+    will disable the HMPP if this property is not set to true.
 
-    As described in the ticket above, we have a separate implementation running in the IDE import that
-    will resolve properties on the project. Unfortunately, this implementation will choose its own defaults.
-    Changing defaults for such properties therefore can't be done easily in the KGP, without taking
-    extra precaution ensuring that the IDE plugin would still receive the correct property.
+    To mitigate that we should pass the "kotlin.mpp.enableGranularSourceSetsMetadata=true" for cases where KGP 1.9.20+ trying to
+    open in the old IDE.
+    This compatibility trick could be safely removed in 2.1, but probably we should keep it in 2.0.
 
-    Until the implementation is changed and IDEs with old implementation are out of support,
-    this code is copied into this test here and checked for consistency!
+    Related issue: https://youtrack.jetbrains.com/issue/KTIJ-19551
      */
-    private fun Project.getProperty(property: GradleImportProperties): Boolean {
-        val explicitValueIfAny = try {
-            (findProperty(property.id) as? String)?.toBoolean()
-        } catch (e: Exception) {
-            logger.error("Error while trying to read property $property from project $project", e)
-            null
-        }
-
-        return explicitValueIfAny ?: property.defaultValue
+    private fun Project.getProperty(propertyId: String): Boolean? = try {
+        (findProperty(propertyId) as? String)?.toBoolean()
+    } catch (e: Exception) {
+        logger.error("Error while trying to read property $propertyId from project $project", e)
+        null
     }
-
-    private enum class GradleImportProperties(val id: String, val defaultValue: Boolean) {
-        IS_HMPP_ENABLED("kotlin.mpp.enableGranularSourceSetsMetadata", false),
-        ENABLE_NATIVE_DEPENDENCY_PROPAGATION("kotlin.native.enableDependencyPropagation", true),
-        /* IDE only relevant cases omitted */
-        ;
-    }
-
-    /*
-    END OF IDE IMPORT SOURCE CODE!
-     */
 
     @Test
     fun `test simple project`() {
         val project = ProjectBuilder.builder().build()
         project.applyMultiplatformPlugin()
-        project.assertPropertiesMatch()
+        project.assertKotlinGranularMetadataEnabled()
     }
 
     @Test
-    fun `test simple project with new hmpp flag`() {
-        val project = ProjectBuilder.builder().build()
-        project.enableHierarchicalStructureByDefault()
-        project.applyMultiplatformPlugin()
-        project.assertPropertiesMatch()
-    }
-
-    @Test
-    fun `test sub project with new hmpp flag`() {
+    fun `test HMPP enabled for all projects`() {
         val rootProject = ProjectBuilder.builder().build()
         val project = ProjectBuilder.builder().withParent(rootProject).build()
-        rootProject.enableHierarchicalStructureByDefault()
         project.applyMultiplatformPlugin()
-        project.assertPropertiesMatch()
+        project.assertKotlinGranularMetadataEnabled()
+
+        rootProject.assertKotlinGranularMetadataEnabled()
     }
 
-    private fun Project.assertPropertiesMatch() {
-        val isHmppValueUsedInCli = project.isKotlinGranularMetadataEnabled
-        val isHmppValueUsedInIde = project.getProperty(GradleImportProperties.IS_HMPP_ENABLED)
+    private fun Project.assertKotlinGranularMetadataEnabled() {
+        val granularMetadataEnabled = project.getProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
         assertEquals(
-            isHmppValueUsedInCli, isHmppValueUsedInIde,
-            """
-                project.isKotlinGranularMetadataEnabled: $isHmppValueUsedInCli
-                GradleImportProperties.IS_HMPP_ENABLED: $isHmppValueUsedInIde
-            """.trimIndent()
-        )
-
-        val dependencyPropagationEnabledInCli = project.isNativeDependencyPropagationEnabled
-        val dependencyPropagationEnabledInIde = project.getProperty(GradleImportProperties.ENABLE_NATIVE_DEPENDENCY_PROPAGATION)
-        assertEquals(
-            dependencyPropagationEnabledInCli, dependencyPropagationEnabledInIde,
-            """
-                propertiesProvider.nativeDependencyPropagation: $dependencyPropagationEnabledInCli
-                GradleImportProperties.ENABLE_NATIVE_DEPENDENCY_PROPAGATION: $dependencyPropagationEnabledInIde
-            """.trimIndent()
+            true, granularMetadataEnabled,
+            "kotlin.mpp.enableGranularSourceSetsMetadata: $granularMetadataEnabled"
         )
     }
 }

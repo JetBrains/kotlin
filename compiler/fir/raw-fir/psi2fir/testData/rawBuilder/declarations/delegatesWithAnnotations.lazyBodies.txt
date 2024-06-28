@@ -1,0 +1,10 @@
+FILE: delegatesWithAnnotations.kt
+    @Anno(LAZY_EXPRESSION) public? final? val x: Intby LAZY_EXPRESSION
+        public? get(): <implicit> { LAZY_BLOCK }
+    @Anno(LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION) public? final? val delegate: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    @Anno(LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION) public? final? val value: <implicit>by LAZY_EXPRESSION
+        @PROPERTY_GETTER:Anno(LAZY_EXPRESSION) public? get(): <implicit> { LAZY_BLOCK }
+    @Anno(LAZY_EXPRESSION) field:@PROPERTY_DELEGATE_FIELD:Anno(LAZY_EXPRESSION) public? final? var variable: <implicit>by LAZY_EXPRESSION
+        @PROPERTY_GETTER:Anno(LAZY_EXPRESSION) public? get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno(LAZY_EXPRESSION) public? set(@SETTER_PARAMETER:Anno(LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }

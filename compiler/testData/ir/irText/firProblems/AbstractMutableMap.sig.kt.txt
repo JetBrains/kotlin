@@ -1,0 +1,181 @@
+// CHECK:
+//   Mangled name: MyMap
+//   Public signature: /MyMap|null[0]
+class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
+  // CHECK:
+  //   Mangled name: MyMap#<init>(){}
+  //   Public signature: /MyMap.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: MyMap#clear(){}
+  //   Public signature: /MyMap.clear|-6446868449915108923[0]
+  //   Public signature debug description: clear(){}
+  /* fake */ override fun clear(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#clone(){}kotlin.Any?
+  //   Public signature: /MyMap.clone|-7083896195458302612[0]
+  //   Public signature debug description: clone(){}kotlin.Any?
+  protected_and_package /* fake */ override fun clone(): Any?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.compute|4714573429337571093[0]
+  //   Public signature debug description: compute(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1?{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun compute(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in @EnhancedNullability V?, out @EnhancedNullability V?>): @EnhancedNullability V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#computeIfAbsent(1:0{EnhancedNullability};java.util.function.Function<in|1:0{EnhancedNullability},out|1:1{EnhancedNullability}>{EnhancedNullability}){}1:1{EnhancedNullability}
+  //   Public signature: /MyMap.computeIfAbsent|6152183439273290645[0]
+  //   Public signature debug description: computeIfAbsent(1:0{EnhancedNullability};java.util.function.Function<in|1:0{EnhancedNullability},out|1:1{EnhancedNullability}>{EnhancedNullability}){}1:1{EnhancedNullability}
+  /* fake */ override fun computeIfAbsent(p0: @EnhancedNullability K, p1: @EnhancedNullability Function<in @EnhancedNullability K, out @EnhancedNullability V>): @EnhancedNullability V
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.computeIfPresent|-5841525018102765873[0]
+  //   Public signature debug description: computeIfPresent(1:0{EnhancedNullability};java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun computeIfPresent(p0: @EnhancedNullability K, p1: @EnhancedNullability BiFunction<in @EnhancedNullability K, in @EnhancedNullability V, out @EnhancedNullability V?>): @EnhancedNullability V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#containsKey(1:0){}kotlin.Boolean
+  //   Public signature: /MyMap.containsKey|-2697616884574929105[0]
+  //   Public signature debug description: containsKey(1:0){}kotlin.Boolean
+  /* fake */ override fun containsKey(key: K): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#containsValue(1:1){}kotlin.Boolean
+  //   Public signature: /MyMap.containsValue|4814293423579408279[0]
+  //   Public signature debug description: containsValue(1:1){}kotlin.Boolean
+  /* fake */ override fun containsValue(value: V): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#equals(kotlin.Any?){}kotlin.Boolean
+  //   Public signature: /MyMap.equals|722809408929142791[0]
+  //   Public signature debug description: equals(kotlin.Any?){}kotlin.Boolean
+  /* fake */ override operator fun equals(other: Any?): Boolean
+
+  // CHECK:
+  //   Mangled name: MyMap#forEach(java.util.function.BiConsumer<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /MyMap.forEach|-3078533954397018194[0]
+  //   Public signature debug description: forEach(java.util.function.BiConsumer<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun forEach(p0: @EnhancedNullability BiConsumer<in @EnhancedNullability K, in @EnhancedNullability V>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#get(1:0){}1:1?
+  //   Public signature: /MyMap.get|-2177239518810968262[0]
+  //   Public signature debug description: get(1:0){}1:1?
+  /* fake */ override operator fun get(key: K): V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#hashCode(){}kotlin.Int
+  //   Public signature: /MyMap.hashCode|-8048879360829830756[0]
+  //   Public signature debug description: hashCode(){}kotlin.Int
+  /* fake */ override fun hashCode(): Int
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#isEmpty(){}kotlin.Boolean
+  //   Public signature: /MyMap.isEmpty|-626562167393617703[0]
+  //   Public signature debug description: isEmpty(){}kotlin.Boolean
+  /* fake */ override fun isEmpty(): Boolean
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.merge|5784030730910430027[0]
+  //   Public signature debug description: merge(1:0{EnhancedNullability};1:1{EnhancedNullability};java.util.function.BiFunction<in|1:1{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1?{EnhancedNullability}>{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun merge(p0: @EnhancedNullability K, p1: @EnhancedNullability V, p2: @EnhancedNullability BiFunction<in @EnhancedNullability V, in @EnhancedNullability V, out @EnhancedNullability V?>): @EnhancedNullability V?
+
+  // CHECK:
+  //   Mangled name: MyMap#putAll(kotlin.collections.Map<out|1:0,1:1>){}
+  //   Public signature: /MyMap.putAll|3806055228188180795[0]
+  //   Public signature debug description: putAll(kotlin.collections.Map<out|1:0,1:1>){}
+  /* fake */ override fun putAll(from: Map<out K, V>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.putIfAbsent|-6480034727897367684[0]
+  //   Public signature debug description: putIfAbsent(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun putIfAbsent(p0: @EnhancedNullability K, p1: @EnhancedNullability V): @EnhancedNullability V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#remove(1:0){}1:1?
+  //   Public signature: /MyMap.remove|-2166109024517733367[0]
+  //   Public signature debug description: remove(1:0){}1:1?
+  /* fake */ override fun remove(key: K): V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  //   Public signature: /MyMap.replace|2326634020395552533[0]
+  //   Public signature debug description: replace(1:0{EnhancedNullability};1:1{EnhancedNullability}){}1:1?{EnhancedNullability}
+  /* fake */ override fun replace(p0: @EnhancedNullability K, p1: @EnhancedNullability V): @EnhancedNullability V?
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#replace(1:0{EnhancedNullability};1:1{EnhancedNullability};1:1{EnhancedNullability}){}kotlin.Boolean
+  //   Public signature: /MyMap.replace|-7414031042140179973[0]
+  //   Public signature debug description: replace(1:0{EnhancedNullability};1:1{EnhancedNullability};1:1{EnhancedNullability}){}kotlin.Boolean
+  /* fake */ override fun replace(p0: @EnhancedNullability K, p1: @EnhancedNullability V, p2: @EnhancedNullability V): Boolean
+
+  // CHECK:
+  //   Mangled name: MyMap#replaceAll(java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1{EnhancedNullability}>{EnhancedNullability}){}
+  //   Public signature: /MyMap.replaceAll|8091434451270596303[0]
+  //   Public signature debug description: replaceAll(java.util.function.BiFunction<in|1:0{EnhancedNullability},in|1:1{EnhancedNullability},out|1:1{EnhancedNullability}>{EnhancedNullability}){}
+  /* fake */ override fun replaceAll(p0: @EnhancedNullability BiFunction<in @EnhancedNullability K, in @EnhancedNullability V, out @EnhancedNullability V>): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#toString(){}kotlin.String
+  //   Public signature: /MyMap.toString|6958853723545266802[0]
+  //   Public signature debug description: toString(){}kotlin.String
+  /* fake */ override fun toString(): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: MyMap#put(1:0;1:1){}1:1?
+  //   Public signature: /MyMap.put|8231545920718079981[0]
+  //   Public signature debug description: put(1:0;1:1){}1:1?
+  override fun put(key: K, value: V): V?
+
+  // CHECK:
+  //   Mangled name: MyMap{}keys
+  //   Public signature: /MyMap.keys|-1539062068328255324[0]
+  //   Public signature debug description: {}keys
+  /* fake */ override val keys: MutableSet<K>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-keys>(){}kotlin.collections.MutableSet<1:0>
+    //   Public signature: /MyMap.keys.<get-keys>|7916886785914150473[0]
+    //   Public signature debug description: <get-keys>(){}kotlin.collections.MutableSet<1:0>
+    /* fake */ override get(): MutableSet<K>
+
+  // CHECK:
+  //   Mangled name: MyMap{}size
+  //   Public signature: /MyMap.size|-6253659984320132064[0]
+  //   Public signature debug description: {}size
+  /* fake */ override val size: Int
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-size>(){}kotlin.Int
+    //   Public signature: /MyMap.size.<get-size>|-3941649985161900780[0]
+    //   Public signature debug description: <get-size>(){}kotlin.Int
+    /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: MyMap{}values
+  //   Public signature: /MyMap.values|-764749005844117249[0]
+  //   Public signature debug description: {}values
+  /* fake */ override val values: MutableCollection<V>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-values>(){}kotlin.collections.MutableCollection<1:1>
+    //   Public signature: /MyMap.values.<get-values>|2480674037943213638[0]
+    //   Public signature debug description: <get-values>(){}kotlin.collections.MutableCollection<1:1>
+    /* fake */ override get(): MutableCollection<V>
+
+  // CHECK:
+  //   Mangled name: MyMap{}entries
+  //   Public signature: /MyMap.entries|-586096469347622282[0]
+  //   Public signature debug description: {}entries
+  override val entries: MutableSet<MutableEntry<K, V>>
+    // CHECK JVM_IR:
+    //   Mangled name: MyMap#<get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<1:0,1:1>>
+    //   Public signature: /MyMap.entries.<get-entries>|-6853624087387317257[0]
+    //   Public signature debug description: <get-entries>(){}kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<1:0,1:1>>
+    override get(): MutableSet<MutableEntry<K, V>>
+
+}

@@ -1,0 +1,11 @@
+MODULE main
+	CLASS InternalGenericToArray.class
+		CLASS METADATA
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				---
+			K2
+				size

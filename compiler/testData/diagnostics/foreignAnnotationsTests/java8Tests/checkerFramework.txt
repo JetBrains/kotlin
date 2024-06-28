@@ -6,7 +6,7 @@ public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     @org.checkerframework.checker.nullness.qual.Nullable public final var field: @org.checkerframework.checker.nullness.qual.Nullable kotlin.String?
     @org.checkerframework.checker.nullness.qual.NonNull public open fun bar(): @org.checkerframework.checker.nullness.qual.NonNull kotlin.String
-    @org.checkerframework.checker.nullness.qual.Nullable public open fun baz(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull x: @org.checkerframework.checker.nullness.qual.NonNull T): @org.checkerframework.checker.nullness.qual.Nullable T?
+    @org.checkerframework.checker.nullness.qual.Nullable public open fun baz(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull x: @org.checkerframework.checker.nullness.qual.NonNull T & Any): @org.checkerframework.checker.nullness.qual.Nullable T?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @org.checkerframework.checker.nullness.qual.Nullable public open fun foo(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull x: @org.checkerframework.checker.nullness.qual.NonNull kotlin.String, /*1*/ @org.checkerframework.checker.nullness.qual.Nullable y: @org.checkerframework.checker.nullness.qual.Nullable kotlin.CharSequence?): @org.checkerframework.checker.nullness.qual.Nullable kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

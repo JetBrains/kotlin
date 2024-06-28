@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.File
 
+/**
+ * This interface represents the abstract klib and is mainly used for detecting modified files.
+ */
 internal interface KotlinLibraryHeader {
     val libraryFile: KotlinLibraryFile
 
@@ -23,7 +26,13 @@ internal interface KotlinLibraryHeader {
     val jsOutputName: String?
 }
 
-internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : KotlinLibraryHeader {
+/**
+ * This implementation represents the existing klib that is present on the disk.
+ */
+internal class KotlinLoadedLibraryHeader(
+    private val library: KotlinLibrary,
+    private val irInterner: IrInterningService
+) : KotlinLibraryHeader {
     private fun parseFingerprintsFromManifest(): Map<KotlinSourceFile, FingerprintHash>? {
         val manifestFingerprints = library.serializedIrFileFingerprints?.takeIf { it.size == sourceFiles.size } ?: return null
         return sourceFiles.withIndex().associate { it.value to manifestFingerprints[it.index].fileFingerprint }
@@ -31,12 +40,12 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
 
     override val libraryFile: KotlinLibraryFile = KotlinLibraryFile(library)
 
-    override val libraryFingerprint: FingerprintHash by lazy {
+    override val libraryFingerprint: FingerprintHash by lazy(LazyThreadSafetyMode.NONE) {
         val serializedKlib = library.serializedKlibFingerprint ?: SerializedKlibFingerprint(File(libraryFile.path))
         serializedKlib.klibFingerprint
     }
 
-    override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy {
+    override val sourceFileDeserializers: Map<KotlinSourceFile, IdSignatureDeserializer> by lazy(LazyThreadSafetyMode.NONE) {
         buildMapUntil(sourceFiles.size) {
             val deserializer = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
@@ -46,13 +55,13 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-            }), null)
+            }), null, irInterner)
 
             put(sourceFiles[it], deserializer)
         }
     }
 
-    override val sourceFileFingerprints: Map<KotlinSourceFile, FingerprintHash> by lazy {
+    override val sourceFileFingerprints: Map<KotlinSourceFile, FingerprintHash> by lazy(LazyThreadSafetyMode.NONE) {
         parseFingerprintsFromManifest() ?: buildMapUntil(sourceFiles.size) {
             put(sourceFiles[it], SerializedIrFileFingerprint(library, it).fileFingerprint)
         }
@@ -61,15 +70,20 @@ internal class KotlinLoadedLibraryHeader(private val library: KotlinLibrary) : K
     override val jsOutputName: String?
         get() = library.jsOutputName
 
-    private val sourceFiles by lazy {
+    private val sourceFiles by lazy(LazyThreadSafetyMode.NONE) {
         val extReg = ExtensionRegistryLite.newInstance()
-        Array(library.fileCount()) {
+        val sources = (0 until library.fileCount()).map {
             val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
-            KotlinSourceFile(fileProto.fileEntry.name)
+            fileProto.fileEntry.name
         }
+        KotlinSourceFile.fromSources(sources)
     }
 }
 
+/**
+ * This implementation represents the removed klib, which no longer exists.
+ * Its main aim is to correctly handle the removed files; for example, we must invalidate all reverse dependencies.
+ */
 internal class KotlinRemovedLibraryHeader(private val libCacheDir: File) : KotlinLibraryHeader {
     override val libraryFile: KotlinLibraryFile
         get() = icError("removed library name is unavailable; cache dir: ${libCacheDir.absolutePath}")

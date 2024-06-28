@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM_IR
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // TARGET_PLATFORM: Common
 
@@ -25,8 +24,7 @@ expect class A() {
     fun g(): Int
 }
 
-// MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
+// MODULE: platform()()(common)
 
 // FILE: p11.kt
 

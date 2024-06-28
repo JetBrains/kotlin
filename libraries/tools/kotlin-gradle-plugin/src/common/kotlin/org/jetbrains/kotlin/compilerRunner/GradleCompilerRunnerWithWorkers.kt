@@ -14,11 +14,10 @@ import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import java.io.File
 import javax.inject.Inject
 
@@ -29,15 +28,16 @@ internal class GradleCompilerRunnerWithWorkers(
     taskProvider: GradleCompileTaskProvider,
     jdkToolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetrics: BuildMetricsReporter,
-    private val workerExecutor: WorkerExecutor
-) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics) {
+    buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val workerExecutor: WorkerExecutor,
+    fusMetricsConsumer: StatisticsValuesConsumer?,
+) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
-        taskOutputsBackup: TaskOutputsBackup?
+        taskOutputsBackup: TaskOutputsBackup?,
     ): WorkQueue {
 
-        buildMetrics.addTimeMetric(BuildPerformanceMetric.CALL_WORKER)
+        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_WORKER)
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(GradleKotlinCompilerWorkAction::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)
@@ -52,10 +52,10 @@ internal class GradleCompilerRunnerWithWorkers(
     }
 
     internal abstract class GradleKotlinCompilerWorkAction @Inject constructor(
-        private val fileSystemOperations: FileSystemOperations
+        private val fileSystemOperations: FileSystemOperations,
     ) : WorkAction<GradleKotlinCompilerWorkParameters> {
 
-        private val logger = Logging.getLogger("kotlin-compile-worker")
+        private val logger = GradleKotlinLogger(Logging.getLogger("kotlin-compile-worker"))
 
         override fun execute() {
             val taskOutputsBackup = if (parameters.snapshotsDir.isPresent) {
@@ -64,7 +64,7 @@ internal class GradleCompilerRunnerWithWorkers(
                     parameters.buildDir,
                     parameters.snapshotsDir,
                     parameters.taskOutputsToRestore.get(),
-                    logger
+                    logger,
                 )
             } else {
                 null
@@ -81,13 +81,12 @@ internal class GradleCompilerRunnerWithWorkers(
                 // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
                 // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
                 // the same.
-                if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
-                    parameters.metricsReporter.get().measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                        logger.info("Restoring task outputs to pre-compilation state")
-                        taskOutputsBackup.restoreOutputs()
+                taskOutputsBackup?.tryRestoringOnRecoverableException(e) { restoreAction ->
+                    parameters.metricsReporter.get().measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                        logger.info(DEFAULT_BACKUP_RESTORE_MESSAGE)
+                        restoreAction()
                     }
                 }
-
                 throw e
             } finally {
                 taskOutputsBackup?.deleteSnapshot()
@@ -100,6 +99,6 @@ internal class GradleCompilerRunnerWithWorkers(
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
         val buildDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter>
+        val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeIn
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
@@ -26,10 +27,12 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
-abstract class AbstractIsDenotableTest : AbstractAnalysisApiSingleFileTest() {
+abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
     val denotableName = Name.identifier("Denotable")
     val undenotableName = Name.identifier("Nondenotable")
-    override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
+
+    override fun doTestByMainModuleAndOptionalMainFile(mainFile: KtFile?, mainModule: KtTestModule, testServices: TestServices) {
+        val ktFile = mainFile ?: mainModule.ktFiles.first()
         val actualText = buildString {
             ktFile.accept(object : KtTreeVisitorVoid() {
                 override fun visitElement(element: PsiElement) {
@@ -60,9 +63,9 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiSingleFileTest() {
                         // ```
                         // smart cast is available for `(@Denotable("...") a)` and not for `a` or `@Denotable("...") a`.
                         val ktType = if (parent != null && deparenthesize(parent.receiverExpression) == deparenthesize(base)) {
-                            parent.receiverExpression.getKtType()
+                            parent.receiverExpression.expressionType
                         } else {
-                            expression.getKtType()
+                            expression.expressionType
                         }
                         val actualHasDenotableType = ktType?.isDenotable ?: error("${base.text} does not have a type.")
                         when (actualHasDenotableType) {

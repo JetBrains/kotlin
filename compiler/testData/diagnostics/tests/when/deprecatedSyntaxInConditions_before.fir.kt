@@ -57,8 +57,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -72,8 +72,8 @@ fun testWithSubject_bad_1(x: A) {
     when (x) {
         (x in x) -> {}
         (x !in x) -> {}
-        (x is String) -> {}
-        (x !is String) -> {}
+        (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         (x < x) -> {}
         (x > x) -> {}
         (x <= x) -> {}
@@ -122,12 +122,12 @@ fun testWithSubject_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
 
@@ -161,8 +161,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x in x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !in x<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x is String<!> -> {}
-        in <!CONFUSING_BRANCH_CONDITION_WARNING!>x !is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x is String<!> -> {}
+        in <!CONFUSING_BRANCH_CONDITION_WARNING, USELESS_IS_CHECK!>x !is String<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x < x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x > x<!> -> {}
         in <!CONFUSING_BRANCH_CONDITION_WARNING!>x <= x<!> -> {}
@@ -176,8 +176,8 @@ fun testWithRange_bad_1(x: A) {
     when (x) {
         in (x in x) -> {}
         in (x !in x) -> {}
-        in (x is String) -> {}
-        in (x !is String) -> {}
+        in (<!USELESS_IS_CHECK!>x is String<!>) -> {}
+        in (<!USELESS_IS_CHECK!>x !is String<!>) -> {}
         in (x < x) -> {}
         in (x > x) -> {}
         in (x <= x) -> {}
@@ -226,11 +226,11 @@ fun testWithRange_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        in <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
+// DIAGNOSTICS: -UNUSED_PARAMETER -UNREACHABLE_CODE
 open class B<T>(x: T, y: T) {
     constructor(x: T): this(x, x)
     constructor(): this(null!!, null!!)

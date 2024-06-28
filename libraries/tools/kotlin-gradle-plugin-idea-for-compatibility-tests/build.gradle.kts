@@ -64,7 +64,7 @@ val outgoingClasspath by configurations.creating {
 }
 
 tasks.register<Delete>("clean") {
-    delete(project.buildDir)
+    delete(layout.buildDirectory)
 }
 
 //endregion

@@ -1,0 +1,9 @@
+A
+
+B
+
+fun values(): kotlin.Array<test.E>
+
+fun valueOf(value: kotlin.String): test.E
+
+val entries: kotlin.enums.EnumEntries<test.E>

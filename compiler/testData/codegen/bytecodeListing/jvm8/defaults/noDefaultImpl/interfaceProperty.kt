@@ -1,4 +1,4 @@
-// !JVM_DEFAULT_MODE: all
+// JVM_DEFAULT_MODE: all
 // JVM_TARGET: 1.8
 // WITH_STDLIB
 @Target(AnnotationTarget.PROPERTY)

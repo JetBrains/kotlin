@@ -9,9 +9,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.backend.Fir2IrScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
-import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.kotlin.fir.serialization.FirMetadataSerializerPlugin
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
@@ -32,8 +33,18 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirSamConversionTransformerExtension::class,
             FirAssignExpressionAltererExtension::class,
             FirScriptConfiguratorExtension::class,
+            FirScriptResolutionConfigurationExtension::class,
+            Fir2IrScriptConfiguratorExtension::class,
             FirFunctionTypeKindExtension::class,
-            FirDeclarationsForMetadataProviderExtension::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirMetadataSerializerPlugin::class,
+            @OptIn(FirExtensionApiInternals::class)
+            FirFunctionCallRefinementExtension::class,
+        )
+
+        internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
+            FirTypeAttributeExtension::class,
+            FirFunctionTypeKindExtension::class,
         )
     }
 
@@ -92,14 +103,31 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirScriptConfiguratorExtension::class, this)
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun (FirScriptResolutionConfigurationExtension.Factory).unaryPlus() {
+            registerExtension(FirScriptResolutionConfigurationExtension::class, this)
+        }
+
+        @JvmName("plusFir2IrScriptConfiguratorExtension")
+        operator fun (Fir2IrScriptConfiguratorExtension.Factory).unaryPlus() {
+            registerExtension(Fir2IrScriptConfiguratorExtension::class, this)
+        }
+
         @JvmName("plusFunctionTypeKindExtension")
         operator fun (FirFunctionTypeKindExtension.Factory).unaryPlus() {
             registerExtension(FirFunctionTypeKindExtension::class, this)
         }
 
-        @JvmName("plusDeclarationForMetadataProviderExtension")
-        operator fun (FirDeclarationsForMetadataProviderExtension.Factory).unaryPlus() {
-            registerExtension(FirDeclarationsForMetadataProviderExtension::class, this)
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun (FirMetadataSerializerPlugin.Factory).unaryPlus() {
+            registerExtension(FirMetadataSerializerPlugin::class, this)
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun (FirFunctionCallRefinementExtension.Factory).unaryPlus() {
+            registerExtension(FirFunctionCallRefinementExtension::class, this)
         }
 
         // ------------------ reference methods ------------------
@@ -154,14 +182,31 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
+        @JvmName("plusFirScriptResolutionConfigurationExtension")
+        operator fun ((FirSession) -> FirScriptResolutionConfigurationExtension).unaryPlus() {
+            FirScriptResolutionConfigurationExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusFir2IrScriptConfiguratorExtension")
+        operator fun ((FirSession) -> Fir2IrScriptConfiguratorExtension).unaryPlus() {
+            Fir2IrScriptConfiguratorExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
         @JvmName("plusFunctionTypeKindExtension")
         operator fun ((FirSession) -> FirFunctionTypeKindExtension).unaryPlus() {
             FirFunctionTypeKindExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
-        @JvmName("plusDeclarationForMetadataProviderExtension")
-        operator fun ((FirSession) -> FirDeclarationsForMetadataProviderExtension).unaryPlus() {
-            FirDeclarationsForMetadataProviderExtension.Factory { this.invoke(it) }.unaryPlus()
+        @FirExtensionApiInternals
+        @JvmName("plusMetadataSerializerPlugin")
+        operator fun ((FirSession) -> FirMetadataSerializerPlugin).unaryPlus() {
+            FirMetadataSerializerPlugin.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @FirExtensionApiInternals
+        @JvmName("plusFunctionCallRefinementExtension")
+        operator fun ((FirSession) -> FirFunctionCallRefinementExtension).unaryPlus() {
+            FirFunctionCallRefinementExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------
@@ -179,25 +224,35 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     @OptIn(PluginServicesInitialization::class)
     fun configure(): BunchOfRegisteredExtensions {
-        if (isInitialized.compareAndSet(false, true)) {
-            // Extension registrars can survive FirSession recreation in IDE mode, but we don't want to
-            // call `configurePlugin` more than once, because it will lead to registering all plugins twice.
-            // Please see KT-51444 for the details.
+        return BunchOfRegisteredExtensions(configuredExtensionFactories)
+    }
 
-            ExtensionRegistrarContext().configurePlugin()
+    private val extensionFactories: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> =
+        AVAILABLE_EXTENSIONS.associateWith {
+            mutableListOf()
         }
 
-        return BunchOfRegisteredExtensions(map)
-    }
+    /**
+     * A lazy property which returns the [extensionFactories] map, but calls
+     * [configurePlugin] to make sure that it's correctly configured.
+     *
+     * Extension registrars can survive FirSession recreation in IDE mode, but we don't want to
+     * call [configurePlugin] more than once, because it will lead to registering all plugins twice.
+     * That's why we don't want to call [configurePlugin] directly from the [configure].
+     *
+     * Instead, we use [lazy] to ensure that initialization happens only once, and that the
+     * resulting [extensionFactories] map is visible to all possible callers, so no races occur.
+     */
+    private val configuredExtensionFactories: Map<KClass<out FirExtension>, List<FirExtension.Factory<FirExtension>>> by lazy(
+        LazyThreadSafetyMode.SYNCHRONIZED
+    ) {
+        ExtensionRegistrarContext().configurePlugin()
 
-    private val map: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> = AVAILABLE_EXTENSIONS.associateWith {
-        mutableListOf()
+        extensionFactories
     }
-
-    private var isInitialized: AtomicBoolean = AtomicBoolean(false)
 
     private fun <P : FirExtension> registerExtension(kClass: KClass<out P>, factory: FirExtension.Factory<P>) {
-        val registeredExtensions = map.getValue(kClass)
+        val registeredExtensions = extensionFactories.getValue(kClass)
         registeredExtensions += factory
     }
 }

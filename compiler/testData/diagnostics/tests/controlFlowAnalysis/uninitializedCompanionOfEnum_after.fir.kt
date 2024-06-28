@@ -3,13 +3,13 @@
 
 enum class SomeEnum(val x: Int) {
     A(<!UNINITIALIZED_ENUM_COMPANION!>companionFun<!>().length),// UNINITIALIZED_ENUM_COMPANION
-    B(<!UNINITIALIZED_ENUM_COMPANION, UNINITIALIZED_VARIABLE!>companionProp<!>.length), // UNINITIALIZED_VARIABLE
+    B(<!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>.length), // UNINITIALIZED_VARIABLE
 
     C(<!UNINITIALIZED_ENUM_COMPANION!>SomeEnum<!>.companionFun().length),
-    D(<!UNINITIALIZED_VARIABLE!><!UNINITIALIZED_ENUM_COMPANION!>SomeEnum<!>.companionProp<!>.length),
+    D(<!UNINITIALIZED_ENUM_COMPANION!>SomeEnum<!>.companionProp.length),
 
     E(SomeEnum.<!UNINITIALIZED_ENUM_COMPANION!>Companion<!>.companionFun().length),
-    F(<!UNINITIALIZED_VARIABLE!>SomeEnum.<!UNINITIALIZED_ENUM_COMPANION!>Companion<!>.companionProp<!>.length); // UNINITIALIZED_VARIABLE
+    F(SomeEnum.<!UNINITIALIZED_ENUM_COMPANION!>Companion<!>.companionProp.length); // UNINITIALIZED_VARIABLE
 
     companion object {
         val companionProp = "someString"
@@ -39,17 +39,17 @@ val OtherEnum.Companion.extensionProp: String
 
 enum class EnumWithLambda(val lambda: () -> Unit) {
     M({
-      <!UNINITIALIZED_ENUM_COMPANION!>companionFun<!>().length
-      <!UNINITIALIZED_ENUM_COMPANION!>companionProp<!>.length
+      companionFun().length
+      companionProp.length
 
-      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.companionFun().length
-      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.companionProp.length
+      EnumWithLambda.companionFun().length
+      EnumWithLambda.companionProp.length
 
-      <!UNINITIALIZED_ENUM_COMPANION!>extensionFun<!>().length
-      <!UNINITIALIZED_ENUM_COMPANION!>extensionProp<!>.length
+      extensionFun().length
+      extensionProp.length
 
-      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.extensionFun().length
-      <!UNINITIALIZED_ENUM_COMPANION!>EnumWithLambda<!>.extensionProp.length
+      EnumWithLambda.extensionFun().length
+      EnumWithLambda.extensionProp.length
       });
 
     companion object {

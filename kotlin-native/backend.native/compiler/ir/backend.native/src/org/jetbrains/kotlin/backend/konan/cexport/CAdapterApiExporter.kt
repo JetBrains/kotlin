@@ -245,7 +245,6 @@ internal class CAdapterApiExporter(
         output("#endif  /* KONAN_${prefix.uppercase()}_H */")
 
         outputStreamWriter.close()
-        println("Produced library API in ${prefix}_api.h")
 
         outputStreamWriter = cppAdapterFile.printWriter()
 
@@ -264,7 +263,13 @@ internal class CAdapterApiExporter(
     |typedef struct FrameOverlay FrameOverlay;
     |
     |#define RUNTIME_NOTHROW __attribute__((nothrow))
-    |#define RUNTIME_USED __attribute__((used))
+    |
+    |#if __has_attribute(retain)
+    |#define RUNTIME_EXPORT __attribute__((used,retain))
+    |#else
+    |#define RUNTIME_EXPORT __attribute__((used))
+    |#endif
+    |
     |#define RUNTIME_NORETURN __attribute__((noreturn))
     |
     |extern "C" {
@@ -273,7 +278,7 @@ internal class CAdapterApiExporter(
     |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
     |void* CreateStablePointer(KObjHeader*) RUNTIME_NOTHROW;
     |void DisposeStablePointer(void*) RUNTIME_NOTHROW;
-    |${prefix}_KBoolean IsInstance(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
+    |${prefix}_KBoolean IsInstanceInternal(const KObjHeader*, const KTypeInfo*) RUNTIME_NOTHROW;
     |void EnterFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
     |void LeaveFrame(KObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
     |void SetCurrentFrame(KObjHeader** start) RUNTIME_NOTHROW;
@@ -289,7 +294,6 @@ internal class CAdapterApiExporter(
     |}  // extern "C"
     |
     |struct ${prefix}_FrameOverlay {
-    |  void* arena;
     |  ${prefix}_FrameOverlay* previous;
     |  ${prefix}_KInt parameters;
     |  ${prefix}_KInt count;
@@ -338,7 +342,7 @@ internal class CAdapterApiExporter(
     |  Kotlin_initRuntimeIfNeeded();
     |  ScopedRunnableState stateGuard;
     |  KObjHolder holder;
-    |  return IsInstance(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
+    |  return IsInstanceInternal(DerefStablePointer(ref, holder.slot()), (const KTypeInfo*)type);
     |}
     """.trimMargin())
         predefinedTypes.forEach {
@@ -381,7 +385,7 @@ internal class CAdapterApiExporter(
 
         makeScopeDefinitions(top, DefinitionKind.C_SOURCE_STRUCT, 1)
         output("};")
-        output("RUNTIME_USED ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
+        output("RUNTIME_EXPORT ${prefix}_ExportedSymbols* $exportedSymbol(void) { return &__konan_symbols;}")
         outputStreamWriter.close()
 
         if (defFile != null) {

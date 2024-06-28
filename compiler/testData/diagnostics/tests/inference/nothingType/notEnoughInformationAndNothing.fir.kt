@@ -1,10 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// CHECK_TYPE
+// COMPARE_WITH_LIGHT_TREE
 
 class Inv<I>
 fun <T> materialize(): Inv<T> = TODO()
 fun <K> id(arg: K) = arg
-fun <S> select(vararg args: <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>S<!>): S = TODO()
+fun <S> select(vararg args: S): S = TODO()
 
 fun test1(b: Boolean?) {
     val v = when(b) {
@@ -16,22 +17,22 @@ fun test1(b: Boolean?) {
 }
 
 fun test2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        materialize()
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
+        <!CANNOT_INFER_PARAMETER_TYPE!><!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()<!>
     )
     select(materialize(), materialize<String>())
     select(materialize(), null, Inv<String>())
     <!NEW_INFERENCE_ERROR!>select(
-        materialize(),
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>(),
         null
     )<!>
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        materialize(),
-        materialize()
+    <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
+        <!CANNOT_INFER_PARAMETER_TYPE{LT}!><!CANNOT_INFER_PARAMETER_TYPE{PSI}!><!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()<!>,
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()<!>
     )
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(
-        materialize(),
-        materialize(),
+    select(
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
+        <!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>(),
         null
     )
 }

@@ -1,4 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
+
+
 // FILE: test.kt
 interface ObjectFace
 
@@ -11,19 +12,26 @@ fun box() {
     makeFace()
 }
 
-// IR backend has additional steps on the way _out_ of the init block.
-
-// EXPECTATIONS JVM JVM_IR
-// test.kt:11 box
-// test.kt:5 makeFace
-// test.kt:5 <init>
-// test.kt:7 <init>
-// test.kt:8 makeFace
-// test.kt:11 box
+// EXPECTATIONS JVM_IR
 // test.kt:12 box
+// test.kt:6 makeFace
+// test.kt:6 <init>
+// test.kt:8 <init>
+// test.kt:6 <init>
+// test.kt:9 makeFace
+// test.kt:12 box
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:11 box
-// test.kt:8 makeFace
-// test.kt:5 <init>
 // test.kt:12 box
+// test.kt:9 makeFace
+// test.kt:6 <init>
+// test.kt:13 box
+
+// EXPECTATIONS WASM
+// test.kt:12 $box
+// test.kt:6 $makeFace (25, 25)
+// test.kt:8 $<no name provided>.<init>
+// test.kt:9 $<no name provided>.<init>
+// test.kt:9 $makeFace
+// test.kt:13 $box

@@ -1,0 +1,30 @@
+// CHECK JVM_IR:
+//   Mangled name: #box(){}kotlin.String
+//   Public signature: /box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #callWithContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+//   Public signature: /callWithContext|2869415620415030876[0]
+//   Public signature debug description: callWithContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #callWithContext(kotlin.Function1<kotlin.String,kotlin.String>){}
+//   Public signature: /callWithContext|-2175578939070447459[0]
+//   Public signature debug description: callWithContext(kotlin.Function1<kotlin.String,kotlin.String>){}
+fun callWithContext(f: Function1<String, String>): String
+
+// CHECK JVM_IR:
+//   Mangled name: #withContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+//   Public signature: /withContext|-1533357735492795771[0]
+//   Public signature debug description: withContext(kotlin.Function1<kotlin.String,kotlin.String>){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #withContext(kotlin.Function1<kotlin.String,kotlin.String>){}
+//   Public signature: /withContext|3644059802172459381[0]
+//   Public signature debug description: withContext(kotlin.Function1<kotlin.String,kotlin.String>){}
+fun withContext(f: Function1<String, String>): String
+

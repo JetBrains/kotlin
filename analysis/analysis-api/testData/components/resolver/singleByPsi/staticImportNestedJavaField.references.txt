@@ -1,0 +1,3 @@
+KtNameReferenceExpression(89,92): 'bar'
+  KtSimpleNameReference:
+    (in Dependency.Nested) open var bar: kotlin.Int

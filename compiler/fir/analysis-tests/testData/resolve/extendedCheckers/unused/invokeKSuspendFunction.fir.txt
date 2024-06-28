@@ -1,0 +1,5 @@
+FILE: invokeKSuspendFunction.kt
+    public final suspend fun foo(action: R|kotlin/reflect/KSuspendFunction1<kotlin/String, kotlin/Int>|): R|kotlin/Int| {
+        lval localAction: R|kotlin/reflect/KSuspendFunction1<kotlin/String, kotlin/Int>| = R|<local>/action|
+        ^foo R|<local>/localAction|.R|SubstitutionOverride<kotlin/reflect/KSuspendFunction1.invoke: R|kotlin/Int|>|(String(hello))
+    }

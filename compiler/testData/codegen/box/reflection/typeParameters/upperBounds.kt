@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE, WASM
-
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
+// JVM_ABI_K1_K2_DIFF: KT-63855
+
 
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.KVariance

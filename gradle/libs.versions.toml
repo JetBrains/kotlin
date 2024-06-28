@@ -1,0 +1,98 @@
+[versions]
+dexMemberList = "4.1.1"
+dokka = "1.9.20"
+gradle-custom-user-data = "1.12.1"
+gradle-enterprise = "3.16.2"
+gradle-plugin-publish = "1.2.1"
+# Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
+gradle-toolchains-foojay-resolver = "0.4.0"
+guava = "33.1.0-jre"
+jdom2 = "2.0.6.1"
+kotlinx-serialization = "1.5.0"
+# Version of the coroutines should be aligned with the oldest supported IntelliJ IDEA. Intellij IDEA uses 1.6 since 2022.3
+# Check the version in this file: https://github.com/JetBrains/intellij-community/blob/cc37866d3827c51712f9856f5e580d405784d1ef/.idea/libraries/kotlinx_coroutines_core.xml
+kotlinx-coroutines = "1.6.4"
+shadow = "8.1.7" # Should be in sync with version in kotlin-native/
+spdx = "0.8.0-dev-14"
+proguard = "7.4.2"
+ktor = "2.3.7"
+kotlinx-metadataJvm = "0.9.0"
+# Forcing gson version because of https://github.com/google/gson/pull/1991
+gson = { strictly = "2.8.9" } # should be in sync with version.properties
+jetbrains-ideaExt = "1.0.1"
+jackson = "2.15.2"
+jgit = "6.6.0.202305301015-r"
+jsoup = "1.17.2"
+junit4 = "4.13.2"
+junit5 = "5.10.1"
+junit-platform = "1.10.0"
+opentest4j = "1.3.0" # should be consistent with the version brought by junit-platform
+android-gradle-plugin = "7.3.0"
+android-tools = "30.3.1"
+gradle-node = "7.0.1"
+commons-text="1.10.0"
+lincheck="2.28.1"
+xerces = "2.12.2"
+# Compose versions used for Compose compiler plugin tests
+compose-stable = "1.7.0-alpha08"
+compose-snapshot-id = "11953424"
+compose-snapshot-version = "1.8.0-SNAPSHOT"
+
+[libraries]
+dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
+dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
+gradle-enterprise-gradlePlugin = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradle-enterprise" }
+gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
+gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
+shadow-gradlePlugin = { module = "io.github.goooler.shadow:shadow-gradle-plugin", version.ref = "shadow" }
+spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
+proguard-gradlePlugin = { module = "com.guardsquare:proguard-gradle", version.ref = "proguard" }
+
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
+jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
+junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5" }
+junit-platform-commons = { module = "org.junit.platform:junit-platform-commons", version.ref = "junit-platform" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit-platform" }
+junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junit-platform" }
+opentest4j = { module = "org.opentest4j:opentest4j", version.ref = "opentest4j" }
+lincheck = { module = "org.jetbrains.kotlinx:lincheck", version.ref = "lincheck" }
+
+android-gradle-plugin-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-builder = { module = "com.android.tools.build:builder", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
+android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
+
+xerces = { module = "xerces:xercesImpl", version.ref = "xerces" }
+
+[plugins]
+jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
+gradle-node = { id = "com.github.node-gradle.node", version.ref = "gradle-node" }
+

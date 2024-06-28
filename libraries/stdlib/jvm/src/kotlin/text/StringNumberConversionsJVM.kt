@@ -16,7 +16,7 @@ package kotlin.text
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -25,7 +25,7 @@ public actual inline fun Byte.toString(radix: Int): String = this.toInt().toStri
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
@@ -46,19 +46,10 @@ public actual inline fun Int.toString(radix: Int): String = java.lang.Integer.to
 public actual inline fun Long.toString(radix: Int): String = java.lang.Long.toString(this, checkRadix(radix))
 
 /**
- * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public actual inline fun String.toBoolean(): Boolean = this.toBoolean()
-
-/**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
-@JvmName("toBooleanNullable")
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public actual inline fun String?.toBoolean(): Boolean = java.lang.Boolean.parseBoolean(this)

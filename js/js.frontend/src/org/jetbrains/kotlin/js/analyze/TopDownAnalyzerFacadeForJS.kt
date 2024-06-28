@@ -89,7 +89,7 @@ abstract class AbstractTopDownAnalyzerFacadeForWeb {
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
-        val trace = BindingTraceContext()
+        val trace = BindingTraceContext(project)
         trace.record(MODULE_KIND, context.module, moduleKind)
         return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, project, additionalPackages)
     }

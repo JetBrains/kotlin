@@ -5,12 +5,9 @@
 
 package kotlin
 
-import kotlin.native.internal.FixmeReflection
-
 /**
  * Represents a value of a functional type, such as a lambda, an anonymous function or a function reference.
  *
  * @param R return type of the function.
  */
-@FixmeReflection
 public interface Function<out R>

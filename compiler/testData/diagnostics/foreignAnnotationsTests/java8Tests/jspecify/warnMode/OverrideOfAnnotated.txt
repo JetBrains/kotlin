@@ -12,9 +12,13 @@ private val FOO: FOO.`<no name provided>`
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @org.jspecify.annotations.Nullable public open fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
+
+    // Static members
+    public open fun foo(): Foo!
 }
 
-public final class Correct : BaseClass {
+public final class Correct : IntermediateClass {
     public constructor Correct()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun everythingNotNullable(/*0*/ x: Foo): Foo
@@ -22,8 +26,10 @@ public final class Correct : BaseClass {
     public open override /*1*/ fun everythingUnknown(/*0*/ x: Foo?): Foo?
     public open override /*1*/ fun explicitlyNullnessUnspecified(/*0*/ x: Foo): Foo
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun intermediateNotNull(): Foo
     public open override /*1*/ fun mixed(/*0*/ x: Foo): Foo?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun withVararg(/*0*/ vararg p: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
 }
 
 public interface Foo {
@@ -32,7 +38,21 @@ public interface Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class WrongParameter : BaseClass {
+public open class IntermediateClass : BaseClass {
+    public constructor IntermediateClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun everythingNotNullable(/*0*/ x: Foo!): Foo!
+    @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun everythingNullable(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable Foo!): @org.jspecify.annotations.Nullable Foo!
+    @org.jspecify.annotations.NullnessUnspecified public open override /*1*/ /*fake_override*/ fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): @org.jspecify.annotations.NullnessUnspecified Foo!
+    public open override /*1*/ /*fake_override*/ fun explicitlyNullnessUnspecified(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): Foo!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun intermediateNotNull(): Foo!
+    @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
+}
+
+public final class WrongParameter : IntermediateClass {
     public constructor WrongParameter()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun everythingNotNullable(/*0*/ x: Foo?): Foo
@@ -40,11 +60,13 @@ public final class WrongParameter : BaseClass {
     public open override /*1*/ fun everythingUnknown(/*0*/ x: Foo): Foo?
     public open override /*1*/ fun explicitlyNullnessUnspecified(/*0*/ x: Foo?): Foo
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun intermediateNotNull(): Foo!
     public open override /*1*/ fun mixed(/*0*/ x: Foo?): Foo?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 }
 
-public final class WrongReturnTypes : BaseClass {
+public final class WrongReturnTypes : IntermediateClass {
     public constructor WrongReturnTypes()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun everythingNotNullable(/*0*/ x: Foo): Foo?
@@ -52,6 +74,9 @@ public final class WrongReturnTypes : BaseClass {
     @org.jspecify.annotations.NullnessUnspecified public open override /*1*/ /*fake_override*/ fun everythingUnknown(/*0*/ @org.jspecify.annotations.NullnessUnspecified x: @org.jspecify.annotations.NullnessUnspecified Foo!): @org.jspecify.annotations.NullnessUnspecified Foo!
     public open override /*1*/ fun explicitlyNullnessUnspecified(/*0*/ x: Foo): Foo?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun intermediateNotNull(): Foo?
     @org.jspecify.annotations.Nullable public open override /*1*/ /*fake_override*/ fun mixed(/*0*/ x: Foo!): @org.jspecify.annotations.Nullable Foo!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun withVararg(/*0*/ vararg p: kotlin.Any! /*kotlin.Array<(out) kotlin.Any!>!*/): kotlin.Unit
 }
+

@@ -1,0 +1,11 @@
+package=cinterop.lib.a
+---
+
+static int a() {
+    return 1;
+}
+
+struct StructA {
+    int a;
+    int b;
+};

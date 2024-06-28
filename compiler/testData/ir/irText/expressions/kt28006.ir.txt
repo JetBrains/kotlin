@@ -17,6 +17,28 @@ FILE fqName:<root> fileName:/kt28006.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Int): kotlin.String declared in <root>'
+        STRING_CONCATENATION type=kotlin.String
+          CONST String type=kotlin.String value="\uD83E\uDD17"
+          GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): kotlin.String declared in <root>'
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
+          CONST String type=kotlin.String value="\uD83E\uDD17"
+  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.String declared in <root>'
+        STRING_CONCATENATION type=kotlin.String
+          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
+          CONST String type=kotlin.String value="\uD83E\uDD17"
+          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
   PROPERTY name:testConst1 visibility:public modality:FINAL [const,val]
     FIELD PROPERTY_BACKING_FIELD name:testConst1 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
@@ -53,25 +75,3 @@ FILE fqName:<root> fileName:/kt28006.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testConst4> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testConst4 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Int): kotlin.String declared in <root>'
-        STRING_CONCATENATION type=kotlin.String
-          CONST String type=kotlin.String value="\uD83E\uDD17"
-          GET_VAR 'x: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (x: kotlin.Int): kotlin.String declared in <root>'
-        STRING_CONCATENATION type=kotlin.String
-          GET_VAR 'x: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
-          CONST String type=kotlin.String value="\uD83E\uDD17"
-  FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 (x: kotlin.Int): kotlin.String declared in <root>'
-        STRING_CONCATENATION type=kotlin.String
-          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null
-          CONST String type=kotlin.String value="\uD83E\uDD17"
-          GET_VAR 'x: kotlin.Int declared in <root>.test3' type=kotlin.Int origin=null

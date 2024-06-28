@@ -1,7 +1,7 @@
-public abstract class A /* A*/<T extends A<T>>  extends B<java.util.Collection<? extends T>> implements C<T> {
+public abstract class A /* A*/<T extends A<@org.jetbrains.annotations.NotNull() T>>  extends B<@org.jetbrains.annotations.NotNull() java.util.Collection<? extends @org.jetbrains.annotations.NotNull() T>> implements C<@org.jetbrains.annotations.NotNull() T> {
   public  A();//  .ctor()
 
-  public class Inner /* A.Inner*/<D>  extends B<java.util.Collection<? extends T>> implements C<D> {
+  public class Inner /* A.Inner*/<D>  extends B<@org.jetbrains.annotations.NotNull() java.util.Collection<? extends @org.jetbrains.annotations.NotNull() T>> implements C<D> {
     public  Inner();//  .ctor()
   }
 

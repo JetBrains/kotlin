@@ -1,6 +1,11 @@
 package
 
-public fun test(/*0*/ s: Sub, /*1*/ js: JSub, /*2*/ cs: kotlin.CharSequence, /*3*/ jcs: java.lang.CharSequence): kotlin.Unit
+public fun test1(/*0*/ js: JSub): kotlin.CharSequence
+public fun test2(/*0*/ js: JSub): java.lang.CharSequence
+public fun test3(/*0*/ s: Sub): kotlin.CharSequence
+public fun test4(/*0*/ s: Sub): java.lang.CharSequence
+public fun test5(/*0*/ js: JSub): Sub
+public fun test6(/*0*/ s: Sub): JSub
 
 public final class JSub : java.lang.CharSequence {
     public constructor JSub()

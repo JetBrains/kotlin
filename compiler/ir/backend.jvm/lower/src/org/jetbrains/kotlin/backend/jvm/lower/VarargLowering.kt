@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrArrayBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-val varargPhase = makeIrFilePhase(
-    ::VarargLowering,
+@PhaseDescription(
     name = "VarargLowering",
     description = "Replace varargs with array arguments and lower arrayOf and emptyArray calls",
-    prerequisite = setOf(polymorphicSignaturePhase)
+    prerequisite = [PolymorphicSignatureLowering::class],
 )
-
 internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
@@ -94,7 +92,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 }
 
 internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
-    (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
+    (PrimitiveType.entries.map { type -> type.name } + UnsignedType.entries.map { type -> type.typeName.asString() })
         .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
 
 internal const val ARRAY_OF_NAME = "arrayOf"
@@ -105,7 +103,7 @@ internal fun IrFunction.isArrayOf(): Boolean {
         is IrPackageFragment -> directParent
         else -> return false
     }
-    return parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
+    return parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
             name.asString().let { it in PRIMITIVE_ARRAY_OF_NAMES || it == ARRAY_OF_NAME } &&
             extensionReceiverParameter == null &&
             dispatchReceiverParameter == null &&
@@ -113,6 +111,4 @@ internal fun IrFunction.isArrayOf(): Boolean {
             valueParameters[0].isVararg
 }
 
-internal fun IrFunction.isEmptyArray(): Boolean =
-    name.asString() == "emptyArray" &&
-            (parent as? IrPackageFragment)?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+internal fun IrFunction.isEmptyArray(): Boolean = isTopLevelInPackage("emptyArray", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)

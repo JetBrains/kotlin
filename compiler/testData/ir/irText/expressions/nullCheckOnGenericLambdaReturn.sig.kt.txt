@@ -1,0 +1,54 @@
+// CHECK JVM_IR:
+//   Mangled name: #checkAny(kotlin.Function0<kotlin.Any>){}kotlin.Any
+//   Public signature: /checkAny|3822573499379692767[0]
+//   Public signature debug description: checkAny(kotlin.Function0<kotlin.Any>){}kotlin.Any
+fun checkAny(fn: Function0<Any>): Any
+
+// CHECK JVM_IR:
+//   Mangled name: #checkAnyN(kotlin.Function0<kotlin.Any?>){}kotlin.Any?
+//   Public signature: /checkAnyN|2531653624856991874[0]
+//   Public signature debug description: checkAnyN(kotlin.Function0<kotlin.Any?>){}kotlin.Any?
+fun checkAnyN(fn: Function0<Any?>): Any?
+
+// CHECK JVM_IR:
+//   Mangled name: #checkT(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+//   Public signature: /checkT|-7816327292579279299[0]
+//   Public signature debug description: checkT(kotlin.Function0<0:0>){0§<kotlin.Any?>}0:0
+fun <T : Any?> checkT(fn: Function0<T>): T
+
+// CHECK JVM_IR:
+//   Mangled name: #checkTAny(kotlin.Function0<0:0>){0§<kotlin.Any>}0:0
+//   Public signature: /checkTAny|3646405182225880944[0]
+//   Public signature debug description: checkTAny(kotlin.Function0<0:0>){0§<kotlin.Any>}0:0
+fun <T : Any> checkTAny(fn: Function0<T>): T
+
+// CHECK JVM_IR:
+//   Mangled name: #id(0:0){0§<kotlin.Any?>}0:0
+//   Public signature: /id|-6791396263062521506[0]
+//   Public signature debug description: id(0:0){0§<kotlin.Any?>}0:0
+fun <T : Any?> id(x: T): T
+
+// CHECK JVM_IR:
+//   Mangled name: #test1(){}kotlin.String?
+//   Public signature: /test1|-4425504554595636049[0]
+//   Public signature debug description: test1(){}kotlin.String?
+fun test1(): String?
+
+// CHECK JVM_IR:
+//   Mangled name: #test2(){}kotlin.String
+//   Public signature: /test2|7756882030981116149[0]
+//   Public signature debug description: test2(){}kotlin.String
+fun test2(): String
+
+// CHECK JVM_IR:
+//   Mangled name: #test3(){}kotlin.String?
+//   Public signature: /test3|-1042227207464237527[0]
+//   Public signature debug description: test3(){}kotlin.String?
+fun test3(): String?
+
+// CHECK JVM_IR:
+//   Mangled name: #test4(){}kotlin.String
+//   Public signature: /test4|4822743421999784081[0]
+//   Public signature debug description: test4(){}kotlin.String
+fun test4(): String
+

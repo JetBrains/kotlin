@@ -1,4 +1,5 @@
-// !API_VERSION: 1.0
+// FIR_IDENTICAL
+// API_VERSION: 1.0
 
 // FILE: a.kt
 package a

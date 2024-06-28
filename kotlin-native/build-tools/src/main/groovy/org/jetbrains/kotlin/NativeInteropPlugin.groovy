@@ -27,6 +27,8 @@ import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSet
 import org.gradle.internal.reflect.Instantiator
+import org.jetbrains.kotlin.dependencies.NativeDependenciesExtension
+import org.jetbrains.kotlin.konan.target.Platform
 
 class NamedNativeInteropConfig implements Named {
 
@@ -144,15 +146,23 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        return new File(project.buildDir, "nativelibs/$target")
+        return project.layout.buildDirectory.dir("nativelibs/$target").get().asFile
     }
 
     File getGeneratedSrcDir() {
-        return new File(project.buildDir, "nativeInteropStubs/$name/kotlin")
+        return project.layout.buildDirectory.dir("nativeInteropStubs/$name/kotlin").get().asFile
     }
 
     File getTemporaryFilesDir() {
-        return new File(project.buildDir, "interopTemp")
+        return project.layout.buildDirectory.dir("interopTemp").get().asFile
+    }
+
+    String getLlvmDir() {
+        return project.extensions.nativeDependencies.llvmPath
+    }
+
+    Platform getHostPlatform() {
+        return project.extensions.nativeDependencies.hostPlatform
     }
 
     NamedNativeInteropConfig(Project project, String name, String target = null, String flavor = 'jvm') {
@@ -160,7 +170,7 @@ class NamedNativeInteropConfig implements Named {
         this.project = project
         this.flavor = flavor
 
-        def platformManager = project.project(":kotlin-native").ext.platformManager
+        def platformManager = project.extensions.platformManager
         def targetManager = platformManager.targetManager(target)
         this.target = targetManager.targetName
 
@@ -178,11 +188,10 @@ class NamedNativeInteropConfig implements Named {
             interopStubs = project.sourceSets.create(interopStubsName)
             configuration = project.configurations.create(interopStubs.name)
             project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
-                dependsOn genTask
-                kotlinOptions.freeCompilerArgs = ["-Xskip-prerelease-check"]
+                compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
             }
 
-            interopStubs.kotlin.srcDirs generatedSrcDir
+            interopStubs.kotlin.srcDir(project.tasks.named(genTask.name).map { generatedSrcDir })
 
             project.dependencies {
                 add interopStubs.getApiConfigurationName(), project(path: ':kotlin-native:Interop:Runtime')
@@ -194,16 +203,18 @@ class NamedNativeInteropConfig implements Named {
         }
 
         genTask.configure {
-            dependsOn ":kotlin-native:dependencies:update"
+            notCompatibleWithConfigurationCache("This task uses Task.project at execution time")
+            dependsOn project.extensions.nativeDependencies.hostPlatformDependency
+            dependsOn project.extensions.nativeDependencies.llvmDependency
             dependsOn ":kotlin-native:Interop:Indexer:nativelibs"
             dependsOn ":kotlin-native:Interop:Runtime:nativelibs"
             classpath = project.configurations.interopStubGenerator
-            main = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
+            mainClass = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
             jvmArgs '-ea'
 
             systemProperties "java.library.path" : project.files(
-                    new File(project.findProject(":kotlin-native:Interop:Indexer").buildDir, "nativelibs"),
-                    new File(project.findProject(":kotlin-native:Interop:Runtime").buildDir, "nativelibs")
+                    project.findProject(":kotlin-native:Interop:Indexer").layout.buildDirectory.dir("nativelibs"),
+                    project.findProject(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs"),
             ).asPath
             // Set the konan.home property because we run the cinterop tool not from a distribution jar
             // so it will not be able to determine this path by itself.
@@ -228,9 +239,6 @@ class NamedNativeInteropConfig implements Named {
                 args '-natives', nativeLibsDir
                 args '-Xtemporary-files-dir', temporaryFilesDir
                 args '-flavor', this.flavor
-                if (flavor == "jvm") {
-                    args '-mode', 'sourcecode'
-                }
                 // Uncomment to debug.
                 // args '-verbose', 'true'
 
@@ -296,6 +304,9 @@ class NativeInteropPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project prj) {
+        prj.plugins.apply("platform-manager")
+        prj.plugins.apply("native-dependencies")
+
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))
 
         prj.configurations {

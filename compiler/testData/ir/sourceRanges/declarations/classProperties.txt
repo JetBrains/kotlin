@@ -1,4 +1,4 @@
-@0:0..77:1 FILE fqName:test fileName:/classProperties.kt
+@0:0..78:0 FILE fqName:test fileName:/classProperties.kt
   @2:0..77:1 CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     @2:0..77:1 CONSTRUCTOR visibility:public <> () returnType:test.Test [primary]
       @2:0..77:1 BLOCK_BODY

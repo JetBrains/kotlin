@@ -9,8 +9,8 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "6849861bf8c1e24ccdbdaf54606271c355d5ef9c",
-    stableKotlinVersion = "1.8.0",
+    gitCommitSha = "8f2b3c96dcc9ad594995367ad138a37328244bb9",
+    stableKotlinVersion = "2.0.0",
 )
 
 import java.io.File
@@ -36,14 +36,14 @@ runBenchmarks(
             title = "Build Js IR with ABI change in ObservableList"
 
             runTasks("jsJar")
-            applyAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+            applyAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {
             title = "Build Js IR with non-ABI change in ObservableList"
 
             runTasks("jsJar")
-            applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
+            applyNonAbiChangeTo("kvision-modules/kvision-state/src/jsMain/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {

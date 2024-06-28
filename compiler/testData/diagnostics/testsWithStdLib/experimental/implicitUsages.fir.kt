@@ -1,4 +1,4 @@
-// !OPT_IN: kotlin.RequiresOptIn
+// OPT_IN: kotlin.RequiresOptIn
 // LANGUAGE: +OptInContagiousSignatures
 
 @RequiresOptIn
@@ -27,7 +27,7 @@ data class DataClass(@property:Marker val x: Int)
 fun useDataClass(d: DataClass) {
     // Should have error in both
     d.<!OPT_IN_USAGE_ERROR!>x<!>
-    val (x) = d
+    val (<!OPT_IN_USAGE_ERROR!>x<!>) = d
 }
 
 typealias My = <!OPT_IN_USAGE_ERROR!>Some<!>
@@ -65,13 +65,21 @@ class B : I
 typealias MyList = ArrayList<I>
 
 @Marker
+typealias AList = ArrayList<I>
+
+@Marker
 typealias YourList = ArrayList<String>
+
+fun my2(my: MyList) {}
+
+fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 fun main() {
     val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
     val y = MyList()
-    val z = YourList()
-    YourList().add("")
+    val b = <!OPT_IN_USAGE_ERROR!>AList<!>()
+    val z = <!OPT_IN_USAGE_ERROR!>YourList<!>()
+    <!OPT_IN_USAGE_ERROR!>YourList<!>().add("")
 }
 
 @Marker
@@ -120,5 +128,5 @@ fun operatorContainerUsage(s: String, a: AnotherContainer) {
     val res1 = s <!OPT_IN_USAGE_ERROR!>-<!> s
     val res2 = <!OPT_IN_USAGE_ERROR!>s<!>()
     val res3 = <!OPT_IN_USAGE_ERROR!>res1<!> <!OPT_IN_USAGE_ERROR!>><!> <!OPT_IN_USAGE_ERROR!>res2<!>
-    <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>for (c in a) {}<!>
+    for (c in <!OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR, OPT_IN_USAGE_ERROR!>a<!>) {}
 }

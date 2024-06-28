@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.BODY_RESOLVE
 ) {
-    override val transformer = FirBodyResolveTransformerAdapter(session, scopeSession)
+    override val transformer: FirBodyResolveTransformerAdapter = FirBodyResolveTransformerAdapter(session, scopeSession)
 }
 
 @AdapterForResolveProcessor
@@ -36,6 +37,8 @@ class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeS
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }

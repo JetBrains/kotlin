@@ -1,0 +1,46 @@
+// CHECK:
+//   Mangled name: {}d
+//   Public signature: /d|5174763769109925331[0]
+//   Public signature debug description: {}d
+val d: dynamic
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-d>(){}
+  //   Public signature: /d.<get-d>|-6701718004621354461[0]
+  //   Public signature debug description: <get-d>(){}
+  get
+
+// CHECK:
+//   Mangled name: {}p
+//   Public signature: /p|6715504260787941082[0]
+//   Public signature debug description: {}p
+val p: Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: #<get-p>(){}
+  //   Public signature: /p.<get-p>|-1162552463316289847[0]
+  //   Public signature debug description: <get-p>(){}
+  get
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(<dynamic>){}
+//   Public signature: /test1|4353482563436034667[0]
+//   Public signature debug description: test1(<dynamic>){}
+fun test1(d: dynamic): Int
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(<dynamic>){}
+//   Public signature: /test2|-7945586224410659921[0]
+//   Public signature debug description: test2(<dynamic>){}
+fun test2(d: dynamic): Any
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(<dynamic>){}
+//   Public signature: /test3|8250122632028727853[0]
+//   Public signature debug description: test3(<dynamic>){}
+fun test3(d: dynamic): Any?
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(<dynamic>){}
+//   Public signature: /test4|3998898222236566906[0]
+//   Public signature debug description: test4(<dynamic>){}
+fun test4(d: dynamic): String
+

@@ -8,91 +8,64 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.targets.native.internal.*
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 
 private typealias SourceSetName = String
 
 internal fun ProjectMetadataProvider(
-    sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>
+    sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>,
 ): ProjectMetadataProvider {
     return ProjectMetadataProviderImpl(sourceSetMetadataOutputs)
 }
 
 internal class SourceSetMetadataOutputs(
-    val metadata: FileCollection,
-    val cinterop: CInterop?
-) {
-    class CInterop(
-        val forCli: FileCollection,
-        val forIde: FileCollection
-    )
-}
+    val metadata: FileCollection?,
+)
 
 private class ProjectMetadataProviderImpl(
-    private val sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>
-): ProjectMetadataProvider() {
+    private val sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>,
+) : ProjectMetadataProvider() {
 
-    override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection =
-        sourceSetMetadataOutputs[sourceSetName]?.metadata ?: error("Unexpected source set '$sourceSetName'")
-
-    override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection? {
-        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
-        val cinteropMetadata = metadataOutputs.cinterop ?: return null
-        return when (consumer) {
-            MetadataConsumer.Ide -> cinteropMetadata.forIde
-            MetadataConsumer.Cli -> cinteropMetadata.forCli
-        }
+    override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection? {
+        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: return null
+        return metadataOutputs.metadata
     }
+
 }
 
-internal fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, SourceSetMetadataOutputs> {
+internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, SourceSetMetadataOutputs> {
+    /*
+    Usually we can safely access the kotlin project extension inside a coroutine, as the Kotlin Gradle Plugin is
+    the only entity that could launch coroutines (hence the extension being available).
+
+    However, this code is crossing project boundaries here:
+    There is _some_ Kotlin Gradle plugin that requests the 'ProjectData' being collected for
+    *all* projects (breaking project isolation).
+
+    Therefore, it might happen that the Kotlin Plugin was not even applied at this point, when this
+    coroutine starts executing. We therefore await the wait for after the buildscript was evaluated to check
+    if the multiplatformExtension is present.
+     */
+    AfterEvaluateBuildscript.await()
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyMap()
 
     val sourceSetMetadata = multiplatformExtension.sourceSetsMetadataOutputs()
-    val sourceSetCInteropMetadata = multiplatformExtension.cInteropMetadataOfSourceSets(sourceSetMetadata.keys)
 
-    return sourceSetMetadata.mapValues { (sourceSet, metadata) ->
-        val cinteropMetadataOutput = sourceSetCInteropMetadata[sourceSet]
-        SourceSetMetadataOutputs(
-            metadata = metadata,
-            cinterop = cinteropMetadataOutput
-        )
+    return sourceSetMetadata.mapValues { (_, metadata) ->
+        SourceSetMetadataOutputs(metadata = metadata,)
     }.mapKeys { it.key.name }
 }
 
-private fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
-    val commonTarget = metadata()
-
-    val compilations = commonTarget.compilations
-
-    return sourceSets.mapNotNull { sourceSet ->
-        val compilation = compilations.findByName(sourceSet.name)
-            ?: return@mapNotNull null // given source set is not shared
-
-        val destination = when (compilation) {
-            is KotlinCommonCompilation -> compilation.output.classesDirs
-            is KotlinSharedNativeCompilation -> compilation.output.classesDirs
-            else -> error("Unexpected compilation type: $compilation")
-        }
-
-        Pair(sourceSet, destination)
-    }.toMap()
-}
-
-private fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
-    sourceSets: Iterable<KotlinSourceSet>
-): Map<KotlinSourceSet, SourceSetMetadataOutputs.CInterop?> {
-    val taskForCLI = project.commonizeCInteropTask ?: return emptyMap()
-    val taskForIde = project.copyCommonizeCInteropForIdeTask ?: return emptyMap()
-
-    return sourceSets.associateWith { sourceSet ->
-        val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return@associateWith null
-        SourceSetMetadataOutputs.CInterop(
-            forCli = taskForCLI.get().commonizedOutputLibraries(dependent),
-            forIde = taskForIde.get().commonizedOutputLibraries(dependent)
-        )
-    }
+private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection?> {
+    return metadataTarget
+        .awaitMetadataCompilationsCreated()
+        // TODO: KT-62332/Stop-Creating-legacy-metadata-compilation-with-name-main
+        .filter { if (it is KotlinCommonCompilation) it.isKlibCompilation else true }
+        .associate { it.defaultSourceSet to it.output.classesDirs }
 }

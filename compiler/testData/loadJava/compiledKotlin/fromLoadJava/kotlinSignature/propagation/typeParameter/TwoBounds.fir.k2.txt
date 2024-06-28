@@ -1,0 +1,12 @@
+public abstract interface TwoBounds : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun <A : R|kotlin/CharSequence|, R|kotlin/Cloneable|> foo(a: R|A|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/TwoBounds.Super| {
+        public abstract fun <B : R|kotlin/CharSequence|, R|kotlin/Cloneable|> foo(a: R|B|): R|kotlin/Unit|
+
+    }
+
+}

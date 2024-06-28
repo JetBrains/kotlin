@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-bom</artifactId>
-    <version>1.9.255-SNAPSHOT</version>
+    <version>2.0.255-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
@@ -50,6 +50,8 @@
         neither it is visible in the consumer project.
         -->
         <kotlin.version>${project.version}</kotlin.version>
+        <deploy-snapshot-repo>sonatype-nexus-staging</deploy-snapshot-repo>
+        <deploy-snapshot-url>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-url>
     </properties>
 
     <dependencyManagement>
@@ -73,6 +75,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-stdlib-js</artifactId>
+                <type>klib</type>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
@@ -116,17 +119,20 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-js</artifactId>
+                <type>klib</type>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-common</artifactId>
                 <version>${kotlin.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-test-annotations-common</artifactId>
                 <version>${kotlin.version}</version>
+                <type>pom</type>
             </dependency>
             <!-- Scripting -->
             <dependency>
@@ -137,11 +143,6 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-script-runtime</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>kotlin-script-util</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
             <dependency>
@@ -189,8 +190,8 @@
             <url>${deploy-url}</url>
         </repository>
         <snapshotRepository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <id>${deploy-snapshot-repo}</id>
+            <url>${deploy-snapshot-url}</url>
         </snapshotRepository>
     </distributionManagement>
 

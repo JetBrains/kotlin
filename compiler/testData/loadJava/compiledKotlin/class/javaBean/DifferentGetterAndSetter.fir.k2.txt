@@ -1,0 +1,8 @@
+public open class DifferentGetterAndSetter : R|kotlin/Any| {
+    public open fun setSomething(p0: R|kotlin/String?|): R|kotlin/Unit|
+
+    public open fun getSomething(): R|kotlin/Int|
+
+    public constructor(): R|test/DifferentGetterAndSetter|
+
+}

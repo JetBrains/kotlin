@@ -7,33 +7,30 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import kotlin.reflect.KClass
 
-class CustomAnnotationTypeAttribute(
-    val annotations: List<FirAnnotation>,
-    val containerSymbols: List<FirBasedSymbol<*>> = emptyList(),
-) : ConeAttribute<CustomAnnotationTypeAttribute>() {
-    constructor(annotations: List<FirAnnotation>, containerSymbol: FirBasedSymbol<*>?) : this(
-        annotations,
-        listOfNotNull(containerSymbol),
-    )
-
+class CustomAnnotationTypeAttribute(val annotations: List<FirAnnotation>) : ConeAttribute<CustomAnnotationTypeAttribute>() {
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this
-        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerSymbols + other.containerSymbols)
+        return CustomAnnotationTypeAttribute(annotations + other.annotations)
     }
 
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true
 
     override fun toString(): String = annotations.joinToString(separator = " ") { it.render() }
 
+    override fun renderForReadability(): String =
+        annotations.joinToString(separator = " ") { FirRenderer.forReadability().renderElementAsString(it, trim = true) }
+
     override val key: KClass<out CustomAnnotationTypeAttribute>
         get() = CustomAnnotationTypeAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = true
 }
 
 val ConeAttributes.custom: CustomAnnotationTypeAttribute? by ConeAttributes.attributeAccessor<CustomAnnotationTypeAttribute>()

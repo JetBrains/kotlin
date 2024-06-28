@@ -16,6 +16,8 @@ public abstract class ObservableProperty<V> : kotlin.properties.ReadWritePropert
     public open override operator fun getValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V
 
     public open override operator fun setValue(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V): kotlin.Unit
+
+    public open override fun toString(): kotlin.String
 }
 
 @kotlin.SinceKotlin(version = "1.4")

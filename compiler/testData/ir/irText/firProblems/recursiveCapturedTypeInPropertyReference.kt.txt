@@ -1,13 +1,3 @@
-interface Something {
-
-}
-
-interface Recursive<R> where R : Recursive<R>, R : Something {
-  abstract val symbol: AbstractSymbol<R>
-    abstract get
-
-}
-
 abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
   constructor() /* primary */ {
     super/*Any*/()
@@ -20,3 +10,13 @@ abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
   }
 
 }
+
+interface Recursive<R> where R : Recursive<R>, R : Something {
+  abstract val symbol: AbstractSymbol<R>
+    abstract get
+
+}
+
+interface Something {
+}
+

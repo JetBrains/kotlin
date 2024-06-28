@@ -1,0 +1,10 @@
+package bar
+
+private fun privateFun(): Set<Int> = hashSetOf(1, 2, 3)
+fun publicFun() = privateFun()
+
+private val privateVal: List<String> get() = mutableListOf("foo", "bar")
+val publicVal get() = privateVal
+
+private class PrivateClass(val collection: Collection<*> = privateFun())
+class PublicClass(val iterator: Iterator<*> = privateVal.iterator())

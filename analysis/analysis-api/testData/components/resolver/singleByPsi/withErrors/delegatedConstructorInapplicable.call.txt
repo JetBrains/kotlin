@@ -1,0 +1,32 @@
+KtConstructorCalleeExpression(40,41): 'A'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaDelegatedConstructorCall:
+        kind = SUPER_CALL
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = A
+            symbol = <constructor>(x: kotlin.String): A
+            valueParameters = [
+              KaVariableSignature:
+                name = x
+                receiverType = null
+                returnType = kotlin.String
+                symbol = x: kotlin.String
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {}
+        argumentMapping = {
+          5 -> (KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.String
+            symbol = x: kotlin.String
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'kotlin.Int', but 'kotlin.String' was expected.>

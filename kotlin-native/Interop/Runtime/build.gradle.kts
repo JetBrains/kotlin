@@ -1,38 +1,27 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 
 plugins {
-    kotlin
+    id("org.jetbrains.kotlin.jvm")
     id("native")
+    id("native-dependencies")
 }
 
 native {
     val isWindows = PlatformInfo.isWindows()
     val obj = if (isWindows) "obj" else "o"
     val lib = if (isWindows) "lib" else "a"
-    val host = rootProject.project(":kotlin-native").extra["hostName"]
-    val hostLibffiDir = rootProject.project(":kotlin-native").extra["${host}LibffiDir"]
-    val cflags = mutableListOf("-I$hostLibffiDir/include",
-                               *platformManager.hostPlatform.clangForJni.hostCompilerArgsForJni)
+    val cflags = mutableListOf("-I${nativeDependencies.libffiPath}/include",
+                               *hostPlatform.clangForJni.hostCompilerArgsForJni)
     suffixes {
         (".c" to ".$obj") {
-            tool(*platformManager.hostPlatform.clangForJni.clangC("").toTypedArray())
+            tool(*hostPlatform.clangForJni.clangC("").toTypedArray())
             flags( *cflags.toTypedArray(), "-c", "-o", ruleOut(), ruleInFirst())
         }
     }
@@ -44,32 +33,50 @@ native {
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
     target(solib("callbacks"), objSet) {
-        tool(*platformManager.hostPlatform.clangForJni.clangCXX("").toTypedArray())
+        tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
         flags("-shared",
               "-o",ruleOut(), *ruleInAll(),
-              "-L${project(":kotlin-native:libclangext").buildDir}",
-              "$hostLibffiDir/lib/libffi.$lib",
+              "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
+              "${nativeDependencies.libffiPath}/lib/libffi.$lib",
               "-lclangext")
     }
     tasks.named(solib("callbacks")).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
+        dependsOn(nativeDependencies.libffiDependency)
     }
 }
 
 dependencies {
-    implementation(project(":kotlin-native:utilities:basic-utils"))
+    implementation(project(":compiler:util"))
     implementation(project(":kotlin-stdlib"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
-sourceSets.main.get().java.srcDir("src/jvm/kotlin")
+val prepareSharedSourcesForJvm by tasks.registering(Sync::class) {
+    from("src/main/kotlin")
+    into(project.layout.buildDirectory.dir("src/main/kotlin"))
+}
+val prepareKotlinIdeaImport by tasks.registering {
+    dependsOn(prepareSharedSourcesForJvm)
+}
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-Xskip-prerelease-check"
+sourceSets.main.configure {
+    kotlin.setSrcDirs(emptyList<String>())
+    kotlin.srcDir("src/jvm/kotlin")
+    kotlin.srcDir(prepareSharedSourcesForJvm)
+}
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    compilerOptions {
+        optIn.addAll(
+                listOf(
+                        "kotlin.ExperimentalUnsignedTypes",
+                        "kotlinx.cinterop.BetaInteropApi",
+                        "kotlinx.cinterop.ExperimentalForeignApi",
+                )
         )
+        freeCompilerArgs.add("-Xskip-prerelease-check")
     }
 }
 
@@ -78,6 +85,6 @@ val nativelibs = project.tasks.create<Copy>("nativelibs") {
     val callbacksSolib = solib("callbacks")
     dependsOn(callbacksSolib)
 
-    from("$buildDir/$callbacksSolib")
-    into("$buildDir/nativelibs/")
+    from(layout.buildDirectory.dir(callbacksSolib))
+    into(layout.buildDirectory.dir("nativelibs"))
 }

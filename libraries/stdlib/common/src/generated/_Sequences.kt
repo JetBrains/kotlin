@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ package kotlin.sequences
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.contracts.*
 import kotlin.random.*
 
 /**
@@ -43,6 +44,9 @@ public fun <T> Sequence<T>.elementAt(index: Int): T {
  * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    contract {
+        callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
+    }
     if (index < 0)
         return defaultValue(index)
     val iterator = iterator()
@@ -805,7 +809,16 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.toList(): List<T> {
-    return this.toMutableList().optimizeReadOnlyList()
+    val it = iterator()
+    if (!it.hasNext())
+        return emptyList()
+    val element = it.next()
+    if (!it.hasNext())
+        return listOf(element)
+    val dst = ArrayList<T>()
+    dst.add(element)
+    while (it.hasNext()) dst.add(it.next())
+    return dst
 }
 
 /**
@@ -825,7 +838,16 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
+    val it = iterator()
+    if (!it.hasNext())
+        return emptySet()
+    val element = it.next()
+    if (!it.hasNext())
+        return setOf(element)
+    val dst = LinkedHashSet<T>()
+    dst.add(element)
+    while (it.hasNext()) dst.add(it.next())
+    return dst
 }
 
 /**
@@ -2258,7 +2280,6 @@ public inline fun <S, T : S> Sequence<T>.reduceIndexedOrNull(operation: (index: 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Sequence<T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
     val iterator = this.iterator()
     if (!iterator.hasNext()) return null
@@ -2339,7 +2360,6 @@ public fun <T, R> Sequence<T>.runningFoldIndexed(initial: R, operation: (index: 
  * @sample samples.collections.Collections.Aggregates.runningReduce
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <S, T : S> Sequence<T>.runningReduce(operation: (acc: S, T) -> S): Sequence<S> {
     return sequence {
         val iterator = iterator()
@@ -2400,7 +2420,6 @@ public fun <S, T : S> Sequence<T>.runningReduceIndexed(operation: (index: Int, a
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T, R> Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): Sequence<R> {
     return runningFold(initial, operation)
 }
@@ -2422,7 +2441,6 @@ public fun <T, R> Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): Seq
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T, R> Sequence<T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): Sequence<R> {
     return runningFoldIndexed(initial, operation)
 }

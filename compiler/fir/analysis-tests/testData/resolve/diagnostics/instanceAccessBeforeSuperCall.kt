@@ -1,5 +1,5 @@
 class A {
-    constructor(x: Int = <!UNRESOLVED_REFERENCE!>getSomeInt<!>(), other: A = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>, header: String = <!UNRESOLVED_REFERENCE!>keker<!>) {}
+    constructor(x: Int = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>getSomeInt<!>(), other: A = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>, header: String = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>keker<!>) {}
     fun getSomeInt() = 10
     var keker = "test"
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // LANGUAGE: +ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun test() {
     @ann

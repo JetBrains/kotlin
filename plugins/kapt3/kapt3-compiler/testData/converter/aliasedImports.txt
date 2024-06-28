@@ -2,11 +2,49 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import a.b.ABC;
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: abc:Lerror/NonExistentClass;
+ *   // getter: getAbc()Lerror/NonExistentClass;
+ *   // setter: setAbc(Lerror/NonExistentClass;)V
+ *   public final lateinit var abc: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: bcd:Lerror/NonExistentClass;
+ *   // getter: getBcd()Lerror/NonExistentClass;
+ *   // setter: setBcd(Lerror/NonExistentClass;)V
+ *   public final lateinit var bcd: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: date:LTest$MyDate;
+ *   // getter: getDate()LTest$MyDate;
+ *   // setter: setDate(LTest$MyDate;)V
+ *   public final lateinit var date: Test.MyDate
+ *     public final get
+ *     public final set
+ *
+ *   // field: timeUnit:Ljava/util/concurrent/TimeUnit;
+ *   // getter: getTimeUnit()Ljava/util/concurrent/TimeUnit;
+ *   // setter: setTimeUnit(Ljava/util/concurrent/TimeUnit;)V
+ *   public final lateinit var timeUnit: java/util/concurrent/TimeUnit
+ *     public final get
+ *     public final set
+ *
+ *   // nested class: MyDate
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     public Test.MyDate date;
     public java.util.concurrent.TimeUnit timeUnit;
-    public java.util.concurrent.TimeUnit microseconds;
     public a.b.ABC abc;
     public bcd bcd;
 
@@ -33,15 +71,6 @@ public final class Test {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.util.concurrent.TimeUnit getMicroseconds() {
-        return null;
-    }
-
-    public final void setMicroseconds(@org.jetbrains.annotations.NotNull()
-    java.util.concurrent.TimeUnit p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
     public final a.b.ABC getAbc() {
         return null;
     }
@@ -59,6 +88,22 @@ public final class Test {
     bcd p0) {
     }
 
+    /**
+     * public final class Test.MyDate : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // field: date2:LTest$MyDate;
+     *   // getter: getDate2()LTest$MyDate;
+     *   // setter: setDate2(LTest$MyDate;)V
+     *   public final lateinit var date2: Test.MyDate
+     *     public final get
+     *     public final set
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class MyDate {
         public Test.MyDate date2;
@@ -85,6 +130,22 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import a.b.ABC;
 
+/**
+ * public final class Test2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: date:Ljava/util/Date;
+ *   // getter: getDate()Ljava/util/Date;
+ *   // setter: setDate(Ljava/util/Date;)V
+ *   public final lateinit var date: java/util/Date
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test2 {
     public java.util.Date date;

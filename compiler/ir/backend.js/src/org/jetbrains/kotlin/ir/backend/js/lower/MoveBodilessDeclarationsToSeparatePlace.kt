@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
@@ -15,10 +14,9 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isChildOf
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.String",
@@ -53,7 +51,7 @@ private val JsPackage = FqName("kotlin.js")
 private val JsIntrinsicFqName = FqName("kotlin.js.JsIntrinsic")
 
 private fun IrDeclaration.isPlacedInsideInternalPackage() =
-    (parent as? IrPackageFragment)?.fqName == JsPackage
+    (parent as? IrPackageFragment)?.packageFqName == JsPackage
 
 private fun isIntrinsic(declaration: IrDeclaration): Boolean =
     declaration is IrSimpleFunction && declaration.isPlacedInsideInternalPackage() &&
@@ -73,10 +71,10 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val irFile = declaration.parent as? IrFile ?: return null
 
-        val externalPackageFragment by lazy {
+        val externalPackageFragment by lazy(LazyThreadSafetyMode.NONE) {
             context.externalPackageFragment.getOrPut(irFile.symbol) {
-                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.fqName, symbol = IrFileSymbolImpl(), module = irFile.module).also {
-                    it.annotations += irFile.annotations
+                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.packageFqName, symbol = IrFileSymbolImpl(), module = irFile.module).also {
+                    it.annotations = it.annotations memoryOptimizedPlus irFile.annotations
                 }
             }
         }

@@ -1,0 +1,12 @@
+KT element: KtClass
+KT element text:
+@kotlin.PublishedApi internal final class Foo public constructor() {
+}
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/PublishedApi|() internal final [ResolvedTo(BODY_RESOLVE)] [LazyPublishedApiEffectiveVisibilityKey=public] class Foo : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor(): R|Foo|
+
+}

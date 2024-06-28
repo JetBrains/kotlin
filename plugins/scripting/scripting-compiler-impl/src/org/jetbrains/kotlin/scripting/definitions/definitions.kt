@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.script.experimental.api.SourceCode
+
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -63,28 +64,37 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
 }
 
 fun findScriptDefinition(project: Project, script: SourceCode): ScriptDefinition {
-    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
-        ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
-
-    return scriptDefinitionProvider.findDefinition(script) ?: scriptDefinitionProvider.getDefaultDefinition()
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
+        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+    return scriptDefinitionProvider.findDefinition(script)
+        ?: scriptDefinitionProvider.getDefaultDefinition()
+            .also {
+                Logger.getInstance("org.jetbrains.kotlin.scripting.definitions")
+                    .debug("Default definition is used for ${script.locationId}")
+            }
 }
 
+private const val JAVA_CLASS_FILE_TYPE_DOT_DEFAULT_EXTENSION = ".class"
 fun VirtualFile.isNonScript(): Boolean = when (this) {
     is VirtualFileWindow -> {
         // This file is an embedded Kotlin code snippet.
         !this.isKotlinFileType()
     }
     else -> {
-        isDirectory ||
-                extension == KotlinFileType.EXTENSION ||
-                extension == JavaFileType.INSTANCE.defaultExtension ||
-                extension == JavaClassFileType.INSTANCE.defaultExtension ||
-                !this.isKotlinFileType()
+        if (isDirectory) {
+            true
+        } else {
+            val nameSeq = nameSequence
+            nameSeq.endsWith(KotlinFileType.DOT_DEFAULT_EXTENSION) ||
+                    nameSeq.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION) ||
+                    nameSeq.endsWith(JAVA_CLASS_FILE_TYPE_DOT_DEFAULT_EXTENSION) ||
+                    !this.isKotlinFileType()
+        }
     }
 }
 
 private fun VirtualFile.isKotlinFileType(): Boolean {
-    if (extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) return true
+    if (nameSequence.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)) return true
 
     val typeRegistry = FileTypeRegistry.getInstance()
     return typeRegistry.getFileTypeByFile(this) == KotlinFileType.INSTANCE ||

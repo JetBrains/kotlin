@@ -6,13 +6,8 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import java.net.URI
-import java.nio.file.Path
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.exists
-import kotlin.io.path.name
-import kotlin.test.fail
 
 /**
  * Tests whether configuration cache for the tasks specified by [buildArguments] works on simple scenario when project is built twice non-incrementally.
@@ -29,9 +24,15 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
-        assertOutputContains(
-            "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
-        )
+        if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
+            assertOutputContains(
+                "Calculating task graph as no configuration cache is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        } else {
+            assertOutputContains(
+                "Calculating task graph as no cached configuration is available for tasks: ${buildArguments.joinToString(separator = " ")}"
+            )
+        }
 
         assertConfigurationCacheStored()
     }

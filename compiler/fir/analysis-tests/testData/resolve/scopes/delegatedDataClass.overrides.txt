@@ -1,0 +1,14 @@
+Data:
+  [Delegated]: public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /Data [id: 0]
+    [Source]: public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of /AnyNeighbor [id: 1]
+      [Library]: public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| from Use site scope of kotlin/Any [id: 2]
+
+Data:
+  [Delegated]: public open override fun hashCode(): R|kotlin/Int| from Use site scope of /Data [id: 0]
+    [Source]: public abstract override fun hashCode(): R|kotlin/Int| from Use site scope of /AnyNeighbor [id: 1]
+      [Library]: public open fun hashCode(): R|kotlin/Int| from Use site scope of kotlin/Any [id: 2]
+
+Data:
+  [Delegated]: public open override fun toString(): R|kotlin/String| from Use site scope of /Data [id: 0]
+    [Source]: public abstract override fun toString(): R|kotlin/String| from Use site scope of /AnyNeighbor [id: 1]
+      [Library]: public open fun toString(): R|kotlin/String| from Use site scope of kotlin/Any [id: 2]

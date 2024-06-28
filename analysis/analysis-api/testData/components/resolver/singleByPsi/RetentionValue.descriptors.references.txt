@@ -1,0 +1,6 @@
+KtNameReferenceExpression(31,37): 'SOURCE'
+  KtSimpleNameReference:
+    (in kotlin.annotation.AnnotationRetention) SOURCE
+  
+  SyntheticPropertyAccessorReference:
+    Nothing (Unresolved reference)

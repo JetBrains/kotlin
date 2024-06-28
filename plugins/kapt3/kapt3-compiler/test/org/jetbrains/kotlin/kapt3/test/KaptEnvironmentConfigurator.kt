@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
-import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar
+import org.jetbrains.kotlin.kapt3.base.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.kapt3.base.KaptFlag
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives

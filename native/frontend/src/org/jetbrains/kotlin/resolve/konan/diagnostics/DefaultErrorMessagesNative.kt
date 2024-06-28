@@ -29,11 +29,6 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         )
         put(ErrorsNative.INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL, "@SharedImmutable is applicable only to top level declarations")
         put(
-            ErrorsNative.VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL,
-            "With old Native GC, variable in singleton without @ThreadLocal can't be changed after initialization"
-        )
-        put(ErrorsNative.VARIABLE_IN_ENUM, "With old Native GC, variable in enum class can't be changed after initialization")
-        put(
             ErrorsNative.INAPPLICABLE_THREAD_LOCAL,
             "@ThreadLocal is applicable only to property with backing field, to property with delegation or to objects"
         )
@@ -63,8 +58,46 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             CommonRenderers.commaSeparated(Renderers.NAME)
         )
         put(
-            ErrorsNative.INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+            ErrorsNative.INVALID_OBJC_HIDES_TARGETS,
+            "@HidesFromObjC annotation is only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
+        )
+        put(
+            ErrorsNative.INVALID_REFINES_IN_SWIFT_TARGETS,
+            "@RefinesInSwift annotation is only applicable to annotations with targets FUNCTION and/or PROPERTY"
+        )
+        put(
+            ErrorsNative.SUBTYPE_OF_HIDDEN_FROM_OBJC,
+            "Only @HiddenFromObjC declaration can be a subtype of @HiddenFromObjC declaration"
+        )
+
+        put(
+            ErrorsNative.CANNOT_CHECK_FOR_FORWARD_DECLARATION,
+            "Cannot check for forward declaration: ''{0}''",
+            Renderers.RENDER_TYPE
+        )
+        put(ErrorsNative.UNCHECKED_CAST_TO_FORWARD_DECLARATION,
+            "Unchecked cast to forward declaration: ''{0}'' to ''{1}''",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        put(
+            ErrorsNative.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT,
+            "Cannot pass forward declaration ''{0}'' for reified type parameter",
+            Renderers.RENDER_TYPE
+        )
+        put(
+            ErrorsNative.FORWARD_DECLARATION_AS_CLASS_LITERAL,
+            "Can't refer to forward declaration ''{0}'' from class literal",
+            Renderers.RENDER_TYPE
+        )
+        put(
+            ErrorsNative.CONFLICTING_OBJC_OVERLOADS,
+            "Conflicting overloads: {0}. Add @ObjCSignatureOverride to allow collision for functions inherited from Objective-C.",
+            CommonRenderers.commaSeparated(Renderers.FQ_NAMES_IN_TYPES)
+        )
+        put(
+            ErrorsNative.INAPPLICABLE_OBJC_OVERRIDE,
+            "@ObjCSignatureOverride is only allowed on functions inherited from Objective-C.",
         )
     }
 }

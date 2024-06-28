@@ -1,0 +1,43 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+inline fun Test(
+    someBool: Boolean,
+) {
+    val someInt = remember { 1 }
+    val lambda = { someInt }
+    println(lambda.hashCode())
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(someBool: Boolean, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Test)<rememb...>,<{>:Test.kt")
+  val someInt = <block>{
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp0_group = %composer.cache(false) {
+      1
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp0_group
+  }
+  val lambda = <block>{
+    sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(false) {
+      {
+        someInt
+      }
+    }
+    sourceInformationMarkerEnd(%composer)
+    tmp1_group
+  }
+  println(lambda.hashCode())
+  sourceInformationMarkerEnd(%composer)
+}

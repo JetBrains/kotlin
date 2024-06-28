@@ -437,7 +437,6 @@ public inline fun <S, T : S> kotlin.sequences.Sequence<T>.reduceIndexed(operatio
 public inline fun <S, T : S> kotlin.sequences.Sequence<T>.reduceIndexedOrNull(operation: (index: kotlin.Int, acc: S, T) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.sequences.Sequence<T>.reduceOrNull(operation: (acc: S, T) -> S): S?
 
 public fun <T : kotlin.Any> kotlin.sequences.Sequence<T?>.requireNoNulls(): kotlin.sequences.Sequence<T>
@@ -449,18 +448,15 @@ public fun <T, R> kotlin.sequences.Sequence<T>.runningFold(initial: R, operation
 public fun <T, R> kotlin.sequences.Sequence<T>.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.sequences.Sequence<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <S, T : S> kotlin.sequences.Sequence<T>.runningReduce(operation: (acc: S, T) -> S): kotlin.sequences.Sequence<S>
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun <S, T : S> kotlin.sequences.Sequence<T>.runningReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.sequences.Sequence<S>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T, R> kotlin.sequences.Sequence<T>.scan(initial: R, operation: (acc: R, T) -> R): kotlin.sequences.Sequence<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T, R> kotlin.sequences.Sequence<T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.sequences.Sequence<R>
 
 @kotlin.SinceKotlin(version = "1.4")

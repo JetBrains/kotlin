@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // SKIP_TXT
-// !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
+// LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 fun main(args: Array<String>) {
     val zero = coerce<Int, String>(0)

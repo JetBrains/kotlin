@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.types.KotlinType
 
 object ErrorsNative {
     @JvmField
@@ -27,13 +28,9 @@ object ErrorsNative {
     @JvmField
     val INAPPLICABLE_SHARED_IMMUTABLE_TOP_LEVEL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
-    val VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.INFO)
-    @JvmField
     val INAPPLICABLE_THREAD_LOCAL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
     @JvmField
     val INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
-    @JvmField
-    val VARIABLE_IN_ENUM = DiagnosticFactory0.create<KtElement>(Severity.INFO)
     @JvmField
     val INVALID_CHARACTERS_NATIVE = DiagnosticFactoryForDeprecation1.create<PsiElement, String>(LanguageFeature.ProhibitInvalidCharsInNativeIdentifiers)
     @JvmField
@@ -59,7 +56,23 @@ object ErrorsNative {
     @JvmField
     val INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE = DiagnosticFactory2.create<KtElement, DeclarationDescriptor, Collection<DeclarationDescriptor>>(Severity.ERROR)
     @JvmField
-    val INVALID_OBJC_REFINEMENT_TARGETS = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    val INVALID_OBJC_HIDES_TARGETS = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val INVALID_REFINES_IN_SWIFT_TARGETS = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val SUBTYPE_OF_HIDDEN_FROM_OBJC = DiagnosticFactory0.create<KtElement>(Severity.ERROR)
+    @JvmField
+    val CANNOT_CHECK_FOR_FORWARD_DECLARATION = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val UNCHECKED_CAST_TO_FORWARD_DECLARATION = DiagnosticFactory2.create<PsiElement, KotlinType, KotlinType>(Severity.WARNING)
+    @JvmField
+    val FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val FORWARD_DECLARATION_AS_CLASS_LITERAL = DiagnosticFactory1.create<PsiElement, KotlinType>(Severity.ERROR)
+    @JvmField
+    val CONFLICTING_OBJC_OVERLOADS = DiagnosticFactory1.create<PsiElement, Collection<DeclarationDescriptor>>(Severity.ERROR)
+    @JvmField
+    val INAPPLICABLE_OBJC_OVERRIDE = DiagnosticFactory0.create<PsiElement>(Severity.ERROR)
 
     init {
         Errors.Initializer.initializeFactoryNames(ErrorsNative::class.java)

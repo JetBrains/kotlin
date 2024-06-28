@@ -1,0 +1,48 @@
+// CHECK:
+//   Mangled name: #invoke(){}
+//   Public signature: /invoke|-4663091332620260873[0]
+//   Public signature debug description: invoke(){}
+fun invoke(): Unit
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test1(<dynamic>){}
+//   Public signature: /test1|4353482563436034667[0]
+//   Public signature debug description: test1(<dynamic>){}
+fun test1(a: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test2(<dynamic>){}
+//   Public signature: /test2|-7945586224410659921[0]
+//   Public signature debug description: test2(<dynamic>){}
+fun test2(a: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test3(<dynamic>;<dynamic>){}
+//   Public signature: /test3|-5295421377258897884[0]
+//   Public signature debug description: test3(<dynamic>;<dynamic>){}
+fun test3(a: dynamic, b: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test4(<dynamic>;<dynamic>){}
+//   Public signature: /test4|-1850506594378519629[0]
+//   Public signature debug description: test4(<dynamic>;<dynamic>){}
+fun test4(a: dynamic, b: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test5(<dynamic>;<dynamic>){}
+//   Public signature: /test5|254402909642760010[0]
+//   Public signature debug description: test5(<dynamic>;<dynamic>){}
+fun test5(a: dynamic, b: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #test6(<dynamic>;<dynamic>){}
+//   Public signature: /test6|2790484771664022046[0]
+//   Public signature debug description: test6(<dynamic>;<dynamic>){}
+fun test6(a: dynamic, b: dynamic): dynamic
+
+// CHECK:
+//   Mangled name: #test7(<dynamic>){}
+//   Public signature: /test7|538407233409957251[0]
+//   Public signature debug description: test7(<dynamic>){}
+fun test7(a: dynamic): Unit
+

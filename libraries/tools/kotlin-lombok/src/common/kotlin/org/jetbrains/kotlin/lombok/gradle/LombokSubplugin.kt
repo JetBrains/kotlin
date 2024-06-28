@@ -38,5 +38,5 @@ class LombokSubplugin @Inject internal constructor(private val registry: Tooling
 
     override fun getCompilerPluginId(): String = "org.jetbrains.kotlin.lombok"
 
-    override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = "kotlin-lombok")
+    override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = "kotlin-lombok-compiler-plugin-embeddable")
 }

@@ -23,7 +23,7 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T =
 internal fun <T> interceptContinuationIfNeeded(
     context: CoroutineContext,
     continuation: Continuation<T>
-) = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
+): Continuation<T> = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
 
 
 @PublishedApi
@@ -68,6 +68,6 @@ internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
 
 @PublishedApi
 @SinceKotlin("1.3")
-internal val EmptyContinuation = Continuation<Any?>(EmptyCoroutineContext) { result ->
+internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
     result.getOrThrow()
 }

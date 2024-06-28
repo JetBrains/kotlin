@@ -1,0 +1,49 @@
+// FILE: a.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%a.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|2314384220441172254[0]
+//   Public signature by Frontend debug description: main(){}%a.kt
+fun main(): Unit
+
+// FILE: b.kt
+
+// CHECK JVM_IR:
+//   Mangled name: #main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%b.kt
+//   Public signature by IR: /main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: /main|8375568780578146760[0]
+//   Public signature by Frontend debug description: main(){}%b.kt
+fun main(): Unit
+
+// FILE: c.kt
+package foo
+
+// CHECK JVM_IR:
+//   Mangled name: foo#main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%c.kt
+//   Public signature by IR: foo/main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: foo/main|-6421719669605920145[0]
+//   Public signature by Frontend debug description: main(){}%c.kt
+fun main(): Unit
+
+// FILE: d.kt
+package foo
+
+// CHECK JVM_IR:
+//   Mangled name: foo#main(){}
+//   Mangled name for the signature by IR:       main(){}
+//   Mangled name for the signature by Frontend: main(){}%d.kt
+//   Public signature by IR: foo/main|-4284757841571462650[0]
+//   Public signature by IR debug description: main(){}
+//   Public signature by Frontend: foo/main|-405077377165952676[0]
+//   Public signature by Frontend debug description: main(){}%d.kt
+fun main(): Unit

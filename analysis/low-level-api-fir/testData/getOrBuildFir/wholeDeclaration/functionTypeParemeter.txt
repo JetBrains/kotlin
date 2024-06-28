@@ -1,0 +1,11 @@
+KT element: KtTypeParameter
+FIR element: FirTypeParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] T
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] functionTypeParemeter.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> x(): R|kotlin/Unit|
+    public? final? [ResolvedTo(RAW_FIR)] fun <no name provided>(): R|kotlin/Unit| { LAZY_BLOCK }

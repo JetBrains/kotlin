@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightTypeElement
+import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtElement
@@ -63,12 +64,26 @@ internal class SymbolPsiExpression(
     override fun getText(): String = psiExpression.text
 }
 
+internal class SymbolPsiClassObjectAccessExpression(
+    override val kotlinOrigin: KtElement?,
+    lightParent: PsiElement,
+    private val psiType: PsiType,
+) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
+    override fun getType(): PsiType = psiType
+    override fun getOperand(): PsiTypeElement = LightTypeElementWithParent(this, type)
+    override fun getText(): String = type.getCanonicalText(false) + ".class"
+}
+
+private class LightTypeElementWithParent(private val lightParent: PsiElement, type: PsiType) : LightTypeElement(lightParent.manager, type) {
+    override fun getParent(): PsiElement = lightParent
+}
+
 internal class SymbolPsiReference(
     override val kotlinOrigin: KtElement?,
     lightParent: PsiElement,
-    private val psiReference: PsiJavaCodeReferenceElement,
+    private val psiReference: PsiReferenceExpression,
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent),
-    PsiJavaCodeReferenceElement, PsiJavaReference by psiReference {
+    PsiReferenceExpression, PsiJavaReference by psiReference {
     override fun getText(): String = psiReference.text
 
     override fun getReferenceNameElement(): PsiElement? = psiReference.referenceNameElement
@@ -80,13 +95,25 @@ internal class SymbolPsiReference(
     override fun getReferenceName(): String? = psiReference.referenceName
     override fun <T> getCopyableUserData(key: Key<T>): T? = null
     override fun <T> putCopyableUserData(key: Key<T>, value: T?) {}
+    override fun getQualifierExpression(): PsiExpression? = psiReference.qualifierExpression
+    override fun bindToElementViaStaticImport(qualifierClass: PsiClass): PsiElement =
+        cannotModify()
+
+    override fun setQualifierExpression(newQualifier: PsiExpression?) {
+        cannotModify()
+    }
+
+    override fun getType(): PsiType? = psiReference.type
 }
 
 internal class SymbolPsiLiteral(
     override val kotlinOrigin: KtElement?,
     lightParent: PsiElement,
-    private val psiLiteral: PsiLiteral,
-) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteral {
+    private val psiLiteral: PsiLiteralExpression,
+) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiLiteralExpression {
     override fun getValue(): Any? = psiLiteral.value
     override fun getText(): String = psiLiteral.text
+    override fun getType(): PsiType? = psiLiteral.type
+    override fun getReference(): PsiReference? = references.firstOrNull()
+    override fun getReferences(): Array<out PsiReference> = kotlinOrigin?.references ?: PsiReference.EMPTY_ARRAY
 }

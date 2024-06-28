@@ -1,0 +1,53 @@
+fun fooApi3(): kotlin.String
+
+internal fun internalFooApi3(): kotlin.String
+
+private fun privateFooApi3(): kotlin.String
+
+fun dependency.api.FakeI.barApi3(): dependency.api.I
+
+internal fun dependency.api.InternalFakeI.internalBarApi3(): dependency.api.I
+
+private fun dependency.api.PrivateFakeI.privateBarApi3(): dependency.api.I
+
+fun fooApi1(): kotlin.String
+
+internal fun internalFooApi1(): kotlin.String
+
+private fun privateFooApi1(): kotlin.String
+
+fun dependency.api.I.barApi1(): dependency.api.I
+
+internal fun dependency.api.InternalI.internalBarApi1(): dependency.api.InternalI
+
+private fun dependency.api.PrivateI.privateBarApi1(): dependency.api.PrivateI
+
+fun fooApi2(): kotlin.String
+
+internal fun internalFooApi2(): kotlin.String
+
+private fun privateFooApi2(): kotlin.String
+
+fun dependency.api.C1.barApi2(): dependency.api.I
+
+internal fun dependency.api.InternalC1.internalBarApi2(): dependency.api.InternalI
+
+private fun dependency.api.PrivateC1.privateBarApi2(): dependency.api.I
+
+interface I
+
+internal interface InternalI
+
+private interface PrivateI
+
+class C1 : dependency.api.I
+
+internal class InternalC1 : dependency.api.InternalI
+
+private class PrivateC1 : dependency.api.I
+
+interface FakeI : dependency.api.I
+
+internal interface InternalFakeI : dependency.api.I
+
+private interface PrivateFakeI : dependency.api.I

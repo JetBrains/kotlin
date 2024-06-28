@@ -1,0 +1,21 @@
+FILE: mutablePropertyWithCapturedType.kt
+    public final class Generic<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Klass<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Klass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var mutableProperty: R|Generic<T>| = R|/Generic.Generic|<R|T|>()
+            public get(): R|Generic<T>|
+            public set(value: R|Generic<T>|): R|kotlin/Unit|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval mutableProperty: R|kotlin/reflect/KMutableProperty1<Klass<*>, Generic<out kotlin/Any?>>| = Q|Klass|<*>::R|SubstitutionOverride</Klass.mutableProperty: R|Generic<CapturedType(*)>|>|
+        R|<local>/mutableProperty|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty1.set: R|kotlin/Unit|>|(R|/Klass.Klass|<R|kotlin/Int|>(), R|/Generic.Generic|<R|kotlin/String|>())
+    }

@@ -93,7 +93,8 @@ object LinkedSpecTestPatterns : BasePatterns {
 object TestCasePatterns {
     private const val TEST_CASE_CODE_REGEX = """(?<%s>[\s\S]*?)"""
 
-    private val testCaseInfoElementsRegex = """(?<%s>%s${SpecTestCaseInfoElementType.TESTCASE_NUMBER.name.withSpaces()}:%s*?\n)"""
+    // Lazy is needed to prevent cycle initialization dependency between this object and SpecTestCaseInfoElementType
+    private val testCaseInfoElementsRegex by lazy { """(?<%s>%s${SpecTestCaseInfoElementType.TESTCASE_NUMBER.name.withSpaces()}:%s*?\n)""" }
     private val testCaseInfoRegex = """$TEST_CASE_CODE_REGEX(?<%s>(?:$directiveRegex)|$)"""
     private val testCaseInfoSingleLineRegex =
         SINGLE_LINE_COMMENT_REGEX.format(
@@ -105,5 +106,5 @@ object TestCasePatterns {
         ) + testCaseInfoRegex.format("codeML", "nextDirectiveML")
 
     val testCaseInfoPattern: Pattern = Pattern.compile("(?:$testCaseInfoSingleLineRegex)|(?:$testCaseInfoMultilineRegex)")
-    val testCaseNumberPattern: Pattern = Pattern.compile("""([1-9]\d*)(,\s*[1-9]\d*)*""")
+    val testCaseNumberPattern: Pattern = Pattern.compile("""([0-9]\d*)(,\s*[1-9]\d*)*""")
 }

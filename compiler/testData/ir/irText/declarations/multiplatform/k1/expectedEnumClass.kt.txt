@@ -1,0 +1,36 @@
+expect enum class MyEnum : Enum<MyEnum> {
+  FOO
+
+  BAR
+
+  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+
+  val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+enum class MyEnum : Enum<MyEnum> {
+  FOO = MyEnum()
+
+  BAR = MyEnum()
+
+  BAZ = MyEnum()
+
+  private constructor() /* primary */ {
+    super/*Enum*/<MyEnum>()
+    /* <init>() */
+
+  }
+
+  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+
+  val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
+
+}
+

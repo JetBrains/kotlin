@@ -1,7 +1,7 @@
-fun main() {
+fun runMe() {
   // COMPOSITE {
-  val tmp0_container: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
-  val a: Int = tmp0_container.component1()
+  val tmp_0: Pair<Int, Int> = 1.to<Int, Int>(that = 2)
+  val a: Int = tmp_0.component1()
   // }
   println(message = a)
 }

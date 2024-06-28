@@ -17,6 +17,7 @@ class AnnotationModel(
         val argumentsString = arguments.joinToString(separator = ", ") { argument ->
             val valueString = when (val value = argument.value) {
                 is Enum<*> -> "${value.javaClass.simpleName}.${value.name}"
+                is Array<*> -> value.toJavaString()
                 is Class<*> -> "${value.simpleName}.class"
                 else -> "\"$value\""
             }
@@ -24,6 +25,13 @@ class AnnotationModel(
         }
         p.print("@${annotation.simpleName}($argumentsString)")
     }
+
+    private fun Array<*>.toJavaString(): String =
+        buildString {
+            append("{ ")
+            append(this@toJavaString.joinToString(separator = ", ") { "\"$it\"" })
+            append(" }")
+        }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun imports(): List<Class<*>> {

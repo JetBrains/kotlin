@@ -1,0 +1,29 @@
+KtAnnotationEntry(121,197): '@AnnotationArray(annos = [Annotation("v1", "v2"), Annotation(["v3", "v4"])])'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = AnnotationArray
+          symbol = <constructor>(vararg annos: Annotation): AnnotationArray
+          valueParameters = [
+            KaVariableSignature:
+              name = annos
+              receiverType = null
+              returnType = Annotation
+              symbol = vararg annos: Annotation
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        [Annotation("v1", "v2"), Annotation(["v3", "v4"])] -> (KaVariableSignature:
+          name = annos
+          receiverType = null
+          returnType = Annotation
+          symbol = vararg annos: Annotation
+          callableId = null)
+      }
+    isInBestCandidates = true

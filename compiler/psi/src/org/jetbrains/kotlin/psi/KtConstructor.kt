@@ -64,6 +64,15 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         }
     }
 
+    fun isExplicitDelegationCall(): Boolean {
+        stub?.let { return it.isExplicitDelegationCall() }
+        return when (this) {
+            is KtPrimaryConstructor -> false
+            is KtSecondaryConstructor -> getDelegationCallOrNull()?.isImplicit == false
+            else -> throw IllegalStateException("Unknown constructor type: $this")
+        }
+    }
+
     override fun hasBody(): Boolean {
         stub?.let { return it.hasBody() }
         return bodyExpression != null

@@ -1,0 +1,16 @@
+FILE: privateSubclassAsTypeArgInParentClass.kt
+    public abstract interface TreeTableStateStrategy<T> : R|kotlin/Any| {
+    }
+    public final class OnModelChangeTreeStateStrategy : R|TreeTableStateStrategy<OnModelChangeTreeStateStrategy.SelectionState>| {
+        public constructor(): R|OnModelChangeTreeStateStrategy| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class SelectionState : R|kotlin/Any| {
+            public constructor(): R|OnModelChangeTreeStateStrategy.SelectionState| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

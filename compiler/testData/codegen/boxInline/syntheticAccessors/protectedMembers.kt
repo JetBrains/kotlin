@@ -1,4 +1,4 @@
-// !LANGUAGE: -ProhibitProtectedCallFromInline
+// LANGUAGE: -ProhibitProtectedCallFromInline
 // FILE: 1.kt
 
 package test

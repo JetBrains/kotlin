@@ -1,12 +1,12 @@
 FILE: simpleClass.kt
-    public? final? interface SomeInterface : R|kotlin/Any| {
+    public final? interface SomeInterface : R|kotlin/Any| {
         public? final? fun foo(x: Int, y: String): String
 
         public? final? val bar: Boolean
             public? get(): Boolean
 
     }
-    public? final? class SomeClass : SomeInterface {
+    public final? class SomeClass : SomeInterface {
         public? constructor(): R|SomeClass| {
             LAZY_super<<implicit>>
         }
@@ -25,7 +25,7 @@ FILE: simpleClass.kt
             public? set(value: Double): R|kotlin/Unit|
 
     }
-    public? final? inline class InlineClass : R|kotlin/Any| {
+    public final? inline class InlineClass : R|kotlin/Any| {
         public? constructor(): R|InlineClass| {
             LAZY_super<R|kotlin/Any|>
         }

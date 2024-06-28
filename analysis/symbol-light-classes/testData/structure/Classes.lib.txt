@@ -1,20 +1,3 @@
-FinalClass.class:
-  KtClass:
-    line: 6
-    name: FinalClass
-    qualifier: cba.FinalClass
-    light: KtLightClassForDecompiledDeclaration
-      name: FinalClass
-      qualifier: cba.FinalClass
-      superTypes: [
-        PsiType:Object
-      ]
-      superClass: ClsClassImpl: Object (java.lang.Object)
-      interfaces: []
-      supers: [
-        ClsClassImpl: Object (java.lang.Object)
-      ]
-
 AbstractClass.class:
   KtClass:
     line: 6
@@ -47,6 +30,23 @@ ChildOfOpen.class:
       interfaces: []
       supers: [
         KtLightClassForDecompiledDeclaration: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
+      ]
+
+FinalClass.class:
+  KtClass:
+    line: 6
+    name: FinalClass
+    qualifier: cba.FinalClass
+    light: KtLightClassForDecompiledDeclaration
+      name: FinalClass
+      qualifier: cba.FinalClass
+      superTypes: [
+        PsiType:Object
+      ]
+      superClass: ClsClassImpl: Object (java.lang.Object)
+      interfaces: []
+      supers: [
+        ClsClassImpl: Object (java.lang.Object)
       ]
 
 OpenClassFromAbstractClass.class:

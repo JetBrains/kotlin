@@ -1,0 +1,161 @@
+library {
+  // module name: <Classes.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: A.B
+    // class name: A.B.C
+    // class name: A.B.D
+    // class name: A.E
+    // class name: F
+    // class name: FinalImpl
+    // class name: Interface
+    // class name: OpenImpl
+
+    public final class A : kotlin/Any {
+
+      public constructor()
+
+      public final fun aFun(): kotlin/Unit
+
+      public final val aVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var aVar: kotlin/String
+        public final get
+        public final set
+
+      // nested class: B
+
+      // nested class: E
+    }
+
+    public final inner class A.B : kotlin/Any {
+
+      public constructor()
+
+      public final fun bFun(): kotlin/Unit
+
+      public final val bVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var bVar: kotlin/String
+        public final get
+        public final set
+
+      // nested class: C
+
+      // nested class: D
+    }
+
+    public final inner class A.B.C : kotlin/Any {
+
+      public constructor()
+
+      public final fun cFun(): kotlin/Unit
+
+      public final val cVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var cVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    private final inner class A.B.D : kotlin/Any {
+
+      public constructor()
+
+      public final fun dFun(): kotlin/Unit
+
+      public final val dVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var dVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class A.E : kotlin/Any {
+
+      public constructor()
+
+      public final fun eFun(): kotlin/Unit
+
+      public final val eVal: kotlin/Int /* = 0 */
+        public final get
+
+      public final var eVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final data class F : kotlin/Any {
+
+      public constructor(fVal: kotlin/Int, fVar: kotlin/String)
+
+      public final /* synthesized */ operator fun component1(): kotlin/Int
+
+      public final /* synthesized */ operator fun component2(): kotlin/String
+
+      public final /* synthesized */ fun copy(fVal: kotlin/Int /* = ... */, fVar: kotlin/String /* = ... */): F
+
+      public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+      public final fun fFun(): kotlin/Unit
+
+      public open /* synthesized */ fun hashCode(): kotlin/Int
+
+      public open /* synthesized */ fun toString(): kotlin/String
+
+      public final val fVal: kotlin/Int
+        public final get
+
+      public final var fVar: kotlin/String
+        public final get
+        public final set
+    }
+
+    public final class FinalImpl : OpenImpl {
+
+      public constructor()
+
+      public open fun iFun(): kotlin/Unit
+
+      public open val iVal: kotlin/Int /* = 0 */
+        public open get
+
+      public open var iVar: kotlin/String
+        public open get
+        public open set
+    }
+
+    public abstract interface Interface : kotlin/Any {
+
+      public abstract fun iFun(): kotlin/Unit
+
+      public abstract val iVal: kotlin/Int
+        public abstract get
+
+      public abstract var iVar: kotlin/String
+        public abstract get
+        public abstract set
+    }
+
+    public open class OpenImpl : Interface {
+
+      public constructor()
+
+      public open fun iFun(): kotlin/Unit
+
+      public open val iVal: kotlin/Int /* = 0 */
+        public open get
+
+      public open var iVar: kotlin/String
+        public open get
+        public open set
+    }
+  }
+}

@@ -147,7 +147,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private KotlinType resolveType(String typeStr) {
         KtTypeReference ktTypeReference = new KtPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(ktTypeReference);
-        BindingTrace trace = new BindingTraceContext();
+        BindingTrace trace = new BindingTraceContext(getProject());
         KotlinType type = container.getTypeResolver().resolveType(scope, ktTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(trace.getBindingContext().getDiagnostics(), DefaultErrorMessages::render, "\n"));

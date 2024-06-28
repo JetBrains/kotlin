@@ -1,5 +1,0 @@
-warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/kotlinPackage.kt:1:1: error: only the Kotlin standard library is allowed to use the 'kotlin' package
-package kotlin.mylibrary
-^
-COMPILATION_ERROR

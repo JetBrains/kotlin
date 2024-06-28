@@ -1,24 +1,24 @@
 fun test1(c: Boolean?) {
     L@ while (true) {
-        L2@while (c ?: break)
+        L2@while (c ?: break) ;
     }
 }
 
 fun test2(c: Boolean?) {
     L@ while (true) {
-        L2@while (c ?: continue)
+        L2@while (c ?: continue) ;
     }
 }
 
 fun test3(ss: List<String>?) {
     L@ while (true) {
-        L2@for (s in ss ?: continue)
+        L2@for (s in ss ?: continue) ;
     }
 }
 
 fun test4(ss: List<String>?) {
     L@ while (true) {
-        L2@for (s in ss ?: break)
+        L2@for (s in ss ?: break) ;
     }
 }
 

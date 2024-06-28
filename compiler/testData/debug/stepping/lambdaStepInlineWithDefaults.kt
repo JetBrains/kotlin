@@ -1,5 +1,4 @@
-// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
-//   Reason: KT-56755
+
 // FILE: test.kt
 inline fun foo(stringMaker: () -> String = { "OK" }): String {
     return stringMaker()
@@ -18,22 +17,27 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR
+// test.kt:15 box
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:3 box
+// test.kt:4 box
 // test.kt:16 box
-// test.kt:4 box
-// test.kt:5 box
-// test.kt:4 box
-// test.kt:5 box
-// test.kt:17 box
+// test.kt:7 box
+// test.kt:11 box
 // test.kt:8 box
-// test.kt:12 box
-// test.kt:9 box
-// test.kt:12 box
-// test.kt:18 box
+// test.kt:11 box
+// test.kt:17 box
 
 // EXPECTATIONS JS_IR
-// test.kt:4 box
-// test.kt:5 box
-// test.kt:9 box
-// test.kt:12 box
-// test.kt:18 box
+// test.kt:17 box
+
+// EXPECTATIONS WASM
+// test.kt:15 $box
+// test.kt:4 $box (11, 4)
+// test.kt:3 $box (45, 45, 45, 45, 49)
+// test.kt:16 $box
+// test.kt:11 $box (11, 4)
+// test.kt:8 $box (4, 4, 4, 4, 8)
+// test.kt:17 $box (11, 11, 11, 11, 4)

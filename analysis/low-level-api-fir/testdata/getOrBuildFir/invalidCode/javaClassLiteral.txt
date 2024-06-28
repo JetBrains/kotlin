@@ -1,6 +1,0 @@
-KT element: KtNameReferenceExpression
-FIR element: FirPropertyAccessExpressionImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|<local>/anyClass|

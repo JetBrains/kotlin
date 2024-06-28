@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: WASM
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
+
 // FILE: DiagnosticFactory0.java
 
 import org.jetbrains.annotations.NotNull;

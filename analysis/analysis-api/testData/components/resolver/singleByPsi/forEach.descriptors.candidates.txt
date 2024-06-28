@@ -1,0 +1,692 @@
+KtDotQualifiedExpression(132,159): 'listOf(1, 2, 3).forEach { }'
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.Array<out ERROR_TYPE>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.Array<out T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.BooleanArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.BooleanArray, action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Boolean, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ByteArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ByteArray, action: kotlin.Function1<kotlin.Byte, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Byte, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Byte, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.CharArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.CharArray, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.CharSequence
+          returnType = kotlin.Unit
+          symbol = kotlin/text/forEach(<extension receiver>: kotlin.CharSequence, action: kotlin.Function1<kotlin.Char, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/text/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Char, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Char, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.DoubleArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.DoubleArray, action: kotlin.Function1<kotlin.Double, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Double, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Double, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.FloatArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.FloatArray, action: kotlin.Function1<kotlin.Float, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Float, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Float, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.IntArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.IntArray, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.LongArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.LongArray, action: kotlin.Function1<kotlin.Long, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Long, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Long, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ShortArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ShortArray, action: kotlin.Function1<kotlin.Short, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Short, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Short, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.UByteArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UByteArray, action: kotlin.Function1<kotlin.UByte, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UByte, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UByte, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.UIntArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UIntArray, action: kotlin.Function1<kotlin.UInt, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UInt, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UInt, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.ULongArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.ULongArray, action: kotlin.Function1<kotlin.ULong, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.ULong, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.ULong, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.UShortArray
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.UShortArray, action: kotlin.Function1<kotlin.UShort, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.UShort, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.UShort, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Iterable<kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterable<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        T -> (kotlin.Int)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Iterator<ERROR_TYPE>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Iterator<T>, operation: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = operation
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = operation: kotlin.Function1<T, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = operation
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = operation: kotlin.Function1<T, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.List<kotlin.Int>
+          returnType = kotlin.Unit
+          symbol = /forEach(<extension receiver>: kotlin.collections.List<kotlin.Int>, action: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = /forEach
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.Int, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.Int, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        K -> (ERROR_TYPE),
+        V -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.collections.Map<out ERROR_TYPE, ERROR_TYPE>
+          returnType = kotlin.Unit
+          symbol = kotlin/collections/forEach(<extension receiver>: kotlin.collections.Map<out K, V>, action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
+              symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/collections/forEach
+      typeArgumentsMapping = {
+        K -> (ERROR_TYPE),
+        V -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<kotlin.collections.Map.Entry<ERROR_TYPE, ERROR_TYPE>, kotlin.Unit>
+          symbol = action: kotlin.Function1<kotlin.collections.Map.Entry<K, V>, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: RECEIVER_TYPE_ERROR with forEach>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KaExplicitReceiverValue:
+          expression = listOf(1, 2, 3)
+          isSafeNavigation = false
+          type = kotlin.collections.List<kotlin.Int>
+        signature = KaFunctionSignature:
+          receiverType = kotlin.sequences.Sequence<ERROR_TYPE>
+          returnType = kotlin.Unit
+          symbol = kotlin/sequences/forEach(<extension receiver>: kotlin.sequences.Sequence<T>, action: kotlin.Function1<T, kotlin.Unit>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = action
+              receiverType = null
+              returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+              symbol = action: kotlin.Function1<T, kotlin.Unit>
+              callableId = null
+          ]
+          callableId = kotlin/sequences/forEach
+      typeArgumentsMapping = {
+        T -> (ERROR_TYPE)
+      }
+      argumentMapping = {
+        { } -> (KaVariableSignature:
+          name = action
+          receiverType = null
+          returnType = kotlin.Function1<ERROR_TYPE, kotlin.Unit>
+          symbol = action: kotlin.Function1<T, kotlin.Unit>
+          callableId = null)
+      }
+    isInBestCandidates = false

@@ -73,7 +73,7 @@ class MultifileClassPartCodegen(
         val access = if (shouldGeneratePartHierarchy) 0 else Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
 
         v.defineClass(
-            element, state.classFileVersion, access or Opcodes.ACC_SUPER, partType.internalName, null, superClassInternalName,
+            element, state.config.classFileVersion, access or Opcodes.ACC_SUPER, partType.internalName, null, superClassInternalName,
             ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(element.name, null)
@@ -96,7 +96,7 @@ class MultifileClassPartCodegen(
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART, false, extraFlags) { av ->
+        writeKotlinMetadata(v, state.config, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART, false, extraFlags) { av ->
             DescriptorAsmUtil.writeAnnotationData(av, serializer, packageProto)
             av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassType.internalName)
 

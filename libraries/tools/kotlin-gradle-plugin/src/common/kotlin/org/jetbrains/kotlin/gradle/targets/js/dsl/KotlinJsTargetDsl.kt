@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.HasBinaries
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -33,7 +36,12 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
 }
 
-interface KotlinJsTargetDsl : KotlinTarget {
+interface KotlinJsTargetDsl :
+    KotlinTarget,
+    KotlinTargetWithNodeJsDsl,
+    HasBinaries<KotlinJsBinaryContainer>,
+    HasConfigurableKotlinCompilerOptions<KotlinJsCompilerOptions> {
+
     var moduleName: String?
 
     fun browser() = browser { }
@@ -44,20 +52,16 @@ interface KotlinJsTargetDsl : KotlinTarget {
         }
     }
 
-    fun nodejs() = nodejs { }
-    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
-    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
-        nodejs {
-            fn.execute(this)
-        }
-    }
-
     fun useCommonJs()
     fun useEsModules()
 
-    fun generateTypeScriptDefinitions()
+    /**
+     * The function accepts [jsExpression] and puts this expression as the "args: Array<String>" argument in place of main-function call
+     */
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passAsArgumentToMainFunction(jsExpression: String)
 
-    val binaries: KotlinJsBinaryContainer
+    fun generateTypeScriptDefinitions()
 
     @Deprecated(
         message = "produceExecutable() was changed on binaries.executable()",
@@ -71,7 +75,19 @@ interface KotlinJsTargetDsl : KotlinTarget {
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
-    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
+
+    override val binaries: KotlinJsBinaryContainer
+}
+
+interface KotlinTargetWithNodeJsDsl {
+    fun nodejs() = nodejs { }
+    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
+        nodejs {
+            fn.execute(this)
+        }
+    }
 }
 
 interface KotlinJsSubTargetDsl {
@@ -96,4 +112,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {
     fun runTask(body: Action<NodeJsExec>)
+
+    @ExperimentalMainFunctionArgumentsDsl
+    fun passProcessArgvToMainFunction()
 }

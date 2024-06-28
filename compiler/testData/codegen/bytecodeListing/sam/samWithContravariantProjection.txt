@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class A {
+    // source: 'test.kt'
+    public method <init>(): void
+    public final method doOnSuccess(@org.jetbrains.annotations.NotNull p0: java.util.function.Consumer): void
+}
+
+@kotlin.Metadata
+synthetic final class TestKt$example$1 {
+    // source: 'test.kt'
+    enclosing method TestKt.example()V
+    public final static field INSTANCE: TestKt$example$1
+    inner (anonymous) class TestKt$example$1
+    static method <clinit>(): void
+    method <init>(): void
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class TestKt {
+    // source: 'test.kt'
+    inner (anonymous) class TestKt$example$1
+    private final static method example$lambda$0(p0: kotlin.jvm.functions.Function1, p1: java.lang.Object): void
+    public final static method example(): void
+    public final static method foo(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}

@@ -24,17 +24,20 @@ import java.util.*
 abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTest() {
     lateinit var klibName: String
     lateinit var outputDir: File
+    lateinit var klibPath: String
 
-    override val backend = TargetBackend.JVM_IR
+    override val backend
+        get() = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory
-        klibName = Paths.get(outputDir.toString(), wholeFile.name.toString().replace(".kt", ".klib")).toString()
+        klibName = wholeFile.nameWithoutExtension
+        klibPath = Paths.get(outputDir.toString(), klibName + ".klib").toString()
 
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), backend, classpath, listOf(outputDir), files
+            configurationKind, getTestJdkKind(files), classpath, listOf(outputDir), files
         )
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -55,7 +58,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName + ".klib"))
+        configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName))
     }
 
     // We need real (as opposed to virtual) files in order to produce a Klib.
@@ -76,9 +79,10 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
             K2JSCompiler(),
             listOf(
-                "-output", klibName,
+                "-ir-output-dir", outputDir.normalize().absolutePath,
+                "-ir-output-name", klibName,
                 "-Xir-produce-klib-file",
-                "-libraries", "libraries/stdlib/js-ir/build/classes/kotlin/js/main/"
+                "-libraries", "libraries/stdlib/build/classes/kotlin/js/main/"
             ) + sourceFiles
         )
         if (exitCode != ExitCode.OK) {

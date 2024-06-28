@@ -29,19 +29,8 @@ test/_1Kt$kValue$lambda$1
 + 2 1.kt
 test/_1Kt$lParams$1
 *L
-1#1,41:1
-35#2:42
-*E
-
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$kValue$lambda$1
-*L
-1#1,41:1
+1#1,32:1
+35#2:33
 *E
 
 // FILE: 2.kt

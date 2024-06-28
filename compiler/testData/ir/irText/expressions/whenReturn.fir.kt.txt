@@ -1,11 +1,11 @@
 fun toString(grade: String): String {
   { // BLOCK
-    val tmp0_subject: String = grade
+    val tmp_0: String = grade
     when {
-      EQEQ(arg0 = tmp0_subject, arg1 = "A") -> return "Excellent"
-      EQEQ(arg0 = tmp0_subject, arg1 = "B") -> return "Good"
-      EQEQ(arg0 = tmp0_subject, arg1 = "C") -> return "Mediocre"
-      EQEQ(arg0 = tmp0_subject, arg1 = "D") -> return "Fair"
+      EQEQ(arg0 = tmp_0, arg1 = "A") -> return "Excellent"
+      EQEQ(arg0 = tmp_0, arg1 = "B") -> return "Good"
+      EQEQ(arg0 = tmp_0, arg1 = "C") -> return "Mediocre"
+      EQEQ(arg0 = tmp_0, arg1 = "D") -> return "Fair"
       else -> return "Failure"
     }
   }

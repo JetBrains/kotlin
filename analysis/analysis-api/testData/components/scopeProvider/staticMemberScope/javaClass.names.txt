@@ -1,0 +1,13 @@
+Classifier names:
+  InnerClass
+  NestedClass
+
+Callable names:
+  <init>
+  bar
+  foo
+  getActualRandomNumber
+  getRandomNumber
+  hello
+  superBar
+  superFoo

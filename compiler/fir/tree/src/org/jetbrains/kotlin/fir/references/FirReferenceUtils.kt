@@ -11,17 +11,24 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+val FirReference.symbol: FirBasedSymbol<*>?
+    get() = when (this) {
+        is FirThisReference -> boundSymbol
+        is FirResolvedNamedReference -> resolvedSymbol
+        is FirNamedReferenceWithCandidateBase -> candidateSymbol
+        else -> null
+    }
+
 val FirReference.resolved: FirResolvedNamedReference? get() = this as? FirResolvedNamedReference
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE",)
 inline fun <reified T : FirBasedSymbol<*>> FirReference.toResolvedSymbol(
     discardErrorReference: Boolean = false
 ): @kotlin.internal.NoInfer T? {
-    val resolvedReference = resolved ?: return null
-    if (discardErrorReference && resolvedReference is FirResolvedErrorReference) {
+    if (discardErrorReference && this is FirResolvedErrorReference) {
         return null
     }
-    return resolvedReference.resolvedSymbol as? T
+    return resolved?.resolvedSymbol as? T
 }
 
 fun FirReference.toResolvedBaseSymbol(discardErrorReference: Boolean = false): FirBasedSymbol<*>? {
@@ -48,7 +55,11 @@ fun FirReference.toResolvedValueParameterSymbol(discardErrorReference: Boolean =
     return this.toResolvedSymbol<FirValueParameterSymbol>(discardErrorReference)
 }
 
-fun FirReference.toResolvedFunctionSymbol(discardErrorReference: Boolean = false): FirNamedFunctionSymbol? {
+fun FirReference.toResolvedFunctionSymbol(discardErrorReference: Boolean = false): FirFunctionSymbol<*>? {
+    return this.toResolvedSymbol<FirFunctionSymbol<*>>(discardErrorReference)
+}
+
+fun FirReference.toResolvedNamedFunctionSymbol(discardErrorReference: Boolean = false): FirNamedFunctionSymbol? {
     return this.toResolvedSymbol<FirNamedFunctionSymbol>(discardErrorReference)
 }
 
@@ -70,3 +81,4 @@ fun FirReference.isError(): Boolean {
         else -> false
     }
 }
+

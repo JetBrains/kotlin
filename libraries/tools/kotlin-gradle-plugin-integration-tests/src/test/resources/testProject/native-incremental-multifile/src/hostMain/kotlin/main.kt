@@ -1,0 +1,4 @@
+
+fun main() {
+    println(foo())
+}

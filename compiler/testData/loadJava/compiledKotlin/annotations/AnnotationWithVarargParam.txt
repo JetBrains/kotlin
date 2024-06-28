@@ -1,0 +1,35 @@
+package test
+
+public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ vararg s: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    public final val s: kotlin.Array<out kotlin.String>
+        public final fun `<get-s>`(): kotlin.Array<out kotlin.String>
+}
+
+@test.A(s = {"1", "2"}) public final class B {
+    /*primary*/ public constructor B()
+}
+
+@test.A(s = {"1", "2"}) public final class D {
+    /*primary*/ public constructor D()
+}
+
+@test.A(s = {"1", "2"}) public final class E {
+    /*primary*/ public constructor E()
+}
+
+@test.A(s = {"1", "2"}) public final class F {
+    /*primary*/ public constructor F()
+}
+
+@test.A(s = {"1", "2"}) public final class H {
+    /*primary*/ public constructor H()
+}
+
+@test.A(s = {"1", "2"}) public final class I {
+    /*primary*/ public constructor I()
+}
+
+@test.A(s = {"1", "2"}) public final class J {
+    /*primary*/ public constructor J()
+}

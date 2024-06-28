@@ -3,7 +3,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // INFER_MAIN_MODULE
 
-// MODULE: overriden_chain_non_export_intermediate
+// MODULE: intermediate
 // FILE: not_exported.kt
 abstract class B : A() {
     abstract fun baz(): String
@@ -31,7 +31,7 @@ class C : B() {
 // FILE: test.js
 
 function box() {
-    return test(new this["overriden_chain_non_export_intermediate"].C());
+    return test(new this["intermediate"].C());
 }
 
 function test(c) {

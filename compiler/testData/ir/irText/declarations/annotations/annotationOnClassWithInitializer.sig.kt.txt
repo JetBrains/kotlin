@@ -1,0 +1,25 @@
+// CHECK:
+//   Mangled name: SomeAnn
+//   Public signature: /SomeAnn|null[0]
+open annotation class SomeAnn : Annotation {
+  // CHECK:
+  //   Mangled name: SomeAnn#<init>(){}
+  //   Public signature: /SomeAnn.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: My
+//   Public signature: /My|null[0]
+@SomeAnn
+class My {
+  // CHECK:
+  //   Mangled name: My#<init>(){}
+  //   Public signature: /My.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+

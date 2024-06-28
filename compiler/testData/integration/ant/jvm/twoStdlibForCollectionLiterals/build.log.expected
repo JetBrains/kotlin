@@ -5,9 +5,9 @@ build:
     [mkdir] Created dir: [Temp]/classes
     [javac] Compiling 2 source files to [Temp]/classes
     [javac] Compiling [[TestData]] => [[Temp]/classes]
-    [javac] [TestData]/myArrayOf.kt:3:30: warning: parameter 'elements' is never used
-    [javac] public fun intArrayOf(vararg elements: Int): IntArray = TODO()
-    [javac]                              ^
+    [javac] [TestData]/literals.kt:5:11: warning: this code uses error suppression for 'UNSUPPORTED_FEATURE'. While it might compile and work, the compiler behavior is UNSPECIFIED and WON'T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue
+    [javac] @Suppress("UNSUPPORTED_FEATURE")
+    [javac]           ^^^^^^^^^^^^^^^^^^^^^
     [javac] Running javac...
       [jar] Building jar: [Temp]/literals.jar
 

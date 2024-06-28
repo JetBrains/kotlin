@@ -24,13 +24,13 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
-import java.util.*
 
 fun KtPsiFactory.createExpressionByPattern(@NonNls pattern: String, @NonNls vararg args: Any, reformat: Boolean = true): KtExpression =
     createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
@@ -151,7 +151,7 @@ fun <TElement : KtElement> createByPattern(
 
     val pointerManager = SmartPointerManager.getInstance(project)
 
-    val pointers = HashMap<SmartPsiElementPointer<PsiElement>, Int>()
+    val pointers = LinkedHashMap<SmartPsiElementPointer<PsiElement>, Int>()
 
     PlaceholdersLoop@
     for ((n, placeholders) in allPlaceholders) {
@@ -182,7 +182,7 @@ fun <TElement : KtElement> createByPattern(
         if (CREATE_BY_PATTERN_MAY_NOT_REFORMAT) {
             throw java.lang.IllegalArgumentException("Reformatting is not allowed in the current context; please change the invocation to use reformat=false")
         }
-        val stringPlaceholderRanges = allPlaceholders
+        val stringPlaceholderRanges = allPlaceholders.asSequence()
             .filter { args[it.key] is String }
             .flatMap { it.value }
             .map { it.range }
@@ -205,18 +205,30 @@ fun <TElement : KtElement> createByPattern(
         // do not reformat the whole expression in PostprocessReformattingAspect
         CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
     }
-    for ((pointer, n) in pointers) {
-        var element = pointer.element!!
-        if (element is KtFunctionLiteral) {
-            element = element.parent as KtLambdaExpression
-        }
-        @Suppress("UNCHECKED_CAST")
-        val argumentType = argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>
-        val range = argumentType.replacePlaceholderElement(element, args[n], reformat)
 
-        if (element == resultElement) {
-            assert(range.first == range.last)
-            resultElement = range.first as KtElement
+    // it is needed to place logical operators first for expressions like `xyz xyz xyz` to become `xyz && xyz`
+    // otherwise if when we place an expression we have to wrap it with extra parenthesis => it becomes `(a != null) xyz xyz`
+    val (left, right) = pointers.entries.partition {
+        val n = it.value
+        val elementType = (args[n] as? KtOperationReferenceExpression)?.getReferencedNameElementType()
+        elementType == KtTokens.ANDAND || elementType == KtTokens.OROR
+    }
+
+    for (partition in listOf(left, right)) {
+        for ((pointer, n) in partition) {
+            var element = pointer.element!!
+
+            if (element is KtFunctionLiteral) {
+                element = element.parent as KtLambdaExpression
+            }
+            @Suppress("UNCHECKED_CAST")
+            val argumentType = argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>
+            val range = argumentType.replacePlaceholderElement(element, args[n], reformat)
+
+            if (element == resultElement) {
+                assert(range.first == range.last)
+                resultElement = range.first as KtElement
+            }
         }
     }
 

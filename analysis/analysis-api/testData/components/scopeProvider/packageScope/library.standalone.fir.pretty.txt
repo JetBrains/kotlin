@@ -1,0 +1,53 @@
+fun fooApi3(): kotlin.String
+
+internal fun internalFooApi3(): kotlin.String
+
+private fun privateFooApi3(): kotlin.String
+
+fun library.api.FakeI.barApi3(): library.api.I
+
+internal fun library.api.InternalFakeI.internalBarApi3(): library.api.I
+
+private fun library.api.PrivateFakeI.privateBarApi3(): library.api.I
+
+fun fooApi2(): kotlin.String
+
+internal fun internalFooApi2(): kotlin.String
+
+private fun privateFooApi2(): kotlin.String
+
+fun library.api.C1.barApi2(): library.api.I
+
+internal fun library.api.InternalC1.internalBarApi2(): library.api.InternalI
+
+private fun library.api.PrivateC1.privateBarApi2(): library.api.I
+
+fun fooApi1(): kotlin.String
+
+internal fun internalFooApi1(): kotlin.String
+
+private fun privateFooApi1(): kotlin.String
+
+fun library.api.I.barApi1(): library.api.I
+
+internal fun library.api.InternalI.internalBarApi1(): library.api.InternalI
+
+private fun library.api.PrivateI.privateBarApi1(): library.api.PrivateI
+
+interface FakeI : library.api.I
+
+internal interface InternalFakeI : library.api.I
+
+private interface PrivateFakeI : library.api.I
+
+private interface PrivateI
+
+internal interface InternalI
+
+interface I
+
+class C1 : library.api.I
+
+internal class InternalC1 : library.api.InternalI
+
+private class PrivateC1 : library.api.I

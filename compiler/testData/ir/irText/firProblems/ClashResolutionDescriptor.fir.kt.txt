@@ -1,35 +1,8 @@
-interface ComponentContainer {
-
-}
-
-interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
-
-}
-
-interface ComponentDescriptor {
-
-}
-
-abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {
-  constructor(applicableTo: Class<E>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val applicableTo: Class<E>
-    field = applicableTo
-    get
-
-}
+private val registrationMap: HashMap<Type, Any>
+  field = hashMapOf<Type, Any>()
+  private get
 
 class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
-  constructor(container: ComponentContainer, resolver: PlatformExtensionsClashResolver<E>, clashedComponents: List<ComponentDescriptor>) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   private val resolver: PlatformExtensionsClashResolver<E>
     field = resolver
     private get
@@ -38,27 +11,52 @@ class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
     field = clashedComponents
     private get
 
+  constructor(container: ComponentContainer, resolver: PlatformExtensionsClashResolver<E>, clashedComponents: List<ComponentDescriptor>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
-private val registrationMap: HashMap<Type, Any>
-  field = hashMapOf<Type, Any>()
-  private get
+abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {
+  val applicableTo: Class<E>
+    field = applicableTo
+    get
+
+  constructor(applicableTo: Class<E>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface ComponentContainer {
+}
+
+interface ComponentDescriptor {
+}
+
+interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
+}
 
 fun resolveClashesIfAny(container: ComponentContainer, clashResolvers: List<PlatformExtensionsClashResolver<*>>) {
   { // BLOCK
-    val <iterator>: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
-    while (<iterator>.hasNext()) { // BLOCK
-      val resolver: PlatformExtensionsClashResolver<*> = <iterator>.next()
+    val tmp_0: Iterator<PlatformExtensionsClashResolver<*>> = clashResolvers.iterator()
+    while (tmp_0.hasNext()) { // BLOCK
+      val resolver: PlatformExtensionsClashResolver<*> = tmp_0.next()
       { // BLOCK
         val clashedComponents: Collection<ComponentDescriptor> = { // BLOCK
-          val <elvis>: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
+          val tmp_1: Collection<ComponentDescriptor>? = <get-registrationMap>().get(p0 = resolver.<get-applicableTo>()) as? Collection<ComponentDescriptor>
           when {
-            EQEQ(arg0 = <elvis>, arg1 = null) -> continue
-            else -> <elvis>
+            EQEQ(arg0 = tmp_1, arg1 = null) -> continue
+            else -> tmp_1
           }
         }
-        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>> = ClashResolutionDescriptor<PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out PlatformSpecificExtension<out Any?>>>>>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
+        val substituteDescriptor: ClashResolutionDescriptor<out PlatformSpecificExtension<*>> = ClashResolutionDescriptor<PlatformSpecificExtension<*>>(container = container, resolver = resolver, clashedComponents = clashedComponents.toList<ComponentDescriptor>())
       }
     }
   }
 }
+

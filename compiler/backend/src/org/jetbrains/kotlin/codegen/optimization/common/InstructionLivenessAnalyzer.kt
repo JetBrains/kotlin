@@ -79,7 +79,7 @@ class InstructionLivenessAnalyzer(
             val insnNode = method.instructions[insn]
             val insnOpcode = insnNode.opcode
 
-            when (insnNode.type) {
+            when (insnNode.nodeType) {
                 AbstractInsnNode.LABEL, AbstractInsnNode.LINE, AbstractInsnNode.FRAME ->
                     visitOpInsn(insn)
                 AbstractInsnNode.JUMP_INSN ->

@@ -1,0 +1,167 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(RAW_FIR)] lval fileParameter: java.io.File
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] lval fileParameter: java.io.File
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(COMPANION_GENERATION)] lval fileParameter: java.io.File
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(SUPER_TYPES)] lval fileParameter: java.io.File
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(TYPES)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(STATUS)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-providedProperty.test.kts>
+        <script receiver parameter>: org.jetbrains.kotlin.scripting.test.definition.ConfigurableTestScript
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(RAW_FIR)] lval stringParameter: kotlin.String
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(CONTRACTS)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(CONSTANT_EVALUATION)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(TYPES)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(BODY_RESOLVE)] lval fileParameter: R|java/io/File|
+
+        public? final? [ResolvedTo(RAW_FIR)] val rv: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] providedProperty.test.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-providedProperty.test.kts>
+        <script receiver parameter>: R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<out kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval stringParameter: R|kotlin/String|
+        [ResolvedTo(BODY_RESOLVE)] lval fileParameter: R|java/io/File|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val rv: R|kotlin/String| = this@R|?|.R|org/jetbrains/kotlin/scripting/test/definition/ConfigurableTestScript.args|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out kotlin/String)|>|(Int(1)).R|kotlin/String.plus|(R|<local>/stringParameter|).R|kotlin/String.plus|(R|<local>/fileParameter|.R|java/io/File.path|)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+

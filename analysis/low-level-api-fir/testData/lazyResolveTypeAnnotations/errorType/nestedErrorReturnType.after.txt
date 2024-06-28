@@ -1,0 +1,46 @@
+@R|lowlevel/Anno|(position = <strcat>(String(return ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type3>
+  context -> FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(nested return ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type3
+  context -> FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc>
+  context -> FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc
+  context -> FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type1
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(nested param ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type2
+  context -> FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirValueParameterSymbol <local>/param from FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF>
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+@R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF
+  context -> FirTypeParameterSymbol F from FirNamedFunctionSymbol lowlevel/function
+  anchor -> [FirNamedFunctionSymbol lowlevel/function]
+
+FILE: [ResolvedTo(IMPORTS)] nestedErrorReturnType.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=lowlevel/Anno.position] position: R|kotlin/String|): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|lowlevel/Anno|(position = <strcat>(String(bound ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for ASF>|> R|@R|lowlevel/Anno|(position = <strcat>(String(receiver ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Abc>|.function([ResolvedTo(ANNOTATION_ARGUMENTS)] param: @R|lowlevel/Anno|[Types](position = <strcat>(String(param ), R|lowlevel/prop|)) <ERROR TYPE REF: Symbol not found for Type1>): R|@R|lowlevel/Anno|(position = <strcat>(String(return ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return ), R|lowlevel/prop|))  ERROR CLASS: Symbol not found for Type3>| {
+    }

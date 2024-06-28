@@ -7,7 +7,7 @@ annotation class Ann2
 typealias AnnGenList<T> = List<@Ann1 T>
 typealias TestAnnGen1 = AnnGenList<dynamic>
 typealias TestAnnGen2 = AnnGenList<@Ann2 dynamic>
-typealias TestAnnGen3 = AnnGenList<@Ann1 dynamic>
+typealias TestAnnGen3 = <!REPEATED_ANNOTATION, REPEATED_ANNOTATION, REPEATED_ANNOTATION!>AnnGenList<@Ann1 dynamic><!>
 
 fun useAnnGen1(x: TestAnnGen1) = x
 fun useAnnGen2(x: TestAnnGen2) = x

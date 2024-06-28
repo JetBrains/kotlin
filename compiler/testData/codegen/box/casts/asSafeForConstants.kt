@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 fun box(): String {
     if ((1 as? Int) == null) return "fail 1"

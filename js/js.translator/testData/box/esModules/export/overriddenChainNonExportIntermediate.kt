@@ -2,7 +2,7 @@
 // EXPECTED_REACHABLE_NODES: 1252
 
 // ES_MODULES
-// MODULE: overriden_chain_non_export_intermediate
+// MODULE: intermediate
 // FILE: lib.kt
 @JsExport
 abstract class A {
@@ -27,7 +27,7 @@ class C : B() {
 
 // FILE: entry.mjs
 // ENTRY_ES_MODULE
-import { C } from "./overriddenChainNonExportIntermediate-overriden_chain_non_export_intermediate_v5.mjs";
+import { C } from "./overriddenChainNonExportIntermediate-intermediate_v5.mjs";
 
 export function box() {
     const c = new C()

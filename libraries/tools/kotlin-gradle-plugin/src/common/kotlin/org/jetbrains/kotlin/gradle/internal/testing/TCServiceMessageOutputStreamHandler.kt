@@ -20,7 +20,7 @@ import java.io.OutputStream
  * Calls [client] for each parsed message and regular text.
  *
  * TeamCity server messages should ends with new line.
- * Only messages short than [MESSAGE_LIMIT_BYTES] supported.
+ * Only messages shorter than [MESSAGE_LIMIT_BYTES] supported.
  */
 internal class TCServiceMessageOutputStreamHandler(
     private val client: ServiceMessageParserCallback,

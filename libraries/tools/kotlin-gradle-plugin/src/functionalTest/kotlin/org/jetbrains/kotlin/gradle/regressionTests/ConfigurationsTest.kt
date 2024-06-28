@@ -11,22 +11,24 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.targets
+import org.jetbrains.kotlin.gradle.utils.toMap
 import java.util.*
 import kotlin.test.*
 
@@ -140,6 +142,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         project.evaluate()
 
         project.configurations
+            .filter { it.isCanBeConsumed }
             .filter { configuration ->
                 configuration.attributes.contains(KotlinPlatformType.attribute) ||
                         configuration.attributes.getAttribute(Usage.USAGE_ATTRIBUTE)?.name in KotlinUsages.values
@@ -155,10 +158,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `don't publish wasm targets with KotlinJsCompilerAttribute attribute`() {
         with(kotlin) {
-            js("nodeJs", KotlinJsCompilerType.IR)
-            js("browser", KotlinJsCompilerType.IR)
+            val jsAttribute = Attribute.of(String::class.java)
+            js("nodeJs", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "nodeJs") } }
+            js("browser", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "browser") } }
             @OptIn(ExperimentalWasmDsl::class)
-            wasm()
+            wasmJs()
 
             val allJs = sourceSets.create("allJs")
             targets.getByName("nodeJs").compilations.getByName("main").defaultSourceSet.dependsOn(allJs)
@@ -182,7 +186,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         // WASM
         val actualWasmConfigurations = targetSpecificConfigurationsToCheck
-            .map { project.configurations.getByName("wasm$it") }
+            .map { project.configurations.getByName("wasmJs$it") }
             .filter { it.attributes.contains(KotlinJsCompilerAttribute.jsCompilerAttribute) }
 
         assertEquals(
@@ -196,20 +200,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "CompileOnlyDependenciesMetadata",
             "ImplementationDependenciesMetadata",
         )
-
-        // allJs
-        val expectedAllJsConfigurations = commonSourceSetsConfigurationsToCheck
-            .map { project.configurations.getByName("allJs$it") }
-
-        val actualAllJsConfigurations = expectedAllJsConfigurations
-            .filter { it.attributes.contains(KotlinJsCompilerAttribute.jsCompilerAttribute) }
-
-        assertEquals(
-            expectedAllJsConfigurations,
-            actualAllJsConfigurations,
-            "JS-only configurations should contain KotlinJsCompilerAttribute"
-        )
-
 
         // commonMain
         val actualCommonMainConfigurations = commonSourceSetsConfigurationsToCheck
@@ -228,10 +218,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     fun `test js IR compilation dependencies`() {
         val project = buildProjectWithMPP {
             kotlin {
-                @Suppress("DEPRECATION")
-                js(BOTH)
-                targets.withType<KotlinJsTarget> {
-                    irTarget!!.compilations.getByName("main").dependencies {
+                js()
+                targets.withType<KotlinJsIrTarget> {
+                    compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }
                 }
@@ -262,10 +251,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
             kotlin {
                 jvm()
-                @Suppress("DEPRECATION")
-                js(BOTH)
+                js()
                 linuxX64("linux")
-                android()
+                androidTarget()
             }
         }
 
@@ -273,8 +261,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
-            val compilationConfigurationNames = compilation.relatedConfigurationNames
-            val sourceSetConfigurationNames = compilationSourceSets.flatMapTo(mutableSetOf()) { it.relatedConfigurationNames }
+            val compilationConfigurationNames = compilation.allCompilationDependenciesConfigurationNames()
+            val sourceSetConfigurationNames = compilationSourceSets.flatMapTo(mutableSetOf()) { it.allDependenciesConfigurationNames() }
 
             assert(compilationConfigurationNames.none { it in sourceSetConfigurationNames }) {
                 """A name clash between source set and compilation configurations detected for the following configurations:
@@ -289,8 +277,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm()
-                @Suppress("DEPRECATION")
-                js(BOTH)
+                js()
                 linuxX64("linux")
             }
         }
@@ -436,7 +423,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 jvm()
                 sourceSets.getByName("jvmMain").apply {
                     dependencies {
-                        api(platform("test:platform-dependency:1.0.0"))
+                        api(
+                            // Deprecated in KT-58759, remove test after deletion
+                            @Suppress("DEPRECATION")
+                            platform("test:platform-dependency:1.0.0")
+                        )
                     }
                 }
             }
@@ -459,7 +450,11 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 }
                 sourceSets.getByName("browserMain").apply {
                     dependencies {
-                        implementation(enforcedPlatform("test:enforced-platform-dependency"))
+                        implementation(
+                            // Deprecated in KT-58759, remove test after deletion
+                            @Suppress("DEPRECATION")
+                            enforcedPlatform("test:enforced-platform-dependency")
+                        )
                     }
                 }
             }
@@ -496,7 +491,8 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 kotlin {
                     jvm()
                     js().nodejs()
-                    ios()
+                    iosX64()
+                    iosArm64()
                 }
             }
             project.evaluate()
@@ -509,6 +505,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     extensions.asMap.keys,
                     kotlin.sourceSets.names,
                     kotlin.targets.names,
+                    @Suppress("DEPRECATION")
                     kotlin.presets.names,
                 ).flatten()
             }
@@ -552,5 +549,91 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         assertFalse(isTestDependencyPresent("releaseRuntimeClasspath"))
         assertFalse(isTestDependencyPresent("releaseUnitTestCompileClasspath"))
         assertFalse(isTestDependencyPresent("releaseUnitTestRuntimeClasspath"))
+    }
+
+    // See KT-55751
+    @Test
+    fun `consumable configurations should have unique attribute set`() {
+        val project = buildProjectWithMPP {
+            plugins.apply("maven-publish")
+
+            val distinguishingAttribute = Attribute.of(String::class.java)
+            kotlin {
+                jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
+                jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
+
+                macosX64 {
+                    binaries.framework("main", listOf(NativeBuildType.DEBUG))
+                }
+
+                iosX64 {
+                    binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
+                    binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
+                }
+                iosArm64 {
+                    binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
+                    binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
+                }
+
+                linuxX64("linuxA") { attributes { attribute(distinguishingAttribute, "linuxA") } }
+                linuxX64("linuxB") { attributes { attribute(distinguishingAttribute, "linuxB") } }
+
+                targets.filterIsInstance<KotlinNativeTarget>().forEach {
+                    it.binaries {
+                        sharedLib("main", listOf(NativeBuildType.DEBUG))
+                        staticLib("main", listOf(NativeBuildType.DEBUG))
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val duplicatedConsumableConfigurations = project.configurations
+            .filter { it.isCanBeConsumed }
+            .filterNot { it.attributes.isEmpty }
+            .groupBy { it.attributes.toMap() }
+            .values
+            .filter { it.size > 1 }
+
+        if (duplicatedConsumableConfigurations.isNotEmpty()) {
+            val msg = duplicatedConsumableConfigurations.joinToString(separator = "\n") { configs ->
+                val list = configs.joinToString { it.name }
+                " * $list"
+            }
+            fail("Following configurations have the same attributes:\n$msg")
+        }
+    }
+
+    @Test
+    fun `user-defined attributes should be present in host-specific metadata dependencies configuration`() {
+        val attribute = Attribute.of("userAttribute", String::class.java)
+
+        val project = buildProjectWithMPP {
+            plugins.apply("maven-publish")
+            kotlin {
+                jvm()
+                iosX64 {
+                    attributes { attribute(attribute, "foo") }
+                }
+
+                iosArm64 {
+                    attributes { attribute(attribute, "bar") }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+        project.evaluate()
+
+        val iosX64HostSpecificMetadataDependencies = project.configurations.getByName("iosX64CompilationDependenciesMetadata")
+        val iosX64MetadataElements = project.configurations.getByName("iosX64MetadataElements")
+        assertEquals("foo", iosX64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
+        assertEquals("foo", iosX64MetadataElements.attributes.getAttribute(attribute))
+
+        val iosArm64HostSpecificMetadataDependencies = project.configurations.getByName("iosArm64CompilationDependenciesMetadata")
+        val iosArm64MetadataElements = project.configurations.getByName("iosArm64MetadataElements")
+        assertEquals("bar", iosArm64HostSpecificMetadataDependencies.attributes.getAttribute(attribute))
+        assertEquals("bar", iosArm64MetadataElements.attributes.getAttribute(attribute))
     }
 }

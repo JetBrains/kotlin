@@ -1,6 +1,0 @@
-KT element: KtTypeProjection
-FIR element: FirTypeProjectionWithVarianceImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-R|kotlin/collections/List<kotlin/Int>|

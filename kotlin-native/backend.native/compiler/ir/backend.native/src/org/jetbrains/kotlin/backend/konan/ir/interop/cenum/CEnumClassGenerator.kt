@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -40,6 +42,7 @@ private val cEnumEntryValueTypes = setOf(
         "UByte", "UShort", "UInt", "ULong"
 )
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumClassGenerator(
         val context: GeneratorContext,
         private val cEnumCompanionGenerator: CEnumCompanionGenerator,
@@ -58,7 +61,7 @@ internal class CEnumClassGenerator(
      * Generates one if absent.
      */
     fun findOrGenerateCEnum(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
-        val irClassSymbol = symbolTable.referenceClass(classDescriptor)
+        val irClassSymbol = symbolTable.descriptorExtension.referenceClass(classDescriptor)
         return if (!irClassSymbol.isBound) {
             provideIrClassForCEnum(classDescriptor).also {
                 it.patchDeclarationParents(parent)
@@ -94,12 +97,12 @@ internal class CEnumClassGenerator(
                 ?: error("No `value` property in ${irClass.name}")
         val irProperty = createProperty(propertyDescriptor)
         symbolTable.withScope(irProperty) {
-            irProperty.backingField = symbolTable.declareField(
+            irProperty.backingField = symbolTable.descriptorExtension.declareField(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
                     propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {
                 postLinkageSteps.add {
-                    it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                    it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                         irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
                     }
                 }
@@ -108,7 +111,7 @@ internal class CEnumClassGenerator(
         val getter = irProperty.getter!!
         getter.correspondingPropertySymbol = irProperty.symbol
         postLinkageSteps.add {
-            getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+            getter.body = irBuiltIns.createIrBuilder(getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(
                         irGetField(
                                 irGet(getter.dispatchReceiverParameter!!),
@@ -121,21 +124,22 @@ internal class CEnumClassGenerator(
     }
 
     private fun createEnumEntry(enumDescriptor: ClassDescriptor, entryDescriptor: ClassDescriptor): IrEnumEntry {
-        val enumEntry = symbolTable.declareEnumEntry(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+        val enumEntry = symbolTable.descriptorExtension.declareEnumEntry(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
         )
-        val constructorSymbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
+        val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
         postLinkageSteps.add {
-            enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                    type = irBuiltIns.unitType,
-                    symbol = constructorSymbol,
-                    typeArgumentsCount = 0,
-                    valueArgumentsCount = constructorSymbol.owner.valueParameters.size
-            ).also {
-                it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
-            })
+            enumEntry.initializerExpression = context.irFactory.createExpressionBody(
+                    IrEnumConstructorCallImpl(
+                            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                            type = irBuiltIns.unitType,
+                            symbol = constructorSymbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = constructorSymbol.owner.valueParameters.size,
+                    ).also {
+                        it.putValueArgument(0, extractEnumEntryValue(entryDescriptor))
+                    },
+            )
         }
         return enumEntry
     }
@@ -156,11 +160,11 @@ internal class CEnumClassGenerator(
         val irConstructor = createConstructor(descriptor.unsubstitutedPrimaryConstructor!!)
         val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
         val enumConstructor = builtIns.enum.constructors.single()
-        val constructorSymbol = symbolTable.referenceConstructor(enumConstructor)
-        val classSymbol = symbolTable.referenceClass(descriptor)
+        val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumConstructor)
+        val classSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
         val type = descriptor.defaultType.toIrType()
         postLinkageSteps.add {
-            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+            irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                     .irBlockBody {
                         +IrEnumConstructorCallImpl(
                                 startOffset, endOffset,

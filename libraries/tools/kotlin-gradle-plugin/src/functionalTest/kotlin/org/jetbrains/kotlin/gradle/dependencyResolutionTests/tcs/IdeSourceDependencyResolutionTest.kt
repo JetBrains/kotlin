@@ -27,7 +27,7 @@ class IdeSourceDependencyResolutionTest {
             applyMultiplatformPlugin()
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()
@@ -39,7 +39,7 @@ class IdeSourceDependencyResolutionTest {
             applyMultiplatformPlugin()
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()
@@ -133,7 +133,7 @@ class IdeSourceDependencyResolutionTest {
 
     @Test
     fun `test - multiplatform to multiplatform - sample 1 - jvmAndAndroid`() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
         val root = buildProject()
 
         fun Project.setup() {
@@ -142,11 +142,11 @@ class IdeSourceDependencyResolutionTest {
             androidLibrary { compileSdk = 33 }
 
             multiplatformExtension.apply {
-                targetHierarchy.default()
+                applyDefaultHierarchyTemplate()
                 linuxX64()
                 linuxArm64()
                 jvm()
-                android()
+                androidTarget()
 
                 sourceSets.getByName("commonMain").let { commonMain ->
                     sourceSets.create("jvmAndAndroidMain").let { jvmAndAndroidMain ->

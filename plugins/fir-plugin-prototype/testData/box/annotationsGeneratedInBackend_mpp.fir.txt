@@ -1,0 +1,100 @@
+Module: common
+FILE: module_common_annotationsGeneratedInBackend_mpp.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Some : R|kotlin/Any| {
+        public constructor(): R|test/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: module_platform_annotationsGeneratedInBackend_mpp.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Other : R|kotlin/Any| {
+        public constructor(): R|test/Other| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun checkClass(klass: R|kotlin/reflect/KClass<*>|): R|kotlin/Boolean| {
+        lval foo: R|kotlin/reflect/KFunction<*>| = R|<local>/klass|.R|kotlin/reflect/full/declaredFunctions|.R|kotlin/collections/first|<R|kotlin/reflect/KFunction<*>|>(<L> = first@fun <anonymous>(it: R|kotlin/reflect/KFunction<*>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|SubstitutionOverride<kotlin/reflect/KFunction.name: R|kotlin/String|>|, String(foo))
+        }
+        )
+        ^checkClass R|<local>/foo|.R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/any|<R|kotlin/Annotation|>(<L> = any@fun <anonymous>(it: R|kotlin/Annotation|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|kotlin/jvm/annotationClass|<R|kotlin/Annotation|>.R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|, String(AnnotationToAdd))
+        }
+        )
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            R|test/checkClass|(<getClass>(Q|test/Some|)).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Some)
+            }
+        }
+
+        when () {
+            R|test/checkClass|(<getClass>(Q|test/Other|)).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Other)
+            }
+        }
+
+        ^box String(OK)
+    }
+Module: platform
+FILE: module_common_annotationsGeneratedInBackend_mpp.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Some : R|kotlin/Any| {
+        public constructor(): R|test/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: module_platform_annotationsGeneratedInBackend_mpp.kt
+    package test
+
+    @R|org/jetbrains/kotlin/fir/plugin/AddAnnotations|() public final class Other : R|kotlin/Any| {
+        public constructor(): R|test/Other| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun checkClass(klass: R|kotlin/reflect/KClass<*>|): R|kotlin/Boolean| {
+        lval foo: R|kotlin/reflect/KFunction<*>| = R|<local>/klass|.R|kotlin/reflect/full/declaredFunctions|.R|kotlin/collections/first|<R|kotlin/reflect/KFunction<*>|>(<L> = first@fun <anonymous>(it: R|kotlin/reflect/KFunction<*>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|SubstitutionOverride<kotlin/reflect/KFunction.name: R|kotlin/String|>|, String(foo))
+        }
+        )
+        ^checkClass R|<local>/foo|.R|kotlin/reflect/KAnnotatedElement.annotations|.R|kotlin/collections/any|<R|kotlin/Annotation|>(<L> = any@fun <anonymous>(it: R|kotlin/Annotation|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|kotlin/jvm/annotationClass|<R|kotlin/Annotation|>.R|SubstitutionOverride<kotlin/reflect/KClass.simpleName: R|kotlin/String?|>|, String(AnnotationToAdd))
+        }
+        )
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            R|test/checkClass|(<getClass>(Q|test/Some|)).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Some)
+            }
+        }
+
+        when () {
+            R|test/checkClass|(<getClass>(Q|test/Other|)).R|kotlin/Boolean.not|() ->  {
+                ^box String(Fail: Other)
+            }
+        }
+
+        ^box String(OK)
+    }

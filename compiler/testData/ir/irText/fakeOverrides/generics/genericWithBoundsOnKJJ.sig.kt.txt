@@ -1,0 +1,161 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java2 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#bar(){}kotlin.Number?
+  //   Public signature: /A.bar|-1679062975122643439[0]
+  //   Public signature debug description: bar(){}kotlin.Number?
+  /* fake */ override fun bar(): Number?
+
+  // CHECK:
+  //   Mangled name: A#foo(kotlin.Number?){}
+  //   Public signature: /A.foo|2831167016207060641[0]
+  //   Public signature debug description: foo(kotlin.Number?){}
+  /* fake */ override fun foo(t: Number?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java3 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#bar(){}kotlin.Double?
+  //   Public signature: /B.bar|-682592564869870715[0]
+  //   Public signature debug description: bar(){}kotlin.Double?
+  /* fake */ override fun bar(): Double?
+
+  // CHECK:
+  //   Mangled name: B#foo(kotlin.Double?){}
+  //   Public signature: /B.foo|6411712553578757001[0]
+  //   Public signature debug description: foo(kotlin.Double?){}
+  /* fake */ override fun foo(t: Double?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java4<Any> {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#bar(){}kotlin.Number?
+  //   Public signature: /C.bar|-1679062975122643439[0]
+  //   Public signature debug description: bar(){}kotlin.Number?
+  /* fake */ override fun bar(): Number?
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Number?){}
+  //   Public signature: /C.foo|2831167016207060641[0]
+  //   Public signature debug description: foo(kotlin.Number?){}
+  /* fake */ override fun foo(t: Number?): Unit
+
+  // CHECK:
+  //   Mangled name: C#foo(kotlin.Any?){}
+  //   Public signature: /C.foo|-6211124056249407422[0]
+  //   Public signature debug description: foo(kotlin.Any?){}
+  /* fake */ override fun foo(t: Any?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java2 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#bar(){}kotlin.Number?
+  //   Public signature: /D.bar|-1679062975122643439[0]
+  //   Public signature debug description: bar(){}kotlin.Number?
+  /* fake */ override fun bar(): Number?
+
+  // CHECK:
+  //   Mangled name: D#foo(kotlin.Number?){}
+  //   Public signature: /D.foo|2831167016207060641[0]
+  //   Public signature debug description: foo(kotlin.Number?){}
+  override fun foo(t: Number?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java3 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#bar(){}kotlin.Double?
+  //   Public signature: /E.bar|-682592564869870715[0]
+  //   Public signature debug description: bar(){}kotlin.Double?
+  /* fake */ override fun bar(): Double?
+
+  // CHECK:
+  //   Mangled name: E#foo(kotlin.Double?){}
+  //   Public signature: /E.foo|6411712553578757001[0]
+  //   Public signature debug description: foo(kotlin.Double?){}
+  override fun foo(t: Double?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java4<Any> {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#bar(){}kotlin.Number?
+  //   Public signature: /F.bar|-1679062975122643439[0]
+  //   Public signature debug description: bar(){}kotlin.Number?
+  /* fake */ override fun bar(): Number?
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.Number?){}
+  //   Public signature: /F.foo|2831167016207060641[0]
+  //   Public signature debug description: foo(kotlin.Number?){}
+  /* fake */ override fun foo(t: Number?): Unit
+
+  // CHECK:
+  //   Mangled name: F#foo(kotlin.Any?){}
+  //   Public signature: /F.foo|-6211124056249407422[0]
+  //   Public signature debug description: foo(kotlin.Any?){}
+  override fun foo(t: Any?): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F){}
+//   Public signature: /test|-4390352378432875580[0]
+//   Public signature debug description: test(A;B;C;D;E;F){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F): Unit

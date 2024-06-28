@@ -1,2 +1,4 @@
-warning: there are files with same path 'lib.kt', relative to source roots: '$TESTDATA_DIR$/sourceMapDuplicatePath/foo/lib.kt' and '$TESTDATA_DIR$/sourceMapDuplicatePath/bar/lib.kt'. This will likely cause problems with debugger
+info: produce executable: $TMP_DIR$
+info: cache directory: null
+info: executable production duration: [time]
 OK

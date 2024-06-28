@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.Name
 
-object FirNativeIdentifierChecker : FirBasicDeclarationChecker() {
+object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     // Also includes characters used by IR mangler (see MangleConstant).
     private val invalidChars = setOf(
         '.', ';', ',', '(', ')', '[', ']', '{', '}', '/', '<', '>',
@@ -37,7 +37,7 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    internal fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
         if (source != null && source.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val text = name.asString()
             val message = when {

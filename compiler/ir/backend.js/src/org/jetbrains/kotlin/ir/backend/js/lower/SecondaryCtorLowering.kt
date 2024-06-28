@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -143,7 +144,9 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
                     ThisUsageReplaceTransformer(
                         constructor.symbol,
                         delegate.symbol,
-                        oldValueParameters.zip(delegate.valueParameters).associate { (old, new) -> old.symbol to new.symbol }
+                        oldValueParameters
+                            .zip(delegate.valueParameters)
+                            .associate { (old, new) -> old.symbol to new.symbol }
                     )
                 )
             }
@@ -159,7 +162,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
 
         override fun visitReturn(expression: IrReturn): IrExpression =
             if (expression.returnTargetSymbol != constructor)
-                expression
+                super.visitReturn(expression)
             else
                 IrReturnImpl(
                     expression.startOffset,
@@ -192,8 +195,8 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
         it.parent = constructor.parent
         it.copyTypeParametersFrom(constructor.parentAsClass)
 
-        it.valueParameters = constructor.valueParameters.map { p -> p.copyTo(it) }
-        it.valueParameters += JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
+        it.valueParameters = constructor.valueParameters.memoryOptimizedMap { p -> p.copyTo(it) }
+        it.valueParameters = it.valueParameters memoryOptimizedPlus JsIrBuilder.buildValueParameter(it, "\$this", constructor.valueParameters.size, type)
     }
 }
 
@@ -214,7 +217,7 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     }.also { factory ->
         factory.parent = constructor.parent
         factory.copyTypeParametersFrom(constructor.parentAsClass)
-        factory.valueParameters += constructor.valueParameters.map { p -> p.copyTo(factory) }
+        factory.valueParameters = factory.valueParameters memoryOptimizedPlus constructor.valueParameters.map { p -> p.copyTo(factory) }
         factory.annotations = constructor.annotations
     }
 }

@@ -25,7 +25,7 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
     }
 
     override fun isCompatibleWithCurrentCompilerVersion(): Boolean {
-        return isCompatibleInternal(INSTANCE_NEXT)
+        return isCompatibleInternal(if (isStrictSemantics) INSTANCE else INSTANCE_NEXT)
     }
 
     fun isCompatible(metadataVersionFromLanguageVersion: JvmMetadataVersion): Boolean {
@@ -59,7 +59,7 @@ class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean)
 
     companion object {
         @JvmField
-        val INSTANCE = JvmMetadataVersion(1, 9, 0)
+        val INSTANCE = JvmMetadataVersion(2, 0, 0)
 
         @JvmField
         val INSTANCE_NEXT = INSTANCE.next()

@@ -4,7 +4,7 @@
  */
 package kotlin.random
 
-import kotlin.native.concurrent.AtomicLong
+import kotlin.concurrent.AtomicLong
 import kotlin.system.getTimeNanos
 
 /**
@@ -12,6 +12,7 @@ import kotlin.system.getTimeNanos
  */
 internal object NativeRandom : Random() {
     private const val MULTIPLIER = 0x5deece66dL
+    @Suppress("DEPRECATION")
     private val _seed = AtomicLong(mult(getTimeNanos()))
 
     /**

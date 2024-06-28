@@ -28,3 +28,16 @@ interface FileAttributeService {
 
     fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>?
 }
+
+
+class DummyFileAttributeService : FileAttributeService {
+    override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
+        return CachedAttributeData(value, 0)
+    }
+
+    override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
+        return null
+    }
+}
+
+

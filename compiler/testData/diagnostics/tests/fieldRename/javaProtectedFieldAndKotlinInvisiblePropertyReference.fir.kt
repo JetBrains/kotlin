@@ -1,4 +1,4 @@
-// FILE: BaseJava.java
+// FILE: base/BaseJava.java
 
 package base;
 
@@ -7,6 +7,10 @@ public class BaseJava {
 
     String b = "";
 }
+
+// FILE: base/DerivedJava.java
+
+package base;
 
 class DerivedJava extends BaseKotlin {
     protected String a = "";
@@ -23,7 +27,7 @@ open class Intermediate : BaseJava() {
 }
 
 class Derived : Intermediate() {
-    fun foo() = this::a // Same package
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> // Same package
 }
 
 private class DerivedFromDerivedJava : DerivedJava() {
@@ -52,18 +56,18 @@ open class IntermediatePublic : BaseJava() {
 
 class Derived : Intermediate() {
     // This should be the first erroneous place (only in K2)
-    fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 
-    fun bar() = a // Non-reference
+    fun bar() = <!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!> // Non-reference
 
-    fun baz() = this::<!UNRESOLVED_REFERENCE!>b<!> // Non-protected
+    fun baz() = this::<!INVISIBLE_REFERENCE!>b<!> // Non-protected
 }
 
 typealias Alias = Intermediate
 
 class DerivedAlias : Alias() {
     // This should be the second erroneous place (only in K2)
-    fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+    fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
 }
 
 fun local() {
@@ -73,7 +77,7 @@ fun local() {
 
     class LocalDerived : LocalIntermediate() {
         // This should be the third and the last erroneous place (only in K2)
-        fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+        fun foo() = this::<!JAVA_FIELD_SHADOWED_BY_KOTLIN_PROPERTY!>a<!>
     }
 }
 
@@ -90,5 +94,5 @@ class DirectlyDerived : BaseJava() {
 }
 
 fun test(d: Derived) {
-    d::<!UNRESOLVED_REFERENCE!>a<!> // Field is also invisible
+    d::<!INVISIBLE_REFERENCE!>a<!> // Field is also invisible
 }

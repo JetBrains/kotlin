@@ -75,7 +75,6 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     isData = false,
                     isValue = false,
                     isInner = false,
-                    isExternal = false,
                     hasEnumEntries = false
                 )
             }
@@ -175,11 +174,12 @@ internal class MockResultsConsumer : ResultsConsumer {
 fun MockNativeManifestDataProvider(
     target: CommonizerTarget,
     uniqueName: String = "mock",
-    versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null, null),
+    versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null),
     dependencies: List<String> = emptyList(),
-    isInterop: Boolean = true,
+    isCInterop: Boolean = true,
     packageFqName: String? = "mock",
     exportForwardDeclarations: List<String> = emptyList(),
+    includedForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
 ): NativeManifestDataProvider = object : NativeManifestDataProvider {
@@ -188,9 +188,10 @@ fun MockNativeManifestDataProvider(
             uniqueName = uniqueName,
             versions = versions,
             dependencies = dependencies,
-            isInterop = isInterop,
+            isCInterop = isCInterop,
             packageFqName = packageFqName,
             exportForwardDeclarations = exportForwardDeclarations,
+            includedForwardDeclarations = includedForwardDeclarations,
             nativeTargets = nativeTargets,
             shortName = shortName,
             commonizerTarget = target,

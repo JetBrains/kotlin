@@ -1,0 +1,69 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+import androidx.compose.runtime.currentComposer
+
+open class Foo {
+    inline val current: Int
+        @Composable
+        @ReadOnlyComposable get() = currentComposer.hashCode()
+
+    @ReadOnlyComposable
+    @Composable
+    fun getHashCode(): Int = currentComposer.hashCode()
+}
+
+@ReadOnlyComposable
+@Composable
+fun getHashCode(): Int = currentComposer.hashCode()
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@StabilityInferred(parameters = 1)
+open class Foo {
+  val current: Int
+    @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
+    get() {
+      sourceInformationMarkerStart(%composer, <>, "CC:Test.kt")
+      val tmp0 = %composer.hashCode()
+      sourceInformationMarkerEnd(%composer)
+      return tmp0
+    }
+  @ReadOnlyComposable
+  @Composable
+  fun getHashCode(%composer: Composer?, %changed: Int): Int {
+    sourceInformationMarkerStart(%composer, <>, "C(getHashCode):Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val tmp0 = %composer.hashCode()
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0
+  }
+  static val %stable: Int = 0
+}
+@ReadOnlyComposable
+@Composable
+fun getHashCode(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(getHashCode):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = %composer.hashCode()
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

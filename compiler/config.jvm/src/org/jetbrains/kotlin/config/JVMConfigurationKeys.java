@@ -70,9 +70,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<File> MODULE_XML_FILE =
             CompilerConfigurationKey.create("path to module.xml");
 
-    public static final CompilerConfigurationKey<String> DECLARATIONS_JSON_PATH =
-            CompilerConfigurationKey.create("path to declarations output");
-
     public static final CompilerConfigurationKey<List<Module>> MODULES =
             CompilerConfigurationKey.create("module data");
 
@@ -148,24 +145,24 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<JvmSerializeIrMode> SERIALIZE_IR =
             CompilerConfigurationKey.create("What functions to serialize as IR to class metadata");
 
-    public static final CompilerConfigurationKey<Boolean> VALIDATE_IR =
-            CompilerConfigurationKey.create("Validate IR");
-
     public static final CompilerConfigurationKey<Boolean> VALIDATE_BYTECODE =
             CompilerConfigurationKey.create("Validate generated JVM bytecode");
 
     public static final CompilerConfigurationKey<Boolean> LINK_VIA_SIGNATURES =
-            CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors");
+            CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors on the K1 frontend");
 
     public static final CompilerConfigurationKey<Boolean> ENABLE_DEBUG_MODE =
             CompilerConfigurationKey.create("Enable debug mode");
-
-    public static final CompilerConfigurationKey<Boolean> IGNORE_CONST_OPTIMIZATION_ERRORS =
-            CompilerConfigurationKey.create("Ignore errors from IrConstTransformer");
 
     public static final CompilerConfigurationKey<Boolean> NO_NEW_JAVA_ANNOTATION_TARGETS =
             CompilerConfigurationKey.create("Do not generate Java 1.8+ targets for Kotlin annotation classes");
 
     public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
             CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_IR_INLINER =
+            CompilerConfigurationKey.create("Enable inlining on IR, instead of inlining on bytecode");
+
+    public static final CompilerConfigurationKey<Boolean> USE_INLINE_SCOPES_NUMBERS =
+            CompilerConfigurationKey.create("Use inline scopes numbers for inline marker variables");
 }

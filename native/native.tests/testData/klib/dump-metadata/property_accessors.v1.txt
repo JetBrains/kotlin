@@ -1,0 +1,76 @@
+library {
+  // module name: <property_accessors.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/A
+
+    // signature: test/A|null[0]
+    public abstract class test/A : kotlin/Any {
+
+      // signature: test/A.<init>|-5645683436151566731[0]
+      public constructor()
+
+      // signature: test/A.a|-1200697420457237799[0]
+      public abstract val a: kotlin/Int
+        // signature: test/A.a.<get-a>|6785176174175479410[0]
+        public abstract get
+
+      // signature: test/A.b|772347207915745207[0]
+      public abstract var b: kotlin/Int
+        // signature: test/A.b.<get-b>|812004636995167743[0]
+        public abstract get
+        // signature: test/A.b.<set-b>|393614520529327556[0]
+        protected abstract /* non-default */ set(<set-?>: kotlin/Int)
+
+      // signature: test/A.c|-4416962153448040627[0]
+      public final val c: kotlin/Int
+        // signature: test/A.c.<get-c>|2368736057102379596[0]
+        public final get
+
+      // signature: test/A.d|5174763769109925331[0]
+      public final val d: kotlin/Int
+        // signature: test/A.d.<get-d>|-6701718004621354461[0]
+        public final /* non-default */ get
+
+      // signature: test/A.e|-5812214850253973038[0]
+      public final var e: kotlin/Int
+        // signature: test/A.e.<get-e>|-6737887868742748227[0]
+        public final /* non-default */ get
+        // signature: test/A.e.<set-e>|352344213206183027[0]
+        public final /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.f|4026638760133205152[0]
+      public final var f: kotlin/Int
+        // signature: test/A.f.<get-f>|2894053160377864677[0]
+        public final get
+        // signature: test/A.f.<set-f>|3759249595734875908[0]
+        private final /* non-default */ set(<set-?>: kotlin/Int)
+
+      // signature: test/A.g|417398068120208694[0]
+      public open val g: kotlin/Int
+        // signature: test/A.g.<get-g>|-4721857388746086614[0]
+        public open get
+
+      // signature: test/A.h|1569348114433471852[0]
+      public open val h: kotlin/Int
+        // signature: test/A.h.<get-h>|2790317730163551900[0]
+        public open /* non-default */ get
+
+      // signature: test/A.k|2162811783424158931[0]
+      public open var k: kotlin/Int
+        // signature: test/A.k.<get-k>|2619553883593572199[0]
+        public open /* non-default */ get
+        // signature: test/A.k.<set-k>|5348632633861416145[0]
+        public open /* non-default */ set(value: kotlin/Int)
+
+      // signature: test/A.l|3307215303229595169[0]
+      public open var l: kotlin/Int
+        // signature: test/A.l.<get-l>|3795442967620585[0]
+        public open get
+        // signature: test/A.l.<set-l>|2538976218320322727[0]
+        protected open /* non-default */ set(<set-?>: kotlin/Int)
+    }
+  }
+}

@@ -1,0 +1,148 @@
+@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(receiver type ), R|second/constant|))  ERROR CLASS: Symbol not found for Pair
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested right receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), R|second/constant|))  F>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested nested right receiver type ), R|second/constant|))  F
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested left receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested left receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested left receiver type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String
+  context -> FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested bound ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass, FirPropertySymbol second/AbstractClass.resolveMe]
+
+@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>
+  context -> FirTypeParameterSymbol F from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String
+  context -> FirTypeParameterSymbol F from FirPropertySymbol second/SubClass.resolveMe
+  anchor -> [FirRegularClassSymbol second/SubClass]
+
+
+TARGET: @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=second/AbstractClass.resolveMe] var <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(STATUS)] F : R|@R|second/Anno|(position = <strcat>(String(bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) @R|second/Anno|[Types](position = <strcat>(String(receiver type ), R|second/constant|)) <ERROR TYPE REF: Symbol not found for Pair>.resolveMe: R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|
+    @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|
+    @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] set([ResolvedTo(STATUS)] value: R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  @R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>>|): R|kotlin/Unit|
+FILE: [ResolvedTo(IMPORTS)] propertyScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-propertyScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+        }
+
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class SubClass : R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|second/SubClass| {
+                LAZY_super<R|second/AbstractClass<@R|second/Anno|(position = <strcat>(String(type argument: ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested type argument: ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested type argument: ), R|second/constant|))  kotlin/String>>>|>
+            }
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|second/AbstractClass<T>| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] var <@R|second/Anno|[Types](position = <strcat>(String(type param ), R|second/constant|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|second/Anno|(position = <strcat>(String(bound ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested bound ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested bound ), R|second/constant|))  T>>|> @RECEIVER:R|second/Anno|[Types](position = <strcat>(String(receiver ), R|second/constant|)) @R|second/Anno|[Types](position = <strcat>(String(receiver type ), R|second/constant|)) <ERROR TYPE REF: Symbol not found for Pair>.resolveMe: R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  T>>|
+                @PROPERTY_GETTER:R|second/Anno|[Types](position = <strcat>(String(get ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] get(): R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  T>>|
+                @PROPERTY_SETTER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=AbstractClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|second/Anno|[Types](position = <strcat>(String(set ), R|second/constant|)) value: R|@R|second/Anno|(position = <strcat>(String(return type ), R|second/constant|))  kotlin/collections/List<@R|second/Anno|(position = <strcat>(String(nested return type ), R|second/constant|))  kotlin/collections/Collection<@R|second/Anno|(position = <strcat>(String(nested nested return type ), R|second/constant|))  T>>|): R|kotlin/Unit|
+
+        }
+

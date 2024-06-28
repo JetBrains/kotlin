@@ -9,8 +9,14 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:fir:fir2ir"))
 
-    testApiJUnit5(vintageEngine = true, runner = true, suiteApi = true)
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.platform.runner)
+    testImplementation(libs.junit.platform.suite.api)
+    runtimeOnly(libs.junit.vintage.engine)
 
     testImplementation(intellijCore())
 }
@@ -28,7 +34,8 @@ fun Project.codegenTest(
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> = projectTest(
     taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-    jUnitMode = JUnitMode.JUnit5
+    jUnitMode = JUnitMode.JUnit5,
+    maxMetaspaceSizeMb = 1024
 ) {
     dependsOn(":dist")
     workingDir = rootDir

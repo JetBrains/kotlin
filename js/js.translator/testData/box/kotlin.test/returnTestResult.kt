@@ -1,6 +1,11 @@
 // EXPECTED_REACHABLE_NODES: 1737
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
+// RUN_UNIT_TESTS
+
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ @Suppress("INVISIBLE_MEMBER") in _common.kt
+
 import common.*
 import kotlin.test.Test
 import kotlin.test.BeforeTest

@@ -1,3 +1,5 @@
+// LANGUAGE: +MultiPlatformProjects
+
 // FILE: B.kt
 
 package b.d

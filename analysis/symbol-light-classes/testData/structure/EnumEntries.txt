@@ -14,42 +14,24 @@ KtClass:
       ClsClassImpl: Object (java.lang.Object)
     ]
 
-KtEnumEntry:
-  line: 6
-  name: FirstEntry
-  qualifier: one.two.EnumEntries.FirstEntry
-  light: null
-
-KtEnumEntry:
-  line: 7
-  name: SecondEntryWithBody
-  qualifier: one.two.EnumEntries.SecondEntryWithBody
-  light: SymbolLightClassForEnumEntry
-    name: SecondEntryWithBody
-    qualifier: one.two.EnumEntries.SecondEntryWithBody
-    superTypes: [
-      PsiType:EnumEntries
-    ]
-    superClass: SymbolLightClassForClassOrObject: EnumEntries (one.two.EnumEntries)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: EnumEntries (one.two.EnumEntries)
-    ]
-
 KtClass:
-  line: 5
-  name: EnumEntries
-  qualifier: one.two.EnumEntries
+  line: 14
+  name: EnumClassWithInterface
+  qualifier: one.two.EnumClassWithInterface
   light: SymbolLightClassForClassOrObject
-    name: EnumEntries
-    qualifier: one.two.EnumEntries
+    name: EnumClassWithInterface
+    qualifier: one.two.EnumClassWithInterface
     superTypes: [
-      PsiType:Enum<EnumEntries>
+      PsiType:Enum<EnumClassWithInterface>
+      PsiType:BaseInterface
     ]
     superClass: ClsClassImpl: Enum (java.lang.Enum)
-    interfaces: []
+    interfaces: [
+      SymbolLightClassForInterface: BaseInterface (one.two.BaseInterface)
+    ]
     supers: [
       ClsClassImpl: Enum (java.lang.Enum)
+      SymbolLightClassForInterface: BaseInterface (one.two.BaseInterface)
     ]
 
 KtEnumEntry:
@@ -75,22 +57,40 @@ KtEnumEntry:
     ]
 
 KtClass:
-  line: 14
-  name: EnumClassWithInterface
-  qualifier: one.two.EnumClassWithInterface
+  line: 5
+  name: EnumEntries
+  qualifier: one.two.EnumEntries
   light: SymbolLightClassForClassOrObject
-    name: EnumClassWithInterface
-    qualifier: one.two.EnumClassWithInterface
+    name: EnumEntries
+    qualifier: one.two.EnumEntries
     superTypes: [
-      PsiType:Enum<EnumClassWithInterface>
-      PsiType:BaseInterface
+      PsiType:Enum<EnumEntries>
     ]
     superClass: ClsClassImpl: Enum (java.lang.Enum)
-    interfaces: [
-      SymbolLightClassForInterface: BaseInterface (one.two.BaseInterface)
-    ]
+    interfaces: []
     supers: [
       ClsClassImpl: Enum (java.lang.Enum)
-      SymbolLightClassForInterface: BaseInterface (one.two.BaseInterface)
+    ]
+
+KtEnumEntry:
+  line: 6
+  name: FirstEntry
+  qualifier: one.two.EnumEntries.FirstEntry
+  light: null
+
+KtEnumEntry:
+  line: 7
+  name: SecondEntryWithBody
+  qualifier: one.two.EnumEntries.SecondEntryWithBody
+  light: SymbolLightClassForEnumEntry
+    name: SecondEntryWithBody
+    qualifier: one.two.EnumEntries.SecondEntryWithBody
+    superTypes: [
+      PsiType:EnumEntries
+    ]
+    superClass: SymbolLightClassForClassOrObject: EnumEntries (one.two.EnumEntries)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: EnumEntries (one.two.EnumEntries)
     ]
 

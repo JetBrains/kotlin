@@ -1,0 +1,17 @@
+fun noGenerics_InterfaceWithFun()
+
+override fun withOuterGeneric_InterfaceWithFun(): test.SomeClass2
+
+fun noGenerics_InterfaceWithFunBase()
+
+override fun withOuterGenericT1_InterfaceWithFunBase(): test.SomeClass1
+
+override fun withOuterGenericT2_InterfaceWithFunBase(): test.SomeClass2
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String
+
+constructor()

@@ -1,3 +1,0 @@
-Resolved to:
-0: (in JavaClass) open fun setSomething(value: kotlin.Int)
-1: (in JavaClass) var JavaClass.something: kotlin.Int

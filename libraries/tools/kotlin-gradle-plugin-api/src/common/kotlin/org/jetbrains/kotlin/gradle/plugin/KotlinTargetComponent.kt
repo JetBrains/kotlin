@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.SoftwareComponent
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean

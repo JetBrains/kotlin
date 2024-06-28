@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 
@@ -96,18 +98,14 @@ public class CodegenBinding {
 
     public static void initTrace(@NotNull GenerationState state, Collection<KtFile> files) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
-        for (KtFile file : allFilesInPackages(state.getBindingContext(), files)) {
-            file.accept(visitor);
-            if (file instanceof KtCodeFragment) {
-                PsiElement context = file.getContext();
-                if (context != null) {
-                    PsiFile contextFile = context.getContainingFile();
-                    if (contextFile != null) {
-                        contextFile.accept(visitor);
-                    }
-                }
-            }
-        }
+        Collection<KtFile> allFiles = allFilesInPackages(state.getBindingContext(), files);
+        Stream<PsiFile> codeFragmentFiles = allFiles.stream()
+                .filter(file -> file instanceof KtCodeFragment)
+                .map(file -> {
+                    PsiFile contextFile = ((KtCodeFragment) file).getContextContainingFile();
+                    return contextFile != null ? contextFile : file;
+                });
+        Stream.concat(allFiles.stream(), codeFragmentFiles).distinct().forEach(file -> file.accept(visitor));
     }
 
     public static boolean enumEntryNeedSubclass(BindingContext bindingContext, KtEnumEntry enumEntry) {

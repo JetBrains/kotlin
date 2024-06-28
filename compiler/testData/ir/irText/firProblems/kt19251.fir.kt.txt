@@ -7,5 +7,5 @@ fun box(): String {
   return map.computeIfAbsent(p0 = fn, p1 = local fun <anonymous>(it: @EnhancedNullability Fun): @EnhancedNullability String {
     return "OK"
   }
- /*as Function1<@EnhancedNullability Any?, @EnhancedNullability String> */ /*-> @EnhancedNullability Function<Any?, @EnhancedNullability String> */) /*!! String */
+ /*as Function1<@EnhancedNullability Any?, @EnhancedNullability String> */ /*-> Function<Any?, @EnhancedNullability String> */) /*!! String */
 }

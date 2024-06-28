@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.parcelize
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -16,6 +14,7 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -23,37 +22,44 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 
 class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
     companion object {
-        fun registerParcelizeComponents(extensionStorage: ExtensionStorage, useFir: Boolean) = with(extensionStorage) {
-            ExpressionCodegenExtension.registerExtension(ParcelizeCodegenExtension())
+        fun registerParcelizeComponents(
+            extensionStorage: ExtensionStorage,
+            additionalAnnotation: List<String>,
+            useFir: Boolean
+        ) = with(extensionStorage) {
+            val parcelizeAnnotations = ParcelizeNames.PARCELIZE_CLASS_FQ_NAMES.toMutableList()
+            additionalAnnotation.mapTo(parcelizeAnnotations) { FqName(it) }
             if (useFir) {
-                IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension())
+                IrGenerationExtension.registerExtension(ParcelizeFirIrGeneratorExtension(parcelizeAnnotations))
             } else {
-                IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension())
+                IrGenerationExtension.registerExtension(ParcelizeIrGeneratorExtension(parcelizeAnnotations))
             }
-            SyntheticResolveExtension.registerExtension(ParcelizeResolveExtension())
-            ClassBuilderInterceptorExtension.registerExtension(ParcelizeClinitClassBuilderInterceptorExtension())
-            StorageComponentContainerContributor.registerExtension(ParcelizeDeclarationCheckerComponentContainerContributor())
-            FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar())
+            SyntheticResolveExtension.registerExtension(ParcelizeResolveExtension(parcelizeAnnotations))
+            StorageComponentContainerContributor.registerExtension(ParcelizeDeclarationCheckerComponentContainerContributor(parcelizeAnnotations))
+            FirExtensionRegistrarAdapter.registerExtension(FirParcelizeExtensionRegistrar(parcelizeAnnotations))
         }
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        registerParcelizeComponents(this, configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+        val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
+        registerParcelizeComponents(this, additionalAnnotation, configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
     }
 
     override val supportsK2: Boolean
         get() = true
 }
 
-class ParcelizeDeclarationCheckerComponentContainerContributor : StorageComponentContainerContributor {
+class ParcelizeDeclarationCheckerComponentContainerContributor(
+    private val parcelizeAnnotations: List<FqName>
+) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer,
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor,
     ) {
         if (platform.isJvm()) {
-            container.useInstance(ParcelizeDeclarationChecker())
-            container.useInstance(ParcelizeAnnotationChecker())
+            container.useInstance(ParcelizeDeclarationChecker(parcelizeAnnotations))
+            container.useInstance(ParcelizeAnnotationChecker(parcelizeAnnotations))
         }
     }
 }

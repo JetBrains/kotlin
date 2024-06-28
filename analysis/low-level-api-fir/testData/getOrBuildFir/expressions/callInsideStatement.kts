@@ -1,0 +1,27 @@
+class Builder {
+    var version: String = ""
+
+    fun execute() {
+        println(version)
+    }
+}
+
+fun build(action: Builder.() -> Unit) = Builder().apply(action)
+
+build {
+    version = "123"
+    class A {
+        fun doo() {
+
+        }
+    }
+
+    <expr>execute()</expr>
+}
+
+val builder = build {
+    version = "321"
+}
+
+builder.execute()
+builder.version = ""

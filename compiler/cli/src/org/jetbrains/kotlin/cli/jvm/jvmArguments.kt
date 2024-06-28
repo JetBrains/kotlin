@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val value =
             when (releaseTargetArg) {
                 "1.6" -> 6
+                "1.7" -> 7
                 "1.8" -> 8
                 else -> releaseTargetArg.toIntOrNull()
             }
@@ -41,18 +42,29 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             if (value != getJavaVersion() || arguments.jdkHome != null) {
                 put(JVMConfigurationKeys.JDK_RELEASE, value)
             }
-            if (jvmTargetArg != null && jvmTargetArg != releaseTargetArg) {
+            if (jvmTargetArg != null && !isCompatibleJvmTargetAndRelease(jvmTargetArg, releaseTargetArg)) {
+                val suggestion =
+                    if (value < 8) "Please change the value of the 'jvm-target' option to 1.8"
+                    else "Please remove the '-jvm-target' option"
                 messageCollector.report(
                     ERROR,
-                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. " +
-                            "Please remove the '-jvm-target' option"
+                    "'-Xjdk-release=$releaseTargetArg' option conflicts with '-jvm-target $jvmTargetArg'. $suggestion"
                 )
             }
         }
     }
 
     val jvmTargetValue = when (releaseTargetArg) {
-        "6" -> "1.6"
+        "6", "1.6", "7", "1.7" -> {
+            if (jvmTargetArg == null) {
+                messageCollector.report(
+                    ERROR,
+                    "'-Xjdk-release=$releaseTargetArg' option requires JVM target explicitly set to 1.8. " +
+                            "Please specify the '-jvm-target' option"
+                )
+            }
+            jvmTargetArg
+        }
         "8" -> "1.8"
         null -> jvmTargetArg
         else -> releaseTargetArg
@@ -70,28 +82,12 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown JVM target version: $jvmTargetValue\n" +
-                        "Supported versions: ${JvmTarget.values().joinToString { it.description }}"
+                        "Supported versions: ${JvmTarget.supportedValues().joinToString { it.description }}"
             )
         }
     }
 
-    val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
-    if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
-        if (jvmDefaultMode.forAllMethodsWithBody) {
-            messageCollector.report(
-                ERROR,
-                "'-Xjvm-default=${jvmDefaultMode.description}' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'"
-            )
-        }
-    }
-
-    if (jvmDefaultMode == JvmDefaultMode.ENABLE || jvmDefaultMode == JvmDefaultMode.ENABLE_WITH_DEFAULT_IMPLS) {
-        messageCollector.report(
-            WARNING,
-            "'-Xjvm-default=${jvmDefaultMode.description}' is deprecated, please use '-Xjvm-default=all|all-compatibility'"
-        )
-    }
 
     val stringConcat = arguments.stringConcat
     if (stringConcat != null) {
@@ -107,41 +103,42 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         } else {
             messageCollector.report(
                 ERROR, "Unknown `-Xstring-concat` mode: $stringConcat\n" +
-                        "Supported modes: ${JvmStringConcat.values().joinToString { it.description }}"
+                        "Supported modes: ${JvmStringConcat.entries.joinToString { it.description }}"
             )
         }
     }
 
-    handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS, jvmTarget)
-    handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS, jvmTarget)
+    handleClosureGenerationSchemeArgument("-Xsam-conversions", arguments.samConversions, JVMConfigurationKeys.SAM_CONVERSIONS)
+    handleClosureGenerationSchemeArgument("-Xlambdas", arguments.lambdas, JVMConfigurationKeys.LAMBDAS)
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
+}
+
+private fun isCompatibleJvmTargetAndRelease(jvmTarget: String, release: String): Boolean {
+    if (jvmTarget == "1.8") {
+        // This is needed to be able to compile stdlib with -jvm-target 1.8 and -Xjdk-release=1.6/1.7.
+        return release in listOf("6", "1.6", "7", "1.7", "8", "1.8")
+    }
+
+    return jvmTarget == release
 }
 
 private fun CompilerConfiguration.handleClosureGenerationSchemeArgument(
     flag: String,
     value: String?,
     key: CompilerConfigurationKey<JvmClosureGenerationScheme>,
-    jvmTarget: JvmTarget
 ) {
-    if (value != null) {
-        val parsedValue = JvmClosureGenerationScheme.fromString(value)
-        if (parsedValue != null) {
-            put(key, parsedValue)
-            if (jvmTarget < parsedValue.minJvmTarget) {
-                messageCollector.report(
-                    WARNING,
-                    "`$flag=$value` requires JVM target at least " +
-                            "${parsedValue.minJvmTarget.description} and is ignored."
-                )
-            }
-        } else {
-            messageCollector.report(
-                ERROR,
-                "Unknown `$flag` argument: ${value}\n." +
-                        "Supported arguments: ${JvmClosureGenerationScheme.values().joinToString { it.description }}"
-            )
-        }
+    if (value == null) return
+
+    val parsedValue = JvmClosureGenerationScheme.fromString(value)
+    if (parsedValue != null) {
+        put(key, parsedValue)
+    } else {
+        messageCollector.report(
+            ERROR,
+            "Unknown `$flag` argument: ${value}\n." +
+                    "Supported arguments: ${JvmClosureGenerationScheme.entries.joinToString { it.description }}"
+        )
     }
 }
 
@@ -164,12 +161,16 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
         messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
     } else {
-        val javaHome = File(System.getProperty("java.home"))
-        messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
-        put(JVMConfigurationKeys.JDK_HOME, javaHome)
+        configureJdkHomeFromSystemProperty()
     }
 
     return true
+}
+
+fun CompilerConfiguration.configureJdkHomeFromSystemProperty() {
+    val javaHome = File(System.getProperty("java.home"))
+    messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+    put(JVMConfigurationKeys.JDK_HOME, javaHome)
 }
 
 fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompilerArguments) {
@@ -258,14 +259,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    // TODO: ignore previous configuration value when we do not need old backend in scripting by default
-    val useOldBackend = arguments.useOldBackend || (!arguments.useIR && get(JVMConfigurationKeys.IR) == false)
-    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 ||
-            if (languageVersionSettings.supportsFeature(LanguageFeature.JvmIrEnabledByDefault)) {
-                !useOldBackend
-            } else {
-                arguments.useIR && !useOldBackend
-            }
+    val useOldBackend = arguments.useOldBackend
+    val useIR = arguments.useK2 || languageVersionSettings.languageVersion.usesK2 || !useOldBackend
 
     messageCollector.report(LOGGING, "Using ${if (useIR) "JVM IR" else "old JVM"} backend")
 
@@ -276,7 +271,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
         if (abiStability == null) {
             messageCollector.report(
                 ERROR,
-                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
+                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.entries.map { it.description }}"
             )
         } else if (!useIR && abiStability == JvmAbiStability.UNSTABLE) {
             messageCollector.report(ERROR, "-Xabi-stability=unstable is not supported in the old JVM backend")
@@ -299,22 +294,22 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.fromString(arguments.serializeIr))
 
-    put(JVMConfigurationKeys.VALIDATE_IR, arguments.validateIr)
     put(JVMConfigurationKeys.VALIDATE_BYTECODE, arguments.validateBytecode)
 
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
 
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
-    put(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
     put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, arguments.oldInnerClassesLogic)
+    put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
+    put(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS, arguments.useInlineScopesNumbers)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)
     if (assertionsMode == null) {
         messageCollector.report(
             ERROR,
-            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.values().map { it.description }}"
+            "Unknown assertions mode: ${arguments.assertionsMode}, supported modes: ${JVMAssertionsMode.entries.map { it.description }}"
         )
     }
     put(JVMConfigurationKeys.ASSERTIONS_MODE, assertionsMode ?: JVMAssertionsMode.DEFAULT)
@@ -339,8 +334,6 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     if (arguments.enableJvmPreview) {
         messageCollector.report(INFO, "Using preview Java language features")
     }
-
-    arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads, messageCollector)
     val nThreads = if (nThreadsRaw == 0) Runtime.getRuntime().availableProcessors() else nThreadsRaw
@@ -367,9 +360,6 @@ fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) 
     val libraries = arguments.klibLibraries ?: return
     put(JVMConfigurationKeys.KLIB_PATHS, libraries.split(File.pathSeparator.toRegex()).filterNot(String::isEmpty))
 }
-
-private val CompilerConfiguration.messageCollector: MessageCollector
-    get() = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
 private fun getJavaVersion(): Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6

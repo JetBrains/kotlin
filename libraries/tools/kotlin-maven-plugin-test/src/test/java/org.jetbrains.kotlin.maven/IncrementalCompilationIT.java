@@ -50,7 +50,7 @@ public class IncrementalCompilationIT extends MavenITBase {
 
         project.exec("package")
                .failed()
-               .contains("Cannot access 'A': it is private in file");
+               .contains("Cannot access 'class A : Any': it is private in file");
 
         MavenTestUtils.replaceFirstInFile(aKt, replacement, original);
         project.exec("package")

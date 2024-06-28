@@ -20,6 +20,11 @@ internal fun throwISE(message: String) {
     throw IllegalStateException(message)
 }
 
+@JsName("throwIAE")
+internal fun throwIAE(message: String) {
+    throw IllegalArgumentException(message)
+}
+
 @JsName("throwUPAE")
 internal fun throwUPAE(propertyName: String) {
     throw UninitializedPropertyAccessException("lateinit property ${propertyName} has not been initialized")

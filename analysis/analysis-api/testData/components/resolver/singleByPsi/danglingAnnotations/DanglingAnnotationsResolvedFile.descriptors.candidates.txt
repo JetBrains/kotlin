@@ -1,0 +1,29 @@
+KtNameReferenceExpression(49,56): 'JvmName'
+  KaApplicableCallCandidateInfo:
+    candidate = KaAnnotationCall:
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.jvm.JvmName
+          symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
+          valueParameters = [
+            KaVariableSignature:
+              name = name
+              receiverType = null
+              returnType = kotlin.String
+              symbol = name: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        "" -> (KaVariableSignature:
+          name = name
+          receiverType = null
+          returnType = kotlin.String
+          symbol = name: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true

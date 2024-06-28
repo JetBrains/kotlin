@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,101 +19,101 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class AllPlatforms extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAllPlatforms() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-
-        @TestMetadata("touchActual")
-        public void testTouchActual() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
-        }
-
-        @TestMetadata("touchExpect")
-        public void testTouchExpect() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class TouchActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInTouchActual() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class TouchExpect extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInTouchExpect() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
+  @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class AllPlatforms extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly")
+    public void testAllFilesPresentInAllPlatforms() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+    }
+
+    @TestMetadata("touchActual")
+    public void testTouchActual() {
+      runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
+    }
+
+    @TestMetadata("touchExpect")
+    public void testTouchExpect() {
+      runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
+    }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmOnly extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
+    public static class TouchActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
 
-        public void testAllFilesPresentInJvmOnly() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-
-        @TestMetadata("multifilePartChanged")
-        public void testMultifilePartChanged() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged/");
-        }
-
-        @TestMetadata("optionalExpectationWithActual")
-        public void testOptionalExpectationWithActual() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual/");
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class MultifilePartChanged extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInMultifilePartChanged() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class OptionalExpectationWithActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInOptionalExpectationWithActual() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
+      public void testAllFilesPresentInTouchActual() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+      }
     }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TouchExpect extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInTouchExpect() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
+      }
+    }
+  }
+
+  @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class JvmOnlyK1 extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInJvmOnlyK1() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1"), Pattern.compile("^([^\\.]+)$"), null, true);
+    }
+
+    @TestMetadata("multifilePartChanged")
+    public void testMultifilePartChanged() {
+      runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged/");
+    }
+
+    @TestMetadata("optionalExpectationWithActual")
+    public void testOptionalExpectationWithActual() {
+      runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual/");
+    }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultifilePartChanged extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInMultifilePartChanged() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+      }
+    }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OptionalExpectationWithActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInOptionalExpectationWithActual() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+      }
+    }
+  }
 }

@@ -167,7 +167,7 @@ public actual fun readlnOrNull(): String? = readLine()
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
-fun readLine(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
+public fun readLine(): String? = LineReader.readLine(System.`in`, Charset.defaultCharset())
 
 // Singleton object lazy initializes on the first use, internal for tests
 internal object LineReader {

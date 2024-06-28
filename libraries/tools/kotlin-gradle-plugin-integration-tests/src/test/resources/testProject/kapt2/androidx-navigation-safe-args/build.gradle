@@ -17,6 +17,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs'
 
 android {
+    namespace "test.androidx.navigation"
     compileSdkVersion 28
     defaultConfig {
         applicationId 'test.androidx.navigation'
@@ -32,9 +33,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
 
     dexOptions {
@@ -58,9 +58,6 @@ android {
 repositories {
     mavenLocal()
     maven { url 'https://maven.google.com' }
-    maven {
-        url 'https://oss.jfrog.org/artifactory/oss-snapshot-local'
-    }
     mavenCentral()
 }
 

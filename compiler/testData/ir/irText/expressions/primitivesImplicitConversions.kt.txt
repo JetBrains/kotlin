@@ -22,6 +22,19 @@ val test6: Byte
   field = -42B
   get
 
+class TestImplicitArguments {
+  val x: Long
+    field = x
+    get
+
+  constructor(x: Long = 1.unaryMinus()) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
 fun test() {
   val test1: Int? = 42
   val test2: Long = 42L
@@ -35,15 +48,3 @@ fun test() {
 fun testImplicitArguments(x: Long = 1.unaryMinus()) {
 }
 
-class TestImplicitArguments {
-  constructor(x: Long = 1.unaryMinus()) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-  val x: Long
-    field = x
-    get
-
-}

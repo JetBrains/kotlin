@@ -1,0 +1,138 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class A : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract @interface A {
+}
+
+////////////////////
+
+
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // signature: foo()I
+ *   public abstract fun foo(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface I {
+
+    public abstract int foo();
+}
+
+////////////////////
+
+
+@A()
+/**
+ * public final data class R<T#0 (* T *)> : I, java/lang/Record {
+ *
+ *   // signature: <init>(ILjava/lang/Object;)V
+ *   public constructor(x: kotlin/Int, y: T#0)
+ *
+ *   // signature: <init>(Ljava/lang/Object;)V
+ *   public (* secondary *) constructor(y: T#0)
+ *
+ *   // signature: component1()I
+ *   public final (* synthesized *) operator fun component1(): kotlin/Int
+ *
+ *   // signature: component2()Ljava/lang/Object;
+ *   public final (* synthesized *) operator fun component2(): T#0
+ *
+ *   // signature: copy(ILjava/lang/Object;)LR;
+ *   public final (* synthesized *) fun copy(x: kotlin/Int (* = ... *), y: T#0 (* = ... *)): R<T#0>
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: foo()I
+ *   public open fun foo(): kotlin/Int
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: x:I
+ *   // getter: x()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   // field: y:Ljava/lang/Object;
+ *   // getter: y()Ljava/lang/Object;
+ *   public final val y: T#0
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@kotlin.jvm.JvmRecord()
+public final class R<T extends java.lang.Object> extends java.lang.Record implements I {
+    private final int x = 0;
+    private final T y = null;
+
+    public R(@A()
+    int x, T y) {
+        super();
+    }
+
+    public final int x() {
+        return 0;
+    }
+
+    public final T y() {
+        return null;
+    }
+
+    public R(T y) {
+        super();
+    }
+
+    @java.lang.Override()
+    public int foo() {
+        return 0;
+    }
+
+    public final int component1() {
+        return 0;
+    }
+
+    public final T component2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final R<T> copy(@A()
+    int x, T y) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object other) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int hashCode() {
+        return 0;
+    }
+
+    @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.String toString() {
+        return null;
+    }
+}

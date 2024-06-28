@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
-import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.diagnostics.findDescendantByType
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode> {
-    val children = Ref<Array<LighterASTNode?>>()
-    val count = tree.getChildren(this, children)
-    return if (count > 0) children.get().filterNotNull() else emptyList()
-}
-
-/**
- * Returns the visibility by given KtModifierList
- */
-fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibilityOrNull()
 
 /**
  * Returns Visibility by token or null
@@ -37,4 +27,27 @@ fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
         KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
         else -> null
     }
+}
+
+/**
+ * Locates first [CONTEXT_RECEIVER_LIST] and returns position in source.
+ */
+fun KtSourceElement.findContextReceiverListSource(): KtLightSourceElement? {
+    if (this.lighterASTNode.tokenType == KtNodeTypes.CONTEXT_RECEIVER_LIST)
+        return this.lighterASTNode.toKtLightSourceElement(treeStructure)
+
+    return treeStructure.findDescendantByType(
+        lighterASTNode,
+        KtNodeTypes.CONTEXT_RECEIVER_LIST,
+        false
+    )?.toKtLightSourceElement(treeStructure)
+}
+
+internal fun KtSourceElement.delegatedPropertySourceOrThis(context: CheckerContext): KtSourceElement {
+    if (kind == KtFakeSourceElementKind.DelegatedPropertyAccessor) {
+        val property = context.containingDeclarations.lastIsInstanceOrNull<FirProperty>()
+        property?.delegate?.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)?.let { return it }
+    }
+
+    return this
 }

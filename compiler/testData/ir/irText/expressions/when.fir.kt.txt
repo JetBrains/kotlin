@@ -7,20 +7,6 @@ object A {
 
 }
 
-fun testWithSubject(x: Any?): String {
-  return { // BLOCK
-    val tmp0_subject: Any? = x
-    when {
-      EQEQ(arg0 = tmp0_subject, arg1 = null) -> "null"
-      EQEQ(arg0 = tmp0_subject, arg1 = A) -> "A"
-      tmp0_subject is String -> "String"
-      tmp0_subject !is Number -> "!Number"
-      setOf<Nothing>().contains<Number>(element = tmp0_subject /*as Number */) -> "nothingness?"
-      else -> "something"
-    }
-  }
-}
-
 fun test(x: Any?): String {
   return when {
     EQEQ(arg0 = x, arg1 = null) -> "null"
@@ -34,30 +20,44 @@ fun test(x: Any?): String {
 
 fun testComma(x: Int): String {
   return { // BLOCK
-    val tmp1_subject: Int = x
+    val tmp_0: Int = x
     when {
       when {
         when {
-          EQEQ(arg0 = tmp1_subject, arg1 = 1) -> true
-          else -> EQEQ(arg0 = tmp1_subject, arg1 = 2)
+          EQEQ(arg0 = tmp_0, arg1 = 1) -> true
+          else -> EQEQ(arg0 = tmp_0, arg1 = 2)
         } -> true
         else -> when {
-          EQEQ(arg0 = tmp1_subject, arg1 = 3) -> true
-          else -> EQEQ(arg0 = tmp1_subject, arg1 = 4)
+          EQEQ(arg0 = tmp_0, arg1 = 3) -> true
+          else -> EQEQ(arg0 = tmp_0, arg1 = 4)
         }
       } -> "1234"
       when {
-        EQEQ(arg0 = tmp1_subject, arg1 = 5) -> true
+        EQEQ(arg0 = tmp_0, arg1 = 5) -> true
         else -> when {
-          EQEQ(arg0 = tmp1_subject, arg1 = 6) -> true
-          else -> EQEQ(arg0 = tmp1_subject, arg1 = 7)
+          EQEQ(arg0 = tmp_0, arg1 = 6) -> true
+          else -> EQEQ(arg0 = tmp_0, arg1 = 7)
         }
       } -> "567"
       when {
-        EQEQ(arg0 = tmp1_subject, arg1 = 8) -> true
-        else -> EQEQ(arg0 = tmp1_subject, arg1 = 9)
+        EQEQ(arg0 = tmp_0, arg1 = 8) -> true
+        else -> EQEQ(arg0 = tmp_0, arg1 = 9)
       } -> "89"
       else -> "?"
+    }
+  }
+}
+
+fun testWithSubject(x: Any?): String {
+  return { // BLOCK
+    val tmp_1: Any? = x
+    when {
+      EQEQ(arg0 = tmp_1, arg1 = null) -> "null"
+      EQEQ(arg0 = tmp_1, arg1 = A) -> "A"
+      tmp_1 is String -> "String"
+      tmp_1 !is Number -> "!Number"
+      setOf<Nothing>().contains<Number>(element = tmp_1 /*as Number */) -> "nothingness?"
+      else -> "something"
     }
   }
 }

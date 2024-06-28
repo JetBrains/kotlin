@@ -11,6 +11,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLITool
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -60,7 +61,10 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
     private val outklib: String
         get() = tmpdir.resolve("out.klib").absolutePath
 
-    private fun runTest(compiler: CLITool<*>, src: TestKtFile, libs: String, outFile: String, extras: List<String> = emptyList()) {
+    private fun runTest(
+        compiler: CLITool<*>, src: TestKtFile, libs: String, outFile: String, extras: List<String> = emptyList(),
+        messageRenderer: MessageRenderer? = null,
+    ) {
         val mainKt = tmpdir.resolve(src.name).apply {
             writeText(src.content)
         }
@@ -71,9 +75,10 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             "-libraries", libs,
             "-ir-output-dir", outputFile.parentFile.path,
             "-ir-output-name", outputFile.nameWithoutExtension,
+            "-language-version", "1.9",
             mainKt.absolutePath
         )
-        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
+        CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras, messageRenderer)
     }
 
     fun testShouldNotGenerateCodeJs() {

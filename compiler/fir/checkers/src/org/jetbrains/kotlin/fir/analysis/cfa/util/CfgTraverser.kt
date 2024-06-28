@@ -7,55 +7,41 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 
-enum class TraverseDirection {
-    Forward, Backward
-}
+val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
+    get() = previousNodes.filter {
+        val kind = edgeFrom(it).kind
+        kind.usedInCfa && (this.isDead || !kind.isDead)
+    }
 
-fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
-    direction: TraverseDirection,
-    visitor: PathAwareControlFlowGraphVisitor<I>,
-): Map<CFGNode<*>, PathAwareControlFlowInfo<I>> {
-    val nodeMap = HashMap<CFGNode<*>, PathAwareControlFlowInfo<I>>()
-    var shouldContinue: Boolean
-    do {
-        shouldContinue = collectDataForNodeInternal(direction, visitor, nodeMap)
-    } while (shouldContinue)
+fun <K : Any, V : Any> ControlFlowGraph.traverseToFixedPoint(
+    visitor: PathAwareControlFlowGraphVisitor<K, V>,
+): Map<CFGNode<*>, PathAwareControlFlowInfo<K, V>> {
+    val nodeMap = LinkedHashMap<CFGNode<*>, PathAwareControlFlowInfo<K, V>>()
+    while (traverseOnce(visitor, nodeMap)) {
+        // had changes, continue
+    }
     return nodeMap
 }
 
-private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeInternal(
-    direction: TraverseDirection,
-    visitor: PathAwareControlFlowGraphVisitor<I>,
-    nodeMap: MutableMap<CFGNode<*>, PathAwareControlFlowInfo<I>>,
+private fun <K : Any, V : Any> ControlFlowGraph.traverseOnce(
+    visitor: PathAwareControlFlowGraphVisitor<K, V>,
+    nodeMap: MutableMap<CFGNode<*>, PathAwareControlFlowInfo<K, V>>,
 ): Boolean {
     var changed = false
-    for (node in getNodesInOrder(direction)) {
-        if (direction == TraverseDirection.Backward && node is CFGNodeWithSubgraphs<*>) {
-            node.subGraphs.forEach {
-                changed = changed or (visitor.visitSubGraph(node, it) && it.collectDataForNodeInternal(direction, visitor, nodeMap))
-            }
-        }
-        // TODO: if data for previousNodes hasn't changed, then should be no need to recompute data for this one
-        val union = node.isUnion
-        val previousData = when (direction) {
-            TraverseDirection.Forward -> node.previousCfgNodes
-            TraverseDirection.Backward -> node.followingCfgNodes
-        }.mapNotNull { source ->
+    for (node in nodes) {
+        // TODO, KT-59670: if data for previousNodes hasn't changed, then should be no need to recompute data for this one
+        val previousData = node.previousCfgNodes.mapNotNull { source ->
             nodeMap[source]?.let {
-                val edge = when (direction) {
-                    TraverseDirection.Forward -> node.edgeFrom(source)
-                    TraverseDirection.Backward -> node.edgeTo(source)
-                }
-                visitor.visitEdge(source, node, edge, it)
+                visitor.visitEdge(source, node, node.edgeFrom(source), it)
             }
-        }.reduceOrNull { a, b -> a.join(b, union) }
-        val newData = node.accept(visitor, previousData ?: visitor.emptyInfo)
+        }.reduceOrNull { a, b -> visitor.mergeInfo(a, b, node) }
+        val newData = node.accept(visitor, previousData ?: emptyNormalPathInfo())
         if (newData != nodeMap.put(node, newData)) {
             changed = true
         }
-        if (direction == TraverseDirection.Forward && node is CFGNodeWithSubgraphs<*>) {
+        if (node is CFGNodeWithSubgraphs<*>) {
             node.subGraphs.forEach {
-                changed = changed or (visitor.visitSubGraph(node, it) && it.collectDataForNodeInternal(direction, visitor, nodeMap))
+                changed = changed or (visitor.visitSubGraph(node, it) && it.traverseOnce(visitor, nodeMap))
             }
         }
     }

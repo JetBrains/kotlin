@@ -1,0 +1,21 @@
+KT element: KtSuperTypeCallEntry
+FIR element: FirDelegatedConstructorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+super<R|B|>(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] constructorDelegationSuperCall.kt
+    public open [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|B|>(Int(1))
+        }
+
+    }

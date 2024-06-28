@@ -40,6 +40,26 @@ class ObservableSetTest {
     }
 
     @Test
+    fun `test - adding already existing elements`() {
+        val set = MutableObservableSetImpl(1, 2, 3)
+        val forAllListener = TestListener()
+        val whenObjectAddedListener = TestListener()
+        set.forAll(forAllListener)
+        set.whenObjectAdded(whenObjectAddedListener)
+
+        assertEquals(listOf(1, 2, 3), forAllListener.invocations)
+        assertEquals(listOf(), whenObjectAddedListener.invocations)
+
+        /* Adding already existing elements */
+        set.add(1)
+        set.addAll(listOf(1, 2))
+
+        /* No further invocations */
+        assertEquals(listOf(1, 2, 3), forAllListener.invocations)
+        assertEquals(listOf(), whenObjectAddedListener.invocations)
+    }
+
+    @Test
     fun `test - whenObjectAdded`() {
         val set = MutableObservableSetImpl(1)
         val testListener1 = TestListener()

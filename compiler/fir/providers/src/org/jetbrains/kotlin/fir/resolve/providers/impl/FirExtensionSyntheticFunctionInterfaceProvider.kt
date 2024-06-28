@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -27,11 +27,14 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.*
@@ -46,19 +49,73 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    companion object {
+        /**
+         * A [FirExtensionSyntheticFunctionInterfaceProvider] only needs to be created if the session's function type service has extension
+         * function kinds. Otherwise, the provider would be useless.
+         *
+         * Important note: this provider should be created once per compiled set of modules, so all sessions will share the same provider
+         *   Otherwise it may lead to the situation when there are two different symbols for the same classId, which may trigger
+         *   errors during expect/actual matching
+         */
+        fun createIfNeeded(
+            session: FirSession,
+            moduleData: FirModuleData,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+        ): FirExtensionSyntheticFunctionInterfaceProvider? {
+            if (!session.functionTypeService.hasExtensionKinds()) return null
+            return FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
+        }
+    }
+
     override fun FunctionTypeKind.isAcceptable(): Boolean {
         return !this.isBuiltin
+    }
+}
+
+class FirBuiltinSyntheticFunctionInterfaceProviderImpl internal constructor(
+    session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider
+) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
+
+/**
+ * This class puts generated classes into a list.
+ * The list is used later on FIR2IR stage for creating regular IR classes instead of lazy ones.
+ * It allows avoiding problems related to lazy classes actualization and fake-overrides building
+ * because FIR2IR treats those declarations as declarations in a virtual file despite the fact they are generated ones.
+ * The provider is only used for the first common source-set with enabled `stdlibCompilation` mode.
+ */
+class FirStdlibBuiltinSyntheticFunctionInterfaceProvider internal constructor(
+    session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider,
+) : FirBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider) {
+    private val generatedClassesList = mutableListOf<FirRegularClass>()
+    val generatedClasses: List<FirRegularClass>
+        get() = generatedClassesList
+
+    override fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
+        return super.createSyntheticFunctionInterface(classId, kind)?.also { generatedClassesList.add(it.fir) }
     }
 }
 
 /*
  * Provides kotlin.FunctionN, kotlin.coroutines.SuspendFunctionN, kotlin.reflect.KFunctionN and kotlin.reflect.KSuspendFunctionN
  */
-class FirBuiltinSyntheticFunctionInterfaceProvider(
+abstract class FirBuiltinSyntheticFunctionInterfaceProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    companion object {
+        fun initialize(
+            session: FirSession, moduleData: FirModuleData, kotlinScopeProvider: FirKotlinScopeProvider
+        ): FirBuiltinSyntheticFunctionInterfaceProvider {
+            return if (session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirStdlibBuiltinSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
+            } else {
+                FirBuiltinSyntheticFunctionInterfaceProviderImpl(session, moduleData, kotlinScopeProvider)
+            }
+        }
+    }
+
     override fun FunctionTypeKind.isAcceptable(): Boolean {
         return this.isBuiltin
     }
@@ -69,9 +126,33 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
-    override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
-        return cache.getValue(classId)
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+
+        override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = classId.getAcceptableFunctionTypeKind() != null
+
+        override fun getPackageNames(): Set<String> = emptySet()
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
+
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+            // Generated function type names aren't included in the top-level classifier names set.
+            emptySet()
+
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+
+        override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = mayHaveSyntheticFunctionType(classId)
+        override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
     }
+
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+        val functionTypeKind = classId.getAcceptableFunctionTypeKind() ?: return null
+        return cache.getValue(classId, functionTypeKind)
+    }
+
+    @OptIn(FirSymbolProviderInternals::class)
+    private fun ClassId.getAcceptableFunctionTypeKind(): FunctionTypeKind? = getFunctionTypeKind(session)?.takeIf { it.isAcceptable() }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -85,33 +166,20 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
+    @FirSymbolProviderInternals
+    fun getFunctionKindPackageNames(): Set<FqName> = session.functionTypeService.getFunctionKindPackageNames()
+
     override fun getPackage(fqName: FqName): FqName? {
         return fqName.takeIf { session.functionTypeService.hasKindWithSpecificPackage(it) }
-    }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String> {
-        return emptySet()
-    }
-
-    /**
-     * This method has no sense for synthetic function interfaces
-     */
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? {
-        return emptySet()
-    }
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? {
-        return emptySet()
     }
 
     private val cache = moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionInterface)
 
     protected abstract fun FunctionTypeKind.isAcceptable(): Boolean
 
-    private fun createSyntheticFunctionInterface(classId: ClassId): FirRegularClassSymbol? {
+    protected open fun createSyntheticFunctionInterface(classId: ClassId, kind: FunctionTypeKind): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
-            val kind = session.functionTypeService.getKindByClassNamePrefix(packageFqName, className) ?: return null
             if (!kind.isAcceptable()) return null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
@@ -233,4 +301,23 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     }
 
     private fun FunctionTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+
+    companion object {
+        @FirSymbolProviderInternals
+        fun ClassId.isNameForFunctionClass(session: FirSession): Boolean = getFunctionTypeKind(session) != null
+
+        @FirSymbolProviderInternals
+        private fun ClassId.getFunctionTypeKind(session: FirSession): FunctionTypeKind? {
+            if (!mayBeSyntheticFunctionClassName()) return null
+            return session.functionTypeService.getKindByClassNamePrefix(packageFqName, shortClassName.asString())
+        }
+
+        /**
+         * A [ClassId] can only be a name for a generated function class if it ends with a digit. See [FunctionTypeKind].
+         *
+         * Checking this first is usually faster than checking `functionTypeService.getKindByClassNamePrefix` or a class cache.
+         */
+        @FirSymbolProviderInternals
+        fun ClassId.mayBeSyntheticFunctionClassName(): Boolean = relativeClassName.asString().lastOrNull()?.isDigit() == true
+    }
 }

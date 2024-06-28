@@ -1,7 +1,5 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-56329
-
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
@@ -15,7 +13,6 @@ expect fun <T> foo(y: T, x: S): String
 fun ok() = foo(1) + foo(2, "K" as S)
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 actual typealias S = String

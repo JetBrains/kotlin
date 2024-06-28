@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.base.kapt3
+package org.jetbrains.kotlin.kapt3.base
 
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
 import java.io.File
@@ -43,7 +43,8 @@ class KaptOptions(
     val processingClassLoader: ClassLoader?,
     //construct new classloader for these processors instead of using one defined in processingClassLoader
     val separateClassloaderForProcessors: Set<String>,
-    val processorsStatsReportFile: File?
+    val processorsStatsReportFile: File?,
+    val fileReadHistoryReportFile: File?
 ) : KaptFlags {
     override fun get(flag: KaptFlag) = flags[flag]
 
@@ -74,6 +75,7 @@ class KaptOptions(
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
         var processorsStatsReportFile: File? = null
+        var fileReadHistoryReportFile: File? = null
 
         fun build(): KaptOptions {
             val sourcesOutputDir = this.sourcesOutputDir ?: error("'sourcesOutputDir' must be set")
@@ -88,7 +90,8 @@ class KaptOptions(
                 mode, detectMemoryLeaks,
                 processingClassLoader = null,
                 separateClassloaderForProcessors = emptySet(),
-                processorsStatsReportFile = processorsStatsReportFile
+                processorsStatsReportFile = processorsStatsReportFile,
+                fileReadHistoryReportFile = fileReadHistoryReportFile
             )
         }
     }
@@ -126,7 +129,6 @@ enum class KaptFlag(val description: String, val defaultValue: Boolean = false) 
     INCREMENTAL_APT("Incremental annotation processing (apt mode)"),
     STRIP_METADATA("Strip @Metadata annotations from stubs"),
     KEEP_KDOC_COMMENTS_IN_STUBS("Keep KDoc comments in stubs", defaultValue = true),
-    USE_JVM_IR("Use JVM IR backend", defaultValue = true)
     ;
 }
 
@@ -191,7 +193,7 @@ fun collectAggregatedTypes(sourcesToReprocess: SourcesToReprocess = SourcesToRep
 
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     val additionalInfoRendered = if (additionalInfo.isEmpty()) "" else " ($additionalInfo)"
-    appendLine("Kapt3 is enabled$additionalInfoRendered.")
+    appendLine("Kapt is enabled$additionalInfoRendered.")
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")

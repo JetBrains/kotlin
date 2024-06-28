@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/functionLiteralGenericSignature.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.unitFun'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unitFun> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit>
       correspondingProperty: PROPERTY name:unitFun visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/functionLiteralGenericSignature.kt
             VALUE_PARAMETER name:x index:0 type:kotlin.String
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (x: kotlin.String): kotlin.Unit declared in <root>.stringParamFun'
-                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+                GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-stringParamFun> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.String, kotlin.Unit>
       correspondingProperty: PROPERTY name:stringParamFun visibility:public modality:FINAL [val]
       BLOCK_BODY

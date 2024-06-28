@@ -1,16 +1,19 @@
-import org.gradle.util.VersionNumber
-
 plugins {
     id 'com.android.test'
     id 'org.jetbrains.kotlin.android'
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "junit:junit:4.13.2"
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
 android {
     compileSdkVersion 22
+    namespace 'org.jetbrains.kotlin.gradle.test.android.test'
 
     defaultConfig {
         minSdkVersion 7
@@ -26,18 +29,13 @@ android {
     }
 
     targetProjectPath ':Android'
-    if (VersionNumber.parse(android_tools_version) < VersionNumber.parse("3.0.0-alpha1")) {
-        targetVariant 'flavor1Debug'
-    }
-    else {
-        flavorDimensions "myFlavor"
-        productFlavors {
-            flavor1 {
-                dimension "myFlavor"
-            }
-            flavor2 {
-                dimension "myFlavor"
-            }
+    flavorDimensions "myFlavor"
+    productFlavors {
+        flavor1 {
+            dimension "myFlavor"
+        }
+        flavor2 {
+            dimension "myFlavor"
         }
     }
     lintOptions.abortOnError = false

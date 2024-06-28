@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;>  A {
-    // source: 'genericClass.kt'
-    public final <()TT;> method f(): java.lang.Object
-    public final <()TT;> method getResult(): java.lang.Object
-    public <(TT;)V> method <init>(p0: java.lang.Object): void
-    private final static <<T:Ljava/lang/Object;>(LA<TT;>;)TT;> method f$g(p0: A): java.lang.Object
-    private final field <TT;> result: java.lang.Object
-}

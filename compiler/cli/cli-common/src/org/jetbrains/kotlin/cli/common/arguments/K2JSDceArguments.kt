@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.ALL
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies.OLDER
+import org.jetbrains.kotlin.config.LanguageVersion
 
 class K2JSDceArguments : CommonToolArguments() {
     companion object {
@@ -20,13 +21,13 @@ class K2JSDceArguments : CommonToolArguments() {
     )
     @GradleDeprecatedOption(
         message = "Use task 'destinationDirectory' to configure output directory",
-        level = DeprecationLevel.WARNING,
-        removeAfter = "1.9.0"
+        level = DeprecationLevel.ERROR,
+        removeAfter = LanguageVersion.KOTLIN_2_0,
     )
     @Argument(
             value = "-output-dir",
             valueDescription = "<path>",
-            description = "Output directory"
+            description = "Output directory."
     )
     var outputDirectory: String? = null
         set(value) {
@@ -37,7 +38,7 @@ class K2JSDceArguments : CommonToolArguments() {
     @Argument(
             value = "-keep",
             valueDescription = "<fully.qualified.name[,]>",
-            description = "List of fully-qualified names of declarations that shouldn't be eliminated"
+            description = "List of fully-qualified names of declarations that shouldn't be eliminated."
     )
     var declarationsToKeep: Array<String>? = null
         set(value) {
@@ -47,7 +48,7 @@ class K2JSDceArguments : CommonToolArguments() {
 
     @Argument(
             value = "-Xprint-reachability-info",
-            description = "Print declarations marked as reachable"
+            description = "Print declarations marked as reachable."
     )
     var printReachabilityInfo = false
         set(value) {
@@ -62,7 +63,7 @@ class K2JSDceArguments : CommonToolArguments() {
     )
     @Argument(
             value = "-dev-mode",
-            description = "Development mode: don't strip out any code, just copy dependencies"
+            description = "Development mode: don't strip out any code, just copy dependencies."
     )
     var devMode = false
         set(value) {
@@ -73,13 +74,15 @@ class K2JSDceArguments : CommonToolArguments() {
     @Argument(
         value = "-Xdev-mode-overwriting-strategy",
         valueDescription = "{$OLDER|$ALL}",
-        description = "Overwriting strategy during copy dependencies in development mode"
+        description = "Overwriting strategy when copying dependencies in development mode."
     )
     var devModeOverwritingStrategy: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
+
+    override fun copyOf(): Freezable = copyK2JSDceArguments(this, K2JSDceArguments())
 }
 
 object DevModeOverwritingStrategies {

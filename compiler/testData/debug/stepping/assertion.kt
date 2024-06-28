@@ -1,3 +1,4 @@
+// IGNORE_INLINER: IR
 
 // FILE: test.kt
 
@@ -30,23 +31,34 @@ fun box(): String {
     return "OK"
 }
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:25 box
-// test.kt:16 box
-// test.kt:17 box
-// test.kt:4 getMASSERTIONS_ENABLED
+// EXPECTATIONS JVM_IR
+// test.kt:26 box
 // test.kt:17 box
 // test.kt:18 box
-// test.kt:22 box
-// test.kt:26 box
-// test.kt:7 box
-// test.kt:4 getMASSERTIONS_ENABLED
-// test.kt:7 box
+// test.kt:5 getMASSERTIONS_ENABLED
+// test.kt:18 box
+// test.kt:19 box
+// test.kt:23 box
+// test.kt:27 box
 // test.kt:8 box
-// test.kt:13 box
-// test.kt:30 box
+// test.kt:5 getMASSERTIONS_ENABLED
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:14 box
+// test.kt:31 box
 
 // EXPECTATIONS JS_IR
 // test.kt:17 box
-// test.kt:7 box
-// test.kt:30 box
+// test.kt:18 box
+// test.kt:8 box
+// test.kt:31 box
+
+// EXPECTATIONS WASM
+// test.kt:26 $box (4, 12)
+// test.kt:17 $box (57, 57, 57, 57)
+// test.kt:18 $box
+// test.kt:19 $box (13, 12)
+// test.kt:27 $box (4, 12)
+// test.kt:8 $box
+// test.kt:9 $box (13, 12)
+// test.kt:31 $box (11, 11, 11, 11, 4)

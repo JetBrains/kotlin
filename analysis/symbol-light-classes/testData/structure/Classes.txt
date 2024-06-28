@@ -1,10 +1,10 @@
 KtClass:
-  line: 3
-  name: FinalClass
-  qualifier: cba.FinalClass
+  line: 5
+  name: AbstractClass
+  qualifier: cba.AbstractClass
   light: SymbolLightClassForClassOrObject
-    name: FinalClass
-    qualifier: cba.FinalClass
+    name: AbstractClass
+    qualifier: cba.AbstractClass
     superTypes: [
       PsiType:Object
     ]
@@ -15,12 +15,28 @@ KtClass:
     ]
 
 KtClass:
-  line: 5
-  name: AbstractClass
-  qualifier: cba.AbstractClass
+  line: 9
+  name: ChildOfOpen
+  qualifier: cba.ChildOfOpen
   light: SymbolLightClassForClassOrObject
-    name: AbstractClass
-    qualifier: cba.AbstractClass
+    name: ChildOfOpen
+    qualifier: cba.ChildOfOpen
+    superTypes: [
+      PsiType:OpenClassFromAbstractClass
+    ]
+    superClass: SymbolLightClassForClassOrObject: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
+    interfaces: []
+    supers: [
+      SymbolLightClassForClassOrObject: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
+    ]
+
+KtClass:
+  line: 3
+  name: FinalClass
+  qualifier: cba.FinalClass
+  light: SymbolLightClassForClassOrObject
+    name: FinalClass
+    qualifier: cba.FinalClass
     superTypes: [
       PsiType:Object
     ]
@@ -44,21 +60,5 @@ KtClass:
     interfaces: []
     supers: [
       SymbolLightClassForClassOrObject: AbstractClass (cba.AbstractClass)
-    ]
-
-KtClass:
-  line: 9
-  name: ChildOfOpen
-  qualifier: cba.ChildOfOpen
-  light: SymbolLightClassForClassOrObject
-    name: ChildOfOpen
-    qualifier: cba.ChildOfOpen
-    superTypes: [
-      PsiType:OpenClassFromAbstractClass
-    ]
-    superClass: SymbolLightClassForClassOrObject: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
-    interfaces: []
-    supers: [
-      SymbolLightClassForClassOrObject: OpenClassFromAbstractClass (cba.OpenClassFromAbstractClass)
     ]
 

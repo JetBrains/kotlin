@@ -1,0 +1,23 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/foo|( {
+    [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/localProperty|
+    R|<local>/localProperty| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+    R|<local>/<unary>|
+}
+)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] functionWithPostIncPropertyArgument.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar localProperty: R|kotlin/Int| = Int(0)
+        R|/foo|( {
+            [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/localProperty|
+            R|<local>/localProperty| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
+        }
+        )
+    }

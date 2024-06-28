@@ -6,41 +6,75 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.getAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
+import kotlin.collections.set
 
-abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Boolean) : FileLoweringPass {
+abstract class InventNamesForLocalClasses(private val generateNamesForRegeneratedObjects: Boolean = false) : FileLoweringPass {
 
     protected abstract fun computeTopLevelClassName(clazz: IrClass): String
     protected abstract fun sanitizeNameIfNeeded(name: String): String
 
+    /** Makes it possible to do customizations for [IrClass] */
+    protected open fun customizeNameInventorData(clazz: IrClass, data: NameInventorData): NameInventorData = data
+
     protected abstract fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String)
 
     override fun lower(irFile: IrFile) {
-        irFile.accept(NameInventor(), Data(null, false))
+        irFile.accept(NameInventor(), NameInventorData(null, false))
     }
 
     /**
      * @property enclosingName internal name of the enclosing class (including anonymous classes, local objects and callable references)
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
      */
-    private data class Data(val enclosingName: String?, val isLocal: Boolean) {
-        fun makeLocal(): Data = if (isLocal) this else copy(isLocal = true)
+    protected data class NameInventorData(
+        val enclosingName: String?,
+        val isLocal: Boolean,
+        val processingInlinedFunction: Boolean = false
+    ) {
+        fun makeLocal(): NameInventorData = if (isLocal) this else copy(isLocal = true)
     }
 
-    private inner class NameInventor : IrElementVisitor<Unit, Data> {
+    private inner class NameInventor : IrElementVisitor<Unit, NameInventorData> {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 
-        override fun visitClass(declaration: IrClass, data: Data) {
+        override fun visitContainerExpression(expression: IrContainerExpression, data: NameInventorData) {
+            if (expression is IrInlinedFunctionBlock && !generateNamesForRegeneratedObjects) {
+                return expression.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+            }
+
+            if (!data.processingInlinedFunction && expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
+                expression.getAdditionalStatementsFromInlinedBlock().forEach { it.accept(this, data) }
+
+                val inlinedAt = expression.inlineCall.symbol.owner.name.asString()
+                val newData = data.copy(
+                    enclosingName = data.enclosingName + "$\$inlined\$$inlinedAt", isLocal = true, processingInlinedFunction = true
+                )
+                expression.getOriginalStatementsFromInlinedBlock().forEach { it.accept(this, newData) }
+
+                return
+            }
+            super.visitContainerExpression(expression, data)
+        }
+
+        override fun visitClass(declaration: IrClass, data: NameInventorData) {
+            visitClassWithCustomizedData(declaration, customizeNameInventorData(declaration, data))
+        }
+
+        private fun visitClassWithCustomizedData(declaration: IrClass, data: NameInventorData) {
             if (!data.isLocal) {
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
@@ -69,12 +103,12 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
             }
         }
 
-        override fun visitConstructor(declaration: IrConstructor, data: Data) {
+        override fun visitConstructor(declaration: IrConstructor, data: NameInventorData) {
             // Constructor is a special case because its name "<init>" doesn't participate when creating names for local classes inside.
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: NameInventorData) {
             if (declaration !is IrDeclarationWithName ||
                 // Skip temporary variables because they are not present in source code, and their names are not particularly
                 // meaningful (e.g. `tmp$1`) in any case.
@@ -98,6 +132,8 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
                         localFunctionNames[declaration.symbol] = name
                     }
                 }
+
+                declaration is IrVariable && generateNamesForRegeneratedObjects || data.processingInlinedFunction -> enclosingName
                 enclosingName != null -> "$enclosingName$$simpleName"
                 else -> simpleName
             }
@@ -113,33 +149,43 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
             declaration.acceptChildren(this, newData)
         }
 
-        override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
+        override fun visitFunctionReference(expression: IrFunctionReference, data: NameInventorData) {
+            if (data.processingInlinedFunction && expression.originalBeforeInline == null) {
+                // skip IrFunctionReference from `singleArgumentInlineFunction`
+                return
+            }
             val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
             putLocalClassName(expression, internalName)
 
             expression.acceptChildren(this, data)
         }
 
-        override fun visitPropertyReference(expression: IrPropertyReference, data: Data) {
+        override fun visitFunctionExpression(expression: IrFunctionExpression, data: NameInventorData) {
+            expression.acceptChildren(this, data)
+            val internalName = localFunctionNames[expression.function.symbol] ?: inventName(null, data)
+            putLocalClassName(expression, internalName)
+        }
+
+        override fun visitPropertyReference(expression: IrPropertyReference, data: NameInventorData) {
             val internalName = inventName(null, data)
             putLocalClassName(expression, internalName)
 
             expression.acceptChildren(this, data)
         }
 
-        override fun visitEnumEntry(declaration: IrEnumEntry, data: Data) {
+        override fun visitEnumEntry(declaration: IrEnumEntry, data: NameInventorData) {
             // Although IrEnumEntry is an IrDeclaration, its name shouldn't be added to nameStack. This is because each IrEnumEntry has
             // an IrClass with the same name underneath it, and that class should obtain the name of the form "Enum$Entry",
             // not "Enum$Entry$Entry".
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitValueParameter(declaration: IrValueParameter, data: Data) {
+        override fun visitValueParameter(declaration: IrValueParameter, data: NameInventorData) {
             // We skip value parameters when constructing names to replicate behavior of the old backend, but this can be safely changed.
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
+        override fun visitSimpleFunction(declaration: IrSimpleFunction, data: NameInventorData) {
             if (declaration.correspondingPropertySymbol != null) {
                 // Skip adding property accessors to the name stack because the name of the property (which is a parent) is already there.
                 declaration.acceptChildren(this, data.makeLocal())
@@ -150,7 +196,7 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
                 val newData = data.copy(
                     enclosingName = inventName(
                         declaration.name,
-                        if (data.enclosingName == null && allowTopLevelCallables) data.copy(enclosingName = "") else data
+                        if (data.enclosingName == null) data.copy(enclosingName = "") else data
                     )
                 )
                 val internalName = inventName(null, newData)
@@ -160,22 +206,22 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
             super.visitSimpleFunction(declaration, data)
         }
 
-        override fun visitField(declaration: IrField, data: Data) {
+        override fun visitField(declaration: IrField, data: NameInventorData) {
             // Skip field name because the name of the property is already there.
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Data) {
+        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: NameInventorData) {
             // IrAnonymousInitializer is not an IrDeclaration, so we need to manually make all its children aware that they're local
             // and might need new invented names.
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitElement(element: IrElement, data: Data) {
+        override fun visitElement(element: IrElement, data: NameInventorData) {
             element.acceptChildren(this, data)
         }
 
-        private fun inventName(sourceName: Name?, data: Data): String {
+        private fun inventName(sourceName: Name?, data: NameInventorData): String {
             val enclosingName = data.enclosingName
             check(enclosingName != null) {
                 """

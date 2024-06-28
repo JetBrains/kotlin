@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotl
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotlinCompilationTaskNamesContainerFactory
 
 open class KotlinNativeCompilationFactory internal constructor(
-    override val target: KotlinNativeTarget
+    final override val target: KotlinNativeTarget
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {
 
     override val itemClass: Class<KotlinNativeCompilation>

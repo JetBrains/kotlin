@@ -1,106 +1,132 @@
-# Diagnostic tests format specification
+# Format specification for diagnostic tests
 
-Each diagnostic test consists of a single .kt file containing the code of one or several Kotlin or Java source files.
+Each diagnostic test consists of a single `.kt` file containing the code of one or several Kotlin or Java source files.
 Each diagnostic, be it a warning or an error, is marked in the following way:
 
     <!DIAGNOSTIC_FACTORY_NAME!>element<!>
 
-where `DIAGNOSTIC_FACTORY_NAME` is the name of the diagnostic which is usually one of the constants in one of `Errors*` classes.
+where `DIAGNOSTIC_FACTORY_NAME` is the name of the diagnostic which is either:
 
-To test not only the presence of the diagnostic but also the arguments which will be rendered to the user, provide string representations of all of them in the parentheses delimited with `;` after the diagnostic name:
+* a constant from one of the `Errors*`/`Fir*Errors` classes;
+* a debug diagnostic implemented specifically for the test infrastructure (e.g. `DEBUG_INFO_EXPRESSION_TYPE`).
 
-    return <!TYPE_MISMATCH(String; Nothing)!>"OK"<!>
+To test not only the presence of the diagnostic but also the arguments which will be rendered to the user, provide in parentheses after the diagnostic name a string representation of all of them delimited with `;`:
 
-Note: if you're unsure what text should be added for the parameters, just leave the parentheses empty and the failed test will present the actual values in the assertion message.
+    return <!TYPE_MISMATCH("String; Nothing")!>"OK"<!>
 
-## Directives
+If you're unsure what text should be added for the parameters, just leave the string representation empty:
 
-Several directives can be added to the beginning of a test file with the following syntax:
+    return <!TYPE_MISMATCH("")!>"OK"<!>
 
-    // !DIRECTIVE
+and the failed test will present the actual values in the assertion message.
 
-### 1. DIAGNOSTICS
+# Directives
 
-This directive allows to exclude some irrelevant diagnostics (e.g. unused parameter) from a certain test or to include others.
+Read more about test directives [here](../../test-infrastructure/ReadMe.md#directives).
 
-The syntax is
+Below is the list of some (but not all) directives supported by the test infrastructure.
+
+### FILE & MODULE
+
+Read more about the `FILE` and `MODULE` directives [here](../../test-infrastructure/ReadMe.md#module-structure-directives).
+
+### LANGUAGE
+
+This directive allows you to enable or disable certain language features.
+Language features are named as entries of [the enum class `LanguageFeature`](../../util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt).
+Each language feature can be enabled with `+`, disabled with `-`, or enabled with a warning with `warn:`.
+
+#### Usage:
+
+    // LANGUAGE: -TopLevelSealedInheritance
+
+    // LANGUAGE: +TypeAliases -LocalDelegatedProperties
+
+    // LANGUAGE: warn:Coroutines
+
+### DIAGNOSTICS
+
+This directive allows you to exclude some irrelevant diagnostics (e.g. `UNUSED_PARAMETER`) from a certain test or to include others.
+
+The syntax is:
 
     '([ + - ] DIAGNOSTIC_FACTORY_NAME | ERROR | WARNING | INFO ) +'
 
-  where
+where:
 
 * `+` means 'include';
 * `-` means 'exclude'.
 
-  Directives are applied in the order of appearance, i.e. `+FOO -BAR` means include `FOO` but not `BAR`.
+Diagnostics are included or excluded in the order of appearance (e.g. `+FOO -BAR` means "include `FOO` but not `BAR`").
 
 #### Usage:
 
-    // !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
+    // DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
 
-    // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+    // DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
+### CHECK_TYPE
 
-### 2. CHECK_TYPE
-
-The directive adds the following declarations to the file:
+This directive adds the following declarations to the file:
 
     fun <T> checkSubtype(t: T) = t
+    
+    class CheckTypeInv<T>
+    fun <E> CheckTypeInv<E>._() {}
 
-    class Inv<T>
-    fun <E> Inv<E>._() {}
-    infix fun <T> T.checkType(f: Inv<T>.() -> Unit) {}
+    infix fun <T> T.checkType(f: CheckTypeInv<T>.() -> Unit) {}
 
-With that, an exact type of an expression can be checked in the following way:
+These declarations allow you to check an exact type of an expression in the following way:
 
     fun test(expr: A) {
        expr checkType { _<A>() }
     }
 
-`CHECK_TYPE` directive also disables `UNDERSCORE_USAGE_WITHOUT_BACKTICKS` diagnostics output.
+In diagnostic tests, `CHECK_TYPE` directive also disables diagnostics related to usages of `_` as a name.
 
 #### Usage:
 
-    // !CHECK_TYPE
+    // CHECK_TYPE
 
-### 3. FILE
+### CHECK_TYPE_WITH_EXACT
 
-The directive lets you compose a test consisting of several files in one actual file.
+This directive adds the following declarations to the file:
 
-#### Usage:
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    fun <T> checkExactType(expr: @kotlin.internal.Exact T) {}
 
-    // FILE: A.java
-    /* Java code */
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    fun <T> checkTypeEquality(reference: @kotlin.internal.Exact T, expr: @kotlin.internal.Exact T) {}
 
-    // FILE: B.kt
-    /* Kotlin code */
+Like the `CHECK_TYPE` directive, these declarations allow you to check an exact type of an expression:
 
-### 4. LANGUAGE
+    fun test(expr: A) {
+        checkExactType<A>(expr)
+        checkTypeEquality(A(), expr)
+    }
 
-This directive lets you enable or disable certain language features. Language features are named as enum entries of the class `LanguageFeature`.
-Each feature can be enabled with `+`, disabled with `-`, or enabled with warning with `warn:`.
+Unlike the `CHECK_TYPE` directive, these declarations:
 
-#### Usage:
-
-    // !LANGUAGE: -TopLevelSealedInheritance
-
-    // !LANGUAGE: +TypeAliases -LocalDelegatedProperties
-
-    // !LANGUAGE: warn:Coroutines
-
-### 5. API_VERSION
-
-This directive emulates the behavior of the `-api-version` command line option, disallowing to use declarations annotated with `@SinceKotlin(X)` where X is greater than the specified API version.
-Note that if this directive is present, the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic is automatically disabled, _unless_ the "!DIAGNOSTICS" directive is present.
+* can be used in e.g. codegen tests (as codegen tests don't disable diagnostics related to usages of `_` as a name);
+* don't require you to explicitly specify the type if you have a reference expression of this type (which is useful when checking for non-denotable types).
 
 #### Usage:
 
-    // !API_VERSION: 1.0
-    
-### 6. RENDER_DIAGNOSTICS_MESSAGES
+    // CHECK_TYPE_WITH_EXACT
 
-This directive forces *Diagnostic printer* prints parametrized diagnostics with all parameters.
+### API_VERSION
+
+This directive emulates the behavior of the `-api-version` command-line option, disallowing to use declarations annotated with `@SinceKotlin(X)` where `X` is greater than the specified API version.
+Note that if this directive is present, the `NEWER_VERSION_IN_SINCE_KOTLIN` diagnostic is automatically disabled, _unless_ the corresponding `DIAGNOSTICS` directive is present.
 
 #### Usage:
 
-    // !RENDER_DIAGNOSTICS_MESSAGES
+    // API_VERSION: 1.0
+
+### RENDER_DIAGNOSTICS_MESSAGES
+
+This K2-specific directive forces the test infrastructure to print diagnostic arguments for *all* diagnostics.
+
+#### Usage:
+
+    // RENDER_DIAGNOSTICS_MESSAGES

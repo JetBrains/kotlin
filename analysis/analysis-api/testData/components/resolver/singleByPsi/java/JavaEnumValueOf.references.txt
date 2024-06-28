@@ -1,0 +1,3 @@
+KtNameReferenceExpression(74,81): 'valueOf'
+  KtSimpleNameReference:
+    (in java.lang.annotation.RetentionPolicy) fun valueOf(value: kotlin.String): java.lang.annotation.RetentionPolicy

@@ -1,3 +1,0 @@
-@GetAnnotation
-@ExplicitGetAnnotation
-get()

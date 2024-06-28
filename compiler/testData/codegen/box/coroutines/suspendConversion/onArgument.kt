@@ -1,8 +1,7 @@
-// !LANGUAGE: +SuspendConversion
+// LANGUAGE: +SuspendConversion
 // WITH_STDLIB
 // WITH_COROUTINES
 // IGNORE_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
 
 import helpers.*
 import kotlin.coroutines.*

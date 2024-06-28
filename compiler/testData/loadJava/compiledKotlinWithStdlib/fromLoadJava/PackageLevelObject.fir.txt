@@ -1,0 +1,4 @@
+public final object Bar : R|kotlin/Any| {
+    private constructor(): R|test/Bar|
+
+}

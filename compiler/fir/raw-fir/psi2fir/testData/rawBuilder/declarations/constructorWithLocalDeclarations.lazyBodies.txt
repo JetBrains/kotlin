@@ -1,0 +1,5 @@
+FILE: constructorWithLocalDeclarations.kt
+    public final? class A : R|kotlin/Any| {
+        public? constructor(): R|util/A| { LAZY_BLOCK }
+
+    }

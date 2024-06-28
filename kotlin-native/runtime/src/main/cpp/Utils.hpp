@@ -10,6 +10,8 @@
 
 #include <type_traits>
 
+#include "std_support/Span.hpp"
+
 namespace kotlin {
 
 // A helper for implementing classes with disabled copy constructor and copy assignment.
@@ -56,6 +58,22 @@ protected:
     ~Pinned() = default;
 };
 
+// A helper that executes the action provided upon destruction of the ScopeGuard instance.
+template<typename FinalAction>
+class ScopeGuard final : private Pinned {
+public:
+    template<typename InitAction>
+    ScopeGuard(InitAction initAction, FinalAction finalAction) noexcept : finalAction_(finalAction) {
+        initAction();
+    }
+    ScopeGuard(FinalAction finalAction) noexcept : finalAction_(finalAction) {}
+    ~ScopeGuard() noexcept {
+        finalAction_();
+    }
+private:
+    FinalAction finalAction_;
+};
+
 // A helper that scopley assigns a value to a variable. The variable will
 // be set to its original value upon destruction of the AutoReset instance.
 // Note that an AutoReset instance must have a shorter lifetime than
@@ -81,6 +99,9 @@ private:
 size_t CombineHash(size_t seed, size_t value);
 
 #define ownerOf(type, field, ref) *reinterpret_cast<type*>(reinterpret_cast<char*>(&ref) - offsetof(type, field))
+
+// Returns `true` if the entire `span` is zeroed.
+bool isZeroed(std_support::span<uint8_t> span) noexcept;
 
 } // namespace kotlin
 

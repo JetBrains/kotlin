@@ -5,27 +5,25 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.overloads.ConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
-// This conflict resolver filters JVM equivalent top-level functions
-// like emptyArray() from intrinsics and built-ins
+/**
+ * Resolver that filters out equivalent calls, mainly to deduplicate multiples of the same declaration coming from different versions
+ * of the same dependency, e.g., multiple stdlibs.
+ *
+ * Currently, it will also consider a declaration from source and one from binary equivalent if all conditions are met for backward
+ * compatibility with K1.
+ */
 class ConeEquivalentCallConflictResolver(
-    specificityComparator: TypeSpecificityComparator,
-    inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
+    private val inferenceComponents: InferenceComponents,
+) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean
@@ -34,8 +32,13 @@ class ConeEquivalentCallConflictResolver(
     }
 
     private fun filterOutEquivalentCalls(candidates: Collection<Candidate>): Set<Candidate> {
+        // Since we can consider a declaration from source and one from binary equivalent, we need to make sure we favor the one from
+        // source, otherwise we might get a behavior change to K1.
+        // See org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.filterOutEquivalentCalls.
+        val fromSourceFirst = candidates.sortedBy { it.symbol.fir.moduleData.session.kind != FirSession.Kind.Source }
+
         val result = mutableSetOf<Candidate>()
-        outerLoop@ for (myCandidate in candidates) {
+        outerLoop@ for (myCandidate in fromSourceFirst) {
             val me = myCandidate.symbol.fir
             if (me is FirCallableDeclaration && me.symbol.containingClassLookupTag() == null) {
                 for (otherCandidate in result) {
@@ -59,25 +62,52 @@ class ConeEquivalentCallConflictResolver(
         secondCandidate: Candidate
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
+        // Emulate behavior from K1 where declarations from the same source module are never equivalent.
+        // We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
+        // See a.containingDeclaration == b.containingDeclaration check in
+        // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
+        // We can't rely on the fact that library declarations will have different moduleData, e.g. in Native metadata compilation,
+        // multiple stdlib declarations with the same moduleData can be present, see KT-61461.
+        if (first.moduleData == second.moduleData && first.moduleData.session.kind == FirSession.Kind.Source) return false
         if (first.isExpect != second.isExpect) return false
-        if (first.receiverParameter?.typeRef?.coneType != second.receiverParameter?.typeRef?.coneType) {
-            return false
-        }
         if (first is FirVariable != second is FirVariable) {
             return false
         }
-        val firstSignature = createFlatSignature(firstCandidate, first)
-        val secondSignature = createFlatSignature(secondCandidate, second)
-        return compareCallsByUsedArguments(firstSignature, secondSignature, discriminateGenerics = false, useOriginalSamTypes = false) &&
-                compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
-    }
+        if (!firstCandidate.mappedArgumentsOrderRepresentation.contentEquals(secondCandidate.mappedArgumentsOrderRepresentation)) {
+            return false
+        }
 
-    private fun createFlatSignature(call: Candidate, declaration: FirCallableDeclaration): FlatSignature<Candidate> {
-        return when (declaration) {
-            is FirSimpleFunction -> createFlatSignature(call, declaration)
-            is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable -> createFlatSignature(call, declaration)
-            else -> error("Not supported: $declaration")
+        val overrideChecker = FirStandardOverrideChecker(inferenceComponents.session)
+        return if (first is FirProperty && second is FirProperty) {
+            overrideChecker.isOverriddenProperty(first, second, ignoreVisibility = true) &&
+                    overrideChecker.isOverriddenProperty(second, first, ignoreVisibility = true)
+        } else if (first is FirSimpleFunction && second is FirSimpleFunction) {
+            overrideChecker.isOverriddenFunction(first, second, ignoreVisibility = true) &&
+                    overrideChecker.isOverriddenFunction(second, first, ignoreVisibility = true)
+        } else {
+            false
         }
     }
+
+    /**
+     * If the candidate is a function, then the arguments
+     * order representation is an array containing the
+     * parameters count and the indices of the parameters
+     * that the call arguments correspond to in the order
+     * the call arguments happen to be.
+     *
+     * Otherwise, null.
+     */
+    private val Candidate.mappedArgumentsOrderRepresentation: IntArray?
+        get() {
+            val function = symbol.fir as? FirFunction ?: return null
+            val parametersToIndices = function.valueParameters.mapIndexed { index, it -> it to index }.toMap()
+            if (!argumentMappingInitialized) return null
+            val mapping = argumentMapping
+            val result = IntArray(mapping.size + 1) { function.valueParameters.size }
+            for ((index, parameter) in mapping.values.withIndex()) {
+                result[index + 1] = parametersToIndices[parameter] ?: error("Unmapped argument in arguments mapping")
+            }
+            return result
+        }
 }

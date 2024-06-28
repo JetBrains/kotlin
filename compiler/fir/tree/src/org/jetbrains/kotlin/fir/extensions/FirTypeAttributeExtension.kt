@@ -19,7 +19,7 @@ import kotlin.reflect.KClass
  */
 abstract class FirTypeAttributeExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("AdditionalTypeAttributeExtension")
+        val NAME: FirExtensionPointName = FirExtensionPointName("AdditionalTypeAttributeExtension")
     }
 
     final override val name: FirExtensionPointName

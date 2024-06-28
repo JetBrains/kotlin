@@ -1,0 +1,7 @@
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: false
+// - Show declarations: true
+
+// Library unique name: <specific_types_library>
+final fun <#A: kotlin.text/Appendable?, #B: kotlin.text/Appendable & kotlin/Any, #C: #A!!> /dnn() // /dnn|dnn(){0§<kotlin.text.Appendable?>;1§<kotlin.text.Appendable&kotlin.Any>;2§<0:0>}[0]

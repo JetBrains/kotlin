@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-629 Assignments are parsed as expressions.
 
 package kt629

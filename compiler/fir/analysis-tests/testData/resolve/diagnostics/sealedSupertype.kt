@@ -1,12 +1,12 @@
 sealed class A
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : A()
+class <!CLASSIFIER_REDECLARATION!>B<!> : A()
 
 interface C : <!INTERFACE_WITH_SUPERCLASS!>A<!>
 
 interface D : C, <!INTERFACE_WITH_SUPERCLASS!>A<!>
 
-class E : <!SINGLETON_IN_SUPERTYPE!>B<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>A<!>()
+class E : <!FINAL_SUPERTYPE!>B<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>A<!>()
 
 sealed class P {
     object H: P()
@@ -28,7 +28,7 @@ sealed class P {
 
 class K : P()
 
-object <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> {
+object <!CLASSIFIER_REDECLARATION!>B<!> {
     class I : P()
 }
 

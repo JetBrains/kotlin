@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 class A() {
 

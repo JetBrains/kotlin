@@ -5,18 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <lombok.common.src>${basedir}/../../../plugins/lombok/lombok.common/src</lombok.common.src>
-        <lombok.k1.src>${basedir}/../../../plugins/lombok/lombok.k1/src</lombok.k1.src>
-        <lombok.k2.src>${basedir}/../../../plugins/lombok/lombok.k2/src</lombok.k2.src>
-        <lombok.cli.src>${basedir}/../../../plugins/lombok/lombok.cli/src</lombok.cli.src>
-        <lombok.resources>${basedir}/../../../plugins/lombok/lombok.cli/resources</lombok.resources>
         <lombok.maven.plugin.src>${basedir}/src/main/kotlin</lombok.maven.plugin.src>
     </properties>
 
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.9.255-SNAPSHOT</version>
+        <version>2.0.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -30,12 +25,18 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-lombok-compiler-plugin</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -46,12 +47,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource>
-                <directory>${lombok.resources}</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -64,10 +59,6 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${lombok.common.src}</source>
-                                <source>${lombok.k1.src}</source>
-                                <source>${lombok.k2.src}</source>
-                                <source>${lombok.cli.src}</source>
                                 <source>${lombok.maven.plugin.src}</source>
                             </sources>
                         </configuration>
@@ -88,12 +79,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <args>
-                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
-                        <arg>-Xcontext-receivers</arg>
-                    </args>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
@@ -110,6 +95,26 @@
                         <id>process-test-classes</id>
                         <goals>
                             <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Shadowing kotlin-lombok-compiler-plugin into maven plugin without removing the dependency -->
+            <!-- Required for backward compatibility for Kotlin/IDEA plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
                         </goals>
                     </execution>
                 </executions>

@@ -1,5 +1,5 @@
-// The old backend has `y` and `j` visible on the finally block.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -33,7 +33,24 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:32 box:
+// test.kt:13 compute:
+// test.kt:14 compute:
+// test.kt:15 compute: y:int=42:int
+// test.kt:16 compute: y:int=42:int, i:int=0:int
+// test.kt:18 compute:
+// test.kt:19 compute: e:java.lang.Exception=java.lang.RuntimeException
+// test.kt:20 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int
+// test.kt:21 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int
+// test.kt:7 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1\21:int=0:int
+// test.kt:22 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1\21:int=0:int, $i$a$-f-TestKt$compute$1\2\88\0:int=0:int
+// test.kt:26 compute:
+// test.kt:32 box:
+// test.kt:33 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:34 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JVM_IR
 // test.kt:32 box:
 // test.kt:13 compute:
 // test.kt:14 compute:

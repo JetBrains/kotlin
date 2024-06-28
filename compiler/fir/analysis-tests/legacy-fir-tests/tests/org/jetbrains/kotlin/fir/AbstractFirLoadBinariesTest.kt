@@ -50,7 +50,7 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
 
         KotlinTestUtils.assertEqualsToFile(
             File(testDataPath),
-            builder.toString()
+            builder.toString().trimEnd() + "\n"
         )
     }
 }

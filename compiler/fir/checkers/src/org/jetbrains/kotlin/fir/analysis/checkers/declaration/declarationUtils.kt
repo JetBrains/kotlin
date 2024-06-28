@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
@@ -35,14 +37,29 @@ private inline fun isInsideSpecificClass(
             context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 }
 
-internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): Boolean {
-    if (this.isFinal) return true
-    val containingClass = context.containingDeclarations.lastOrNull() as? FirRegularClass ?: return true
+internal fun FirMemberDeclaration.isEffectivelyFinal(context: CheckerContext): Boolean =
+    this.symbol.isEffectivelyFinal(context.session)
+
+internal fun FirBasedSymbol<*>.isEffectivelyFinal(session: FirSession): Boolean {
+    if (this.isFinal()) return true
+
+    val containingClass = this.getContainingClassSymbol(session) as? FirClassSymbol<*> ?: return true
+
     if (containingClass.isEnumClass) {
-        // Enum class has enum entries and hence is not considered final.
+        // Enum class has enum entries and hence is not considered final
         return false
     }
     return containingClass.isFinal
+}
+
+private fun FirBasedSymbol<*>.isFinal(): Boolean {
+    when (this) {
+        is FirCallableSymbol<*> -> if (this.isFinal) return true
+        is FirClassLikeSymbol<*> -> if (this.isFinal) return true
+        else -> return true
+    }
+
+    return false
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
@@ -90,23 +107,18 @@ internal val FirBasedSymbol<*>.isLocalMember: Boolean
         else -> false
     }
 
-internal val FirCallableDeclaration.isExtensionMember: Boolean
-    get() = symbol.isExtensionMember
-
 internal val FirCallableSymbol<*>.isExtensionMember: Boolean
     get() = resolvedReceiverTypeRef != null && dispatchReceiverType != null
 
-fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
-    for (declarationSymbol in this.declarationSymbols) {
-        if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
-            return declarationSymbol
-        }
-    }
-    return null
+@OptIn(SymbolInternals::class)
+fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstructorSymbol? {
+    return fir.primaryConstructorIfAny(session)
 }
 
-fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
-    coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable
+fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
+
+fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
+    typeConstructor().isMultiFieldValueClass() && !isNullable
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean

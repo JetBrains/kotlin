@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.UnsignedType
 import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
-import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.numbers.primitives.BasePrimitivesGenerator
+import org.jetbrains.kotlin.generators.builtins.numbers.primitives.END_LINE
 import org.jetbrains.kotlin.generators.builtins.printDoc
 import java.io.File
 import java.io.PrintWriter
@@ -18,7 +19,7 @@ fun generateUnsignedTypes(
     targetDir: File,
     generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit
 ) {
-    for (type in UnsignedType.values()) {
+    for (type in UnsignedType.entries) {
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
         generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
@@ -29,8 +30,8 @@ fun generateUnsignedTypes(
 }
 
 class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val className = type.capitalized
-    val storageType = type.asSigned.capitalized
+    private val className = type.capitalized
+    private val storageType = type.asSigned.capitalized
 
     internal fun binaryOperatorDoc(operator: String, operand1: UnsignedType, operand2: UnsignedType): String = when (operator) {
         "floorDiv" ->
@@ -55,7 +56,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 For unsigned types, the remainders of flooring division and truncating division are the same.
                 """.trimIndent()
         }
-        else -> GeneratePrimitives.binaryOperatorDoc(operator, operand1.asSigned, operand2.asSigned)
+        else -> BasePrimitivesGenerator.binaryOperatorDoc(operator, operand1.asSigned, operand2.asSigned)
     }
 
     override fun generateBody() {
@@ -69,7 +70,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("@JvmInline")
         out.println("public value class $className @kotlin.internal.IntrinsicConstEvaluation @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
-        out.println("""    companion object {
+        out.println("""    public companion object {
         /**
          * A constant holding the minimum value an instance of $className can have.
          */
@@ -118,7 +119,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
     private fun generateCompareTo() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             out.println("""
     /**
      * Compares this value with the specified value for order.
@@ -146,7 +147,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateBinaryOperators() {
-        for (name in GeneratePrimitives.binaryOperators) {
+        for (name in BasePrimitivesGenerator.binaryOperators) {
             generateOperator(name)
         }
         generateFloorDivMod("floorDiv")
@@ -154,7 +155,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateOperator(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val returnType = getOperatorReturnType(type, otherType)
 
             out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
@@ -175,7 +176,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateFloorDivMod(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val operationType = getOperatorReturnType(type, otherType)
             val returnType = if (name == "mod") otherType else operationType
 
@@ -203,7 +204,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
     private fun generateUnaryOperators() {
         for (name in listOf("inc", "dec")) {
-            out.println(GeneratePrimitives.incDecOperatorsDoc(name).replaceIndent("    "))
+            out.printDoc(BasePrimitivesGenerator.incDecOperatorsDoc(name), "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline operator fun $name(): $className = $className(data.$name())")
             out.println()
@@ -229,8 +230,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("     *")
         out.println("     * If the [other] value is less than or equal to `this` value, then the returned range is empty.")
         out.println("     */")
-        out.println("    @SinceKotlin(\"1.7\")")
-        out.println("    @ExperimentalStdlibApi")
+        out.println("    @SinceKotlin(\"1.9\")")
+        out.println("    @WasExperimental(ExperimentalStdlibApi::class)")
         out.println("    @kotlin.internal.InlineOnly")
         out.println("    public inline operator fun rangeUntil(other: $className): $rangeType = ${convert("this")} until ${convert("other")}")
         out.println()
@@ -240,13 +241,9 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     private fun generateBitShiftOperators() {
 
         fun generateShiftOperator(name: String, implementation: String = name) {
-            val doc = GeneratePrimitives.shiftOperators[implementation]!!
-            val detail = GeneratePrimitives.shiftOperatorsDocDetail(type.asSigned)
-            out.println("    /**")
-            out.println("     * $doc")
-            out.println("     *")
-            out.println(detail.replaceIndent("     "))
-            out.println("     */")
+            val doc = BasePrimitivesGenerator.shiftOperators[implementation]!!
+            val detail = BasePrimitivesGenerator.shiftOperatorsDocDetail(type.asSigned)
+            out.printDoc(doc + END_LINE + END_LINE + detail, "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
             out.println()
@@ -257,7 +254,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateBitwiseOperators() {
-        for ((name, doc) in GeneratePrimitives.bitwiseOperators) {
+        for ((name, doc) in BasePrimitivesGenerator.bitwiseOperators) {
             out.println("    /** $doc */")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline infix fun $name(other: $className): $className = $className(this.data $name other.data)")
@@ -302,14 +299,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$signed(): $signed = ")
             out.println(when {
-                otherType < type -> "data.to$signed()"
-                otherType == type -> "data"
-                else -> "data.to$signed() and ${type.mask}"
-            })
+                    type == UnsignedType.UINT && otherType == UnsignedType.ULONG -> "uintToLong(data)"
+                    otherType < type -> "data.to$signed()"
+                    otherType == type -> "data"
+                    else -> "data.to$signed() and ${type.mask}"
+                }
+            )
         }
         out.println()
 
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val name = otherType.capitalized
 
             if (type == otherType)
@@ -335,11 +334,14 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun to$name(): $name = ")
-            out.println(when {
-                otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
-                otherType == type -> "this"
-                else -> "data.to${otherType.capitalized}()"
-            })
+            out.println(
+                when {
+                    type == UnsignedType.UINT && otherType == UnsignedType.ULONG -> "uintToULong(data)"
+                    otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
+                    otherType == type -> "this"
+                    else -> "data.to${otherType.capitalized}()"
+                }
+            )
         }
         out.println()
     }
@@ -362,16 +364,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.print("    public inline fun to$otherName(): $otherName = ")
             when (type) {
                 UnsignedType.UINT, UnsignedType.ULONG ->
-                    out.println(if (otherType == PrimitiveType.FLOAT) "this.toDouble().toFloat()" else className.lowercase() + "ToDouble(data)")
+                    out.println(className.lowercase() + "To$otherName(data)")
                 else ->
-                    out.println("this.toInt().to$otherName()")
+                    out.println("uintTo$otherName(this.toInt())")
             }
         }
         out.println()
     }
 
     private fun generateExtensionConversions() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val otherSigned = otherType.asSigned.capitalized
             val thisSigned = type.asSigned.capitalized
 
@@ -427,18 +429,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println("@WasExperimental(ExperimentalUnsignedTypes::class)")
             out.println("@kotlin.internal.InlineOnly")
             out.print("public inline fun $otherName.to$className(): $className = ")
-            val conversion = if (otherType == PrimitiveType.DOUBLE) "" else ".toDouble()"
-            out.println("doubleTo$className(this$conversion)")
+            out.println("${otherName.lowercase()}To$className(this)")
         }
     }
 
 
     private fun generateToStringHashCode() {
-
         out.print("    public override fun toString(): String = ")
         when (type) {
             UnsignedType.UBYTE, UnsignedType.USHORT -> out.println("toInt().toString()")
-            UnsignedType.UINT -> out.println("toLong().toString()")
+            UnsignedType.UINT -> out.println("uintToString(data)")
             UnsignedType.ULONG -> out.println("ulongToString(data)")
         }
 
@@ -458,11 +458,11 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
 class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val elementType = type.capitalized
-    val arrayType = elementType + "Array"
-    val arrayTypeOf = elementType.lowercase() + "ArrayOf"
-    val storageElementType = type.asSigned.capitalized
-    val storageArrayType = storageElementType + "Array"
+    private val elementType = type.capitalized
+    private val arrayType = elementType + "Array"
+    private val arrayTypeOf = elementType.lowercase() + "ArrayOf"
+    private val storageElementType = type.asSigned.capitalized
+    private val storageArrayType = storageElementType + "Array"
     override fun generateBody() {
         out.println("import kotlin.jvm.*")
         out.println()
@@ -551,10 +551,10 @@ public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elem
 }
 
 class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
-    val elementType = type.capitalized
-    val signedType = type.asSigned.capitalized
-    val stepType = signedType
-    val stepMinValue = "$stepType.MIN_VALUE"
+    private val elementType = type.capitalized
+    private val signedType = type.asSigned.capitalized
+    private val stepType = signedType
+    private val stepMinValue = "$stepType.MIN_VALUE"
 
     override fun getPackage(): String = "kotlin.ranges"
 
@@ -572,14 +572,13 @@ import kotlin.internal.*
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@OptIn(ExperimentalStdlibApi::class)
 public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}>, OpenEndRange<${elementType}> {
     override val start: $elementType get() = first
     override val endInclusive: $elementType get() = last
     
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
     @Deprecated("Can throw an exception when it's impossible to represent the value with $elementType type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: $elementType get() {
         if (last == $elementType.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u
@@ -603,7 +602,7 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
 
     override fun toString(): String = "${'$'}first..${'$'}last"
 
-    companion object {
+    public companion object {
         /** An empty range of values of type $elementType. */
         public val EMPTY: ${elementType}Range = ${elementType}Range($elementType.MAX_VALUE, $elementType.MIN_VALUE)
     }
@@ -659,7 +658,7 @@ internal constructor(
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
 
-    companion object {
+    public companion object {
         /**
          * Creates ${elementType}Progression within the specified bounds of a closed range.
 

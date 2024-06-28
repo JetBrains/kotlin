@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: PropertyDescriptorImpl.java

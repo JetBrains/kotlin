@@ -24,8 +24,6 @@ import kotlin.internal.RequireKotlinVersionKind
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @OptionalExpectation
-@Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
 @SinceKotlin("1.9")
 @RequireKotlin(version = "1.8.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-@ExperimentalStdlibApi
 public expect annotation class Volatile()

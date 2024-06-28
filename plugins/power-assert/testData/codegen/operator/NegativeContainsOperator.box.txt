@@ -1,0 +1,39 @@
+---
+assert("Hello" !in listOf("Hello", "World"))
+               |   |
+               |   [Hello, World]
+               false
+---
+---
+assert(" !in " !in listOf(" !in "))
+               |   |
+               |   [ !in ]
+               false
+---
+---
+assert(
+    " !in "
+
+            !in
+            |
+            false
+
+            listOf(" !in ")
+            |
+            [ !in ]
+)
+---
+---
+assert("Hello"/*!in*/!in/*!in*/listOf("Hello", "World"))
+                     |         |
+                     |         [Hello, World]
+                     false
+---
+---
+assert(("Hello" !in listOf("Hello", "World")) !in listOf(false))
+                |   |                         |   |
+                |   |                         |   [false]
+                |   |                         false
+                |   [Hello, World]
+                false
+---

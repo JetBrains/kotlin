@@ -1,0 +1,6 @@
+// CHECK:
+//   Mangled name: #testArrayAugmentedAssignment(<dynamic>){}
+//   Public signature: /testArrayAugmentedAssignment|-3592844207838342981[0]
+//   Public signature debug description: testArrayAugmentedAssignment(<dynamic>){}
+fun testArrayAugmentedAssignment(d: dynamic): Unit
+

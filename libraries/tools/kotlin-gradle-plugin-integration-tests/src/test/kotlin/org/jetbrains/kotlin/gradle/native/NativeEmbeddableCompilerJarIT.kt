@@ -1,21 +1,18 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCompilerClasspath
-import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 
-class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+@DisplayName("Tests for K/N builds with embeddable compiler jar")
+@NativeGradlePluginTests
+internal class NativeEmbeddableCompilerJarIT : KGPBaseTest() {
 
     private fun String.isRegularJar() = this.endsWith("/kotlin-native.jar")
     private fun String.isEmbeddableJar() = this.endsWith("/kotlin-native-compiler-embeddable.jar")
@@ -23,60 +20,103 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
     private fun List<String>.includesRegularJar() = any { it.isRegularJar() }
     private fun List<String>.includesEmbeddableJar() = any { it.isEmbeddableJar() }
 
-    @Test
-    fun testDefault() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
-        build(":linkDebugExecutableHost") {
-            assertSuccessful()
-            withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertFalse(it.includesRegularJar())
-                assertTrue(it.includesEmbeddableJar())
+    private val String.withPrefix get() = "native-binaries/$this"
+
+    @DisplayName("K/N with default config shouldn't contain kotlin-native.jar and should contain kotlin-native-compiler-embeddable.jar")
+    @GradleTest
+    fun shouldNotUseRegularJarInDefaultConfig(gradleVersion: GradleVersion) {
+        nativeProject("executables".withPrefix, gradleVersion) {
+            build(":linkDebugExecutableHost") {
+                assertNativeTasksClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                    assert(!it.includesRegularJar()) {
+                        assertionFailedMessage(it)
+                    }
+                    assert(it.includesEmbeddableJar()) {
+                        assertionFailedMessage(it)
+                    }
+                }
             }
         }
     }
 
-    @Test
-    fun testEmbeddableJarFalse() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
-        build(":linkDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=false") {
-            assertSuccessful()
-            withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertTrue(it.includesRegularJar())
-                assertFalse(it.includesEmbeddableJar())
+    @DisplayName("K/N with embeddable compiler flag turned off config should contain kotlin-native.jar and shouldn't contain kotlin-native-compiler-embeddable.jar")
+    @GradleTest
+    fun shouldUseRegularJarWithoutUseEmbeddableCompilerJar(gradleVersion: GradleVersion) {
+        nativeProject("executables".withPrefix, gradleVersion) {
+            build(
+                ":linkDebugExecutableHost",
+                "-Pkotlin.native.useEmbeddableCompilerJar=false",
+            ) {
+                assertNativeTasksClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                    assert(it.includesRegularJar()) {
+                        assertionFailedMessage(it)
+                    }
+                    assert(!it.includesEmbeddableJar()) {
+                        assertionFailedMessage(it)
+                    }
+                }
             }
         }
     }
 
-    @Test
-    fun testEmbeddableJarTrue() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
-        build(":linkDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=true") {
-            assertSuccessful()
-            withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertFalse(it.includesRegularJar())
-                assertTrue(it.includesEmbeddableJar())
+    @DisplayName("K/N with embeddable compiler flag turned on config shouldn't contain kotlin-native.jar and should contain kotlin-native-compiler-embeddable.jar")
+    @GradleTest
+    fun shouldUseRegularJarWithUseEmbeddableCompilerJar(gradleVersion: GradleVersion) {
+        nativeProject("executables".withPrefix, gradleVersion) {
+            build(
+                ":linkDebugExecutableHost",
+                "-Pkotlin.native.useEmbeddableCompilerJar=true",
+            ) {
+                assertNativeTasksClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                    assert(!it.includesRegularJar()) {
+                        assertionFailedMessage(it)
+                    }
+                    assert(it.includesEmbeddableJar()) {
+                        assertionFailedMessage(it)
+                    }
+                }
             }
         }
     }
 
-    @Test
-    fun testSwitch() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
-        build(":linkDebugExecutableHost") {
-            assertSuccessful()
-            withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertFalse(it.includesRegularJar())
-                assertTrue(it.includesEmbeddableJar())
+    @DisplayName("K/N project's builds with switching embeddable compiler flag turned from on to off")
+    @GradleTest
+    fun testSwitch(gradleVersion: GradleVersion) {
+        nativeProject("executables".withPrefix, gradleVersion) {
+            build(":linkDebugExecutableHost") {
+                assertNativeTasksClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                    assert(!it.includesRegularJar()) {
+                        assertionFailedMessage(it)
+                    }
+                    assert(it.includesEmbeddableJar()) {
+                        assertionFailedMessage(it)
+                    }
+                }
+            }
+
+            build(":linkDebugExecutableHost") {
+                assertTasksUpToDate(":linkDebugExecutableHost", ":compileKotlinHost")
+            }
+
+            build(
+                ":linkDebugExecutableHost",
+                "-Pkotlin.native.useEmbeddableCompilerJar=false",
+            ) {
+                assertTasksExecuted(":linkDebugExecutableHost", ":compileKotlinHost")
+                assertNativeTasksClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
+                    assert(it.includesRegularJar()) {
+                        assertionFailedMessage(it)
+                    }
+                    assert(!it.includesEmbeddableJar()) {
+                        assertionFailedMessage(it)
+                    }
+                }
             }
         }
+    }
 
-        build(":linkDebugExecutableHost") {
-            assertTasksUpToDate(":linkDebugExecutableHost", ":compileKotlinHost")
-        }
-
-        build(":linkDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=false") {
-            assertSuccessful()
-            assertTasksExecuted(":linkDebugExecutableHost", ":compileKotlinHost")
-            withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertTrue(it.includesRegularJar())
-                assertFalse(it.includesEmbeddableJar())
-            }
-        }
+    private fun BuildResult.assertionFailedMessage(classPathValues: List<String>): String {
+        printBuildOutput()
+        return "Actual classpath is: ${classPathValues}"
     }
 }

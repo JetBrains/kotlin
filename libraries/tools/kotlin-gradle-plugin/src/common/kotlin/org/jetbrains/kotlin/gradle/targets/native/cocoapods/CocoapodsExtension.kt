@@ -10,17 +10,21 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
-@Suppress("unused") // Public API
+@Suppress("unused", "MemberVisibilityCanBePrivate") // Public API
 abstract class CocoapodsExtension @Inject constructor(private val project: Project) {
     /**
      * Configure version of the pod
@@ -48,17 +52,11 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     /**
      * Setup plugin to generate synthetic xcodeproj compatible with static libraries
-     *
-     * This option is not supported and scheduled to be removed. If you are using this please
-     * file an issue with your case to [https://kotl.in/issue](https://kotl.in/issue)
      */
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("This option is not supported and scheduled to be removed")
+    @Deprecated("'useLibraries' mode is removed", level = DeprecationLevel.ERROR)
     fun useLibraries() {
-        useLibraries = true
+        project.kotlinToolingDiagnosticsCollector.report(project, CocoapodsPluginDiagnostics.UseLibrariesUsed())
     }
-
-    internal var useLibraries: Boolean = false
 
     /**
      * Configure name of the pod built from this project.
@@ -121,8 +119,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         anyFramework
     }
 
-    internal val podFrameworkName = anyPodFramework.map { it.baseName.asValidFrameworkName() }
-    internal val podFrameworkIsStatic = anyPodFramework.map { it.isStatic }
+    internal val podFrameworkName: Provider<String> = anyPodFramework.map { it.baseName.asValidFrameworkName() }
+    internal val podFrameworkIsStatic: Provider<Boolean> = anyPodFramework.map { it.isStatic }
 
     /**
      * Configure custom Xcode Configurations to Native Build Types mapping
@@ -135,7 +133,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure output directory for pod publishing
      */
-    var publishDir: File = CocoapodsBuildDirs(project).publish
+    var publishDir: File = CocoapodsBuildDirs(project.layout).publish.getFile()
 
     internal val specRepos = SpecRepos()
 
@@ -168,31 +166,6 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
-        var podSource = path
-        if (path != null && !path.isDirectory) {
-            val pattern = "\\W*pod(.*\"${name}\".*)".toRegex()
-            val buildScript = project.buildFile
-            val lines = buildScript.readLines()
-            val lineNumber = lines.indexOfFirst { pattern.matches(it) }
-            val warnMessage = if (lineNumber != -1) run {
-                val lineContent = lines[lineNumber].trimIndent()
-                val newContent = lineContent.replace(path.name, "")
-                """
-                |Deprecated DSL found on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
-                |Found: "${lineContent}"
-                |Expected: "${newContent}"
-                |Please, change the path to avoid this warning.
-                |
-            """.trimMargin()
-            } else
-                """
-                |Deprecated DSL is used for pod "$name".
-                |Please, change its path from ${path.path} to ${path.parentFile.path} 
-                |
-            """.trimMargin()
-            project.logger.warn(warnMessage)
-            podSource = path.parentFile
-        }
         addToPods(
             project.objects.newInstance(
                 CocoapodsDependency::class.java,
@@ -201,7 +174,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
             ).apply {
                 this.headers = headers
                 this.version = version
-                source = podSource?.let { Path(it) }
+                source = path?.let(::Path)
                 this.linkOnly = linkOnly
             }
         )
@@ -291,6 +264,27 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
          */
         @get:Input
         var linkOnly: Boolean = false
+
+        /**
+         * Contains a list of dependencies to other pods. This list will be used while building an interop Kotlin-binding for the pod.
+         *
+         * @see useInteropBindingFrom
+         */
+        @get:Input
+        val interopBindingDependencies: MutableList<String> = mutableListOf()
+
+        /**
+         * Specify that the pod depends on another pod **podName** and a Kotlin-binding for **podName** should be used while building
+         * a binding for the pod. This is necessary if you need to operate entities from **podName** and from the pod together, for
+         * instance pass an object from **podName** to the pod in Kotlin.
+         *
+         * A pod with the exact name must be declared before calling this function.
+         *
+         * @see interopBindingDependencies
+         */
+        fun useInteropBindingFrom(podName: String) {
+            interopBindingDependencies.add(podName)
+        }
 
         @Input
         override fun getName(): String = name

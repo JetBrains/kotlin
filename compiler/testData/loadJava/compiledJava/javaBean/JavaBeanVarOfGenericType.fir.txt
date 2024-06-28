@@ -1,7 +1,7 @@
 public open class JavaBeanVarOfGenericType<P : R|kotlin/Any!|> : R|kotlin/Any| {
-    public open fun getCharacters(): R|ft<java/util/ArrayList<ft<P & Any, P?>>, java/util/ArrayList<ft<P & Any, P?>>?>|
+    public open fun getCharacters(): R|ft<java/util/ArrayList<P!>, java/util/ArrayList<P!>?>|
 
-    public open fun setCharacters(characters: R|ft<java/util/ArrayList<ft<P & Any, P?>>, java/util/ArrayList<ft<P & Any, P?>>?>|): R|kotlin/Unit|
+    public open fun setCharacters(characters: R|ft<java/util/ArrayList<P!>, java/util/ArrayList<P!>?>|): R|kotlin/Unit|
 
     public constructor<P : R|kotlin/Any!|>(): R|test/JavaBeanVarOfGenericType<P>|
 

@@ -1,0 +1,42 @@
+// CHECK:
+//   Mangled name: IrElement
+//   Public signature: /IrElement|null[0]
+open class IrElement {
+  // CHECK:
+  //   Mangled name: IrElement#<init>(){}
+  //   Public signature: /IrElement.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+//   Public signature: /dump|-3225440066498389487[0]
+//   Public signature debug description: dump@IrElement(kotlin.Boolean;kotlin.Boolean){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dump@IrElement(kotlin.Boolean;kotlin.Boolean){}
+//   Public signature: /dump|773530586679184317[0]
+//   Public signature debug description: dump@IrElement(kotlin.Boolean;kotlin.Boolean){}
+fun IrElement.dump(normalizeNames: Boolean, stableOrder: Boolean): String
+
+// CHECK JVM_IR:
+//   Mangled name: #dump(IrElement;kotlin.String){}kotlin.String
+//   Public signature: /dump|2660497428954829765[0]
+//   Public signature debug description: dump(IrElement;kotlin.String){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dump(IrElement;kotlin.String){}
+//   Public signature: /dump|4886700334642684742[0]
+//   Public signature debug description: dump(IrElement;kotlin.String){}
+fun dump(data: IrElement, dumpStrategy: String): String
+
+// CHECK JVM_IR:
+//   Mangled name: #dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+//   Public signature: /dumpKotlinLike|4178458168806795646[0]
+//   Public signature debug description: dumpKotlinLike@IrElement(kotlin.String){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #dumpKotlinLike@IrElement(kotlin.String){}
+//   Public signature: /dumpKotlinLike|-2371556323569177260[0]
+//   Public signature debug description: dumpKotlinLike@IrElement(kotlin.String){}
+fun IrElement.dumpKotlinLike(options: String): String
+

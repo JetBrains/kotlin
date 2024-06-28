@@ -1,5 +1,5 @@
-// !LANGUAGE: +SoundSmartcastForEnumEntries
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +SoundSmartcastForEnumEntries
+// DIAGNOSTICS: -UNUSED_VARIABLE
 // SKIP_TXT
 
 enum class Message(val text: String?) {

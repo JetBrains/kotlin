@@ -8,34 +8,36 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
-import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 
-internal val Project.useXcodeMessageStyle: Boolean
-    get() = getOrPutRootProjectProperty("$KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE.extra") {
-        PropertiesProvider(this).nativeUseXcodeMessageStyle ?: isXcodeTasksRequested
+internal val Project.useXcodeMessageStyle: Provider<Boolean>
+    get() = nativeProperties
+        .isUseXcodeMessageStyleEnabled
+        .orElse(isXcodeTasksRequested)
+
+private val Project.isXcodeTasksRequested: Provider<Boolean>
+    get() = providers.provider {
+        gradle.startParameter.taskNames.any { requestedTask ->
+            val name = requestedTask.substringAfterLast(':')
+            val isSyncTask = name == KotlinCocoapodsPlugin.SYNC_TASK_NAME
+            val isEmbedAndSignTask = name.startsWith(AppleXcodeTasks.embedAndSignTaskPrefix) && name.endsWith(AppleXcodeTasks.embedAndSignTaskPostfix)
+            isSyncTask || isEmbedAndSignTask
+        }
     }
 
-private val Project.isXcodeTasksRequested: Boolean
-    get() = gradle.startParameter.taskNames.any { requestedTask ->
-        val name = requestedTask.substringAfterLast(':')
-        val isSyncTask = name == KotlinCocoapodsPlugin.SYNC_TASK_NAME
-        val isEmbedAndSignTask = name.startsWith(AppleXcodeTasks.embedAndSignTaskPrefix) && name.endsWith(AppleXcodeTasks.embedAndSignTaskPostfix)
-        isSyncTask || isEmbedAndSignTask
-    }
-
-internal fun Project.addBuildListenerForXcode() {
-    if (!useXcodeMessageStyle) {
-        return
-    }
-
-    if (isConfigurationCacheAvailable(gradle)) {
+internal val AddBuildListenerForXCodeSetupAction = KotlinProjectSetupAction action@{
+    if (isConfigurationCacheEnabled) {
         // TODO https://youtrack.jetbrains.com/issue/KT-55832
         // Configuration cache case will be supported later
-        return
+        return@action
+    }
+
+    if (!useXcodeMessageStyle.get()) {
+        return@action
     }
 
     gradle.addBuildListener(XcodeBuildErrorListener)

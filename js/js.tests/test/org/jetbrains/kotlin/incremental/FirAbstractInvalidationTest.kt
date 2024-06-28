@@ -5,31 +5,71 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFir
+import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
-import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.MainModule
+import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class AbstractJsFirInvalidationTest : FirAbstractInvalidationTest(TargetBackend.JS_IR, "incrementalOut/invalidationFir")
+abstract class AbstractJsFirInvalidationPerFileTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
+abstract class AbstractJsFirInvalidationPerModuleTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFir/perModule")
+abstract class AbstractJsFirES6InvalidationPerFileTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirES6/perFile")
+abstract class AbstractJsFirES6InvalidationPerModuleTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR_ES6, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirES6/perModule")
+abstract class AbstractJsFirInvalidationPerFileWithPLTest :
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
+abstract class AbstractJsFirInvalidationPerModuleWithPLTest :
+    AbstractJsFirInvalidationWithPLTest(JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFirWithPL/perModule")
+
+abstract class AbstractJsFirInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
+    FirAbstractInvalidationTest(
+        TargetBackend.JS_IR,
+        granularity,
+        workingDirPath
+    ) {
+    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+        val config = super.createConfiguration(moduleName, language, moduleKind)
+        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        return config
+    }
+}
 
 abstract class FirAbstractInvalidationTest(
     targetBackend: TargetBackend,
+    granularity: JsGenerationGranularity,
     workingDirPath: String
-) : AbstractInvalidationTest(targetBackend, workingDirPath) {
-    private val mutedTests = setOf("constVals", "enum", "jsCodeWithConstString")
+) : AbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
+    private fun getFirInfoFile(defaultInfoFile: File): File {
+        val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
+        val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
+        return firInfoFile.takeIf { it.exists() } ?: defaultInfoFile
+    }
 
-    override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
-        return super.isIgnoredTest(projectInfo) || projectInfo.name in mutedTests
+    override fun getModuleInfoFile(directory: File): File {
+        return getFirInfoFile(super.getModuleInfoFile(directory))
+    }
+
+    override fun getProjectInfoFile(directory: File): File {
+        return getFirInfoFile(super.getProjectInfoFile(directory))
     }
 
     override fun buildKlib(
@@ -46,7 +86,7 @@ abstract class FirAbstractInvalidationTest(
 
         val libraries = dependencies.map { it.absolutePath }
         val friendLibraries = friends.map { it.absolutePath }
-        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
+        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
         val moduleStructure = ModulesStructure(
             project = environment.project,
             mainModule = MainModule.SourceFiles(sourceFiles),
@@ -55,32 +95,42 @@ abstract class FirAbstractInvalidationTest(
             friendDependenciesPaths = friendLibraries
         )
 
-        val outputs = compileModuleToAnalyzedFir(
+        val groupedSources = collectSources(configuration, environment.project, messageCollector)
+        val analyzedOutput = compileModulesToAnalyzedFirWithLightTree(
             moduleStructure = moduleStructure,
-            ktFiles = sourceFiles,
+            groupedSources = groupedSources,
+            ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
             libraries = libraries,
             friendLibraries = friendLibraries,
-            messageCollector = messageCollector,
-            diagnosticsReporter = diagnosticsReporter
+            diagnosticsReporter = diagnosticsReporter,
+            incrementalDataProvider = null,
+            lookupTracker = null,
+            useWasmPlatform = false,
         )
 
-        if (outputs != null) {
-            val irResult = transformFirToIr(moduleStructure, outputs)
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
 
-            serializeFirKlib(
-                moduleStructure = moduleStructure,
-                firOutputs = outputs,
-                irResult = irResult,
-                outputKlibPath = outputKlibFile.absolutePath,
-                messageCollector = messageCollector,
-                diagnosticsReporter = diagnosticsReporter,
-                jsOutputName = moduleName
-            )
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred compiling test:\n$messages")
         }
+
+        serializeFirKlib(
+            moduleStructure = moduleStructure,
+            firOutputs = analyzedOutput.output,
+            fir2IrActualizedResult = fir2IrActualizedResult,
+            outputKlibPath = outputKlibFile.absolutePath,
+            nopack = false,
+            messageCollector = messageCollector,
+            diagnosticsReporter = diagnosticsReporter,
+            jsOutputName = moduleName,
+            useWasmPlatform = false,
+            wasmTarget = null,
+        )
 
         if (messageCollector.hasErrors()) {
             val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
-            throw AssertionError("The following errors occurred compiling test:\n$messages")
+            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
         }
     }
 }

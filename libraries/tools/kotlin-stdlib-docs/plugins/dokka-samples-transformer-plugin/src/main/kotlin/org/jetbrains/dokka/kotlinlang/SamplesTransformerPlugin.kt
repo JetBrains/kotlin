@@ -1,16 +1,18 @@
 package org.jetbrains.dokka.kotlinlang
 
-import org.jetbrains.dokka.CoreExtensions
-import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.analysis.kotlin.KotlinAnalysisPlugin
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
+import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 
 class SamplesTransformerPlugin : DokkaPlugin() {
-    private val dokkaBase by lazy { plugin<DokkaBase>() }
+    private val kotlinAnalysisPlugin by lazy { plugin<KotlinAnalysisPlugin>() }
 
     @Suppress("unused")
     val kotlinWebsiteSamplesTransformer by extending {
-        CoreExtensions.pageTransformer providing ::KotlinWebsiteSamplesTransformer override dokkaBase.defaultSamplesTransformer order {
-            before(dokkaBase.pageMerger)
-        }
+        kotlinAnalysisPlugin.sampleRewriter providing ::KotlinWebsiteSampleRewriter
     }
+
+    @DokkaPluginApiPreview
+    override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
 }

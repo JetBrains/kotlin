@@ -203,7 +203,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                     iv.ifnull(ifNull);
                 }
 
-                genHashCode(mv, iv, asmType, generationState.getTarget());
+                genHashCode(mv, iv, asmType, generationState.getConfig().getTarget());
 
                 if (ifNull != null) {
                     Label end = new Label();

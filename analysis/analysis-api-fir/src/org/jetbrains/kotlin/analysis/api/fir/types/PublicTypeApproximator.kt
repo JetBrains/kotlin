@@ -21,13 +21,13 @@ internal object PublicTypeApproximator {
     }
 
     internal class PublicApproximatorConfiguration(
-        override val localTypes: Boolean
+        override val approximateLocalTypes: Boolean
     ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
-        override val allFlexible: Boolean get() = false
-        override val errorType: Boolean get() = true
-        override val definitelyNotNullType: Boolean get() = false
-        override val integerLiteralConstantType: Boolean get() = true
-        override val intersectionTypesInContravariantPositions: Boolean get() = true
-        override val anonymous: Boolean get() = true
+        override val approximateAllFlexible: Boolean get() = true
+        override val approximateErrorTypes: Boolean get() = false
+        override val approximateDefinitelyNotNullTypes: Boolean get() = true
+        override val approximateIntegerLiteralConstantTypes: Boolean get() = true
+        override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
+        override val approximateAnonymous: Boolean get() = true
     }
 }

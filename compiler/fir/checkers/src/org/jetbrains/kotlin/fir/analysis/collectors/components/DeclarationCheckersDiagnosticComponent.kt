@@ -5,21 +5,41 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
 @OptIn(CheckersComponentInternal::class)
 class DeclarationCheckersDiagnosticComponent(
     session: FirSession,
     reporter: DiagnosticReporter,
-    private val checkers: DeclarationCheckers = session.checkersComponent.declarationCheckers,
+    private val checkers: DeclarationCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
+    constructor(session: FirSession, reporter: DiagnosticReporter, mppKind: MppCheckerKind) : this(
+        session,
+        reporter,
+        when (mppKind) {
+            MppCheckerKind.Common -> session.checkersComponent.commonDeclarationCheckers
+            MppCheckerKind.Platform -> session.checkersComponent.platformDeclarationCheckers
+        }
+    )
+
+    override fun visitElement(element: FirElement, data: CheckerContext) {
+        if (element is FirDeclaration) {
+            error("${element::class.simpleName} should call parent checkers inside ${this::class.simpleName}")
+        }
+    }
+
+    override fun visitDeclaration(declaration: FirDeclaration, data: CheckerContext) {
+        checkers.allBasicDeclarationCheckers.check(declaration, data)
+    }
 
     override fun visitFile(file: FirFile, data: CheckerContext) {
         checkers.allFileCheckers.check(file, data)
@@ -47,6 +67,10 @@ class DeclarationCheckersDiagnosticComponent(
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
         checkers.allConstructorCheckers.check(constructor, data)
+    }
+
+    override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: CheckerContext) {
+        checkers.allConstructorCheckers.check(errorPrimaryConstructor, data)
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: CheckerContext) {
@@ -79,6 +103,26 @@ class DeclarationCheckersDiagnosticComponent(
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: CheckerContext) {
         checkers.allAnonymousInitializerCheckers.check(anonymousInitializer, data)
+    }
+
+    override fun visitField(field: FirField, data: CheckerContext) {
+        checkers.allCallableDeclarationCheckers.check(field, data)
+    }
+
+    override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: CheckerContext) {
+        checkers.allBasicDeclarationCheckers.check(danglingModifierList, data)
+    }
+
+    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: CheckerContext) {
+        checkers.allCallableDeclarationCheckers.check(errorProperty, data)
+    }
+
+    override fun visitScript(script: FirScript, data: CheckerContext) {
+        checkers.allScriptCheckers.check(script, data)
+    }
+
+    override fun visitCodeFragment(codeFragment: FirCodeFragment, data: CheckerContext) {
+        checkers.allBasicDeclarationCheckers.check(codeFragment, data)
     }
 
     private fun <D : FirDeclaration> Collection<FirDeclarationChecker<D>>.check(

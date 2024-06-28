@@ -1,0 +1,29 @@
+KtNameReferenceExpression(67,70): 'foo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = main/foo(t: {main.T=} ERROR CLASS: Symbol not found for A): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = t
+              receiverType = null
+              returnType = {main.T=} ERROR CLASS: Symbol not found for A
+              symbol = t: {main.T=} ERROR CLASS: Symbol not found for A
+              callableId = null
+          ]
+          callableId = main/foo
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        2 -> (KaVariableSignature:
+          name = t
+          receiverType = null
+          returnType = {main.T=} ERROR CLASS: Symbol not found for A
+          symbol = t: {main.T=} ERROR CLASS: Symbol not found for A
+          callableId = null)
+      }

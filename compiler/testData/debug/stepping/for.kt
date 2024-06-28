@@ -1,3 +1,4 @@
+
 // FILE: test.kt
 fun box() {
     for (i in 1..3) {
@@ -7,29 +8,34 @@ fun box() {
 
 inline fun foo(n: Int) {}
 
-// EXPECTATIONS JVM JVM_IR
-// test.kt:3 box
+// EXPECTATIONS JVM_IR
 // test.kt:4 box
-// test.kt:8 box
-// test.kt:3 box
+// test.kt:5 box
+// test.kt:9 box
 // test.kt:4 box
-// test.kt:8 box
-// test.kt:3 box
+// test.kt:5 box
+// test.kt:9 box
 // test.kt:4 box
-// test.kt:8 box
-// test.kt:3 box
-// test.kt:6 box
+// test.kt:5 box
+// test.kt:9 box
+// test.kt:4 box
+// test.kt:7 box
 
 // EXPECTATIONS JS_IR
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:3 box
-// test.kt:6 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:4 box
+// test.kt:7 box
+
+// EXPECTATIONS WASM
+// test.kt:4 $box (14, 4, 17, 4, 14, 9, 14, 4, 17, 4, 4, 14, 9, 14, 4, 17, 4, 4, 14, 9, 14, 4, 17, 4, 4)
+// test.kt:5 $box (8, 12, 8, 12, 8, 12)
+// test.kt:7 $box

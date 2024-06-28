@@ -1,0 +1,1193 @@
+FILE fqName:<root> fileName:/test.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java1
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+  CLASS CLASS name:AA modality:FINAL visibility:public superTypes:[<root>.Java15]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.AA
+    CONSTRUCTOR visibility:public <> () returnType:<root>.AA [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java15'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:AA modality:FINAL visibility:public superTypes:[<root>.Java15]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:protected modality:OPEN <> ($this:<root>.AA) returnType:kotlin.Unit
+      overridden:
+        public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:<root>.AA
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java15
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java1
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+  CLASS CLASS name:BB modality:FINAL visibility:public superTypes:[<root>.Java16]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.BB
+    CONSTRUCTOR visibility:public <> () returnType:<root>.BB [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java16'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:BB modality:FINAL visibility:public superTypes:[<root>.Java16]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java16
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java16
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java16
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.Java2]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:CC modality:FINAL visibility:public superTypes:[<root>.Java17]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CC
+    CONSTRUCTOR visibility:public <> () returnType:<root>.CC [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java17'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:CC modality:FINAL visibility:public superTypes:[<root>.Java17]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public/*package*/ modality:OPEN <> ($this:<root>.Java17) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java17
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java17
+  CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.D
+    PROPERTY name:a visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=55
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.D
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.Int declared in <root>.D'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.D declared in <root>.D.<get-a>' type=<root>.D origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.D [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java2'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:D modality:FINAL visibility:public superTypes:[<root>.Java2]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java2
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:FINAL <> ($this:<root>.D) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.D
+      BLOCK_BODY
+  CLASS CLASS name:DD modality:FINAL visibility:public superTypes:[<root>.Java17]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DD
+    CONSTRUCTOR visibility:public <> () returnType:<root>.DD [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java17'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DD modality:FINAL visibility:public superTypes:[<root>.Java17]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:internal modality:OPEN <> ($this:<root>.DD) returnType:kotlin.Unit
+      overridden:
+        public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java17
+      $this: VALUE_PARAMETER name:<this> type:<root>.DD
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java17
+  CLASS CLASS name:DefaultVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.DefaultVisibility
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=4
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:OPEN <> ($this:<root>.DefaultVisibility) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.DefaultVisibility
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.DefaultVisibility'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.DefaultVisibility declared in <root>.DefaultVisibility.<get-a>' type=<root>.DefaultVisibility origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.DefaultVisibility [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DefaultVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.DefaultVisibility) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.DefaultVisibility
+      BLOCK_BODY
+  CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.E
+    CONSTRUCTOR visibility:public <> () returnType:<root>.E [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:E modality:FINAL visibility:public superTypes:[<root>.Java3]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected open fun foo (): kotlin.Unit declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java3
+      FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java3
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+  CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.F
+    CONSTRUCTOR visibility:public <> () returnType:<root>.F [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java3'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:F modality:FINAL visibility:public superTypes:[<root>.Java3]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Unit
+      overridden:
+        protected open fun foo (): kotlin.Unit declared in <root>.Java3
+      $this: VALUE_PARAMETER name:<this> type:<root>.F
+      BLOCK_BODY
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java3
+      FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.F) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java3
+        $this: VALUE_PARAMETER name:<this> type:<root>.F
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.F'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.G
+    CONSTRUCTOR visibility:public <> () returnType:<root>.G [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:G modality:FINAL visibility:public superTypes:[<root>.Java4]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.DefaultVisibility) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:<root>.DefaultVisibility
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java4
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.DefaultVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java4
+        $this: VALUE_PARAMETER name:<this> type:<root>.DefaultVisibility
+  CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java4]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.H
+    CONSTRUCTOR visibility:public <> () returnType:<root>.H [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java4'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:H modality:FINAL visibility:public superTypes:[<root>.Java4]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java4
+      $this: VALUE_PARAMETER name:<this> type:<root>.H
+      BLOCK_BODY
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java4
+      FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.H) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java4
+        $this: VALUE_PARAMETER name:<this> type:<root>.H
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.H'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I
+    CONSTRUCTOR visibility:public <> () returnType:<root>.I [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java5'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:I modality:FINAL visibility:public superTypes:[<root>.Java5]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java5
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java5
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java5
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:InternalVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InternalVisibility
+    PROPERTY name:a visibility:internal modality:OPEN [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=4
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:internal modality:OPEN <> ($this:<root>.InternalVisibility) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:internal modality:OPEN [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.InternalVisibility
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='internal open fun <get-a> (): kotlin.Int declared in <root>.InternalVisibility'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.InternalVisibility declared in <root>.InternalVisibility.<get-a>' type=<root>.InternalVisibility origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.InternalVisibility [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InternalVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:internal modality:OPEN <> ($this:<root>.InternalVisibility) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.InternalVisibility
+      BLOCK_BODY
+  CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java6]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J
+    CONSTRUCTOR visibility:public <> () returnType:<root>.J [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java6'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:J modality:FINAL visibility:public superTypes:[<root>.Java6]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java6) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java6
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java6
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java6
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java6
+        $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+  CLASS CLASS name:K modality:FINAL visibility:public superTypes:[<root>.Java6]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
+    CONSTRUCTOR visibility:public <> () returnType:<root>.K [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java6'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:K modality:FINAL visibility:public superTypes:[<root>.Java6]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.K) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java6
+      $this: VALUE_PARAMETER name:<this> type:<root>.K
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java6
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java6
+      FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.K) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java6
+        $this: VALUE_PARAMETER name:<this> type:<root>.K
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.K'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:L modality:FINAL visibility:public superTypes:[<root>.Java7]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.L
+    CONSTRUCTOR visibility:public <> () returnType:<root>.L [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java7'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:L modality:FINAL visibility:public superTypes:[<root>.Java7]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java7
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java7) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java7
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java7
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java7
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java7
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java7
+  CLASS CLASS name:M modality:FINAL visibility:public superTypes:[<root>.Java8]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.M
+    CONSTRUCTOR visibility:public <> () returnType:<root>.M [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java8'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:M modality:FINAL visibility:public superTypes:[<root>.Java8]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java8) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java8
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java8
+      FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java8
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java8
+  CLASS CLASS name:N modality:FINAL visibility:public superTypes:[<root>.Java8]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.N
+    CONSTRUCTOR visibility:public <> () returnType:<root>.N [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java8'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:N modality:FINAL visibility:public superTypes:[<root>.Java8]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.N) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java8
+      $this: VALUE_PARAMETER name:<this> type:<root>.N
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java8
+    PROPERTY name:a visibility:protected modality:OPEN [val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java8
+      FUN name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.N) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:protected modality:OPEN [val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java8
+        $this: VALUE_PARAMETER name:<this> type:<root>.N
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected open fun <get-a> (): kotlin.Int declared in <root>.N'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:O modality:FINAL visibility:public superTypes:[<root>.Java9]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.O
+    CONSTRUCTOR visibility:public <> () returnType:<root>.O [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java9'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:O modality:FINAL visibility:public superTypes:[<root>.Java9]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java9) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java9
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java9
+  CLASS CLASS name:P modality:FINAL visibility:public superTypes:[<root>.Java9]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.P
+    CONSTRUCTOR visibility:public <> () returnType:<root>.P [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java9'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:P modality:FINAL visibility:public superTypes:[<root>.Java9]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java9
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java9
+  CLASS CLASS name:PrivateVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PrivateVisibility
+    PROPERTY name:a visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=2
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL <> ($this:<root>.PrivateVisibility) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PrivateVisibility
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlin.Int declared in <root>.PrivateVisibility'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PrivateVisibility declared in <root>.PrivateVisibility.<get-a>' type=<root>.PrivateVisibility origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PrivateVisibility [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PrivateVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:private modality:FINAL <> ($this:<root>.PrivateVisibility) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.PrivateVisibility
+      BLOCK_BODY
+  CLASS CLASS name:ProtectedVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ProtectedVisibility
+    PROPERTY name:a visibility:protected modality:OPEN [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=3
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:protected modality:OPEN [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected open fun <get-a> (): kotlin.Int declared in <root>.ProtectedVisibility'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.ProtectedVisibility declared in <root>.ProtectedVisibility.<get-a>' type=<root>.ProtectedVisibility origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ProtectedVisibility [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ProtectedVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+      BLOCK_BODY
+  CLASS CLASS name:PublicVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PublicVisibility
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=1
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.PublicVisibility'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.PublicVisibility declared in <root>.PublicVisibility.<get-a>' type=<root>.PublicVisibility origin=null
+    CONSTRUCTOR visibility:public <> () returnType:<root>.PublicVisibility [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:PublicVisibility modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.PublicVisibility) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.PublicVisibility
+      BLOCK_BODY
+  CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[<root>.Java10]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Q
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Q [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java10'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Q modality:FINAL visibility:public superTypes:[<root>.Java10]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:OPEN <> ($this:<root>.Java10) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java10
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java10
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java10
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:OPEN <> ($this:<root>.DefaultVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:OPEN [fake_override,val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java10
+        $this: VALUE_PARAMETER name:<this> type:<root>.DefaultVisibility
+  CLASS CLASS name:R modality:FINAL visibility:public superTypes:[<root>.Java10]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.R
+    CONSTRUCTOR visibility:public <> () returnType:<root>.R [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java10'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:R modality:FINAL visibility:public superTypes:[<root>.Java10]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.R) returnType:kotlin.Unit
+      overridden:
+        public open fun foo (): kotlin.Unit declared in <root>.Java10
+      $this: VALUE_PARAMETER name:<this> type:<root>.R
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: kotlin.Int declared in <root>.Java10
+    PROPERTY name:a visibility:public modality:OPEN [val]
+      overridden:
+        public open a: kotlin.Int declared in <root>.Java10
+      FUN name:<get-a> visibility:public modality:OPEN <> ($this:<root>.R) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:public modality:OPEN [val]
+        overridden:
+          public open fun <get-a> (): kotlin.Int declared in <root>.Java10
+        $this: VALUE_PARAMETER name:<this> type:<root>.R
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-a> (): kotlin.Int declared in <root>.R'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:S modality:FINAL visibility:public superTypes:[<root>.Java11]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.S
+    CONSTRUCTOR visibility:public <> () returnType:<root>.S [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java11'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:S modality:FINAL visibility:public superTypes:[<root>.Java11]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:protected/*protected and package*/ modality:OPEN <> ($this:<root>.Java11) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java11
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java11
+      FUN FAKE_OVERRIDE name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.ProtectedVisibility) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:protected modality:OPEN [fake_override,val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java11
+        $this: VALUE_PARAMETER name:<this> type:<root>.ProtectedVisibility
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java11
+  CLASS CLASS name:T modality:FINAL visibility:public superTypes:[<root>.Java11]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.T
+    CONSTRUCTOR visibility:public <> () returnType:<root>.T [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java11'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:T modality:FINAL visibility:public superTypes:[<root>.Java11]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.T) returnType:kotlin.Unit
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java11
+      $this: VALUE_PARAMETER name:<this> type:<root>.T
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java11
+    PROPERTY name:a visibility:protected modality:OPEN [val]
+      overridden:
+        protected open a: kotlin.Int declared in <root>.Java11
+      FUN name:<get-a> visibility:protected modality:OPEN <> ($this:<root>.T) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:a visibility:protected modality:OPEN [val]
+        overridden:
+          protected open fun <get-a> (): kotlin.Int declared in <root>.Java11
+        $this: VALUE_PARAMETER name:<this> type:<root>.T
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='protected open fun <get-a> (): kotlin.Int declared in <root>.T'
+            CONST Int type=kotlin.Int value=55
+  CLASS CLASS name:U modality:FINAL visibility:public superTypes:[<root>.Java12]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.U
+    CONSTRUCTOR visibility:public <> () returnType:<root>.U [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java12'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:U modality:FINAL visibility:public superTypes:[<root>.Java12]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:protected/*protected and package*/ modality:OPEN <> ($this:<root>.Java12) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java12
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java12
+  CLASS CLASS name:V modality:FINAL visibility:public superTypes:[<root>.Java12]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.V
+    CONSTRUCTOR visibility:public <> () returnType:<root>.V [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java12'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:V modality:FINAL visibility:public superTypes:[<root>.Java12]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.V) returnType:kotlin.Unit
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java12
+      $this: VALUE_PARAMETER name:<this> type:<root>.V
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java12
+  CLASS CLASS name:W modality:FINAL visibility:public superTypes:[<root>.Java13]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.W
+    CONSTRUCTOR visibility:public <> () returnType:<root>.W [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java13'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:W modality:FINAL visibility:public superTypes:[<root>.Java13]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:protected/*protected and package*/ modality:OPEN <> ($this:<root>.Java13) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java13
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java13
+  CLASS CLASS name:X modality:FINAL visibility:public superTypes:[<root>.Java13]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X
+    CONSTRUCTOR visibility:public <> () returnType:<root>.X [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java13'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:X modality:FINAL visibility:public superTypes:[<root>.Java13]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:foo visibility:public modality:OPEN <> ($this:<root>.X) returnType:kotlin.Unit
+      overridden:
+        protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.Java13
+      $this: VALUE_PARAMETER name:<this> type:<root>.X
+      BLOCK_BODY
+    PROPERTY FAKE_OVERRIDE name:a visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final a: kotlin.Int declared in <root>.Java13
+  CLASS CLASS name:Y modality:FINAL visibility:public superTypes:[<root>.Java14]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Y
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Y [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java14'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Y modality:FINAL visibility:public superTypes:[<root>.Java14]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java14
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java14
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java14
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[<root>.Java15]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Z [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java15'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[<root>.Java15]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:foo visibility:public/*package*/ modality:OPEN <> ($this:<root>.Java15) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public/*package*/ open fun foo (): kotlin.Unit declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:<root>.Java15
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java15
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:a visibility:public/*package*/ modality:FINAL [fake_override,var]
+      overridden:
+        public/*package*/ final a: kotlin.Int declared in <root>.Java15
+  FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B, d:<root>.D, f:<root>.F, g:<root>.G, h:<root>.H, j:<root>.J, k:<root>.K, l:<root>.L, m:<root>.M, n:<root>.N, o:<root>.O, p:<root>.P, q:<root>.Q, r:<root>.R, s:<root>.S, t:<root>.T, u:<root>.U, v:<root>.V, w:<root>.W, x:<root>.X, aa:<root>.AA, cc:<root>.CC, dd:<root>.DD) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    VALUE_PARAMETER name:b index:1 type:<root>.B
+    VALUE_PARAMETER name:d index:2 type:<root>.D
+    VALUE_PARAMETER name:f index:3 type:<root>.F
+    VALUE_PARAMETER name:g index:4 type:<root>.G
+    VALUE_PARAMETER name:h index:5 type:<root>.H
+    VALUE_PARAMETER name:j index:6 type:<root>.J
+    VALUE_PARAMETER name:k index:7 type:<root>.K
+    VALUE_PARAMETER name:l index:8 type:<root>.L
+    VALUE_PARAMETER name:m index:9 type:<root>.M
+    VALUE_PARAMETER name:n index:10 type:<root>.N
+    VALUE_PARAMETER name:o index:11 type:<root>.O
+    VALUE_PARAMETER name:p index:12 type:<root>.P
+    VALUE_PARAMETER name:q index:13 type:<root>.Q
+    VALUE_PARAMETER name:r index:14 type:<root>.R
+    VALUE_PARAMETER name:s index:15 type:<root>.S
+    VALUE_PARAMETER name:t index:16 type:<root>.T
+    VALUE_PARAMETER name:u index:17 type:<root>.U
+    VALUE_PARAMETER name:v index:18 type:<root>.V
+    VALUE_PARAMETER name:w index:19 type:<root>.W
+    VALUE_PARAMETER name:x index:20 type:<root>.X
+    VALUE_PARAMETER name:aa index:21 type:<root>.AA
+    VALUE_PARAMETER name:cc index:22 type:<root>.CC
+    VALUE_PARAMETER name:dd index:23 type:<root>.DD
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
+        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun <get-a> (): kotlin.Int declared in <root>.D' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
+      CALL 'public final fun foo (): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
+        $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.F' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.F' type=kotlin.Unit origin=null
+        $this: GET_VAR 'f: <root>.F declared in <root>.test' type=<root>.F origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.G' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.G' type=kotlin.Unit origin=null
+        $this: GET_VAR 'g: <root>.G declared in <root>.test' type=<root>.G origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-a> (): kotlin.Int declared in <root>.H' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+        $this: GET_VAR 'h: <root>.H declared in <root>.test' type=<root>.H origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java6' type=kotlin.Int superQualifierSymbol=<root>.J origin=null
+          receiver: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java6' type=kotlin.Int superQualifierSymbol=<root>.K origin=null
+          receiver: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.K' type=kotlin.Unit origin=null
+        $this: GET_VAR 'k: <root>.K declared in <root>.test' type=<root>.K origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java7' type=kotlin.Int superQualifierSymbol=<root>.L origin=null
+          receiver: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.L' type=kotlin.Unit origin=null
+        $this: GET_VAR 'l: <root>.L declared in <root>.test' type=<root>.L origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java8' type=kotlin.Int superQualifierSymbol=<root>.M origin=null
+          receiver: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.M' type=kotlin.Unit origin=null
+        $this: GET_VAR 'm: <root>.M declared in <root>.test' type=<root>.M origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java8' type=kotlin.Int superQualifierSymbol=<root>.N origin=null
+          receiver: GET_VAR 'n: <root>.N declared in <root>.test' type=<root>.N origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.N' type=kotlin.Unit origin=null
+        $this: GET_VAR 'n: <root>.N declared in <root>.test' type=<root>.N origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java9' type=kotlin.Int superQualifierSymbol=<root>.O origin=null
+          receiver: GET_VAR 'o: <root>.O declared in <root>.test' type=<root>.O origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.Unit origin=null
+        $this: GET_VAR 'o: <root>.O declared in <root>.test' type=<root>.O origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java9' type=kotlin.Int superQualifierSymbol=<root>.P origin=null
+          receiver: GET_VAR 'p: <root>.P declared in <root>.test' type=<root>.P origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.P' type=kotlin.Unit origin=null
+        $this: GET_VAR 'p: <root>.P declared in <root>.test' type=<root>.P origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java10' type=kotlin.Int superQualifierSymbol=<root>.Q origin=null
+          receiver: GET_VAR 'q: <root>.Q declared in <root>.test' type=<root>.Q origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.Q' type=kotlin.Unit origin=null
+        $this: GET_VAR 'q: <root>.Q declared in <root>.test' type=<root>.Q origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public declared in <root>.Java10' type=kotlin.Int superQualifierSymbol=<root>.R origin=null
+          receiver: GET_VAR 'r: <root>.R declared in <root>.test' type=<root>.R origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.R' type=kotlin.Unit origin=null
+        $this: GET_VAR 'r: <root>.R declared in <root>.test' type=<root>.R origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java11' type=kotlin.Int superQualifierSymbol=<root>.S origin=null
+          receiver: GET_VAR 's: <root>.S declared in <root>.test' type=<root>.S origin=null
+      CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.S' type=kotlin.Unit origin=null
+        $this: GET_VAR 's: <root>.S declared in <root>.test' type=<root>.S origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java11' type=kotlin.Int superQualifierSymbol=<root>.T origin=null
+          receiver: GET_VAR 't: <root>.T declared in <root>.test' type=<root>.T origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.T' type=kotlin.Unit origin=null
+        $this: GET_VAR 't: <root>.T declared in <root>.test' type=<root>.T origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java12' type=kotlin.Int superQualifierSymbol=<root>.U origin=null
+          receiver: GET_VAR 'u: <root>.U declared in <root>.test' type=<root>.U origin=null
+      CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.U' type=kotlin.Unit origin=null
+        $this: GET_VAR 'u: <root>.U declared in <root>.test' type=<root>.U origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java12' type=kotlin.Int superQualifierSymbol=<root>.V origin=null
+          receiver: GET_VAR 'v: <root>.V declared in <root>.test' type=<root>.V origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.V' type=kotlin.Unit origin=null
+        $this: GET_VAR 'v: <root>.V declared in <root>.test' type=<root>.V origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java13' type=kotlin.Int superQualifierSymbol=<root>.W origin=null
+          receiver: GET_VAR 'w: <root>.W declared in <root>.test' type=<root>.W origin=null
+      CALL 'protected/*protected and package*/ open fun foo (): kotlin.Unit declared in <root>.W' type=kotlin.Unit origin=null
+        $this: GET_VAR 'w: <root>.W declared in <root>.test' type=<root>.W origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:protected/*protected and package*/ declared in <root>.Java13' type=kotlin.Int superQualifierSymbol=<root>.X origin=null
+          receiver: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
+      CALL 'public open fun foo (): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=null
+        $this: GET_VAR 'x: <root>.X declared in <root>.test' type=<root>.X origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/ declared in <root>.Java15' type=kotlin.Int superQualifierSymbol=<root>.AA origin=null
+          receiver: GET_VAR 'aa: <root>.AA declared in <root>.test' type=<root>.AA origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/ declared in <root>.Java17' type=kotlin.Int superQualifierSymbol=<root>.CC origin=null
+          receiver: GET_VAR 'cc: <root>.CC declared in <root>.test' type=<root>.CC origin=null
+      CALL 'public/*package*/ open fun foo (): kotlin.Unit declared in <root>.CC' type=kotlin.Unit origin=null
+        $this: GET_VAR 'cc: <root>.CC declared in <root>.test' type=<root>.CC origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:kotlin.Int visibility:public/*package*/ declared in <root>.Java17' type=kotlin.Int superQualifierSymbol=<root>.DD origin=null
+          receiver: GET_VAR 'dd: <root>.DD declared in <root>.test' type=<root>.DD origin=null
+      CALL 'internal open fun foo (): kotlin.Unit declared in <root>.DD' type=kotlin.Unit origin=null
+        $this: GET_VAR 'dd: <root>.DD declared in <root>.test' type=<root>.DD origin=null

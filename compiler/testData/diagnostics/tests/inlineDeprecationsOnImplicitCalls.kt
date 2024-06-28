@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -NOTHING_TO_INLINE
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 
 @PublishedApi
 internal class InternalClassPrivateConstructor private constructor() {

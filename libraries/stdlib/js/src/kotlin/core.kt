@@ -51,3 +51,11 @@ public external val definedExternally: Nothing
  *        including parameters. You can't refer to functions, properties and classes by their short names.
  */
 public external fun js(code: String): dynamic
+
+
+/**
+ * Function corresponding to JavaScript's `typeof` operator
+ */
+// @JsIntrinsic
+//  To prevent people to insert @OptIn every time
+public external fun jsTypeOf(a: Any?): String

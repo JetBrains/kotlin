@@ -1,0 +1,1 @@
+public final fun <T> foo(t: R|T|): R|T|

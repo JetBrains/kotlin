@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object UnaryMinus : IntrinsicMethod() {
-    /*TODO return type*/
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, classCodegen) {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+    ): IntrinsicFunction {
+        return IntrinsicFunction.create(expression, signature, classCodegen) {
             it.neg(numberFunctionOperandType(signature.returnType))
         }
     }
-
 }

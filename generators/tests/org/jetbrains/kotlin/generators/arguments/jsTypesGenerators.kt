@@ -30,6 +30,7 @@ internal fun generateJsMainFunctionExecutionMode(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromMode(mode: String): JsMainFunctionExecutionMode =")
                 println("    JsMainFunctionExecutionMode.values().firstOrNull { it.mode == mode }")
                 println("        ?: throw IllegalArgumentException(\"Unknown main function execution mode: ${'$'}mode\")")
@@ -62,6 +63,7 @@ internal fun generateJsModuleKind(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromKind(kind: String): JsModuleKind =")
                 println("    JsModuleKind.values().firstOrNull { it.kind == kind }")
                 println("        ?: throw IllegalArgumentException(\"Unknown JS module kind: ${'$'}kind\")")
@@ -92,6 +94,7 @@ internal fun generateJsSourceMapEmbedMode(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromMode(mode: String): JsSourceMapEmbedMode =")
                 println("    JsSourceMapEmbedMode.values().firstOrNull { it.mode == mode }")
                 println("        ?: throw IllegalArgumentException(\"Unknown JS source map embed mode: ${'$'}mode\")")
@@ -122,6 +125,7 @@ internal fun generateJsSourceMapNamesPolicy(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromPolicy(policy: String): JsSourceMapNamesPolicy =")
                 println("    JsSourceMapNamesPolicy.values().firstOrNull { it.policy == policy }")
                 println("        ?: throw IllegalArgumentException(\"Unknown JS source map names policy: ${'$'}policy\")")
@@ -151,6 +155,7 @@ internal fun generateJsDiagnosticMode(
             println()
             println("companion object {")
             withIndent {
+                println("@JvmStatic")
                 println("fun fromMode(mode: String): JsDiagnosticMode =")
                 println("    JsDiagnosticMode.values().firstOrNull { it.mode == mode }")
                 println("        ?: throw IllegalArgumentException(\"Unknown JS diagnostic mode: ${'$'}mode\")")

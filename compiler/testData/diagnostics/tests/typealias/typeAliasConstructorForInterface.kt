@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface IFoo
 
 typealias Test = IFoo

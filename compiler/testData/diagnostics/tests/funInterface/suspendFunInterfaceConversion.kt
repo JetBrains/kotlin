@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
-// !DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
+// LANGUAGE: +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
+// DIAGNOSTICS: -UNUSED_PARAMETER -NOTHING_TO_INLINE
 
 fun interface SuspendRunnable {
     suspend fun invoke()

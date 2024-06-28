@@ -5,186 +5,140 @@
 
 package org.jetbrains.kotlin.commonizer.metadata
 
-import kotlinx.metadata.Flag
-import kotlinx.metadata.Flags
-import kotlinx.metadata.flagsOf
+import kotlin.metadata.*
+import kotlin.metadata.Modality as KmModality
+import kotlin.metadata.ClassKind as KmClassKind
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 
-internal const val NO_FLAGS: Flags = 0
-
-internal fun CirFunction.functionFlags(isExpect: Boolean): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityFlag,
-        modalityFlag,
-        memberKindFlag,
-        Flag.Function.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !hasStableParameterNames },
-        Flag.Function.IS_EXPECT.takeIf { isExpect }
-    ) or modifiers.modifiersFlags
-
-internal fun CirProperty.propertyFlags(isExpect: Boolean): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityFlag,
-        modalityFlag,
-        memberKindFlag,
-        Flag.Property.HAS_GETTER.takeIf { getter != null },
-        Flag.Property.HAS_SETTER.takeIf { setter != null },
-        Flag.Property.IS_DELEGATED.takeIf { isDelegate },
-        Flag.Property.IS_EXPECT.takeIf { isExpect }
-    ) or modifiersFlags
-
-internal fun CirPropertyAccessor.propertyAccessorFlags(
-    visibilityHolder: CirHasVisibility,
-    modalityHolder: CirHasModality
-): Flags {
-    return flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityHolder.visibilityFlag,
-        modalityHolder.modalityFlag,
-        Flag.PropertyAccessor.IS_NOT_DEFAULT.takeIf { !isDefault },
-        Flag.PropertyAccessor.IS_EXTERNAL.takeIf { isExternal },
-        Flag.PropertyAccessor.IS_INLINE.takeIf { isInline }
-    )
+internal fun KmFunction.modifiersFrom(cf: CirFunction, isExpect: Boolean) {
+    hasAnnotations = cf.hasAnnotations
+    visibility = cf.kmVisibility
+    modality = cf.kmModality
+    kind = cf.kind.kmMemberKind
+    hasNonStableParameterNames = !cf.hasStableParameterNames
+    this.isExpect = isExpect
+    isOperator = cf.modifiers.isOperator
+    isInfix = cf.modifiers.isInfix
+    isInline = cf.modifiers.isInline
+    isSuspend = cf.modifiers.isSuspend
 }
 
-internal fun CirClassConstructor.classConstructorFlags(): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityFlag,
-        Flag.Constructor.IS_SECONDARY.takeIf { !isPrimary },
-        Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES.takeIf { !hasStableParameterNames }
-    )
+internal fun KmProperty.modifiersFrom(cp: CirProperty, isExpect: Boolean) {
+    hasAnnotations = cp.hasAnnotations
+    visibility = cp.kmVisibility
+    modality = cp.kmModality
+    kind = cp.kind.kmMemberKind
+    isDelegated = cp.isDelegate
+    this.isExpect = isExpect
+    isVar = cp.isVar
+    isConst = cp.isConst
+    hasConstant = cp.compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue } != null
+    isLateinit = cp.isLateInit
+}
 
-internal fun CirType.typeFlags(): Flags =
-    flagsOfNotNull(
-        nullableFlag,
-        //Flag.Type.IS_SUSPEND.takeIf { false }
-    )
+internal fun KmPropertyAccessorAttributes.modifiersFrom(
+    cp: CirPropertyAccessor, visibilityHolder: CirHasVisibility,
+    modalityHolder: CirHasModality,
+) {
+    hasAnnotations = cp.hasAnnotations
+    visibility = visibilityHolder.kmVisibility
+    modality = modalityHolder.kmModality
+    isNotDefault = !cp.isDefault
+    isInline = cp.isInline
+}
 
-internal fun CirTypeParameter.typeParameterFlags(): Flags =
-    flagsOfNotNull(
-        Flag.TypeParameter.IS_REIFIED.takeIf { isReified }
-    )
+internal fun KmConstructor.modifiersFrom(cc: CirClassConstructor) {
+    hasAnnotations = cc.hasAnnotations
+    visibility = cc.kmVisibility
+    isSecondary = !cc.isPrimary
+    hasNonStableParameterNames = !cc.hasStableParameterNames
+}
 
-internal fun CirValueParameter.valueParameterFlags(): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        Flag.ValueParameter.DECLARES_DEFAULT_VALUE.takeIf { declaresDefaultValue },
-        Flag.ValueParameter.IS_CROSSINLINE.takeIf { isCrossinline },
-        Flag.ValueParameter.IS_NOINLINE.takeIf { isNoinline }
-    )
+internal fun CirType.applyTypeFlagsTo(type: KmType) {
+    type.isNullable = when (this) {
+        is CirSimpleType -> isMarkedNullable
+        is CirFlexibleType -> lowerBound.isMarkedNullable
+    }
+    //Flag.Type.IS_SUSPEND.takeIf { false }
+}
 
-internal fun CirClass.classFlags(isExpect: Boolean): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityFlag,
-        modalityFlag,
-        classKindFlag,
-        Flag.Class.IS_COMPANION_OBJECT.takeIf { isCompanion },
-        Flag.Class.IS_INNER.takeIf { isInner },
-        Flag.Class.IS_DATA.takeIf { isData },
-        Flag.Class.IS_EXTERNAL.takeIf { isExternal },
-        Flag.Class.IS_EXPECT.takeIf { isExpect },
-        Flag.Class.IS_VALUE.takeIf { isValue },
-        Flag.Class.HAS_ENUM_ENTRIES.takeIf { hasEnumEntries }
-        //Flag.Class.IS_FUN.takeIf { false }
-    )
+internal fun KmValueParameter.modifiersFrom(cv: CirValueParameter) {
+    hasAnnotations = cv.hasAnnotations
+    declaresDefaultValue = cv.declaresDefaultValue
+    isCrossinline = cv.isCrossinline
+    isNoinline = cv.isNoinline
+}
 
-internal fun CirTypeAlias.typeAliasFlags(): Flags =
-    flagsOfNotNull(
-        hasAnnotationsFlag,
-        visibilityFlag
-    )
+internal fun KmClass.modifiersFrom(cc: CirClass, isExpect: Boolean) {
+    hasAnnotations = cc.hasAnnotations
+    visibility = cc.kmVisibility
+    modality = cc.kmModality
+    kind = cc.kmClassKind
+    isInner = cc.isInner
+    isData = cc.isData
+    this.isExpect = isExpect
+    isValue = cc.isValue
+    hasEnumEntries = cc.hasEnumEntries
+    //Flag.Class.IS_FUN.takeIf { false }
+}
 
-private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
-    get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null
+internal fun KmTypeAlias.modifiersFrom(ct: CirTypeAlias) {
+    hasAnnotations = ct.hasAnnotations
+    visibility = ct.kmVisibility
+}
+
+private inline val CirHasAnnotations.hasAnnotations: Boolean
+    get() = annotations.isNotEmpty()
 
 // Since 1.4.30 a special @JvmInline annotation is generated to distinguish JVM-inline from value classes.
 // This has an effect on class serialization: Every class with isValue == true automatically gets HAS_ANNOTATIONS flag.
-private inline val CirClass.hasAnnotationsFlag: Flag?
-    get() = if (annotations.isNotEmpty() || isValue) Flag.Common.HAS_ANNOTATIONS else null
+private inline val CirClass.hasAnnotations: Boolean
+    get() = annotations.isNotEmpty() || isValue
 
-private inline val CirProperty.hasAnnotationsFlag: Flag?
-    get() = if (annotations.isNotEmpty() || !backingFieldAnnotations.isNullOrEmpty() || !delegateFieldAnnotations.isNullOrEmpty())
-        Flag.Common.HAS_ANNOTATIONS
-    else
-        null
+private inline val CirProperty.hasAnnotations: Boolean
+    get() = annotations.isNotEmpty() || backingFieldAnnotations.isNotEmpty() || delegateFieldAnnotations.isNotEmpty()
 
-private inline val CirHasVisibility.visibilityFlag: Flag
+private inline val CirHasVisibility.kmVisibility: Visibility
     get() = when (visibility) {
-        Visibilities.Public -> Flag.Common.IS_PUBLIC
-        Visibilities.Protected -> Flag.Common.IS_PROTECTED
-        Visibilities.Internal -> Flag.Common.IS_INTERNAL
-        Visibilities.Private -> Flag.Common.IS_PRIVATE
+        Visibilities.Public -> Visibility.PUBLIC
+        Visibilities.Protected -> Visibility.PROTECTED
+        Visibilities.Internal -> Visibility.INTERNAL
+        Visibilities.Private -> Visibility.PRIVATE
         else -> error("Unexpected visibility: $this")
     }
 
-private inline val CirHasModality.modalityFlag: Flag
+private inline val CirHasModality.kmModality: KmModality
     get() = when (modality) {
-        Modality.FINAL -> Flag.Common.IS_FINAL
-        Modality.ABSTRACT -> Flag.Common.IS_ABSTRACT
-        Modality.OPEN -> Flag.Common.IS_OPEN
-        Modality.SEALED -> Flag.Common.IS_SEALED
+        Modality.FINAL -> KmModality.FINAL
+        Modality.ABSTRACT -> KmModality.ABSTRACT
+        Modality.OPEN -> KmModality.OPEN
+        Modality.SEALED -> KmModality.SEALED
     }
 
-private inline val CirFunction.memberKindFlag: Flag
-    get() = when (kind) {
-        CallableMemberDescriptor.Kind.DECLARATION -> Flag.Function.IS_DECLARATION
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> Flag.Function.IS_FAKE_OVERRIDE
-        CallableMemberDescriptor.Kind.DELEGATION -> Flag.Function.IS_DELEGATION
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> Flag.Function.IS_SYNTHESIZED
+private inline val CallableMemberDescriptor.Kind.kmMemberKind: MemberKind
+    get() = when (this) {
+        CallableMemberDescriptor.Kind.DECLARATION -> MemberKind.DECLARATION
+        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> MemberKind.FAKE_OVERRIDE
+        CallableMemberDescriptor.Kind.DELEGATION -> MemberKind.DELEGATION
+        CallableMemberDescriptor.Kind.SYNTHESIZED -> MemberKind.SYNTHESIZED
     }
 
-private inline val CirProperty.memberKindFlag: Flag
-    get() = when (kind) {
-        CallableMemberDescriptor.Kind.DECLARATION -> Flag.Property.IS_DECLARATION
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> Flag.Property.IS_FAKE_OVERRIDE
-        CallableMemberDescriptor.Kind.DELEGATION -> Flag.Property.IS_DELEGATION
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> Flag.Property.IS_SYNTHESIZED
-    }
-
-private inline val CirClass.classKindFlag: Flag
-    get() = when (kind) {
-        ClassKind.CLASS -> Flag.Class.IS_CLASS
-        ClassKind.INTERFACE -> Flag.Class.IS_INTERFACE
-        ClassKind.ENUM_CLASS -> Flag.Class.IS_ENUM_CLASS
-        ClassKind.ENUM_ENTRY -> Flag.Class.IS_ENUM_ENTRY
-        ClassKind.ANNOTATION_CLASS -> Flag.Class.IS_ANNOTATION_CLASS
-        ClassKind.OBJECT -> Flag.Class.IS_OBJECT
-    }
-
-private inline val CirFunctionModifiers.modifiersFlags: Flags
-    get() = flagsOfNotNull(
-        Flag.Function.IS_OPERATOR.takeIf { isOperator },
-        Flag.Function.IS_INFIX.takeIf { isInfix },
-        Flag.Function.IS_INLINE.takeIf { isInline },
-        Flag.Function.IS_TAILREC.takeIf { isTailrec },
-        Flag.Function.IS_SUSPEND.takeIf { isSuspend },
-        Flag.Function.IS_EXTERNAL.takeIf { isExternal }
-    )
-
-private inline val CirProperty.modifiersFlags: Flags
-    get() = flagsOfNotNull(
-        Flag.Property.IS_VAR.takeIf { isVar },
-        Flag.Property.IS_CONST.takeIf { isConst },
-        Flag.Property.HAS_CONSTANT.takeIf { compileTimeInitializer.takeIf { it !is CirConstantValue.NullValue } != null },
-        Flag.Property.IS_LATEINIT.takeIf { isLateInit },
-        Flag.Property.IS_EXTERNAL.takeIf { isExternal }
-    )
-
-private inline val CirType.nullableFlag: Flag?
+private inline val CirClass.kmClassKind: KmClassKind
     get() {
-        val isNullable = when (this) {
-            is CirSimpleType -> isMarkedNullable
-            is CirFlexibleType -> lowerBound.isMarkedNullable
+        if (isCompanion) return KmClassKind.COMPANION_OBJECT
+        return when (kind) {
+            ClassKind.CLASS -> KmClassKind.CLASS
+            ClassKind.INTERFACE -> KmClassKind.INTERFACE
+            ClassKind.ENUM_CLASS -> KmClassKind.ENUM_CLASS
+            ClassKind.ENUM_ENTRY -> KmClassKind.ENUM_ENTRY
+            ClassKind.ANNOTATION_CLASS -> KmClassKind.ANNOTATION_CLASS
+            ClassKind.OBJECT -> KmClassKind.OBJECT
         }
-
-        return if (isNullable) Flag.Type.IS_NULLABLE else null
     }
 
-private fun flagsOfNotNull(vararg flags: Flag?): Flags = flagsOf(*listOfNotNull(*flags).toTypedArray())
+
+

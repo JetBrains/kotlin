@@ -1,0 +1,35 @@
+MODULE main
+	CLASS AMap1.class
+		CLASS METADATA
+			K1
+				---
+			K2
+				entries
+			K1
+				getEntries()Ljava/util/Set;
+			K2
+				---
+			K1
+				getKeys()Ljava/util/Set;
+			K2
+				---
+			K1
+				getSize()I
+			K2
+				---
+			K1
+				getValues()Ljava/util/Collection;
+			K2
+				---
+			K1
+				---
+			K2
+				keys
+			K1
+				---
+			K2
+				size
+			K1
+				---
+			K2
+				values

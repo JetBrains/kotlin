@@ -9,6 +9,7 @@ import com.intellij.psi.PsiTypeParameterListOwner
 import com.intellij.psi.impl.light.LightTypeParameterBuilder
 import org.jetbrains.kotlin.psi.KtTypeParameter
 
+@Suppress("unused") // Used by UastFakeSourceLightMethod
 open class KotlinLightTypeParameterBuilder(
     name: String,
     owner: PsiTypeParameterListOwner,

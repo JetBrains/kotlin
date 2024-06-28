@@ -9,29 +9,15 @@ import kotlin.internal.RequireKotlin
 import kotlin.internal.RequireKotlinVersionKind
 
 /**
- *
  * Specifies that a JVM default method should be generated for non-abstract Kotlin interface member.
  *
- * Usages of this annotation require an explicit compilation argument to be specified:
- * either `-Xjvm-default=enable` or `-Xjvm-default=compatibility`.
- *
- * * with `-Xjvm-default=enable`, only default method in interface is generated for each @[JvmDefault] method.
- *   In this mode, annotating an existing method with @[JvmDefault] can break binary compatibility, because it will effectively
- *   remove the method from the `DefaultImpls` class.
- * * with `-Xjvm-default=compatibility`, in addition to the default interface method, a compatibility accessor is generated
- *   in the `DefaultImpls` class, that calls the default interface method via a synthetic accessor.
- *   In this mode, annotating an existing method with @[JvmDefault] is binary compatible, but results in more methods in bytecode.
- *
- * Removing this annotation from an interface member is a binary incompatible change in both modes.
- *
- * Generation of default methods is only possible with JVM target bytecode version 1.8 (`-jvm-target 1.8`) or higher.
- *
- * @[JvmDefault] methods are excluded from interface delegation.
+ * This annotation can no longer be used. It has been superseded by the new `-Xjvm-default` modes `all` and `all-compatibility`,
+ * and the new annotations `@JvmDefaultWithCompatibility` and `@JvmDefaultWithoutCompatibility`.
  */
 @SinceKotlin("1.2")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
-annotation class JvmDefault
+@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`", level = DeprecationLevel.ERROR)
+public annotation class JvmDefault
 
 /**
  * Prevents the compiler from generating compatibility accessors for the annotated class or interface, and suppresses
@@ -41,12 +27,12 @@ annotation class JvmDefault
  * Annotating an existing class with this annotation is a binary incompatible change. Therefore this annotation makes
  * the most sense for _new_ classes in libraries which opted into the compatibility mode.
  *
- * Used only with `-Xjvm-default=compatibility|all-compatibility`.
+ * Used only with `-Xjvm-default=all-compatibility`.
  */
 @SinceKotlin("1.4")
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class JvmDefaultWithoutCompatibility
+public annotation class JvmDefaultWithoutCompatibility
 
 /**
  * Forces the compiler to generate compatibility accessors for the annotated interface in the `DefaultImpls` class.
@@ -59,4 +45,4 @@ annotation class JvmDefaultWithoutCompatibility
 @RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-annotation class JvmDefaultWithCompatibility
+public annotation class JvmDefaultWithCompatibility

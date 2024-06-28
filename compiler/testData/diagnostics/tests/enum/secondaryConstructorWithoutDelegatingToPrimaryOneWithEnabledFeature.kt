@@ -1,5 +1,5 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +RequiredPrimaryConstructorDelegationCallInEnums
+// LANGUAGE: +RequiredPrimaryConstructorDelegationCallInEnums
 
 enum class Enum1(val a: String) {
     A;

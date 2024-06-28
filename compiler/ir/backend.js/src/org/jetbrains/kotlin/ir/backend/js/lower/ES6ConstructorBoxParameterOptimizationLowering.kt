@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
+    private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (!context.es6mode) return
@@ -36,7 +37,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
             containerFunction?.isEs6ConstructorReplacement == true && !containerFunction.parentAsClass.requiredToHaveBoxParameter()
 
         if (containerFunction != null && shouldRemoveBoxRelatedDeclarationsAndStatements && irBody is IrBlockBody) {
-            containerFunction.valueParameters = containerFunction.valueParameters.filter { !it.isBoxParameter }
+            containerFunction.valueParameters = containerFunction.valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
         }
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -85,12 +86,12 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
     }
 
     private fun IrClass.requiredToHaveBoxParameter(): Boolean {
-        return esClassWhichNeedBoxParameters.contains(this)
+        return needsOfBoxParameter == true
     }
 }
 
 class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBackendContext) : DeclarationTransformer {
-    private val esClassWhichNeedBoxParameters = context.mapping.esClassWhichNeedBoxParameters
+    private var IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!context.es6mode || declaration !is IrClass) return null
@@ -134,7 +135,7 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
 
     private fun IrClass.addToClassListWhichNeedBoxParameter() {
         if (isExternal) return
-        esClassWhichNeedBoxParameters.add(this)
+        needsOfBoxParameter = true
         superClass?.addToClassListWhichNeedBoxParameter()
     }
 }

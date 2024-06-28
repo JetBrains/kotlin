@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/samAdapter.kt
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
-                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value="Hello, world!"
       CALL 'public abstract fun run (): kotlin.Unit declared in java.lang.Runnable' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val hello: java.lang.Runnable [val] declared in <root>.test1' type=java.lang.Runnable origin=null
+        $this: GET_VAR 'val hello: java.lang.Runnable declared in <root>.test1' type=java.lang.Runnable origin=null

@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.explicitTypeArgumentIfMadeFlexibleSynthetically
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -21,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import kotlin.reflect.KClass
 
 /**
@@ -33,13 +37,29 @@ fun checkUpperBoundViolated(
     reporter: DiagnosticReporter,
     isIgnoreTypeParameters: Boolean = false
 ) {
-    val notExpandedType = typeRef?.coneTypeSafe<ConeClassLikeType>() ?: return
+    val type = typeRef?.coneTypeSafe<ConeClassLikeType>() ?: return
+    checkUpperBoundViolated(typeRef, type, context, reporter, isIgnoreTypeParameters)
+}
 
-    // Everything should be reported on the typealias expansion
+private fun checkUpperBoundViolated(
+    typeRef: FirTypeRef?,
+    notExpandedType: ConeClassLikeType,
+    context: CheckerContext,
+    reporter: DiagnosticReporter,
+    isIgnoreTypeParameters: Boolean = false,
+) {
     if (notExpandedType.typeArguments.isEmpty()) return
 
-    val type = notExpandedType.fullyExpandedType(context.session)
-    val isAbbreviatedType = notExpandedType !== type
+    // If we have FirTypeRef information, add KtSourceElement information to each argument of the type and fully expand.
+    val type = if (typeRef != null) {
+        (notExpandedType.abbreviatedTypeOrSelf as? ConeClassLikeType)
+            ?.fullyExpandedTypeWithSource(typeRef, context.session)
+            // Add fallback source information to arguments of the expanded type.
+            ?.withArguments { it.withSource(FirTypeRefSource(null, typeRef.source)) }
+            ?: return
+    } else {
+        notExpandedType
+    }
 
     val prototypeClassSymbol = type.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return
 
@@ -52,30 +72,26 @@ fun checkUpperBoundViolated(
     val substitution = typeParameterSymbols.zip(type.typeArguments).toMap()
     val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
 
-    val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
-    val typeArgumentsWithSourceInfo = type.typeArguments.withIndex().map { (index, projection) ->
-        val (argTypeRef, source) =
-            if (!isAbbreviatedType) {
-                typeRefAndSourcesForArguments.getOrNull(index) ?: return
-            } else {
-                // For abbreviated arguments we use the whole typeRef as a place to report
-                FirTypeRefSource(null, typeRef.source)
-            }
-
-        TypeArgumentWithSourceInfo(projection, argTypeRef, source)
-    }
-
     return checkUpperBoundViolated(
-        context, reporter, typeParameterSymbols, typeArgumentsWithSourceInfo, substitutor,
-        isAbbreviatedType,
-        isIgnoreTypeParameters,
+        context, reporter, typeParameterSymbols, type.typeArguments.toList(), substitutor,
+        isReportExpansionError = true, isIgnoreTypeParameters,
     )
 }
 
-private class FE10LikeConeSubstitutor(
+/**
+ * This substitutor replaces type projections with type of this projection
+ * Star projections are replaced with Any?
+ */
+internal class FE10LikeConeSubstitutor(
     private val substitution: Map<FirTypeParameterSymbol, ConeTypeProjection>,
-    private val useSiteSession: FirSession
+    useSiteSession: FirSession
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    constructor(
+        typeParameters: List<FirTypeParameterSymbol>,
+        typeArguments: List<ConeTypeProjection>,
+        useSiteSession: FirSession
+    ) : this(typeParameters.zip(typeArguments).toMap(), useSiteSession)
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         val projection = substitution[type.lookupTag.symbol] ?: return null
@@ -87,14 +103,6 @@ private class FE10LikeConeSubstitutor(
         val result =
             projection.type!!.updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
                 ?: return null
-
-        if (type.isUnsafeVarianceType(useSiteSession)) {
-            useSiteSession.typeApproximator.approximateToSuperType(
-                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            )?.let {
-                return it.withProjection(projection)
-            }
-        }
 
         return result.withProjection(projection)
     }
@@ -140,58 +148,185 @@ private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : Co
 
     override val key: KClass<out OriginalProjectionTypeAttribute>
         get() = OriginalProjectionTypeAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = false
 }
 
-private val ConeAttributes.originalProjection: OriginalProjectionTypeAttribute? by ConeAttributes.attributeAccessor<OriginalProjectionTypeAttribute>()
+private val ConeAttributes.originalProjection: OriginalProjectionTypeAttribute? by ConeAttributes.attributeAccessor()
 
-class TypeArgumentWithSourceInfo(
-    val coneTypeProjection: ConeTypeProjection,
-    val typeRef: FirTypeRef?,
-    val source: KtSourceElement?,
-)
+fun List<FirTypeProjection>.toTypeArgumentsWithSourceInfo(): List<ConeTypeProjection> {
+    return map { firTypeProjection ->
+        firTypeProjection.toConeTypeProjection().withSource(
+            FirTypeRefSource((firTypeProjection as? FirTypeProjectionWithVariance)?.typeRef, firTypeProjection.source)
+        )
+    }
+}
+
+fun createSubstitutorForUpperBoundViolationCheck(
+    typeParameters: List<FirTypeParameterSymbol>,
+    typeArguments: List<ConeTypeProjection>,
+    session: FirSession
+): ConeSubstitutor {
+    return substitutorByMap(
+        typeParameters.withIndex().associate { Pair(it.value, typeArguments[it.index] as ConeKotlinType) },
+        session,
+    )
+}
 
 fun checkUpperBoundViolated(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     typeParameters: List<FirTypeParameterSymbol>,
-    arguments: List<TypeArgumentWithSourceInfo>,
+    typeArguments: List<ConeTypeProjection>,
     substitutor: ConeSubstitutor,
-    isAbbreviatedType: Boolean = false,
-    isIgnoreTypeParameters: Boolean = false
+    isReportExpansionError: Boolean = false,
+    isIgnoreTypeParameters: Boolean = false,
 ) {
-    val count = minOf(typeParameters.size, arguments.size)
+    val count = minOf(typeParameters.size, typeArguments.size)
     val typeSystemContext = context.session.typeContext
+    val additionalUpperBoundsProvider = context.session.platformUpperBoundsProvider
 
     for (index in 0 until count) {
-        val argument = arguments.getOrNull(index) ?: continue
-        val argumentType: ConeKotlinType? = argument.coneTypeProjection.type
-        val argumentTypeRef = argument.typeRef
-        val argumentSource = argument.source
+        val argument = typeArguments[index]
+        val argumentType = argument.type
+        val sourceAttribute = argumentType?.attributes?.sourceAttribute
+        val argumentTypeRef = sourceAttribute?.typeRef
+        val argumentSource = sourceAttribute?.source
 
-        if (argumentType != null && argumentSource != null) {
+        if (argumentType != null && isExplicitTypeArgumentSource(argumentSource)) {
             if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =
-                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType }) as? ConeKotlinType
-                if (intersection != null) {
-                    val upperBound = substitutor.substituteOrSelf(intersection)
-                    if (!AbstractTypeChecker.isSubtypeOf(
-                            typeSystemContext,
-                            argumentType,
-                            upperBound,
-                            stubTypesEqualToAnything = true
+                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })
+                val upperBound = substitutor.substituteOrSelf(intersection)
+                if (!AbstractTypeChecker.isSubtypeOf(
+                        typeSystemContext,
+                        argumentType,
+                        upperBound,
+                        stubTypesEqualToAnything = true
+                    )
+                ) {
+                    if (isReportExpansionError && argumentTypeRef == null) {
+                        reporter.reportOn(
+                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION, upperBound, argumentType.type, context
                         )
-                    ) {
-                        val factory =
-                            if (isAbbreviatedType) FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION else FirErrors.UPPER_BOUND_VIOLATED
-                        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
-                        if (isAbbreviatedType) {
-                            return
-                        }
+                    } else {
+                        val extraMessage = if (upperBound.lowerBoundIfFlexible().originalIfDefinitelyNotNullable() is ConeCapturedType) "Consider removing the explicit type arguments" else ""
+                        reporter.reportOn(
+                            argumentSource, FirErrors.UPPER_BOUND_VIOLATED,
+                            upperBound, argumentType.type, extraMessage, context
+                        )
                     }
+                } else {
+                    // Only check if the original check was successful to prevent duplicate diagnostics
+                    reportUpperBoundViolationWarningIfNecessary(
+                        additionalUpperBoundsProvider,
+                        argumentType,
+                        upperBound,
+                        context,
+                        typeSystemContext,
+                        reporter,
+                        isReportExpansionError,
+                        argumentTypeRef,
+                        argumentSource
+                    )
                 }
             }
 
-            checkUpperBoundViolated(argumentTypeRef, context, reporter, isIgnoreTypeParameters = isIgnoreTypeParameters)
+            if (argumentType is ConeClassLikeType) {
+                checkUpperBoundViolated(argumentTypeRef, argumentType, context, reporter, isIgnoreTypeParameters)
+            }
         }
     }
 }
+
+private fun reportUpperBoundViolationWarningIfNecessary(
+    additionalUpperBoundsProvider: FirPlatformUpperBoundsProvider?,
+    argumentType: ConeKotlinType,
+    upperBound: ConeKotlinType,
+    context: CheckerContext,
+    typeSystemContext: ConeInferenceContext,
+    reporter: DiagnosticReporter,
+    isReportExpansionError: Boolean,
+    argumentTypeRef: FirTypeRef?,
+    argumentSource: KtSourceElement?,
+) {
+    if (additionalUpperBoundsProvider == null) return
+    val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return
+    // While [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
+    // is here, to obtain original explicit type arguments, we need to look into special attribute.
+    // TODO: Get rid of this unwrapping once KT-59138 is fixed and the relevant feature for disabling it will be removed
+    val properArgumentType =
+        argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
+
+    if (!AbstractTypeChecker.isSubtypeOf(
+            typeSystemContext,
+            properArgumentType,
+            additionalUpperBound,
+            stubTypesEqualToAnything = true
+        )
+    ) {
+        val factory = when {
+            isReportExpansionError && argumentTypeRef == null -> additionalUpperBoundsProvider.diagnosticForTypeAlias
+            else -> additionalUpperBoundsProvider.diagnostic
+        }
+        reporter.reportOn(argumentSource, factory, upperBound, properArgumentType.type, context)
+    }
+}
+
+fun ConeClassLikeType.fullyExpandedTypeWithSource(
+    typeRef: FirTypeRef,
+    useSiteSession: FirSession,
+): ConeClassLikeType? {
+    val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return null
+
+    // Add source information to arguments of non-expanded type, which is preserved during expansion.
+    val typeArguments = typeArguments.mapIndexed { i, projection ->
+        // typeRefAndSourcesForArguments can have fewer elements than there are type arguments
+        // because in FIR, inner types of generic outer types have the generic arguments of the outer type added to the end of their list
+        // of type arguments but there is no source for them.
+        val source = typeRefAndSourcesForArguments.elementAtOrNull(i) ?: return@mapIndexed projection
+        projection.withSource(source)
+    }.toTypedArray()
+
+    return withArguments(typeArguments).fullyExpandedType(useSiteSession)
+}
+
+private class SourceAttribute(private val data: FirTypeRefSource) : ConeAttribute<SourceAttribute>() {
+    val source: KtSourceElement? get() = data.source
+    val typeRef: FirTypeRef? get() = data.typeRef
+
+    override fun union(other: SourceAttribute?): SourceAttribute = other ?: this
+    override fun intersect(other: SourceAttribute?): SourceAttribute = other ?: this
+    override fun add(other: SourceAttribute?): SourceAttribute = other ?: this
+
+    override fun isSubtypeOf(other: SourceAttribute?): Boolean = true
+
+    override fun toString() = "SourceAttribute: $data"
+
+    override val key: KClass<out SourceAttribute>
+        get() = SourceAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = false
+}
+
+private val ConeAttributes.sourceAttribute: SourceAttribute? by ConeAttributes.attributeAccessor()
+
+fun ConeTypeProjection.withSource(source: FirTypeRefSource?): ConeTypeProjection {
+    return when {
+        source == null || this !is ConeKotlinTypeProjection -> this
+        else -> {
+            // Prefer existing source information.
+            val attributes = ConeAttributes.create(listOf(SourceAttribute(source))).add(type.attributes)
+            replaceType(type.withAttributes(attributes))
+        }
+    }
+}
+
+interface FirPlatformUpperBoundsProvider : FirSessionComponent {
+    val diagnostic: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+    val diagnosticForTypeAlias: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType>
+
+    fun getAdditionalUpperBound(coneKotlinType: ConeKotlinType): ConeKotlinType?
+}
+
+val FirSession.platformUpperBoundsProvider: FirPlatformUpperBoundsProvider? by FirSession.nullableSessionComponentAccessor()

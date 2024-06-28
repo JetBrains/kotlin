@@ -1,3 +1,12 @@
+/**
+ * public abstract class Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class Foo {
 
@@ -9,6 +18,24 @@ public abstract class Foo {
 ////////////////////
 
 
+/**
+ * package {
+ *
+ *   // signature: test1()Ljava/util/List;
+ *   public final fun test1(): kotlin/collections/List<kotlin/Any>
+ *
+ *   // signature: test2()Ljava/util/List;
+ *   public final fun test2(): kotlin/collections/List<java/lang/Runnable>
+ *
+ *   // signature: test3()Ljava/util/List;
+ *   public final fun test3(): kotlin/collections/List<Foo>
+ *
+ *   // signature: test4()Ljava/util/List;
+ *   public final fun test4(): kotlin/collections/List<kotlin/Any>
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Kt18682Kt {
 

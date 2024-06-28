@@ -4,7 +4,7 @@ public final class _2Kt$box$$inlined$complicatedCast$1 {
     enclosing method _2Kt.box()Ljava/lang/String;
     inner (anonymous) class _2Kt$box$$inlined$complicatedCast$1
     public method <init>(): void
-    public final method f(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public final method f(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -13,7 +13,7 @@ public final class _2Kt$complicatedCast$1$1 {
     enclosing method _2Kt.complicatedCast(Ljava/lang/Object;)Ljava/lang/Object;
     inner (anonymous) class _2Kt$complicatedCast$1$1
     public method <init>(): void
-    public final method f(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.Object
+    public final method f(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata

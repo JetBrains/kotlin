@@ -1,0 +1,42 @@
+FILE: entriesPropertyInCompanionClashOn.fir.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val entries: R|kotlin/Int| = Int(0)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<A>|
+            public get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|A|.R|/A.Companion.entries|
+        Q|A.Companion|.R|/A.Companion.entries|
+        R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|A.Companion|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(Q|A|, <L> = with@fun R|A.Companion|.<anonymous>(): <ERROR TYPE REF: Unresolved name: values> <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/A.Companion.entries|
+            this@R|special/anonymous|.R|/A.Companion.entries|
+            ^ <Unresolved name: values>#()
+        }
+        )
+        R|kotlin/with|<R|A.Companion|, R|kotlin/Int|>(Q|A.Companion|, <L> = with@fun R|A.Companion|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|special/anonymous|.R|/A.Companion.entries|
+        }
+        )
+        lval aCompanion: R|A.Companion| = Q|A.Companion|
+        R|<local>/aCompanion|.R|/A.Companion.entries|
+    }

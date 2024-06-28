@@ -1,5 +1,5 @@
 // SKIP_TXT
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 interface A<E> {
     fun foo(): E

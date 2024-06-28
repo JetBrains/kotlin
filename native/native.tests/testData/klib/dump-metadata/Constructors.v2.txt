@@ -1,0 +1,95 @@
+library {
+  // module name: <Constructors.kt>
+
+  library fragment {
+    // package name: <root>
+
+    // class name: A
+    // class name: Bar
+    // class name: Baz
+    // class name: Foo
+    // class name: Qux
+    // class name: Typed
+
+    // signature: /A|null[0]
+    public final annotation class A : kotlin/Annotation {
+
+      // signature: /A.<init>|<init>(){}[0]
+      public constructor()
+    }
+
+    // signature: /Bar|null[0]
+    public final class Bar : kotlin/Any {
+
+      // signature: /Bar.<init>|<init>(kotlin.Int){}[0]
+      @A
+      public constructor(x: kotlin/Int)
+    }
+
+    // signature: /Baz|null[0]
+    public final class Baz : kotlin/Any {
+
+      // signature: /Baz.<init>|<init>(kotlin.Int){}[0]
+      private constructor(x: kotlin/Int)
+    }
+
+    // signature: /Foo|null[0]
+    public final class Foo : kotlin/Any {
+
+      // signature: /Foo.<init>|<init>(){}[0]
+      public /* secondary */ constructor()
+
+      // signature: /Foo.<init>|<init>(Foo){}[0]
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      // signature: /Foo.<init>|<init>(kotlin.Double){}[0]
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      // signature: /Foo.<init>|<init>(kotlin.Int){}[0]
+      public constructor(x: kotlin/Int)
+
+      // signature: /Foo.<init>|<init>(kotlin.Long){}[0]
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      // signature: /Foo.<init>|<init>(kotlin.String){}[0]
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      // signature: /Foo.<init>|<init>(kotlin.Double;kotlin.Int){}[0]
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+
+    // signature: /Qux|null[0]
+    public final class Qux : kotlin/Any {
+
+      // signature: /Qux.<init>|<init>(kotlin.Int){}[0]
+      protected constructor(x: kotlin/Int)
+    }
+
+    // signature: /Typed|null[0]
+    public final class Typed<T#0 /* T */> : kotlin/Any {
+
+      // signature: /Typed.<init>|<init>(){}[0]
+      public /* secondary */ constructor()
+
+      // signature: /Typed.<init>|<init>(Foo){}[0]
+      @A
+      public /* secondary */ constructor(x: Foo)
+
+      // signature: /Typed.<init>|<init>(kotlin.Double){}[0]
+      public /* secondary */ constructor(x: kotlin/Double)
+
+      // signature: /Typed.<init>|<init>(kotlin.Int){}[0]
+      public constructor(x: kotlin/Int)
+
+      // signature: /Typed.<init>|<init>(kotlin.Long){}[0]
+      private /* secondary */ constructor(x: kotlin/Long)
+
+      // signature: /Typed.<init>|<init>(kotlin.String){}[0]
+      protected /* secondary */ constructor(x: kotlin/String)
+
+      // signature: /Typed.<init>|<init>(kotlin.Double;kotlin.Int){}[0]
+      public /* secondary */ constructor(x: kotlin/Double, y: kotlin/Int)
+    }
+  }
+}

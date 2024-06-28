@@ -1,0 +1,8 @@
+Classifier names:
+  InnerClass
+  InnerSuperClass
+  NestedClass
+  NestedSuperClass
+
+Callable names:
+  hello

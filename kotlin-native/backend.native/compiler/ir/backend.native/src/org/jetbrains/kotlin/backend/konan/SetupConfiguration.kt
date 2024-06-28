@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(KonanConfigKeys) {
@@ -41,12 +41,22 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.moduleName?.let { put(MODULE_NAME, it) }
 
     // TODO: allow overriding the prefix directly.
-    arguments.moduleName?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
+    // With Swift Export, exported prefix must be Kotlin.
+    ("Kotlin".takeIf { get(BinaryOptions.swiftExport) == true } ?: arguments.moduleName)?.let { put(FULL_EXPORTED_NAME_PREFIX, it) }
 
     arguments.target?.let { put(TARGET, it) }
 
     put(INCLUDED_BINARY_FILES, arguments.includeBinaries.toNonNullList())
     put(NATIVE_LIBRARY_FILES, arguments.nativeLibraries.toNonNullList())
+
+    if (arguments.repositories != null) {
+        // Show the warning also if `-repo` was really specified.
+        report(
+                WARNING,
+                "'-repo' ('-r') compiler option is deprecated and will be removed in one of the future releases. " +
+                        "Please use library paths instead of library names in all compiler options such as '-library' ('-l')."
+        )
+    }
     put(REPOSITORIES, arguments.repositories.toNonNullList())
 
     // TODO: Collect all the explicit file names into an object
@@ -56,15 +66,17 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     val outputKind = CompilerOutputKind.valueOf(
             (arguments.produce ?: "program").uppercase())
     put(PRODUCE, outputKind)
-    put(METADATA_KLIB, arguments.metadataKlib)
-
-    arguments.libraryVersion?.let { put(LIBRARY_VERSION, it) }
+    putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
 
     arguments.mainPackage?.let { put(ENTRY, it) }
     arguments.manifestFile?.let { put(MANIFEST_FILE, it) }
     arguments.runtimeFile?.let { put(RUNTIME_FILE, it) }
     arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
     put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
+
+    if (arguments.optimization && arguments.debug) {
+        report(WARNING, "Unsupported combination of flags: -opt and -g. Please pick one.")
+    }
 
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
@@ -100,23 +112,12 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
     put(PRINT_IR, arguments.printIr)
     put(PRINT_BITCODE, arguments.printBitCode)
-    put(CHECK_EXTERNAL_CALLS, arguments.checkExternalCalls)
     put(PRINT_FILES, arguments.printFiles)
 
     put(PURGE_USER_LIBS, arguments.purgeUserLibs)
 
     if (arguments.verifyCompiler != null)
         put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
-    put(VERIFY_IR, when (arguments.verifyIr) {
-        null -> IrVerificationMode.NONE
-        "none" -> IrVerificationMode.NONE
-        "warning" -> IrVerificationMode.WARNING
-        "error" -> IrVerificationMode.ERROR
-        else -> {
-            report(ERROR, "Unsupported IR verification mode ${arguments.verifyIr}")
-            IrVerificationMode.NONE
-        }
-    })
     put(VERIFY_BITCODE, arguments.verifyBitCode)
 
     put(ENABLE_ASSERTIONS, arguments.enableAssertions)
@@ -162,11 +163,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
     arguments.emitLazyObjCHeader?.let { put(EMIT_LAZY_OBJC_HEADER_FILE, it) }
 
-    put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this@setupFromArguments, arguments))
     put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
-    put(COVERAGE, arguments.coverage)
-    put(LIBRARIES_TO_COVER, arguments.coveredLibraries.toNonNullList())
-    arguments.coverageFile?.let { put(PROFRAW_PATH, it) }
     put(OBJC_GENERICS, !arguments.noObjcGenerics)
     put(DEBUG_PREFIX_MAP, parseDebugPrefixMap(arguments, this@setupFromArguments))
 
@@ -178,6 +175,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(CACHE_DIRECTORIES, arguments.cacheDirectories.toNonNullList())
     put(AUTO_CACHEABLE_FROM, arguments.autoCacheableFrom.toNonNullList())
     arguments.autoCacheDir?.let { put(AUTO_CACHE_DIR, it) }
+    val incrementalCacheDir = arguments.incrementalCacheDir
+    if ((incrementalCacheDir != null) xor (arguments.incrementalCompilation == true))
+        report(ERROR, "For incremental compilation both flags should be supplied: " +
+                "-Xenable-incremental-compilation and ${K2NativeCompilerArguments.INCREMENTAL_CACHE_DIR}")
+    incrementalCacheDir?.let { put(INCREMENTAL_CACHE_DIR, it) }
     arguments.filesToCache?.let { put(FILES_TO_CACHE, it.toList()) }
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
@@ -197,24 +199,49 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(this@setupFromArguments, arguments.preLinkCaches))
     putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, this@setupFromArguments))
-    put(DESTROY_RUNTIME_MODE, when (arguments.destroyRuntimeMode) {
+    putIfNotNull(DESTROY_RUNTIME_MODE, when (arguments.destroyRuntimeMode) {
+        null -> null
         "legacy" -> DestroyRuntimeMode.LEGACY
         "on-shutdown" -> DestroyRuntimeMode.ON_SHUTDOWN
         else -> {
             report(ERROR, "Unsupported destroy runtime mode ${arguments.destroyRuntimeMode}")
-            DestroyRuntimeMode.ON_SHUTDOWN
-        }
-    })
-    putIfNotNull(GARBAGE_COLLECTOR, when (arguments.gc) {
-        null -> null
-        "noop" -> GC.NOOP
-        "stms" -> GC.SAME_THREAD_MARK_AND_SWEEP
-        "cms" -> GC.CONCURRENT_MARK_AND_SWEEP
-        else -> {
-            report(ERROR, "Unsupported GC ${arguments.gc}")
             null
         }
     })
+
+    val gcFromArgument = when (arguments.gc) {
+        null -> null
+        "noop" -> GC.NOOP
+        "stms" -> GC.STOP_THE_WORLD_MARK_AND_SWEEP
+        "cms" -> GC.PARALLEL_MARK_CONCURRENT_SWEEP
+        else -> {
+            val validValues = enumValues<GC>().map {
+                val fullName = "$it".lowercase()
+                it.shortcut?.let { short ->
+                    "$fullName (or: $short)"
+                } ?: fullName
+            }.joinToString("|")
+            report(ERROR, "Unsupported argument -Xgc=${arguments.gc}. Use -Xbinary=gc= with values ${validValues}")
+            null
+        }
+    }
+    if (gcFromArgument != null) {
+        val newValue = gcFromArgument.shortcut ?: "$gcFromArgument".lowercase()
+        report(WARNING, "-Xgc=${arguments.gc} compiler argument is deprecated. Use -Xbinary=gc=${newValue} instead")
+    }
+    // TODO: revise priority and/or report conflicting values.
+    if (get(BinaryOptions.gc) == null) {
+        putIfNotNull(BinaryOptions.gc, gcFromArgument)
+    }
+
+    if (arguments.checkExternalCalls != null) {
+        report(WARNING, "-Xcheck-state-at-external-calls compiler argument is deprecated. Use -Xbinary=checkStateAtExternalCalls=true instead")
+    }
+    // TODO: revise priority and/or report conflicting values.
+    if (get(BinaryOptions.checkStateAtExternalCalls) == null) {
+        putIfNotNull(BinaryOptions.checkStateAtExternalCalls, arguments.checkExternalCalls)
+    }
+
     putIfNotNull(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
         null -> null
         "enable" -> true
@@ -244,7 +271,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
     })
     put(LAZY_IR_FOR_CACHES, when (arguments.lazyIrForCaches) {
-        null -> true
+        null -> false
         "enable" -> true
         "disable" -> false
         else -> {
@@ -271,12 +298,24 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(RUNTIME_LOGS, arguments.runtimeLogs)
     putIfNotNull(BUNDLE_ID, parseBundleId(arguments, outputKind, this@setupFromArguments))
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
-    put(PARTIAL_LINKAGE, arguments.partialLinkage)
+
+    setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage = outputKind != CompilerOutputKind.LIBRARY, // Don't run PL when producing KLIB.
+            onWarning = { report(WARNING, it) },
+            onError = { report(ERROR, it) }
+    )
+
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(COMPILE_FROM_BITCODE, parseCompileFromBitcode(arguments, this@setupFromArguments, outputKind))
     putIfNotNull(SERIALIZED_DEPENDENCIES, parseSerializedDependencies(arguments, this@setupFromArguments))
     putIfNotNull(SAVE_DEPENDENCIES_PATH, arguments.saveDependenciesPath)
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
+    putIfNotNull(KONAN_DATA_DIR, arguments.konanDataDir)
+
+    if (arguments.manifestNativeTargets != null)
+        putIfNotNull(MANIFEST_NATIVE_TARGETS, parseManifestNativeTargets(arguments.manifestNativeTargets!!))
 }
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
@@ -284,16 +323,17 @@ private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.no
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(KonanConfigKeys) {
     put(TARGET, konanConfig.target.toString())
     put(DEBUG, konanConfig.debug)
-    put(PARTIAL_LINKAGE, konanConfig.partialLinkage)
+    setupPartialLinkageConfig(konanConfig.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
-    put(BinaryOptions.memoryModel, konanConfig.memoryModel)
     put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
     put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
     put(ALLOCATION_MODE, konanConfig.allocationMode)
-    put(GARBAGE_COLLECTOR, konanConfig.gc)
+    put(BinaryOptions.gc, konanConfig.gc)
     put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
-    put(BinaryOptions.freezing, konanConfig.freezing)
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
+    put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, konanConfig.threadsCount)
+    putIfNotNull(KONAN_DATA_DIR, konanConfig.distribution.localKonanDir.absolutePath)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()
@@ -326,25 +366,6 @@ private fun parsePreLinkCachesValue(
         configuration.report(ERROR, "Unsupported `-Xpre-link-caches` value: $value. Possible values are 'enable'/'disable'")
         null
     }
-}
-
-private fun selectBitcodeEmbeddingMode(
-        configuration: CompilerConfiguration,
-        arguments: K2NativeCompilerArguments
-): BitcodeEmbedding.Mode = when {
-    arguments.embedBitcodeMarker -> {
-        if (arguments.embedBitcode) {
-            configuration.report(
-                    STRONG_WARNING,
-                    "'${K2NativeCompilerArguments.EMBED_BITCODE_FLAG}' is ignored because '${K2NativeCompilerArguments.EMBED_BITCODE_MARKER_FLAG}' is specified"
-            )
-        }
-        BitcodeEmbedding.Mode.MARKER
-    }
-    arguments.embedBitcode -> {
-        BitcodeEmbedding.Mode.FULL
-    }
-    else -> BitcodeEmbedding.Mode.NONE
 }
 
 private fun selectExportedLibraries(
@@ -548,4 +569,24 @@ private fun parseCompileFromBitcode(
                 "Compilation from bitcode is not available when producing ${outputKind.visibleName}")
     }
     return arguments.compileFromBitcode
+}
+
+private fun CompilerConfiguration.parseManifestNativeTargets(targetStrings: Array<String>): Collection<KonanTarget> {
+    val trimmedTargetStrings = targetStrings.map { it.trim() }
+    val (recognizedTargetNames, unrecognizedTargetNames) = trimmedTargetStrings.partition { it in KonanTarget.predefinedTargets.keys }
+
+    if (unrecognizedTargetNames.isNotEmpty()) {
+        report(
+                WARNING,
+                """
+                    The following target names passed to the -Xmanifest-native-targets are not recognized:
+                    ${unrecognizedTargetNames.joinToString(separator = ", ")}
+                    
+                    List of known target names:
+                    ${KonanTarget.predefinedTargets.keys.joinToString(separator = ", ")}
+                """.trimIndent()
+        )
+    }
+
+    return recognizedTargetNames.map { KonanTarget.predefinedTargets[it]!! }
 }

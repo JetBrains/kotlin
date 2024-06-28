@@ -9,5 +9,4 @@ internal val stdlibFqNames = mapOf(
     Pair::class to "kotlin.Pair",
     Triple::class to "kotlin.Triple",
     HashMap::class to "kotlin.collections.HashMap",
-    AbstractMutableMap.SimpleEntry::class to "kotlin.collections.AbstractMutableMap.SimpleEntry"
 )

@@ -1,4 +1,3 @@
-
 // KT-42025
 
 open class L<LL>(val ll: LL)

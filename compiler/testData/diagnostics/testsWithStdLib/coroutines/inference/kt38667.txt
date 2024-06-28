@@ -44,12 +44,12 @@ public interface PropKey</*0*/ T, /*1*/ V : AnimationVector> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class TransitionDefinition</*0*/ T> {
-    public constructor TransitionDefinition</*0*/ T>()
+public final class TransitionDefinition</*0*/ X> {
+    public constructor TransitionDefinition</*0*/ X>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun transition(/*0*/ fromState: T? = ..., /*1*/ toState: T? = ..., /*2*/ init: TransitionSpec<T>.() -> kotlin.Unit): kotlin.Unit
+    public final fun transition(/*0*/ fromState: X? = ..., /*1*/ toState: X? = ..., /*2*/ init: TransitionSpec<X>.() -> kotlin.Unit): kotlin.Unit
 }
 
 public final class TransitionSpec</*0*/ S> {
@@ -57,8 +57,8 @@ public final class TransitionSpec</*0*/ S> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun </*0*/ T> tween(/*0*/ init: TweenBuilder<T>.() -> kotlin.Unit): DurationBasedAnimationBuilder<T>
-    public final infix fun </*0*/ T, /*1*/ V : AnimationVector> PropKey<T, V>.using(/*0*/ builder: AnimationBuilder<T>): kotlin.Unit
+    public final fun </*0*/ E> tween(/*0*/ init: TweenBuilder<E>.() -> kotlin.Unit): DurationBasedAnimationBuilder<E>
+    public final infix fun </*0*/ F, /*1*/ V : AnimationVector> PropKey<F, V>.using(/*0*/ builder: AnimationBuilder<F>): kotlin.Unit
 }
 
 public final class TweenBuilder</*0*/ T> : DurationBasedAnimationBuilder<T> {

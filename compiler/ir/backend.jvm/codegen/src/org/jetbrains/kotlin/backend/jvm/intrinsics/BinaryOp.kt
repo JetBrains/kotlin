@@ -35,7 +35,7 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         val returnType = signature.returnType
         val intermediateResultType = numberFunctionOperandType(returnType)
         val argTypes = if (!expression.symbol.owner.parentAsClass.defaultType.isChar()) {
@@ -44,7 +44,7 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
             listOf(Type.CHAR_TYPE, signature.valueParameters[0].asmType)
         }
 
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, argTypes) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, argTypes) {
             it.visitInsn(returnType.getOpcode(opcode))
             StackValue.coerce(intermediateResultType, returnType, it)
         }

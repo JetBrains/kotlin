@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.getLogger
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.util.Logger
 
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
@@ -34,24 +32,13 @@ class KonanLibrariesResolveSupport(
     private val unresolvedLibraries = libraryNames.toUnresolvedLibraries
 
     private val repositories = configuration.getList(KonanConfigKeys.REPOSITORIES)
-    private val resolverLogger =
-            object : Logger {
-                private val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                override fun warning(message: String)= collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-                override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
-                override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
-                override fun fatal(message: String): Nothing {
-                    collector.report(CompilerMessageSeverity.ERROR, message)
-                    throw KonanCompilationException()
-                }
-            }
 
     private val resolver = defaultResolver(
             repositories,
             libraryNames.filter { it.contains(File.separator) } + includedLibraryFiles.map { it.absolutePath },
             target,
             distribution,
-            resolverLogger
+            configuration.getLogger()
     ).libraryResolver(resolveManifestDependenciesLenient)
 
     // We pass included libraries by absolute paths to avoid repository-based resolution for them.
@@ -59,9 +46,9 @@ class KonanLibrariesResolveSupport(
     // But currently the resolver is in the middle of a complex refactoring so it was decided to avoid changes in its logic.
     // TODO: Handle included libraries in KonanLibraryResolver when it's refactored and moved into the big Kotlin repo.
     internal val resolvedLibraries = run {
-        val additionalLibraryFiles = includedLibraryFiles + listOfNotNull(libraryToCacheFile)
+        val additionalLibraryFiles = (includedLibraryFiles + listOfNotNull(libraryToCacheFile)).toSet()
         resolver.resolveWithDependencies(
-                unresolvedLibraries + additionalLibraryFiles.map { UnresolvedLibrary(it.absolutePath, null) },
+                unresolvedLibraries + additionalLibraryFiles.map { RequiredUnresolvedLibrary(it.absolutePath) },
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
                 noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS),
                 noEndorsedLibs = configuration.getBoolean(KonanConfigKeys.NOENDORSEDLIBS)
@@ -70,9 +57,6 @@ class KonanLibrariesResolveSupport(
 
     internal val exportedLibraries =
             getExportedLibraries(configuration, resolvedLibraries, resolver.searchPathResolver, report = true)
-
-    internal val coveredLibraries =
-            getCoveredLibraries(configuration, resolvedLibraries, resolver.searchPathResolver)
 
     internal val includedLibraries =
             getIncludedLibraries(includedLibraryFiles, configuration, resolvedLibraries)

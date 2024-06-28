@@ -1,5 +1,5 @@
-// The local variables in the try and finally blocks are not removed for the finally block with the old backend.
-// IGNORE_BACKEND: JVM
+
+
 // WITH_STDLIB
 // FILE: test.kt
 
@@ -38,7 +38,28 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM JVM_IR
+// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// test.kt:37 box:
+// test.kt:13 compute:
+// test.kt:14 compute:
+// test.kt:15 compute:
+// test.kt:16 compute: y:int=42:int
+// test.kt:17 compute: y:int=42:int, i:int=0:int
+// test.kt:20 compute:
+// test.kt:21 compute: s:java.lang.String="NOPE":java.lang.String
+// test.kt:22 compute: s:java.lang.String="NOPE":java.lang.String
+// test.kt:7 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\103\0:int=0:int
+// test.kt:27 compute:
+// test.kt:28 compute: s2:java.lang.String="NOPE":java.lang.String
+// test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int
+// test.kt:28 compute: s2:java.lang.String="OK":java.lang.String, j:int=0:int
+// test.kt:31 compute: s2:java.lang.String="OK":java.lang.String
+// test.kt:37 box:
+// test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:39 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JVM_IR
 // test.kt:37 box:
 // test.kt:13 compute:
 // test.kt:14 compute:

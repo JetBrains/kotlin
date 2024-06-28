@@ -1,10 +1,4 @@
-open enum class Test0 : Enum<Test0> {
-  private constructor(x: Int) /* primary */ {
-    super/*Enum*/<Test0>()
-    /* <init>() */
-
-  }
-
+enum class Test0 : Enum<Test0> {
   val x: Int
     field = x
     get
@@ -15,22 +9,22 @@ open enum class Test0 : Enum<Test0> {
     this/*Test0*/(x = 0)
   }
 
-  fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test0>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): Test0 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<Test0>
     get(): EnumEntries<Test0> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
-open enum class Test1 : Enum<Test1> {
-  private constructor(x: Int) /* primary */ {
-    super/*Enum*/<Test1>()
-    /* <init>() */
-
-  }
-
+enum class Test1 : Enum<Test1> {
   val x: Int
     field = x
     get
@@ -43,9 +37,15 @@ open enum class Test1 : Enum<Test1> {
     this/*Test1*/(x = 0)
   }
 
-  fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test1>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): Test1 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<Test1>
     get(): EnumEntries<Test1> /* Synthetic body for ENUM_ENTRIES */
@@ -53,12 +53,6 @@ open enum class Test1 : Enum<Test1> {
 }
 
 abstract enum class Test2 : Enum<Test2> {
-  private constructor(x: Int) /* primary */ {
-    super/*Enum*/<Test2>()
-    /* <init>() */
-
-  }
-
   val x: Int
     field = x
     get
@@ -95,10 +89,17 @@ abstract enum class Test2 : Enum<Test2> {
     this/*Test2*/(x = 0)
   }
 
-  abstract fun foo()
-  fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test2>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): Test2 /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
+
+  abstract fun foo()
 
   val entries: EnumEntries<Test2>
     get(): EnumEntries<Test2> /* Synthetic body for ENUM_ENTRIES */

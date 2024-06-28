@@ -18,17 +18,18 @@ import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
+import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
  */
-internal class DynamicCompilerDriver : CompilerDriver() {
+internal class DynamicCompilerDriver(private val performanceManager: CommonCompilerPerformanceManager?) : CompilerDriver() {
 
     override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
         usingNativeMemoryAllocator {
@@ -44,7 +45,8 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
+                        CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
             }
@@ -58,38 +60,55 @@ internal class DynamicCompilerDriver : CompilerDriver() {
      * - Binary (if -Xomit-framework-binary is not passed).
      */
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
-        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
-        if (config.omitFrameworkBinary) {
-            return
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
+
+        val (objCExportedInterface, psiToIrOutput, objCCodeSpec) = performanceManager.trackIRTranslation {
+            val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+            engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
+            if (config.omitFrameworkBinary) {
+                return
+            }
+            val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+                it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+            }
+            require(psiToIrOutput is PsiToIrOutput.ForBackend)
+            Triple(objCExportedInterface, psiToIrOutput, objCCodeSpec)
         }
-        val (psiToIrOutput, objCCodeSpec) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
-            it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)
+
+        performanceManager.trackGeneration {
+            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+                it.objCExportedInterface = objCExportedInterface
+                it.objCExportCodeSpec = objCCodeSpec
+            }
+            engine.runBackend(backendContext, psiToIrOutput.irModule)
         }
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-            it.objCExportedInterface = objCExportedInterface
-            it.objCExportCodeSpec = objCCodeSpec
-        }
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
-            it.runPhase(BuildCExports, frontendOutput)
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
+
+        val (psiToIrOutput, cAdapterElements) = performanceManager.trackIRTranslation {
+            engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
+                if (config.cInterfaceGenerationMode == CInterfaceGenerationMode.V1) {
+                    it.runPhase(BuildCExports, frontendOutput)
+                } else {
+                    null
+                }
+            }
         }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
-            it.cAdapterExportedElements = cAdapterElements
+
+        performanceManager.trackGeneration {
+            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
+                it.cAdapterExportedElements = cAdapterElements
+            }
+            engine.runBackend(backendContext, psiToIrOutput.irModule)
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
     }
 
     private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val serializerOutput = if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
-            serializeKLibK2(engine, environment)
+            serializeKLibK2(engine, config, environment)
         else
             serializeKlibK1(engine, config, environment)
         serializerOutput?.let { engine.writeKlib(it) }
@@ -97,15 +116,32 @@ internal class DynamicCompilerDriver : CompilerDriver() {
 
     private fun serializeKLibK2(
             engine: PhaseEngine<PhaseContext>,
+            config: KonanConfig,
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
-        val frontendOutput = engine.runFirFrontend(environment)
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFirFrontend(environment) }
         if (frontendOutput is FirOutput.ShouldNotGenerateCode) return null
         require(frontendOutput is FirOutput.Full)
 
-        val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-//        engine.runK2SpecialBackendChecks(fir2IrOutput)  // TODO After fix of KT-56018 try uncommenting this line
-        return engine.runFirSerializer(fir2IrOutput)
+        return if (config.metadataKlib) {
+            engine.runFirSerializer(frontendOutput)
+        } else {
+            performanceManager.trackIRTranslation {
+                val fir2IrOutput = engine.runFir2Ir(frontendOutput)
+
+                val headerKlibPath = config.headerKlibPath
+                if (!headerKlibPath.isNullOrEmpty()) {
+                    val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
+                    engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                    // Don't overwrite the header klib with the full klib and stop compilation here.
+                    // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+                    if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+                }
+
+                engine.runK2SpecialBackendChecks(fir2IrOutput)
+                engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput))
+            }
+        }
     }
 
     private fun serializeKlibK1(
@@ -113,24 +149,39 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             config: KonanConfig,
             environment: KotlinCoreEnvironment
     ): SerializerOutput? {
-        val frontendOutput = engine.runFrontend(config, environment) ?: return null
-        val psiToIrOutput = if (config.metadataKlib) {
-            null
-        } else {
-            engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return null
+        return performanceManager.trackIRTranslation {
+            val psiToIrOutput = if (config.metadataKlib) {
+                null
+            } else {
+                engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+            }
+
+            val headerKlibPath = config.headerKlibPath
+            if (!headerKlibPath.isNullOrEmpty()) {
+                val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
+                engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
+                // Don't overwrite the header klib with the full klib and stop compilation here.
+                // By providing the same path for both regular output and header klib we can skip emitting the full klib.
+                if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
+            }
+            engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
         }
-        return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }
 
     /**
      * Produce a single binary artifact.
      */
     private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
-        val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
+
+        val psiToIrOutput = performanceManager.trackIRTranslation { engine.runPsiToIr(frontendOutput, isProducingLibrary = false) }
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
+
+        performanceManager.trackGeneration {
+            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+            engine.runBackend(backendContext, psiToIrOutput.irModule)
+        }
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
@@ -147,6 +198,30 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         } finally {
             llvmModule?.let { LLVMDisposeModule(it) }
             LLVMContextDispose(llvmContext)
+        }
+    }
+
+    /**
+     * Produce a bundle that is a directory with code and resources.
+     * It consists of
+     * - Info.plist
+     * - Binary without an entry point.
+     *
+     * See https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html
+     */
+    private fun produceBundle(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+        require(config.target.family.isAppleFamily)
+        require(config.produce == CompilerOutputKind.TEST_BUNDLE)
+
+        val frontendOutput = performanceManager.trackAnalysis { engine.runFrontend(config, environment) } ?: return
+        val psiToIrOutput = performanceManager.trackIRTranslation {
+            engine.runPhase(CreateTestBundlePhase, frontendOutput)
+            engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        }
+        require(psiToIrOutput is PsiToIrOutput.ForBackend)
+        performanceManager.trackGeneration {
+            val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
+            engine.runBackend(backendContext, psiToIrOutput.irModule)
         }
     }
 

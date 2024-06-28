@@ -1,0 +1,110 @@
+/**
+ * public final class AnotherRootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class AnotherRootClass {
+
+    public AnotherRootClass() {
+        super();
+    }
+}
+
+
+////////////////////
+
+/**
+ * public final annotation class RootAnnotation : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface RootAnnotation {
+}
+
+
+////////////////////
+
+/**
+ * public final class RootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class RootClass {
+
+    public RootClass() {
+        super();
+    }
+}
+
+
+////////////////////
+
+package test;
+
+/**
+ * public abstract interface test/PackedClass : kotlin/Any {
+ *
+ *   // signature: oneMoreMethod()LAnotherRootClass;
+ *   public abstract fun oneMoreMethod(): AnotherRootClass
+ *
+ *   // signature: otherMethod()Ljava/lang/Number;
+ *   public abstract fun otherMethod(): java/lang/Number
+ *
+ *   // signature: someMethod()LRootClass;
+ *   public abstract fun someMethod(): RootClass
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public abstract interface PackedClass {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract RootClass someMethod();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.Number otherMethod();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract AnotherRootClass oneMoreMethod();
+}
+
+
+////////////////////
+
+package test;
+
+/**
+ * public final class test/PackedWithAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+@ClassRefAnnotation(value = {RootClass.class})
+@RootAnnotation()
+public final class PackedWithAnnotation {
+
+    public PackedWithAnnotation() {
+        super();
+    }
+}

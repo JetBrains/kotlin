@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: Base.java
 public class Base {

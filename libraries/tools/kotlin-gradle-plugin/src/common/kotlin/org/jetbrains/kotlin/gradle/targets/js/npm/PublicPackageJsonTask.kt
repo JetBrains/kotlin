@@ -5,83 +5,96 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
-import javax.inject.Inject
 
-open class PublicPackageJsonTask
-@Inject
-constructor(
-    @Transient
-    private val compilation: KotlinJsCompilation
-) : DefaultTask() {
-    private val npmProject = compilation.npmProject
+@DisableCachingByDefault
+abstract class PublicPackageJsonTask :
+    DefaultTask(),
+    UsesKotlinNpmResolutionManager {
 
-    @Transient
-    private val nodeJs = npmProject.nodeJs
-    private val resolutionManager = nodeJs.npmResolutionManager
+    @get:Internal
+    abstract val compilationDisambiguatedName: Property<String>
 
-    private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
-    private val packageJsonHandlers = compilation.packageJsonHandlers
+    @get:Input
+    val projectVersion = project.version.toString()
 
     @get:Input
-    val packageJsonCustomFields: Map<String, Any?>
-        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
-            .apply {
-                packageJsonHandlers.forEach { it() }
-            }.customFields
+    abstract val jsIrCompilation: Property<Boolean>
 
-    private val compilationResolver
-        get() = resolutionManager.resolver[projectPath][compilationName]
+    @get:Input
+    abstract val extension: Property<String>
 
-    private val compilationResolution
-        get() = compilationResolver.getResolutionOrResolveIfForced() ?: error("Compilation resolution isn't available")
+    @get:Input
+    abstract val npmProjectName: Property<String>
 
-    @get:Nested
-    internal val externalDependencies: Collection<NpmDependencyDeclaration>
-        get() = compilationResolution.externalNpmDependencies
-            .map {
-                NpmDependencyDeclaration(
-                    scope = it.scope,
-                    name = it.name,
-                    version = it.version,
-                )
-            }
+    @get:Internal
+    abstract val npmProjectMain: Property<String>
 
-    private val publicPackageJsonTaskName by lazy {
-        npmProject.publicPackageJsonTaskName
+    @get:Internal
+    abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
+
+    @Suppress("unused")
+    @get:Input
+    internal val packageJsonInputHandlers: Provider<PackageJson> by lazy {
+        packageJsonHandlers.map { packageJsonHandlersList ->
+            PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+                .apply {
+                    packageJsonHandlersList.forEach { it.execute(this) }
+                }
+        }
     }
 
+    private val compilationResolution: PreparedKotlinCompilationNpmResolution
+        get() = npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
+            .getResolutionOrPrepare(
+                npmResolutionManager.get(),
+                logger
+            )
+
+    @get:Input
+    val externalDependencies: Collection<NpmDependencyDeclaration>
+        get() = compilationResolution.externalNpmDependencies
+
     private val defaultPackageJsonFile by lazy {
-        project.buildDir
-            .resolve("tmp")
-            .resolve(publicPackageJsonTaskName)
-            .resolve(PACKAGE_JSON)
+        project.layout.buildDirectory
+            .dir("tmp")
+            .map { it.dir(name) }
+            .map { it.file(PACKAGE_JSON) }
+            .getFile()
     }
 
     @get:OutputFile
     var packageJsonFile: File by property { defaultPackageJsonFile }
 
-    private val isJrIrCompilation = compilation is KotlinJsIrCompilation
-    private val projectVersion = project.version.toString()
-
     @TaskAction
     fun resolve() {
-        packageJson(npmProject.name, projectVersion, npmProject.main, externalDependencies, packageJsonHandlers).let { packageJson ->
-            packageJson.main = "${npmProject.name}.js"
+        packageJson(
+            npmProjectName.get(),
+            projectVersion,
+            npmProjectMain.get(),
+            externalDependencies,
+            packageJsonHandlers.get()
+        ).let { packageJson ->
+            packageJson.main = "${npmProjectName.get()}.${extension.get()}"
 
-            if (isJrIrCompilation) {
-                packageJson.types = "${npmProject.name}.d.ts"
+            if (jsIrCompilation.get()) {
+                packageJson.types = "${npmProjectName.get()}.d.ts"
             }
 
             packageJson.apply {

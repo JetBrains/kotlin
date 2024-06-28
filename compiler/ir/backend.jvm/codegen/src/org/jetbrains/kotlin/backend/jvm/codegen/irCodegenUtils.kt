@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.localClassType
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
@@ -38,6 +39,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
+import kotlin.collections.set
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol, Type>()
@@ -68,7 +71,10 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val fileEntry = declaration.fileParent.fileEntry
+    val irFile = declaration.fileParentBeforeInline
+    val type = declaration.getAttributeOwnerBeforeInline()?.localClassType ?: defaultTypeMapper.mapClass(declaration)
+
+    val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
@@ -77,12 +83,12 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
-        else -> declaration.fileParent.name
+        else -> irFile.name
     }
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            defaultTypeMapper.mapClass(declaration).internalName,
+            type.internalName,
             endLineNumber + 1
         )
     )
@@ -237,8 +243,8 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, genera
     if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
         // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
         // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
-        // the FunctionN type and fails, because that type doesn't need an import in the Kotlin source (kotlin.FunctionN), but needs one
-        // in the Java source (kotlin.jvm.functions.FunctionN), and kapt3 doesn't perform any Kotlin->Java name lookup.
+        // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
+        // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
     }
 
@@ -345,3 +351,15 @@ val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
 
         return tempReifiedTypeParametersUsages
     }
+
+internal fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType, containingCodegen: ClassCodegen): FieldInsnNode? {
+    val irClass = type.getClass()
+    if (irClass == null || !irClass.isEnumClassWhichRequiresExternalEntries()) return null
+
+    val mappingsCache = containingCodegen.context.enumEntriesIntrinsicMappingsCache
+    val field = mappingsCache.getEnumEntriesIntrinsicMappings(containingCodegen.irClass, irClass)
+    return FieldInsnNode(
+        Opcodes.GETSTATIC, containingCodegen.typeMapper.mapClass(field.parentAsClass).internalName,
+        field.name.asString(), AsmTypes.ENUM_ENTRIES.descriptor
+    )
+}

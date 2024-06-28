@@ -1,5 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
-
 inline suspend fun inlineMe() = 1000
 
 // inlineMe$$forInline : valueOf

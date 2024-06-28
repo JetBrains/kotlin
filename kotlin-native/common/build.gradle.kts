@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
+
 /*
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
@@ -6,6 +8,8 @@
 plugins {
     id("kotlin.native.build-tools-conventions")
     id("compile-to-bitcode")
+    kotlin("jvm")
+    id("native-interop-plugin")
 }
 
 bitcode {
@@ -26,14 +30,33 @@ bitcode {
     }
 }
 
-val hostName: String by project
+kotlinNativeInterop {
+    create("files") {
+        pkg("org.jetbrains.kotlin.backend.konan.files")
+        linker("clang++")
+        linkOutputs(bitcode.hostTarget.module("files").get().sourceSets.main.get().task.get())
+        headers(layout.projectDirectory.files("src/files/headers/Files.h"))
+    }
 
-val build by tasks.registering {
-    dependsOn("${hostName}Common")
+    create("env") {
+        pkg("org.jetbrains.kotlin.backend.konan.env")
+        linker("clang++")
+        linkOutputs(bitcode.hostTarget.module("env").get().sourceSets.main.get().task.get())
+        headers(layout.projectDirectory.files("src/env/headers/Env.h"))
+    }
 }
 
-val clean by tasks.registering {
-    doFirst {
-        delete(buildDir)
+val nativeLibs by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    attributes {
+        attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.DIRECTORY_TYPE)
+        attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, TargetWithSanitizer.host)
+    }
+}
+
+artifacts {
+    add(nativeLibs.name, layout.buildDirectory.dir("nativelibs/${TargetWithSanitizer.host}")) {
+        builtBy(kotlinNativeInterop["files"].genTask, kotlinNativeInterop["env"].genTask)
     }
 }

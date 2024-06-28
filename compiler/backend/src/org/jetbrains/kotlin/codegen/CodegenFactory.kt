@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.serialization.StringTableImpl
 
 interface CodegenFactory {
     fun convertToIr(input: IrConversionInput): BackendInput
@@ -126,7 +128,20 @@ object DefaultCodegenFactory : CodegenFactory {
     }
 
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
-        // Do nothing
+        generateModuleMetadata(input)
+    }
+
+    private fun generateModuleMetadata(result: CodegenFactory.CodegenInput) {
+        val builder = JvmModuleProtoBuf.Module.newBuilder()
+
+        val stringTable = StringTableImpl()
+        builder.addDataFromCompiledModule(stringTable, result.state)
+
+        val (stringTableProto, qualifiedNameTableProto) = stringTable.buildProto()
+        builder.setStringTable(stringTableProto)
+        builder.setQualifiedNameTable(qualifiedNameTableProto)
+
+        result.state.factory.setModuleMapping(builder.build())
     }
 
     private fun generateMultifileClass(state: GenerationState, multifileClassFqName: FqName, files: Collection<KtFile>) {

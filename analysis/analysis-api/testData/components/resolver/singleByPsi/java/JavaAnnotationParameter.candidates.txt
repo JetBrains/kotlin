@@ -1,0 +1,2 @@
+KtNameReferenceExpression(32,37): 'value'
+  NO_CANDIDATES

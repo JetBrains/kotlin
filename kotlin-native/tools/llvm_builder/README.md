@@ -34,7 +34,7 @@ Set of required `$DISTRIBUTION_COMPONENTS` depends on OS:
 |---------|----------------------------------------------------------------------------------------|
 | Windows | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
 | macOS   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers`             |
-| Linux   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler_rt` |
+| Linux   | `clang libclang lld llvm-cov llvm-profdata llvm-ar clang-resource-headers compiler-rt` |
 
 ### Tuning
 Run `python3 package.py -h` to check how one can tune script's behavior.
@@ -50,10 +50,23 @@ Some examples:
 
 ### Docker
 
+#### Linux 
+
 You can use Docker to build LLVM for Linux:
 ```shell
-docker build -t kotlin-llvm-builder .
+docker build -t kotlin-llvm-builder --file images/linux/Dockerfile .
 docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --install-path /output/llvm-11.1.0-linux-x64 --pack
+```
+
+#### Windows 
+
+> [!WARNING]  
+> Windows containers support is experimental
+
+If your host machine is Windows, you can use Windows Docker container to build LLVM for Windows: 
+```shell 
+docker build -t kotlin-llvm-builder --file images/windows/Dockerfile .
+docker run --rm -it -v <HOST_PATH>:/output kotlin-llvm-builder --instal-path /output/llvm-11-1.0-windows-x64 --pack
 ```
 
 ### Known problems

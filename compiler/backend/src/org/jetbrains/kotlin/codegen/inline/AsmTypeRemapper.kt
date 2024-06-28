@@ -36,7 +36,7 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val result: InlineResult) 
                     if (mapping.isReified) {
                         result.reifiedTypeParametersUsages.mergeAll(mapping.reifiedTypeParametersUsages)
                     }
-                    SignatureReader(mapping.signature).accept(v)
+                    SignatureReader(mapping.signature).acceptType(v)
                     return
                 }
                 return super.visitTypeVariable(name)

@@ -5,3 +5,5 @@ $TESTDATA_DIR$/fir.kt
 $TEMP_DIR$
 -ir-output-name
 fir
+-libraries
+libraries/stdlib/build/classes/kotlin/js/main

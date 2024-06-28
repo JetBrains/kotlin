@@ -1,18 +1,22 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
+import org.jetbrains.kotlin.fir.analysis.checkers.FirCheckerWithMppKind
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 
 /*
  * This file was generated automatically
  * DO NOT MODIFY IT MANUALLY
  */
 
-class ComposedExpressionCheckers : ExpressionCheckers() {
+class ComposedExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Boolean) : ExpressionCheckers() {
+    constructor(mppKind: MppCheckerKind) : this({ it.mppKind == mppKind })
+
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = _basicExpressionCheckers
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
@@ -53,6 +57,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _getClassCallCheckers
     override val safeCallExpressionCheckers: Set<FirSafeCallExpressionChecker>
         get() = _safeCallExpressionCheckers
+    override val smartCastExpressionCheckers: Set<FirSmartCastExpressionChecker>
+        get() = _smartCastExpressionCheckers
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker>
         get() = _equalityOperatorCallCheckers
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker>
@@ -61,8 +67,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _typeOperatorCallCheckers
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker>
         get() = _resolvedQualifierCheckers
-    override val constExpressionCheckers: Set<FirConstExpressionChecker>
-        get() = _constExpressionCheckers
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker>
+        get() = _literalExpressionCheckers
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = _callableReferenceAccessCheckers
     override val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker>
@@ -73,10 +79,12 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _throwExpressionCheckers
     override val doWhileLoopCheckers: Set<FirDoWhileLoopChecker>
         get() = _doWhileLoopCheckers
-    override val arrayOfCallCheckers: Set<FirArrayOfCallChecker>
-        get() = _arrayOfCallCheckers
+    override val arrayLiteralCheckers: Set<FirArrayLiteralChecker>
+        get() = _arrayLiteralCheckers
     override val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker>
         get() = _classReferenceExpressionCheckers
+    override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
+        get() = _inaccessibleReceiverCheckers
 
     private val _basicExpressionCheckers: MutableSet<FirBasicExpressionChecker> = mutableSetOf()
     private val _qualifiedAccessExpressionCheckers: MutableSet<FirQualifiedAccessExpressionChecker> = mutableSetOf()
@@ -98,52 +106,56 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _elvisExpressionCheckers: MutableSet<FirElvisExpressionChecker> = mutableSetOf()
     private val _getClassCallCheckers: MutableSet<FirGetClassCallChecker> = mutableSetOf()
     private val _safeCallExpressionCheckers: MutableSet<FirSafeCallExpressionChecker> = mutableSetOf()
+    private val _smartCastExpressionCheckers: MutableSet<FirSmartCastExpressionChecker> = mutableSetOf()
     private val _equalityOperatorCallCheckers: MutableSet<FirEqualityOperatorCallChecker> = mutableSetOf()
     private val _stringConcatenationCallCheckers: MutableSet<FirStringConcatenationCallChecker> = mutableSetOf()
     private val _typeOperatorCallCheckers: MutableSet<FirTypeOperatorCallChecker> = mutableSetOf()
     private val _resolvedQualifierCheckers: MutableSet<FirResolvedQualifierChecker> = mutableSetOf()
-    private val _constExpressionCheckers: MutableSet<FirConstExpressionChecker> = mutableSetOf()
+    private val _literalExpressionCheckers: MutableSet<FirLiteralExpressionChecker> = mutableSetOf()
     private val _callableReferenceAccessCheckers: MutableSet<FirCallableReferenceAccessChecker> = mutableSetOf()
     private val _thisReceiverExpressionCheckers: MutableSet<FirThisReceiverExpressionChecker> = mutableSetOf()
     private val _whileLoopCheckers: MutableSet<FirWhileLoopChecker> = mutableSetOf()
     private val _throwExpressionCheckers: MutableSet<FirThrowExpressionChecker> = mutableSetOf()
     private val _doWhileLoopCheckers: MutableSet<FirDoWhileLoopChecker> = mutableSetOf()
-    private val _arrayOfCallCheckers: MutableSet<FirArrayOfCallChecker> = mutableSetOf()
+    private val _arrayLiteralCheckers: MutableSet<FirArrayLiteralChecker> = mutableSetOf()
     private val _classReferenceExpressionCheckers: MutableSet<FirClassReferenceExpressionChecker> = mutableSetOf()
+    private val _inaccessibleReceiverCheckers: MutableSet<FirInaccessibleReceiverChecker> = mutableSetOf()
 
     @CheckersComponentInternal
     fun register(checkers: ExpressionCheckers) {
-        _basicExpressionCheckers += checkers.basicExpressionCheckers
-        _qualifiedAccessExpressionCheckers += checkers.qualifiedAccessExpressionCheckers
-        _callCheckers += checkers.callCheckers
-        _functionCallCheckers += checkers.functionCallCheckers
-        _propertyAccessExpressionCheckers += checkers.propertyAccessExpressionCheckers
-        _integerLiteralOperatorCallCheckers += checkers.integerLiteralOperatorCallCheckers
-        _variableAssignmentCheckers += checkers.variableAssignmentCheckers
-        _tryExpressionCheckers += checkers.tryExpressionCheckers
-        _whenExpressionCheckers += checkers.whenExpressionCheckers
-        _loopExpressionCheckers += checkers.loopExpressionCheckers
-        _loopJumpCheckers += checkers.loopJumpCheckers
-        _logicExpressionCheckers += checkers.logicExpressionCheckers
-        _returnExpressionCheckers += checkers.returnExpressionCheckers
-        _blockCheckers += checkers.blockCheckers
-        _annotationCheckers += checkers.annotationCheckers
-        _annotationCallCheckers += checkers.annotationCallCheckers
-        _checkNotNullCallCheckers += checkers.checkNotNullCallCheckers
-        _elvisExpressionCheckers += checkers.elvisExpressionCheckers
-        _getClassCallCheckers += checkers.getClassCallCheckers
-        _safeCallExpressionCheckers += checkers.safeCallExpressionCheckers
-        _equalityOperatorCallCheckers += checkers.equalityOperatorCallCheckers
-        _stringConcatenationCallCheckers += checkers.stringConcatenationCallCheckers
-        _typeOperatorCallCheckers += checkers.typeOperatorCallCheckers
-        _resolvedQualifierCheckers += checkers.resolvedQualifierCheckers
-        _constExpressionCheckers += checkers.constExpressionCheckers
-        _callableReferenceAccessCheckers += checkers.callableReferenceAccessCheckers
-        _thisReceiverExpressionCheckers += checkers.thisReceiverExpressionCheckers
-        _whileLoopCheckers += checkers.whileLoopCheckers
-        _throwExpressionCheckers += checkers.throwExpressionCheckers
-        _doWhileLoopCheckers += checkers.doWhileLoopCheckers
-        _arrayOfCallCheckers += checkers.arrayOfCallCheckers
-        _classReferenceExpressionCheckers += checkers.classReferenceExpressionCheckers
+        checkers.basicExpressionCheckers.filterTo(_basicExpressionCheckers, predicate)
+        checkers.qualifiedAccessExpressionCheckers.filterTo(_qualifiedAccessExpressionCheckers, predicate)
+        checkers.callCheckers.filterTo(_callCheckers, predicate)
+        checkers.functionCallCheckers.filterTo(_functionCallCheckers, predicate)
+        checkers.propertyAccessExpressionCheckers.filterTo(_propertyAccessExpressionCheckers, predicate)
+        checkers.integerLiteralOperatorCallCheckers.filterTo(_integerLiteralOperatorCallCheckers, predicate)
+        checkers.variableAssignmentCheckers.filterTo(_variableAssignmentCheckers, predicate)
+        checkers.tryExpressionCheckers.filterTo(_tryExpressionCheckers, predicate)
+        checkers.whenExpressionCheckers.filterTo(_whenExpressionCheckers, predicate)
+        checkers.loopExpressionCheckers.filterTo(_loopExpressionCheckers, predicate)
+        checkers.loopJumpCheckers.filterTo(_loopJumpCheckers, predicate)
+        checkers.logicExpressionCheckers.filterTo(_logicExpressionCheckers, predicate)
+        checkers.returnExpressionCheckers.filterTo(_returnExpressionCheckers, predicate)
+        checkers.blockCheckers.filterTo(_blockCheckers, predicate)
+        checkers.annotationCheckers.filterTo(_annotationCheckers, predicate)
+        checkers.annotationCallCheckers.filterTo(_annotationCallCheckers, predicate)
+        checkers.checkNotNullCallCheckers.filterTo(_checkNotNullCallCheckers, predicate)
+        checkers.elvisExpressionCheckers.filterTo(_elvisExpressionCheckers, predicate)
+        checkers.getClassCallCheckers.filterTo(_getClassCallCheckers, predicate)
+        checkers.safeCallExpressionCheckers.filterTo(_safeCallExpressionCheckers, predicate)
+        checkers.smartCastExpressionCheckers.filterTo(_smartCastExpressionCheckers, predicate)
+        checkers.equalityOperatorCallCheckers.filterTo(_equalityOperatorCallCheckers, predicate)
+        checkers.stringConcatenationCallCheckers.filterTo(_stringConcatenationCallCheckers, predicate)
+        checkers.typeOperatorCallCheckers.filterTo(_typeOperatorCallCheckers, predicate)
+        checkers.resolvedQualifierCheckers.filterTo(_resolvedQualifierCheckers, predicate)
+        checkers.literalExpressionCheckers.filterTo(_literalExpressionCheckers, predicate)
+        checkers.callableReferenceAccessCheckers.filterTo(_callableReferenceAccessCheckers, predicate)
+        checkers.thisReceiverExpressionCheckers.filterTo(_thisReceiverExpressionCheckers, predicate)
+        checkers.whileLoopCheckers.filterTo(_whileLoopCheckers, predicate)
+        checkers.throwExpressionCheckers.filterTo(_throwExpressionCheckers, predicate)
+        checkers.doWhileLoopCheckers.filterTo(_doWhileLoopCheckers, predicate)
+        checkers.arrayLiteralCheckers.filterTo(_arrayLiteralCheckers, predicate)
+        checkers.classReferenceExpressionCheckers.filterTo(_classReferenceExpressionCheckers, predicate)
+        checkers.inaccessibleReceiverCheckers.filterTo(_inaccessibleReceiverCheckers, predicate)
     }
 }

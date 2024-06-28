@@ -1,0 +1,40 @@
+FILE: kt63434.fir.kt
+    public abstract class InlineCompletionSessionManager : R|kotlin/Any| {
+        public constructor(): R|InlineCompletionSessionManager| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final class Proto : R|kotlin/Any| {
+            public constructor(): R|InlineCompletionSessionManager.Proto| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final class Some : R|kotlin/Any| {
+                public constructor(): R|InlineCompletionSessionManager.Proto.Some| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun checkCannotAccess(): R|kotlin/Unit| {
+        object : R|InlineCompletionSessionManager| {
+            private constructor(): R|<anonymous>| {
+                super<R|InlineCompletionSessionManager|>()
+            }
+
+            public final fun chch(): R|kotlin/Unit| {
+                lval b: R|InlineCompletionSessionManager.Proto| = R|/InlineCompletionSessionManager.Proto.Proto|()
+                when () {
+                    (R|<local>/b| is R|InlineCompletionSessionManager.Proto.Some|) ->  {
+                        ^chch Unit
+                    }
+                }
+
+            }
+
+        }
+
+    }

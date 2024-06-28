@@ -98,6 +98,29 @@ public actual annotation class JvmSynthetic
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
+/**
+ * This annotation marks Kotlin `expect` declarations that are implicitly actualized by Java.
+ *
+ * # Safety Risks
+ *
+ * Implicit actualization bypasses safety features, potentially leading to errors or unexpected behavior. If you use this annotation, some
+ * of the expect-actual invariants are not checked.
+ *
+ * Use this annotation only as a last resort. The annotation might stop working in future Kotlin versions without prior notice.
+ *
+ * If you use this annotation, consider describing your use cases in [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) comments.
+ *
+ * # Migration
+ *
+ * Rewrite the code using explicit `actual typealias`. Unfortunately, it requires you to move your expect declarations into another
+ * package. Refer to [KT-58545](https://youtrack.jetbrains.com/issue/KT-58545) for more detailed migration example.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.CLASS)
+@ExperimentalMultiplatform
+@MustBeDocumented
+@SinceKotlin("1.9")
+public actual annotation class ImplicitlyActualizedByJvmDeclaration
 
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
@@ -111,13 +134,17 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 public actual annotation class JvmField
 
 /**
- * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with
- * declaration-site variance, for example such as `Collection<out T>` has.
+ * Instructs the compiler to generate or omit wildcards for type arguments corresponding to parameters with declaration-site variance,
+ * for example such as `E` of `kotlin.collections.Collection` which is declared with an `out` variance.
  *
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=true`, the type is generated without wildcards.
- * If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=true` and the type is not annotated with `@JvmWildcard`, the type is
+ * generated without wildcards.
+ * - If the innermost applied `@JvmSuppressWildcards` has `suppress=false`, the type is generated with wildcards.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)
@@ -125,9 +152,12 @@ public actual annotation class JvmField
 public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean = true)
 
 /**
- * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
+ * Instructs the compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
+ *
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/java-to-kotlin-interop.html#variant-generics)
+ * for more information.
  */
 @Target(AnnotationTarget.TYPE)
 @Retention(AnnotationRetention.BINARY)

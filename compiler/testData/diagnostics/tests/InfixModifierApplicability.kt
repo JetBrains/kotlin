@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 class Pair<A, B>(val a: A, val b: B)
 infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)

@@ -1,5 +1,3 @@
-// EXISTS: $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/lib.js
 // EXISTS: $TESTDATA_DIR$/sourceMapRelativeRoot/main/out/main.js
-// CONTAINS: $TESTDATA_DIR$/sourceMapRelativeRoot/lib/out/lib.js.map, "../src/lib.kt"
 // CONTAINS: $TESTDATA_DIR$/sourceMapRelativeRoot/main/out/main.js.map, "../src/main.kt"
 // CONTAINS: $TESTDATA_DIR$/sourceMapRelativeRoot/main/out/main.js.map, "../../lib/src/lib.kt"

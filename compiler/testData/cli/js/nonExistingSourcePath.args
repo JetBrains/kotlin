@@ -1,6 +1,9 @@
 not/existing/path
--no-stdlib
--Xlegacy-deprecated-no-warn
--Xuse-deprecated-legacy-compiler
--output
-$TESTDATA_DIR$
+-Xir-only
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out

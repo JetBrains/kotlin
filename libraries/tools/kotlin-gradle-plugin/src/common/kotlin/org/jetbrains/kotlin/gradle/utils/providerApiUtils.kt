@@ -8,17 +8,20 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.provider.SetProperty
-import org.gradle.api.provider.ValueSource
-import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.api.provider.*
 import java.io.File
 import kotlin.reflect.KProperty
+
+// Workaround for https://github.com/gradle/gradle/issues/12388
+// which should be fixed via https://github.com/gradle/gradle/issues/24767
+internal fun <IN : Any, OUT> Provider<IN>.mapOrNull(
+    providerFactory: ProviderFactory,
+    block: (IN) -> OUT?
+): Provider<OUT> = flatMap { providerFactory.provider { (block(it)) } }
 
 internal operator fun <T> Provider<T>.getValue(thisRef: Any?, property: KProperty<*>) = get()
 
@@ -45,6 +48,10 @@ internal inline fun <reified T : Any?> ObjectFactory.property(initialValue: Prov
 
 internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
     initialValue: Provider<Iterable<T>>
+) = setProperty<T>().value(initialValue)
+
+internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
+    initialValue: Iterable<T>
 ) = setProperty<T>().value(initialValue)
 
 internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithLazyValue(
@@ -96,6 +103,12 @@ internal fun <PropType : Any?, T : Property<PropType>> T.chainedDisallowChanges(
         disallowChanges()
     }
 
+internal fun <PropType : Any?, T : SetProperty<PropType>> T.chainedDisallowChanges(): T =
+    apply {
+        disallowChanges()
+    }
+
+
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--
 internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularFileProperty {
@@ -108,19 +121,21 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
     }
 }
 
+internal fun ObjectFactory.fileProperty(initialValue: File): RegularFileProperty = fileProperty()
+    .apply { set(initialValue) }
+
+internal fun ObjectFactory.directoryProperty(initialValue: File): DirectoryProperty = directoryProperty()
+    .apply { set(initialValue) }
+
 internal fun Project.filesProvider(
     vararg buildDependencies: Any,
-    provider: () -> Any
+    provider: () -> Any?
 ): ConfigurableFileCollection {
     return project.files(provider).builtBy(*buildDependencies)
 }
 
 internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): ConfigurableFileCollection {
     return project.filesProvider(this) { provider() }
-}
-
-internal fun <T : Task> T.outputFilesProvider(lazy: Lazy<Any>): ConfigurableFileCollection {
-    return project.filesProvider(this) { lazy.value }
 }
 
 internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>): ListProperty<T> =
@@ -166,3 +181,5 @@ private abstract class AdhocValueSource<T> : ValueSource<T, AdhocValueSource.Par
         return parameters.producingLambda.get().invoke() as T
     }
 }
+
+internal fun Provider<Directory>.dir(path: String): Provider<Directory> = map { it.dir(path) }

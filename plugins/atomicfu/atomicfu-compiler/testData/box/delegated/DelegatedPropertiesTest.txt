@@ -1,0 +1,111 @@
+@kotlin.Metadata
+public final class DelegatedProperties$A {
+    // source: 'DelegatedPropertiesTest.kt'
+    private final @org.jetbrains.annotations.NotNull field b: DelegatedProperties$B
+    public method <init>(@org.jetbrains.annotations.NotNull p0: DelegatedProperties$B): void
+    public final @org.jetbrains.annotations.NotNull method getB(): DelegatedProperties$B
+    public final inner class DelegatedProperties$A
+    public final inner class DelegatedProperties$B
+}
+
+@kotlin.Metadata
+public final class DelegatedProperties$B {
+    // source: 'DelegatedPropertiesTest.kt'
+    private final field n: int
+    public method <init>(p0: int): void
+    public final method getN(): int
+    public final inner class DelegatedProperties$B
+}
+
+@kotlin.Metadata
+public final class DelegatedProperties {
+    // source: 'DelegatedPropertiesTest.kt'
+    private synthetic final static field _a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _a$volatile: int
+    private synthetic final static field _b$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _b$volatile: int
+    private synthetic final static field _l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field _l$volatile: long
+    private synthetic final static field _ref$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field _ref$volatile: java.lang.Object
+    private synthetic volatile field vBoolean$volatile: boolean
+    private synthetic volatile field vInt$volatile: int
+    private synthetic volatile field vLong$volatile: int
+    private synthetic volatile field vRef$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getA(): int
+    private final method getB(): boolean
+    private final method getL(): long
+    private final method getPrivateA(): int
+    private final method getRef(): DelegatedProperties$A
+    private final method getVBoolean(): boolean
+    private final method getVInt(): int
+    private final method getVLong(): int
+    private final method getVRef(): DelegatedProperties$A
+    private synthetic final static method get_a$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_a$volatile(): int
+    private synthetic final static method get_b$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_b$volatile(): int
+    private synthetic final static method get_l$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method get_l$volatile(): long
+    private synthetic final static method get_ref$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method get_ref$volatile(): java.lang.Object
+    public final method setA(p0: int): void
+    private final method setB(p0: boolean): void
+    private final method setL(p0: long): void
+    private final method setPrivateA(p0: int): void
+    private final method setRef(p0: DelegatedProperties$A): void
+    private final method setVBoolean(p0: boolean): void
+    private final method setVInt(p0: int): void
+    private final method setVLong(p0: int): void
+    private final method setVRef(p0: DelegatedProperties$A): void
+    private synthetic final method set_a$volatile(p0: int): void
+    private synthetic final method set_b$volatile(p0: int): void
+    private synthetic final method set_l$volatile(p0: long): void
+    private synthetic final method set_ref$volatile(p0: java.lang.Object): void
+    public final method test(): void
+    public final method testDelegatedAtomicBoolean(): void
+    public final method testDelegatedAtomicInt(): void
+    public final method testDelegatedAtomicLong(): void
+    public final method testDelegatedAtomicRef(): void
+    public final method testDelegatedVariablesFlow(): void
+    public final method testVolatileBoolean(): void
+    public final method testVolatileInt(): void
+    public final method testVolatileLong(): void
+    public final method testVolatileRef(): void
+    public final inner class DelegatedProperties$A
+    public final inner class DelegatedProperties$B
+}
+
+@kotlin.Metadata
+synthetic final class DelegatedPropertiesTest$VolatileWrapper$atomicfu$private {
+    // source: 'DelegatedPropertiesTest.kt'
+    private synthetic final static field _topLevelInt$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _topLevelInt$volatile: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$get_topLevelInt$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final static method access$get_topLevelInt$volatile$p(p0: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private): int
+    public synthetic final static method access$set_topLevelInt$volatile$p(p0: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private, p1: int): void
+    private synthetic final static method get_topLevelInt$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_topLevelInt$volatile(): int
+    private synthetic final method set_topLevelInt$volatile(p0: int): void
+}
+
+@kotlin.Metadata
+public final class DelegatedPropertiesTestKt {
+    // source: 'DelegatedPropertiesTest.kt'
+    private synthetic final static field delegatedPropertiesTest$VolatileWrapper$atomicfu$private: DelegatedPropertiesTest$VolatileWrapper$atomicfu$private
+    private synthetic volatile static field topLevelVolatile$volatile: int
+    static method <clinit>(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private synthetic final static method getDelegatedPropertiesTest$VolatileWrapper$atomicfu$private(): DelegatedPropertiesTest$VolatileWrapper$atomicfu$private
+    public final static method getTopLevelInt(): int
+    private final static method getTopLevelVolatile(): int
+    public final static method setTopLevelInt(p0: int): void
+    private final static method setTopLevelVolatile(p0: int): void
+    public final static method testTopLevelDelegatedProperties(): void
+    public final static method testTopLevelVolatileProperties(): void
+}

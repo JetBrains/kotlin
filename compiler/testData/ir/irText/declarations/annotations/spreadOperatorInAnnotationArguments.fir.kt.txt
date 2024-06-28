@@ -1,16 +1,17 @@
 open annotation class A : Annotation {
+  val xs: Array<out String>
+    field = xs
+    get
+
   constructor(vararg xs: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val xs: Array<out String>
-    field = xs
-    get
-
 }
 
 @A(xs = ["a", "b"])
 fun test() {
 }
+

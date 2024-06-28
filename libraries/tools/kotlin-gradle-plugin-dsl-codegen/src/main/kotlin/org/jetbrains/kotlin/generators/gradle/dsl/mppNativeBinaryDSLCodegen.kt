@@ -200,6 +200,6 @@ fun generateAbstractKotlinNativeBinaryContainer() {
         "}"
     ).joinToString(separator = "\n\n")
 
-    val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
+    val targetFile = File("$kotlinGradlePluginSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
 }

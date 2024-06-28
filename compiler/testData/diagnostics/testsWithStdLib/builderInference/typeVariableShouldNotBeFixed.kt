@@ -1,4 +1,5 @@
-// FILE: spr/Expr.java
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// FILE: spr/Exec.java
 package spr;
 
 import org.jetbrains.annotations.NotNull;

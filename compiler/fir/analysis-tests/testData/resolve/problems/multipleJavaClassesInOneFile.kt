@@ -1,3 +1,5 @@
+// ISSUE: KT-4455
+
 // FILE: foo/Some.java
 
 package foo;
@@ -11,5 +13,5 @@ package foo
 
 fun test() {
     val some = Some()
-    val another = Another()
+    val another = <!UNRESOLVED_REFERENCE!>Another<!>()
 }

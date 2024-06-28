@@ -27,7 +27,8 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 class BuiltInAnnotationDescriptor(
         private val builtIns: KotlinBuiltIns,
         override val fqName: FqName,
-        override val allValueArguments: Map<Name, ConstantValue<*>>
+        override val allValueArguments: Map<Name, ConstantValue<*>>,
+        val forcePropagationDeprecationToOverrides: Boolean = false,
 ) : AnnotationDescriptor {
     override val type: KotlinType by lazy(PUBLICATION) {
         builtIns.getBuiltInClassByFqName(fqName).defaultType

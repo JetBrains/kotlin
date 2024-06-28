@@ -1,5 +1,5 @@
-// !LANGUAGE: +RepeatableAnnotations
-// !API_VERSION: LATEST
+// LANGUAGE: +RepeatableAnnotations
+// API_VERSION: LATEST
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // FULL_JDK
@@ -8,6 +8,10 @@
 
 // java.lang.NoSuchMethodError: java.lang.Class.getAnnotationsByType
 // IGNORE_BACKEND: ANDROID
+
+// In light analysis mode, repeated annotations are not wrapped into the container. This is by design, so that in kapt stubs repeated
+// annotations will be visible unwrapped.
+// IGNORE_LIGHT_ANALYSIS
 
 @Repeatable
 @JvmRepeatable(As::class)

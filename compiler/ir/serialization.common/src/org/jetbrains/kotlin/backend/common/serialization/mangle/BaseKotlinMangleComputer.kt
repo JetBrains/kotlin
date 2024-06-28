@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle
 
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
 /**
@@ -41,13 +42,11 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected val typeParameterContainers = ArrayList<TypeParameterContainer>(4)
 
-    protected var isRealExpect = false
-
-    protected open fun FunctionDeclaration.platformSpecificFunctionName(): String? = null
+    protected open fun makePlatformSpecificFunctionNameMangleComputer(
+        function: FunctionDeclaration
+    ): PlatformSpecificFunctionNameMangleComputer<ValueParameter> = PlatformSpecificFunctionNameMangleComputer.Default
 
     protected open fun FunctionDeclaration.platformSpecificSuffix(): String? = null
-
-    protected open fun FunctionDeclaration.specialValueParamPrefix(param: ValueParameter): String = ""
 
     protected open fun addReturnType(): Boolean = false
 
@@ -85,6 +84,13 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected abstract fun Declaration.visitParent()
 
+    /**
+     * Like [visitParent], but may have some logic that makes it suitable specifically for mangling function names.
+     */
+    protected open fun Declaration.visitParentForFunctionMangling() {
+        visitParent()
+    }
+
     protected abstract fun Declaration.visit()
 
     final override fun computeMangle(declaration: Declaration): String {
@@ -101,6 +107,100 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         }
 
         builder.appendName(name)
+    }
+
+    protected abstract fun getContextReceiverTypes(function: FunctionDeclaration): List<Type>
+
+    protected abstract fun getExtensionReceiverParameterType(function: FunctionDeclaration): Type?
+
+    protected abstract fun getValueParameters(function: FunctionDeclaration): List<ValueParameter>
+
+    protected abstract fun getReturnType(function: FunctionDeclaration): Type?
+
+    protected abstract fun isUnit(type: Type): Boolean
+
+    protected abstract fun getTypeParametersWithIndices(
+        function: FunctionDeclaration,
+        container: Declaration,
+    ): Iterable<IndexedValue<TypeParameter>>
+
+    protected open fun FunctionDeclaration.platformSpecificFunctionMarks(): List<String> = emptyList()
+
+    /**
+     * Simply attempts to cast [Declaration] to [TypeParameterContainer].
+     */
+    protected abstract fun Declaration.asTypeParameterContainer(): TypeParameterContainer?
+
+    protected fun FunctionDeclaration.mangleFunction(
+        name: Name,
+        isConstructor: Boolean,
+        isStatic: Boolean,
+        container: Declaration,
+        session: Session
+    ) {
+
+        container.asTypeParameterContainer()?.let(typeParameterContainers::add)
+
+        container.visitParentForFunctionMangling()
+
+        builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
+
+        makePlatformSpecificFunctionNameMangleComputer(this).computePlatformSpecificFunctionName()?.let {
+            builder.append(it)
+            return
+        }
+
+        builder.append(name.asString())
+
+        mangleSignature(isConstructor, isStatic, container, session)
+    }
+
+    private fun FunctionDeclaration.mangleSignature(
+        isConstructor: Boolean,
+        isStatic: Boolean,
+        typeParameterContainer: Declaration,
+        session: Session
+    ) {
+        if (!mode.signature) return
+
+        if (!isConstructor && isStatic) {
+            builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
+        }
+
+        platformSpecificFunctionMarks().forEach { builder.appendSignature(it) }
+
+        getContextReceiverTypes(this).forEach {
+            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
+            mangleType(builder, it, session)
+        }
+
+        getExtensionReceiverParameterType(this)?.let {
+            builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+            mangleType(builder, it, session)
+        }
+
+        getValueParameters(this).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+            appendSignature(
+                makePlatformSpecificFunctionNameMangleComputer(this@mangleSignature)
+                    .computePlatformSpecificValueParameterPrefix(it)
+            )
+            mangleValueParameter(this, it, session)
+        }
+
+        getTypeParametersWithIndices(this, typeParameterContainer).collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) {
+            mangleTypeParameter(this, it.value, it.index, session)
+        }
+
+        getReturnType(this)?.let {
+            if (!isConstructor && !isUnit(it) && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
+                mangleType(builder, it, session)
+            }
+        }
+
+        platformSpecificSuffix()?.let {
+            builder.appendSignature(MangleConstant.PLATFORM_FUNCTION_MARKER)
+            builder.appendSignature(it)
+        }
     }
 
     protected abstract fun mangleType(tBuilder: StringBuilder, type: Type, declarationSiteSession: Session)
@@ -122,7 +222,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
 
     protected fun StringBuilder.mangleTypeParameterReference(typeParameter: TypeParameter) {
         val parent = getEffectiveParent(typeParameter)
-        val containerIndex = typeParameterContainers.indexOf(parent)
+        val containerIndex = getContainerIndex(parent)
         require(allowOutOfScopeTypeParameters || containerIndex >= 0) {
             "No container found for type parameter '${getTypeParameterName(typeParameter)}' of '${renderDeclaration(parent)}'"
         }
@@ -131,6 +231,9 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         appendSignature(getIndexOfTypeParameter(typeParameter, parent))
     }
 
+    protected open fun getContainerIndex(parent: TypeParameterContainer): Int {
+        return typeParameterContainers.indexOf(parent)
+    }
 
     protected fun mangleTypeParameter(
         tpBuilder: StringBuilder,

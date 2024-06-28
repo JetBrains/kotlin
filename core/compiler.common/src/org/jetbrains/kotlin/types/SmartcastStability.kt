@@ -17,9 +17,12 @@ enum class SmartcastStability(private val str: String, val description: String =
     // Smart casts are completely safe
     STABLE_VALUE("stable val"),
 
+    // Smart casts are not safe
+    EXPECT_PROPERTY("expect property"),
+
     // Member value with open / custom getter
     // Smart casts are not safe
-    PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),
+    PROPERTY_WITH_GETTER("custom getter", "property that has an open or custom getter"),
 
     // Protected / public member value from another module
     // Smart casts are not safe
@@ -27,13 +30,13 @@ enum class SmartcastStability(private val str: String, val description: String =
 
     // Local variable already captured by a changing closure
     // Smart casts are not safe
-    CAPTURED_VARIABLE("captured var", "local variable that is captured by a changing closure"),
+    CAPTURED_VARIABLE("captured var", "local variable that is mutated in a capturing closure"),
 
     // Member variable regardless of its visibility
     // Smart casts are not safe
-    MUTABLE_PROPERTY("member", "mutable property that could have been changed by this time"),
+    MUTABLE_PROPERTY("member", "mutable property that could be mutated concurrently"),
 
     // A delegated property.
     // Smart casts are not safe
-    DELEGATED_PROPERTY("delegate", "delegated property that could have been changed by this time"),
+    DELEGATED_PROPERTY("delegate", "delegated property"),
 }

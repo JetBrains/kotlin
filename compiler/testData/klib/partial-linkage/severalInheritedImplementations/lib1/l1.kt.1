@@ -1,0 +1,38 @@
+package lib1
+
+interface I {
+    fun foo(): String = "I v2"
+    val bar: String get() = "I v2"
+}
+
+interface J {
+    fun foo(): String = "J v2"
+    val bar: String get() = "J v2"
+}
+
+interface Default {
+    fun foo(): String = "Default v2"
+    val bar: String get() = "Default v2"
+}
+
+interface RemovedDefault {
+    fun foo(): String
+    val bar: String
+}
+
+open class Unrelated {
+    fun foo(): String = "Unrelated v2"
+    val bar: String = "Unrelated v2"
+}
+
+abstract class AbstractUnrelated {
+    abstract fun foo(): String
+    abstract val bar: String
+}
+
+open class WithFakeOverride : I
+
+open class WithRealOverride : I {
+    override fun foo() = "WithRealOverride v2"
+    override val bar = "WithRealOverride v2"
+}

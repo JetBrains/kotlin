@@ -4,18 +4,21 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/generators/analysis-api-generator" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="generateFrontendApiTests" />
+      <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
         <list />
       </option>
       <option name="taskNames">
-        <list />
+        <list>
+          <option value="generateFrontendApiTests" />
+        </list>
       </option>
       <option name="vmOptions" />
     </ExternalSystemSettings>
     <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>false</RunAsTest>
     <method v="2" />
   </configuration>
 </component>

@@ -1,0 +1,303 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @ArrayAnnEnumJava[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun box(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @ArrayAnnEnumJava[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun box(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @ArrayAnnEnumJava[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun box(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @ArrayAnnEnumJava[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun box(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @ArrayAnnEnumJava[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun box(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun box(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun box(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun box(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun box(): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final [ResolvedTo(STATUS)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] ArrayAnnUsage.kt
+    public final [ResolvedTo(STATUS)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            LAZY_super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] ArrayAnnUsage.kt
+    public final [ResolvedTo(BODY_RESOLVE)] enum class AnnAuxEnum : R|kotlin/Enum<light/ann/array/AnnAuxEnum>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] constructor(): R|light/ann/array/AnnAuxEnum| {
+            super<R|kotlin/Enum<light/ann/array/AnnAuxEnum>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_A: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] enum entry ANN_ENUM_VAL_B: R|light/ann/array/AnnAuxEnum|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] fun values(): R|kotlin/Array<light/ann/array/AnnAuxEnum>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|light/ann/array/AnnAuxEnum| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnAuxEnum] val entries: R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<light/ann/array/AnnAuxEnum>|
+
+    }
+    @R|light/ann/array/ArrayAnnEnumJava|[Types](enumValDef = <implicitArrayOf>(R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_A|, R|light/ann/array/AnnAuxEnum.ANN_ENUM_VAL_B|)) public final [ResolvedTo(BODY_RESOLVE)] fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

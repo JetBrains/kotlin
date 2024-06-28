@@ -1,8 +1,0 @@
-KT element: KtPropertyAccessor
-FIR element: FirPropertyAccessorImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-public get(): R|kotlin/String| {
-    ^ String()
-}

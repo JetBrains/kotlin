@@ -43,8 +43,11 @@ public abstract class Number {
     /**
      * Returns the [Char] with the numeric value equal to this number, truncated to 16 bits if appropriate.
      */
-//    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
-    public abstract fun toChar(): Char
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\nIf you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.\nSee https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.9", errorSince = "2.3")
+    public open fun toChar(): Char {
+        return toInt().toChar()
+    }
 
     /**
      * Returns the value of this number as a [Short], which may involve rounding or truncation.

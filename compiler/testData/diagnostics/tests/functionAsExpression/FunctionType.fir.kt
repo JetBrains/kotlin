@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
 fun testReturnType(foo: String) {
     val bar = fun () = foo
@@ -27,5 +27,5 @@ fun testReceiverType() {
 
     val bas: String.() -> Unit = fun String.() {}
 
-    val bag: Int.() -> Unit = fun String.() {}
+    val bag: Int.() -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun String.() {}<!>
 }

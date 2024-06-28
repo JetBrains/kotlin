@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArrayOf
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -22,35 +21,29 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.render
 
-internal val jvmBuiltInsPhase = makeIrFilePhase(
-    ::JvmBuiltInsLowering,
+@PhaseDescription(
     name = "JvmBuiltInsLowering",
     description = "JVM-specific implementations of some built-ins"
 )
-
-class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
-
+internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val transformer = object : IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildren(this, null)
 
                 val callee = expression.symbol.owner
-
-                if (context.state.target >= JvmTarget.JVM_1_8) {
-                    val parentClassName = callee.parent.fqNameForIrSerialization.asString()
-                    val functionName = callee.name.asString()
-                    if (parentClassName == "kotlin.CompareToKt" && functionName == "compareTo") {
-                        val operandType = expression.getValueArgument(0)!!.type
-                        when {
-                            operandType.isUInt() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedInt)
-                            operandType.isULong() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedLong)
-                        }
+                val parentClassName = callee.parent.fqNameForIrSerialization.asString()
+                val functionName = callee.name.asString()
+                if (parentClassName == "kotlin.CompareToKt" && functionName == "compareTo") {
+                    val operandType = expression.getValueArgument(0)!!.type
+                    when {
+                        operandType.isUInt() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedInt)
+                        operandType.isULong() -> return expression.replaceWithCallTo(context.ir.symbols.compareUnsignedLong)
                     }
-                    val jvm8Replacement = jvm8builtInReplacements[parentClassName to functionName]
-                    if (jvm8Replacement != null) {
-                        return expression.replaceWithCallTo(jvm8Replacement)
-                    }
+                }
+                val jvm8Replacement = jvm8builtInReplacements[parentClassName to functionName]
+                if (jvm8Replacement != null) {
+                    return expression.replaceWithCallTo(jvm8Replacement)
                 }
 
                 return when {

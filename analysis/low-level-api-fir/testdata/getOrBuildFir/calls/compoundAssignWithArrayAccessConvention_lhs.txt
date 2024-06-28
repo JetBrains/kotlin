@@ -1,6 +1,0 @@
-KT element: KtArrayAccessExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredCompoundAssignment
-
-FIR element rendered:
-R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|)

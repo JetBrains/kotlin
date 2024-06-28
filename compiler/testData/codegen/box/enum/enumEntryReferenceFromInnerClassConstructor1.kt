@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63880
 interface IFoo {
     fun foo(): String
 }

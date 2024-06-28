@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class A protected constructor(x: Int) {
     protected constructor() : this(1)
@@ -7,7 +7,7 @@ open class A protected constructor(x: Int) {
 }
 
 fun foo() {
-    <!NONE_APPLICABLE!>A<!>()
+    <!INVISIBLE_REFERENCE!>A<!>()
     A(1.0)
 }
 

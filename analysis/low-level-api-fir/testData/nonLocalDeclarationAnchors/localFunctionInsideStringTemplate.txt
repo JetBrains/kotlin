@@ -1,0 +1,9 @@
+package one
+
+/* anchor --> */open class ClassWithParameter/* anchor --> */(/* anchor --> */s: String/* <-- */)/* <-- *//* <-- */
+
+/* anchor --> */class TopLevelClass : ClassWithParameter("${
+    fun(): String {
+        return ""
+    }()
+}")/* <-- */

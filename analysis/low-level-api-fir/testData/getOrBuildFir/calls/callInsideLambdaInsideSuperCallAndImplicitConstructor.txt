@@ -1,0 +1,26 @@
+KT element: KtCallExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|/foo|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallAndImplicitConstructor.kt
+    public open [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] x: R|() -> kotlin/Unit|): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|B| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|B|>(Int(1), [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                R|/foo|()
+            }
+            )
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+    }

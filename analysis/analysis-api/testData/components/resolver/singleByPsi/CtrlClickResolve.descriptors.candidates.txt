@@ -1,0 +1,98 @@
+KtNameReferenceExpression(202,210): 'IntArray'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<out kotlin.String>
+          symbol = ctrl_click/IntArray(vararg content: kotlin.String): kotlin.Array<out kotlin.String>
+          valueParameters = [
+            KaVariableSignature:
+              name = content
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg content: kotlin.String
+              callableId = null
+          ]
+          callableId = ctrl_click/IntArray
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = content
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg content: kotlin.String
+          callableId = null)
+      }
+    isInBestCandidates = true
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: OTHER_ERROR with <init>>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = <constructor>(size: kotlin.Int): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = size
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = size: kotlin.Int
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = size
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = size: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = false
+  
+  KaInapplicableCallCandidateInfo:
+    diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'init'>
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.IntArray
+          symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray
+          valueParameters = [
+            KaVariableSignature:
+              name = size
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = size: kotlin.Int
+              callableId = null,
+            KaVariableSignature:
+              name = init
+              receiverType = null
+              returnType = kotlin.Function1<kotlin.Int, kotlin.Int>
+              symbol = init: kotlin.Function1<kotlin.Int, kotlin.Int>
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        array("1", "2", "3") -> (KaVariableSignature:
+          name = size
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = size: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = false

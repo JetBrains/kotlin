@@ -11,21 +11,9 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
 public class KotlinLightParser {
     public static FlyweightCapableTreeStructure<LighterASTNode> parse(PsiBuilder builder) {
-        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevelNonLazy(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
         ktParsing.parseFile();
 
-        return builder.getLightTree();
-    }
-
-    public static FlyweightCapableTreeStructure<LighterASTNode> parseLambdaExpression(PsiBuilder psiBuilder) {
-        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        ktParsing.parseLambdaExpression();
-        return psiBuilder.getLightTree();
-    }
-
-    public static FlyweightCapableTreeStructure<LighterASTNode> parseBlockExpression(PsiBuilder builder) {
-        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
-        ktParsing.parseBlockExpression();
         return builder.getLightTree();
     }
 }

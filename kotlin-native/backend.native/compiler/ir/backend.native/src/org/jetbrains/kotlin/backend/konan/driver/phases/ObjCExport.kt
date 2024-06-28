@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
@@ -26,8 +27,8 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Ph
 }
 
 internal data class CreateObjCFrameworkInput(
-        val moduleDescriptor: ModuleDescriptor,
-        val exportedInterface: ObjCExportedInterface,
+    val moduleDescriptor: ModuleDescriptor,
+    val exportedInterface: ObjCExportedInterface,
 )
 
 /**

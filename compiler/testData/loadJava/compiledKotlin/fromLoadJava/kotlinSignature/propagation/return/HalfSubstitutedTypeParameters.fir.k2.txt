@@ -1,0 +1,17 @@
+public abstract interface HalfSubstitutedTypeParameters : R|kotlin/Any| {
+    public abstract interface TrickyList<X, E> : R|kotlin/collections/MutableList<E>| {
+    }
+
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/collections/MutableList<kotlin/String?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/HalfSubstitutedTypeParameters.Super| {
+        public abstract fun foo(): R|test/HalfSubstitutedTypeParameters.TrickyList<kotlin/Int, kotlin/String?>|
+
+    }
+
+}

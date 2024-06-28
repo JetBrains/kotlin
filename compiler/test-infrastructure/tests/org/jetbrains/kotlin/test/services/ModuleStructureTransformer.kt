@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 
 @TestInfrastructureInternals
 abstract class ModuleStructureTransformer {
-    abstract fun transformModuleStructure(moduleStructure: TestModuleStructure): TestModuleStructure
+    abstract fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure
 }
 
 class ExceptionFromModuleStructureTransformer(

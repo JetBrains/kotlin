@@ -17,27 +17,36 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.utils.fileExtensionCasePermutations
 import org.jetbrains.kotlin.gradle.utils.property
 import javax.inject.Inject
 
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constructor(
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ) : DefaultTask(),
     KotlinCompileTool,
-    CompilerArgumentAware<T>,
+    KotlinCompilerArgumentsProducer,
+    DeprecatedCompilerArgumentAware<T>,
     TaskWithLocalState {
 
-    private val patternFilterable = PatternSet()
+    @Internal
+    protected val sourceFileFilter = PatternSet()
 
     init {
-        patternFilterable.include(
+        sourceFileFilter.include(
             DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS.flatMap { ext -> ext.fileExtensionCasePermutations().map { "**/*.$it" } }
         )
     }
@@ -46,7 +55,7 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
 
     override val sources: FileCollection = objectFactory.fileCollection()
         .from(
-            { sourceFiles.asFileTree.matching(patternFilterable) }
+            { sourceFiles.asFileTree.matching(sourceFileFilter) }
         )
 
     override fun source(vararg sources: Any) {
@@ -62,54 +71,54 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     }
 
     @Internal
-    final override fun getIncludes(): MutableSet<String> = patternFilterable.includes
+    final override fun getIncludes(): MutableSet<String> = sourceFileFilter.includes
 
     @Internal
-    final override fun getExcludes(): MutableSet<String> = patternFilterable.excludes
+    final override fun getExcludes(): MutableSet<String> = sourceFileFilter.excludes
 
     final override fun setIncludes(includes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.setIncludes(includes)
+        sourceFileFilter.setIncludes(includes)
     }
 
     final override fun setExcludes(excludes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.setExcludes(excludes)
+        sourceFileFilter.setExcludes(excludes)
     }
 
     final override fun include(vararg includes: String?): PatternFilterable = also {
-        patternFilterable.include(*includes)
+        sourceFileFilter.include(*includes)
     }
 
     final override fun include(includes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.include(includes)
+        sourceFileFilter.include(includes)
     }
 
     final override fun include(includeSpec: Spec<FileTreeElement>): PatternFilterable = also {
-        patternFilterable.include(includeSpec)
+        sourceFileFilter.include(includeSpec)
     }
 
     final override fun include(includeSpec: Closure<*>): PatternFilterable = also {
-        patternFilterable.include(includeSpec)
+        sourceFileFilter.include(includeSpec)
     }
 
     final override fun exclude(vararg excludes: String?): PatternFilterable = also {
-        patternFilterable.exclude(*excludes)
+        sourceFileFilter.exclude(*excludes)
     }
 
     final override fun exclude(excludes: Iterable<String>): PatternFilterable = also {
-        patternFilterable.exclude(excludes)
+        sourceFileFilter.exclude(excludes)
     }
 
     final override fun exclude(excludeSpec: Spec<FileTreeElement>): PatternFilterable = also {
-        patternFilterable.exclude(excludeSpec)
+        sourceFileFilter.exclude(excludeSpec)
     }
 
     final override fun exclude(excludeSpec: Closure<*>): PatternFilterable = also {
-        patternFilterable.exclude(excludeSpec)
+        sourceFileFilter.exclude(excludeSpec)
     }
 
     @get:Internal
-    final override val metrics: Property<BuildMetricsReporter> = project.objects
-        .property(BuildMetricsReporterImpl())
+    final override val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+        .property(GradleBuildMetricsReporter())
 
     /**
      * By default, should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
@@ -119,6 +128,9 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     @get:Classpath
     internal val defaultCompilerClasspath: ConfigurableFileCollection =
         project.objects.fileCollection()
+
+    @get:Internal
+    internal abstract val runViaBuildToolsApi: Property<Boolean>
 
     protected fun validateCompilerClasspath() {
         // Note that the check triggers configuration resolution

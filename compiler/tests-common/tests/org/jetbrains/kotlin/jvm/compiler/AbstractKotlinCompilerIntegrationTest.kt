@@ -20,13 +20,13 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
@@ -105,12 +105,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalOptions: List<String> = emptyList(),
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) }
     ): File {
-        val destination = File(tmpdir, "$libraryName.js")
+        val destination = File(tmpdir, libraryName)
         val output = compileKotlin(
             libraryName, destination, compiler = K2JSCompiler(), additionalOptions = additionalOptions, expectedFileName = null
         )
         checkKotlinOutput(normalizeOutput(output))
-        return File(tmpdir, "$libraryName.meta.js")
+        return destination
     }
 
     /**
@@ -132,7 +132,12 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     }
 
     protected fun normalizeOutput(output: Pair<String, ExitCode>): String {
-        return AbstractCliTest.getNormalizedCompilerOutput(output.first, output.second, testDataDirectory.path).removeFirWarning()
+        return AbstractCliTest.getNormalizedCompilerOutput(
+            output.first,
+            output.second,
+            testDataDirectory.path,
+            tmpdir.absolutePath
+        ).removeFirWarning()
             .replace(FileUtil.toSystemIndependentName(tmpdir.absolutePath), "\$TMP_DIR\$")
     }
 
@@ -142,7 +147,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         )
     }
 
-    protected fun compileKotlin(
+    protected open fun compileKotlin(
         fileName: String,
         output: File,
         classpath: List<File> = emptyList(),
@@ -159,17 +164,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         additionalSources.mapTo(args) { File(testDataDirectory, it).path }
 
         if (compiler is K2JSCompiler) {
-            if (classpath.isNotEmpty()) {
-                args.add("-libraries")
-                args.add(classpath.joinToString(File.pathSeparator))
-            }
-            args.add("-Xlegacy-deprecated-no-warn")
-            args.add("-Xuse-deprecated-legacy-compiler")
-            args.add("-output")
+            args.add("-libraries")
+            args.add((classpath + PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath).joinToString(File.pathSeparator))
+            args.add("-Xir-produce-klib-dir")
+            args.add("-Xir-only")
+            args.add("-ir-output-dir")
             args.add(output.path)
-            args.add("-meta-info")
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+            args.add("-ir-output-name")
+            args.add("out")
         } else if (compiler is K2JVMCompiler || compiler is K2MetadataCompiler) {
             if (classpath.isNotEmpty()) {
                 args.add("-classpath")

@@ -1,11 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
-import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
+import org.jetbrains.kotlin.analysis.decompiler.stub.computeParameterName
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
@@ -14,10 +17,10 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
@@ -32,19 +35,35 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     excludedTypeAnnotationClasses = emptySet()
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
+    defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
+    includePropertyConstant = true
+    propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
 }
 
+/**
+ * @see org.jetbrains.kotlin.analysis.decompiler.stub.mustNotBeWrittenToStubs
+ */
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
     return when (kind) {
-        CallableMemberDescriptor.Kind.DECLARATION -> false
+        CallableMemberDescriptor.Kind.DECLARATION, CallableMemberDescriptor.Kind.DELEGATION -> false
+        CallableMemberDescriptor.Kind.FAKE_OVERRIDE -> true
+        CallableMemberDescriptor.Kind.SYNTHESIZED -> syntheticMemberMustNotBeWrittenToDecompiledText()
+    }
+}
 
-        CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-        CallableMemberDescriptor.Kind.DELEGATION -> true
+private fun CallableMemberDescriptor.syntheticMemberMustNotBeWrittenToDecompiledText(): Boolean {
+    val containingClass = containingDeclaration as? ClassDescriptor ?: return false
 
-        CallableMemberDescriptor.Kind.SYNTHESIZED -> {
-            // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
-            !DataClassDescriptorResolver.isComponentLike(name)
+    return when {
+        containingClass.kind == ClassKind.ENUM_CLASS -> {
+            name in arrayOf(
+                StandardNames.ENUM_VALUES,
+                StandardNames.ENUM_ENTRIES,
+                StandardNames.ENUM_VALUE_OF,
+            )
         }
+
+        else -> false
     }
 }
 
@@ -52,7 +71,25 @@ fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
     descriptorRenderer: DescriptorRenderer,
-    indexers: Collection<DecompiledTextIndexer<*>> = listOf(ByDescriptorIndexer),
+): DecompiledText = buildDecompiledTextImpl(
+    packageFqName,
+    descriptors,
+    descriptorRenderer.withOptions {
+        // Stub decompilation builds type stubs for expanded types instead of abbreviated types, as type aliases are transparent and
+        // need to be treated as their expanded type at use sites. If we instead decompiled to the type alias, we run the risk of an
+        // unresolved symbol, as the type alias doesn't need to be present in the dependencies of a use-site module (see KT-62889).
+        //
+        // To be consistent with stub decompilation, we need to render abbreviated types as their type expansions in decompiled text as
+        // well. We also render the abbreviated type in a comment for clarity.
+        renderTypeExpansions = true
+        renderAbbreviatedTypeComments = true
+    },
+)
+
+private fun buildDecompiledTextImpl(
+    packageFqName: FqName,
+    descriptors: List<DeclarationDescriptor>,
+    descriptorRenderer: DescriptorRenderer,
 ): DecompiledText {
     val builder = StringBuilder()
 
@@ -64,14 +101,7 @@ fun buildDecompiledText(
         }
     }
 
-    val textIndex = DecompiledTextIndex(indexers)
-
-    fun indexDescriptor(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
-        textIndex.addToIndex(descriptor, TextRange(startOffset, endOffset))
-    }
-
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
-        val startOffset = builder.length
         if (isEnumEntry(descriptor)) {
             for (annotation in descriptor.annotations) {
                 builder.append(descriptorRenderer.renderAnnotation(annotation))
@@ -82,7 +112,6 @@ fun buildDecompiledText(
         } else {
             builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))
         }
-        var endOffset = builder.length
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
@@ -105,7 +134,36 @@ fun buildDecompiledText(
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
-                endOffset = builder.length
+            }
+            if (descriptor is PropertyDescriptor) {
+                for (accessor in descriptor.accessors) {
+                    if (accessor.isDefault) continue
+                    builder.append("\n$indent    ")
+                    builder.append(accessor.visibility.internalDisplayName).append(" ")
+                    builder.append(accessor.modality.name.toLowerCaseAsciiOnly()).append(" ")
+                    if (accessor.isExternal) {
+                        builder.append("external ")
+                    }
+                    for (annotation in accessor.annotations) {
+                        builder.append(descriptorRenderer.renderAnnotation(annotation))
+                        builder.append(" ")
+                    }
+                    if (accessor is PropertyGetterDescriptor) {
+                        builder.append("get")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set(")
+                        val parameterDescriptor = accessor.valueParameters[0]
+                        for (annotation in parameterDescriptor.annotations) {
+                            builder.append(descriptorRenderer.renderAnnotation(annotation))
+                            builder.append(" ")
+                        }
+                        val parameterName = computeParameterName(parameterDescriptor.name)
+                        builder.append(parameterName.asString()).append(": ")
+                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                        builder.append(")")
+                        builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
+                    }
+                }
             }
         } else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
             builder.append(" {\n")
@@ -153,18 +211,9 @@ fun buildDecompiledText(
             }
 
             builder.append(indent).append("}")
-            endOffset = builder.length
         }
 
         builder.append("\n")
-        indexDescriptor(descriptor, startOffset, endOffset)
-
-        if (descriptor is ClassDescriptor) {
-            val primaryConstructor = descriptor.unsubstitutedPrimaryConstructor
-            if (primaryConstructor != null) {
-                indexDescriptor(primaryConstructor, startOffset, endOffset)
-            }
-        }
     }
 
     appendDecompiledTextAndPackageName()
@@ -173,5 +222,5 @@ fun buildDecompiledText(
         builder.append("\n")
     }
 
-    return DecompiledText(builder.toString(), textIndex)
+    return DecompiledText(builder.toString())
 }

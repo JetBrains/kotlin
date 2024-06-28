@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
@@ -34,8 +37,14 @@ import kotlin.script.experimental.jvm.*
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
 class ScriptCliCompilationTest : TestCase() {
+    private val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
 
-    protected val testRootDisposable: Disposable = TestDisposable()
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { Disposer.dispose(testRootDisposable) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 
     fun testPrerequisites() {
         Assert.assertTrue(thisClasspath.isNotEmpty())
@@ -83,7 +92,7 @@ class ScriptCliCompilationTest : TestCase() {
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             updateWithBaseCompilerArguments()
-            put(MESSAGE_COLLECTOR_KEY, collector)
+            this.messageCollector = collector
             if (scriptDef != null) {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                     configurationDependencies(JvmDependency(classpath))

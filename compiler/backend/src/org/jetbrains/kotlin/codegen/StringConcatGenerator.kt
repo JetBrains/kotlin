@@ -17,7 +17,6 @@ import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import java.lang.StringBuilder
 
 class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapter) {
 
@@ -236,7 +235,6 @@ class StringConcatGenerator(val mode: JvmStringConcat, val mv: InstructionAdapte
         }
 
         fun create(state: GenerationState, mv: InstructionAdapter) =
-            StringConcatGenerator(state.runtimeStringConcat, mv)
-
+            StringConcatGenerator(state.config.runtimeStringConcat, mv)
     }
 }

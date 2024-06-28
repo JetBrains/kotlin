@@ -5,10 +5,21 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 
-interface LoweredStatementOrigins  {
-    object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE : IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
-    object SYNTHESIZED_INIT_BLOCK : IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
-    object DEFAULT_DISPATCH_CALL : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL")
+object LoweredStatementOrigins {
+    val STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE = IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE")
+    val SYNTHESIZED_INIT_BLOCK by IrStatementOriginImpl
+    val DEFAULT_DISPATCH_CALL by IrStatementOriginImpl
+
+    val INLINED_FUNCTION_REFERENCE by IrStatementOriginImpl
+    val INLINED_FUNCTION_ARGUMENTS by IrStatementOriginImpl
+    val INLINED_FUNCTION_DEFAULT_ARGUMENTS by IrStatementOriginImpl
+
+    val INLINE_LAMBDA by IrStatementOriginImpl
+}
+
+object LoweredDeclarationOrigins {
+    val INLINE_LAMBDA by IrDeclarationOriginImpl
 }

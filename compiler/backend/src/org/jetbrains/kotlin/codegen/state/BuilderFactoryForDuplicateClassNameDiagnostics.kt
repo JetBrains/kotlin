@@ -18,34 +18,33 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassNameCollectionClassBuilderFactory
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import java.util.concurrent.ConcurrentHashMap
 
-
 class BuilderFactoryForDuplicateClassNameDiagnostics(
-        builderFactory: ClassBuilderFactory,
-        private val diagnostics: DiagnosticSink
+    builderFactory: ClassBuilderFactory,
+    private val state: GenerationState,
 ) : ClassNameCollectionClassBuilderFactory(builderFactory) {
 
     private val className = ConcurrentHashMap<String, JvmDeclarationOrigin>()
 
     override fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin) {
-        val another = className.getOrPut(internalName, { origin })
-        //workaround for inlined anonymous objects
-        if (origin.element != another.element) {
+        val another = className.getOrPut(internalName) { origin }
+        // Allow clashing classes if they are originated from the same source element. For example, this happens during inlining anonymous
+        // objects. In JVM IR, this also happens for anonymous classes in default arguments of tailrec functions, because default arguments
+        // are deep-copied (see JvmTailrecLowering).
+        if (origin.originalSourceElement != another.originalSourceElement) {
             reportError(internalName, origin, another)
         }
     }
 
     private fun reportError(internalName: String, vararg another: JvmDeclarationOrigin) {
-        val fromString = another.mapNotNull { it.descriptor }.
-                joinToString { DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(it) }
+        val duplicateClasses =
+            another.mapNotNull { it.descriptor }.joinToString { DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(it) }
 
-        another.mapNotNull { it.element }.forEach {
-            diagnostics.report(ErrorsJvm.DUPLICATE_CLASS_NAMES.on(it, internalName, fromString))
+        for (origin in another) {
+            state.reportDuplicateClassNameError(origin, internalName, duplicateClasses)
         }
     }
 }

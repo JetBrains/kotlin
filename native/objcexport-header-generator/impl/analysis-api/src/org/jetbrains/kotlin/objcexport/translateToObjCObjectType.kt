@@ -1,0 +1,101 @@
+/*
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.objcexport
+
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.name.NativeStandardInteropNames.cInteropPackage
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getDeclaredSuperInterfaceSymbols
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.getSuperClassSymbolNotAny
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.objCErrorType
+import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
+import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
+
+/**
+ * ClassId for 'kotlinx.cinterop.ObjCClass'
+ */
+private val objCClassClassId = ClassId(cInteropPackage, Name.identifier("ObjCClass"))
+
+/**
+ * ClassId for 'kotlinx.cinterop.ObjCProtocol'
+ */
+private val objCProtocolClassId = ClassId(cInteropPackage, Name.identifier("ObjCProtocol"))
+
+
+/**
+ * Special type translation for types that implement `ObjCObject`:
+ * Such types cannot be directly translated but need to use a supertype that is explicitly marked with an
+ * `@ExternalObjCClass` annotation. (See [org.jetbrains.kotlin.objcexport.analysisApiUtils.isObjCObjectType]
+ */
+context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+internal fun KaType.translateToObjCObjectType(): ObjCNonNullReferenceType {
+    if (this !is KaClassType) return objCErrorType
+    val classSymbol = this.symbol as? KaClassSymbol ?: return ObjCIdType
+    return classSymbol.translateToObjCObjectType()
+}
+
+context(KaSession, KtObjCExportSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun KaClassSymbol.translateToObjCObjectType(): ObjCNonNullReferenceType {
+    if (isObjCMetaClass()) return ObjCMetaClassType
+    if (isObjCProtocolClass()) return ObjCClassType("Protocol", extras = objCTypeExtras {
+        requiresForwardDeclaration = true
+    })
+
+    if (isExternalObjCClass() || isObjCForwardDeclaration()) {
+        return if (classKind == KaClassKind.INTERFACE) {
+            ObjCProtocolType(nameOrAnonymous.asString().removeSuffix("Protocol"), extras = objCTypeExtras {
+                requiresForwardDeclaration = true
+            })
+        } else {
+            ObjCClassType(nameOrAnonymous.asString(), extras = objCTypeExtras {
+                requiresForwardDeclaration = true
+            })
+        }
+    }
+
+    return getSuperClassSymbolNotAny()?.translateToObjCObjectType() ?: ObjCIdType
+}
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun KaClassSymbol.isObjCMetaClass(): Boolean {
+    if (classId == objCClassClassId) return true
+    return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCMetaClass() }
+}
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun KaClassSymbol.isObjCProtocolClass(): Boolean {
+    if (classId == objCProtocolClassId) return true
+    return getDeclaredSuperInterfaceSymbols().any { superInterfaceSymbol -> superInterfaceSymbol.isObjCProtocolClass() }
+}
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun KaClassSymbol.isExternalObjCClass(): Boolean {
+    return NativeStandardInteropNames.externalObjCClassClassId in annotations
+}
+
+context(KaSession)
+@Suppress("CONTEXT_RECEIVERS_DEPRECATED")
+private fun KaClassSymbol.isObjCForwardDeclaration(): Boolean {
+    val classId = classId ?: return false
+    return when (NativeForwardDeclarationKind.packageFqNameToKind[classId.packageFqName]) {
+        null, NativeForwardDeclarationKind.Struct -> false
+        NativeForwardDeclarationKind.ObjCProtocol, NativeForwardDeclarationKind.ObjCClass -> true
+    }
+}

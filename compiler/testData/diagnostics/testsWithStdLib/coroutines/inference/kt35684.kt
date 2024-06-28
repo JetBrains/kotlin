@@ -1,6 +1,5 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54708
-// !OPT_IN: kotlin.RequiresOptIn
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// OPT_IN: kotlin.RequiresOptIn
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-35684
 
 import kotlin.experimental.ExperimentalTypeInference

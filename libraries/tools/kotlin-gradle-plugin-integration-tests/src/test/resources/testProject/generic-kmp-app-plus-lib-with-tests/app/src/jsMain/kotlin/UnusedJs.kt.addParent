@@ -1,0 +1,3 @@
+class AppJsUnusedClass : AppCommonUnusedClass() {
+    fun foo() = 234
+}

@@ -11,16 +11,30 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.storage.StorageManager
 
+// TODO: Here for IDE ABI, remove after rename in IDE
+typealias WasmJsPlatformAnalyzerServices = WasmPlatformAnalyzerServices
+
 object WasmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.js.*"))
     }
 
-    override val platformConfigurator: PlatformConfigurator = WasmPlatformConfigurator
+    override val platformConfigurator: PlatformConfigurator = WasmJsPlatformConfigurator
 
     val builtIns: KotlinBuiltIns
         get() = DefaultBuiltIns.Instance
 
     override val excludedImports: List<FqName> =
         listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
+}
+
+object WasmWasiPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
+    override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
+        result.add(ImportPath.fromString("kotlin.wasm.*"))
+    }
+
+    override val platformConfigurator: PlatformConfigurator = WasmWasiPlatformConfigurator
+
+    val builtIns: KotlinBuiltIns
+        get() = DefaultBuiltIns.Instance
 }

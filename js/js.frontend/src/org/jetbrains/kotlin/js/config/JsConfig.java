@@ -17,12 +17,7 @@
 package org.jetbrains.kotlin.js.config;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.util.SmartList;
-import com.intellij.util.io.URLUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,12 +41,6 @@ import java.util.*;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public class JsConfig {
-    public static final List<String> JS_STDLIB =
-            Collections.singletonList(getKotlinPathsForDistDirectory().getJsStdLibJarPath().getAbsolutePath());
-
-    public static final List<String> JS_KOTLIN_TEST =
-            Collections.singletonList(getKotlinPathsForDistDirectory().getJsKotlinTestJarPath().getAbsolutePath());
-
     public static final String UNKNOWN_EXTERNAL_MODULE_NAME = "<unknown>";
 
     private final Project project;

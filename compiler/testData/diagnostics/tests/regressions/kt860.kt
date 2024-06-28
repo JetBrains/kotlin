@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !DIAGNOSTICS: -NOTHING_TO_INLINE
+// DIAGNOSTICS: -NOTHING_TO_INLINE
 // KT-860 ConcurrentModificationException in frontend
 
 package std.util

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-# Copyright 2010-2017 JetBrains s.r.o.
+# Copyright 2010-2023 JetBrains s.r.o.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import traceback
 
 NULL = 'null'
 logging=False
-exe_logging=False
+exe_logging=True if (os.getenv('GLOG_log_dir') != None) else False # Same as in LLDBFrontend
 bench_logging=False
 
 def log(msg):
@@ -43,7 +43,7 @@ def log(msg):
 
 def exelog(stmt):
     if exe_logging:
-        f = open(os.getenv('HOME', '') + "/lldbexelog.txt", "a")
+        f = open(os.getenv('GLOG_log_dir', '') + "/konan_lldb.log", "a")
         f.write(stmt())
         f.write("\n")
         f.close()
@@ -77,12 +77,14 @@ def _symbol_loaded_address(name, debugger = lldb.debugger):
     process = target.GetProcess()
     thread = process.GetSelectedThread()
     frame = thread.GetSelectedFrame()
-    candidates = list(filter(lambda x: x.name == name, frame.module.symbols))
+    candidates = frame.module.symbol[name]
     # take first
     for candidate in candidates:
         address = candidate.GetStartAddress().GetLoadAddress(target)
         log(lambda: "_symbol_loaded_address:{} {:#x}".format(name, address))
         return address
+
+    return 0
 
 def _type_info_by_address(address, debugger = lldb.debugger):
     target = debugger.GetSelectedTarget()
@@ -93,11 +95,11 @@ def _type_info_by_address(address, debugger = lldb.debugger):
     return candidates
 
 def is_instance_of(addr, typeinfo):
-    return evaluate("(bool)IsInstance({:#x}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
+    return evaluate("(bool)Konan_DebugIsInstance({:#x}, {:#x})".format(addr, typeinfo)).GetValue() == "true"
 
 def is_string_or_array(value):
     start = time.monotonic()
-    soa = evaluate("(int)IsInstance({0:#x}, {1:#x}) ? 1 : ((int)Konan_DebugIsArray({0:#x})) ? 2 : 0)"
+    soa = evaluate("(int)Konan_DebugIsInstance({0:#x}, {1:#x}) ? 1 : ((int)Konan_DebugIsArray({0:#x})) ? 2 : 0)"
                    .format(value.unsigned, _symbol_loaded_address('kclass:kotlin.String'))).unsigned
     log(lambda: "is_string_or_array:{:#x}:{}".format(value.unsigned, soa))
     bench(start, lambda: "is_string_or_array({:#x}) = {}".format(value.unsigned, soa))
@@ -123,6 +125,7 @@ __FACTORY = {}
 SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
 TO_STRING_DEPTH = 2
 ARRAY_TO_STRING_LIMIT = 10
+TOTAL_MEMBERS_LIMIT = 50
 
 _TYPE_CONVERSION = [
      lambda obj, value, address, name: value.CreateValueFromExpression(name, "(void *){:#x}".format(address)),
@@ -192,11 +195,12 @@ def select_provider(lldb_val, tip, internal_dict):
     return ret
 
 class KonanHelperProvider(lldb.SBSyntheticValueProvider):
-    def __init__(self, valobj, amString, internal_dict = {}):
+    def __init__(self, valobj, amString, type_name, internal_dict = {}):
         self._target = lldb.debugger.GetSelectedTarget()
         self._process = self._target.GetProcess()
         self._valobj = valobj
         self._internal_dict = internal_dict.copy()
+        self._type_name = type_name
         if amString:
             return
         if self._children_count == 0:
@@ -250,7 +254,7 @@ class KonanStringSyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj):
         log(lambda: "KonanStringSyntheticProvider:{:#x} name:{}".format(valobj.unsigned, valobj.name))
         self._children_count = 0
-        super(KonanStringSyntheticProvider, self).__init__(valobj, True)
+        super(KonanStringSyntheticProvider, self).__init__(valobj, True, "StringProvider")
         fallback = valobj.GetValue()
         buff_addr = evaluate("(void *)Konan_DebugBuffer()").unsigned
         buff_len = evaluate(
@@ -296,7 +300,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
         # Save an extra call into the process
         log(lambda: "KonanObjectSyntheticProvider({:#x})".format(valobj.unsigned))
         self._children_count = 0
-        super(KonanObjectSyntheticProvider, self).__init__(valobj, False, internal_dict)
+        super(KonanObjectSyntheticProvider, self).__init__(valobj, False, "ObjectProvider", internal_dict)
         self._children = [self._field_name(i) for i in range(self._children_count)]
         log(lambda: "KonanObjectSyntheticProvider::__init__({:#x}) _children:{}".format(self._valobj.unsigned,
                                                                                         self._children))
@@ -346,7 +350,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
 class KonanArraySyntheticProvider(KonanHelperProvider):
     def __init__(self, valobj, internal_dict):
         self._children_count = 0
-        super(KonanArraySyntheticProvider, self).__init__(valobj, False, internal_dict)
+        super(KonanArraySyntheticProvider, self).__init__(valobj, False, "ArrayProvider", internal_dict)
         log(lambda: "KonanArraySyntheticProvider: valobj:{:#x}".format(valobj.unsigned))
         if self._valobj is None:
             return
@@ -452,9 +456,38 @@ class KonanProxyTypeProvider:
     def __getattr__(self, item):
        return getattr(self._proxy, item)
 
+def strip_quotes(name):
+    return "" if (name == None) else name.strip('"')
 
-def type_name_command(debugger, command, result, internal_dict):
-    result.AppendMessage(evaluate('(char *)Konan_DebugGetTypeName({})'.format(command)).summary)
+def get_runtime_type(variable):
+    return strip_quotes(evaluate("(char *)Konan_DebugGetTypeName({:#x})".format(variable.unsigned)).summary)
+
+def field_type_command(debugger, field_address, exe_ctx, result, internal_dict):
+    """
+    Returns runtime type of foo.bar.baz field in the form "(foo.bar.baz <TYPE_NAME>)".
+    If requested field could not be traced, then "<NO_FIELD_FOUND>" plug is used for type name.
+    """
+    fields = field_address.split('.')
+
+    variable = exe_ctx.GetFrame().FindVariable(fields[0])
+    provider = None
+
+    for field_name in fields[1:]:
+        if (variable != None):
+            provider = KonanProxyTypeProvider(variable, internal_dict)
+            field_index = provider.get_child_index(field_name)
+            variable = provider.get_child_at_index(field_index)
+        else:
+            break
+
+    desc = "<NO_FIELD_FOUND>"
+
+    if (variable != None):
+        rt = get_runtime_type(variable)
+        if (len(rt) > 0):
+            desc = rt
+
+    result.write("{}".format(desc))
 
 
 __KONAN_VARIABLE = re.compile('kvar:(.*)#internal')
@@ -536,6 +569,97 @@ def konan_globals_command(debugger, command, result, internal_dict):
        result.AppendMessage('{} {}: {}'.format(type, name, str_value))
 
 
+class KonanStep(object):
+    def __init__(self, thread_plan):
+        self.thread_plan = thread_plan
+        self.step_thread_plan = self.queue_thread_plan()
+
+        debugger = thread_plan.GetThread().GetProcess().GetTarget().GetDebugger()
+        self.avoid_no_debug = debugger.GetInternalVariableValue('target.process.thread.step-in-avoid-nodebug',
+                                                                debugger.GetInstanceName()).GetStringAtIndex(0)
+
+    def explains_stop(self, event):
+        return True
+
+    def should_stop(self, event):
+        frame = self.thread_plan.GetThread().GetFrameAtIndex(0)
+        source_file = frame.GetLineEntry().GetFileSpec().GetFilename()
+
+        if self.avoid_no_debug == 'true' and source_file in [None, '<compiler-generated>']:
+            self.step_thread_plan = self.queue_thread_plan()
+            return False
+
+        self.thread_plan.SetPlanComplete(True)
+        return True
+
+    def should_step(self):
+        return True
+
+    def queue_thread_plan(self):
+        address = self.thread_plan.GetThread().GetFrameAtIndex(0).GetPCAddress()
+        line_entry = self.thread_plan.GetThread().GetFrameAtIndex(0).GetLineEntry()
+        begin_address = line_entry.GetStartAddress().GetFileAddress()
+        end_address = line_entry.GetEndAddress().GetFileAddress()
+        return self.do_queue_thread_plan(address, end_address - begin_address)
+
+
+class KonanStepIn(KonanStep):
+    def __init__(self, thread_plan, dict, *args):
+        KonanStep.__init__(self, thread_plan)
+
+    def do_queue_thread_plan(self, address, offset):
+        return self.thread_plan.QueueThreadPlanForStepInRange(address, offset)
+
+
+class KonanStepOver(KonanStep):
+    def __init__(self, thread_plan, dict, *args):
+        KonanStep.__init__(self, thread_plan)
+
+    def do_queue_thread_plan(self, address, offset):
+        return self.thread_plan.QueueThreadPlanForStepOverRange(address, offset)
+
+
+class KonanStepOut(KonanStep):
+    def __init__(self, thread_plan, dict, *args):
+        KonanStep.__init__(self, thread_plan)
+
+    def do_queue_thread_plan(self, address, offset):
+      return self.thread_plan.QueueThreadPlanForStepOut(0)
+
+
+KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS = 'KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS'
+MAX_SIZE_FOR_STOP_REASON = 20
+PLAN_FROM_STOP_REASON = {
+    'step in' : KonanStepIn.__name__,
+    'step out' : KonanStepOut.__name__,
+    'step over' : KonanStepOver.__name__,
+}
+
+class KonanHook:
+    def __init__(self, target, extra_args, _):
+        pass
+
+    def handle_stop(self, execution_context, stream) -> bool:
+        is_bridging_functions_skip_enabled = not execution_context.target.GetEnvironment().Get(KONAN_LLDB_DONT_SKIP_BRIDGING_FUNCTIONS)
+
+        def is_kotlin_bridging_function() -> bool:
+            addr = execution_context.frame.addr
+            function_name = addr.function.name
+            if function_name is None:
+                return False
+            file_name = addr.line_entry.file.basename
+            if file_name is None:
+                return False
+            return function_name.startswith('objc2kotlin_') and file_name == '<compiler-generated>'
+
+        if is_bridging_functions_skip_enabled and is_kotlin_bridging_function():
+            stop_reason = execution_context.frame.thread.GetStopDescription(MAX_SIZE_FOR_STOP_REASON)
+            plan = PLAN_FROM_STOP_REASON.get(stop_reason)
+            if plan is not None:
+                execution_context.thread.StepUsingScriptedThreadPlan('{}.{}'.format(__name__, plan))
+        return True
+
+
 def __lldb_init_module(debugger, _):
     log(lambda: "init start")
     __FACTORY['object'] = lambda x, y, z: KonanObjectSyntheticProvider(x, y, z)
@@ -556,7 +680,10 @@ def __lldb_init_module(debugger, _):
         --category Kotlin\
     ')
     debugger.HandleCommand('type category enable Kotlin')
-    debugger.HandleCommand('command script add -f {}.type_name_command type_name'.format(__name__))
+    debugger.HandleCommand('command script add -f {}.field_type_command field_type'.format(__name__))
     debugger.HandleCommand('command script add -f {}.type_by_address_command type_by_address'.format(__name__))
     debugger.HandleCommand('command script add -f {}.symbol_by_name_command symbol_by_name'.format(__name__))
+    # Avoid Kotlin/Native runtime
+    debugger.HandleCommand('settings set target.process.thread.step-avoid-regexp ^::Kotlin_')
+    debugger.HandleCommand('target stop-hook add -P {}.KonanHook'.format(__name__))
     log(lambda: "init end")

@@ -5,20 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import javax.inject.Inject
 
-open class BinaryenExec
+@DisableCachingByDefault
+abstract class BinaryenExec
 @Inject
 constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
-    @Transient
-    @get:Internal
-    lateinit var binaryen: BinaryenRootExtension
+    @get:Inject
+    abstract val fs: FileSystemOperations
 
     init {
         onlyIf {
@@ -27,25 +34,23 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     }
 
     @Input
-    var binaryenArgs: MutableList<String> = mutableListOf(
-        "--enable-nontrapping-float-to-int",
-        "--enable-gc",
-        "--enable-reference-types",
-        "--enable-exception-handling",
-        "--enable-bulk-memory",  // For array initialization from data sections
-        "--hybrid",
-        "-O3",
-        "--inline-functions-with-loops",
-        "--traps-never-happen",
-        "--fast-math",
-    )
+    var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
 
+    @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
-    @OutputFile
-    val outputFileProperty: RegularFileProperty = project.newFileProperty()
+    @get:OutputDirectory
+    abstract val outputDirectory: DirectoryProperty
+
+    @get:Input
+    abstract val outputFileName: Property<String>
+
+    @Internal
+    val outputFileProperty: Provider<RegularFile> = project.provider {
+        outputDirectory.file(outputFileName).get()
+    }
 
     override fun exec() {
         val inputFile = inputFileProperty.asFile.get()
@@ -53,7 +58,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         newArgs.addAll(binaryenArgs)
         newArgs.add(inputFile.canonicalPath)
         newArgs.add("-o")
-        newArgs.add(outputFileProperty.asFile.get().canonicalPath)
+        newArgs.add(outputDirectory.file(outputFileName).get().asFile.normalize().absolutePath)
         workingDir = inputFile.parentFile
         this.args = newArgs
         super.exec()
@@ -61,9 +66,9 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
 
     companion object {
         fun create(
-            compilation: KotlinJsCompilation,
+            compilation: KotlinJsIrCompilation,
             name: String,
-            configuration: BinaryenExec.() -> Unit = {}
+            configuration: BinaryenExec.() -> Unit = {},
         ): TaskProvider<BinaryenExec> {
             val target = compilation.target
             val project = target.project
@@ -71,8 +76,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
             return project.registerTask(
                 name,
             ) {
-                it.binaryen = binaryen
-                it.executable = binaryen.requireConfigured().executablePath.absolutePath
+                it.executable = binaryen.requireConfigured().executable
                 it.dependsOn(binaryen.setupTaskProvider)
                 it.dependsOn(compilation.compileTaskProvider)
                 it.configuration()

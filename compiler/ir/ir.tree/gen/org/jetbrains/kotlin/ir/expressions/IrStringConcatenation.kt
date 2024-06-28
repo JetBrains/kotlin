@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,8 +13,18 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
- * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.stringConcatenation
+ * Represents a string template expression.
+ *
+ * For example, the value of `template` in the following code:
+ * ```kotlin
+ * val i = 10
+ * val template = "i = $i"
+ * ```
+ * will be represented by [IrStringConcatenation] with the following list of [arguments]:
+ * - [IrConst] whose `value` is `"i = "`
+ * - [IrGetValue] whose `symbol` will be that of the `i` variable. 
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.stringConcatenation]
  */
 abstract class IrStringConcatenation : IrExpression() {
     abstract val arguments: MutableList<IrExpression>

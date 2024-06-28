@@ -13,6 +13,7 @@ import org.eclipse.aether.util.artifact.JavaScopes
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import java.io.File
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.ArtifactWithLocation
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.*
@@ -20,19 +21,10 @@ import kotlin.script.experimental.dependencies.maven.impl.AetherResolveSession
 import kotlin.script.experimental.dependencies.maven.impl.ResolutionKind
 import kotlin.script.experimental.dependencies.maven.impl.mavenCentral
 
-@Deprecated(
-    "This class is not functional and left only for compatibility reasons. Use kotlin.script.experimental.dependencies.ExternalDependenciesResolver.Options for passing authorization options",
-    replaceWith = ReplaceWith("RepositoryCoordinates(url)", "kotlin.script.experimental.dependencies.RepositoryCoordinates")
-)
-class MavenRepositoryCoordinates(
-    url: String,
-    val username: String?,
-    val password: String?,
-    val privateKeyFile: String?,
-    val passPhrase: String?
-) : RepositoryCoordinates(url)
 
-class MavenDependenciesResolver : ExternalDependenciesResolver {
+class MavenDependenciesResolver(
+    cacheResolveSession: Boolean = false
+) : ExternalDependenciesResolver {
 
     override fun acceptsArtifact(artifactCoordinates: String): Boolean =
         artifactCoordinates.toMavenArtifact() != null
@@ -41,40 +33,45 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
         return repositoryCoordinates.toRepositoryUrlOrNull() != null
     }
 
-    val repos: ArrayList<RemoteRepository> = arrayListOf()
+    private val repos: ArrayList<RemoteRepository> = arrayListOf()
 
     private fun remoteRepositories() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos.toList() // copy to avoid sharing problems
+
+    private val getResolveSession = { repositories: List<RemoteRepository> ->
+        AetherResolveSession(null, repositories)
+    }.let { sessionFactory ->
+        if (cacheResolveSession) LRU1Cache(sessionFactory) else sessionFactory
+    }
 
     private fun String.toMavenArtifact(): DefaultArtifact? =
         if (this.isNotBlank() && this.count { it == ':' } >= 2) DefaultArtifact(this)
         else null
 
     override suspend fun resolve(
-        artifactCoordinates: String,
-        options: ExternalDependenciesResolver.Options,
-        sourceCodeLocation: SourceCode.LocationWithId?
+        artifactsWithLocations: List<ArtifactWithLocation>,
+        options: ExternalDependenciesResolver.Options
     ): ResultWithDiagnostics<List<File>> {
-
-        val artifactId = artifactCoordinates.toMavenArtifact()!!
+        val firstArtifactWithLocation = artifactsWithLocations.firstOrNull() ?: return ResultWithDiagnostics.Success(emptyList())
+        val artifactIds = artifactsWithLocations.map {
+            it.artifact.toMavenArtifact()!!
+        }
 
         return try {
             val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
             val kind = when (options.partialResolution) {
                 true -> ResolutionKind.TRANSITIVE_PARTIAL
-                false, null -> when(options.transitive) {
+                false, null -> when (options.transitive) {
                     true, null -> ResolutionKind.TRANSITIVE
                     false -> ResolutionKind.NON_TRANSITIVE
                 }
             }
             val classifier = options.classifier
             val extension = options.extension
-            AetherResolveSession(
-                null, remoteRepositories()
-            ).resolve(
-                artifactId, dependencyScopes.joinToString(","), kind, null, classifier, extension
+            getResolveSession(remoteRepositories()).resolve(
+                artifactIds, dependencyScopes.joinToString(","), kind, null, classifier, extension
             )
         } catch (e: RepositoryException) {
-            makeResolveFailureResult(e, sourceCodeLocation)
+            makeResolveFailureResult(e, firstArtifactWithLocation.sourceCodeLocation)
         }
     }
 
@@ -106,12 +103,10 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
     ): ResultWithDiagnostics<Boolean> {
         val url = repositoryCoordinates.toRepositoryUrlOrNull()
             ?: return false.asSuccess()
-        val repoId = repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
+        val repoId = options.mavenRepoId ?: repositoryCoordinates.string.replace(FORBIDDEN_CHARS, "_")
 
-        @Suppress("DEPRECATION")
-        val mavenRepo = repositoryCoordinates as? MavenRepositoryCoordinates
-        val usernameRaw = options.username ?: mavenRepo?.username
-        val passwordRaw = options.password ?: mavenRepo?.password
+        val usernameRaw = options.username
+        val passwordRaw = options.password
 
         val reports = mutableListOf<ScriptDiagnostic>()
         fun getFinalValue(optionName: String, rawValue: String?): String? {
@@ -179,6 +174,23 @@ class MavenDependenciesResolver : ExternalDependenciesResolver {
             }
 
             return makeResolveFailureResult(listOf(message), location, exception)
+        }
+
+        private class LRU1Cache<T : Any, R>(private val calculate: (T) -> R) : (T) -> R {
+            private var lastArgument: T? = null
+            private var lastValue: R? = null
+
+            @Synchronized
+            override operator fun invoke(arg: T): R {
+                return if (arg == lastArgument) {
+                    lastValue!!
+                } else {
+                    val newValue = calculate(arg)
+                    lastArgument = arg
+                    lastValue = newValue
+                    newValue
+                }
+            }
         }
     }
 }

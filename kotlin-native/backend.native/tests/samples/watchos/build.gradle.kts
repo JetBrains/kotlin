@@ -8,7 +8,7 @@ plugins {
 val sdkName: String? = System.getenv("SDK_NAME")
 
 enum class Target(val simulator: Boolean, val key: String) {
-    WATCHOS_X86(true, "watchos"), WATCHOS_ARM64(false, "watchos"),
+    WATCHOS_X64(true, "watchos"), WATCHOS_ARM64(false, "watchos"),
     IOS_X64(true, "ios"), IOS_ARM64(false, "ios")
 }
 
@@ -17,8 +17,8 @@ val target = sdkName.orEmpty().let {
         it.startsWith("iphoneos") -> Target.IOS_ARM64
         it.startsWith("iphonesimulator") -> Target.IOS_X64
         it.startsWith("watchos") -> Target.WATCHOS_ARM64
-        it.startsWith("watchsimulator") -> Target.WATCHOS_X86
-        else -> Target.WATCHOS_X86
+        it.startsWith("watchsimulator") -> Target.WATCHOS_X64
+        else -> Target.WATCHOS_X64
     }
 }
 
@@ -44,7 +44,7 @@ kotlin {
         watchosArm64("watchos")
     } else {
         // Simulator.
-        watchosX86("watchos")
+        watchosX64("watchos")
     }
 
     // Declare the output program.

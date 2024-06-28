@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.mpp.TypeParameterSymbolMarker;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 
 import java.util.List;
 
-public interface TypeParameterDescriptor extends ClassifierDescriptor, TypeParameterMarker {
+public interface TypeParameterDescriptor extends ClassifierDescriptor, TypeParameterMarker, TypeParameterSymbolMarker {
     boolean isReified();
 
     @NotNull

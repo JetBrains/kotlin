@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +VariableDeclarationInWhenSubject
-// !DIAGNOSTICS: -UNUSED_VARIABLE
+// LANGUAGE: +VariableDeclarationInWhenSubject
+// DIAGNOSTICS: -UNUSED_VARIABLE
 
 enum class E { FIRST, SECOND }
 

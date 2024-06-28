@@ -163,8 +163,9 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected fun Project.configureNativeTarget(hostPreset: AbstractKotlinNativeTargetPreset<*>) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
             compilations.named("main").configure {
-                @Suppress("DEPRECATION")
-                kotlinOptions.freeCompilerArgs = benchmark.compilerOpts + project.compilerArgs
+                compileTaskProvider.configure {
+                    compilerOptions.freeCompilerArgs.addAll(benchmark.compilerOpts + project.compilerArgs)
+                }
                 dependencies {
                     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
                 }
@@ -180,7 +181,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected open fun Project.configureNativeTask(nativeTarget: KotlinNativeTarget): Task {
         val konanRun = createRunTask(this, "konanRun", nativeLinkTask,
-                nativeExecutable, buildDir.resolve(nativeBenchResults).absolutePath).apply {
+                nativeExecutable, layout.buildDirectory.file(nativeBenchResults).get().asFile.absolutePath).apply {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
         }
@@ -222,7 +223,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
             doLast {
                 val applicationName = benchmark.applicationName
-                val benchContents = buildDir.resolve(nativeBenchResults).readText()
+                val benchContents = layout.buildDirectory.file(nativeBenchResults).get().asFile.readText()
                 val nativeCompileTasks = if (benchmark.compileTasks.isEmpty()) {
                    listOf("linkBenchmark${benchmark.buildType.name.lowercase().replaceFirstChar { it.uppercase() }}ExecutableNative")
                 } else benchmark.compileTasks
@@ -239,7 +240,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 )
 
                 val output = createJsonReport(properties)
-                buildDir.resolve(nativeJson).writeText(output)
+                layout.buildDirectory.file(nativeJson).get().asFile.writeText(output)
             }
         }
     }

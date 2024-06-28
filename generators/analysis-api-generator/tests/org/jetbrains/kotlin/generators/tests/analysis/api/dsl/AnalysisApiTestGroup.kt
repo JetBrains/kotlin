@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.generators.tests.analysis.api.dsl
 
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.defaultExtension
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.getDefaultSuiteTestClassName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import kotlin.reflect.KClass
 
-internal class AnalysisApiTestGroup(
+class AnalysisApiTestGroup(
     private val generator: AnalysisApiTestGenerator,
     private val groupFilter: TestFilter,
     private val directory: String?,
@@ -30,9 +30,15 @@ internal class AnalysisApiTestGroup(
         generator.suite.init()
     }
 
+    inline fun <reified T : Any> test(
+        noinline filter: TestFilter = { true },
+        noinline init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit,
+    ) {
+        test(T::class.java, filter, init)
+    }
 
     fun test(
-        testClass: KClass<*>,
+        testClass: Class<*>,
         filter: TestFilter = { true },
         init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit,
     ) {
@@ -53,9 +59,23 @@ internal class AnalysisApiTestGroup(
     }
 }
 
+internal fun TestGroup.TestClass.model(
+    data: AnalysisApiTestConfiguratorFactoryData,
+    relativeRootPath: String,
+    excludeDirsRecursively: List<String> = listOf(),
+    excludedPattern: String? = null,
+) {
+    model(
+        relativeRootPath = relativeRootPath,
+        extension = data.defaultExtension(),
+        excludeDirsRecursively = excludeDirsRecursively,
+        excludedPattern = excludedPattern,
+    )
+}
+
 private fun TestGroup.analysisApiTestClass(
     data: AnalysisApiTestConfiguratorFactoryData,
-    testClass: KClass<*>,
+    testClass: Class<*>,
     init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit
 ) {
     val factory = AnalysisApiConfiguratorFactoryProvider.getFactory(data) ?: return
@@ -65,10 +85,10 @@ private fun TestGroup.analysisApiTestClass(
     val suiteTestClassName = buildString {
         append(fullPackage)
         append(getTestNameSuffix(data))
-        append(getDefaultSuiteTestClassName(testClass.java.simpleName))
+        append(getDefaultSuiteTestClassName(testClass.simpleName))
     }
 
-    getDefaultSuiteTestClassName(testClass.java.simpleName)
+    getDefaultSuiteTestClassName(testClass.simpleName)
 
 
     testClass(
@@ -90,7 +110,7 @@ private fun getTestNameSuffix(data: AnalysisApiTestConfiguratorFactoryData): Str
     }
 }
 
-private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testClass: KClass<*>): String {
+private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testClass: Class<*>): String {
     val basePrefix = buildString {
         append("org.jetbrains.kotlin.analysis.api.")
         if (data.analysisApiMode == AnalysisApiMode.Standalone) {
@@ -99,7 +119,7 @@ private fun getPackageName(data: AnalysisApiTestConfiguratorFactoryData, testCla
         append(data.frontend.suffix.lowercase())
         append(".test.cases.generated")
     }
-    val packagePrefix = "cases." + testClass.java.name
+    val packagePrefix = "cases." + testClass.name
         .substringAfter("test.cases.")
         .substringBeforeLast('.', "")
 

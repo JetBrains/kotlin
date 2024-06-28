@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.name.CallableId
  * Frontend IR creates such kind a symbol when a Java class is asked for a property which
  * exists in one of its base Kotlin classes, and the Java class itself contains the bound getter.
  *
- * The typical example:
- *
+ * ## Example 1
  * ```
  * abstract class SomeKotlinClass {
  *     abstract val foo: Int
@@ -26,6 +25,21 @@ import org.jetbrains.kotlin.name.CallableId
  *     public int getFoo() { return 42; }
  * }
  * ```
+ *
+ * ## Example 2
+ * Another use-case is "properties" of Java annotations:
+ * ```
+ * public @interface JavaAnnotation {
+ *     public String javaProperty() default ""; // Java method which is considered property in Kotlin,
+ *                                              // because methods in Java annotations can't have parameters
+ * }
+ *
+ * fun main(annotation: JavaAnnotation) {
+ *    annotation.javaProperty // FirJavaOverriddenSyntheticPropertySymbol
+ * }
+ * ```
+ * The mental model is that in Kotlin world annotations can have only constructor-properties.
+ * And Java "overrides" Kotlin's "base Annotation" class (yes, technically there is no base class for annotations).
  */
 class FirJavaOverriddenSyntheticPropertySymbol(
     propertyId: CallableId,

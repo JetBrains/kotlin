@@ -41,12 +41,15 @@ public class KtNameReferenceExpressionElementType extends KtStubElementType<Kotl
     @Override
     public void serialize(@NotNull KotlinNameReferenceExpressionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getReferencedName());
+        dataStream.writeBoolean(
+                stub instanceof KotlinNameReferenceExpressionStubImpl && ((KotlinNameReferenceExpressionStubImpl) stub).isClassRef());
     }
 
     @NotNull
     @Override
     public KotlinNameReferenceExpressionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef referencedName = dataStream.readName();
-        return new KotlinNameReferenceExpressionStubImpl(parentStub, referencedName);
+        boolean isClassRef = dataStream.readBoolean();
+        return new KotlinNameReferenceExpressionStubImpl(parentStub, referencedName, isClassRef);
     }
 }

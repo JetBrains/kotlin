@@ -2,17 +2,17 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
-import kotlinx.metadata.jvm.KmModuleVisitor
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import kotlinx.metadata.jvm.UnstableMetadataApi
+import org.apache.tools.zip.ZipEntry
+import org.apache.tools.zip.ZipOutputStream
 import org.gradle.kotlin.dsl.support.serviceOf
-import shadow.org.apache.tools.zip.ZipEntry
-import shadow.org.apache.tools.zip.ZipOutputStream
 
 description = "Kotlin Full Reflection Library"
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.0")
+        classpath(libs.kotlinx.metadataJvm)
     }
 }
 
@@ -25,7 +25,7 @@ configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
 publish()
 
 val core = "$rootDir/core"
-val relocatedCoreSrc = "$buildDir/core-relocated"
+val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 
 val proguardDeps by configurations.creating
 val proguardAdditionalInJars by configurations.creating
@@ -60,7 +60,8 @@ dependencies {
 }
 
 @CacheableTransformer
-class KotlinModuleShadowTransformer(private val logger: Logger, private val useK2: Boolean) : Transformer {
+@OptIn(UnstableMetadataApi::class)
+class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     @Suppress("ArrayInDataClass")
     private data class Entry(val path: String, val bytes: ByteArray)
 
@@ -75,38 +76,23 @@ class KotlinModuleShadowTransformer(private val logger: Logger, private val useK
         fun relocate(content: String): String =
             context.relocators.fold(content) { acc, relocator -> relocator.applyToSourceContent(acc) }
 
-        val writer = KotlinModuleMetadata.Writer()
         logger.info("Transforming ${context.path}")
-        if (useK2) {
-            // TODO: remove this branch after migration to version 1.9
-            val internalData = org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping.loadModuleMapping(
-                context.`is`.readBytes(), javaClass.name, skipMetadataVersionCheck = true, isJvmPackageNameSupported = true
-            ) {
-            }
-            val visitor = object : KmModuleVisitor(writer) {
-                override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
-                    assert(multiFileClassParts.isEmpty()) { multiFileClassParts } // There are no multi-file class parts in core
-                    super.visitPackageParts(relocate(fqName), fileFacades.map(::relocate), multiFileClassParts)
-                }
-            }
-            for ((fqName, parts) in internalData.packageFqName2Parts) {
-                val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
-                visitor.visitPackageParts(fqName, fileFacades, multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! })
-            }
-            visitor.visitEnd()
-        } else {
-            val metadata = KotlinModuleMetadata.read(context.`is`.readBytes())
-                ?: error("Not a .kotlin_module file: ${context.path}")
-            // TODO: writer declaration and logger.info call from above should be move here after migration to version 1.9
-            metadata.accept(object : KmModuleVisitor(writer) {
-                override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
-                    assert(multiFileClassParts.isEmpty()) { multiFileClassParts } // There are no multi-file class parts in core
-                    super.visitPackageParts(relocate(fqName), fileFacades.map(::relocate), multiFileClassParts)
-                }
-            })
-        }
+        val metadata = KotlinModuleMetadata.read(context.`is`.readBytes())
+        val module = metadata.kmModule
 
-        data += Entry(context.path, writer.write().bytes)
+        val packageParts = module.packageParts.toMap()
+        module.packageParts.clear()
+        packageParts.map { (fqName, parts) ->
+            require(parts.multiFileClassParts.isEmpty()) { parts.multiFileClassParts } // There are no multi-file class parts in core
+
+            val fileFacades = parts.fileFacades.toList()
+            parts.fileFacades.clear()
+            fileFacades.mapTo(parts.fileFacades) { relocate(it) }
+
+            relocate(fqName) to parts
+        }.toMap(module.packageParts)
+
+        data += Entry(context.path, metadata.write())
     }
 
     override fun hasTransformedResource(): Boolean = data.isNotEmpty()
@@ -133,7 +119,7 @@ val reflectShadowJar by task<ShadowJar> {
 
     if (kotlinBuildProperties.relocation) {
         mergeServiceFiles()
-        transform(KotlinModuleShadowTransformer(logger, project.kotlinBuildProperties.useFir))
+        transform(KotlinModuleShadowTransformer(logger))
         relocate("org.jetbrains.kotlin", "kotlin.reflect.jvm.internal.impl")
         relocate("javax.inject", "kotlin.reflect.jvm.internal.impl.javax.inject")
     }
@@ -176,7 +162,7 @@ val proguard by task<CacheableProguardTask> {
                     "jre/lib/rt.jar",
                     "../Classes/classes.jar",
                     jdkHome = it.metadata.installationPath.asFile
-                )
+                )!!
             }
         )
     )
@@ -244,30 +230,31 @@ val intermediate = when {
     kotlinBuildProperties.relocation -> stripMetadata
     else -> reflectShadowJar
 }
-    
+
 val result by task<Jar> {
     dependsOn(intermediate)
     from {
-        zipTree(intermediate.get().singleOutputFile())
+        zipTree(intermediate.get().singleOutputFile(layout))
     }
     from(zipTree(provider { reflectShadowJar.get().archiveFile.get().asFile })) {
         include("META-INF/versions/**")
     }
-    callGroovy("manifestAttributes", manifest, project, "Main", true)
+    manifestAttributes(
+        manifest,
+        component = "Main",
+        multiRelease = true
+    )
 }
 
 javadocJar()
 
 dexMethodCount {
-    dependsOn(result)
-    jarFile = result.get().outputs.files.single()
+    jarFile.fileProvider(result.map { it.outputs.files.singleFile })
     ownPackages.set(listOf("kotlin.reflect"))
 }
 
 artifacts {
     listOf("archives", "runtimeElements").forEach { configurationName ->
-        add(configurationName, provider { result.get().outputs.files.singleFile }) {
-            builtBy(result)
-        }
+        add(configurationName, result.map { it.outputs.files.singleFile })
     }
 }

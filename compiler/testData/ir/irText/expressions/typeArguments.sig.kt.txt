@@ -1,0 +1,6 @@
+// CHECK JVM_IR:
+//   Mangled name: #test1(kotlin.Any){}kotlin.Boolean
+//   Public signature: /test1|1992455603103220352[0]
+//   Public signature debug description: test1(kotlin.Any){}kotlin.Boolean
+fun test1(x: Any): Boolean
+

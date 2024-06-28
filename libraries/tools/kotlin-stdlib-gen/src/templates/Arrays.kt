@@ -87,32 +87,63 @@ object ArrayOps : TemplateGroupBase() {
         annotation("""@DeprecatedSinceKotlin(hiddenSince = "1.4")""")
     }
 
+    private fun MemberBuilder.contentEqualsDoc(nullabilityNote: String = "") {
+        doc {
+            """
+            Checks if the two specified arrays are *structurally* equal to one another.
+
+            Two arrays are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+            """
+        }
+
+        val isArrayOfObjects = f == ArraysOfObjects
+        val isArrayOfFloatingPoint = primitive?.isFloatingPoint() == true
+
+        if (isArrayOfObjects || isArrayOfFloatingPoint) {
+            val prefix = if (isArrayOfObjects) "For floating point numbers, this" else "This"
+            doc {
+                doc + """Elements are compared for equality using the [equals][Any.equals] function.
+                $prefix means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+                """
+            }
+        }
+        doc {
+            doc + nullabilityNote
+        }
+        if (isArrayOfObjects) {
+            doc {
+                doc + """
+                If the arrays contain nested arrays, use [contentDeepEquals] to recursively compare their elements.
+                """
+            }
+        }
+        doc {
+            doc + """
+            @param other the array to compare with this array.
+            @return `true` if the two arrays are structurally equal, `false` otherwise.
+            """
+        }
+
+        val sampleMethod = when {
+            isArrayOfObjects -> "arrayContentEquals"
+            isArrayOfFloatingPoint -> "doubleArrayContentEquals"
+            primitive == PrimitiveType.Char -> "charArrayContentEquals"
+            primitive == PrimitiveType.Boolean -> "booleanArrayContentEquals"
+            else -> "intArrayContentEquals"
+        }
+        sample("samples.collections.Arrays.ContentOperations.$sampleMethod")
+    }
+
     val f_contentEquals = fn("contentEquals(other: SELF)") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
         deprecatedNonNullArrayFunction()
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *structurally* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            """
-        }
         returns("Boolean")
+        contentEqualsDoc()
         body { "return this.contentEquals(other)" }
-        if (f == ArraysOfUnsigned) {
-            return@builder
-        }
-        doc {
-            doc + """
-            The elements are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
-        on(Platform.JVM) {
-            inlineOnly()
-        }
     }
 
     val f_contentEquals_nullable = fn("contentEquals(other: SELF?)") {
@@ -120,40 +151,24 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         since("1.4")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *structurally* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            """
-        }
         receiver("SELF?")
         returns("Boolean")
+        contentEqualsDoc(
+            nullabilityNote = """
+            The arrays are also considered structurally equal if both are `null`.
+            """
+        )
         if (family == ArraysOfUnsigned) {
             body { "return this?.storage.contentEquals(other?.storage)" }
             return@builder
         }
-
-        doc {
-            doc + """
-            The elements are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentEqualsNullable")""")
             body { "return java.util.Arrays.equals(this, other)" }
         }
 
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayEquals")""")
-                body { "definedExternally" }
-            }
-
-            on(Backend.IR) {
-                body { "return contentEqualsInternal(other)" }
-            }
+            body { "return contentEqualsInternal(other)" }
         }
         on(Platform.Native) {
             fun notEq(operand1: String, operand2: String) = when {
@@ -174,25 +189,39 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.contentDeepEqualsDoc(nullabilityNote: String = "") {
+        doc {
+            """
+            Checks if the two specified arrays are *deeply* equal to one another.
+
+            Two arrays are considered deeply equal if they have the same size, and elements at corresponding indices are deeply equal.
+            That is, if two corresponding elements are nested arrays, they are also compared deeply.
+            Elements of other types are compared for equality using the [equals][Any.equals] function.
+            For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+            """
+        }
+        doc {
+            doc + nullabilityNote
+        }
+        doc {
+            doc + """
+            If any of the arrays contain themselves at any nesting level, the behavior is undefined.
+
+            @param other the array to compare deeply with this array.
+            @return `true` if the two arrays are deeply equal, `false` otherwise.
+            """
+        }
+        sample("samples.collections.Arrays.ContentOperations.contentDeepEquals")
+    }
+
     val f_contentDeepEquals = fn("contentDeepEquals(other: SELF)") {
         include(ArraysOfObjects)
     } builder {
         since("1.1")
         annotation("@kotlin.internal.LowPriorityInOverloadResolution")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *deeply* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-
-            If two corresponding elements are nested arrays, they are also compared deeply.
-            If any of arrays contains itself on any nesting level the behavior is undefined.
-
-            The elements of other types are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
         returns("Boolean")
+        contentDeepEqualsDoc()
         body { "return this.contentDeepEquals(other)" }
         on(Platform.JVM) {
             inlineOnly()
@@ -205,22 +234,13 @@ object ArrayOps : TemplateGroupBase() {
     } builder {
         since("1.4")
         infix(true)
-        doc {
-            """
-            Returns `true` if the two specified arrays are *deeply* equal to one another,
-            i.e. contain the same number of the same elements in the same order.
-            
-            The specified arrays are also considered deeply equal if both are `null`.
-
-            If two corresponding elements are nested arrays, they are also compared deeply.
-            If any of arrays contains itself on any nesting level the behavior is undefined.
-
-            The elements of other types are compared for equality with the [equals][Any.equals] function.
-            For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
-            """
-        }
         receiver("SELF?")
         returns("Boolean")
+        contentDeepEqualsDoc(
+            nullabilityNote = """
+            The arrays are also considered deeply equal if both are `null`.
+            """
+        )
         on(Platform.JVM) {
             inlineOnly()
             annotation("""@JvmName("contentDeepEqualsNullable")""")
@@ -234,14 +254,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepEquals")""")
-                body { "definedExternally" }
-            }
-
-            on(Backend.IR) {
-                body { "return contentDeepEqualsImpl(other)" }
-            }
+            body { "return contentDeepEqualsImpl(other)" }
         }
         on(Platform.Native) {
             body { "return contentDeepEqualsImpl(other)" }
@@ -249,6 +262,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_contentToString = fn("contentToString()") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
@@ -263,9 +277,6 @@ object ArrayOps : TemplateGroupBase() {
         body { "return this.contentToString()" }
         if (f == ArraysOfUnsigned) {
             return@builder
-        }
-        on(Platform.JVM) {
-            inlineOnly()
         }
     }
 
@@ -288,17 +299,10 @@ object ArrayOps : TemplateGroupBase() {
 
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentToStringNullable")""")
             body { "return java.util.Arrays.toString(this)" }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayToString")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
-            }
+            body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
         }
         on(Platform.Native) {
             body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
@@ -357,13 +361,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepToString")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentDeepToStringImpl()" }
-            }
+            body { "return contentDeepToStringImpl()" }
         }
         on(Platform.Native) {
             body { "return contentDeepToStringImpl()" }
@@ -371,6 +369,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
@@ -382,9 +381,6 @@ object ArrayOps : TemplateGroupBase() {
         body { "return this.contentHashCode()" }
         if (f == ArraysOfUnsigned) {
             return@builder
-        }
-        on(Platform.JVM) {
-            inlineOnly()
         }
     }
 
@@ -404,17 +400,10 @@ object ArrayOps : TemplateGroupBase() {
 
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentHashCodeNullable")""")
             body { "return java.util.Arrays.hashCode(this)" }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayHashCode")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentHashCodeInternal()" }
-            }
+            body { "return contentHashCodeInternal()" }
         }
         on(Platform.Native) {
             body {
@@ -477,13 +466,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepHashCode")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentDeepHashCodeInternal()" }
-            }
+            body { "return contentDeepHashCodeInternal()" }
         }
         on(Platform.Native) {
             body { "return contentDeepHashCodeImpl()" }
@@ -491,8 +474,8 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_toPrimitiveArray = fn("toPrimitiveArray()") {
-        include(ArraysOfObjects, PrimitiveType.values().toSet())
-        include(Collections, PrimitiveType.values().toSet())
+        include(ArraysOfObjects, PrimitiveType.entries.toSet())
+        include(Collections, PrimitiveType.entries.toSet())
     } builder {
         val primitive = checkNotNull(primitive)
         val arrayType = primitive.name + "Array"
@@ -744,23 +727,16 @@ object ArrayOps : TemplateGroupBase() {
                     null, PrimitiveType.Boolean, PrimitiveType.Long ->
                         body { "return arrayPlusCollection(this, elements)" }
                     else -> {
-                        on(Backend.Legacy) {
-                            body {
-                                "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)"
-                            }
-                        }
-                        on(Backend.IR) {
-                            // Don't use fillFromCollection because it treats arrays
-                            // as `dynamic` but we need to concrete types to perform
-                            // unboxing of collections elements
-                            body {
-                                """
-                                var index = size
-                                val result = this.copyOf(size + elements.size)
-                                for (element in elements) result[index++] = element
-                                return result
-                                """
-                            }
+                        // Don't use fillFromCollection because it treats arrays
+                        // as `dynamic` but we need to concrete types to perform
+                        // unboxing of collections elements
+                        body {
+                            """
+                            var index = size
+                            val result = this.copyOf(size + elements.size)
+                            for (element in elements) result[index++] = element
+                            return result
+                            """
                         }
                     }
                 }
@@ -1029,6 +1005,9 @@ object ArrayOps : TemplateGroupBase() {
             """
         }
         body { "return copyOfUninitializedElements(0, newSize)" }
+        specialFor(InvariantArraysOfObjects) {
+            explicitActual()
+        }
     }
 
     val f_copyOfUninitializedElements_range = fn("copyOfUninitializedElements(fromIndex: Int, toIndex: Int)") {
@@ -1206,18 +1185,12 @@ object ArrayOps : TemplateGroupBase() {
                 }
                 specialFor(ArraysOfPrimitives) {
                     if (primitive != PrimitiveType.Long) {
-                        on(Backend.Legacy) {
-                            annotation("""@library("primitiveArraySort")""")
-                            body { "definedExternally" }
-                        }
-                        on(Backend.IR) {
-                            if (primitive == PrimitiveType.Char) {
-                                // Requires comparator because default comparator of 'Array.prototype.sort' compares
-                                // string representation of values
-                                body { "nativeSort(::primitiveCompareTo)" }
-                            } else {
-                                body { "nativeSort()" }
-                            }
+                        if (primitive == PrimitiveType.Char) {
+                            // Requires comparator because default comparator of 'Array.prototype.sort' compares
+                            // string representation of values
+                            body { "nativeSort(::primitiveCompareTo)" }
+                        } else {
+                            body { "nativeSort()" }
                         }
                     } else {
                         body {
@@ -1632,8 +1605,19 @@ object ArrayOps : TemplateGroupBase() {
                 body {
                     """
                     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
-                    nativeFill(element, fromIndex, toIndex);
+                    nativeFill(element, fromIndex, toIndex)
                     """
+                }
+                specialFor(ArraysOfPrimitives) {
+                    if (primitive == PrimitiveType.Char) {
+                        body {
+                            """
+                            AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                            // We need to call [Char.code] here to eliminate Char-boxing with the new JS function inlining logic
+                            nativeFill(element.code, fromIndex, toIndex)
+                            """
+                        }
+                    }
                 }
             }
             on(Platform.Native) {

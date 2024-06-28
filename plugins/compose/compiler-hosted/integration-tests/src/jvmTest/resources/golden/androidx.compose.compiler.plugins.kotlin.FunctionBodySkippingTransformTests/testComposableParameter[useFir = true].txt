@@ -1,0 +1,74 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Example(a: Int = 0, b: Int = makeInt(), c: Int = 0) {
+    used(a)
+    used(b)
+    used(c)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Example(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<makeIn...>:Test.kt")
+  val %dirty = %changed
+  if (%default and 0b0001 != 0) {
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%changed and 0b00110000 == 0) {
+    %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
+  }
+  if (%default and 0b0100 != 0) {
+    %dirty = %dirty or 0b000110000000
+  } else if (%changed and 0b000110000000 == 0) {
+    %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+  }
+  if (%dirty and 0b10010011 != 0b10010010 || !%composer.skipping) {
+    %composer.startDefaults()
+    if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+      if (%default and 0b0001 != 0) {
+        a = 0
+      }
+      if (%default and 0b0010 != 0) {
+        b = makeInt(%composer, 0)
+        %dirty = %dirty and 0b01110000.inv()
+      }
+      if (%default and 0b0100 != 0) {
+        c = 0
+      }
+    } else {
+      %composer.skipToGroupEnd()
+      if (%default and 0b0010 != 0) {
+        %dirty = %dirty and 0b01110000.inv()
+      }
+    }
+    %composer.endDefaults()
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    used(a)
+    used(b)
+    used(c)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
+  }
+}

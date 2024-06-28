@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.fastCheckIsNullabilityApplied
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
@@ -89,7 +89,7 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 
             sourceAnnotations.mapNotNullTo(result) { sourceAnnotation ->
                 sourceAnnotation.additionalConverter()
-                    ?: sourceAnnotation.tryConvertAsTarget(support)
+                    ?: sourceAnnotation.tryConvertAsTarget()
                     ?: sourceAnnotation.tryConvertAsRetention()
                     ?: sourceAnnotation.tryConvertAsRepeatable(owner)
                     ?: sourceAnnotation.tryConvertAsMustBeDocumented()

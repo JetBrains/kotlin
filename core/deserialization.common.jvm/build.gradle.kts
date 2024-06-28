@@ -1,5 +1,4 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
@@ -14,14 +13,11 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
 }
 
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" {}
-}
-
-// 1.9 level breaks Kotlin Gradle plugins via changes in enums (KT-48872)
-// We limit api and LV until KGP will stop using Kotlin compiler directly (KT-56574)
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
 }

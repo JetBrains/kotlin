@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
@@ -50,13 +50,13 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasLateinit(): Boolean = hasFlag(ModifierFlag.MEMBER_LATEINIT)
 
-    fun getVisibility(): Visibility {
+    fun getVisibility(publicByDefault: Boolean = false): Visibility {
         return when {
             hasFlag(ModifierFlag.VISIBILITY_PRIVATE) -> Visibilities.Private
             hasFlag(ModifierFlag.VISIBILITY_PUBLIC) -> Visibilities.Public
             hasFlag(ModifierFlag.VISIBILITY_PROTECTED) -> Visibilities.Protected
             hasFlag(ModifierFlag.VISIBILITY_INTERNAL) -> Visibilities.Internal
-            else -> Visibilities.Unknown
+            else -> if (publicByDefault) Visibilities.Public else Visibilities.Unknown
         }
     }
 
@@ -114,7 +114,7 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasConst(): Boolean = hasFlag(ModifierFlag.PARAMETER_CONST)
 
-    protected fun hasFlag(flag: ModifierFlag) = (modifiers and flag.value) == flag.value
+    protected fun hasFlag(flag: ModifierFlag): Boolean = (modifiers and flag.value) == flag.value
 
     protected fun setFlag(flag: ModifierFlag?) {
         if (flag != null) {
@@ -125,7 +125,7 @@ open class Modifier(var modifiers: Long = ModifierFlag.NONE.value) {
     override fun toString(): String {
         val result = StringBuilder()
         var firstAppend = true
-        for (value in ModifierFlag.Values) {
+        for (value in ModifierFlag.entries) {
             if (hasFlag(value) && value != ModifierFlag.NONE) {
                 if (firstAppend) {
                     firstAppend = false

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-302 Report an error when inheriting many implementations of the same member
 
 package kt302

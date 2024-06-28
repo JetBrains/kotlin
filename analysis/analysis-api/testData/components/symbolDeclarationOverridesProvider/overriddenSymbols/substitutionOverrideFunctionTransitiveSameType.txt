@@ -1,0 +1,4 @@
+ALL:
+  test/A.x(obj: T): Unit
+DIRECT:
+  test/A.x(obj: T): Unit

@@ -1,0 +1,65 @@
+element: df.column
+implicit receivers:
+  type: Scope1
+  owner symbol: KaFirLocalVariableSymbol
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 4
+      val DataFrame<Schema1>.column: kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 1
+      val df: DataFrame<DataFrameType>
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 1
+      df: DataFrame<*>
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 4
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 2
+      interface DataFrame<T>
+      annotation class Refine
+    callables: 2
+      fun <T, R> DataFrame<T>.add(columnName: kotlin.String, expression: () -> R): DataFrame<kotlin.Any?>
+      fun test_1(df: DataFrame<*>)
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultStarImportingScope, index = 8
+

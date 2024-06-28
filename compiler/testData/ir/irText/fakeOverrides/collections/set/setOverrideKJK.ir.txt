@@ -1,0 +1,291 @@
+FILE fqName:<root> fileName:/1.kt
+  CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> () returnType:<root>.A [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:add visibility:public modality:ABSTRACT <> ($this:kotlin.collections.AbstractMutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public abstract fun add (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.AbstractMutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun clear (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun contains (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Any?> [fake_override,operator]
+      overridden:
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun remove (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>? [fake_override]
+      overridden:
+        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.A.toArray?>?
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
+      overridden:
+        public abstract size: kotlin.Int declared in <root>.Java1
+      FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
+        overridden:
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    PROPERTY name:size visibility:public modality:OPEN [val]
+      overridden:
+        public abstract size: kotlin.Int declared in <root>.Java1
+      FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'size: kotlin.Int declared in <root>.B.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-size> visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
+        overridden:
+          public abstract fun <get-size> (): kotlin.Int declared in <root>.Java1
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-size>' type=<root>.B origin=null
+    CONSTRUCTOR visibility:public <> (size:kotlin.Int) returnType:<root>.B [primary]
+      VALUE_PARAMETER name:size index:0 type:kotlin.Int
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Java1'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]'
+    FUN FAKE_OVERRIDE name:addAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun addAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun clear (): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:contains visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun contains (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:containsAll visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun containsAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN <> ($this:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?) returnType:kotlin.Unit [fake_override]
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?): kotlin.Unit declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Iterable<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.Any?>?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:isEmpty visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun isEmpty (): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:remove visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, element:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun remove (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:element index:0 type:@[FlexibleNullability] kotlin.Any?
+    FUN FAKE_OVERRIDE name:removeAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN <> ($this:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:retainAll visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>, elements:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public open fun retainAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN <> ($this:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN <> ($this:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>) returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> [fake_override]
+      overridden:
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? [fake_override]
+      overridden:
+        public open fun toArray (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
+    FUN FAKE_OVERRIDE name:toArray visibility:public modality:OPEN <T> ($this:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>, p0:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?) returnType:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>? [fake_override]
+      overridden:
+        public open fun toArray <T> (p0: @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>?): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.Java1.toArray?>? declared in <root>.Java1
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[@[FlexibleNullability] kotlin.Any?] reified:false
+      $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Any?>
+      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] T of <root>.B.toArray?>?
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:add visibility:public modality:OPEN <> ($this:<root>.B, element:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun add (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      VALUE_PARAMETER name:element index:0 type:kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun add (element: kotlin.Any?): kotlin.Boolean declared in <root>.B'
+          CONST Boolean type=kotlin.Boolean value=true
+    FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.collections.MutableIterator<kotlin.Any> [operator]
+      overridden:
+        public abstract fun iterator (): kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.Any?> declared in <root>.Java1
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<kotlin.Any> declared in <root>.B'
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+            <T0>: kotlin.Nothing
+            arg0: CONST Null type=kotlin.Nothing? value=null
+  FUN name:test visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:<root>.A
+    VALUE_PARAMETER name:b index:1 type:<root>.B
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun <get-size> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun add (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.A' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+          element: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public abstract fun add (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.A' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+          element: CONST Null type=kotlin.Nothing? value=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=@[FlexibleNullability] kotlin.Any? origin=null
+          <T>: @[FlexibleNullability] kotlin.Any?
+          $receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun remove (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.A' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+          element: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.A' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+          elements: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Nothing?> origin=null
+            <T>: kotlin.Nothing?
+            element: CONST Null type=kotlin.Nothing? value=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun isNotEmpty <T> (): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=null
+          <T>: @[FlexibleNullability] kotlin.Any?
+          $receiver: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun <get-size> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun add (element: kotlin.Any?): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          element: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun add (element: kotlin.Any?): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          element: CONST Null type=kotlin.Nothing? value=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=@[FlexibleNullability] kotlin.Any? origin=null
+          <T>: @[FlexibleNullability] kotlin.Any?
+          $receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun remove (element: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          element: CONST Int type=kotlin.Int value=1
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun removeAll (elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.Any?>): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
+          elements: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Nothing?> origin=null
+            <T>: kotlin.Nothing?
+            element: CONST Null type=kotlin.Nothing? value=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun isNotEmpty <T> (): kotlin.Boolean declared in kotlin.collections' type=kotlin.Boolean origin=null
+          <T>: @[FlexibleNullability] kotlin.Any?
+          $receiver: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null

@@ -82,7 +82,6 @@ public actual inline fun Long.countOneBits(): Int =
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
-@ExperimentalStdlibApi
 public actual fun Long.countLeadingZeroBits(): Int = wasm_i64_clz(this).toInt()
 
 /**
@@ -141,33 +140,33 @@ public actual inline fun Long.rotateRight(bitCount: Int): Long =
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-actual fun Double.isNaN(): Boolean = this != this
+public actual fun Double.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if the specified number is a
  * Not-a-Number (NaN) value, `false` otherwise.
  */
-actual fun Float.isNaN(): Boolean = this != this
+public actual fun Float.isNaN(): Boolean = this != this
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-actual fun Double.isInfinite(): Boolean = (this == Double.POSITIVE_INFINITY) || (this == Double.NEGATIVE_INFINITY)
+public actual fun Double.isInfinite(): Boolean = (this == Double.POSITIVE_INFINITY) || (this == Double.NEGATIVE_INFINITY)
 
 /**
  * Returns `true` if this value is infinitely large in magnitude.
  */
-actual fun Float.isInfinite(): Boolean = (this == Float.POSITIVE_INFINITY) || (this == Float.NEGATIVE_INFINITY)
+public actual fun Float.isInfinite(): Boolean = (this == Float.POSITIVE_INFINITY) || (this == Float.NEGATIVE_INFINITY)
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
 
 /**
  * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
  */
-actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+public actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]

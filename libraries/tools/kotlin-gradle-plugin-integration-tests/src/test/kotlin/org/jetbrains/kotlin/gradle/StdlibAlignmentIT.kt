@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Stdlib 1.8+ version alignment")
 class StdlibAlignmentIT : KGPBaseTest() {
+
+    val constrainedAlignmentVersion = "1.8.0"
 
     @AndroidGradlePluginTests
     @DisplayName("stdlib-jdk7, stdlib-jdk8 versions aligned with stdlib:1.8+")
@@ -71,6 +74,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
                 |}
                 """.trimMargin()
             )
+            buildGradle.replaceText("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib:1.9.0")
 
             gradleProperties.appendText(
                 """
@@ -105,7 +109,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
                     """
                     |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
                     |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${buildOptions.kotlinVersion}
+                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${constrainedAlignmentVersion}
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -116,25 +120,30 @@ class StdlibAlignmentIT : KGPBaseTest() {
     @DisplayName("alignment in Kotlin DSL")
     @GradleTest
     fun stdlibJdkAlignmentKotlinDsl(gradleVersion: GradleVersion) {
-        project("sourceSetsKotlinDsl", gradleVersion) {
-            buildGradleKts.appendText(
-                """
-                |
-                |dependencies {
-                |   implementation(kotlin("stdlib"))
-                |   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-                |}
-                """.trimMargin()
-            )
-
-            build("dependencies", "--configuration", "compileClasspath") {
-                assertOutputContains(
+        for ((stdlibVersion, alignedVersion) in listOf(
+            defaultBuildOptions.kotlinVersion to constrainedAlignmentVersion,
+            "1.9.0" to "1.9.0"
+        )) {
+            project("sourceSetsKotlinDsl", gradleVersion) {
+                buildGradleKts.appendText(
                     """
-                    |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
-                    |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${buildOptions.kotlinVersion}
-                    """.trimMargin().normalizeLineEndings()
+                    |
+                    |dependencies {
+                    |   implementation(kotlin("stdlib", version = "$stdlibVersion"))
+                    |   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+                    |}
+                    """.trimMargin()
                 )
+
+                build("dependencies", "--configuration", "compileClasspath") {
+                    assertOutputContains(
+                        """
+                        |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
+                        |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
+                        |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${alignedVersion}
+                        """.trimMargin().normalizeLineEndings()
+                    )
+                }
             }
         }
     }

@@ -1,0 +1,12 @@
+library {
+  // module name: <simpleReferenceToDarwinApi>
+
+  library fragment {
+    // package name: simple
+
+    package {
+
+      public final fun use(): platform/Foundation/NSString
+    }
+  }
+}

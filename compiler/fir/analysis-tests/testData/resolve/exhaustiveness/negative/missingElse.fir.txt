@@ -1,6 +1,6 @@
 FILE: missingElse.kt
     public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
-        lval x: R|kotlin/Unit| = when (R|<local>/a|) {
+        lval x: R|kotlin/Int| = when (R|<local>/a|) {
             ($subj$ is R|kotlin/Int|) ->  {
                 Int(1)
             }

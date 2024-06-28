@@ -1,5 +1,5 @@
-// !API_VERSION: 1.5
-// !OPT_IN: kotlin.ExperimentalStdlibApi
+// API_VERSION: 1.5
+// OPT_IN: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 

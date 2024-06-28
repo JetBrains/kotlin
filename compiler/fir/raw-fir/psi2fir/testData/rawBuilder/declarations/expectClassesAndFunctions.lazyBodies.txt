@@ -1,0 +1,33 @@
+FILE: expectClassesAndFunctions.kt
+    public final? expect class A : R|kotlin/Any| {
+    }
+    public open class B : R|kotlin/Any| {
+        public? constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public open class C : R|kotlin/Any| {
+        public? constructor(): R|C| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final? expect class D : B {
+        public? expect error_constructor(): R|D| {
+            LAZY_super<B>
+        }
+
+    }
+    public final? expect class E : B, C {
+        public? expect error_constructor(): R|E| {
+            LAZY_super<B>
+            LAZY_super<C>
+        }
+
+    }
+    public? final? expect fun f(): R|kotlin/Unit|
+    public final? expect annotation class G : R|kotlin/Annotation| {
+    }
+    public final? expect class H : E {
+    }

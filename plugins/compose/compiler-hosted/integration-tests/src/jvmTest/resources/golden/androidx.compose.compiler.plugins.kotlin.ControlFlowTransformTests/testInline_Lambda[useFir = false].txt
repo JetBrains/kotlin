@@ -1,0 +1,49 @@
+//
+// Source
+// ------------------------------------------
+
+fun Test(condition: Boolean) {
+    T {
+        compose {
+            M1 {
+                if (condition) return@compose
+            }
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+fun Test(condition: Boolean) {
+  T {
+    %this%T.compose(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+      sourceInformation(%composer, "C<M1>:Test.kt")
+      val tmp0_marker = %composer.currentMarker
+      if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
+        if (isTraceInProgress()) {
+          traceEventStart(<>, %changed, -1, <>)
+        }
+        M1({ %composer: Composer?, %changed: Int ->
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C:Test.kt")
+          if (condition) {
+            %composer.endToMarker(tmp0_marker)
+            if (isTraceInProgress()) {
+              traceEventEnd()
+            }
+            return@composableLambdaInstance
+          }
+          %composer.endReplaceGroup()
+        }, %composer, 0)
+        if (isTraceInProgress()) {
+          traceEventEnd()
+        }
+      } else {
+        %composer.skipToGroupEnd()
+      }
+    }
+    )
+  }
+}

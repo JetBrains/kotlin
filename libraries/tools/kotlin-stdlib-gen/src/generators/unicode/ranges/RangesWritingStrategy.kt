@@ -12,7 +12,6 @@ import java.io.FileWriter
 
 internal sealed class RangesWritingStrategy {
     abstract val indentation: String
-    abstract val rangesAnnotation: String
     abstract val rangesVisibilityModifier: String
     abstract fun beforeWritingRanges(writer: FileWriter)
     abstract fun afterWritingRanges(writer: FileWriter)
@@ -22,15 +21,14 @@ internal sealed class RangesWritingStrategy {
         fun of(target: KotlinTarget, wrapperName: String? = null): RangesWritingStrategy {
             return when (target.platform) {
                 Platform.JS -> JsRangesWritingStrategy(wrapperName!!)
-                else -> NativeRangesWritingStrategy(useNativeRangesAnnotation = target.backend != Backend.Wasm)
+                else -> NativeRangesWritingStrategy
             }
         }
     }
 }
 
-internal class NativeRangesWritingStrategy(private val useNativeRangesAnnotation: Boolean) : RangesWritingStrategy() {
+internal object NativeRangesWritingStrategy : RangesWritingStrategy() {
     override val indentation: String get() = ""
-    override val rangesAnnotation: String get() = if (useNativeRangesAnnotation) "@SharedImmutable\n" else ""
     override val rangesVisibilityModifier: String get() = "private"
     override fun beforeWritingRanges(writer: FileWriter) {}
     override fun afterWritingRanges(writer: FileWriter) {}
@@ -42,7 +40,6 @@ internal class JsRangesWritingStrategy(
     private val wrapperName: String
 ) : RangesWritingStrategy() {
     override val indentation: String get() = " ".repeat(4)
-    override val rangesAnnotation: String get() = ""
     override val rangesVisibilityModifier: String get() = "internal"
 
     override fun beforeWritingRanges(writer: FileWriter) {

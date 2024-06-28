@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 abstract class ConeSubstitutor : TypeSubstitutorMarker {
     open fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType = substituteOrNull(type) ?: type
     abstract fun substituteOrNull(type: ConeKotlinType): ConeKotlinType?
+    abstract fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection?
 
     object Empty : ConeSubstitutor() {
         override fun substituteOrSelf(type: ConeKotlinType): ConeKotlinType {
@@ -21,6 +23,11 @@ abstract class ConeSubstitutor : TypeSubstitutorMarker {
             return null
         }
 
+        override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
+            return null
+        }
+
+        override fun toString(): String = "Empty"
     }
 }
 

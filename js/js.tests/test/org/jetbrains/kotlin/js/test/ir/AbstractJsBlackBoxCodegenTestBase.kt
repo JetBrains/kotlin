@@ -12,16 +12,21 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.IrMangledNameAndSignatureDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.JsIrInterpreterDumpHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
+import org.jetbrains.kotlin.test.backend.handlers.KlibInterpreterDumpHandler
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
-import org.jetbrains.kotlin.test.services.JsLibraryProvider
+import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -53,15 +58,10 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForJsBlackBoxCodegenTest() {
-        globalDefaults {
-            frontend = targetFrontend
-            targetPlatform = JsPlatforms.defaultJsPlatform
-            dependencyKind = DependencyKind.Binary
-        }
+        commonConfigurationForJsCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         defaultDirectives {
-            +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
             JsEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
             JsEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
             JsEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
@@ -71,52 +71,99 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
             if (getBoolean("kotlin.js.ir.skipRegularMode")) +JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE
         }
 
+        useAdditionalSourceProviders(
+            ::JsAdditionalSourceProvider,
+            ::CoroutineHelpersSourceFilesProvider,
+        )
+
         forTestsNotMatching("compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*") {
             defaultDirectives {
                 DIAGNOSTICS with "-warnings"
             }
         }
 
-        forTestsNotMatching("compiler/testData/codegen/boxError/*") {
-            enableMetaInfoHandler()
+        enableMetaInfoHandler()
+
+        configureIrHandlersStep {
+            useHandlers(::IrMangledNameAndSignatureDumpHandler)
         }
 
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::JsEnvironmentConfigurator,
-        )
-
-        useAdditionalSourceProviders(
-            ::JsAdditionalSourceProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-        )
-
-        useAdditionalService(::JsLibraryProvider)
-
-        useAfterAnalysisCheckers(
-            ::JsFailingTestSuppressor,
-            ::BlackBoxCodegenSuppressor,
-            ::JsArtifactsDumpHandler
-        )
-
-        facadeStep(frontendFacade)
-        classicFrontendHandlersStep {
-            commonClassicFrontendHandlersForCodegenTest()
-            useHandlers(::ClassicDiagnosticsHandler)
-        }
-
-        firHandlersStep {
-            useHandlers(::FirDiagnosticsHandler)
-        }
-
-        facadeStep(frontendToBackendConverter)
-        irHandlersStep()
-
-        facadeStep(backendFacade)
         afterBackendFacade?.let { facadeStep(it) }
         facadeStep(recompileFacade)
         jsArtifactsHandlersStep {
             useHandlers(::JsSourceMapPathRewriter)
         }
+
+        useAfterAnalysisCheckers(
+            ::JsArtifactsDumpHandler
+        )
+
+        forTestsMatching("compiler/testData/codegen/box/involvesIrInterpreter/*") {
+            enableMetaInfoHandler()
+            configureKlibArtifactsHandlersStep {
+                useHandlers(::KlibInterpreterDumpHandler)
+            }
+            configureJsArtifactsHandlersStep {
+                useHandlers(::JsIrInterpreterDumpHandler)
+            }
+        }
+
+        forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+            defaultDirectives {
+                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
+            }
+        }
+    }
+}
+
+@Suppress("reformat")
+fun <
+    R : ResultingArtifact.FrontendOutput<R>,
+    I : ResultingArtifact.BackendInput<I>,
+    A : ResultingArtifact.Binary<A>
+> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
+    targetFrontend: FrontendKind<R>,
+    frontendFacade: Constructor<FrontendFacade<R>>,
+    frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
+    backendFacade: Constructor<BackendFacade<I, A>>,
+) {
+    globalDefaults {
+        frontend = targetFrontend
+        targetPlatform = JsPlatforms.defaultJsPlatform
+        dependencyKind = DependencyKind.Binary
+    }
+
+    defaultDirectives {
+        +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+    }
+
+    useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::JsEnvironmentConfigurator,
+    )
+
+    useAdditionalService(::LibraryProvider)
+
+    useAfterAnalysisCheckers(
+        ::JsFailingTestSuppressor,
+        ::BlackBoxCodegenSuppressor,
+    )
+
+    facadeStep(frontendFacade)
+    classicFrontendHandlersStep {
+        commonClassicFrontendHandlersForCodegenTest()
+        useHandlers(::ClassicDiagnosticsHandler)
+    }
+
+    firHandlersStep {
+        useHandlers(::FirDiagnosticsHandler)
+    }
+
+    facadeStep(frontendToBackendConverter)
+    irHandlersStep()
+
+    facadeStep(backendFacade)
+    klibArtifactsHandlersStep {
+        useHandlers(::KlibBackendDiagnosticsHandler)
     }
 }

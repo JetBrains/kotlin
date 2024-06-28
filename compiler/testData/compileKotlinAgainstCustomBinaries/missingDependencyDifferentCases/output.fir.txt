@@ -1,0 +1,10 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyDifferentCases/source.kt:6:7: error: cannot access class 'a.A'. Check your module classpath for missing or conflicting dependencies.
+    b.returnType()
+      ^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyDifferentCases/source.kt:7:7: error: cannot access class 'a.A'. Check your module classpath for missing or conflicting dependencies.
+    b.parameter(null)
+      ^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/missingDependencyDifferentCases/source.kt:8:10: error: cannot access class 'a.A'. Check your module classpath for missing or conflicting dependencies.
+    null.extensionReceiver()
+         ^^^^^^^^^^^^^^^^^
+COMPILATION_ERROR

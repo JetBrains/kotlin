@@ -73,6 +73,11 @@ public final class AccessorIdSignature extends
             flags_ = input.readInt64();
             break;
           }
+          case 40: {
+            bitField0_ |= 0x00000010;
+            debugInfo_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -167,11 +172,27 @@ public final class AccessorIdSignature extends
     return flags_;
   }
 
+  public static final int DEBUG_INFO_FIELD_NUMBER = 5;
+  private int debugInfo_;
+  /**
+   * <code>optional int32 debug_info = 5;</code>
+   */
+  public boolean hasDebugInfo() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>optional int32 debug_info = 5;</code>
+   */
+  public int getDebugInfo() {
+    return debugInfo_;
+  }
+
   private void initFields() {
     propertySignature_ = 0;
     name_ = 0;
     accessorHashId_ = 0L;
     flags_ = 0L;
+    debugInfo_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -210,6 +231,9 @@ public final class AccessorIdSignature extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       output.writeInt64(4, flags_);
     }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeInt32(5, debugInfo_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -234,6 +258,10 @@ public final class AccessorIdSignature extends
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(4, flags_);
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(5, debugInfo_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -337,6 +365,8 @@ public final class AccessorIdSignature extends
       bitField0_ = (bitField0_ & ~0x00000004);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
+      debugInfo_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -376,6 +406,10 @@ public final class AccessorIdSignature extends
         to_bitField0_ |= 0x00000008;
       }
       result.flags_ = flags_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.debugInfo_ = debugInfo_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -393,6 +427,9 @@ public final class AccessorIdSignature extends
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
+      }
+      if (other.hasDebugInfo()) {
+        setDebugInfo(other.getDebugInfo());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -558,6 +595,38 @@ public final class AccessorIdSignature extends
     public Builder clearFlags() {
       bitField0_ = (bitField0_ & ~0x00000008);
       flags_ = 0L;
+      
+      return this;
+    }
+
+    private int debugInfo_ ;
+    /**
+     * <code>optional int32 debug_info = 5;</code>
+     */
+    public boolean hasDebugInfo() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int32 debug_info = 5;</code>
+     */
+    public int getDebugInfo() {
+      return debugInfo_;
+    }
+    /**
+     * <code>optional int32 debug_info = 5;</code>
+     */
+    public Builder setDebugInfo(int value) {
+      bitField0_ |= 0x00000010;
+      debugInfo_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 debug_info = 5;</code>
+     */
+    public Builder clearDebugInfo() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      debugInfo_ = 0;
       
       return this;
     }

@@ -9,14 +9,16 @@ public abstract class MindMap {
     public bridge final method entrySet(): java.util.Set
     public final @org.jetbrains.annotations.Nullable method get(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.String
     public abstract method get(p0: int): java.lang.String
-    public bridge final method get(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method get(p0: java.lang.Object): java.lang.Object
     public abstract method getEntries(): java.util.Set
     public abstract method getKeys(): java.util.Set
     public abstract method getSize(): int
     public abstract method getValues(): java.util.Collection
     public bridge final method keySet(): java.util.Set
     public abstract method remove(p0: int): java.lang.String
-    public bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public synthetic bridge final method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method remove(p0: java.lang.Object): java.lang.String
     public bridge final method size(): int
     public bridge final method values(): java.util.Collection
+    public inner class java/util/Map$Entry
 }

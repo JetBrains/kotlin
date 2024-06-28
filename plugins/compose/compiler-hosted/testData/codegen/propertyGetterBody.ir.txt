@@ -1,0 +1,129 @@
+MODULE_FRAGMENT
+  FILE fqName:home fileName:main.kt
+    FUN name:Home visibility:public modality:FINAL <> ($composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int) returnType:kotlin.Unit
+      annotations:
+        Composable
+      VALUE_PARAMETER name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
+      VALUE_PARAMETER name:$changed index:1 type:kotlin.Int
+      BLOCK_BODY
+        BLOCK type=kotlin.Unit origin=null
+          SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=kotlin.Unit origin=null
+            CALL 'public abstract fun startRestartGroup (key: kotlin.Int): androidx.compose.runtime.Composer declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.Composer origin=null
+              $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+              key: CONST Int type=kotlin.Int value=289538687
+          CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+            composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+            sourceInformation: CONST String type=kotlin.String value="C(Home)52@317L41,53@363L38:main.kt#1wrmn"
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=OROR
+              BRANCH
+                if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                  $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                    arg0: GET_VAR '$changed: kotlin.Int declared in home.Home' type=kotlin.Int origin=null
+                    arg1: CONST Int type=kotlin.Int value=0
+                then: CONST Boolean type=kotlin.Boolean value=true
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                  $this: CALL 'public abstract fun <get-skipping> (): kotlin.Boolean declared in androidx.compose.runtime.Composer' type=kotlin.Boolean origin=null
+                    $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+            then: BLOCK type=kotlin.Unit origin=null
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                  then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                    key: CONST Int type=kotlin.Int value=289538687
+                    dirty1: GET_VAR '$changed: kotlin.Int declared in home.Home' type=kotlin.Int origin=null
+                    dirty2: CONST Int type=kotlin.Int value=-1
+                    info: CONST String type=kotlin.String value="home.Home (main.kt:51)"
+              LOCAL_DELEGATED_PROPERTY name:emailState type:home.EmailState flags:val
+                VAR PROPERTY_DELEGATE name:emailState$delegate type:androidx.compose.runtime.MutableState<home.EmailState> [val]
+                  BLOCK type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
+                    BLOCK type=kotlin.Unit origin=null
+                      CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                        $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                        key: CONST Int type=kotlin.Int value=-2008705801
+                      CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                        composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                        sourceInformation: CONST String type=kotlin.String value="CC(remember):main.kt#9igjgp"
+                    VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:androidx.compose.runtime.MutableState<home.EmailState> [val]
+                      CALL 'public final fun cache <T> (invalid: kotlin.Boolean, block: @[DisallowComposableCalls] kotlin.Function0<T of androidx.compose.runtime.cache>): T of androidx.compose.runtime.cache [inline] declared in androidx.compose.runtime' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
+                        <T>: androidx.compose.runtime.MutableState<home.EmailState>
+                        $receiver: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                        invalid: CONST Boolean type=kotlin.Boolean value=false
+                        block: FUN_EXPR type=kotlin.Function0<androidx.compose.runtime.MutableState<home.EmailState>> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:androidx.compose.runtime.MutableState<home.EmailState>
+                            BLOCK_BODY
+                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): androidx.compose.runtime.MutableState<home.EmailState> declared in home.Home'
+                                CALL 'public final fun mutableStateOf <T> (value: T of androidx.compose.runtime.mutableStateOf, policy: androidx.compose.runtime.SnapshotMutationPolicy<T of androidx.compose.runtime.mutableStateOf>): androidx.compose.runtime.MutableState<T of androidx.compose.runtime.mutableStateOf> declared in androidx.compose.runtime' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
+                                  <T>: home.EmailState
+                                  value: CONSTRUCTOR_CALL 'public constructor <init> (email: kotlin.String?) [primary] declared in home.EmailState' type=home.EmailState origin=null
+                    CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+                      $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                    GET_VAR 'val tmp_0: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
+                FUN DELEGATED_PROPERTY_ACCESSOR name:<get-emailState> visibility:local modality:FINAL <> () returnType:home.EmailState
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <get-emailState> (): home.EmailState declared in home.Home'
+                      CALL 'public final fun getValue <T> (thisObj: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of androidx.compose.runtime.getValue [inline,operator] declared in androidx.compose.runtime' type=home.EmailState origin=null
+                        <T>: home.EmailState
+                        $receiver: GET_VAR 'val emailState$delegate: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' type=androidx.compose.runtime.MutableState<home.EmailState> origin=null
+                        thisObj: CONST Null type=kotlin.Nothing? value=null
+                        property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val emailState: home.EmailState by (...)' delegate='val emailState$delegate: androidx.compose.runtime.MutableState<home.EmailState> [val] declared in home.Home' getter='local final fun <get-emailState> (): home.EmailState declared in home.Home' setter=null type=kotlin.reflect.KProperty0<home.EmailState> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              CALL 'public final fun Column (content: @[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit [inline] declared in compose.ui' type=kotlin.Unit origin=null
+                content: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<compose.ui.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:compose.ui.ColumnScope, $composer:androidx.compose.runtime.Composer?, $changed:kotlin.Int) returnType:kotlin.Unit
+                    annotations:
+                      Composable
+                    $receiver: VALUE_PARAMETER name:$this$Column type:compose.ui.ColumnScope
+                    VALUE_PARAMETER name:$composer index:0 type:androidx.compose.runtime.Composer? [assignable]
+                    VALUE_PARAMETER name:$changed index:1 type:kotlin.Int
+                    BLOCK_BODY
+                      BLOCK type=kotlin.Unit origin=null
+                        CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                          composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                          key: CONST Int type=kotlin.Int value=735227335
+                          sourceInformation: CONST String type=kotlin.String value="C:main.kt#1wrmn"
+                        COMPOSITE type=kotlin.Unit origin=null
+                          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                            CALL 'public final fun <get-text> (): kotlin.String [fake_override] declared in home.EmailState' type=kotlin.String origin=GET_PROPERTY
+                              $this: CALL 'local final fun <get-emailState> (): home.EmailState declared in home.Home' type=home.EmailState origin=GET_LOCAL_PROPERTY
+                        CALL 'public final fun sourceInformationMarkerEnd (composer: androidx.compose.runtime.Composer): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                          composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+                $changed: CONST Int type=kotlin.Int value=0
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+                  then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL 'public abstract fun skipToGroupEnd (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+              $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+        BLOCK type=kotlin.Unit origin=null
+          BLOCK type=kotlin.Unit origin=SAFE_CALL
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:androidx.compose.runtime.ScopeUpdateScope? [val]
+              CALL 'public abstract fun endRestartGroup (): androidx.compose.runtime.ScopeUpdateScope? declared in androidx.compose.runtime.Composer' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                $this: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=androidx.compose.runtime.Composer? origin=null
+            WHEN type=kotlin.Unit origin=IF
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=null
+                  arg0: GET_VAR 'val tmp_1: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Home' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  arg1: CONST Null type=kotlin.Any? value=null
+                then: CONST Null type=kotlin.Any? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CALL 'public abstract fun updateScope (block: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in androidx.compose.runtime.ScopeUpdateScope' type=kotlin.Unit origin=null
+                  $this: GET_VAR 'val tmp_1: androidx.compose.runtime.ScopeUpdateScope? [val] declared in home.Home' type=androidx.compose.runtime.ScopeUpdateScope? origin=null
+                  block: FUN_EXPR type=kotlin.Function2<androidx.compose.runtime.Composer?, kotlin.Int, kotlin.Unit> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($composer:androidx.compose.runtime.Composer?, $force:kotlin.Int) returnType:kotlin.Unit
+                      VALUE_PARAMETER name:$composer index:0 type:androidx.compose.runtime.Composer?
+                      VALUE_PARAMETER name:$force index:1 type:kotlin.Int
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> ($composer: androidx.compose.runtime.Composer?, $force: kotlin.Int): kotlin.Unit declared in home.Home'
+                          CALL 'public final fun Home ($composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in home' type=kotlin.Unit origin=null
+                            $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? declared in home.Home.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
+                            $changed: CALL 'internal final fun updateChangedFlags (flags: kotlin.Int): kotlin.Int declared in androidx.compose.runtime' type=kotlin.Int origin=null
+                              flags: CALL 'public final fun or (other: kotlin.Int): kotlin.Int [infix] declared in kotlin.Int' type=kotlin.Int origin=null
+                                $this: GET_VAR '$changed: kotlin.Int declared in home.Home' type=kotlin.Int origin=null
+                                other: CONST Int type=kotlin.Int value=1

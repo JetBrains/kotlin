@@ -14,14 +14,26 @@ interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
+class Runtime(private val llvmContext: LLVMContextRef, bitcodeFile: String) {
     val llvmModule: LLVMModuleRef = parseBitcodeFile(llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
-    private fun getStructTypeOrNull(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")
+    private fun getStructTypeOrNull(name: String) =
+            LLVMGetTypeByName(llvmModule, "struct.$name")
+                    ?: LLVMGetNamedGlobal(llvmModule, "touch$name")?.let(::LLVMGlobalGetValueType)
+
     private fun getStructType(name: String) = getStructTypeOrNull(name)
-            ?: error("struct.$name is not found in the Runtime module.")
+            ?: error("type $name is not found in the Runtime module.")
+
+    private fun createStructType(name: String, vararg fieldTypes: LLVMTypeRef): LLVMTypeRef {
+        val result = LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
+        LLVMStructSetBody(result, fieldTypes.toList().toCValues(), fieldTypes.size, 0)
+        return result
+    }
+
+    private fun createOpaqueStructType(name: String): LLVMTypeRef =
+            LLVMStructCreateNamed(llvmContext, name) ?: error("failed to create struct $name")
 
     val typeInfoType = getStructType("TypeInfo")
     val extendedTypeInfoType = getStructType("ExtendedTypeInfo")
@@ -35,6 +47,9 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val arrayHeaderType = getStructType("ArrayHeader")
 
     val frameOverlayType = getStructType("FrameOverlay")
+
+    val initNodeType = getStructType("InitNode")
+    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")!!
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
@@ -50,14 +65,46 @@ class Runtime(llvmContext: LLVMContextRef, bitcodeFile: String) {
     val kotlinToObjCMethodAdapter by lazy { getStructType("KotlinToObjCMethodAdapter") }
     val typeInfoObjCExportAddition by lazy { getStructType("TypeInfoObjCExportAddition") }
 
-    val objCClassObjectType by lazy { getStructType("_class_t") }
-    val objCCache by lazy { getStructType("_objc_cache") }
-    val objCClassRoType by lazy { getStructType("_class_ro_t") }
-    val objCMethodType by lazy { getStructType("_objc_method") }
-    val objCMethodListType by lazy { getStructType("__method_list_t") }
-    val objCProtocolListType by lazy { getStructType("_objc_protocol_list") }
-    val objCIVarListType by lazy { getStructType("_ivar_list_t") }
-    val objCPropListType by lazy { getStructType("_prop_list_t") }
+    val objCClassObjectType: LLVMTypeRef by lazy {
+        val result = LLVMStructCreateNamed(llvmContext, "_class_t") ?: error("failed to create struct _class_t")
+        val fieldTypes = listOf(
+                pointerType(result),
+                pointerType(result),
+                pointerType(objCCache),
+                pointerType(pointerType(functionType(i8Ptr, false, i8Ptr, i8Ptr))),
+                pointerType(objCClassRoType)
+        )
+        LLVMStructSetBody(result, fieldTypes.toList().toCValues(), fieldTypes.size, 0)
+        result
+    }
+    val objCCache by lazy { createOpaqueStructType("_objc_cache") }
+    val objCClassRoType by lazy {
+        createStructType(
+                "_class_ro_t",
+                i32,
+                i32,
+                i32,
+                i8Ptr,
+                i8Ptr,
+                pointerType(objCMethodListType),
+                pointerType(objCProtocolListType),
+                pointerType(objCIVarListType),
+                i8Ptr,
+                pointerType(objCPropListType)
+        )
+    }
+    val objCMethodType by lazy {
+        createStructType("_objc_method", i8Ptr, i8Ptr, i8Ptr)
+    }
+
+    private val i32 = LLVMInt32TypeInContext(llvmContext)!!
+    private val i8 = LLVMInt8TypeInContext(llvmContext)!!
+    private val i8Ptr = pointerType(i8)
+
+    val objCMethodListType by lazy { createOpaqueStructType("__method_list_t") }
+    val objCProtocolListType by lazy { createOpaqueStructType("_objc_protocol_list") }
+    val objCIVarListType by lazy { createOpaqueStructType("_ivar_list_t") }
+    val objCPropListType by lazy { createOpaqueStructType("_prop_list_t") }
 
     val kRefSharedHolderType by lazy { LLVMGetTypeByName(llvmModule, "class.KRefSharedHolder")!! }
     val blockLiteralType by lazy { getStructType("Block_literal_1") }

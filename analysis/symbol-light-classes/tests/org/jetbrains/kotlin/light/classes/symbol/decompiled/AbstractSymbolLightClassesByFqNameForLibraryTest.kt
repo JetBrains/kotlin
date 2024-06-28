@@ -11,5 +11,5 @@ import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.A
 abstract class AbstractSymbolLightClassesByFqNameForLibraryTest : AbstractSymbolLightClassesByFqNameTest(
     AnalysisApiSymbolLightClassesDecompiledTestConfigurator,
     EXTENSIONS.LIB_JAVA,
-    stopIfCompilationErrorDirectivePresent = true,
+    isTestAgainstCompiledCode = true,
 )

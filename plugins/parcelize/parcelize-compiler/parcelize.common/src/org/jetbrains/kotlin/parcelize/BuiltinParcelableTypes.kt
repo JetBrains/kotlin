@@ -15,6 +15,27 @@ package org.jetbrains.kotlin.parcelize
  * reflection, as well as all objects, enums, and function types (since they are implicitly serializable).
  */
 object BuiltinParcelableTypes {
+    val IMMUTABLE_LIST_FQNAMES = setOf(
+        kotlinxImmutable("PersistentList"),
+        kotlinxImmutable("ImmutableList"),
+    )
+
+    val IMMUTABLE_SET_FQNAMES = setOf(
+        kotlinxImmutable("PersistentSet"),
+        kotlinxImmutable("ImmutableSet"),
+    )
+
+    val IMMUTABLE_MAP_FQNAMES = setOf(
+        kotlinxImmutable("PersistentMap"),
+        kotlinxImmutable("ImmutableMap"),
+    )
+
+    val IMMUTABLE_COLLECTIONS_FQNAMES = setOf(
+        *IMMUTABLE_LIST_FQNAMES.toTypedArray(),
+        *IMMUTABLE_SET_FQNAMES.toTypedArray(),
+        *IMMUTABLE_MAP_FQNAMES.toTypedArray()
+    )
+
     val PARCELABLE_SUPERTYPE_FQNAMES = setOf(
         "android.os.Parcelable",
         "android.os.IBinder",
@@ -65,6 +86,7 @@ object BuiltinParcelableTypes {
         "kotlin.ULongArray",
         "kotlin.UShort",
         "kotlin.UShortArray",
+        "kotlin.time.Duration",
     ) + PARCELABLE_SUPERTYPE_FQNAMES
 
     val PARCELABLE_CONTAINER_FQNAMES = setOf(
@@ -97,5 +119,6 @@ object BuiltinParcelableTypes {
         "kotlin.collections.MutableMap",
         "kotlin.collections.MutableSet",
         "kotlin.collections.Set",
+        *IMMUTABLE_COLLECTIONS_FQNAMES.toTypedArray(),
     )
 }

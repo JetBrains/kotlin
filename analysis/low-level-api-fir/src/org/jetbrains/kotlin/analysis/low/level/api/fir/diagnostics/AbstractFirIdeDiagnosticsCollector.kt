@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.platform.SimplePlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -49,7 +51,7 @@ private object CheckersFactory {
         useExtendedCheckers: Boolean
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
-        val platform = module.platform.componentPlatforms.first()
+        val platform = module.targetPlatform
         val extensionCheckers = session.extensionService.additionalCheckers
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)
@@ -70,7 +72,7 @@ private object CheckersFactory {
 
     private fun createDeclarationCheckers(
         useExtendedCheckers: Boolean,
-        platform: SimplePlatform,
+        platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): DeclarationCheckers {
         return if (useExtendedCheckers) {
@@ -78,9 +80,11 @@ private object CheckersFactory {
         } else {
             createDeclarationCheckers {
                 add(CommonDeclarationCheckers)
-                when (platform) {
-                    is JvmPlatform -> add(JvmDeclarationCheckers)
-                    is JsPlatform -> add(JsDeclarationCheckers)
+                add(CommonIdeOnlyDeclarationCheckers)
+                when {
+                    platform.isJvm() -> add(JvmDeclarationCheckers)
+                    platform.isJs() -> add(JsDeclarationCheckers)
+                    platform.isNative() -> add(NativeDeclarationCheckers)
                     else -> {}
                 }
                 addAll(extensionCheckers.map { it.declarationCheckers })
@@ -90,7 +94,7 @@ private object CheckersFactory {
 
     private fun createExpressionCheckers(
         useExtendedCheckers: Boolean,
-        platform: SimplePlatform,
+        platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): ExpressionCheckers {
         return if (useExtendedCheckers) {
@@ -98,9 +102,9 @@ private object CheckersFactory {
         } else {
             createExpressionCheckers {
                 add(CommonExpressionCheckers)
-                when (platform) {
-                    is JvmPlatform -> add(JvmExpressionCheckers)
-                    is JsPlatform -> add(JsExpressionCheckers)
+                when {
+                    platform.isJvm() -> add(JvmExpressionCheckers)
+                    platform.isJs() -> add(JsExpressionCheckers)
                     else -> {
                     }
                 }
@@ -109,12 +113,16 @@ private object CheckersFactory {
         }
     }
 
-    private fun createTypeCheckers(useExtendedCheckers: Boolean, platform: SimplePlatform, extensionCheckers: List<FirAdditionalCheckersExtension>): TypeCheckers {
+    private fun createTypeCheckers(
+        useExtendedCheckers: Boolean,
+        platform: TargetPlatform,
+        extensionCheckers: List<FirAdditionalCheckersExtension>,
+    ): TypeCheckers {
         if (useExtendedCheckers) return ExtendedTypeCheckers
         return createTypeCheckers {
             add(CommonTypeCheckers)
-            when (platform) {
-                is JvmPlatform -> add(JvmTypeCheckers)
+            when {
+                platform.isJvm() -> add(JvmTypeCheckers)
                 else -> {}
             }
             addAll(extensionCheckers.map { it.typeCheckers })
@@ -132,7 +140,7 @@ private object CheckersFactory {
     private fun createDeclarationCheckers(declarationCheckers: List<DeclarationCheckers>): DeclarationCheckers {
         return when (declarationCheckers.size) {
             1 -> declarationCheckers.single()
-            else -> ComposedDeclarationCheckers().apply {
+            else -> ComposedDeclarationCheckers { true }.apply {
                 declarationCheckers.forEach(::register)
             }
         }
@@ -146,7 +154,7 @@ private object CheckersFactory {
     private fun createExpressionCheckers(expressionCheckers: List<ExpressionCheckers>): ExpressionCheckers {
         return when (expressionCheckers.size) {
             1 -> expressionCheckers.single()
-            else -> ComposedExpressionCheckers().apply {
+            else -> ComposedExpressionCheckers { true }.apply {
                 expressionCheckers.forEach(::register)
             }
         }
@@ -160,7 +168,7 @@ private object CheckersFactory {
     private fun createTypeCheckers(typeCheckers: List<TypeCheckers>): TypeCheckers {
         return when (typeCheckers.size) {
             1 -> typeCheckers.single()
-            else -> ComposedTypeCheckers().apply {
+            else -> ComposedTypeCheckers { true }.apply {
                 typeCheckers.forEach(::register)
             }
         }

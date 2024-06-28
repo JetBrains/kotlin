@@ -31,6 +31,17 @@ abstract class JsBinaryArtifactHandler(
     doNotRunIfThereWerePreviousFailures
 )
 
+abstract class KlibArtifactHandler(
+    testServices: TestServices,
+    failureDisablesNextSteps: Boolean = false,
+    doNotRunIfThereWerePreviousFailures: Boolean = false
+) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
+    testServices,
+    ArtifactKinds.KLib,
+    failureDisablesNextSteps,
+    doNotRunIfThereWerePreviousFailures
+)
+
 abstract class NativeBinaryArtifactHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = false,
@@ -38,6 +49,17 @@ abstract class NativeBinaryArtifactHandler(
 ) : BinaryArtifactHandler<BinaryArtifacts.Native>(
     testServices,
     ArtifactKinds.Native,
+    failureDisablesNextSteps,
+    doNotRunIfThereWerePreviousFailures
+)
+
+abstract class WasmBinaryArtifactHandler(
+    testServices: TestServices,
+    failureDisablesNextSteps: Boolean = false,
+    doNotRunIfThereWerePreviousFailures: Boolean = false
+) : BinaryArtifactHandler<BinaryArtifacts.Wasm>(
+    testServices,
+    ArtifactKinds.Wasm,
     failureDisablesNextSteps,
     doNotRunIfThereWerePreviousFailures
 )

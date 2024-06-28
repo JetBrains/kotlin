@@ -1,3 +1,4 @@
+import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.konan.target.HostManager
 
@@ -11,6 +12,8 @@ repositories {
 }
 
 kotlin {
+    val distinguishingAttribute = Attribute.of(String::class.java)
+
     val platformTargetA = when {
         HostManager.hostIsMac -> macosX64("platformA")
         HostManager.hostIsMingw -> mingwX64("platformA")
@@ -24,4 +27,7 @@ kotlin {
         HostManager.hostIsLinux -> linuxX64("platformB")
         else -> error("Unexpected host: ${HostManager.host}")
     }
+
+    platformTargetA.attributes { attribute(distinguishingAttribute, "A") }
+    platformTargetB.attributes { attribute(distinguishingAttribute, "B") }
 }

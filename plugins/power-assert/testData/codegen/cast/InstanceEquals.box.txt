@@ -1,0 +1,36 @@
+---
+assert(null is String)
+            |
+            false
+---
+---
+assert(!(" is " is String))
+       |        |
+       |        true
+       false
+---
+---
+assert(!(
+       |
+       false
+    " is "
+
+            is
+            |
+            true
+
+            String
+))
+---
+---
+assert(null/*is*/is/*is*/String)
+                 |
+                 false
+---
+---
+assert(!((null is String) is Boolean))
+       |       |          |
+       |       |          true
+       |       false
+       false
+---

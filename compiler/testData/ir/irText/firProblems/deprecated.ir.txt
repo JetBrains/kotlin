@@ -3,17 +3,17 @@ FILE fqName:<root> fileName:/deprecated.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun create (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:create visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String
-    annotations:
-      Deprecated(message = 'Use create() instead()', replaceWith = ReplaceWith(expression = 'create()', imports = []), level = <null>)
-    VALUE_PARAMETER name:s index:0 type:kotlin.String
-    BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun create (s: kotlin.String): kotlin.String declared in <root>'
-        CALL 'public final fun create (): kotlin.String declared in <root>' type=kotlin.String origin=null
   FUN name:create visibility:public modality:FINAL <> (b:kotlin.Boolean) returnType:kotlin.String
     annotations:
-      Deprecated(message = 'Use create() instead()', replaceWith = <null>, level = <null>)
+      Deprecated(message = "Use create() instead()", replaceWith = <null>, level = <null>)
     VALUE_PARAMETER name:b index:0 type:kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun create (b: kotlin.Boolean): kotlin.String declared in <root>'
+        CALL 'public final fun create (): kotlin.String declared in <root>' type=kotlin.String origin=null
+  FUN name:create visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.String
+    annotations:
+      Deprecated(message = "Use create() instead()", replaceWith = ReplaceWith(expression = "create()", imports = []), level = <null>)
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun create (s: kotlin.String): kotlin.String declared in <root>'
         CALL 'public final fun create (): kotlin.String declared in <root>' type=kotlin.String origin=null

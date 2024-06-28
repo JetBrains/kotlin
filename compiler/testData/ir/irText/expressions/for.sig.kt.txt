@@ -1,0 +1,24 @@
+// CHECK:
+//   Mangled name: #testDestructuring(kotlin.collections.List<kotlin.Pair<kotlin.Int,kotlin.String>>){}
+//   Public signature: /testDestructuring|-7027332132873483477[0]
+//   Public signature debug description: testDestructuring(kotlin.collections.List<kotlin.Pair<kotlin.Int,kotlin.String>>){}
+fun testDestructuring(pp: List<Pair<Int, String>>): Unit
+
+// CHECK:
+//   Mangled name: #testEmpty(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testEmpty|4311987365375111339[0]
+//   Public signature debug description: testEmpty(kotlin.collections.List<kotlin.String>){}
+fun testEmpty(ss: List<String>): Unit
+
+// CHECK:
+//   Mangled name: #testIterable(kotlin.collections.List<kotlin.String>){}
+//   Public signature: /testIterable|3066285127841729695[0]
+//   Public signature debug description: testIterable(kotlin.collections.List<kotlin.String>){}
+fun testIterable(ss: List<String>): Unit
+
+// CHECK:
+//   Mangled name: #testRange(){}
+//   Public signature: /testRange|5870058580411114415[0]
+//   Public signature debug description: testRange(){}
+fun testRange(): Unit
+

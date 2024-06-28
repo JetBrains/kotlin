@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import org.jetbrains.kotlin.ideaExt.idea
 
 plugins {
@@ -18,13 +19,7 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-sourceSets {
-    "main" {
-        projectDefault()
-        generatedDir()
-    }
-    "test" {}
-}
+optInToUnsafeDuringIrConstructionAPI()
 
 val generatorClasspath by configurations.creating
 
@@ -48,18 +43,21 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     args(generationRoot)
     workingDir = rootDir
     classpath = generatorClasspath
-    main = "org.jetbrains.kotlin.ir.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.ir.generator.MainKt")
     systemProperties["line.separator"] = "\n"
 }
 
-val compileKotlin by tasks
-
-compileKotlin.dependsOn(generateTree)
-
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xinline-classes"
+sourceSets {
+    "main" {
+        projectDefault()
+        java.srcDirs(generateTree)
     }
+    "test" {}
+}
+
+tasks.withType<KotlinJvmCompile> {
+    compilerOptions.freeCompilerArgs.add("-Xinline-classes")
+    compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

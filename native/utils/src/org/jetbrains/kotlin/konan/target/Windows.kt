@@ -9,10 +9,11 @@ import org.jetbrains.kotlin.konan.util.InternalServer
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.properties.KonanPropertiesLoader
 import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.konan.util.ProgressCallback
 import java.nio.file.Paths
 
-class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : MingwConfigurables, KonanPropertiesLoader(target, properties, baseDir) {
+class MingwConfigurablesImpl(target: KonanTarget, properties: Properties, dependenciesRoot: String?, progressCallback : ProgressCallback) : MingwConfigurables,
+    KonanPropertiesLoader(target, properties, dependenciesRoot, progressCallback = progressCallback) {
     override val windowsKit: WindowsKit by lazy {
         when (windowsSdkPartsProvider) {
             WindowsSdkPartsProvider.InternalServer -> createCustomWindowsKitPath(Paths.get(absolute(windowsKitParts)))

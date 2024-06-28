@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,14 +23,16 @@ fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSe
 /**
  * Use this function to collect direct overridden tree for debug purposes
  */
+@Suppress("unused")
 @TestOnly
 fun debugCollectOverrides(symbol: FirCallableSymbol<*>, session: FirSession, scopeSession: ScopeSession): Map<Any, Any> {
     val scope = symbol.dispatchReceiverType?.scope(
         session,
         scopeSession,
-        FakeOverrideTypeCalculator.DoNothing,
-        requiredPhase = FirResolvePhase.STATUS
+        CallableCopyTypeCalculator.DoNothing,
+        requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return emptyMap()
+
     return debugCollectOverrides(symbol, scope)
 }
 
@@ -58,20 +60,29 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, scope: FirTypeScope): Ma
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     session: FirSession,
-    scopeSession: ScopeSession
-): List<FirFunctionSymbol<*>> {
+    scopeSession: ScopeSession,
+): Collection<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         session,
         scopeSession,
-        withForcedTypeCalculator = true
+        withForcedTypeCalculator = true,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
-    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
+    val overriddenFunctions = mutableSetOf<FirFunctionSymbol<*>>()
     firTypeScope.processFunctionsByName(callableId.callableName) { }
     firTypeScope.processOverriddenFunctions(this) {
         overriddenFunctions.add(it)
         ProcessorAction.NEXT
     }
+
+    /*
+     * The original symbol may appear in `processOverriddenFunctions`, so it should be removed from the resulting
+     *   list to not confuse the caller with a situation when the function directly overrides itself
+     *
+     * For details see FirTypeScope.processDirectOverriddenFunctionsWithBaseScope
+     */
+    overriddenFunctions -= this
 
     return overriddenFunctions
 }

@@ -5,138 +5,224 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.util.PrivateForInline
 
-class Fir2IrConversionScope {
-    private val parentStack = mutableListOf<IrDeclarationParent>()
+@OptIn(PrivateForInline::class)
+class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
+    @PublishedApi
+    @PrivateForInline
+    internal val _parentStack: MutableList<IrDeclarationParent> = mutableListOf()
 
-    private val containingFirClassStack = mutableListOf<FirClass>()
-    private val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
+    val parentStack: List<IrDeclarationParent>
+        get() = _parentStack
 
-    fun <T : IrDeclarationParent?> withParent(parent: T, f: T.() -> Unit): T {
-        if (parent == null) return parent
-        parentStack += parent
-        parent.f()
-        parentStack.removeAt(parentStack.size - 1)
-        return parent
+    @PublishedApi
+    @PrivateForInline
+    internal val scopeStack: MutableList<Scope> = mutableListOf()
+
+    @PublishedApi
+    @PrivateForInline
+    internal val containingFirClassStack: MutableList<FirClass> = mutableListOf()
+
+    @PublishedApi
+    @PrivateForInline
+    internal val currentlyGeneratedDelegatedConstructors: MutableMap<IrClassSymbol, IrConstructor> = mutableMapOf()
+
+    inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
+        _parentStack += parent
+        if (parent is IrDeclaration) {
+            scopeStack += Scope(parent.symbol)
+        }
+        try {
+            return parent.f()
+        } finally {
+            if (parent is IrDeclaration) {
+                scopeStack.removeAt(scopeStack.size - 1)
+            }
+            _parentStack.removeAt(_parentStack.size - 1)
+        }
     }
 
-    fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
-        currentlyGeneratedDelegatedConstructors[irClass] = constructor
-        val result = f()
-        currentlyGeneratedDelegatedConstructors.remove(irClass)
-        return result
+    internal fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
+        currentlyGeneratedDelegatedConstructors[irClass.symbol] = constructor
+        try {
+            return f()
+        } finally {
+            currentlyGeneratedDelegatedConstructors.remove(irClass.symbol)
+        }
     }
 
-    fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClass: IrClass): IrConstructor? =
-        currentlyGeneratedDelegatedConstructors[itClass]
+    fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClassSymbol: IrClassSymbol): IrConstructor? =
+        currentlyGeneratedDelegatedConstructors[itClassSymbol]
 
-    fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
+    fun containingFileIfAny(): IrFile? = _parentStack.getOrNull(0) as? IrFile
 
-    fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
+    inline fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
         containingFirClassStack += containingFirClass
-        f()
-        containingFirClassStack.removeAt(containingFirClassStack.size - 1)
+        try {
+            f()
+        } finally {
+            containingFirClassStack.removeAt(containingFirClassStack.size - 1)
+        }
     }
 
-    fun parentFromStack(): IrDeclarationParent = parentStack.last()
+    fun parentFromStack(): IrDeclarationParent = _parentStack.last()
 
-    fun parentAccessorOfPropertyFromStack(property: IrProperty): IrSimpleFunction? {
-        for (parent in parentStack.asReversed()) {
+    fun scope(): Scope = scopeStack.last()
+
+    fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction {
+        // It is safe to access an owner of property symbol here, because this function may be called
+        // only from property accessor of corresponding property
+        // We inside accessor -> accessor is built -> property is built
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val property = propertySymbol.owner
+        for (parent in _parentStack.asReversed()) {
             when (parent) {
-                property.getter -> return property.getter
-                property.setter -> return property.setter
+                property.getter -> return parent as IrSimpleFunction
+                property.setter -> return parent as IrSimpleFunction
             }
         }
-        return null
+        error("Accessor of property ${property.render()} not found on parent stack")
+    }
+
+    @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+    inline fun <reified D : IrDeclaration> findDeclarationInParentsStack(symbol: IrSymbol): @kotlin.internal.NoInfer D {
+        // This is an unsafe fast path for production
+        if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return symbol.owner as D
+        }
+        // With slow assertions the following code guarantees that taking owner from symbol is safe
+        for (parent in _parentStack.asReversed()) {
+            if ((parent as? IrDeclaration)?.symbol == symbol) {
+                return parent as D
+            }
+        }
+        /*
+         * In case of IDE (when allowNonCachedDeclarations is set to true) we may be in scope of some already compiled class,
+         *   for which we have Fir2IrLazyClass in symbol
+         */
+        if (configuration.allowNonCachedDeclarations) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return symbol.owner as D
+        }
+        error("Declaration with symbol $symbol is not found in parents stack")
     }
 
     fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T {
-        declaration.parent = parentStack.last()
+        declaration.parent = _parentStack.last()
         return declaration
     }
 
     fun containerFirClass(): FirClass? = containingFirClassStack.lastOrNull()
 
-    private val functionStack = mutableListOf<IrFunction>()
+    @PublishedApi
+    @PrivateForInline
+    internal val functionStack: MutableList<IrFunction> = mutableListOf()
 
-    fun <T : IrFunction> withFunction(function: T, f: T.() -> Unit): T {
+    inline fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
-        function.f()
-        functionStack.removeAt(functionStack.size - 1)
-        return function
+        try {
+            return function.f()
+        } finally {
+            functionStack.removeAt(functionStack.size - 1)
+        }
     }
 
-    private val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
+    @PublishedApi
+    @PrivateForInline
+    internal val propertyStack: MutableList<Pair<IrProperty, FirProperty?>> = mutableListOf()
 
-    fun withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> Unit): IrProperty {
+    inline fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
-        property.f()
-        propertyStack.removeAt(propertyStack.size - 1)
-        return property
+        try {
+            return property.f()
+        } finally {
+            propertyStack.removeAt(propertyStack.size - 1)
+        }
     }
 
-    private val classStack = mutableListOf<IrClass>()
+    @PublishedApi
+    @PrivateForInline
+    internal val classStack: MutableList<IrClass> = mutableListOf()
 
-    fun withClass(klass: IrClass, f: IrClass.() -> Unit): IrClass {
+    inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
-        klass.f()
-        classStack.removeAt(classStack.size - 1)
-        return klass
+        return try {
+            klass.f()
+        } finally {
+            classStack.removeAt(classStack.size - 1)
+        }
     }
 
-    private val whenSubjectVariableStack = mutableListOf<IrVariable>()
-    private val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
+    @PublishedApi
+    @PrivateForInline
+    internal val whenSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
 
-    fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
+    @PublishedApi
+    @PrivateForInline
+    internal val safeCallSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
+
+    inline fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) whenSubjectVariableStack += subject
-        val result = f()
-        if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
-        return result
+        try {
+            return f()
+        } finally {
+            if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
+        }
     }
 
-    fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
+    inline fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) safeCallSubjectVariableStack += subject
-        val result = f()
-        if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
-        return result
+        try {
+            return f()
+        } finally {
+            if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
+        }
     }
 
-    fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
+    fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {
         val irTarget = when (val firTarget = expression.target.labeledElement) {
-            is FirConstructor -> declarationStorage.getCachedIrConstructor(firTarget)
+            is FirConstructor -> declarationStorage.getCachedIrConstructorSymbol(firTarget)
             is FirPropertyAccessor -> {
-                var answer: IrFunction? = null
+                var answer: IrFunctionSymbol? = null
                 for ((property, firProperty) in propertyStack.asReversed()) {
                     if (firProperty?.getter === firTarget) {
-                        answer = property.getter
+                        answer = property.getter?.symbol
                     } else if (firProperty?.setter === firTarget) {
-                        answer = property.setter
+                        answer = property.setter?.symbol
                     }
                 }
                 answer
             }
-            else -> declarationStorage.getCachedIrFunction(firTarget)
+            else -> declarationStorage.getCachedIrFunctionSymbol(firTarget)
         }
         for (potentialTarget in functionStack.asReversed()) {
-            if (potentialTarget == irTarget) {
-                return potentialTarget
+            val targetSymbol = potentialTarget.symbol
+            if (targetSymbol == irTarget) {
+                return targetSymbol
             }
         }
-        return functionStack.last()
+        return functionStack.last().symbol
     }
 
-    fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
+    fun parent(): IrDeclarationParent? = _parentStack.lastOrNull()
 
-    fun defaultConversionTypeContext(): ConversionTypeContext =
-        if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
+    fun defaultConversionTypeOrigin(): ConversionTypeOrigin =
+        if ((parent() as? IrFunction)?.isSetter == true) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 
     fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
         for (function in functionStack.asReversed()) {
@@ -152,8 +238,32 @@ class Fir2IrConversionScope {
         return irClass.thisReceiver
     }
 
-    fun lastClass(): IrClass? = classStack.lastOrNull()
-
     fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
     fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
+
+    fun shouldEraseType(type: ConeTypeParameterType): Boolean = containingFirClassStack.asReversed().any { clazz ->
+        if (clazz !is FirAnonymousObject && !clazz.isLocal) return@any false
+
+        val typeParameterSymbol = type.lookupTag.typeParameterSymbol
+        if (typeParameterSymbol.containingDeclarationSymbol.fir.let { it !is FirProperty || it.delegate == null || !it.isExtension }) {
+            return@any false
+        }
+
+        return@any clazz.typeParameters.any { it.symbol === typeParameterSymbol }
+    }
+
+    @PublishedApi
+    @PrivateForInline
+    internal val _initBlocksStack: MutableList<IrAnonymousInitializer> = mutableListOf()
+    internal val initBlocksStack: List<IrAnonymousInitializer>
+        get() = _initBlocksStack
+
+    inline fun <T> withInitBlock(initializer: IrAnonymousInitializer, f: () -> T): T {
+        _initBlocksStack += initializer
+        try {
+            return f()
+        } finally {
+            _initBlocksStack.removeAt(_initBlocksStack.size - 1)
+        }
+    }
 }

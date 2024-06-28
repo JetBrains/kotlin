@@ -378,7 +378,7 @@ public final class ParametersList implements Cloneable {
         }
         Map<String, String> env = EnvironmentUtil.getEnvironmentMap();
         for (String name : env.keySet()) {
-            ContainerUtil.putIfAbsent(name, env.get(name), map);
+            map.putIfAbsent(name, env.get(name));
         }
         return map;
     }

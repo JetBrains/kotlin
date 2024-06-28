@@ -35,7 +35,7 @@ internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
     private val support: KtUltraLightSupport,
     method: KtLightMethod
-) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
+) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiTypes.nullType(), method, method.language),
     KtLightParameter,
     KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter> {
 
@@ -53,7 +53,7 @@ internal class KtUltraLightSuspendContinuationParameter(
         }
 
     private val psiType by lazyPub {
-        ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiType.NULL
+        ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiTypes.nullType()
     }
 
     private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
@@ -86,7 +86,7 @@ internal abstract class KtUltraLightParameter(
     private val ultraLightMethod: KtUltraLightMethod
 ) : LightParameter(
     name,
-    PsiType.NULL,
+    PsiTypes.nullType(),
     ultraLightMethod,
     ultraLightMethod.language
 ), KtUltraLightElementWithNullabilityAnnotationDescriptorBased<KtParameter, PsiParameter>, KtLightParameter {
@@ -117,12 +117,12 @@ internal abstract class KtUltraLightParameter(
         get() = type
 
     protected fun computeParameterType(kotlinType: KotlinType?, containingDeclaration: CallableDescriptor?): PsiType {
-        kotlinType ?: return PsiType.NULL
+        kotlinType ?: return PsiTypes.nullType()
 
         if (kotlinType.isSuspendFunctionType) {
             return kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
-            val containingDescriptor = containingDeclaration ?: return PsiType.NULL
+            val containingDescriptor = containingDeclaration ?: return PsiTypes.nullType()
             val mappedType = support.mapType(kotlinType, this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }

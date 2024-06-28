@@ -1,0 +1,40 @@
+public final class ClassVal : R|kotlin/Any| {
+    public final var property1: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public final var property2: R|java/lang/Object|
+        public get(): R|java/lang/Object|
+        protected set(value: R|java/lang/Object|): R|kotlin/Unit|
+
+    public final var property3: R|java/lang/Object|
+        public get(): R|java/lang/Object|
+        private set(value: R|java/lang/Object|): R|kotlin/Unit|
+
+    protected final var property4: R|kotlin/String|
+        protected get(): R|kotlin/String|
+        protected set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    protected final var property5: R|kotlin/String|
+        protected get(): R|kotlin/String|
+        private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    public final var property8: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public final var property9: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public final var property10: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        protected set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public final var property11: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        internal set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/ClassVal|
+
+}

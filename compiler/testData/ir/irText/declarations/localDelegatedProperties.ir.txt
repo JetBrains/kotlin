@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:x type:kotlin.Int flags:val
         VAR PROPERTY_DELEGATE name:x$delegate type:kotlin.Lazy<kotlin.Int> [val]
-          CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.LazyKt.lazy>): kotlin.Lazy<T of kotlin.LazyKt.lazy> declared in kotlin.LazyKt' type=kotlin.Lazy<kotlin.Int> origin=null
+          CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
             initializer: FUN_EXPR type=kotlin.Function0<kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int
@@ -13,38 +13,38 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-x> (): kotlin.Int declared in <root>.test1'
-              CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.LazyKt.getValue [inline,operator] declared in kotlin.LazyKt' type=kotlin.Int origin=null
+              CALL 'public final fun getValue <T> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of kotlin.getValue declared in kotlin' type=kotlin.Int origin=null
                 <T>: kotlin.Int
-                $receiver: GET_VAR 'val x$delegate: kotlin.Lazy<kotlin.Int> [val] declared in <root>.test1' type=kotlin.Lazy<kotlin.Int> origin=null
+                $receiver: GET_VAR 'val x$delegate: kotlin.Lazy<kotlin.Int> declared in <root>.test1' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val x: kotlin.Int by (...)' delegate='val x$delegate: kotlin.Lazy<kotlin.Int> [val] declared in <root>.test1' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test1' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
-      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'val x: kotlin.Int by (...)' delegate='val x$delegate: kotlin.Lazy<kotlin.Int> declared in <root>.test1' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test1' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit declared in kotlin.io' type=kotlin.Unit origin=null
         message: CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test1' type=kotlin.Int origin=GET_LOCAL_PROPERTY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:x type:kotlin.Int flags:var
-        VAR PROPERTY_DELEGATE name:x$delegate type:java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } [val]
-          CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf>{ kotlin.collections.TypeAliasesKt.HashMap<K of kotlin.collections.MapsKt.hashMapOf, V of kotlin.collections.MapsKt.hashMapOf> } [inline] declared in kotlin.collections.MapsKt' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } origin=null
+        VAR PROPERTY_DELEGATE name:x$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> [val]
+          CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> declared in kotlin.collections' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
             <K>: kotlin.String
             <V>: kotlin.Int
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <get-x> (): kotlin.Int declared in <root>.test2'
-              CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Int origin=null
+              CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue declared in kotlin.collections' type=kotlin.Int origin=null
                 <V>: kotlin.Int
                 <V1>: kotlin.Int
-                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } [val] declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } origin=null
+                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } [val] declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<set-x> visibility:local modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
           VALUE_PARAMETER name:value index:0 type:kotlin.Int
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2'
-              CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.MapAccessorsKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Unit origin=null
+              CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit declared in kotlin.collections' type=kotlin.Unit origin=null
                 <V>: kotlin.Int
-                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } [val] declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } origin=null
+                $receiver: GET_VAR 'val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
-                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int>{ kotlin.collections.TypeAliasesKt.HashMap<kotlin.String, kotlin.Int> } [val] declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'var x: kotlin.Int by (...)' delegate='val x$delegate: java.util.HashMap<kotlin.String, kotlin.Int> declared in <root>.test2' getter='local final fun <get-x> (): kotlin.Int declared in <root>.test2' setter='local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                 value: GET_VAR 'value: kotlin.Int declared in <root>.test2.<set-x>' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=EQ
         value: CONST Int type=kotlin.Int value=0
@@ -53,10 +53,10 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=POSTFIX_INCR
           CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=POSTFIX_INCR
-            value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-          GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+            value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=PLUSEQ
-        value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+        value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
           $this: CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=PLUSEQ
           other: CONST Int type=kotlin.Int value=1

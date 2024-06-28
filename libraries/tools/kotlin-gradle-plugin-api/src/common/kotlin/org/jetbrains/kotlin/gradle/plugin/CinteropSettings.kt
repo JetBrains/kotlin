@@ -11,6 +11,9 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.FileCollection
 
+/**
+ * @suppress TODO: KT-58858 add documentation
+ */
 interface CInteropSettings : Named {
 
     interface IncludeDirectories {
@@ -21,11 +24,6 @@ interface CInteropSettings : Named {
         fun headerFilterOnly(includeDirs: Collection<Any>)
     }
 
-    @Deprecated(
-        "This configuration is no longer used by the plugin, the property shouldn't be accessed",
-        level = DeprecationLevel.ERROR
-    )
-    val dependencyConfigurationName: String
     var dependencyFiles: FileCollection
 
     // DSL.

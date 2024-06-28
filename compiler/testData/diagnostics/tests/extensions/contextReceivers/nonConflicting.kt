@@ -1,4 +1,6 @@
-// !LANGUAGE: +ContextReceivers
+// DIAGNOSTICS: -CONTEXT_RECEIVERS_DEPRECATED
+// FIR_IDENTICAL
+// LANGUAGE: +ContextReceivers
 
 interface A
 interface B

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.codegen.inline.MethodBodyVisitor
-import org.jetbrains.kotlin.codegen.inline.SourceMapCopier
+import org.jetbrains.kotlin.codegen.inline.SourceMapCopyingMethodVisitor
+import org.jetbrains.kotlin.codegen.inline.argumentsSize
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -42,20 +43,14 @@ object IrInlineDefaultCodegen : IrInlineCallGenerator {
         isInsideIfCondition: Boolean
     ) {
         val function = expression.symbol.owner
-        val nodeAndSmap = codegen.classCodegen.generateMethodNode(function)
-        val childSourceMapper = SourceMapCopier(codegen.smap, nodeAndSmap.classSMAP)
-
-        val argsSize =
-            (Type.getArgumentsAndReturnSizes(callableMethod.asmMethod.descriptor) ushr 2) - if (function.isStatic) 1 else 0
-        nodeAndSmap.node.accept(object : MethodBodyVisitor(codegen.visitor) {
+        val (node, smap) = codegen.classCodegen.generateMethodNode(function)
+        val argsSize = argumentsSize(callableMethod.asmMethod.descriptor, function.isStatic)
+        val mv = object : MethodBodyVisitor(codegen.visitor) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
-                // We only copy LVT entries for local variables, since we already generated entries for the method parameters,
+                // We only copy LVT entries for local variables, since we already generated entries for the method parameters.
                 if (index >= argsSize) super.visitLocalVariable(name, desc, signature, start, end, index)
             }
-
-            override fun visitLineNumber(line: Int, start: Label?) {
-                super.visitLineNumber(childSourceMapper.mapLineNumber(line), start)
-            }
-        })
+        }
+        node.accept(SourceMapCopyingMethodVisitor(codegen.smap, smap, mv))
     }
 }

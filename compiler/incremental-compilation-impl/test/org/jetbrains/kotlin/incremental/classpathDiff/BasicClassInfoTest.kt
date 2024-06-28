@@ -60,7 +60,7 @@ class BasicClassInfoTest {
     }
 
     private fun classId(@Suppress("SameParameterValue") packageFqName: String, relativeClassName: String, local: Boolean) =
-        ClassId(FqName(packageFqName), FqName(relativeClassName), local)
+        ClassId(FqName(packageFqName), FqName(relativeClassName), isLocal = local)
 }
 
 private const val className = "com/example/TopLevelClass"

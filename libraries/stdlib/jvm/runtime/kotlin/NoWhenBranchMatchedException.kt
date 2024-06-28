@@ -6,11 +6,11 @@
 package kotlin
 
 public actual open class NoWhenBranchMatchedException : RuntimeException {
-    actual constructor()
+    public actual constructor()
 
-    actual constructor(message: String?) : super(message)
+    public actual constructor(message: String?) : super(message)
 
-    actual constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
 
-    actual constructor(cause: Throwable?) : super(cause)
+    public actual constructor(cause: Throwable?) : super(cause)
 }

@@ -1,0 +1,46 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open annotation class A : Annotation {
+  // CHECK:
+  //   Mangled name: A{}klass
+  //   Public signature: /A.klass|6015918431206184939[0]
+  //   Public signature debug description: {}klass
+  val klass: KClass<*>
+    // CHECK JVM_IR:
+    //   Mangled name: A#<get-klass>(){}kotlin.reflect.KClass<*>
+    //   Public signature: /A.klass.<get-klass>|5739372350059323846[0]
+    //   Public signature debug description: <get-klass>(){}kotlin.reflect.KClass<*>
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: A#<get-klass>(){}
+    //   Public signature: /A.klass.<get-klass>|4259458871347467473[0]
+    //   Public signature debug description: <get-klass>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: A#<init>(kotlin.reflect.KClass<*>){}
+  //   Public signature: /A.<init>|5783844857148764471[0]
+  //   Public signature debug description: <init>(kotlin.reflect.KClass<*>){}
+  constructor(klass: KClass<*>) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #test1(){}
+//   Public signature: /test1|4297044443957252634[0]
+//   Public signature debug description: test1(){}
+@A(klass = C::class)
+fun test1(): Unit
+

@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // DISABLE_CALL_ASSERTIONS
 // MODULE: lib
-// FILE: C.java
+// FILE: test/C.java
 package test;
 
 import org.jetbrains.annotations.NotNull;

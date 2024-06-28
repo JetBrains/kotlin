@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
-fun ConeKotlinType.ensureResolvedTypeDeclaration(
+fun ConeKotlinType?.ensureResolvedTypeDeclaration(
     useSiteSession: FirSession,
     requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ) {
@@ -29,5 +29,5 @@ fun FirTypeRef.ensureResolvedTypeDeclaration(
     useSiteSession: FirSession,
     requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
 ) {
-    coneTypeSafe<ConeKotlinType>()?.ensureResolvedTypeDeclaration(useSiteSession, requiredPhase)
+    coneTypeSafe<ConeKotlinType>().ensureResolvedTypeDeclaration(useSiteSession, requiredPhase)
 }

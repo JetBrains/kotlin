@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
@@ -46,6 +45,8 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
 
+    abstract fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript>
+
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
     abstract fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean
@@ -63,7 +64,7 @@ abstract class KotlinAsJavaSupport {
     companion object {
         @JvmStatic
         fun getInstance(project: Project): KotlinAsJavaSupport {
-            return ServiceManager.getService(project, KotlinAsJavaSupport::class.java)
+            return project.getService( KotlinAsJavaSupport::class.java)
         }
     }
 }

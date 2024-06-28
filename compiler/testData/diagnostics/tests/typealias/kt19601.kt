@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface Order<T>
 
 typealias Ord<T> = Order<T>

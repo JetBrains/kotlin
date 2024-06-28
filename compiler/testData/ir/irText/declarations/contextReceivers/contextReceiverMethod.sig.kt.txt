@@ -1,0 +1,50 @@
+// CHECK:
+//   Mangled name: Context
+//   Public signature: /Context|null[0]
+class Context {
+  // CHECK:
+  //   Mangled name: Context#<init>(){}
+  //   Public signature: /Context.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: Context#foo(){}kotlin.Int
+  //   Public signature: /Context.foo|-1256155405684507276[0]
+  //   Public signature debug description: foo(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Context#foo(){}
+  //   Public signature: /Context.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  fun foo(): Int
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+class Test {
+  // CHECK:
+  //   Mangled name: Test#<init>!Context(){}
+  //   Public signature: /Test.<init>|4848133296495274545[0]
+  //   Public signature debug description: <init>!Context(){}
+  constructor($context_receiver_0: Context) /* primary */
+
+  // CHECK:
+  //   Mangled name: Test#bar(){}
+  //   Public signature: /Test.bar|496682602797471549[0]
+  //   Public signature debug description: bar(){}
+  fun bar(): Unit
+
+  // CHECK JVM_IR:
+  //   Mangled name: Test#foo(){}kotlin.Int
+  //   Public signature: /Test.foo|-1256155405684507276[0]
+  //   Public signature debug description: foo(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Test#foo(){}
+  //   Public signature: /Test.foo|-1041209573719867811[0]
+  //   Public signature debug description: foo(){}
+  fun foo(): Int
+
+}
+

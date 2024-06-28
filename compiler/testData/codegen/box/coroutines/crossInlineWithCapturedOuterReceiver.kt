@@ -20,13 +20,9 @@ fun builder(c: suspend () -> Unit) {
 
 fun builderConsumer(c: suspend () -> Consumer): Consumer {
     var res: Consumer? = null
-    c.startCoroutine(object : ContinuationAdapter<Consumer>() {
-        override fun resume(value: Consumer) {
-            res = value
-        }
-
-        override fun resumeWithException(e: Throwable) {
-            throw e
+    c.startCoroutine(object : Continuation<Consumer> {
+        override fun resumeWith(value: Result<Consumer>) {
+            res = value.getOrThrow()
         }
 
         override val context = EmptyCoroutineContext

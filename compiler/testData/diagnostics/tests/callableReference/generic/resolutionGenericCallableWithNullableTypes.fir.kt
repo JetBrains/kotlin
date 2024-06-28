@@ -1,5 +1,5 @@
-// !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
+// CHECK_TYPE
+// DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun foo(x: Int?) {}
 fun foo(y: String?) {}
@@ -16,7 +16,7 @@ fun test1() {
     baz<String>(::foo).checkType { _<String?>() }
     baz<Boolean>(::foo).checkType { _<Boolean?>() }
 
-    val b1: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
-    val b2: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
-    val b3: Boolean = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!UNRESOLVED_REFERENCE!>foo<!>)<!>
+    val b1: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!NONE_APPLICABLE!>foo<!>)<!>
+    val b2: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!NONE_APPLICABLE!>foo<!>)<!>
+    val b3: Boolean = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz(::<!NONE_APPLICABLE!>foo<!>)<!>
 }

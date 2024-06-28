@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.facade.MainCallParameters
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
@@ -27,8 +25,6 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ERROR_POLICY
-import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.EXPECT_ACTUAL_LINKER
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.GENERATE_INLINE_ANONYMOUS_FUNCTIONS
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.MODULE_KIND
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.NO_INLINE
@@ -37,11 +33,9 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TYPED_ARRAYS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
-import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
 
@@ -49,7 +43,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(JsEnvironmentConfigurationDirectives)
 
-    companion object {
+    companion object : KlibBasedEnvironmentConfiguratorUtils {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
         const val OLD_MODULE_SUFFIX = "_old"
 
@@ -58,10 +52,11 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             TranslationMode.FULL_DEV to "out",
             TranslationMode.FULL_PROD_MINIMIZED_NAMES to "outMin",
             TranslationMode.PER_MODULE_DEV to "outPm",
-            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin"
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin",
+            TranslationMode.PER_FILE_DEV to "outPf",
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin"
         )
 
-        private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
         private const val MINIFICATION_OUTPUT_DIR_NAME = "minOutputDir"
 
         object ExceptionThrowingReporter : JsConfig.Reporter() {
@@ -70,29 +65,25 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             }
         }
 
-        private val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
-            KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
-                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+        private val METADATA_CACHE by lazy {
+            listOf(StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath, StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath).flatMap { path ->
+                KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
+                    val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
+                    JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+                }
             }
         }
 
-        fun getJsArtifactSimpleName(testServices: TestServices, moduleName: String): String {
-            val testName = testServices.testInfo.methodName.removePrefix("test").decapitalizeAsciiOnly()
-            val outputFileSuffix = if (moduleName == ModuleStructureExtractor.DEFAULT_MODULE_NAME) "" else "-$moduleName"
-            return testName + outputFileSuffix
-        }
-
         fun getJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL_DEV): String {
-            return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+            return getJsArtifactsOutputDir(testServices, translationMode).absolutePath + File.separator + getJsModuleArtifactName(testServices, moduleName)
         }
 
         fun getRecompiledJsModuleArtifactPath(testServices: TestServices, moduleName: String, translationMode: TranslationMode = TranslationMode.FULL_DEV): String {
-            return getJsArtifactsRecompiledOutputDir(testServices, translationMode).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName) + "_v5"
+            return getJsArtifactsRecompiledOutputDir(testServices, translationMode).absolutePath + File.separator + getJsModuleArtifactName(testServices, moduleName)
         }
 
-        fun getJsKlibArtifactPath(testServices: TestServices, moduleName: String): String {
-            return getJsKlibOutputDir(testServices).absolutePath + File.separator + getJsArtifactSimpleName(testServices, moduleName)
+        fun getJsModuleArtifactName(testServices: TestServices, moduleName: String): String {
+            return getKlibArtifactSimpleName(testServices, moduleName) + "_v5"
         }
 
         fun getJsArtifactsOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL_DEV): File {
@@ -101,10 +92,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getJsArtifactsRecompiledOutputDir(testServices: TestServices, translationMode: TranslationMode = TranslationMode.FULL_DEV): File {
             return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(outputDirByMode[translationMode]!! + "-recompiled")
-        }
-
-        fun getJsKlibOutputDir(testServices: TestServices): File {
-            return testServices.temporaryDirectoryManager.getOrCreateTempDirectory(OUTPUT_KLIB_DIR_NAME)
         }
 
         fun getMinificationJsArtifactsOutputDir(testServices: TestServices): File {
@@ -126,7 +113,14 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             project: Project, configuration: CompilerConfiguration, compilerEnvironment: TargetEnvironment = CompilerEnvironment
         ): JsConfig {
             return JsConfig(
-                project, configuration, compilerEnvironment, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet()
+                project,
+                configuration,
+                compilerEnvironment,
+                METADATA_CACHE,
+                setOf(
+                    StandardLibrariesPathProviderForKotlinProject.fullJsStdlib().absolutePath,
+                    StandardLibrariesPathProviderForKotlinProject.kotlinTestJsKLib().absolutePath
+                )
             )
         }
 
@@ -152,74 +146,25 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             val needsFullIrRuntime = JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives ||
                     ConfigurationDirectives.WITH_STDLIB in module.directives
 
-            val names = if (needsFullIrRuntime) listOf("full.stdlib", "kotlin.test") else listOf("reduced.stdlib")
-            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path")?.let { File(it).absolutePath } }
+            val pathProvider = testServices.standardLibrariesPathProvider
+            if (needsFullIrRuntime) {
+                result += pathProvider.fullJsStdlib().absolutePath
+                result += pathProvider.kotlinTestJsKLib().absolutePath
+            } else {
+                result += pathProvider.defaultJsStdlib().absolutePath
+            }
             val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
             runtimeClasspaths.mapTo(result) { it.absolutePath }
             return result
         }
 
-        fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
-            val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, relation: DependencyRelation) {
-                val dependencies = if (relation == DependencyRelation.FriendDependency) {
-                    module.friendDependencies
-                } else {
-                    module.regularDependencies
-                }
-                dependencies
-                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
-                    .filter { it.kind != DependencyKind.Source }
-                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                        if (it !in visited) {
-                            visited += it
-                            getRecursive(it, relation)
-                        }
-                    }
-            }
-            getRecursive(module, kind)
-            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
-        }
-
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
-            return getKlibDependencies(module, testServices, kind)
-                .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
-        }
-
         fun getMainCallParametersForModule(module: TestModule): MainCallParameters {
-            return when (JsEnvironmentConfigurationDirectives.CALL_MAIN) {
-                in module.directives -> MainCallParameters.mainWithArguments(listOf())
-                else -> MainCallParameters.noCall()
-            }
-        }
-
-        fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
-            val visited = mutableSetOf<ModuleDescriptorImpl>()
-            fun getRecursive(descriptor: ModuleDescriptor) {
-                descriptor.allDependencyModules.forEach {
-                    if (it is ModuleDescriptorImpl && it !in visited) {
-                        visited += it
-                        getRecursive(it)
-                    }
+            return when {
+                JsEnvironmentConfigurationDirectives.CALL_MAIN in module.directives -> MainCallParameters.mainWithArguments(listOf())
+                JsEnvironmentConfigurationDirectives.MAIN_ARGS in module.directives -> {
+                    MainCallParameters.mainWithArguments(module.directives[JsEnvironmentConfigurationDirectives.MAIN_ARGS].single())
                 }
-            }
-
-            getRecursive(testServices.moduleDescriptorProvider.getModuleDescriptor(module))
-            return visited
-        }
-
-        fun getAllRecursiveLibrariesFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, ModuleDescriptorImpl> {
-            val dependencies = getAllRecursiveDependenciesFor(module, testServices)
-            return dependencies.associateBy { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
-        }
-
-        fun getAllDependenciesMappingFor(module: TestModule, testServices: TestServices): Map<KotlinLibrary, List<KotlinLibrary>> {
-            val allRecursiveLibraries: Map<KotlinLibrary, ModuleDescriptor> = getAllRecursiveLibrariesFor(module, testServices)
-            val m2l = allRecursiveLibraries.map { it.value to it.key }.toMap()
-
-            return allRecursiveLibraries.keys.associateWith { m ->
-                val descriptor = allRecursiveLibraries[m] ?: error("No descriptor found for library ${m.libraryName}")
-                descriptor.allDependencyModules.filter { it != descriptor }.map { m2l.getValue(it) }
+                else -> MainCallParameters.noCall()
             }
         }
 
@@ -231,13 +176,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return JsEnvironmentConfigurationDirectives.SKIP_IR_INCREMENTAL_CHECKS !in testServices.moduleStructure.allDirectives &&
                     testServices.moduleStructure.modules.any { it.hasFilesToRecompile() }
         }
-    }
-
-
-    private fun TestModule.allTransitiveDependencies(): Set<DependencyDescription> {
-        val modules = testServices.moduleStructure.modules
-        return regularDependencies.toSet() +
-                regularDependencies.flatMap { modules.single { module -> module.name == it.moduleName }.allTransitiveDependencies() }
     }
 
     override fun provideAdditionalAnalysisFlags(
@@ -255,6 +193,8 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+        if (module.targetPlatform !in JsPlatforms.allJsPlatforms) return
+
         val registeredDirectives = module.directives
         val moduleKinds = registeredDirectives[MODULE_KIND]
         val moduleKind = when (moduleKinds.size) {
@@ -273,9 +213,12 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val friends = module.friendDependencies.map { getJsModuleArtifactPath(testServices, it.moduleName) + ".meta.js" }
 
         val libraries = when (module.targetBackend) {
-            null -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST
+            null -> listOf(
+                testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
+                testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
+            )
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> dependencies + friends
-            TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies + friends
+            TargetBackend.JS -> listOf(testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath, testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath) + dependencies + friends
             else -> error("Unsupported target backend: ${module.targetBackend}")
         }
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
@@ -283,16 +226,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
-        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
-
-        val errorIgnorancePolicy = registeredDirectives[ERROR_POLICY].singleOrNull() ?: ErrorTolerancePolicy.DEFAULT
-        configuration.put(JSConfigurationKeys.ERROR_TOLERANCE_POLICY, errorIgnorancePolicy)
-        if (errorIgnorancePolicy.allowErrors) {
-            configuration.put(JSConfigurationKeys.DEVELOPER_MODE, true)
-        }
-        if (errorIgnorancePolicy != ErrorTolerancePolicy.DEFAULT) {
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        }
+        configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.es5)
 
         val multiModule = testServices.moduleStructure.modules.size > 1
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
@@ -313,8 +247,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
-
-        configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, EXPECT_ACTUAL_LINKER in registeredDirectives)
     }
 }
 

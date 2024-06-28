@@ -482,7 +482,7 @@ public inline fun Path.deleteExisting() {
 @WasExperimental(ExperimentalPathApi::class)
 @Throws(IOException::class)
 @kotlin.internal.InlineOnly
-public inline fun Path.deleteIfExists() =
+public inline fun Path.deleteIfExists(): Boolean =
     Files.deleteIfExists(this)
 
 /**
@@ -562,8 +562,16 @@ public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): P
  */
 @SinceKotlin("1.9")
 @Throws(IOException::class)
-public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path =
-    this.apply { parent?.createDirectories(*attributes) }
+public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path = also {
+    val parent = it.parent
+    if (parent != null && !parent.isDirectory()) {
+        try {
+            parent.createDirectories(*attributes)
+        } catch (e: FileAlreadyExistsException) {
+            if (!parent.isDirectory()) throw e
+        }
+    }
+}
 
 /**
  * Moves or renames the file located by this path to the [target] path.
@@ -1038,6 +1046,7 @@ public inline fun URI.toPath(): Path =
  * Returns a sequence of paths for visiting this directory and all its content.
  *
  * By default, only files are visited, in depth-first order, and symbolic links are not followed.
+ * If encountered, symbolic links are included in the sequence as-is, and the content of the directory they point to is not visited.
  * The combination of [options] overrides the default behavior. See [PathWalkOption].
  *
  * The order in which sibling files are visited is unspecified.
@@ -1046,7 +1055,13 @@ public inline fun URI.toPath(): Path =
  * the changes may or may not appear in the returned sequence.
  *
  * If the file located by this path does not exist, an empty sequence is returned.
- * if the file located by this path is not a directory, a sequence containing only this path is returned.
+ * If the file located by this path is not a directory, a sequence containing only this path is returned.
+ *
+ * When iterating the returned sequence, the following exceptions could be thrown:
+ *   * [FileSystemException] if the traversal reaches an entry with an illegal name such as "." or "..".
+ *   * [FileSystemLoopException] if the traversal reaches a cycle.
+ *   * [SecurityException] if a security manager is installed and the traversal reaches an entry whose access is not permitted.
+ *   * [IOException] if any errors arise while opening a directory.
  */
 @ExperimentalPathApi
 @SinceKotlin("1.7")

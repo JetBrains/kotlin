@@ -1,0 +1,12 @@
+public abstract interface InheritReadOnliness : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun <A : R|kotlin/collections/List<kotlin/String>|> foo(a: R|A|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/InheritReadOnliness.Super| {
+        public abstract fun <B : R|kotlin/collections/List<kotlin/String>|> foo(a: R|B|): R|kotlin/Unit|
+
+    }
+
+}

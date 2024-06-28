@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt.cli.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,38 +18,38 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/kapt3/kapt3-cli/testData/argumentParsing")
 @TestDataPath("$PROJECT_ROOT")
 public class ArgumentParsingTestGenerated extends AbstractArgumentParsingTest {
-    @Test
-    public void testAllFilesPresentInArgumentParsing() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/argumentParsing"), Pattern.compile("^(.+)\\.txt$"), null, true);
-    }
+  @Test
+  public void testAllFilesPresentInArgumentParsing() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kapt3/kapt3-cli/testData/argumentParsing"), Pattern.compile("^(.+)\\.txt$"), null, true);
+  }
 
-    @Test
-    @TestMetadata("errorFlag.txt")
-    public void testErrorFlag() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorFlag.txt");
-    }
+  @Test
+  @TestMetadata("errorFlag.txt")
+  public void testErrorFlag() {
+    runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorFlag.txt");
+  }
 
-    @Test
-    @TestMetadata("errorKeyValue.txt")
-    public void testErrorKeyValue() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorKeyValue.txt");
-    }
+  @Test
+  @TestMetadata("errorKeyValue.txt")
+  public void testErrorKeyValue() {
+    runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorKeyValue.txt");
+  }
 
-    @Test
-    @TestMetadata("errorValue.txt")
-    public void testErrorValue() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorValue.txt");
-    }
+  @Test
+  @TestMetadata("errorValue.txt")
+  public void testErrorValue() {
+    runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/errorValue.txt");
+  }
 
-    @Test
-    @TestMetadata("kotlincHelp.txt")
-    public void testKotlincHelp() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/kotlincHelp.txt");
-    }
+  @Test
+  @TestMetadata("kotlincHelp.txt")
+  public void testKotlincHelp() {
+    runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/kotlincHelp.txt");
+  }
 
-    @Test
-    @TestMetadata("simple.txt")
-    public void testSimple() throws Exception {
-        runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/simple.txt");
-    }
+  @Test
+  @TestMetadata("simple.txt")
+  public void testSimple() {
+    runTest("plugins/kapt3/kapt3-cli/testData/argumentParsing/simple.txt");
+  }
 }

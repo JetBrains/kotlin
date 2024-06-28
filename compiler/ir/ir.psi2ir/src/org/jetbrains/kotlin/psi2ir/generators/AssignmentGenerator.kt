@@ -201,8 +201,8 @@ internal class AssignmentGenerator(statementGenerator: StatementGenerator) : Sta
                         context,
                         startOffset, endOffset,
                         descriptor.type.toIrType(),
-                        descriptor.getter?.let { context.symbolTable.referenceDeclaredFunction(it) },
-                        descriptor.setter?.let { context.symbolTable.referenceDeclaredFunction(it) },
+                        descriptor.getter?.let { context.symbolTable.descriptorExtension.referenceDeclaredFunction(it) },
+                        descriptor.setter?.let { context.symbolTable.descriptorExtension.referenceDeclaredFunction(it) },
                         origin
                     )
                 else
@@ -251,7 +251,7 @@ internal class AssignmentGenerator(statementGenerator: StatementGenerator) : Sta
         VariableLValue(
             context,
             ktExpression.startOffsetSkippingComments, ktExpression.endOffset,
-            context.symbolTable.referenceValue(descriptor),
+            context.symbolTable.descriptorExtension.referenceValue(descriptor),
             descriptor.type.toIrType(),
             origin
         )
@@ -266,7 +266,7 @@ internal class AssignmentGenerator(statementGenerator: StatementGenerator) : Sta
             context,
             ktExpression.startOffsetSkippingComments, ktExpression.endOffset,
             descriptor.type.toIrType(),
-            context.symbolTable.referenceField(descriptor),
+            context.symbolTable.descriptorExtension.referenceField(descriptor),
             receiverValue, origin
         )
 
@@ -338,12 +338,12 @@ internal class AssignmentGenerator(statementGenerator: StatementGenerator) : Sta
         val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
             ?.takeUnless { it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
-        val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
+        val getterSymbol = getterDescriptor?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
 
         val propertyIrType = resultingDescriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
-            val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
+            val superQualifierSymbol = superQualifier?.let { context.symbolTable.descriptorExtension.referenceClass(it) }
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
                     candidateDescriptor.typeParameters.map {
@@ -369,12 +369,16 @@ internal class AssignmentGenerator(statementGenerator: StatementGenerator) : Sta
             )
         } else {
             val superQualifierSymbol = (superQualifier
-                ?: unwrappedPropertyDescriptor.containingDeclaration as? ClassDescriptor)?.let { context.symbolTable.referenceClass(it) }
+                ?: unwrappedPropertyDescriptor.containingDeclaration as? ClassDescriptor)?.let {
+                context.symbolTable.descriptorExtension.referenceClass(
+                    it
+                )
+            }
             FieldPropertyLValue(
                 context,
                 scope,
                 ktExpression.startOffsetSkippingComments, ktExpression.endOffset, origin,
-                context.symbolTable.referenceField(unwrappedPropertyDescriptor.resolveFakeOverride().original),
+                context.symbolTable.descriptorExtension.referenceField(unwrappedPropertyDescriptor.resolveFakeOverride().original),
                 unwrappedPropertyDescriptor,
                 propertyIrType,
                 propertyReceiver,

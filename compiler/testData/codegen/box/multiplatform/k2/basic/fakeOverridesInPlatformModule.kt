@@ -1,5 +1,4 @@
-// TARGET_BACKEND: JVM
-// !LANGUAGE: +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
 // TARGET_PLATFORM: Common
@@ -11,9 +10,8 @@ interface Foo {
 
 fun test(e: Foo) = e.ok()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 interface Bar : Foo
 

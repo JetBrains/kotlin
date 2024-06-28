@@ -34,5 +34,5 @@ object SignatureBuildingComponents {
 
 val ClassId.internalName: String
     get() {
-        return JvmClassName.byClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
+        return JvmClassName.internalNameByClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this)
     }

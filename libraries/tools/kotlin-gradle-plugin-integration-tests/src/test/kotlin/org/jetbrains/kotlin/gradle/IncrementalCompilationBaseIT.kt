@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.*
-import java.nio.file.Path
-import kotlin.io.path.relativeTo
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
+import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.TestProject
+import org.jetbrains.kotlin.gradle.testbase.project
 
 abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
 
@@ -23,6 +23,7 @@ abstract class IncrementalCompilationBaseIT : KGPBaseTest() {
     ): TestProject = project(
         defaultProjectName,
         gradleVersion,
+        buildOptions,
         test = test
     )
 

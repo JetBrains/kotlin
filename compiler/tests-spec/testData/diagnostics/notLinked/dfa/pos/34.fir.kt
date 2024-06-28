@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 34
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, objects, typealiases, functions, enumClasses, interfaces, sealedClasses
+ */
 
 // TESTCASE NUMBER: 1
 fun case_1() {
@@ -97,10 +106,10 @@ fun case_6() {
     val e: Any?
 
     when (if (true) {b = 11} else {b = 12}) {
-        when (if (true) {b.inv(); c = b; c as ClassLevel1;} else {b.inv(); c = b; c as ClassLevel1;}) {
+        when (if (true) {b.inv(); c = b; c <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel1;} else {b.inv(); c = b; c <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel1;}) {
             else -> kotlin.Unit
-        } -> when (if (true) {c.test1(); d = c; d as ClassLevel2} else {c.test1(); d = c; d as ClassLevel2}) {
-            when (if (true) {d.test2(); e = d; e as ClassLevel3} else {d.test2(); e = d; e as ClassLevel3}) {
+        } -> when (if (true) {c.test1(); d = c; d <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel2} else {c.test1(); d = c; d <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel2}) {
+            when (if (true) {d.test2(); e = d; e <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel3} else {d.test2(); e = d; e <!CAST_NEVER_SUCCEEDS!>as<!> ClassLevel3}) {
                 else -> ClassLevel2()
             } -> {
                 <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int & ClassLevel3")!>e<!>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.JsModuleAndQualifierReference
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
@@ -22,15 +25,19 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.wasm.config.wasmTarget
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
@@ -46,6 +53,8 @@ class WasmBackendContext(
     override val scriptMode = false
     override val irFactory: IrFactory = symbolTable.irFactory
 
+    val isWasmJsTarget: Boolean = configuration.wasmTarget == WasmTarget.JS
+
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
 
@@ -58,10 +67,10 @@ class WasmBackendContext(
 
     override val mapping = JsMapping()
 
-    val closureCallExports = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    val kotlinClosureToJsConverters = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    val jsClosureCallers = mutableMapOf<IrSimpleType, IrSimpleFunction>()
-    val jsToKotlinClosures = mutableMapOf<IrSimpleType, IrSimpleFunction>()
+    val closureCallExports = mutableMapOf<String, IrSimpleFunction>()
+    val kotlinClosureToJsConverters = mutableMapOf<String, IrSimpleFunction>()
+    val jsClosureCallers = mutableMapOf<String, IrSimpleFunction>()
+    val jsToKotlinClosures = mutableMapOf<String, IrSimpleFunction>()
 
     val jsModuleAndQualifierReferences =
         mutableSetOf<JsModuleAndQualifierReference>()
@@ -69,7 +78,10 @@ class WasmBackendContext(
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)
 
-    val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
+    override val jsPromiseSymbol: IrClassSymbol?
+        get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsPromise else null
+
+    override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
@@ -86,15 +98,18 @@ class WasmBackendContext(
                 SourceRangeInfo(
                     "",
                     UNDEFINED_OFFSET,
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER,
                     UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER
                 )
 
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getLineNumber(offset: Int) = UNDEFINED_LINE_NUMBER
+            override fun getColumnNumber(offset: Int) = UNDEFINED_COLUMN_NUMBER
+            override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+                return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+            }
         }, internalPackageFragmentDescriptor, irModuleFragment).also {
             irModuleFragment.files += it
         }
@@ -111,8 +126,7 @@ class WasmBackendContext(
     val fieldInitFunction = createInitFunction("fieldInit")
     val mainCallsWrapperFunction = createInitFunction("mainCallsWrapper")
 
-    override val sharedVariablesManager =
-        WasmSharedVariablesManager(this, irBuiltIns, internalPackageFragment)
+    override val sharedVariablesManager = WasmSharedVariablesManager(this)
 
     val wasmSymbols: WasmSymbols = WasmSymbols(this@WasmBackendContext, symbolTable)
     override val reflectionSymbols: ReflectionSymbols get() = wasmSymbols.reflectionSymbols
@@ -129,16 +143,6 @@ class WasmBackendContext(
     }
 
     override val inlineClassesUtils = WasmInlineClassesUtils(wasmSymbols)
-
-    override fun log(message: () -> String) {
-        /*TODO*/
-        if (inVerbosePhase) print(message())
-    }
-
-    override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
-        /*TODO*/
-        print(message)
-    }
 
     //
     // Unit test support, mostly borrowed from the JS implementation
@@ -158,15 +162,18 @@ class WasmBackendContext(
                 SourceRangeInfo(
                     "",
                     UNDEFINED_OFFSET,
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER,
                     UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET
+                    UNDEFINED_LINE_NUMBER,
+                    UNDEFINED_COLUMN_NUMBER
                 )
 
-            override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
-            override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
+            override fun getLineNumber(offset: Int) = UNDEFINED_LINE_NUMBER
+            override fun getColumnNumber(offset: Int) = UNDEFINED_COLUMN_NUMBER
+            override fun getLineAndColumnNumbers(offset: Int): LineAndColumn {
+                return LineAndColumn(UNDEFINED_LINE_NUMBER, UNDEFINED_COLUMN_NUMBER)
+            }
         }, internalPackageFragmentDescriptor, module).also {
             module.files += it
         }
@@ -177,7 +184,8 @@ class WasmBackendContext(
     val testEntryPoints: Collection<IrSimpleFunction>
         get() = testContainerFuns.values
 
-    override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
+    override fun createTestContainerFun(container: IrDeclaration): IrSimpleFunction {
+        val irFile = container.file
         val module = irFile.module
         return testContainerFuns.getOrPut(module) {
             val file = syntheticFile("tests", module)
@@ -190,4 +198,10 @@ class WasmBackendContext(
             }
         }
     }
+
+    override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
+        configuration.partialLinkageConfig,
+        irBuiltIns,
+        configuration.messageCollector
+    )
 }

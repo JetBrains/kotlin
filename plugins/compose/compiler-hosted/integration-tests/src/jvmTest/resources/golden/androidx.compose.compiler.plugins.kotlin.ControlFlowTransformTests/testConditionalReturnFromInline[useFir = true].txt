@@ -1,0 +1,76 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable fun Test(test: Boolean) {
+    Column {
+       if (!test) {
+           Text("Say")
+           return@Column
+       }
+       Text("Hello")
+    }
+
+    NonComposable {
+        if (!test) {
+           Text("Say")
+           return@NonComposable
+       }
+       Text("Hello")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun Test(test: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<Column>,*<Text("...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(test)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Column({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C<Text("...>:Test.kt")
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<Text("...>")
+      if (!test) {
+        Text("Say", %composer, 0b0110)
+        %composer.endReplaceGroup()
+        %composer.endReplaceGroup()
+        return@Column
+      }
+      %composer.endReplaceGroup()
+      Text("Hello", %composer, 0b0110)
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    NonComposable {
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<Text("...>")
+      if (!test) {
+        Text("Say", %composer, 0b0110)
+        %composer.endReplaceGroup()
+        return@NonComposable
+      }
+      %composer.endReplaceGroup()
+      Text("Hello", %composer, 0b0110)
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(test, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

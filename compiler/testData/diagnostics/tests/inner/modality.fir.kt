@@ -7,7 +7,7 @@ class Outer {
 
     class Nested1 : OpenNested()
     class Nested2 : <!FINAL_SUPERTYPE!>FinalNested<!>()
-    class Nested3 : <!UNRESOLVED_REFERENCE!>OpenInner<!>()
+    class Nested3 : <!INNER_CLASS_CONSTRUCTOR_NO_RECEIVER!>OpenInner<!>()
     class Nested4 : <!FINAL_SUPERTYPE!>FinalInner<!>()
 
     inner class Inner1 : OpenNested()

@@ -1,21 +1,7 @@
 open enum class Z : Enum<Z> {
-  private constructor() /* primary */ {
-    super/*Enum*/<Z>()
-    /* <init>() */
-
-  }
 
   ENTRY = ENTRY()
   private enum entry class ENTRY : Z {
-    private constructor() /* primary */ {
-      super/*Z*/() /*~> Unit */
-      /* <init>() */
-
-    }
-
-    fun test() {
-    }
-
     inner class A {
       constructor() /* primary */ {
         super/*Any*/()
@@ -29,13 +15,29 @@ open enum class Z : Enum<Z> {
 
     }
 
+    private constructor() /* primary */ {
+      super/*Z*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    fun test() {
+    }
+
   }
 
-  fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
+  private constructor() /* primary */ {
+    super/*Enum*/<Z>()
+    /* <init>() */
+
+  }
 
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
+
+  fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
 
   val entries: EnumEntries<Z>
     get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

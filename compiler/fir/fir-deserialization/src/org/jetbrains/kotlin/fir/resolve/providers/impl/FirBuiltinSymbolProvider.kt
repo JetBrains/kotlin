@@ -9,12 +9,10 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
-import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
-import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
-import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -32,32 +30,50 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.InputStream
 
+/**
+ * This provider allows to get symbols for so-called built-in classes.
+ *
+ * Built-in classes are the classes which are considered mandatory for compiling any Kotlin code.
+ * For this reason these classes must be provided even in a case when no standard library exists in classpath.
+ * One can find a set of these classes inside core/builtins directory (look at both src/kotlin and native/kotlin subdirectories).
+ * In particular: all primitives, all arrays, collection-like interfaces, Any, Nothing, Unit, etc.
+ *
+ * For non-JVM platforms, all / almost all built-in classes exist also in the standard library, so this provider works as a fallback.
+ * For the JVM platform, some classes are mapped to Java classes and do not exist themselves,
+ * so this provider is mandatory for the JVM compiler to work properly even with the standard library in classpath.
+ */
 @ThreadSafeMutableState
 open class FirBuiltinSymbolProvider(
     session: FirSession,
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
-    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
-        session,
-        moduleData,
-        kotlinScopeProvider
-    )
 
-    private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
+    companion object {
+        private val builtInsPackageFragments: Map<FqName, BuiltInsPackageFragment> = run {
+            val classLoader = FirBuiltinSymbolProvider::class.java.classLoader
+            val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
+            val packageFqNames = StandardClassIds.builtInsPackages
 
-    private fun loadBuiltIns(): List<BuiltInsPackageFragment> {
-        val classLoader = this::class.java.classLoader
-        val streamProvider = { path: String -> classLoader?.getResourceAsStream(path) ?: ClassLoader.getSystemResourceAsStream(path) }
-        val packageFqNames = StandardClassIds.builtInsPackages
-
-        return packageFqNames.map { fqName ->
-            val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
-            val inputStream = streamProvider(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-            BuiltInsPackageFragment(inputStream, fqName, moduleData, kotlinScopeProvider)
+            packageFqNames.associateWith { fqName ->
+                val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
+                val inputStream =
+                    streamProvider(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
+                BuiltInsPackageFragment(inputStream)
+            }
         }
+
+        fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> {
+            return builtInsPackageFragments[packageFqName]?.classDataFinder?.allClassIds?.mapTo(mutableSetOf()) { it.shortClassName }.orEmpty()
+        }
+
+    }
+
+    private val allPackageFragments = builtInsPackageFragments.mapValues { (fqName, foo) ->
+        BuiltInsPackageFragmentWrapper(foo, fqName, moduleData, kotlinScopeProvider)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -66,29 +82,28 @@ open class FirBuiltinSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
-        return allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
-            it.getClassLikeSymbolByClassId(classId)
-        } ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
+        return allPackageFragments[classId.packageFqName]?.getClassLikeSymbolByClassId(classId)
     }
 
-    override fun computePackageSetWithTopLevelCallables(): Set<String> =
-        allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override fun getPackageNames(): Set<String> = allPackageFragments.keys.mapToSetOrEmpty(FqName::asString)
 
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
-        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->
-            fragment.classDataFinder.allClassIds.map { it.shortClassName.asString() }
-        }.orEmpty()
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
-        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) {
-            it.getTopLevelCallableNames()
-        }.orEmpty()
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+            FirBuiltinSymbolProvider.getTopLevelClassifierNamesInPackage(packageFqName)
+
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =
+            allPackageFragments[packageFqName]?.getTopLevelCallableNames()?.toSet().orEmpty()
+
+        // This symbol provider delegates to `FirBuiltinSyntheticFunctionInterfaceProvider`, so synthetic function types can be provided.
+        override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+    }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        allPackageFragments[packageFqName]?.flatMapTo(destination) {
-            it.getTopLevelCallableSymbols(name)
-        }
+        allPackageFragments[packageFqName]?.getTopLevelCallableSymbols(name)?.let { destination += it }
     }
 
     @FirSymbolProviderInternals
@@ -96,40 +111,50 @@ open class FirBuiltinSymbolProvider(
         getTopLevelFunctionSymbolsToByPackageFragments(destination, packageFqName, name)
     }
 
-    protected fun getTopLevelFunctionSymbolsToByPackageFragments(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        allPackageFragments[packageFqName]?.flatMapTo(destination) {
-            it.getTopLevelFunctionSymbols(name)
-        }
+    protected fun getTopLevelFunctionSymbolsToByPackageFragments(
+        destination: MutableList<FirNamedFunctionSymbol>,
+        packageFqName: FqName,
+        name: Name
+    ) {
+        allPackageFragments[packageFqName]?.getTopLevelFunctionSymbols(name)?.let { destination += it }
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
 
-    private class BuiltInsPackageFragment(
-        stream: InputStream, val fqName: FqName, val moduleData: FirModuleData,
-        val kotlinScopeProvider: FirKotlinScopeProvider,
-    ) {
-
+    private class BuiltInsPackageFragment(stream: InputStream) {
         private val binaryVersionAndPackageFragment = BinaryVersionAndPackageFragment.createFromStream(stream)
 
         val version: BuiltInsBinaryVersion get() = binaryVersionAndPackageFragment.version
         val packageProto: ProtoBuf.PackageFragment get() = binaryVersionAndPackageFragment.packageFragment
 
-        private val nameResolver = NameResolverImpl(packageProto.strings, packageProto.qualifiedNames)
-
+        val nameResolver = NameResolverImpl(packageProto.strings, packageProto.qualifiedNames)
         val classDataFinder = ProtoBasedClassDataFinder(packageProto, nameResolver, version) { SourceElement.NO_SOURCE }
+    }
+
+    private class BuiltInsPackageFragmentWrapper(
+        private val builtInsPackageFragment: BuiltInsPackageFragment,
+        val fqName: FqName,
+        val moduleData: FirModuleData,
+        val kotlinScopeProvider: FirKotlinScopeProvider,
+    ) {
+
+        private val packageProto get() = builtInsPackageFragment.packageProto
+        private val nameResolver get() = builtInsPackageFragment.nameResolver
+        val classDataFinder get() = builtInsPackageFragment.classDataFinder
 
         private val memberDeserializer by lazy {
             FirDeserializationContext.createForPackage(
                 fqName, packageProto.`package`, nameResolver, moduleData,
                 FirBuiltinAnnotationDeserializer(moduleData.session),
+                FirTypeDeserializer.FlexibleTypeFactory.Default,
                 FirConstDeserializer(moduleData.session, BuiltInSerializerProtocol),
                 containerSource = null
             ).memberDeserializer
         }
 
-        private val lookup = moduleData.session.firCachesFactory.createCacheWithPostCompute(
+        private val classCache = moduleData.session.firCachesFactory.createCacheWithPostCompute(
             { classId: ClassId, context: FirDeserializationContext? -> FirRegularClassSymbol(classId) to context }
         ) { classId, symbol, parentContext ->
             val classData = classDataFinder.findClassData(classId)!!
@@ -137,11 +162,23 @@ open class FirBuiltinSymbolProvider(
 
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, moduleData.session, moduleData,
-                null, kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
+                null, FirTypeDeserializer.FlexibleTypeFactory.Default,
+                kotlinScopeProvider, BuiltInSerializerProtocol, parentContext,
                 null,
                 origin = FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
             )
+        }
+
+        private val functionCache: FirCache<Name, List<FirNamedFunctionSymbol>, Nothing?> =
+            moduleData.session.firCachesFactory.createCache { name ->
+                packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
+                    memberDeserializer.loadFunction(it).symbol
+                }
+            }
+
+        private val functionsNameCache: FirLazyValue<List<Name>> = moduleData.session.firCachesFactory.createLazyValue {
+            packageProto.`package`.functionList.map { nameResolver.getName(it.name) }
         }
 
         fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
@@ -153,20 +190,19 @@ open class FirBuiltinSymbolProvider(
         ): FirRegularClassSymbol? {
             val classIdExists = classId in classDataFinder.allClassIds
             if (!classIdExists) return null
-            return lookup.getValue(classId, parentContext)
+            return classCache.getValue(classId, parentContext)
         }
 
         fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
             return getTopLevelFunctionSymbols(name)
         }
 
-        fun getTopLevelCallableNames(): Collection<Name> =
-            packageProto.`package`.functionList.map { nameResolver.getName(it.name) }
+        fun getTopLevelCallableNames(): Collection<Name> {
+            return functionsNameCache.getValue()
+        }
 
         fun getTopLevelFunctionSymbols(name: Name): List<FirNamedFunctionSymbol> {
-            return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
-                memberDeserializer.loadFunction(it).symbol
-            }
+            return functionCache.getValue(name)
         }
     }
 }
@@ -193,4 +229,3 @@ private data class BinaryVersionAndPackageFragment(
         }
     }
 }
-

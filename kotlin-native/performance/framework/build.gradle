@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.RunJvmTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 buildscript {
@@ -20,10 +19,13 @@ def archSuffix = PlatformInfo.hostName.substring(PlatformInfo.hostName.lastIndex
 
 kotlin {
     sourceSets {
-        nativeMain {
+        commonMain {
             kotlin.srcDir "$toolsPath/benchmarks/shared/src"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin"
             kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin"
+        }
+        nativeMain {
+            dependsOn commonMain
             kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin-native"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin-native"
         }
@@ -103,7 +105,7 @@ task konanJsonReport {
                                                       'compileTime'    : [nativeCompileTime],
                                                       'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, nativeExecutable)]
             def output = MPPTools.createJsonReport(properties)
-            new File("${buildDir.absolutePath}/${nativeJson}").write(output)
+            layout.buildDirectory.file(nativeJson).get().asFile.write(output)
         }
     }
 }

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.File
 import java.io.OutputStream
 
@@ -30,8 +33,19 @@ internal inline fun File.useCodedOutput(f: CodedOutputStream.() -> Unit) {
     outputStream().useCodedOutput(f)
 }
 
-internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null): Nothing {
-    val filePath = listOfNotNull(libFile?.path, srcFile?.path).joinToString(":") { File(it).name }
+internal inline fun <T> CodedOutputStream.ifNotNull(value: T?, write: (T) -> Unit) {
+    writeBoolNoTag(value != null)
+    if (value != null) {
+        write(value)
+    }
+}
+
+internal inline fun <T> CodedInputStream.ifTrue(then: () -> T): T? {
+    return if (readBool()) then() else null
+}
+
+internal fun icError(what: String, libFile: KotlinLibraryFile? = null, srcFile: KotlinSourceFile? = null, irFile: IrFile? = null): Nothing {
+    val filePath = listOfNotNull(libFile?.path, (srcFile?.path ?: irFile?.fileEntry?.name)).joinToString(":") { File(it).name }
     val msg = if (filePath.isEmpty()) what else "$what for $filePath"
     error("IC internal error: $msg")
 }
@@ -40,12 +54,16 @@ internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile? = null, s
     icError("can not find $what", libFile, srcFile)
 }
 
+internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile, irFile: IrFile): Nothing {
+    icError("can not find $what", libFile, irFile = irFile)
+}
+
 internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int) -> Unit): Set<E> {
-    return HashSet<E>(to).apply { repeat(to) { builderAction(it) } }
+    return newHashSetWithExpectedSize<E>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V>.(Int) -> Unit): Map<K, V> {
-    return HashMap<K, V>(to).apply { repeat(to) { builderAction(it) } }
+    return newHashMapWithExpectedSize<K, V>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal fun findStdlib(

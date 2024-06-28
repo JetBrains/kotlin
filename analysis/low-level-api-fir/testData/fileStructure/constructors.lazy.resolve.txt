@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constructors.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|<local>/a|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            this<R|A|>(Int(1))
+        }
+
+    }

@@ -1,5 +1,5 @@
 public open class NestedEnumArgument : R|kotlin/Any| {
-    @R|test/NestedEnumArgument.Anno|(value = R|test/NestedEnumArgument.E.FIRST|) public/*package*/ open fun foo(): R|kotlin/Unit|
+    @R|test/NestedEnumArgument.Anno|(value = test/NestedEnumArgument.E.FIRST) public/*package*/ open fun foo(): R|kotlin/Unit|
 
     public constructor(): R|test/NestedEnumArgument|
 
@@ -8,7 +8,7 @@ public open class NestedEnumArgument : R|kotlin/Any| {
 
     }
     public final enum class E : R|kotlin/Enum<test/NestedEnumArgument.E!>| {
-        public final static enum entry FIRST: R|@EnhancedNullability test/NestedEnumArgument.E|
+        public final static enum entry FIRST: R|test/NestedEnumArgument.E|
         public final static fun values(): R|kotlin/Array<test/NestedEnumArgument.E>| {
         }
 

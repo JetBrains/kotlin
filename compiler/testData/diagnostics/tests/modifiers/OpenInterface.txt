@@ -1,0 +1,18 @@
+package
+
+public interface OpenInterface {
+    public abstract val abstractVal: kotlin.Any
+    public abstract val abstractValWithGetter: kotlin.Any
+    public abstract var abstractValWithSetter: kotlin.Any
+    public open val defaultModalityValWithGetter: kotlin.Any
+    public abstract val defaultModalityValWithoutGetter: kotlin.Any
+    public open val openVal: kotlin.Any
+    public abstract fun abstractFunc(): kotlin.Unit
+    public open fun defaultModalityFuncWithBody(): kotlin.Unit
+    public abstract fun defaultModalityFuncWithoutBody(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun openFunc(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

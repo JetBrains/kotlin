@@ -1,0 +1,63 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+fun interface Consumer {
+    fun consume(t: Int)
+}
+
+@Composable fun Test(int: Int) {
+    Example {
+        println(int)
+    }
+}
+
+@Composable inline fun Example(consumer: Consumer) {
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+interface Consumer {
+  abstract fun consume(t: Int)
+}
+@Composable
+fun Test(int: Int, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<{>,<Exampl...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(int)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Example(<block>{
+      sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+        Consumer { it: Int ->
+          println(int)
+        }
+      }
+      sourceInformationMarkerEnd(%composer)
+      tmp0_group
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(int, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
+  sourceInformationMarkerStart(%composer, <>, "CC(Example):Test.kt")
+  sourceInformationMarkerEnd(%composer)
+}

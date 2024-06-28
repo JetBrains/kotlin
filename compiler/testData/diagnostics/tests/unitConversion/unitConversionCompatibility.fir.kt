@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 
 object Test1 {
     fun foo(f: () -> Int) {}
@@ -25,5 +25,16 @@ object Test2 {
         fun test(f: () -> Int) {
             <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)<!>
         }
+    }
+}
+
+object Test3 {
+    fun foo(f: () -> Int) = 1
+
+    fun foo(f: () -> Unit) = "2"
+
+    fun test(f: () -> Int) {
+        val result = foo(f)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }

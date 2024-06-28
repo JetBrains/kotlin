@@ -50,16 +50,16 @@ FILE: implicitReceivers.kt
         <Unresolved name: foo>#()
     }
     public final fun test_3(a: R|kotlin/Any|, b: R|kotlin/Any|, c: R|kotlin/Any|): R|kotlin/Unit| {
-        R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-            R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+        R|kotlin/with<CS errors: kotlin/with>#|<R|kotlin/Any|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/with<Inapplicable(INAPPLICABLE): kotlin/with>#|<R|kotlin/Any|, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): <ERROR TYPE REF: Unresolved name: foo> <inline=Inline, kind=EXACTLY_ONCE>  {
                 R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                     (this@R|special/anonymous| as R|A|)
                     this@R|special/anonymous|.R|/A.foo|()
                     this@R|special/anonymous|.R|/A.foo|()
                 }
                 )
-                this@R|special/anonymous|.R|/A.foo|()
-                this@R|special/anonymous|.R|/A.foo|()
+                this@R|special/anonymous|.<Unresolved name: foo>#()
+                ^ <Unresolved name: foo>#()
             }
             )
         }
@@ -73,17 +73,22 @@ FILE: implicitReceivers.kt
                 this@R|/test_4|.<Unresolved name: bar>#()
                 <Unresolved name: bar>#()
             }
-            (this@R|/test_4| !is R|B|) ->  {
-                this@R|/test_4|.<Unresolved name: bar>#()
-                <Unresolved name: bar>#()
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/A.foo|()
-            }
             else ->  {
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/A.foo|()
-                this@R|/test_4|.R|/B.bar|()
-                this@R|/test_4|.R|/B.bar|()
+                when () {
+                    (this@R|/test_4| !is R|B|) ->  {
+                        this@R|/test_4|.<Unresolved name: bar>#()
+                        <Unresolved name: bar>#()
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
+                    }
+                    else ->  {
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/A.foo|()
+                        this@R|/test_4|.R|/B.bar|()
+                        this@R|/test_4|.R|/B.bar|()
+                    }
+                }
+
             }
         }
 

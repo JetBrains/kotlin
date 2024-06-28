@@ -1,28 +1,41 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension
 import org.jetbrains.kotlin.fir.builder.FirScriptConfiguratorExtension.Factory
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
+import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -39,101 +52,152 @@ import kotlin.script.experimental.host.StringScriptSource
 class FirScriptConfiguratorExtensionImpl(
     session: FirSession,
     // TODO: left here because it seems it will be needed soon, remove supression if used or remove the param if it is not the case
-    @Suppress("UNUSED_PARAMETER") hostConfiguration: ScriptingHostConfiguration
+    @Suppress("UNUSED_PARAMETER", "unused") hostConfiguration: ScriptingHostConfiguration,
 ) : FirScriptConfiguratorExtension(session) {
-    @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(fileBuilder: FirFileBuilder) {
 
-        // TODO: rewrite/extract decision logic for clarity
-        val compilationConfiguration = session.scriptDefinitionProviderService?.let { providerService ->
-            fileBuilder.sourceFile?.toSourceCode()?.let { script ->
-                val ktFile = (script as? KtFileScriptSource)?.ktFile ?: error("only PSI scripts are supported at the moment")
-                providerService.configurationProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
-                    ?: providerService.definitionProvider?.findDefinition(script)?.compilationConfiguration
-            } ?: providerService.definitionProvider?.getDefaultDefinition()?.compilationConfiguration
+    override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile, context: Context<PsiElement>) {
+        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
+            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
+            return
         }
 
-        if (compilationConfiguration != null) {
+        // TODO: rewrite/extract decision logic for clarity
+        configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
+            val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
+            receivers.add(buildImplicitReceiverWithFqName(baseClassFqn, isBaseClassReceiver = true))
 
-            compilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-                val trimmed = defaultImport.trim()
-                val endsWithStar = trimmed.endsWith("*")
-                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 1) else trimmed
-                val fqName = FqName.fromSegments(stripped.split("."))
-                fileBuilder.imports += buildImport {
-                    importedFqName = fqName
-                    isAllUnder = endsWithStar
+            val baseClassSymbol =
+                session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
+                        as? FirRegularClassSymbol
+            if (baseClassSymbol != null) {
+                // assuming that if base class will be unresolved, the error will be reported on the contextReceiver
+                baseClassSymbol.fir.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
+                    parameters.add(
+                        buildProperty {
+                            moduleData = session.moduleData
+                            source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                            origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
+                            // TODO: copy type parameters?
+                            returnTypeRef = baseCtorParameter.returnTypeRef
+                            name = baseCtorParameter.name
+                            symbol = FirPropertySymbol(name)
+                            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                            isLocal = true
+                            isVar = false
+                        }
+                    )
                 }
             }
+        }
 
-            compilationConfiguration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
-                val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
-                contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn))
+        configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
+            receivers.add(
+                buildImplicitReceiverWithFqName(
+                    FqName.fromSegments(implicitReceiver.typeName.split(".")),
+                    isBaseClassReceiver = false
+                )
+            )
+        }
 
-                val baseClassSymbol =
-                    session.dependenciesSymbolProvider.getClassLikeSymbolByClassId(ClassId(baseClassFqn.parent(), baseClassFqn.shortName()))
-                            as? FirRegularClassSymbol
-                if (baseClassSymbol != null) {
-                    // assuming that if base class will be unresolved, the error will be reported on the contextReceiver
-                    baseClassSymbol.fir.primaryConstructorIfAny(session)?.fir?.valueParameters?.forEach { baseCtorParameter ->
-                        parameters.add(
-                            buildProperty {
-                                moduleData = session.moduleData
-                                origin = FirDeclarationOrigin.ScriptCustomization
-                                // TODO: copy type parameters?
-                                returnTypeRef = baseCtorParameter.returnTypeRef
-                                this.name = baseCtorParameter.name
-                                this.symbol = FirPropertySymbol(this.name)
-                                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                                isLocal = true
-                                isVar = false
-                            }
-                        )
-                    }
+        configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
+            val typeRef = buildUserTypeRef {
+                isMarkedNullable = propertyType.isNullable
+                propertyType.typeName.split(".").forEach {
+                    qualifier.add(FirQualifierPartImpl(null, Name.identifier(it), FirTypeArgumentListImpl(null)))
                 }
             }
-
-            compilationConfiguration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
-                contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
-            }
-
-            compilationConfiguration[ScriptCompilationConfiguration.providedProperties]?.forEach { propertyName, propertyType ->
-                val typeRef = buildUserTypeRef {
-                    isMarkedNullable = propertyType.isNullable
-                    propertyType.typeName.split(".").forEach {
-                        qualifier.add(FirQualifierPartImpl(null, Name.identifier(it), FirTypeArgumentListImpl(null)))
-                    }
+            parameters.add(
+                buildProperty {
+                    moduleData = session.moduleData
+                    source = this@configure.source?.fakeElement(KtFakeSourceElementKind.ScriptParameter)
+                    origin = FirDeclarationOrigin.ScriptCustomization.Parameter
+                    returnTypeRef = typeRef
+                    name = Name.identifier(propertyName)
+                    symbol = FirPropertySymbol(name)
+                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                    isLocal = true
+                    isVar = false
                 }
-                parameters.add(
+            )
+        }
+
+        configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
+            _knownAnnotationsForSamWithReceiver.add(it.typeName)
+        }
+
+        configuration[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }?.let { resultFieldName ->
+            val lastScriptBlock = declarations.lastOrNull() as? FirAnonymousInitializer
+            val lastExpression =
+                when (val lastScriptBlockBody = lastScriptBlock?.body) {
+                    is FirLazyBlock -> null
+                    is FirSingleExpressionBlock -> lastScriptBlockBody.statement as? FirExpression
+                    else -> lastScriptBlockBody?.statements?.single()?.takeIf { it is FirExpression } as? FirExpression
+                }?.takeUnless { it is FirErrorExpression }
+
+            if (lastExpression != null) {
+                declarations.removeLast()
+                @OptIn(UnresolvedExpressionTypeAccess::class)
+                val lastExpressionTypeRef =
+                    lastExpression.takeUnless { it is FirLazyExpression }?.coneTypeOrNull?.toFirResolvedTypeRef()
+                        ?: FirImplicitTypeRefImplWithoutSource
+                declarations.add(
                     buildProperty {
+                        this.name = Name.identifier(resultFieldName)
+                        this.symbol = FirPropertySymbol(CallableId(context.packageFqName, this.name))
+                        source = lastScriptBlock?.source
                         moduleData = session.moduleData
-                        origin = FirDeclarationOrigin.ScriptCustomization
-                        returnTypeRef = typeRef
-                        this.name = Name.identifier(propertyName)
-                        this.symbol = FirPropertySymbol(this.name)
-                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                        isLocal = true
+                        origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
+                        initializer = lastExpression
+                        returnTypeRef = lastExpressionTypeRef
+                        getter = FirDefaultPropertyGetter(
+                            lastScriptBlock?.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
+                            session.moduleData,
+                            FirDeclarationOrigin.ScriptCustomization.ResultProperty,
+                            lastExpressionTypeRef,
+                            Visibilities.Public,
+                            this.symbol,
+                        )
+                        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                        isLocal = false
                         isVar = false
+                    }.also {
+                        resultPropertyName = it.name
                     }
                 )
-            }
-
-            compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
-                _knownAnnotationsForSamWithReceiver.add(it.typeName)
             }
         }
     }
 
-    private fun buildContextReceiverWithFqName(baseClassFqn: FqName) =
-        buildContextReceiver {
-            typeRef = buildUserTypeRef {
+    private fun KtSourceFile.asString() = path ?: name
+
+    private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
+        val service = checkNotNull(session.scriptDefinitionProviderService)
+        val sourceCode = file.toSourceCode()
+        val ktFile = sourceCode?.originalKtFile()
+        val configuration = with(service) {
+            ktFile?.let { asKtFile -> configurationFor(asKtFile) }
+                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
+                ?: defaultConfiguration()?.also { log.debug("Default configuration loaded for ${file.asString()}") }
+        }
+        return configuration
+    }
+
+    private fun buildImplicitReceiverWithFqName(classFqn: FqName, isBaseClassReceiver: Boolean) =
+        buildScriptReceiverParameter {
+            val userTypeRef = buildUserTypeRef {
                 isMarkedNullable = false
                 qualifier.addAll(
-                    baseClassFqn.pathSegments().map {
+                    classFqn.pathSegments().map {
                         FirQualifierPartImpl(null, it, FirTypeArgumentListImpl(null))
                     }
                 )
             }
+            typeRef = userTypeRef
+            this.isBaseClassReceiver = isBaseClassReceiver
         }
 
     private val _knownAnnotationsForSamWithReceiver = hashSetOf<String>()
@@ -142,11 +206,26 @@ class FirScriptConfiguratorExtensionImpl(
         get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
+        private val log: Logger get() = Logger.getInstance(FirScriptConfiguratorExtensionImpl::class.java)
+
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
         }
     }
 }
+
+private fun SourceCode.originalKtFile(): KtFile =
+    (this as? KtFileScriptSource)?.ktFile?.originalFile as? KtFile
+        ?: error("only PSI scripts are supported at the moment")
+
+private fun FirScriptDefinitionProviderService.configurationFor(file: KtFile): ScriptCompilationConfiguration? =
+    configurationProvider?.getScriptConfigurationResult(file)?.valueOrNull()?.configuration
+
+private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
+    definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
+
+private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
+    definitionProvider?.getDefaultDefinition()?.compilationConfiguration
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)

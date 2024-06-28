@@ -1,0 +1,41 @@
+final class NonInlineReceiversKt$foo$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function1 {
+    final int $count
+
+    final java.lang.String $this_foo
+
+    final boolean $x
+
+    void <init>(java.lang.String $receiver, boolean $x, int $count) {
+        Local variables:
+            0 this: LNonInlineReceiversKt$foo$1;
+            1 $receiver: Ljava/lang/String;
+            2 $x: Z
+            3 $count: I
+    }
+
+    public final void invoke(long $this$block) {
+        Local variables:
+            0 this: LNonInlineReceiversKt$foo$1;
+            1 $this$block: J
+    }
+
+    public java.lang.Object invoke(java.lang.Object p1) {
+        Local variables:
+            0 this: LNonInlineReceiversKt$foo$1;
+            1 p1: Ljava/lang/Object;
+    }
+}
+
+public final class NonInlineReceiversKt : java/lang/Object {
+    public final static void block(kotlin.jvm.functions.Function1 block) {
+        Local variables:
+            0 block: Lkotlin/jvm/functions/Function1;
+    }
+
+    public final static void foo(java.lang.String $this$foo, int count) {
+        Local variables:
+            2 x: Z
+            0 $this$foo: Ljava/lang/String;
+            1 count: I
+    }
+}

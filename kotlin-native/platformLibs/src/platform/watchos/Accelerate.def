@@ -5,3 +5,6 @@ modules = Accelerate
 
 compilerOpts = -framework Accelerate
 linkerOpts = -framework Accelerate
+
+excludedFunctions.watchos_arm32 = SparseGetInertia
+excludedFunctions.watchos_x86 = SparseGetInertia

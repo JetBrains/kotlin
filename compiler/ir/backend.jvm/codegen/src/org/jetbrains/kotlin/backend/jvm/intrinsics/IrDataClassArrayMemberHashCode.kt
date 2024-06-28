@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 
 object IrDataClassArrayMemberHashCode : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? =
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue =
         with(codegen) {
             val arrayType = expression.getValueArgument(0)!!.type
             val asmArrayType = codegen.typeMapper.mapType(arrayType)

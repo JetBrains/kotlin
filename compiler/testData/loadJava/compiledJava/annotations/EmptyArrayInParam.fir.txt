@@ -4,7 +4,7 @@ public abstract interface EmptyArrayInParam : R|kotlin/Any| {
 
     }
     public final annotation class MyAnnotation : R|kotlin/Annotation| {
-        public constructor(vararg value: R|kotlin/Array<kotlin/String>|): R|test/EmptyArrayInParam.MyAnnotation|
+        public constructor(vararg value: R|kotlin/Array<out kotlin/String>|): R|test/EmptyArrayInParam.MyAnnotation|
 
     }
 }

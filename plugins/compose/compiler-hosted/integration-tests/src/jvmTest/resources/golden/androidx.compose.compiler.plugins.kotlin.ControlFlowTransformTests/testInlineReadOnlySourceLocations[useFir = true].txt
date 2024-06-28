@@ -1,0 +1,84 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+
+val current
+    @Composable
+    @ReadOnlyComposable
+    get() = 0
+
+@Composable
+@ReadOnlyComposable
+fun calculateSometing(): Int {
+    return 0;
+}
+
+@Composable
+fun Test() {
+    val c = current
+    val cl = calculateSometing()
+    Layout {
+        Text("$c $cl")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+val current: Int
+  @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
+  get() {
+    sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, "<get-current> (Test.kt:7)")
+    }
+    val tmp0 = 0
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+    sourceInformationMarkerEnd(%composer)
+    return tmp0
+  }
+@Composable
+@ReadOnlyComposable
+fun calculateSometing(%composer: Composer?, %changed: Int): Int {
+  sourceInformationMarkerStart(%composer, <>, "C(calculateSometing):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, "calculateSometing (Test.kt:11)")
+  }
+  val tmp0 = 0
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, "Test (Test.kt:16)")
+    }
+    val c = <get-current>(%composer, 0)
+    val cl = calculateSometing(%composer, 0)
+    Layout({ %composer: Composer?, %changed: Int ->
+      sourceInformationMarkerStart(%composer, <>, "C<Text("...>:Test.kt")
+      Text("%c %cl", %composer, 0)
+      sourceInformationMarkerEnd(%composer)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -4,11 +4,7 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT
     public bridge final <(I)TT;> method remove(p0: int): java.lang.Object
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
-    public abstract <null> method contains(p0: java.lang.Object): boolean
     public abstract <null> method getSize(): int
-    public abstract <null> method indexOf(p0: java.lang.Object): int
-    public abstract <null> method lastIndexOf(p0: java.lang.Object): int
-    public abstract <null> method remove(p0: java.lang.Object): boolean
     public abstract <null> method removeAt(p0: int): java.lang.Object
     public bridge final <null> method size(): int
     public <null> method toArray(): java.lang.Object[]

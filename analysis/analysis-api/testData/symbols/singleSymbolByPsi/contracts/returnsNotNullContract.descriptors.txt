@@ -1,0 +1,107 @@
+KaNamedFunctionSymbol:
+  annotations: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableId: /returnsNotNullContract
+  compilerVisibility: Public
+  contextReceivers: []
+  contractEffects: [
+    KaContractConditionalContractEffectDeclaration:
+      effect:
+        KaContractReturnsNotNullEffectDeclaration:
+      condition:
+        KaContractIsNullPredicateExpression:
+          argument:
+            KaContractParameterValue:
+              parameterSymbol:
+                KaValueParameterSymbol:
+                  annotations: []
+                  callableId: null
+                  compilerVisibility: Local
+                  contextReceivers: []
+                  generatedPrimaryConstructorProperty: null
+                  hasDefaultValue: false
+                  isActual: false
+                  isCrossinline: false
+                  isExpect: false
+                  isExtension: false
+                  isImplicitLambdaParameter: false
+                  isNoinline: false
+                  isVal: true
+                  isVararg: false
+                  location: LOCAL
+                  modality: FINAL
+                  name: foo
+                  origin: SOURCE
+                  receiverParameter: null
+                  returnType: KaUsualClassType:
+                    annotations: []
+                    typeArguments: []
+                    type: kotlin/Any?
+                  visibility: LOCAL
+                  getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
+                  getContainingJvmClassName: ReturnsNotNullContractKt
+                  getContainingModule: KaSourceModule "Sources of main"
+                  deprecationStatus: null
+          isNegated: true
+  ]
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: TOP_LEVEL
+  modality: FINAL
+  name: returnsNotNullContract
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Any?
+  typeParameters: []
+  valueParameters: [
+    KaValueParameterSymbol:
+      annotations: []
+      callableId: null
+      compilerVisibility: Local
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isActual: false
+      isCrossinline: false
+      isExpect: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVal: true
+      isVararg: false
+      location: LOCAL
+      modality: FINAL
+      name: foo
+      origin: SOURCE
+      receiverParameter: null
+      returnType: KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Any?
+      visibility: LOCAL
+      getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
+      getContainingJvmClassName: ReturnsNotNullContractKt
+      getContainingModule: KaSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: PUBLIC
+  getContainingFileSymbol: KaFileSymbol(returnsNotNullContract.kt)
+  getContainingJvmClassName: ReturnsNotNullContractKt
+  getContainingModule: KaSourceModule "Sources of main"
+  deprecationStatus: null

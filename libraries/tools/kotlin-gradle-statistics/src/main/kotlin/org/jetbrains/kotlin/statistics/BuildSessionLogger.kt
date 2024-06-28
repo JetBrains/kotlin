@@ -5,39 +5,36 @@
 
 package org.jetbrains.kotlin.statistics
 
-import org.jetbrains.kotlin.statistics.fileloggers.FileRecordLogger
-import org.jetbrains.kotlin.statistics.fileloggers.IRecordLogger
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.fileloggers.NullRecordLogger
 import org.jetbrains.kotlin.statistics.metrics.*
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.nio.file.Files
 
 class BuildSessionLogger(
     rootPath: File,
     private val maxProfileFiles: Int = DEFAULT_MAX_PROFILE_FILES,
-    private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE,
     private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE,
-    private val forceValuesValidation: Boolean = false
-) : IStatisticsValuesConsumer {
+    forceValuesValidation: Boolean = false,
+) : StatisticsValuesConsumer {
 
     companion object {
+        const val PROFILE_FILE_NAME_SUFFIX = ".profile"
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"
-        const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}(.\\d+)?.profile"
+        val STATISTICS_FILE_NAME_PATTERN = "[\\w-]*$PROFILE_FILE_NAME_SUFFIX".toRegex()
 
         private const val DEFAULT_MAX_PROFILE_FILES = 1_000
-        private const val DEFAULT_MAX_PROFILE_FILE_SIZE = 100_000L
         private const val DEFAULT_MAX_FILE_AGE = 30 * 24 * 3600 * 1000L //30 days
 
-        fun listProfileFiles(statisticsFolder: File): List<File>? {
-            return statisticsFolder.listFiles()?.filterTo(ArrayList()) { it.name.matches(STATISTICS_FILE_NAME_PATTERN.toRegex()) }?.sorted()
+        fun listProfileFiles(statisticsFolder: File): List<File> {
+            return Files.newDirectoryStream(statisticsFolder.toPath()).use { dirStream ->
+                dirStream.map { it.toFile() }
+                    .filter { it.name.matches(STATISTICS_FILE_NAME_PATTERN) }
+                    .sortedBy { it.lastModified() }
+            }
         }
     }
-
-    private val profileFileNameFormatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm-ss-SSS")
-    private val profileFileNameSuffix = ".profile"
 
     private val statisticsFolder: File = File(
         rootPath,
@@ -45,45 +42,43 @@ class BuildSessionLogger(
     ).also { it.mkdirs() }
 
     private var buildSession: BuildSession? = null
-    private var trackingFile: IRecordLogger? = null
 
     private val metricsContainer = MetricsContainer(forceValuesValidation)
 
     @Synchronized
-    fun startBuildSession(buildSinceDaemonStart: Long, buildStartedTime: Long?) {
-        report(NumericalMetrics.GRADLE_BUILD_NUMBER_IN_CURRENT_DAEMON, buildSinceDaemonStart)
-
-        buildSession = BuildSession(buildStartedTime)
-        initTrackingFile()
+    fun startBuildSession(buildUid: String) {
+        buildSession = BuildSession(buildUid)
     }
 
     @Synchronized
     fun isBuildSessionStarted() = buildSession != null
 
     @Synchronized
-    private fun closeTrackingFile() {
-        trackingFile?.let {
-            metricsContainer.flush(it)
-            it.close()
-            trackingFile = null
+    fun getActiveBuildId() = buildSession?.buildUid
+
+    /**
+     * Initializes a new build report file
+     * The following contracts are implemented:
+     * - each file contains metrics for one build
+     * - any other process can add metrics to the file during build
+     * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
+     */
+    private fun storeMetricsIntoFile(buildId: String) {
+        try {
+            statisticsFolder.mkdirs()
+            val file = File(statisticsFolder, buildId + PROFILE_FILE_NAME_SUFFIX)
+
+            FileOutputStream(file, true).bufferedWriter().use {
+                metricsContainer.flush(it)
+            }
+        } catch (_: IOException) {
+            //ignore io exception
         }
     }
 
-    /**
-     * Initializes a new tracking file
-     * The following contracts are implemented:
-     * - number of tracking files should not be more than maxProfileFiles (the earlier file created the earlier deleted)
-     * - files with age (current time - last modified) more than maxFileAge should be deleted (if we trust lastModified returned by FS)
-     * - files are ordered on the basis of name (creation timestamp)
-     * - if the last file has size less then maxFileSize, the next record will be append to it (new file created otherwise)
-     * -
-     */
-    @Synchronized
-    private fun initTrackingFile() {
-        closeTrackingFile()
-
+    private fun clearOldFiles() {
         // Get list of existing files. Try to create folder if possible, return from function if failed to create folder
-        val fileCandidates = listProfileFiles(statisticsFolder) ?: if (statisticsFolder.mkdirs()) emptyList() else return
+        val fileCandidates = listProfileFiles(statisticsFolder)
 
         for ((index, file) in fileCandidates.withIndex()) {
             val toDelete = if (index < fileCandidates.size - maxProfileFiles)
@@ -96,63 +91,16 @@ class BuildSessionLogger(
                 file.delete()
             }
         }
-
-        // emergency check. What if a lot of files are locked due to some reason
-        if ((listProfileFiles(statisticsFolder)?.size ?: 0) > maxProfileFiles * 2) {
-            trackingFile = NullRecordLogger()
-            return
-        }
-
-        fun newFile(): File {
-            val timestamp = profileFileNameFormatter.format(LocalDateTime.now())
-            var result = File(statisticsFolder, timestamp + profileFileNameSuffix)
-            var suffixIndex = 0
-            while (result.exists()) {
-                result = File(statisticsFolder, "${timestamp}.${suffixIndex++}$profileFileNameSuffix")
-            }
-            return result
-        }
-
-        val lastFile = fileCandidates.lastOrNull() ?: newFile()
-
-        trackingFile = try {
-            if (lastFile.length() < maxFileSize) {
-                FileRecordLogger(lastFile)
-            } else {
-                FileRecordLogger(newFile())
-            }
-        } catch (e: IOException) {
-            try {
-                FileRecordLogger(newFile())
-            } catch (e: IOException) {
-                NullRecordLogger()
-            }
-        }
     }
 
-    @Synchronized
-    fun finishBuildSession(@Suppress("UNUSED_PARAMETER") action: String?, failure: Throwable?) {
-        try {
-            // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
-            // could be affected by system clock correction
-            val finishTime = System.currentTimeMillis()
-            buildSession?.also {
-                if (it.buildStartedTime != null) {
-                    report(NumericalMetrics.GRADLE_BUILD_DURATION, finishTime - it.buildStartedTime)
-                }
-                report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
-                report(NumericalMetrics.BUILD_FINISH_TIME, finishTime)
-                report(BooleanMetrics.BUILD_FAILED, failure != null)
-            }
-            buildSession = null
-        } finally {
-            unlockJournalFile()
-        }
-    }
 
     @Synchronized
-    private fun unlockJournalFile() {
-        closeTrackingFile()
+    fun finishBuildSession() {
+        buildSession?.also {
+            storeMetricsIntoFile(it.buildUid)
+        }
+        buildSession = null
+        clearOldFiles()
     }
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =

@@ -1,8 +1,0 @@
-apply plugin: 'kotlin'
-apply plugin: 'application'
-
-dependencies {
-	implementation 'com.example:sample-lib:1.0'
-}
-
-mainClassName = 'com.example.app.JvmAppKt'

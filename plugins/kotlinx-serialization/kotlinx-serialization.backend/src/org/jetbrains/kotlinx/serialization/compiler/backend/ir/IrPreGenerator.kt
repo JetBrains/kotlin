@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.companionObject
+import org.jetbrains.kotlin.ir.util.copyTo
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
@@ -42,10 +44,12 @@ class IrPreGenerator(
     private fun preGenerateWriteSelfMethodIfNeeded() {
         // write$Self in K1 is created only on JVM (see SerializationResolveExtension)
         if (!compilerContext.platform.isJvm()) return
-        if (!irClass.isInternalSerializable) return
-        val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
+        if (!irClass.shouldHaveGeneratedMethods()) return
+
+        val serializerClass = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
+
         if (!irClass.shouldHaveSpecificSyntheticMethods {
-                serializerDescriptor.findPluginGeneratedMethod(
+                serializerClass.findPluginGeneratedMethod(
                     SerialEntityNames.SAVE,
                     compilerContext.afterK2
                 )
@@ -54,21 +58,21 @@ class IrPreGenerator(
         val method = irClass.addFunction {
             name = SerialEntityNames.WRITE_SELF_NAME
             returnType = compilerContext.irBuiltIns.unitType
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
             modality = Modality.FINAL
             origin = SERIALIZATION_PLUGIN_ORIGIN
         }
-        method.apply {
-            dispatchReceiverParameter = null // function is static
-            excludeFromJsExport()
-        }
+        method.excludeFromJsExport()
 
-        val typeParams = irClass.typeParameters.map {
+        val typeParamsMap = irClass.typeParameters.associateWith {
             method.addTypeParameter(
                 it.name.asString(), compilerContext.irBuiltIns.anyNType
             )
         }
-        val typeParamsAsArguments = typeParams.map { it.defaultType }
+        // Despite this function should be static in bytecode, registerFunctionAsMetadataVisible needs a correct dispatch receiver
+        // to handle function metadata correctly. This dispatchReceiverParameter will become `null` later.
+        method.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(method, remapTypeMap = typeParamsMap)
+        val typeParamsAsArguments = typeParamsMap.values.map { it.defaultType }
 
         // object
         method.addValueParameter(
@@ -96,10 +100,18 @@ class IrPreGenerator(
                 SERIALIZATION_PLUGIN_ORIGIN
             )
         }
+
+        compilerContext.referenceClass(StandardClassIds.Annotations.jvmStatic)
+            ?.let { method.annotations += method.createAnnotationCallWithoutArgs(it) }
+
+        compilerContext.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(method)
+
+        // Make function static in bytecode (see JvmStaticAnnotationLowering.makeStatic).
+        method.dispatchReceiverParameter = null
     }
 
     private fun preGenerateDeserializationConstructorIfNeeded() {
-        if (!irClass.isInternalSerializable) return
+        if (!irClass.shouldHaveGeneratedMethods()) return
         // do not add synthetic deserialization constructor if .deserialize method is customized
         if (irClass.hasCompanionObjectAsSerializer && irClass.companionObject()
                 ?.findPluginGeneratedMethod(SerialEntityNames.LOAD, compilerContext.afterK2) == null
@@ -108,7 +120,7 @@ class IrPreGenerator(
         if (irClass.findSerializableSyntheticConstructor() != null) return
         val ctor = irClass.addConstructor {
             origin = SERIALIZATION_PLUGIN_ORIGIN
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = if (irClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
         }.apply { excludeFromJsExport() }
         val markerClassSymbol =
             compilerContext.getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_CTOR_MARKER_NAME.asString())
@@ -125,6 +137,7 @@ class IrPreGenerator(
         }
 
         ctor.addValueParameter(SerialEntityNames.dummyParamName, markerClassSymbol.defaultType.makeNullable(), SERIALIZATION_PLUGIN_ORIGIN)
+        compilerContext.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
     }
 
     private fun IrType.makeNullableIfNotPrimitive() =
@@ -136,7 +149,7 @@ class IrPreGenerator(
             irClass: IrClass,
             compilerContext: SerializationPluginContext
         ) {
-            if (!irClass.isInternalSerializable) return
+            if (!irClass.shouldHaveGeneratedMethods()) return
             IrPreGenerator(irClass, compilerContext).generate()
         }
     }

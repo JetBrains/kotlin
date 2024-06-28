@@ -1,6 +1,0 @@
-KT element: KtBlockStringTemplateEntry
-FIR element: FirIntegerLiteralOperatorCallImpl
-FIR source kind: KtRealSourceElementKind
-
-FIR element rendered:
-Int(1).R|kotlin/Int.plus|(Int(2))

@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
+    namespace "com.example.parcelize"
+
     compileSdkVersion 23
 
     defaultConfig {
@@ -13,11 +15,10 @@ android {
         versionName "1.0"
     }
 
-    // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+    kotlin {
+        jvmToolchain(8)
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }

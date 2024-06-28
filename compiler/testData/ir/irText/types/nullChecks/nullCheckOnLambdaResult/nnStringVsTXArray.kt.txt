@@ -1,10 +1,11 @@
-fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
-  return fn.invoke()
-}
-
 fun testWithNullCheck(xs: Array<String>) {
   useTX<Serializable>(x = xs, fn = local fun <anonymous>(): Serializable {
     return notNullString() /*!! String */
   }
 ) /*~> Unit */
 }
+
+fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
+  return fn.invoke()
+}
+

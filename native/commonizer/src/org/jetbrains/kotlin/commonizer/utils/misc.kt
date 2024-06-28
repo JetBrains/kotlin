@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import com.intellij.util.SmartFMap
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 import java.util.Collections.singletonList
@@ -17,7 +16,7 @@ internal inline fun <K : Any, V, R> Map<K, V>.compactMapValues(transform: (Map.E
         0 -> emptyMap()
         1 -> with(entries.iterator().next()) { singletonMap(key, transform(this)) }
         2, 3 -> entries.fold(SmartFMap.emptyMap()) { acc, entry -> acc.plus(entry.key, transform(entry)) }
-        else -> mapValuesTo(THashMap(size), transform)
+        else -> mapValuesTo(CommonizerMap(size), transform)
     }
 
 internal inline fun <T, R> Collection<T>.compactMap(transform: (T) -> R): List<R> =
@@ -69,7 +68,7 @@ internal fun <K, V> Map<K, V>.compact(): Map<K, V> =
         0 -> emptyMap()
         1 -> with(entries.iterator().next()) { singletonMap(key, value) }
         2, 3 -> SmartFMap.emptyMap<K, V>().plusAll(this)
-        else -> THashMap(this)
+        else -> CommonizerMap(this)
     }
 
 @Suppress("NOTHING_TO_INLINE")
@@ -83,7 +82,7 @@ internal inline fun <K : Any, V> compactMapOf(key1: K, value1: V, key2: K, value
 internal inline fun <reified T> Iterable<T?>.firstNonNull() = firstIsInstance<T>()
 
 internal inline fun <reified T, reified K : Any> Collection<T>.foldToMap(keySelector: (T) -> K): Map<K, List<T>> {
-    val result = fold(THashMap<K, MutableList<T>>()) { accumulator, element ->
+    val result = fold(CommonizerMap<K, MutableList<T>>()) { accumulator, element ->
         accumulator.getOrPut(keySelector(element)) { ArrayList() } += element
         accumulator
     }

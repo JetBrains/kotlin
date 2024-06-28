@@ -4,6 +4,7 @@
 
 package org.jetbrains.kotlin.js.backend;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsIntLiteral;
 import org.jetbrains.kotlin.js.backend.ast.JsVars.JsVar;
 import org.jetbrains.kotlin.js.common.IdentifierPolicyKt;
 import org.jetbrains.kotlin.js.util.TextOutput;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -27,6 +27,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_CLASS = "class".toCharArray();
     private static final char[] CHARS_CONSTRUCTOR = "constructor".toCharArray();
     private static final char[] CHARS_CONTINUE = "continue".toCharArray();
+    private static final char[] CHARS_YIELD = "yield".toCharArray();
     private static final char[] CHARS_DEBUGGER = "debugger".toCharArray();
     private static final char[] CHARS_DEFAULT = "default".toCharArray();
     private static final char[] CHARS_DO = "do".toCharArray();
@@ -46,6 +47,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_RETURN = "return".toCharArray();
     private static final char[] CHARS_SWITCH = "switch".toCharArray();
     private static final char[] CHARS_THIS = "this".toCharArray();
+    private static final char CHARS_GENERATOR = '*';
 
     private static final char[] CHARS_SUPER = "super".toCharArray();
     private static final char[] CHARS_THROW = "throw".toCharArray();
@@ -188,7 +190,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
      * because the statements designated by statementEnds and statementStarts are
      * those that appear directly within these global blocks.
      */
-    private Set<JsBlock> globalBlocks = new THashSet<JsBlock>();
+    private Set<JsBlock> globalBlocks = new ObjectOpenHashSet<>();
 
     @NotNull
     protected final TextOutput p;
@@ -332,6 +334,24 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         p.print(CHARS_CONTINUE);
         continueOrBreakLabel(x);
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
+    public void visitYield(@NotNull JsYield x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(CHARS_YIELD);
+
+        JsExpression expression = x.getExpression();
+
+        if (expression != null) {
+            space();
+            accept(x.getExpression());
+        }
 
         printCommentsAfterNode(x);
         popSourceInfo();
@@ -684,6 +704,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             space();
         }
 
+        if (x.isGenerator()) {
+            p.print(CHARS_GENERATOR);
+        }
+
         if (x.getName() != null) {
             nameOf(x);
         }
@@ -828,7 +852,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private static JsStatement materialize(JsStatement statement) {
-       return statement instanceof JsCompositeBlock && ((JsCompositeBlock) statement).getStatements().size() > 1
+       return statement instanceof JsCompositeBlock
               ? new JsBlock(statement)
               : statement;
     }
@@ -1342,7 +1366,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             blockOpen();
             List<JsExport.Element> elements = ((JsExport.Subject.Elements) subject).getElements();
             for (JsExport.Element element : elements) {
-                nameDef(element.getName());
+                visitNameRef(element.getName());
                 JsName alias = element.getAlias();
                 if (alias != null) {
                     p.print(" as ");
@@ -1369,10 +1393,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         p.print("import ");
 
         if (target instanceof JsImport.Target.Default) {
-            nameDef(((JsImport.Target.Default) target).getName());
+            visitNameRef(((JsImport.Target.Default) target).getName());
         } else if (target instanceof JsImport.Target.All) {
             p.print("* as ");
-            nameDef(((JsImport.Target.All) target).getAlias());
+            visitNameRef(((JsImport.Target.All) target).getAlias());
         } else if (target instanceof JsImport.Target.Elements) {
             List<JsImport.Element> elements = ((JsImport.Target.Elements) target).getElements();
 
@@ -1386,10 +1410,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
             for (JsImport.Element element : elements) {
                 nameDef(element.getName());
-                JsName alias = element.getAlias();
+                JsNameRef alias = element.getAlias();
                 if (alias != null) {
                     p.print(" as ");
-                    nameDef(alias);
+                    visitNameRef(alias);
                 }
 
                 if (isMultiline) {
@@ -1404,7 +1428,10 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print("}");
         }
 
-        p.print(" from ");
+        if (!(target == JsImport.Target.Effect.INSTANCE)) {
+            p.print(" from ");
+        }
+
         p.print(javaScriptString(jsImport.getModule()));
     }
 

@@ -11,16 +11,13 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
-import org.jetbrains.kotlin.gradle.util.enableHierarchicalStructureByDefault
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
-import kotlin.test.Test
-import kotlin.test.assertNotNull
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class DisabledCInteropCommonizationWarningTest {
 
@@ -32,7 +29,7 @@ class DisabledCInteropCommonizationWarningTest {
         project.setupNativeTargetsWithCInterops()
         project.evaluate()
 
-        val warningMessage = project.runHealthCheckAndGetWarning()
+        val warningMessage = project.getWarningMessage()
 
         assertNotNull(warningMessage, "Expected a warning message to be logged")
 
@@ -65,7 +62,7 @@ class DisabledCInteropCommonizationWarningTest {
         project.evaluate()
 
         assertNull(
-            project.runHealthCheckAndGetWarning(),
+            project.getWarningMessage(),
             "Expected no warning message shown when explicitly ignored"
         )
     }
@@ -76,20 +73,8 @@ class DisabledCInteropCommonizationWarningTest {
         project.setupNativeTargetsWithCInterops()
         project.evaluate()
         assertNull(
-            project.runHealthCheckAndGetWarning(),
+            project.getWarningMessage(),
             "Expected no error message shown when cinterop commonization is enabled"
-        )
-    }
-
-    @Test
-    fun `test warning is not shown when hierarchical structure is disabled`() {
-        project.enableCInteropCommonization(false)
-        project.enableHierarchicalStructureByDefault(false)
-        project.setupNativeTargetsWithCInterops()
-        project.evaluate()
-        assertNull(
-            project.runHealthCheckAndGetWarning(),
-            "Expected no error message shown when hmpp is disabled"
         )
     }
 
@@ -99,7 +84,7 @@ class DisabledCInteropCommonizationWarningTest {
         project.setupNativeTargets()
         project.evaluate()
         assertNull(
-            project.runHealthCheckAndGetWarning(),
+            project.getWarningMessage(),
             "Expected no error message shown when no cinterops are defined"
         )
     }
@@ -129,8 +114,12 @@ private fun Project.setupNativeTargetsWithCInterops(): List<KotlinNativeTarget> 
     }
 }
 
-private fun Project.runHealthCheckAndGetWarning(): String? {
-    var message: String? = null
-    runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck { message = it }
-    return message
+private fun Project.getWarningMessage(): String? {
+    val diagnostics = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).filter {
+        it.id == KotlinToolingDiagnostics.DisabledCinteropsCommonizationInHmppProject.id
+    }
+
+    if (diagnostics.size > 1) fail("Unexpected multiple diagnostics reported:\n\n" + diagnostics.joinToString(separator = "\n\n"))
+
+    return diagnostics.singleOrNull()?.message
 }

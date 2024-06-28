@@ -1,3 +1,4 @@
 /upperBoundViolated2.kt:4:15: warning: type argument is not within its bounds: 'List<Any>' should be subtype of 'List<CharSequence>'. This warning will become an error in K2
 val a = Alias<Any>() // Also should be error
-              ^
+              ^^^
+

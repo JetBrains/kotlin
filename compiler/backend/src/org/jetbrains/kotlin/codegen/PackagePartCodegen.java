@@ -46,7 +46,7 @@ import java.util.Objects;
 
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME;
-import static org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME;
+import static org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<KtFile> {
@@ -77,7 +77,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
 
-        v.defineClass(element, state.getClassFileVersion(),
+        v.defineClass(element, state.getConfig().getClassFileVersion(),
                       ACC_PUBLIC | ACC_FINAL | ACC_SUPER | (isSynthetic ? ACC_SYNTHETIC : 0),
                       packagePartType.getInternalName(),
                       null,
@@ -107,7 +107,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     protected void generateKotlinMetadataAnnotation() {
         Pair<DescriptorSerializer, ProtoBuf.Package> serializedPart = serializePackagePartMembers(this, packagePartType);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, false, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state.getConfig(), KotlinClassHeader.Kind.FILE_FACADE, false, 0, av -> {
             writeAnnotationData(av, serializedPart.getFirst(), serializedPart.getSecond());
 
             FqName kotlinPackageFqName = element.getPackageFqName();

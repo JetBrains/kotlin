@@ -8,7 +8,7 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity.version")
+val isTeamcityBuild = project.hasProperty("teamcity.version") || System.getenv("TEAMCITY_VERSION") != null
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
@@ -54,13 +54,13 @@ val prepare by tasks.registering {
 
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
-    dokkaPlugin(project(":plugins:dokka-stdlib-configuration-plugin"))
     dokkaPlugin(project(":plugins:dokka-version-filter-plugin"))
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
 }
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlin_stdlib_dir = file("$kotlin_root/libraries/stdlib")
@@ -75,6 +75,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 "kotlin.native.internal",
                 "kotlin.jvm.functions",
                 "kotlin.coroutines.jvm.internal",
+                "kotlin.wasm.internal",
         )
 
         val kotlinLanguageVersion = version
@@ -83,7 +84,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
         val moduleDirName = "kotlin-stdlib"
         with(pluginsMapConfiguration) {
             put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-            put("org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
+            put("org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.CompilerDescriptorAnalysisPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }" }""")
         }
         if (isLatest) {
@@ -135,8 +136,32 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("JS")
                 dependsOn("common")
 
-                sourceRoots.from("$kotlin_stdlib_dir/js/src")
-                sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
+                // kotlinx and org.w3c might become excluded in future
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
+
+                sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
+
+                // builtin sources that are copied from common builtins during JS stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "Any.kt",
+                    "Array.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Iterator.kt",
+                    "Nothing.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/native/kotlin/$it") }
+
+                listOf(
+                    "annotation/Annotations.kt",
+                    "Function.kt",
+                    "internal/InternalAnnotations.kt",
+                    "Unit.kt",
+                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/src/kotlin/$it") }
 
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
@@ -162,6 +187,35 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                     suppress.set(true)
                 }
             }
+            register("wasm-js") {
+                platform.set(Platform.wasm)
+                noJdkLink.set(true)
+
+                displayName.set("Wasm-JS")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/internal")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
+            }
+            register("wasm-wasi") {
+                platform.set(Platform.wasm)
+                noJdkLink.set(true)
+
+                displayName.set("Wasm-WASI")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/internal")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/src")
+            }
             configureEach {
                 documentedVisibilities.set(setOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))
                 skipDeprecated.set(false)
@@ -181,6 +235,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-reflect_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinReflectIncludeMd = file("$kotlin_root/libraries/reflect/Module.md")
@@ -226,6 +281,7 @@ fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
     tasks.register<DokkaTaskPartial>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         dependsOn(prepare)
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
@@ -243,7 +299,7 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
 
         val moduleDirName = "kotlin-test"
         with(pluginsMapConfiguration) {
-            put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
+            put("org.jetbrains.dokka.base.DokkaBase", """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
         }
         if (isLatest) {
@@ -339,6 +395,24 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 dependsOn("common")
                 sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin/kotlin/test")
             }
+            register("wasm-js") {
+                platform.set(Platform.wasm)
+                noJdkLink.set(true)
+
+                displayName.set("Wasm-JS")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/wasm/src/main")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/wasm/js/src/main")
+            }
+            register("wasm-wasi") {
+                platform.set(Platform.wasm)
+                noJdkLink.set(true)
+
+                displayName.set("Wasm-WASI")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/wasm/src/main")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/wasm/wasi/src/main")
+            }
             configureEach {
                 skipDeprecated.set(false)
                 includes.from(kotlinTestIncludeMd)
@@ -352,13 +426,14 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
 
 fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg libTasks: TaskProvider<DokkaTaskPartial>) =
     tasks.register<DokkaMultiModuleTask>("all-libs_" + version + (if (isLatest) "_latest" else "")) {
+        notCompatibleWithConfigurationCache("Dokka is not compatible with Configuration Cache yet.")
         moduleName.set("Kotlin libraries")
         plugins.extendsFrom(configurations.dokkaHtmlMultiModulePlugin.get())
         runtime.extendsFrom(configurations.dokkaHtmlMultiModuleRuntime.get())
         libTasks.forEach { addChildTask(it.name) }
 
         fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
-            parent.outputDirectory.get().resolve(child.moduleName.get())
+            parent.outputDirectory.dir(child.moduleName)
         })
 
         val moduleDirName = "all-libs"

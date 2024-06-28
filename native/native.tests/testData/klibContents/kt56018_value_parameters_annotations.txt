@@ -1,2 +1,0 @@
-    annotation class Annotation constructor() : Annotation
-    fun foo(@Annotation arg: Int)

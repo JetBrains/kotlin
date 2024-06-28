@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE
 // WITH_REFLECT
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
@@ -16,14 +13,14 @@ fun box(): String {
     val b = Z("b")
 
     val equals = Z<String>::equals
-    assertTrue(equals.call(a, a))
-    assertFalse(equals.call(a, b))
+    assertTrue(equals.invoke(a, a))
+    assertFalse(equals.invoke(a, b))
 
     val hashCode = Z<String>::hashCode
-    assertEquals(a.s.hashCode(), hashCode.call(a))
+    assertEquals(a.s.hashCode(), hashCode.invoke(a))
 
     val toString = Z<String>::toString
-    assertEquals("Z(s=${a.s})", toString.call(a))
+    assertEquals("Z(s=${a.s})", toString.invoke(a))
 
     return "OK"
 }

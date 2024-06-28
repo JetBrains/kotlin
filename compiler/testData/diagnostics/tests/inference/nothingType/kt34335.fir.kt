@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER, -DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE
 
 fun call(vararg x: Any?) {}
 fun <R> Any.call(vararg args: Any?): R = TODO()
@@ -9,9 +9,9 @@ fun foo(action: (Int) -> Unit) {
 }
 
 fun test1() {
-    call({ x -> println(x::class) }) // x inside the lambda is inferred to `Nothing`, the lambda is `(Nothing) -> Unit`.
+    call({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) }) // x inside the lambda is inferred to `Nothing`, the lambda is `(Nothing) -> Unit`.
 }
 
 fun test2() {
-    ::foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ x -> println(x::class) })
+    ::foo.<!CANNOT_INFER_PARAMETER_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>call<!>({ <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> println(x::class) })
 }

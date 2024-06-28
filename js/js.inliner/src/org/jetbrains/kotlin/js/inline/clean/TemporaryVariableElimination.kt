@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.imported
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
-import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -88,6 +85,16 @@ import org.jetbrains.kotlin.js.translate.utils.splitToRanges
  *     foo(B, $a)
  *
  * we get `$a` eliminated.
+ *
+ * It is also worth taking care of the temporary variables captured into closure as they cannot be simply removed.
+ *
+ * function test(a) {
+ *     var tmp_a = a // removing this temporary variable changes function behaviour
+ *     var f = function() { console.log(tmp_a) }
+ *     a = []
+ *     return f
+ * }
+ *
  */
 internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val root = function.body
@@ -95,6 +102,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
+    private val capturedInClosure = mutableSetOf<JsName>()
     private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
 
@@ -201,6 +209,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 for (freeVar in x.collectFreeVariables()) {
                     useVariable(freeVar)
                     useVariable(freeVar)
+                    capturedInClosure += freeVar
                 }
             }
 
@@ -209,8 +218,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 try {
                     localVars = mutableSetOf()
                     return block()
-                }
-                finally {
+                } finally {
                     currentScope -= localVars
                     localVars = localVarsBackup
                 }
@@ -233,8 +241,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 if (assignment != null) {
                     val (name, value) = assignment
                     handleDefinition(name, value, x)
-                }
-                else {
+                } else {
                     if (handleExpression(expression)) {
                         invalidateTemporaries()
                     }
@@ -256,16 +263,18 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     if (isTrivial(value)) {
                         statementsToRemove += node
                         namesToSubstitute += name
-                    }
-                    else {
+                    } else {
                         lastAssignedVars += Pair(name, node)
                         if (sideEffects) {
                             namesWithSideEffects += name
                         }
                     }
-                }
-                else if (sideEffects) {
-                    invalidateTemporaries()
+                } else {
+                    if (sideEffects) {
+                        invalidateTemporaries()
+                    } else {
+                        invalidateTemporariesUsingName(name)
+                    }
                 }
             }
 
@@ -362,6 +371,21 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 lastAssignedVars.clear()
             }
 
+            private fun invalidateTemporariesUsingName(name: JsName) {
+                lastAssignedVars.removeAll { (_, expr) ->
+                    var nameUsed = false
+                    object : RecursiveJsVisitor() {
+                        override fun visitNameRef(nameRef: JsNameRef) {
+                            if (nameRef.name == name) {
+                                nameUsed = true
+                            }
+                            super.visitNameRef(nameRef)
+                        }
+                    }.accept(expr)
+                    nameUsed
+                }
+            }
+
             private fun handleExpression(expression: JsExpression): Boolean {
                 val candidateFinder = SubstitutionCandidateFinder()
                 candidateFinder.accept(expression)
@@ -454,14 +478,13 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
         override fun visitNameRef(nameRef: JsNameRef) {
             val name = nameRef.name
-            if (name != null && name in localVariables) {
-                if (name !in namesToSubstitute && shouldConsiderTemporary(name)) {
+            if (name != null && (name in localVariables || name.constant)) {
+                if (name.constant || (name !in namesToSubstitute && shouldConsiderTemporary(name))) {
                     if (!sideEffectOccurred) {
                         substitutableVariableReferences += name
                     }
                 }
-            }
-            else {
+            } else {
                 super.visitNameRef(nameRef)
                 if (nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
@@ -479,8 +502,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     if (qualifier != null) {
                         accept(qualifier)
                     }
-                }
-                else if (left is JsArrayAccess) {
+                } else if (left is JsArrayAccess) {
                     accept(left.arrayExpression)
                     accept(left.indexExpression)
                 }
@@ -488,13 +510,11 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
                 accept(right)
                 sideEffectOccurred = true
-            }
-            else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
+            } else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
                 accept(x.arg1)
                 sideEffectOccurred = true
                 accept(x.arg2)
-            }
-            else {
+            } else {
                 super.visitBinaryExpression(x)
             }
         }
@@ -518,8 +538,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                         for (initializer in initializers) {
                             ctx.addPrevious(JsExpressionStatement(accept(initializer)).apply { synthetic = true })
                         }
-                    }
-                    else {
+                    } else {
                         ctx.addPrevious(JsVars(*subList.toTypedArray()).apply { synthetic = true })
                     }
                 }
@@ -601,7 +620,9 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             (definitions[name] ?: 0) > 0 && (usages[name] ?: 0) == 0 && name in temporary && !name.imported
 
     private fun shouldConsiderTemporary(name: JsName): Boolean {
-        if (definitions[name] != 1 || name !in temporary) return false
+        if (definitions[name] != 1 || name !in temporary || name in capturedInClosure) {
+            return false
+        }
 
         val expr = definedValues[name]
         // It's useful to copy trivial expressions when they are used more than once. Example are temporary variables
@@ -613,16 +634,18 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private fun isTrivial(expr: JsExpression): Boolean = when (expr) {
         is JsNameRef -> {
             val qualifier = expr.qualifier
-            if (expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier))) {
-                expr.name !in temporary
-            }
-            else {
-                val name = expr.name
-                name in localVariables && when (definitions[name]) {
-                    // Local variables with zero definitions are function parameters. We can relocate and copy them.
-                    null, 0 -> true
-                    1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
-                    else -> false
+            when {
+                expr.name?.constant == true -> true
+                expr.sideEffects == SideEffectKind.PURE && (qualifier == null || isTrivial(qualifier)) ->
+                    expr.name !in temporary
+                else -> {
+                    val name = expr.name
+                    name in localVariables && when (definitions[name]) {
+                        // Local variables with zero definitions are function parameters. We can relocate and copy them.
+                        null, 0 -> true
+                        1 -> name !in namesToSubstitute || definedValues[name]?.let { isTrivial(it) } ?: false
+                        else -> false
+                    }
                 }
             }
         }

@@ -1,0 +1,227 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1, Java4 {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+abstract class E : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: E{}a
+  //   Public signature: /E.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract /* fake */ override val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-a>(){}kotlin.Int
+    //   Public signature: /E.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: E{}b
+  //   Public signature: /E.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  abstract /* fake */ override val b: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-b>(){}kotlin.Int
+    //   Public signature: /E.b.<get-b>|-2902143276921469679[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: E{}c
+  //   Public signature: /E.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  abstract /* fake */ override val c: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-c>(){}kotlin.Int
+    //   Public signature: /E.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+  // CHECK:
+  //   Mangled name: E{}d
+  //   Public signature: /E.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
+  abstract /* fake */ override val d: Int
+    // CHECK JVM_IR:
+    //   Mangled name: E#<get-d>(){}kotlin.Int
+    //   Public signature: /E.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
+    abstract /* fake */ override get(): Int
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: F{}a
+  //   Public signature: /F.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  override val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-a>(){}kotlin.Int
+    //   Public signature: /F.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: F{}b
+  //   Public signature: /F.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  override val b: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-b>(){}kotlin.Int
+    //   Public signature: /F.b.<get-b>|-2902143276921469679[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: F{}c
+  //   Public signature: /F.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  override val c: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-c>(){}kotlin.Int
+    //   Public signature: /F.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: F{}d
+  //   Public signature: /F.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
+  override val d: Int
+    // CHECK JVM_IR:
+    //   Mangled name: F#<get-d>(){}kotlin.Int
+    //   Public signature: /F.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
+    override get
+
+  // CHECK:
+  //   Mangled name: F#<init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}
+  //   Public signature: /F.<init>|-8848599841094497990[0]
+  //   Public signature debug description: <init>(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}
+  constructor(a: Int, b: Int, c: Int, d: Int) /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: KotlinClass
+//   Public signature: /KotlinClass|null[0]
+open class KotlinClass : Java1 {
+  // CHECK:
+  //   Mangled name: KotlinClass#<init>(){}
+  //   Public signature: /KotlinClass.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK:
+  //   Mangled name: KotlinInterface{}a
+  //   Public signature: /KotlinInterface.a|-1200697420457237799[0]
+  //   Public signature debug description: {}a
+  abstract val a: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-a>(){}kotlin.Int
+    //   Public signature: /KotlinInterface.a.<get-a>|4232747788241509192[0]
+    //   Public signature debug description: <get-a>(){}kotlin.Int
+    abstract get
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}b
+  //   Public signature: /KotlinInterface.b|772347207915745207[0]
+  //   Public signature debug description: {}b
+  abstract val b: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-b>(){}kotlin.Int
+    //   Public signature: /KotlinInterface.b.<get-b>|-2902143276921469679[0]
+    //   Public signature debug description: <get-b>(){}kotlin.Int
+    abstract get
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}c
+  //   Public signature: /KotlinInterface.c|-4416962153448040627[0]
+  //   Public signature debug description: {}c
+  abstract val c: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-c>(){}kotlin.Int
+    //   Public signature: /KotlinInterface.c.<get-c>|-2440337234483931882[0]
+    //   Public signature debug description: <get-c>(){}kotlin.Int
+    abstract get
+
+  // CHECK:
+  //   Mangled name: KotlinInterface{}d
+  //   Public signature: /KotlinInterface.d|5174763769109925331[0]
+  //   Public signature debug description: {}d
+  abstract val d: Int
+    // CHECK JVM_IR:
+    //   Mangled name: KotlinInterface#<get-d>(){}kotlin.Int
+    //   Public signature: /KotlinInterface.d.<get-d>|-3703416348690628760[0]
+    //   Public signature debug description: <get-d>(){}kotlin.Int
+    abstract get
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F){}
+//   Public signature: /test|-4390352378432875580[0]
+//   Public signature debug description: test(A;B;C;D;E;F){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F): Unit

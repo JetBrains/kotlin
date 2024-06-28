@@ -4,9 +4,9 @@ apply plugin: 'kotlin'
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
-configurePublishing(project)
-configureSourcesJar()
-configureJavadocJar()
+RepoArtifacts.publish(project)
+RepoArtifacts.sourcesJar(project)
+RepoArtifacts.javadocJar(project)
 
 sourceSets {
     main {
@@ -26,11 +26,10 @@ sourceSets {
 
 dependencies {
     api project(':kotlin-stdlib')
-    testApi project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main', true)
+    LibrariesCommon.manifestAttributes(project, manifest, 'Main', true)
     from sourceSets.java9.output
 }
 
@@ -45,19 +44,14 @@ artifacts {
 }
 
 compileKotlin {
-    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_7))
+    kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_11_0))
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.moduleName = project.name
+    kotlinOptions.freeCompilerArgs = [ "-Xjdk-release=7" ]
 }
 
 compileTestKotlin {
 }
-
-tasks.withType(Test) {
-    systemProperty("supportsNamedCapturingGroup", false)
-}
-
-configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 

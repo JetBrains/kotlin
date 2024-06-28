@@ -1,0 +1,181 @@
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirNamedFunctionSymbol second/check
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/bar
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirValueParameterSymbol <local>/value from FirPropertyAccessorSymbol special/accessor from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirBackingFieldSymbol <local>/field from FirPropertySymbol <local>/foo
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String
+  context -> FirAnonymousFunctionSymbol special/anonymous
+  anchor -> [FirPropertySymbol <local>/foo]
+
+FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableInImplicitBody.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.str] str: R|kotlin/reflect/KClass<*>|): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/reflect/KClass<*>| = R|<local>/str|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lambda([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
+        ^lambda action#()
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+        ^check R|second/lambda|<R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lambda@fun <anonymous>(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| <inline=NoInline>  {
+            local final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(RAW_FIR)] val bar: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+                        ^ this@R|<local>/A|.R|<local>/A.B.B|().R|<local>/foo|
+                    }
+
+                local final inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] class B : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] <local>/A.constructor(): R|<local>/A.B| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] var foo: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| = Null(null)
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] get(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] set([ResolvedTo(RAW_FIR)] value: R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|): R|kotlin/Unit|
+
+                    local final inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : R|kotlin/Any| {
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] <local>/A.B.constructor(): R|<local>/A.B.C| {
+                            super<R|kotlin/Any|>()
+                        }
+
+                    }
+
+                }
+
+            }
+
+            ^ R|<local>/A.A|().R|<local>/bar|
+        }
+        )
+    }

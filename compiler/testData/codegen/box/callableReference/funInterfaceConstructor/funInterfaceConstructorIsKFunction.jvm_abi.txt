@@ -1,0 +1,9 @@
+MODULE main
+	CLASS FunInterfaceConstructorIsKFunctionKt.class
+		PACKAGE METADATA
+			PROPERTY getKr()Lkotlin/reflect/KFunction;
+				Property: class.metadata.property.returnType
+					K1
+						kotlin/reflect/KFunction1<@kotlin/ParameterName(name = "function") kotlin/Function0<kotlin/Unit>, KRunnable>
+					K2
+						kotlin/reflect/KFunction1<kotlin/Function0<kotlin/Unit>, KRunnable>

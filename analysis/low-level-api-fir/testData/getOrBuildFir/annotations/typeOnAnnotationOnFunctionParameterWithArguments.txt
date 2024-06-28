@@ -1,0 +1,26 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|Anno|[Types](value = String(abcd))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameterWithArguments.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|(value = String(abcd))  kotlin/Boolean|): R|kotlin/Unit| {
+    }
+    public open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.value] value: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }

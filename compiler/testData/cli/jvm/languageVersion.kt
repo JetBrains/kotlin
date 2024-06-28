@@ -1,3 +1,5 @@
 package test
 
-sealed interface Polygon
+import kotlin.reflect.*
+
+abstract class Some : KSuspendFunction0<Unit>

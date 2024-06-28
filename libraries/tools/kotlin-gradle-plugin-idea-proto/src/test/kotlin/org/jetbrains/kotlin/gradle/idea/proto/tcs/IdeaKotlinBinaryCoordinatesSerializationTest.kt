@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.idea.proto.tcs
 
 import org.jetbrains.kotlin.gradle.idea.proto.AbstractSerializationTest
 import org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProto
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryAttributes
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.junit.Test
 
@@ -43,6 +45,37 @@ class IdeaKotlinBinaryCoordinatesSerializationTest : AbstractSerializationTest<I
             module = "myModule",
             version = "myVersion",
             sourceSetName = null
+        )
+    )
+
+    @Test
+    fun `sample 3`() = testSerialization(
+        IdeaKotlinBinaryCoordinates(
+            group = "myGroup",
+            module = "myModule",
+            version = "myVersion",
+            sourceSetName = null,
+            capabilities = setOf(
+                IdeaKotlinBinaryCapability("my", "capability", "1.0.0"),
+                IdeaKotlinBinaryCapability("my", "other-capability", "1.0.0")
+            )
+        )
+    )
+
+    @Test
+    fun `sample 4`() = testSerialization(
+        IdeaKotlinBinaryCoordinates(
+            group = "myGroup",
+            module = "myModule",
+            version = "myVersion",
+            sourceSetName = null,
+            capabilities = setOf(
+                IdeaKotlinBinaryCapability("my", "capability", "1.0.0"),
+                IdeaKotlinBinaryCapability("my", "other-capability", "1.0.0")
+            ),
+            attributes = IdeaKotlinBinaryAttributes(
+                mapOf("a" to "valueA", "b" to "valueB")
+            )
         )
     )
 }

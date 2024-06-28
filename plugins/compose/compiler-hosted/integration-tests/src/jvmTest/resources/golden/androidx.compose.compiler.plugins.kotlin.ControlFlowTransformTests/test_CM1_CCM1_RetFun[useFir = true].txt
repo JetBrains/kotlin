@@ -1,0 +1,79 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun test_CM1_CCM1_RetFun(condition: Boolean) {
+    Text("Root - before")
+    M1 {
+        Text("M1 - begin")
+        if (condition) {
+            Text("if - begin")
+            M1 {
+                Text("In CCM1")
+                return@test_CM1_CCM1_RetFun
+            }
+        }
+        Text("M1 - end")
+    }
+    Text("Root - end")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+fun test_CM1_CCM1_RetFun(condition: Boolean, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(test_CM1_CCM1_RetFun)<Text("...>,<M1>,<Text("...>:Test.kt")
+  val tmp0_marker = %composer.currentMarker
+  val %dirty = %changed
+  if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Text("Root - before", %composer, 0b0110)
+    M1({ %composer: Composer?, %changed: Int ->
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "C<Text("...>,<Text("...>:Test.kt")
+      Text("M1 - begin", %composer, 0b0110)
+      %composer.startReplaceGroup(<>)
+      sourceInformation(%composer, "<Text("...>,<M1>")
+      if (condition) {
+        Text("if - begin", %composer, 0b0110)
+        M1({ %composer: Composer?, %changed: Int ->
+          %composer.startReplaceGroup(<>)
+          sourceInformation(%composer, "C<Text("...>:Test.kt")
+          Text("In CCM1", %composer, 0b0110)
+          %composer.endToMarker(tmp0_marker)
+          if (isTraceInProgress()) {
+            traceEventEnd()
+          }
+          %composer@test_CM1_CCM1_RetFun.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+            test_CM1_CCM1_RetFun(condition, %composer, updateChangedFlags(%changed or 0b0001))
+          }
+          return
+          %composer.endReplaceGroup()
+        }, %composer, 0)
+      }
+      %composer.endReplaceGroup()
+      Text("M1 - end", %composer, 0b0110)
+      %composer.endReplaceGroup()
+    }, %composer, 0)
+    Text("Root - end", %composer, 0b0110)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    test_CM1_CCM1_RetFun(condition, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

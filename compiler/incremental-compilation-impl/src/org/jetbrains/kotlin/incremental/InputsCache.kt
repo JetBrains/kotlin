@@ -38,7 +38,7 @@ class InputsCache(
 
     fun removeOutputForSourceFiles(sources: Iterable<File>) {
         for (sourceFile in sources) {
-            sourceToOutputMap.remove(sourceFile).forEach {
+            sourceToOutputMap.getAndRemove(sourceFile)?.forEach {
                 icContext.reporter.debug { "Deleting $it on clearing cache for $sourceFile" }
                 icContext.transaction.deleteFile(it.toPath())
             }
@@ -46,13 +46,13 @@ class InputsCache(
     }
 
     fun getOutputForSourceFiles(sources: Iterable<File>): List<File> = sources.flatMap {
-        sourceToOutputMap[it]
+        sourceToOutputMap[it].orEmpty()
     }
 
     // generatedFiles can contain multiple entries with the same source file
     // for example Kapt3 IC will generate a .java stub and .class stub for each source file
     fun registerOutputForSourceFiles(generatedFiles: List<GeneratedFile>) {
-        val sourceToOutput = MultiMap<File, File>()
+        val sourceToOutput = MultiMap.createLinked<File, File>()
 
         for (generatedFile in generatedFiles) {
             for (source in generatedFile.sourceFiles) {
@@ -61,7 +61,7 @@ class InputsCache(
         }
 
         for ((source, outputs) in sourceToOutput.entrySet()) {
-            sourceToOutputMap[source] = outputs
+            sourceToOutputMap[source] = outputs.toSet()
         }
     }
 }

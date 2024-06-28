@@ -1,0 +1,23 @@
+@Ann1(<implicitArrayOf>())
+owner -> FirRegularClassSymbol Zero
+context -> FirRegularClassSymbol Zero
+
+@Ann2(<implicitArrayOf>())
+owner -> FirRegularClassSymbol Zero
+context -> FirRegularClassSymbol Zero
+
+@Ann3(<implicitArrayOf>())
+owner -> FirRegularClassSymbol Zero
+context -> FirRegularClassSymbol Zero
+
+@Ann1(<implicitArrayOf>(IntegerLiteral(1), IntegerLiteral(2)))
+owner -> FirRegularClassSymbol First
+context -> FirRegularClassSymbol First
+
+@Ann2(<implicitArrayOf>(Double(3.14)))
+owner -> FirRegularClassSymbol Second
+context -> FirRegularClassSymbol Second
+
+@Ann3(<implicitArrayOf>(String(Alpha), String(Omega)))
+owner -> FirRegularClassSymbol Third
+context -> FirRegularClassSymbol Third

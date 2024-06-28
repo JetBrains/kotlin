@@ -1,6 +1,4 @@
-// !API_VERSION: 1.9
 @Volatile var vol = 1
-@OptIn(ExperimentalStdlibApi::class)
 @kotlin.concurrent.Volatile var vol2 = 1
 @Transient val tra = 1
 

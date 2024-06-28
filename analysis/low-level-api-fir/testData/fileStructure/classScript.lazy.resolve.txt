@@ -1,0 +1,19 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] classScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-classScript.kts>
+        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Int| {
+                ^y Int(10)
+            }
+
+        }
+

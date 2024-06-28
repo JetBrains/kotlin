@@ -3,8 +3,13 @@ plugins {
     kotlin("multiplatform")
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion(28)
+    namespace = "io.sellmair.mpp"
     defaultConfig {
         minSdkVersion(21)
         targetSdkVersion(28)
@@ -71,7 +76,7 @@ kotlin {
             implementation(kotlin("stdlib-jdk8"))
         }
 
-        getByName("androidAndroidTest").dependencies {
+        getByName("androidInstrumentedTest").dependencies {
             implementation(kotlin("test-junit"))
             implementation("com.android.support.test:runner:1.0.2")
         }

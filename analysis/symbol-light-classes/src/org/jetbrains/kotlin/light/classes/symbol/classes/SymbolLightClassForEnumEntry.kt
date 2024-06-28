@@ -1,20 +1,22 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
+import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
@@ -25,12 +27,16 @@ import org.jetbrains.kotlin.psi.KtEnumEntry
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClassBase,
-    ktModule: KtModule,
+    ktModule: KaModule,
 ) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
-    override fun getBaseClassReference(): PsiJavaCodeReferenceElement =
-        SymbolLightPsiJavaCodeReferenceElementWithNoReference(enumConstant) //???TODO
+    override fun getBaseClassReference(): PsiJavaCodeReferenceElement = SymbolLightPsiJavaCodeReferenceElementWithNoReference(
+        enumConstant,
+        ReferenceInformationHolder(
+            referenceName = enumConstant.name,
+        )
+    )
 
     override fun getArgumentList(): PsiExpressionList? = null
 
@@ -76,7 +82,7 @@ internal class SymbolLightClassForEnumEntry(
             symbol.returnType.asPsiType(
                 this@SymbolLightClassForEnumEntry,
                 allowErrorTypes = true,
-                KtTypeMappingMode.SUPER_TYPE
+                KaTypeMappingMode.SUPER_TYPE
             ) as? PsiClassType
         } ?: return@lazyPub null
 
@@ -107,7 +113,18 @@ internal class SymbolLightClassForEnumEntry(
             val result = mutableListOf<KtLightField>()
 
             // Then, add instance fields: properties from parameters, and then member properties
-            addPropertyBackingFields(result, enumEntrySymbol)
+            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+                addPropertyBackingFields(
+                    result,
+                    initializer,
+                    SymbolLightField.FieldNameGenerator(),
+
+                    // `addPropertyBackingFields` detects that property fields should be static when the given symbol with members is an
+                    // object. Unfortunately, the enum entry's initializer is an anonymous object, yet we want the enum entry's light class
+                    // to have non-static properties.
+                    forceIsStaticTo = false,
+                )
+            }
 
             result
         }
@@ -117,11 +134,13 @@ internal class SymbolLightClassForEnumEntry(
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
             val result = mutableListOf<KtLightMethod>()
 
-            val declaredMemberScope = enumEntrySymbol.getDeclaredMemberScope()
-            val visibleDeclarations = declaredMemberScope.getCallableSymbols()
+            enumEntrySymbol.enumEntryInitializer?.let { initializer ->
+                val declaredMemberScope = initializer.declaredMemberScope
+                val visibleDeclarations = declaredMemberScope.callables
 
-            createMethods(visibleDeclarations, result)
-            createConstructors(declaredMemberScope.getConstructors(), result)
+                createMethods(visibleDeclarations, result)
+                createConstructors(declaredMemberScope.constructors, result)
+            }
 
             result
         }
@@ -142,7 +161,7 @@ internal class SymbolLightClassForEnumEntry(
     override fun isDeprecated(): Boolean = false
     override fun isInterface(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
     override val kotlinOrigin: KtEnumEntry get() = enumConstant.kotlinOrigin
     override val originKind: LightClassOriginKind = LightClassOriginKind.SOURCE
     override fun isValid(): Boolean = enumConstant.isValid

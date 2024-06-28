@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.parents
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.continuationClassVarsCountByType
 import org.jetbrains.kotlin.backend.jvm.ir.hasChild
 import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
@@ -48,12 +48,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import kotlin.collections.set
-
-internal val suspendLambdaPhase = makeIrFilePhase(
-    ::SuspendLambdaLowering,
-    "SuspendLambda",
-    "Transform suspend lambdas into continuation classes"
-)
 
 private fun IrFunction.capturesCrossinline(): Boolean {
     val parents = parents.toSet()
@@ -94,7 +88,11 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         val message = "This is a stub representing a copy of a suspend method without the state machine " +
                 "(used by the inliner). Since the difference is at the bytecode level, the body is " +
                 "still on the original function. Use suspendForInlineToOriginal() to retrieve it."
-        body = IrExpressionBodyImpl(startOffset, endOffset, IrErrorExpressionImpl(startOffset, endOffset, returnType, message))
+        body = context.irFactory.createExpressionBody(
+            startOffset,
+            endOffset,
+            IrErrorExpressionImpl(startOffset, endOffset, returnType, message),
+        )
     }
 
     protected fun IrFunction.addCompletionValueParameter(): IrValueParameter =
@@ -104,7 +102,11 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
         context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
 }
 
-private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
+@PhaseDescription(
+    name = "SuspendLambda",
+    description = "Transform suspend lambdas into continuation classes"
+)
+internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweringUtils(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
             override fun visitBlock(expression: IrBlock): IrExpression {
@@ -190,7 +192,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                 ParameterInfo(field, it.type, it.name, it.origin)
             }
 
-            context.continuationClassesVarsCountByType[attributeOwnerId] = varsCountByType
+            this.continuationClassVarsCountByType = varsCountByType
             val constructor = addPrimaryConstructorForLambda(suspendLambda, arity)
             val invokeToOverride = functionNClass.functions.single {
                 it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "invoke"
@@ -209,7 +211,6 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             }
 
             this.metadata = function.metadata
-            context.suspendLambdaToOriginalFunctionMap[attributeOwnerId as IrFunctionReference] = function
         }
 
     private fun IrClass.addInvokeSuspendForLambda(
@@ -247,7 +248,10 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     override fun visitGetValue(expression: IrGetValue): IrExpression {
                         val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
                             ?: return expression
-                        val lvar = localVals[parameter.index + if (irFunction.extensionReceiverParameter != null) 1 else 0]
+                        val varIndex = if (parameter.index < 0) irFunction.contextReceiverParametersCount
+                        else if (parameter.index < irFunction.contextReceiverParametersCount || irFunction.extensionReceiverParameter == null) parameter.index
+                        else parameter.index + 1
+                        val lvar = localVals[varIndex]
                             ?: return expression
                         return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
                     }

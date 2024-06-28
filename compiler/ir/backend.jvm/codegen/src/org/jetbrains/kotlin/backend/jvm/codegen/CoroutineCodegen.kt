@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.hasContinuation
+import org.jetbrains.kotlin.backend.jvm.ir.isReadOfCrossinline
+import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -19,7 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.allOverridden
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -33,8 +38,7 @@ internal fun MethodNode.acceptWithStateMachine(
     obtainContinuationClassBuilder: () -> ClassBuilder,
 ) {
     val context = classCodegen.context
-    val state = context.state
-    val languageVersionSettings = state.languageVersionSettings
+    val languageVersionSettings = context.config.languageVersionSettings
     assert(languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) { "Experimental coroutines are unsupported in JVM_IR backend" }
 
     val lineNumber = if (irFunction.startOffset >= 0) {
@@ -67,7 +71,7 @@ internal fun MethodNode.acceptWithStateMachine(
         internalNameForDispatchReceiver = classCodegen.type.internalName,
         putContinuationParameterToLvt = false,
         initialVarsCountByType = varsCountByType,
-        shouldOptimiseUnusedVariables = !context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
+        shouldOptimiseUnusedVariables = !context.config.enableDebugMode
     )
     accept(visitor)
 }

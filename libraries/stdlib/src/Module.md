@@ -87,7 +87,7 @@ The functions include trigonometric, hyperbolic, exponentiation and power, logar
 
 # Package kotlin.properties
 
-Standard implementations of delegates for [delegated properties](/docs/reference/delegated-properties.html)
+Standard implementations of delegates for [delegated properties](https://kotlinlang.org/docs/delegated-properties.html)
 and helper functions for implementing custom delegates.
 
 # Package kotlin.random
@@ -96,19 +96,19 @@ Provides the default generator of pseudo-random values, the repeatable generator
 
 # Package kotlin.ranges
 
-[Ranges](/docs/reference/ranges.html), Progressions and related top-level and extension functions.
+[Ranges](https://kotlinlang.org/docs/ranges.html), Progressions and related top-level and extension functions.
 
 # Package kotlin.reflect
 
-Runtime API for [Kotlin reflection](/docs/reference/reflection.html)
+Runtime API for [Kotlin reflection](https://kotlinlang.org/docs/reflection.html)
 
 # Package kotlin.reflect.full
 
-Extensions for [Kotlin reflection](/docs/reference/reflection.html) provided by `kotlin-reflect` library.
+Extensions for [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) provided by `kotlin-reflect` library.
 
 # Package kotlin.reflect.jvm
 
-Runtime API for interoperability between [Kotlin reflection](/docs/reference/reflection.html) and
+Runtime API for interoperability between [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) and
 Java reflection provided by `kotlin-reflect` library.
 
 # Package kotlin.sequences
@@ -149,7 +149,13 @@ Functions for working with text and regular expressions.
 
 # Package kotlin.time
 
-API for representing [Duration][kotlin.time.Duration] values and experimental API for measuring time intervals.
+API for measuring time intervals and calculating durations.
+
+For more information, see our [Time measurement](https://kotlinlang.org/docs/time-measurement.html) guide.
+
+# Package kotlin.uuid
+
+Multiplatform `Uuid` class and utility functions for working with UUIDs.
 
 # Package org.khronos.webgl
 

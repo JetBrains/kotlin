@@ -8,6 +8,7 @@
  * Copyright 2007 Google Inc.
 */
 
+@file:JsFileName("AbstractMutableListJs")
 
 package kotlin.collections
 
@@ -17,7 +18,17 @@ package kotlin.collections
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
-    protected var modCount: Int = 0
+    /**
+     * The number of times this list is structurally modified.
+     *
+     * A modification is considered to be structural if it changes the list size,
+     * or otherwise changes it in a way that iterations in progress may return incorrect results.
+     *
+     * This value can be used by iterators returned by [iterator] and [listIterator]
+     * to provide fail-fast behavior when a concurrent modification is detected during iteration.
+     * [ConcurrentModificationException] will be thrown in this case.
+     */
+    protected actual var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
     abstract override fun removeAt(index: Int): E
@@ -67,23 +78,9 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
     actual override fun contains(element: E): Boolean = indexOf(element) >= 0
 
-    actual override fun indexOf(element: E): Int {
-        for (index in 0..lastIndex) {
-            if (get(index) == element) {
-                return index
-            }
-        }
-        return -1
-    }
+    actual override fun indexOf(element: E): Int = indexOfFirst { it == element }
 
-    actual override fun lastIndexOf(element: E): Int {
-        for (index in lastIndex downTo 0) {
-            if (get(index) == element) {
-                return index
-            }
-        }
-        return -1
-    }
+    actual override fun lastIndexOf(element: E): Int = indexOfLast { it == element }
 
     actual override fun listIterator(): MutableListIterator<E> = listIterator(0)
     actual override fun listIterator(index: Int): MutableListIterator<E> = ListIteratorImpl(index)
@@ -94,7 +91,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
      */
-    protected open fun removeRange(fromIndex: Int, toIndex: Int) {
+    protected actual open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {
             iterator.next()
@@ -103,9 +100,14 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     }
 
     /**
-     * Compares this list with another list instance with the ordered structural equality.
+     * Checks if the two specified lists are *structurally* equal to one another.
      *
-     * @return true, if [other] instance is a [List] of the same size, which contains the same elements in the same order.
+     * Two lists are considered structurally equal if they have the same size, and elements at corresponding indices are equal.
+     * Elements are compared for equality using the [equals][Any.equals] function.
+     * For floating point numbers, this means `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+     *
+     * @param other the list to compare with this list.
+     * @return `true` if [other] is a [List] that is structurally equal to this list, `false` otherwise.
      */
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
@@ -214,6 +216,11 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
             AbstractList.checkElementIndex(index, _size)
 
             return list.set(fromIndex + index, element)
+        }
+
+        override fun removeRange(fromIndex: Int, toIndex: Int) {
+            list.removeRange(this.fromIndex + fromIndex, this.fromIndex + toIndex)
+            _size -= toIndex - fromIndex
         }
 
         override val size: Int get() = _size

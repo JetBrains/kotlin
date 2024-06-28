@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !CHECK_TYPE
+// CHECK_TYPE
 
 //KT-2294 Type inference infers DONT_CARE instead of correct type
 package a

@@ -1,0 +1,113 @@
+// CHECK:
+//   Mangled name: GenericIn
+//   Public signature: /GenericIn|null[0]
+class GenericIn<in T : Number> {
+  // CHECK:
+  //   Mangled name: GenericIn#<init>(){}
+  //   Public signature: /GenericIn.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: GenericInv
+//   Public signature: /GenericInv|null[0]
+class GenericInv<T : Number> {
+  // CHECK:
+  //   Mangled name: GenericInv#<init>(){}
+  //   Public signature: /GenericInv.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: GenericOut
+//   Public signature: /GenericOut|null[0]
+class GenericOut<out T : Number> {
+  // CHECK:
+  //   Mangled name: GenericOut#<init>(){}
+  //   Public signature: /GenericOut.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: KRaw
+//   Public signature: /KRaw|null[0]
+class KRaw : JRaw {
+  // CHECK:
+  //   Mangled name: KRaw#<init>(JRaw){}
+  //   Public signature: /KRaw.<init>|-9018601651041838198[0]
+  //   Public signature debug description: <init>(JRaw){}
+  constructor(j: JRaw) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: KRaw#returnsRawGenericIn(){}GenericIn<kotlin.Number>?
+  //   Public signature: /KRaw.returnsRawGenericIn|2316913195849838102[0]
+  //   Public signature debug description: returnsRawGenericIn(){}GenericIn<kotlin.Number>?
+  override fun returnsRawGenericIn(): GenericIn<Number>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: KRaw#returnsRawGenericInv(){}GenericInv<kotlin.Number>?
+  //   Public signature: /KRaw.returnsRawGenericInv|5636795900726870653[0]
+  //   Public signature debug description: returnsRawGenericInv(){}GenericInv<kotlin.Number>?
+  override fun returnsRawGenericInv(): GenericInv<Number>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: KRaw#returnsRawGenericOut(){}GenericOut<kotlin.Number>?
+  //   Public signature: /KRaw.returnsRawGenericOut|-2900081068433007254[0]
+  //   Public signature debug description: returnsRawGenericOut(){}GenericOut<kotlin.Number>?
+  override fun returnsRawGenericOut(): GenericOut<Number>?
+
+  // CHECK JVM_IR:
+  //   Mangled name: KRaw#returnsRawList(){}kotlin.collections.MutableList<kotlin.Any?>?
+  //   Public signature: /KRaw.returnsRawList|-6457317888193014337[0]
+  //   Public signature debug description: returnsRawList(){}kotlin.collections.MutableList<kotlin.Any?>?
+  override fun returnsRawList(): MutableList<Any?>?
+
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericIn(GenericIn<kotlin.Number>?){}
+  //   Public signature: /KRaw.takesRawGenericIn|7111924639802650374[0]
+  //   Public signature debug description: takesRawGenericIn(GenericIn<kotlin.Number>?){}
+  override fun takesRawGenericIn(g: GenericIn<Number>?): Unit
+
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericInv(GenericInv<kotlin.Number>?){}
+  //   Public signature: /KRaw.takesRawGenericInv|-7043210737732405875[0]
+  //   Public signature debug description: takesRawGenericInv(GenericInv<kotlin.Number>?){}
+  override fun takesRawGenericInv(g: GenericInv<Number>?): Unit
+
+  // CHECK:
+  //   Mangled name: KRaw#takesRawGenericOut(GenericOut<kotlin.Number>?){}
+  //   Public signature: /KRaw.takesRawGenericOut|-6937861296436003286[0]
+  //   Public signature debug description: takesRawGenericOut(GenericOut<kotlin.Number>?){}
+  override fun takesRawGenericOut(g: GenericOut<Number>?): Unit
+
+  // CHECK:
+  //   Mangled name: KRaw#takesRawList(kotlin.collections.MutableList<kotlin.Any?>?){}
+  //   Public signature: /KRaw.takesRawList|-1231162314770327388[0]
+  //   Public signature debug description: takesRawList(kotlin.collections.MutableList<kotlin.Any?>?){}
+  override fun takesRawList(list: MutableList<Any?>?): Unit
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: #testReturnsRawGenericIn(JRaw){}GenericIn<kotlin.Number>?
+//   Public signature: /testReturnsRawGenericIn|-306193371031556622[0]
+//   Public signature debug description: testReturnsRawGenericIn(JRaw){}GenericIn<kotlin.Number>?
+fun testReturnsRawGenericIn(j: JRaw): GenericIn<Number>?
+
+// CHECK JVM_IR:
+//   Mangled name: #testReturnsRawGenericInv(JRaw){}GenericInv<kotlin.Number>?
+//   Public signature: /testReturnsRawGenericInv|6592680998914081032[0]
+//   Public signature debug description: testReturnsRawGenericInv(JRaw){}GenericInv<kotlin.Number>?
+fun testReturnsRawGenericInv(j: JRaw): GenericInv<Number>?
+
+// CHECK JVM_IR:
+//   Mangled name: #testReturnsRawGenericOut(JRaw){}GenericOut<kotlin.Number>?
+//   Public signature: /testReturnsRawGenericOut|6146268409340591089[0]
+//   Public signature debug description: testReturnsRawGenericOut(JRaw){}GenericOut<kotlin.Number>?
+fun testReturnsRawGenericOut(j: JRaw): GenericOut<Number>?

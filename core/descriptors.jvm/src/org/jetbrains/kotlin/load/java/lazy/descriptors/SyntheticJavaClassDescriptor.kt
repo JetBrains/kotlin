@@ -193,8 +193,8 @@ class SyntheticJavaClassDescriptor(
             get() = this@SyntheticJavaClassDescriptor.isRecord
         override val isSealed: Boolean
             get() = modality == Modality.SEALED
-        override val permittedTypes: Collection<JavaClassifierType>
-            get() = emptyList()
+        override val permittedTypes: Sequence<JavaClassifierType>
+            get() = emptySequence()
         override val lightClassOriginKind: LightClassOriginKind?
             get() = null
         override val methods: Collection<JavaMethod>

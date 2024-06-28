@@ -53,6 +53,10 @@ abstract class BasicTypeInterpreter<V : Value> : Interpreter<V>(API_VERSION) {
             else -> throw AssertionError("Unexpected type: $type")
         }
 
+    override fun newEmptyValue(local: Int): V {
+        return uninitializedValue()
+    }
+
     override fun newOperation(insn: AbstractInsnNode): V? =
         when (insn.opcode) {
             ACONST_NULL ->

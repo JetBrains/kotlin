@@ -1,0 +1,28 @@
+KaUsualClassType:
+  abbreviatedType: KaUsualClassType:
+    abbreviatedType: null
+    annotations: []
+    classId: library1/StringAlias
+    nullability: NON_NULLABLE
+    qualifiers: [
+      qualifier:
+        name: StringAlias
+        symbol: KaTypeAliasSymbol(library1/StringAlias)
+        typeArguments: []
+    ]
+    symbol: KaTypeAliasSymbol(library1/StringAlias)
+    typeArguments: []
+  annotations: []
+  classId: kotlin/String
+  nullability: NON_NULLABLE
+  qualifiers: [
+    qualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+
+Rendered type:
+library1.StringAlias

@@ -3,11 +3,6 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
     annotations:
       JvmRecord
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyRec
-    CONSTRUCTOR visibility:public <> (name:kotlin.String) returnType:<root>.MyRec [primary]
-      VALUE_PARAMETER name:name index:0 type:kotlin.String
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'protected/*protected and package*/ constructor <init> () declared in java.lang.Record'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRec modality:FINAL visibility:public [data] superTypes:[java.lang.Record]'
     PROPERTY name:name visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -19,13 +14,18 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
           RETURN type=kotlin.Nothing from='public final fun <get-name> (): kotlin.String declared in <root>.MyRec'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.<get-name>' type=<root>.MyRec origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.MyRec) returnType:kotlin.String [operator]
+    CONSTRUCTOR visibility:public <> (name:kotlin.String) returnType:<root>.MyRec [primary]
+      VALUE_PARAMETER name:name index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'protected/*protected and package*/ constructor <init> () declared in java.lang.Record'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyRec modality:FINAL visibility:public [data] superTypes:[java.lang.Record]'
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyRec) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.MyRec'
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String declared in <root>.MyRec'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.component1' type=<root>.MyRec origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.MyRec, name:kotlin.String) returnType:<root>.MyRec
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.MyRec, name:kotlin.String) returnType:<root>.MyRec
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       VALUE_PARAMETER name:name index:0 type:kotlin.String
         EXPRESSION_BODY
@@ -33,13 +33,13 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
             receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.copy' type=<root>.MyRec origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun copy (name: kotlin.String): <root>.MyRec declared in <root>.MyRec'
-          CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String) [primary] declared in <root>.MyRec' type=<root>.MyRec origin=null
+          CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String) declared in <root>.MyRec' type=<root>.MyRec origin=null
             name: GET_VAR 'name: kotlin.String declared in <root>.MyRec.copy' type=kotlin.String origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.MyRec, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.MyRec, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.MyRec
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+        public abstract fun equals (p0: @[EnhancedNullability] kotlin.Any?): kotlin.Boolean declared in java.lang.Record
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -59,29 +59,29 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
             GET_VAR 'other: kotlin.Any? declared in <root>.MyRec.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                   receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.equals' type=<root>.MyRec origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-                  receiver: GET_VAR 'val tmp_0: <root>.MyRec [val] declared in <root>.MyRec.equals' type=<root>.MyRec origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.MyRec declared in <root>.MyRec.equals' type=<root>.MyRec origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyRec'
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyRec'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.MyRec) returnType:kotlin.Int
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.MyRec
+        public abstract fun hashCode (): kotlin.Int declared in java.lang.Record
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.MyRec'
-          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.hashCode' type=<root>.MyRec origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.MyRec) returnType:kotlin.String
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.MyRec
+        public abstract fun toString (): @[EnhancedNullability] kotlin.String declared in java.lang.Record
+      $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyRec'
           STRING_CONCATENATION type=kotlin.String

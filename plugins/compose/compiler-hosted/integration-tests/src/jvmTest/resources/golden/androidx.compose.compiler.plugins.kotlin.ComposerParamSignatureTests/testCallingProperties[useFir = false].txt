@@ -1,0 +1,27 @@
+//
+// Source
+// ------------------------------------------
+
+val bar: Int @Composable get() { return 123 }
+
+@Composable fun Example() {
+    bar
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+public final class TestKt {
+  public final static getBar(Landroidx/compose/runtime/Composer;I)I
+  public final static Example(Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Example%1 null null
+}
+final class TestKt%Example%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+  <init>(I)V
+  public final invoke(Landroidx/compose/runtime/Composer;I)V
+  public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  final synthetic I %%changed
+  OUTERCLASS TestKt Example (Landroidx/compose/runtime/Composer;I)V
+  final static INNERCLASS TestKt%Example%1 null null
+}

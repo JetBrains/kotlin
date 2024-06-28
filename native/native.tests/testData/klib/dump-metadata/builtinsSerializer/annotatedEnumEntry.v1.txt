@@ -1,0 +1,84 @@
+library {
+  // module name: <annotatedEnumEntry.kt>
+
+  library fragment {
+    // package name: test
+
+    // class name: test/Anno
+    // class name: test/Bnno
+    // class name: test/Eee
+    // class name: test/Eee.Entry1
+    // class name: test/Eee.Entry2
+    // class name: test/Eee.Entry3
+    // class name: test/Eee.Entry4
+
+    // signature: test/Anno|null[0]
+    public final annotation class test/Anno : kotlin/Annotation {
+
+      // signature: test/Anno.<init>|-2457917570611619111[0]
+      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+
+      // signature: test/Anno.value|1987073854177347439[0]
+      public final val value: kotlin/String
+        // signature: test/Anno.value.<get-value>|3260093555963109437[0]
+        public final get
+
+      // signature: test/Anno.x|-8060530855978347579[0]
+      public final val x: kotlin/Int
+        // signature: test/Anno.x.<get-x>|1482705010654679335[0]
+        public final get
+    }
+
+    // signature: test/Bnno|null[0]
+    public final annotation class test/Bnno : kotlin/Annotation {
+
+      // signature: test/Bnno.<init>|-5645683436151566731[0]
+      public constructor()
+    }
+
+    // signature: test/Eee|null[0]
+    public final enum class test/Eee : kotlin/Enum<test/Eee> {
+
+      // signature: test/Eee.<init>|-5645683436151566731[0]
+      private constructor()
+
+      // signature: test/Eee.Entry1|null[0]
+      @test/Anno
+      Entry1,
+
+      // signature: test/Eee.Entry2|null[0]
+      Entry2,
+
+      // signature: test/Eee.Entry3|null[0]
+      @test/Anno(value = "3")
+      @test/Bnno
+      Entry3,
+
+      // signature: test/Eee.Entry4|null[0]
+      @test/Anno(value = "4", x = 4)
+      Entry4,
+
+      // has Enum.entries
+    }
+
+    // signature: test/Eee.Entry1|null[0]
+    @test/Anno
+    public final enum entry test/Eee.Entry1 : test/Eee {
+    }
+
+    // signature: test/Eee.Entry2|null[0]
+    public final enum entry test/Eee.Entry2 : test/Eee {
+    }
+
+    // signature: test/Eee.Entry3|null[0]
+    @test/Anno(value = "3")
+    @test/Bnno
+    public final enum entry test/Eee.Entry3 : test/Eee {
+    }
+
+    // signature: test/Eee.Entry4|null[0]
+    @test/Anno(value = "4", x = 4)
+    public final enum entry test/Eee.Entry4 : test/Eee {
+    }
+  }
+}

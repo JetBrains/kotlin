@@ -1,6 +1,6 @@
 class Outer<T> {
     class Nested {
-        fun foo(t: T) = t
+        fun foo(t: <!UNRESOLVED_REFERENCE!>T<!>) = t
     }
     
     class Nested2<T> {

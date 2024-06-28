@@ -1,6 +1,5 @@
 // WITH_COROUTINES
 // WITH_STDLIB
-// !LANGUAGE: +ReleaseCoroutines
 // NO_CHECK_LAMBDA_INLINING
 // FILE: test.kt
 
@@ -8,17 +7,14 @@ inline suspend fun foo(x: suspend () -> String) = x()
 
 // FILE: box.kt
 
-import helpers.ContinuationAdapter
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: ContinuationAdapter<Unit>() {
-        override fun resume(value: Unit) {
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            throw exception
+    c.startCoroutine(object: Continuation<Unit> {
+        override val context: CoroutineContext get() = EmptyCoroutineContext
+        override fun resumeWith(value: Result<Unit>) {
+            value.getOrThrow()
         }
     })
 }

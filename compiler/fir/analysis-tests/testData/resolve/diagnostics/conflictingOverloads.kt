@@ -6,35 +6,38 @@ fun test() {}
 
 fun test(z: Int, c: Char) {}
 
-open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+open class <!CLASSIFIER_REDECLARATION!>A<!> {
     open fun rest(s: String) {}
 
     open val u = 20
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
+class <!CLASSIFIER_REDECLARATION!>A<!> {
 
 }
 
-class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
-    <!CONFLICTING_OVERLOADS!><!NOTHING_TO_OVERRIDE!>override<!> fun rest(s: String)<!> {}
+class <!CLASSIFIER_REDECLARATION!>B<!> : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
+    <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
+    <!CONFLICTING_OVERLOADS!>fun <!VIRTUAL_MEMBER_HIDDEN!>rest<!>(s: String)<!> {}
 
     fun rest(l: Long) {}
 
-    <!NOTHING_TO_OVERRIDE!>override<!> val u = 310
+    override val u = 310
 }
 
-interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+interface <!CLASSIFIER_REDECLARATION!>B<!>
 
-enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
+enum class <!CLASSIFIER_REDECLARATION!>B<!>
 
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
 
-typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = A
-typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = B
+val <!SYNTAX!>(a,b)<!> = 30 to 40
+val <!SYNTAX!>(c,d)<!> = 50 to 60
+
+typealias <!CLASSIFIER_REDECLARATION!>TA<!> = A
+typealias <!CLASSIFIER_REDECLARATION!>TA<!> = B
 
 typealias BA = A
 

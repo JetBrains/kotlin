@@ -57,4 +57,68 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
     }
 
     fun nameForReceiverLabel() = (typeElement as? KtUserType)?.referencedName
+
+    /**
+     * Returns presentable text for the underlying type based on stubs when provided.
+     * No decompilation happens if [KtTypeReference] represents compiled code.
+     */
+    fun getTypeText(): String {
+        return stub?.let { getTypeText(typeElement) } ?: text
+    }
+
+    private fun getQualifiedName(userType: KtUserType): String? {
+        val qualifier = userType.qualifier ?: return userType.referencedName
+        return getQualifiedName(qualifier) + "." + userType.referencedName
+    }
+
+    private fun getTypeText(typeElement: KtTypeElement?): String? {
+        return when (typeElement) {
+            is KtUserType -> buildString {
+                append(getQualifiedName(typeElement))
+                val args = typeElement.typeArguments
+                if (args.isNotEmpty()) {
+                    append(args.joinToString(", ", "<", ">") {
+                        val projection = when (it.projectionKind) {
+                            KtProjectionKind.IN -> "in "
+                            KtProjectionKind.OUT -> "out "
+                            KtProjectionKind.STAR -> "*"
+                            KtProjectionKind.NONE -> ""
+                        }
+                        projection + (getTypeText(it.typeReference?.typeElement) ?: "")
+                    })
+                }
+            }
+            is KtFunctionType -> buildString {
+                val contextReceivers = typeElement.contextReceiversTypeReferences
+                if (contextReceivers.isNotEmpty()) {
+                    append(contextReceivers.joinToString(", ", "context(", ")") {getTypeText(it.typeElement) ?: ""})
+                }
+                typeElement.receiverTypeReference?.let { append(getTypeText(it.typeElement)) }
+                append(typeElement.parameters.joinToString(", ", "(", ")") { param ->
+                    param.name?.let { "$it: " }.orEmpty() + param.typeReference?.getTypeText()?.orEmpty()
+                })
+                typeElement.returnTypeReference?.let { returnType ->
+                    append(" -> ")
+                    append(getTypeText(returnType.typeElement))
+                }
+            }
+            is KtIntersectionType -> getTypeText(typeElement.getLeftTypeRef()?.typeElement) + " & " + getTypeText(typeElement.getRightTypeRef()?.typeElement)
+            is KtNullableType -> {
+                val innerType = typeElement.innerType
+                buildString {
+                    val parenthesisRequired = innerType is KtFunctionType
+                    if (parenthesisRequired) {
+                        append("(")
+                    }
+                    append(getTypeText(innerType))
+                    append("?")
+                    if (parenthesisRequired) {
+                        append(")")
+                    }
+                }
+            }
+            null -> null
+            else -> error("Unsupported type $typeElement")
+        }
+    }
 }

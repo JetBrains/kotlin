@@ -1,9 +1,0 @@
-public final class SimpleClassObject : R|kotlin/Any| {
-    public final companion object Companion : R|kotlin/Any| {
-        private constructor(): R|test/SimpleClassObject.Companion|
-
-    }
-
-    public constructor(): R|test/SimpleClassObject|
-
-}

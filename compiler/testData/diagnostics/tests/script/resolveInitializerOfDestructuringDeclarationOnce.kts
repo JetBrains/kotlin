@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val (a, b, c) = A<!NO_VALUE_FOR_PARAMETER!>()<!>
 
 class A(val a: Int) {

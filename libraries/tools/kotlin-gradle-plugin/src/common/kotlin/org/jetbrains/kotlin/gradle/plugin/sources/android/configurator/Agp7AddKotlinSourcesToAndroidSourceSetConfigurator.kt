@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.configurator
 
-import com.android.build.gradle.api.AndroidSourceDirectorySet
-import com.android.build.gradle.api.AndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.utils.*
 
 object Agp7AddKotlinSourcesToAndroidSourceSetConfigurator: KotlinAndroidSourceSetConfigurator {
-    override fun configure(target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet) {
+    override fun configure(
+        target: KotlinAndroidTarget,
+        kotlinSourceSet: KotlinSourceSet,
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
+    ) {
+        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
         val androidKotlinSourceDirectorySet = androidSourceSet.javaClass.getMethod("getKotlin")
-            .invoke(androidSourceSet) as AndroidSourceDirectorySet
+            .invoke(androidSourceSet) as DeprecatedAndroidSourceDirectorySet
 
         androidKotlinSourceDirectorySet.setSrcDirs(listOf(target.project.provider { kotlinSourceSet.kotlin.srcDirs }))
     }

@@ -1,0 +1,31 @@
+[IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosMain' without registering any ios target:
+  kotlin {
+     /* Register at least one of the following targets */
+     iosX64()
+     iosArm64()
+     iosSimulatorArm64()
+
+     /* Use convention */
+     sourceSets.iosMain.dependencies {
+
+     }
+  }
+----
+[IosSourceSetConventionUsedWithoutIosTarget | WARNING] Accessed 'source set iosTest' without registering any ios target:
+  kotlin {
+     /* Register at least one of the following targets */
+     iosX64()
+     iosArm64()
+     iosSimulatorArm64()
+
+     /* Use convention */
+     sourceSets.iosTest.dependencies {
+
+     }
+  }
+----
+[UnusedSourceSetsWarning | WARNING] The following Kotlin source sets were configured but not added to any Kotlin compilation:
+ * iosMain
+ * iosTest
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets

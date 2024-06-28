@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.scripting.compiler.test
 
 import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
@@ -97,7 +97,7 @@ class ScriptTest : TestCase() {
             return (extraInt(metadata) as Int) and JvmAnnotationNames.METADATA_SCRIPT_FLAG != 0
         }
 
-        val scriptClass = compileScript("metadata_flag.kts", StandardScriptDefinition)!!
+        val scriptClass = compileScript("metadata_flag.kts", StandardScriptDefinition) ?: throw AssertionError("compilation failed")
         assertTrue("Script class SHOULD have the metadata flag set", scriptClass.isFlagSet())
         assertFalse(
             "Non-script class in a script should NOT have the metadata flag set",
@@ -116,11 +116,11 @@ class ScriptTest : TestCase() {
             if (suppressOutput) MessageCollector.NONE
             else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
 
-        val rootDisposable = Disposer.newDisposable()
+        val rootDisposable = Disposer.newDisposable("Disposable for ${ScriptTest::class.simpleName}")
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
             configuration.updateWithBaseCompilerArguments()
-            configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
+            configuration.messageCollector = messageCollector
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromLegacy(

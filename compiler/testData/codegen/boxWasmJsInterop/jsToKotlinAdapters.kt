@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JS
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6, JS
 
 inline fun checkNPE(body: () -> Unit) {
     var throwed = false
@@ -43,22 +43,23 @@ fun testExterRef() {
     check(null2ExternRef() == null)
 }
 
-class DataRef
+class StructRefImpl
+typealias StructRef = JsReference<StructRefImpl>
 
-fun notNullDataRef(x: DataRef): DataRef = js("x")
+fun notNullStructRef(x: StructRef): StructRef = js("x")
 
-fun notNull2DataRef(x: DataRef): DataRef = js("null")
+fun notNull2StructRef(x: StructRef): StructRef = js("null")
 
-fun nullDataRef(x: DataRef): DataRef? = js("x")
+fun nullStructRef(x: StructRef): StructRef? = js("x")
 
-fun null2DataRef(x: DataRef): DataRef? = js("null")
+fun null2StructRef(x: StructRef): StructRef? = js("null")
 
-fun testDataRef() {
-    val dataRef = DataRef()
-    check(notNullDataRef(dataRef) == dataRef)
-    checkNPE { notNull2DataRef(dataRef) }
-    check (nullDataRef(dataRef) == dataRef)
-    check (null2DataRef(dataRef) == null)
+fun testStructRef() {
+    val structRef = StructRefImpl().toJsReference()
+    check(notNullStructRef(structRef) == structRef)
+    checkNPE { notNull2StructRef(structRef) }
+    check (nullStructRef(structRef) == structRef)
+    check (null2StructRef(structRef) == null)
 }
 
 fun notNullInt(): Int = js("123")
@@ -121,30 +122,13 @@ fun testFloat() {
     check(null2Float() == null)
 }
 
-
-fun notNullNumber(): Number = js("123.5")
-
-fun notNull2Number(): Number = js("null")
-
-fun nullNumber(): Number? = js("123.5")
-
-fun null2Number(): Number? = js("null")
-
-fun testNumber() {
-    check(notNullNumber() == 123.5)
-    check(notNull2Number() == 0.0)
-    check(nullNumber() == 123.5)
-    check(null2Number() == null)
-}
-
 fun box(): String {
     testString()
     testExterRef()
-    testDataRef()
+    testStructRef()
     testInt()
     testBoolean()
     testShort()
     testFloat()
-    testNumber()
     return "OK"
 }

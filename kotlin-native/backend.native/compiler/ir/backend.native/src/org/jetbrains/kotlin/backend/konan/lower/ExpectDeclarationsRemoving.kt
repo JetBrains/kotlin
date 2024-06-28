@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan.lower
@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -42,6 +45,7 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFragment) {
 
     // Note: local declarations aren't required here; TODO: use more lightweight index.
@@ -81,7 +85,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
                 val actualForExpected = function.findActualForExpected()
                 actualForExpected.valueParameters[index].defaultValue =
-                        IrExpressionBodyImpl(
+                        irModule.irBuiltins.irFactory.createExpressionBody(
                                 defaultValue.startOffset, defaultValue.endOffset,
                                 defaultValue.expression.remapExpectValueSymbols().patchDeclarationParents(actualForExpected)
                         )
@@ -113,25 +117,18 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedClass(symbol)
 
-            override fun getReferencedClassOrNull(symbol: IrClassSymbol?) =
-                    symbol?.let { getReferencedClass(it) }
+            override fun getReferencedTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol {
+                return remapExpectTypeParameter(symbol).symbol
+            }
 
-            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
-                is IrClassSymbol -> getReferencedClass(symbol)
-                is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol
-                else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
+            override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol {
+                symbol.unexpectedSymbolKind<IrScriptSymbol>()
             }
 
             override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
                     if (symbol.descriptor.isExpect)
                         symbol.owner.findActualForExpected().symbol
                     else super.getReferencedConstructor(symbol)
-
-            override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol = when (symbol) {
-                is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
-                is IrConstructorSymbol -> getReferencedConstructor(symbol)
-                else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
-            }
 
             override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
                 symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol
@@ -168,7 +165,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
         val symbolRemapper = SymbolRemapper()
         acceptVoid(symbolRemapper)
-        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, DeepCopyTypeRemapper(symbolRemapper)), data = null)
+        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper), data = null)
     }
 
     private fun remapExpectTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {

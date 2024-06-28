@@ -10,16 +10,18 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.android.androidTargetPrototype
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.anyDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getByType
+import org.jetbrains.kotlin.util.assertDoesNotThrow
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -29,7 +31,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
 
     @BeforeTest
     fun checkSdk() {
-        assumeAndroidSdkAvailable()
+        assertAndroidSdkAvailable()
     }
 
     @Test
@@ -48,6 +50,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
     @Test
     fun `apply prototype - evaluate - configurations can be resolved`() {
         val project = buildProjectWithMPP()
+        setAndroidSdkDirProperty(project)
         project.androidLibrary { compileSdk = 31 }
 
         val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
@@ -84,7 +87,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             applyMultiplatformPlugin()
             repositories.mavenCentralCacheRedirector()
         }
-
+        setAndroidSdkDirProperty(project)
         project.androidLibrary { compileSdk = 31 }
         project.multiplatformExtension.androidTargetPrototype()
         project.evaluate()
@@ -95,5 +98,48 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             binaryCoordinates(Regex("com\\.android:sdk:.*")),
             anyDependency()
         )
+    }
+
+    @Test
+    fun `test compile task arguments created without failures`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenLocal()
+            repositories.mavenCentralCacheRedirector()
+        }
+        setAndroidSdkDirProperty(project)
+        project.androidLibrary { compileSdk = 31 }
+        val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
+        project.evaluate()
+
+        androidTargetPrototype.compilations.forEach { compilation ->
+            val compileTask = compilation.compileTaskProvider.get() as KotlinCompile
+            assertDoesNotThrow { compileTask.createCompilerArguments(default) }
+        }
+    }
+
+    @Test
+    fun `test extra friend-path is added correctly to compiler args`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(false)
+            enableDependencyVerification(false)
+            applyMultiplatformPlugin()
+            repositories.mavenLocal()
+            repositories.mavenCentralCacheRedirector()
+        }
+        setAndroidSdkDirProperty(project)
+        project.androidLibrary { compileSdk = 31 }
+        val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
+        project.evaluate()
+
+        val unitTest = androidTargetPrototype.compilations.getByName("unitTest")
+        val file = project.file("foo.jar")
+        unitTest.extraFriendPaths.from(file)
+
+        val compileTask = unitTest.compileTaskProvider.get() as KotlinCompile
+        val args = compileTask.createCompilerArguments(default)
+        if (file.absolutePath !in args.friendPaths!!) fail("File $file was not found int the friend paths ${args.friendPaths!!.toList()}")
     }
 }

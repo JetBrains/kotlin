@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class KonanConfigKeys {
     companion object {
@@ -19,8 +21,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("add debug information")
         val FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("fake override validator")
-        val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
-                = CompilerConfigurationKey.create("bitcode embedding mode")
         val EMIT_LAZY_OBJC_HEADER_FILE: CompilerConfigurationKey<String?> =
                 CompilerConfigurationKey.create("output file to emit lazy Obj-C header")
         val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
@@ -39,6 +39,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("paths to the root directories from which dependencies are to be cached automatically")
         val AUTO_CACHE_DIR: CompilerConfigurationKey<String>
                 = CompilerConfigurationKey.create<String>("path to the directory where to put caches for auto-cacheable dependencies")
+        val INCREMENTAL_CACHE_DIR: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create<String>("path to the directory where to put incremental build caches")
         val CACHED_LIBRARIES: CompilerConfigurationKey<Map<String, String>>
                 = CompilerConfigurationKey.create<Map<String, String>>("mapping from library paths to cache paths")
         val FILES_TO_CACHE: CompilerConfigurationKey<List<String>>
@@ -59,8 +61,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("overridden compiler distribution path")
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
-        val LIBRARY_VERSION: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("library version")
         val LIGHT_DEBUG: CompilerConfigurationKey<Boolean?>
                 = CompilerConfigurationKey.create("add light debug information")
         val GENERATE_DEBUG_TRAMPOLINE: CompilerConfigurationKey<Boolean?>
@@ -71,8 +71,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("list available targets")
         val MANIFEST_FILE: CompilerConfigurationKey<String?> 
                 = CompilerConfigurationKey.create("provide manifest addend file")
-        val METADATA_KLIB: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("metadata klib")
+        val HEADER_KLIB: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create("path to file where header klib should be produced")
         val MODULE_NAME: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("module name")
         val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>
@@ -99,8 +99,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("export KDoc into klib and framework")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print bitcode")
-        val CHECK_EXTERNAL_CALLS: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("check external calls")
         val PRINT_IR: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print ir")
         val PRINT_FILES: CompilerConfigurationKey<Boolean>
@@ -127,18 +125,10 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("save LLVM IR")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")
-        val VERIFY_IR: CompilerConfigurationKey<IrVerificationMode>
-                = CompilerConfigurationKey.create("IR verification mode")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
                 = CompilerConfigurationKey.create("debug info format version")
-        val COVERAGE: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("emit coverage info for sources")
-        val LIBRARIES_TO_COVER: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("libraries that should be covered")
-        val PROFRAW_PATH: CompilerConfigurationKey<String?>
-                = CompilerConfigurationKey.create("path to *.profraw coverage output")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("write objc header with generics support")
         val DEBUG_PREFIX_MAP: CompilerConfigurationKey<Map<String, String>>
@@ -149,7 +139,6 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("override konan.properties values")
         val DESTROY_RUNTIME_MODE: CompilerConfigurationKey<DestroyRuntimeMode>
                 = CompilerConfigurationKey.create("when to destroy runtime")
-        val GARBAGE_COLLECTOR: CompilerConfigurationKey<GC> = CompilerConfigurationKey.create("gc")
         val PROPERTY_LAZY_INITIALIZATION: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("lazy top level properties initialization")
         val WORKER_EXCEPTION_HANDLING: CompilerConfigurationKey<WorkerExceptionHandling> = CompilerConfigurationKey.create("unhandled exception processing in Worker.executeAfter")
@@ -158,13 +147,13 @@ class KonanConfigKeys {
         val LLVM_VARIANT: CompilerConfigurationKey<LlvmVariant?> = CompilerConfigurationKey.create("llvm variant")
         val RUNTIME_LOGS: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("enable runtime logging")
         val LAZY_IR_FOR_CACHES: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("use lazy IR for cached libraries")
-        val PARTIAL_LINKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("allows some symbols in klibs be missed")
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
         val COMPILE_FROM_BITCODE: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to bitcode file to compile")
         val SERIALIZED_DEPENDENCIES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to serialized dependencies for native linking")
         val SAVE_DEPENDENCIES_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to save serialized dependencies to")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
+        val KONAN_DATA_DIR: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory for storing konan dependencies, cache and prebuilds")
+        val MANIFEST_NATIVE_TARGETS: CompilerConfigurationKey<Collection<KonanTarget>?> = CompilerConfigurationKey.create("value of native_targets property to write in manifest")
     }
 }
-

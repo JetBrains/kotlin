@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import gnu.trove.THashMap
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 
 sealed interface TargetDependent<T> : Iterable<T> {
     val size: Int get() = targets.size
@@ -116,7 +116,7 @@ private class FactoryBasedTargetDependent<T>(
     private object Null
     private object Uninitialized
 
-    private val values = targets.associateWithTo(THashMap<CommonizerTarget, Any>(targets.size)) { Uninitialized }
+    private val values = targets.associateWithTo(CommonizerMap<CommonizerTarget, Any>(targets.size)) { Uninitialized }
 
     @Suppress("UNCHECKED_CAST")
     override fun get(target: CommonizerTarget): T {

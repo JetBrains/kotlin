@@ -30,31 +30,21 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
+import org.jetbrains.kotlin.resolve.DescriptorUtils.unwrapFakeOverride
 import org.jetbrains.kotlin.resolve.LanguageVersionSettingsProvider
-import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
+import org.jetbrains.kotlin.resolve.calls.util.getSuperCallExpression
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 
-class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, private val project: Project) : CallChecker {
-
+class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, project: Project) : CallChecker {
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val supportDefaults = jvmTarget >= JvmTarget.JVM_1_8
-
         val descriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
         if (descriptor is JavaPropertyDescriptor) return
-
-        if (!supportDefaults &&
-            isStaticDeclaration(descriptor) &&
-            isInterface(descriptor.containingDeclaration) &&
-            descriptor is JavaCallableMemberDescriptor) {
-            context.trace.report(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET.on(context.languageVersionSettings, reportOn))
-        }
 
         val superCallExpression = getSuperCallExpression(resolvedCall.call) ?: return
 
@@ -70,16 +60,12 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget, private val pr
             val bindingContext = context.trace.bindingContext
             val thisForSuperCall = getSuperCallLabelTarget(bindingContext, superCallExpression)
 
-            if (thisForSuperCall != null && DescriptorUtils.isInterface(thisForSuperCall)) {
+            if (thisForSuperCall != null && isInterface(thisForSuperCall)) {
                 val declarationWithCall = findInterfaceMember(thisForSuperCall, superCallExpression, bindingContext)
                 if (declarationWithCall?.isCompiledToJvmDefaultWithProperMode(ideService, jvmDefaultMode) == false) {
                     context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
                     return
                 }
-            }
-
-            if (!supportDefaults) {
-                context.trace.report(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET.on(context.languageVersionSettings, reportOn))
             }
         }
     }

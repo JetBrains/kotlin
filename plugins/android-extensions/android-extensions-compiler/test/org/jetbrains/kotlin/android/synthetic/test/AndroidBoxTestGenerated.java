@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,129 +19,129 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidBoxTestGenerated extends AbstractAndroidBoxTest {
-    @TestMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Android extends AbstractAndroidBoxTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doCompileAgainstAndroidSdkTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInAndroid() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
-        }
-
-        @TestMetadata("androidEntity")
-        public void testAndroidEntity() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
-        }
-
-        @TestMetadata("androidEntityInnerClass")
-        public void testAndroidEntityInnerClass() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
-        }
-
-        @TestMetadata("fqNameInAttr")
-        public void testFqNameInAttr() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
-        }
-
-        @TestMetadata("fqNameInTag")
-        public void testFqNameInTag() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInTag/");
-        }
-
-        @TestMetadata("fragment")
-        public void testFragment() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragment/");
-        }
-
-        @TestMetadata("fragmentNoGetView")
-        public void testFragmentNoGetView() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
-        }
-
-        @TestMetadata("manyWidgets")
-        public void testManyWidgets() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/manyWidgets/");
-        }
-
-        @TestMetadata("multiFile")
-        public void testMultiFile() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/multiFile/");
-        }
-
-        @TestMetadata("singleFile")
-        public void testSingleFile() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/singleFile/");
-        }
-
-        @TestMetadata("view")
-        public void testView() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/view/");
-        }
+  @TestMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Android extends AbstractAndroidBoxTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doCompileAgainstAndroidSdkTest, this, testDataFilePath);
     }
 
-    @TestMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Invoke extends AbstractAndroidBoxTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doFakeInvocationTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInInvoke() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
-        }
-
-        @TestMetadata("androidEntity")
-        public void testAndroidEntity() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
-        }
-
-        @TestMetadata("androidEntityInnerClass")
-        public void testAndroidEntityInnerClass() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
-        }
-
-        @TestMetadata("fqNameInAttr")
-        public void testFqNameInAttr() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
-        }
-
-        @TestMetadata("fqNameInTag")
-        public void testFqNameInTag() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInTag/");
-        }
-
-        @TestMetadata("fragment")
-        public void testFragment() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragment/");
-        }
-
-        @TestMetadata("fragmentNoGetView")
-        public void testFragmentNoGetView() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
-        }
-
-        @TestMetadata("manyWidgets")
-        public void testManyWidgets() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/manyWidgets/");
-        }
-
-        @TestMetadata("multiFile")
-        public void testMultiFile() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/multiFile/");
-        }
-
-        @TestMetadata("singleFile")
-        public void testSingleFile() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/singleFile/");
-        }
-
-        @TestMetadata("view")
-        public void testView() throws Exception {
-            runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/view/");
-        }
+    public void testAllFilesPresentInAndroid() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
+
+    @TestMetadata("androidEntity")
+    public void testAndroidEntity() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
+    }
+
+    @TestMetadata("androidEntityInnerClass")
+    public void testAndroidEntityInnerClass() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
+    }
+
+    @TestMetadata("fqNameInAttr")
+    public void testFqNameInAttr() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
+    }
+
+    @TestMetadata("fqNameInTag")
+    public void testFqNameInTag() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInTag/");
+    }
+
+    @TestMetadata("fragment")
+    public void testFragment() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragment/");
+    }
+
+    @TestMetadata("fragmentNoGetView")
+    public void testFragmentNoGetView() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
+    }
+
+    @TestMetadata("manyWidgets")
+    public void testManyWidgets() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/manyWidgets/");
+    }
+
+    @TestMetadata("multiFile")
+    public void testMultiFile() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/multiFile/");
+    }
+
+    @TestMetadata("singleFile")
+    public void testSingleFile() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/singleFile/");
+    }
+
+    @TestMetadata("view")
+    public void testView() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/view/");
+    }
+  }
+
+  @TestMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/android")
+  @TestDataPath("$PROJECT_ROOT")
+  @RunWith(JUnit3RunnerWithInners.class)
+  public static class Invoke extends AbstractAndroidBoxTest {
+    private void runTest(String testDataFilePath) {
+      KotlinTestUtils.runTest(this::doFakeInvocationTest, this, testDataFilePath);
+    }
+
+    public void testAllFilesPresentInInvoke() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/android"), Pattern.compile("^([^\\.]+)$"), null, false);
+    }
+
+    @TestMetadata("androidEntity")
+    public void testAndroidEntity() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntity/");
+    }
+
+    @TestMetadata("androidEntityInnerClass")
+    public void testAndroidEntityInnerClass() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/androidEntityInnerClass/");
+    }
+
+    @TestMetadata("fqNameInAttr")
+    public void testFqNameInAttr() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInAttr/");
+    }
+
+    @TestMetadata("fqNameInTag")
+    public void testFqNameInTag() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fqNameInTag/");
+    }
+
+    @TestMetadata("fragment")
+    public void testFragment() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragment/");
+    }
+
+    @TestMetadata("fragmentNoGetView")
+    public void testFragmentNoGetView() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/fragmentNoGetView/");
+    }
+
+    @TestMetadata("manyWidgets")
+    public void testManyWidgets() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/manyWidgets/");
+    }
+
+    @TestMetadata("multiFile")
+    public void testMultiFile() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/multiFile/");
+    }
+
+    @TestMetadata("singleFile")
+    public void testSingleFile() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/singleFile/");
+    }
+
+    @TestMetadata("view")
+    public void testView() {
+      runTest("plugins/android-extensions/android-extensions-compiler/testData/codegen/android/view/");
+    }
+  }
 }

@@ -1,0 +1,11 @@
+val test1: ErrorType
+  field = error("") /* ErrorCallExpression */
+  get
+
+val test2: ErrorType
+  field = error("") /* ErrorCallExpression */
+  get
+
+val test3: ErrorType
+  field = error("") /* ErrorCallExpression */56;
+  get

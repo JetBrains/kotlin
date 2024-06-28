@@ -1,19 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.backend.ir.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -50,12 +50,6 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                 -USE_PSI_CLASS_FILES_READING
             }
 
-            forTestsMatching("*WithStdLib/*") {
-                defaultDirectives {
-                    +WITH_STDLIB
-                }
-            }
-
             configureFirHandlersStep {
                 useHandlersAtFirst(
                     ::FirDumpHandler,
@@ -65,20 +59,34 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                 )
             }
 
+            configureIrHandlersStep {
+                useHandlers(
+                    ::IrDiagnosticsHandler,
+                    ::IrConstCheckerHandler
+                )
+            }
+
             useAfterAnalysisCheckers(
                 ::FirMetaInfoDiffSuppressor
             )
 
             configureDumpHandlersForCodegenTest()
 
-            forTestsMatching(
-                "compiler/fir/fir2ir/testData/codegen/box/properties/backingField/*" or
-                        "compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties/backingField/*"
-            ) {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-                }
-            }
+            baseFirBlackBoxCodegenTestDirectivesConfiguration()
+        }
+    }
+}
+
+fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {
+    forTestsMatching("*WithStdLib/*") {
+        defaultDirectives {
+            +WITH_STDLIB
+        }
+    }
+
+    forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+        defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
         }
     }
 }

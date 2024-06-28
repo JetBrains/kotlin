@@ -1,0 +1,65 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin.Enum.Companion
+    Element 7
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 8
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Foo|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Foo>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry VALUE: R|Foo| = object : R|Foo|
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Foo>|
+                    public get(): R|kotlin/enums/EnumEntries<Foo>|
+    Element 9
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Foo|
+                Type: <anonymous>
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] enumValueFunction.kt
+    public final? [ResolvedTo(RAW_FIR)] enum class Foo : R|kotlin/Enum<Foo>| {
+        private [ResolvedTo(RAW_FIR)] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Enum<Foo>|>
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry VALUE: R|Foo| = object : R|Foo| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Foo|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun run(): R|kotlin/Int| {
+                ^run Int(1)
+            }
+
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<Foo>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|Foo| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<Foo>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<Foo>|
+
+    }

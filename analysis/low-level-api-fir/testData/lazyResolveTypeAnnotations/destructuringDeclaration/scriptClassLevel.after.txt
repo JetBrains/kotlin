@@ -1,0 +1,53 @@
+FILE: [ResolvedTo(IMPORTS)] scriptClassLevel.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptClassLevel.kts>
+        <script receiver parameter>: kotlin.script.templates.standard.ScriptTemplateWithArgs
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.position] position: String): R|util/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor(): R|util/Foo| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final? data [ResolvedTo(RAW_FIR)] class Pair : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.a] a: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Foo.Pair.b] b: Int): R|util/Foo.Pair| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component1, IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+                public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=util/Foo.Pair.component2, IsFromPrimaryConstructor=true] val b: Int = R|<local>/b|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] get(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+                public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Int
+
+                public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] a: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.a|, [ResolvedTo(RAW_FIR)] b: Int = this@R|util/Foo.Pair|.R|util/Foo.Pair.b|): R|util/Foo.Pair|
+
+            }
+
+            <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+
+            public final? [ResolvedTo(RAW_FIR)] object <no name provided> : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] constructor(): R|util/Foo.<no name provided>| {
+                    LAZY_super<R|kotlin/Any|>
+                }
+
+                public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=<no name provided>] get(): <implicit>
+
+            }
+
+        }
+

@@ -21,8 +21,8 @@ const val l = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>k<!>
 const val m = "123".toString()
 const val n = "456".length
 val o = "789"
-const val p = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.toString()<!>
-const val q = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>o.length<!>
+const val p = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.toString()<!>
+const val q = <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>o.length<!>
 
 class ForConst{
     companion object {

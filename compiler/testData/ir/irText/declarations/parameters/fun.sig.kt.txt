@@ -1,0 +1,48 @@
+// CHECK:
+//   Mangled name: Host
+//   Public signature: /Host|null[0]
+class Host {
+  // CHECK:
+  //   Mangled name: Host#<init>(){}
+  //   Public signature: /Host.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Host#testMembetExt1@kotlin.String(kotlin.Int;kotlin.String){}
+  //   Public signature: /Host.testMembetExt1|8870420018904797729[0]
+  //   Public signature debug description: testMembetExt1@kotlin.String(kotlin.Int;kotlin.String){}
+  fun String.testMembetExt1(i: Int, j: String): Unit
+
+  // CHECK:
+  //   Mangled name: Host#testMembetExt2@kotlin.String(kotlin.Int;0:0){0§<kotlin.Any?>}
+  //   Public signature: /Host.testMembetExt2|7335072512555735434[0]
+  //   Public signature debug description: testMembetExt2@kotlin.String(kotlin.Int;0:0){0§<kotlin.Any?>}
+  fun <T : Any?> String.testMembetExt2(i: Int, j: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: #test1(kotlin.Int;0:0){0§<kotlin.Any?>}
+//   Public signature: /test1|3909853005204725277[0]
+//   Public signature debug description: test1(kotlin.Int;0:0){0§<kotlin.Any?>}
+fun <T : Any?> test1(i: Int, j: T): Unit
+
+// CHECK:
+//   Mangled name: #test2(kotlin.Int;kotlin.String){}
+//   Public signature: /test2|7169768065709748599[0]
+//   Public signature debug description: test2(kotlin.Int;kotlin.String){}
+fun test2(i: Int, j: String): Unit
+
+// CHECK:
+//   Mangled name: #test3(kotlin.Array<out|kotlin.String>...){}
+//   Public signature: /test3|-5387729831293380819[0]
+//   Public signature debug description: test3(kotlin.Array<out|kotlin.String>...){}
+fun test3(vararg args: String): Unit
+
+// CHECK:
+//   Mangled name: #textExt1@kotlin.String(kotlin.Int;kotlin.String){}
+//   Public signature: /textExt1|-1442095296360892469[0]
+//   Public signature debug description: textExt1@kotlin.String(kotlin.Int;kotlin.String){}
+fun String.textExt1(i: Int, j: String): Unit
+

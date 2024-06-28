@@ -1,0 +1,8 @@
+Before shortening: dependency.MyFoo
+with default settings:
+[qualifier] dependency.MyFoo
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] dependency.MyFoo
+with SHORTEN_AND_STAR_IMPORT:

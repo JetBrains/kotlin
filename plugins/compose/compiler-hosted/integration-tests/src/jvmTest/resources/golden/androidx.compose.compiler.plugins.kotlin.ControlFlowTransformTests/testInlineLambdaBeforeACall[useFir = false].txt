@@ -1,0 +1,44 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.*
+
+@Composable
+private fun Test(param: String?): String? {
+    InlineNonComposable {
+        repeat(10) {
+            Test("InsideInline")
+        }
+    }
+    return Test("AfterInline")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
+  sourceInformationMarkerStart(%composer, <>, "C(Test)<Test("...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceGroup(<>)
+  sourceInformation(%composer, "")
+  InlineNonComposable {
+    %composer.startReplaceGroup(<>)
+    sourceInformation(%composer, "*<Test("...>")
+    repeat(10) { it: Int ->
+      Test("InsideInline", %composer, 0b0110)
+    }
+    %composer.endReplaceGroup()
+  }
+  %composer.endReplaceGroup()
+  val tmp0 = Test("AfterInline", %composer, 0b0110)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  sourceInformationMarkerEnd(%composer)
+  return tmp0
+}

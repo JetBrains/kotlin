@@ -1,0 +1,126 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+open class A : Java1 {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /A.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: B
+//   Public signature: /B|null[0]
+class B : Java2 {
+  // CHECK:
+  //   Mangled name: B#<init>(){}
+  //   Public signature: /B.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: B#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /B.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: C
+//   Public signature: /C|null[0]
+class C : Java1, Java3 {
+  // CHECK:
+  //   Mangled name: C#<init>(){}
+  //   Public signature: /C.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: C#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /C.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: D
+//   Public signature: /D|null[0]
+class D : Java1, KotlinInterface {
+  // CHECK:
+  //   Mangled name: D#<init>(){}
+  //   Public signature: /D.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: D#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /D.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: E
+//   Public signature: /E|null[0]
+class E : Java4 {
+  // CHECK:
+  //   Mangled name: E#<init>(){}
+  //   Public signature: /E.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: E#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /E.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: F
+//   Public signature: /F|null[0]
+class F : Java5 {
+  // CHECK:
+  //   Mangled name: F#<init>(){}
+  //   Public signature: /F.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: F#toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  //   Public signature: /F.toSet|-2461674864639155173[0]
+  //   Public signature debug description: toSet(kotlin.collections.MutableCollection<kotlin.String{EnhancedNullability}>?){}kotlin.collections.MutableSet<kotlin.String{EnhancedNullability}>?
+  @Override
+  /* fake */ override fun toSet(elements: MutableCollection<@EnhancedNullability String>?): MutableSet<@EnhancedNullability String>?
+
+}
+
+// CHECK:
+//   Mangled name: KotlinInterface
+//   Public signature: /KotlinInterface|null[0]
+interface KotlinInterface {
+  // CHECK JVM_IR:
+  //   Mangled name: KotlinInterface#toSet(kotlin.collections.Collection<kotlin.String>){}kotlin.collections.Set<kotlin.String?>
+  //   Public signature: /KotlinInterface.toSet|6531884437362673162[0]
+  //   Public signature debug description: toSet(kotlin.collections.Collection<kotlin.String>){}kotlin.collections.Set<kotlin.String?>
+  abstract fun toSet(elements: Collection<String>): Set<String?>
+
+}
+
+// CHECK:
+//   Mangled name: #test(A;B;C;D;E;F){}
+//   Public signature: /test|-4390352378432875580[0]
+//   Public signature debug description: test(A;B;C;D;E;F){}
+fun test(a: A, b: B, c: C, d: D, e: E, f: F): Unit

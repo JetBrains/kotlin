@@ -1,0 +1,28 @@
+data object DataObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is DataObject -> return false
+    }
+    val tmp_0: DataObject = other as DataObject
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return -1155894359
+  }
+
+  override fun toString(): String {
+    return "DataObject"
+  }
+
+}
+

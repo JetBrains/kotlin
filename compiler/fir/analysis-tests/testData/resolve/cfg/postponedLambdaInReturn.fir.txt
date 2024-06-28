@@ -84,5 +84,5 @@ FILE: postponedLambdaInReturn.kt
 
         }
         )
-        R|<local>/y|.R|kotlin/String.length|
+        R|<local>/y|.R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|
     }

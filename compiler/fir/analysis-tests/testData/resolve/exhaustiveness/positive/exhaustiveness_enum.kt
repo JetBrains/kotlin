@@ -11,7 +11,7 @@ fun test_1(e: Enum) {
     val b = <!NO_ELSE_IN_WHEN!>when<!> (e) {
         Enum.A -> 1
         Enum.B -> 2
-        is String -> 3
+        <!USELESS_IS_CHECK!>is String<!> -> 3
     }
 
     val c = when (e) {
@@ -33,14 +33,14 @@ fun test_2(e: Enum?) {
         Enum.C -> 3
     }
 
-    val a = when (e) {
+    val b = when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3
         null -> 4
     }
 
-    val a = when (e) {
+    val c = when (e) {
         Enum.A -> 1
         Enum.B -> 2
         Enum.C -> 3

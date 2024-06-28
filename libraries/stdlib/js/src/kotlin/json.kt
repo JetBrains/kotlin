@@ -24,7 +24,7 @@ public external interface Json {
      * }
      * ```
      */
-    operator fun get(propertyName: String): Any?
+    public operator fun get(propertyName: String): Any?
 
     /**
      * Calls of the function will be translated to an assignment of [value] to the receiver indexed (with square brackets/index operation) with [propertyName].
@@ -46,7 +46,7 @@ public external interface Json {
      * }
      * ```
      */
-    operator fun set(propertyName: String, value: Any?): Unit
+    public operator fun set(propertyName: String, value: Any?): Unit
 }
 
 /**

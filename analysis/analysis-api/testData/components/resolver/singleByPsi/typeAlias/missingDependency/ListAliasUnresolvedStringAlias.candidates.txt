@@ -1,0 +1,33 @@
+KtNameReferenceExpression(157,162): 'check'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = m
+          isSafeNavigation = false
+          type = library3.MyInterface
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = library3/MyInterface.check(<dispatch receiver>: library3.MyInterface, list: {library2.ListAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.List<{library1.StringAlias=} kotlin.String>): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = list
+              receiverType = null
+              returnType = {library2.ListAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.List<{library1.StringAlias=} kotlin.String>
+              symbol = list: {library2.ListAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.List<{library1.StringAlias=} kotlin.String>
+              callableId = null
+          ]
+          callableId = library3/MyInterface.check
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        emptyList() -> (KaVariableSignature:
+          name = list
+          receiverType = null
+          returnType = {library2.ListAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.List<{library1.StringAlias=} kotlin.String>
+          symbol = list: {library2.ListAlias<{library1.StringAlias=} kotlin.String>=} kotlin.collections.List<{library1.StringAlias=} kotlin.String>
+          callableId = null)
+      }
+    isInBestCandidates = true

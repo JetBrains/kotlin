@@ -1,2 +1,0 @@
-language = C
-headerFilter = **/workerSignals.h

@@ -19,15 +19,7 @@ abstract class DescriptorBasedKotlinManglerImpl : AbstractKotlinMangler<Declarat
     private fun withMode(mode: MangleMode, compatibleMode: Boolean, descriptor: DeclarationDescriptor): String =
         getMangleComputer(mode, compatibleMode).computeMangle(descriptor)
 
-    override fun ClassDescriptor.mangleEnumEntryString(compatibleMode: Boolean): String = withMode(MangleMode.FQNAME, compatibleMode, this)
-
-    override fun PropertyDescriptor.mangleFieldString(compatibleMode: Boolean): String = mangleString(compatibleMode)
-
-    override fun DeclarationDescriptor.mangleString(compatibleMode: Boolean): String = withMode(MangleMode.FULL, compatibleMode, this)
-
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String = withMode(MangleMode.SIGNATURE, compatibleMode, this)
-
-    override fun DeclarationDescriptor.fqnString(compatibleMode: Boolean): String = withMode(MangleMode.FQNAME, compatibleMode, this)
 
     override fun DeclarationDescriptor.isExported(compatibleMode: Boolean): Boolean = getExportChecker(compatibleMode).check(this, SpecialDeclarationType.REGULAR)
 }
@@ -42,16 +34,10 @@ class Ir2DescriptorManglerAdapter(private val delegate: DescriptorBasedKotlinMan
     }
 
     override fun IrDeclaration.mangleString(compatibleMode: Boolean): String {
-        return when (this) {
-            is IrEnumEntry -> delegate.run { descriptor.mangleEnumEntryString(compatibleMode) }
-            is IrField -> delegate.run { descriptor.mangleFieldString(compatibleMode) }
-            else -> delegate.run { descriptor.mangleString(compatibleMode) }
-        }
+        error("Should not be called")
     }
 
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { descriptor.signatureString(compatibleMode) }
-
-    override fun IrDeclaration.fqnString(compatibleMode: Boolean): String = delegate.run { descriptor.fqnString(compatibleMode) }
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
         error("Should not have been reached")

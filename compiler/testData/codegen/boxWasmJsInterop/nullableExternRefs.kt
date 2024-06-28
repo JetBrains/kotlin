@@ -25,6 +25,10 @@ fun getNull(): EI? =
 fun getUndefined(): EI? =
     js("undefined")
 
+// https://youtrack.jetbrains.com/issue/KT-59294/WASM-localStorage-Cannot-read-properties-of-undefined-reading-length
+fun getStringUndefined(): String? =
+    js("undefined")
+
 fun isJsNull(ref: EI?): Boolean =
     js("ref === null")
 
@@ -55,6 +59,7 @@ fun box(): String {
     assertTrue((jsNull as Any?) == null)
     assertTrue((jsNull as Any?) === null)
     assertTrue(jsUndefined == null)
+    assertTrue(getStringUndefined() == null)
 
     assertTrue(isJsNull(null))
     assertTrue(isJsNull(null as EI?))

@@ -17,34 +17,30 @@
 package org.jetbrains.kotlin.konan.target
 
 import org.jetbrains.kotlin.konan.properties.*
+import org.jetbrains.kotlin.konan.util.ProgressCallback
 
-class GccConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : GccConfigurables, KonanPropertiesLoader(target, properties, baseDir), ConfigurablesWithEmulator {
+class GccConfigurablesImpl(target: KonanTarget, properties: Properties, dependenciesRoot: String?, progressCallback: ProgressCallback) : GccConfigurables,
+    KonanPropertiesLoader(target, properties, dependenciesRoot, progressCallback = progressCallback), ConfigurablesWithEmulator {
     override val dependencies: List<String>
         get() = super.dependencies + listOfNotNull(emulatorDependency)
-    }
-
-class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : AndroidConfigurables, KonanPropertiesLoader(target, properties, baseDir)
-
-class WasmConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : WasmConfigurables, KonanPropertiesLoader(target, properties, baseDir)
-
-class ZephyrConfigurablesImpl(target: KonanTarget, properties: Properties, baseDir: String?)
-    : ZephyrConfigurables, KonanPropertiesLoader(target, properties, baseDir)
-
-
-fun loadConfigurables(target: KonanTarget, properties: Properties, baseDir: String?): Configurables = when (target.family) {
-    Family.LINUX -> GccConfigurablesImpl(target, properties, baseDir)
-
-    Family.TVOS, Family.WATCHOS, Family.IOS, Family.OSX -> AppleConfigurablesImpl(target, properties, baseDir)
-
-    Family.ANDROID -> AndroidConfigurablesImpl(target, properties, baseDir)
-
-    Family.MINGW -> MingwConfigurablesImpl(target, properties, baseDir)
-
-    Family.WASM -> WasmConfigurablesImpl(target, properties, baseDir)
-
-    Family.ZEPHYR -> ZephyrConfigurablesImpl(target, properties, baseDir)
 }
 
+class AndroidConfigurablesImpl(target: KonanTarget, properties: Properties, dependenciesRoot: String?, progressCallback: ProgressCallback) : AndroidConfigurables,
+    KonanPropertiesLoader(target, properties, dependenciesRoot, progressCallback = progressCallback)
+
+fun loadConfigurables(
+    target: KonanTarget,
+    properties: Properties,
+    dependenciesRoot: String?,
+    progressCallback: ProgressCallback = { url, currentBytes, totalBytes ->
+        print("\n(KonanProperties) Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
+    },
+): Configurables = when (target.family) {
+    Family.LINUX -> GccConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
+
+    Family.TVOS, Family.WATCHOS, Family.IOS, Family.OSX -> AppleConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
+
+    Family.ANDROID -> AndroidConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
+
+    Family.MINGW -> MingwConfigurablesImpl(target, properties, dependenciesRoot, progressCallback)
+}

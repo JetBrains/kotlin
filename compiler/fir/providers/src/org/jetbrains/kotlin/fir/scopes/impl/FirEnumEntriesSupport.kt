@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.name.StandardClassIds
 
 open class FirEnumEntriesSupport(val session: FirSession) : FirSessionComponent {
-    protected val isEnumEntriesAvailable by lazy {
+    protected val isEnumEntriesAvailable: Boolean by lazy {
         session.symbolProvider.getRegularClassSymbolByClassId(StandardClassIds.EnumEntries) != null
     }
 

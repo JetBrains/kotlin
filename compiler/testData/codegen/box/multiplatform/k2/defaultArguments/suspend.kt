@@ -1,7 +1,5 @@
-// !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, NATIVE
+// LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// WITH_COROUTINES
 
 // MODULE: common
 // FILE: common.kt
@@ -11,6 +9,7 @@ expect interface I {
 }
 
 // MODULE: main()()(common)
+// WITH_COROUTINES
 // FILE: main.kt
 import kotlin.coroutines.*
 import helpers.*

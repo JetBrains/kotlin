@@ -1,5 +1,5 @@
-// !LANGUAGE: +ExpectedTypeFromCast
-// !DIAGNOSTICS: -UNUSED_VARIABLE -DEBUG_INFO_LEAKING_THIS
+// LANGUAGE: +ExpectedTypeFromCast
+// DIAGNOSTICS: -UNUSED_VARIABLE -DEBUG_INFO_LEAKING_THIS
 
 // FILE: a/View.java
 package a;
@@ -27,7 +27,7 @@ val xExplicit: X = Test().findViewById(0)
 val xCast = Test().findViewById(0) as X
 
 val xCastExplicitType = Test().findViewById<X>(0) as X
-val xSafeCastExplicitType = Test().findViewById<X>(0) <!USELESS_CAST!>as? X<!>
+val xSafeCastExplicitType = Test().findViewById<X>(0) as? X
 
 val yExplicit: Y<String> = Test().findViewById(0)
 val yCast = Test().findViewById(0) as Y<String>

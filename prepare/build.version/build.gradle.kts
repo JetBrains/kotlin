@@ -2,23 +2,25 @@
 
 import java.io.File
 
-val buildVersionFilePath = "$buildDir/build.txt"
+val buildVersionFilePath = layout.buildDirectory.file("build.txt")
 val buildVersion by configurations.creating
 val buildNumber: String by rootProject.extra
 val kotlinVersion: String by rootProject.extra
 
 val writeBuildNumber by tasks.registering {
-    val versionFile = File(buildVersionFilePath)
+    val versionFile = buildVersionFilePath
     val buildNumber = buildNumber
     inputs.property("version", buildNumber)
     outputs.file(versionFile)
     doLast {
-        versionFile.parentFile.mkdirs()
-        versionFile.writeText(buildNumber)
+        with(versionFile.get().asFile) {
+            parentFile.mkdirs()
+            writeText(buildNumber)
+        }
     }
 }
 
-artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
+artifacts.add(buildVersion.name, buildVersionFilePath) {
     builtBy(writeBuildNumber)
 }
 

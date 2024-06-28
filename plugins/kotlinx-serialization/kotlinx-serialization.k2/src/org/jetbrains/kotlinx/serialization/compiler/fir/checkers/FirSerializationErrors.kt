@@ -34,7 +34,11 @@ object FirSerializationErrors {
     val SERIALIZER_NOT_FOUND by error1<PsiElement, ConeKotlinType>()
     val SERIALIZER_NULLABILITY_INCOMPATIBLE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val SERIALIZER_TYPE_INCOMPATIBLE by warning3<PsiElement, ConeKotlinType, ConeKotlinType, ConeKotlinType>()
+    val ABSTRACT_SERIALIZER_TYPE by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val LOCAL_SERIALIZER_USAGE by error1<PsiElement, ConeKotlinType>()
+    val CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT by error3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
+    val CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE by error3<PsiElement, ConeKotlinType, ConeKotlinType, String>()
+
     val GENERIC_ARRAY_ELEMENT_NOT_SUPPORTED by error0<PsiElement>()
     val TRANSIENT_MISSING_INITIALIZER by error0<PsiElement>()
 
@@ -46,10 +50,18 @@ object FirSerializationErrors {
 
     val INCONSISTENT_INHERITABLE_SERIALINFO by error2<PsiElement, ConeKotlinType, ConeKotlinType>()
     val META_SERIALIZABLE_NOT_APPLICABLE by error0<PsiElement>()
+    val INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE by error0<PsiElement>()
 
     val EXTERNAL_SERIALIZER_USELESS by warning1<PsiElement, FirClassSymbol<*>>()
     val EXTERNAL_CLASS_NOT_SERIALIZABLE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
     val EXTERNAL_CLASS_IN_ANOTHER_MODULE by error2<PsiElement, FirClassSymbol<*>, ConeKotlinType>()
+    val EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR by error3<PsiElement, FirClassSymbol<*>, ConeKotlinType, String>()
+
+    val KEEP_SERIALIZER_ANNOTATION_USELESS by error0<PsiElement>()
+    val KEEP_SERIALIZER_ANNOTATION_ON_POLYMORPHIC by error0<PsiElement>()
+
+    val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<PsiElement>()
+    val JSON_FORMAT_REDUNDANT by warning0<PsiElement>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultErrorMessagesSerialization)

@@ -1,11 +1,11 @@
 plugins {
-    kotlin("multiplatform").version("<pluginMarkerVersion>")
+    kotlin("multiplatform")
     `maven-publish`
 }
 
 repositories {
     mavenLocal()
-    maven("../repo")
+    maven("<localRepo>")
     mavenCentral()
 }
 
@@ -16,6 +16,7 @@ kotlin {
     jvm() 
     js()
     linuxX64()
+    wasmJs()
 
     sourceSets {
         val commonMain by getting {
@@ -89,6 +90,6 @@ kotlin {
 
 publishing {
     repositories {
-        maven("../repo")
+        maven("<localRepo>")
     }
 }

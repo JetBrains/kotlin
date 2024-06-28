@@ -10,18 +10,16 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 fun createExpectActualTypeParameterSubstitutor(
-    expectedTypeParameters: List<FirTypeParameterSymbol>,
-    actualTypeParameters: List<FirTypeParameterSymbol>,
+    expectActualTypeParameters: List<Pair<FirTypeParameterSymbol, FirTypeParameterSymbol>>,
     useSiteSession: FirSession,
     parentSubstitutor: ConeSubstitutor? = null
 ): ConeSubstitutor {
-    val substitution = expectedTypeParameters.zip(actualTypeParameters).associate { (expectedParameterSymbol, actualParameterSymbol) ->
+    val substitution = expectActualTypeParameters.associate { (expectedParameterSymbol, actualParameterSymbol) ->
         expectedParameterSymbol to actualParameterSymbol.toLookupTag().constructType(emptyArray(), isNullable = false)
     }
-    val substitutor = ConeSubstitutorByMap(
+    val substitutor = ConeSubstitutorByMap.create(
         substitution,
         useSiteSession
     )
@@ -29,19 +27,4 @@ fun createExpectActualTypeParameterSubstitutor(
         return substitutor
     }
     return substitutor.chain(parentSubstitutor)
-}
-
-fun areCompatibleExpectActualTypes(
-    expectedType: ConeKotlinType?,
-    actualType: ConeKotlinType?,
-    actualSession: FirSession
-): Boolean {
-    if (expectedType == null) return actualType == null
-    if (actualType == null) return false
-
-    return AbstractTypeChecker.equalTypes(
-        actualSession.typeContext,
-        expectedType,
-        actualType
-    )
 }

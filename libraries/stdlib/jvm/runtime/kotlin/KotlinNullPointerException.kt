@@ -6,7 +6,7 @@
 package kotlin
 
 public open class KotlinNullPointerException : NullPointerException {
-    constructor()
+    public constructor()
 
-    constructor(message: String?) : super(message)
+    public constructor(message: String?) : super(message)
 }

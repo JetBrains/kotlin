@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] memberProperties.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo1(): R|kotlin/Int| {
+            ^foo1 Int(10)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo2(): R|kotlin/Unit| {
+        }
+
+    }

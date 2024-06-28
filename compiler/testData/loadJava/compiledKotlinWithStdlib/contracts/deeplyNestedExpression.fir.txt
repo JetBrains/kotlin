@@ -1,0 +1,11 @@
+public final fun deeplyNested(x: R|kotlin/Any?|, y: R|kotlin/Any?|, b: R|kotlin/Boolean|, s: R|kotlin/String?|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> x is kotlin/Int && x is kotlin/String || x is kotlin/Int && y is test/A || b || (!b) && s != null && y is test/A || x is kotlin/String
+    >
+
+
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+}

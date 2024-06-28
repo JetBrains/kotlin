@@ -1,0 +1,18 @@
+KtNameReferenceExpression(55,61): 'values'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = E
+          isSafeNavigation = false
+          type = kotlin.Unit
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Array<test.E>
+          symbol = test/E.values(): kotlin.Array<test.E>
+          valueParameters = []
+          callableId = test/E.values
+      typeArgumentsMapping = {}
+      argumentMapping = {}

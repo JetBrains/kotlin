@@ -41,12 +41,15 @@ open class SpecialGenericSignatures {
                 SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
         }
 
-        data class NameAndSignature internal constructor(val name: Name, val signature: String)
+        data class NameAndSignature(val classInternalName: String, val name: Name, val parameters: String, val returnType: String) {
+            val signature = SignatureBuildingComponents.signature(classInternalName, "$name($parameters)$returnType")
+        }
 
         private fun String.method(name: String, parameters: String, returnType: String) =
             NameAndSignature(
+                this@method,
                 Name.identifier(name),
-                SignatureBuildingComponents.signature(this@method, "$name($parameters)$returnType")
+                parameters, returnType,
             )
 
         private val ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES = setOf(
@@ -125,7 +128,13 @@ open class SpecialGenericSignatures {
         val SIGNATURE_TO_JVM_REPRESENTATION_NAME: Map<String, Name> =
             NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapKeys { it.key.signature }
 
-        val ORIGINAL_SHORT_NAMES: List<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.map { it.name }
+        // java/lang/Number.intValue()I, java/lang/ etc.
+        val JVM_SIGNATURES_FOR_RENAMED_BUILT_INS: Set<String> =
+            NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapTo(mutableSetOf()) { (signatureAndName, jdkName) ->
+                signatureAndName.copy(name = jdkName).signature
+            }
+
+        val ORIGINAL_SHORT_NAMES: Set<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.mapTo(HashSet()) { it.name }
 
         val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, Name> =
             NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.entries

@@ -30,18 +30,10 @@ public final class Simple {
     }
 
     @kotlin.Metadata()
-    public static final class NestedClass {
+    public static final class Companion {
 
-        public NestedClass() {
+        private Companion() {
             super();
-        }
-
-        @kotlin.Metadata()
-        public static final class NestedNestedClass {
-
-            public NestedNestedClass() {
-                super();
-            }
         }
     }
 
@@ -54,10 +46,18 @@ public final class Simple {
     }
 
     @kotlin.Metadata()
-    public static final class Companion {
+    public static final class NestedClass {
 
-        private Companion() {
+        public NestedClass() {
             super();
+        }
+
+        @kotlin.Metadata()
+        public static final class NestedNestedClass {
+
+            public NestedNestedClass() {
+                super();
+            }
         }
     }
 }

@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDebugging
-import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererWithJavaFlexibleTypes
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
@@ -21,19 +20,28 @@ val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.looku
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
+ * Doesn't give guarantees on the traversal order.
  */
-fun ConeKotlinType.forEachType(action: (ConeKotlinType) -> Unit) {
-    action(this)
+inline fun ConeKotlinType.forEachType(
+    prepareType: (ConeKotlinType) -> ConeKotlinType = { it },
+    action: (ConeKotlinType) -> Unit,
+) {
+    val stack = mutableListOf(this)
 
-    return when (this) {
-        is ConeFlexibleType -> {
-            lowerBound.forEachType(action)
-            upperBound.forEachType(action)
+    while (stack.isNotEmpty()) {
+        val next = stack.popLast().let(prepareType)
+        action(next)
+
+        when (next) {
+            is ConeFlexibleType -> {
+                stack.add(next.lowerBound)
+                stack.add(next.upperBound)
+            }
+
+            is ConeDefinitelyNotNullType -> stack.add(next.original)
+            is ConeIntersectionType -> stack.addAll(next.intersectedTypes)
+            else -> next.typeArguments.forEach { if (it is ConeKotlinTypeProjection) stack.add(it.type) }
         }
-
-        is ConeDefinitelyNotNullType -> original.forEachType(action)
-        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachType(action) }
-        else -> typeArguments.forEach { if (it is ConeKotlinTypeProjection) it.type.forEachType(action) }
     }
 }
 
@@ -56,6 +64,14 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
 
 // ----------------------------------- Transformations -----------------------------------
 
+fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
+    return when(this) {
+        is ConeDefinitelyNotNullType -> original.unwrapLowerBound()
+        is ConeFlexibleType -> lowerBound.unwrapLowerBound()
+        is ConeSimpleKotlinType -> this
+    }
+}
+
 fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
     return when (this) {
         is ConeSimpleKotlinType -> this
@@ -70,19 +86,19 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
     }
 }
 
-fun ConeKotlinType.originalIfDefinitelyNotNullable(): ConeKotlinType {
+fun ConeSimpleKotlinType.originalIfDefinitelyNotNullable(): ConeSimpleKotlinType {
     return when (this) {
         is ConeDefinitelyNotNullType -> original
         else -> this
     }
 }
 
-fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes, alternativeType)
+fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
+    return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
@@ -121,13 +137,28 @@ fun ConeKotlinType.renderForDebugging(): String {
 
 fun ConeKotlinType.renderReadable(): String {
     val builder = StringBuilder()
-    ConeTypeRendererWithJavaFlexibleTypes(builder) { ConeIdShortRenderer() }.render(this)
+    ConeTypeRendererForReadability(builder) { ConeIdShortRenderer() }.render(this)
     return builder.toString()
 }
 
-fun ConeKotlinType.renderReadableWithFqNames(): String {
+fun ConeKotlinType.renderReadableWithFqNames(preRenderedConstructors: Map<TypeConstructorMarker, String>? = null): String {
     val builder = StringBuilder()
-    ConeTypeRendererWithJavaFlexibleTypes(builder) { ConeIdRendererForDebugging() }.render(this)
+    ConeTypeRendererForReadability(builder, preRenderedConstructors) { ConeIdRendererForDiagnostics() }.render(this)
     return builder.toString()
 }
 
+fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }
+
+fun ConeKotlinType.hasCapture(): Boolean = contains { it is ConeCapturedType }
+
+fun ConeSimpleKotlinType.getConstructor(): TypeConstructorMarker {
+    return when (this) {
+        is ConeLookupTagBasedType -> this.lookupTag
+        is ConeCapturedType -> this.constructor
+        is ConeTypeVariableType -> this.typeConstructor
+        is ConeIntersectionType -> this
+        is ConeStubType -> this.constructor
+        is ConeDefinitelyNotNullType -> original.getConstructor()
+        is ConeIntegerLiteralType -> this
+    }
+}

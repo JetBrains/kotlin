@@ -1,0 +1,18 @@
+FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectAccessorsPropagation.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate> = R|low/incorrectProperty|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+    [ResolvedTo(RAW_FIR)] <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>[ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) <DANGLING MODIFIER: Top level declaration expected>

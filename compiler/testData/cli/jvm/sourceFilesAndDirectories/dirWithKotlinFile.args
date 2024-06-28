@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/dirWithKotlinFile
+-d
+$TEMP_DIR$

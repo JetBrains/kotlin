@@ -1,0 +1,728 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] delegatedFieldNestedName.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Second<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Second<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Second<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] field $$delegate_0: @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Base<[ResolvedTo(RAW_FIR)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface Second<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>>, @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(COMPANION_GENERATION)] field $$delegate_0: @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Second<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(SUPER_TYPES)] field $$delegate_0: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Base<R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>|> = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Second<R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String|> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Base<[ResolvedTo(SUPER_TYPES)] A> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface Second<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(LAZY_EXPRESSION)  second/Second<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_1: @R|second/Anno|[Unresolved](LAZY_EXPRESSION) Second<R|@R|second/Anno|(LAZY_EXPRESSION)  kotlin/String|> = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final? companion [ResolvedTo(RAW_FIR)] object Companion : @Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Base<@Anno[Unresolved](LAZY_EXPRESSION) Int>> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.i] i: Int): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val outer: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONSTANT_EVALUATION)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>|, R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(CONSTANT_EVALUATION)] field $$delegate_0: R|@R|second/Anno|(IntegerLiteral(0).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(1).plus#(outer#))  second/Base<@R|second/Anno|(IntegerLiteral(2).plus#(outer#))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(IntegerLiteral(4).plus#(outer#))  second/Second<@R|second/Anno|(IntegerLiteral(5).plus#(outer#))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val outer: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = LAZY_EXPRESSION
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Base<[ResolvedTo(STATUS)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Second<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val outer: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public? final? const [ResolvedTo(RAW_FIR)] val inner: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = Q|second/MyClass.Companion|
+
+        private final [ResolvedTo(STATUS)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| = LAZY_EXPRESSION
+
+        public final companion [ResolvedTo(STATUS)] object Companion : R|@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  second/Base<@R|second/Anno|(LAZY_EXPRESSION)  kotlin/Int>>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                LAZY_super<<implicit>>
+            }
+
+            public final const [ResolvedTo(STATUS)] val outer: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+            public final const [ResolvedTo(STATUS)] val inner: <implicit> = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
+
+        }
+
+        public final? [ResolvedTo(RAW_FIR)] object NestedObject : @Anno[Unresolved](LAZY_EXPRESSION) Second<@Anno[Unresolved](LAZY_EXPRESSION) String> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                LAZY_super<<implicit>>
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldNestedName.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.i] i: R|kotlin/Int|): R|second/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Base<[ResolvedTo(BODY_RESOLVE)] A> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Second<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val outer: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val inner: R|kotlin/String| = String()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol second/MyClass.$$delegate_0, 1=FirFieldSymbol second/MyClass.$$delegate_1}] class MyClass : R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>|, R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|second/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|@R|second/Anno|(i = Int(0).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(1).R|kotlin/Int.plus|(R|second/outer|))  second/Base<@R|second/Anno|(i = Int(2).R|kotlin/Int.plus|(R|second/outer|))  kotlin/Int>>| = Q|second/MyClass.Companion|
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_1: R|@R|second/Anno|(i = Int(4).R|kotlin/Int.plus|(R|second/outer|))  second/Second<@R|second/Anno|(i = Int(5).R|kotlin/Int.plus|(R|second/outer|))  kotlin/String>| = Q|second/MyClass.NestedObject|
+
+        public final companion [ResolvedTo(BODY_RESOLVE)] object Companion : R|@R|second/Anno|(i = Int(6).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(7).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Base<@R|second/Anno|(i = Int(8).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/Int>>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] constructor(): R|second/MyClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String()] val outer: R|kotlin/String| = String()
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/String|
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(0)] val inner: R|kotlin/Int| = Int(0)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] object NestedObject : R|@R|second/Anno|(i = Int(9).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  second/Second<@R|second/Anno|(i = Int(10).R|kotlin/Int.plus|(this@R|second/MyClass.Companion|.R|second/MyClass.Companion.inner|))  kotlin/String>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedObject] constructor(): R|second/MyClass.NestedObject| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

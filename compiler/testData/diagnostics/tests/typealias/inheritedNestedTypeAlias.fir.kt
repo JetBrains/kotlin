@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
+// DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 interface ICell<T> {
     val x: T
@@ -16,5 +16,5 @@ class Derived : Base<Int>() {
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
     val test1: <!UNRESOLVED_REFERENCE!>CT<!> = Cell(42)
-    val test2: Base<Int>.CT = <!TYPE_MISMATCH, TYPE_MISMATCH!>Cell(42)<!>
+    val test2: Base<!TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED!><Int><!>.CT = Cell(42)
 }

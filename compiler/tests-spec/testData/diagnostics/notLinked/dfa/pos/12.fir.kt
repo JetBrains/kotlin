@@ -1,5 +1,14 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION
+// DIAGNOSTICS: -UNUSED_EXPRESSION
 // SKIP_TXT
+
+/*
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: dfa
+ * NUMBER: 12
+ * DESCRIPTION: Raw data flow analysis test
+ * HELPERS: classes, interfaces, properties, functions
+ */
 
 // TESTCASE NUMBER: 1
 fun <T> T.case_1() {
@@ -2216,7 +2225,7 @@ fun <T> Map<in T, *>?.case_37() {
 }
 
 // TESTCASE NUMBER: 38
-fun <T> Map<*, out T>?.case_38() {
+fun <T> Map<*, <!REDUNDANT_PROJECTION!>out<!> T>?.case_38() {
     if (this != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<*, out T>? & kotlin.collections.Map<*, out T>")!>this<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<*, out T>? & kotlin.collections.Map<*, out T>")!>this<!>.equals(null)
@@ -2422,7 +2431,7 @@ fun <T> InterfaceWithTwoTypeParameters<in T, in T>?.case_40() {
 }
 
 // TESTCASE NUMBER: 41
-fun <T> Map<out T, out T>?.case_41() {
+fun <T> Map<out T, <!REDUNDANT_PROJECTION!>out<!> T>?.case_41() {
     if (this != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out T, out T>? & kotlin.collections.Map<out T, out T>")!>this<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<out T, out T>? & kotlin.collections.Map<out T, out T>")!>this<!>.equals(null)
@@ -2494,7 +2503,7 @@ fun <T> Map<out T, out T>?.case_41() {
 }
 
 // TESTCASE NUMBER: 42
-fun <T> Map<T, out T>?.case_42() {
+fun <T> Map<T, <!REDUNDANT_PROJECTION!>out<!> T>?.case_42() {
     if (this != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<T, out T>? & kotlin.collections.Map<T, out T>")!>this<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Map<T, out T>? & kotlin.collections.Map<T, out T>")!>this<!>.equals(null)

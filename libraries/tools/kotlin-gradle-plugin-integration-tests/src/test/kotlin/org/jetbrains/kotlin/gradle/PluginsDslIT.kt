@@ -43,6 +43,7 @@ class PluginsDslIT : KGPBaseTest() {
                 "org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin",
                 "org.jetbrains.kotlinx.atomicfu.gradle.AtomicfuKotlinGradleSubplugin",
                 "org.jetbrains.kotlin.lombok.gradle.LombokSubplugin",
+                "org.jetbrains.kotlin.powerassert.gradle.PowerAssertGradlePlugin",
                 "org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin",
                 "org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
             )

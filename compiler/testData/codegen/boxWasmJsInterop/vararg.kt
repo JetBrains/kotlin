@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR
-
 // Partial copy of js/js.translator/testData/box/native/vararg.kt
 // With some additions for concrete number types, strings and function references
 

@@ -1,0 +1,104 @@
+KtNameReferenceExpression(25,31): 'myPack'
+  KtSimpleNameReference:
+    package myPack
+
+KtNameReferenceExpression(40,46): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(47,54): 'reflect'
+  KtSimpleNameReference:
+    package kotlin.reflect
+
+KtNameReferenceExpression(55,64): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtNameReferenceExpression(72,78): 'kotlin'
+  KtSimpleNameReference:
+    package kotlin
+
+KtNameReferenceExpression(79,89): 'properties'
+  KtSimpleNameReference:
+    package kotlin.properties
+
+KtNameReferenceExpression(90,106): 'ReadOnlyProperty'
+  KtSimpleNameReference:
+    (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
+
+KtNameReferenceExpression(172,175): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(188,197): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtNameReferenceExpression(203,219): 'ReadOnlyProperty'
+  KtSimpleNameReference:
+    (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
+
+KtNameReferenceExpression(220,223): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(226,227): 'T'
+  KtSimpleNameReference:
+    (in <local>: ResourceID) T
+
+KtCallExpression(246,258): 'MyDelegate()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(246,256): 'MyDelegate'
+  KtSimpleNameReference:
+    (in myPack.MyDelegate) constructor()
+
+KtNameReferenceExpression(290,306): 'ReadOnlyProperty'
+  KtSimpleNameReference:
+    (in kotlin.properties) fun interface ReadOnlyProperty<in T, out V>
+
+KtNameReferenceExpression(307,310): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(313,314): 'T'
+  KtSimpleNameReference:
+    (in <local>: MyDelegate) T
+
+KtNameReferenceExpression(353,356): 'Any'
+  KtSimpleNameReference:
+    (in kotlin) open class Any
+
+KtNameReferenceExpression(369,378): 'KProperty'
+  KtSimpleNameReference:
+    (in kotlin.reflect) interface KProperty<out V> : kotlin.reflect.KCallable<V>
+
+KtNameReferenceExpression(384,385): 'T'
+  KtSimpleNameReference:
+    (in <local>: MyDelegate) T
+
+KtOperationReferenceExpression(408,410): 'as'
+  KtSimpleNameReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(411,412): 'T'
+  KtSimpleNameReference:
+    (in <local>: MyDelegate) T
+
+KtPropertyDelegate(443,463): 'by ResourceID<Int>()'
+  KtPropertyDelegationMethodsReference:
+    0: (in kotlin.properties.ReadOnlyProperty) operator fun getValue(thisRef: T, property: kotlin.reflect.KProperty<*>): V
+    1: (in myPack.ResourceID) operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.properties.ReadOnlyProperty<kotlin.Any?, T>
+
+KtCallExpression(446,463): 'ResourceID<Int>()'
+  KtInvokeFunctionReference:
+    Nothing (Unresolved reference)
+
+KtNameReferenceExpression(446,456): 'ResourceID'
+  KtSimpleNameReference:
+    (in myPack.ResourceID) constructor()
+
+KtNameReferenceExpression(457,460): 'Int'
+  KtSimpleNameReference:
+    (in kotlin) class Intprivate constructor : kotlin.Number(), kotlin.Comparable<kotlin.Int>, java.io.Serializable

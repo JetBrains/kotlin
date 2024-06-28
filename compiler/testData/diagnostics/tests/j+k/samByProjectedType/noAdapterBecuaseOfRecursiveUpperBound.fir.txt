@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        R|/A.A|().R|/A.foo|(<L> = SAM(foo@fun <anonymous>(x: R|ft<kotlin/collections/MutableMap<kotlin/String!, kotlin/CharSequence!>, kotlin/collections/Map<kotlin/String!, kotlin/CharSequence!>?>|): R|kotlin/CharSequence!| <inline=NoInline>  {
+            ^ String()
+        }
+        ))
+        Q|A|.R|/A.bar*s|(<L> = SAM(bar@fun <anonymous>(x: R|ft<kotlin/collections/MutableMap<kotlin/String!, kotlin/CharSequence!>, kotlin/collections/Map<kotlin/String!, kotlin/CharSequence!>?>|): R|kotlin/CharSequence!| <inline=NoInline>  {
+            ^ String()
+        }
+        ))
+    }

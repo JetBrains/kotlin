@@ -1,0 +1,54 @@
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+abstract class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Test
+//   Public signature: /Test|null[0]
+object Test : Base {
+  // CHECK:
+  //   Mangled name: Test{}x
+  //   Public signature: /Test.x|-8060530855978347579[0]
+  //   Public signature debug description: {}x
+  val x: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-x>(){}kotlin.Int
+    //   Public signature: /Test.x.<get-x>|4966956098150895696[0]
+    //   Public signature debug description: <get-x>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test#<get-x>(){}
+    //   Public signature: /Test.x.<get-x>|1482705010654679335[0]
+    //   Public signature debug description: <get-x>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test{}y
+  //   Public signature: /Test.y|3625903257357557171[0]
+  //   Public signature debug description: {}y
+  val y: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test#<get-y>(){}kotlin.Int
+    //   Public signature: /Test.y.<get-y>|-6745575372101973707[0]
+    //   Public signature debug description: <get-y>(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test#<get-y>(){}
+    //   Public signature: /Test.y.<get-y>|-7902422373892128922[0]
+    //   Public signature debug description: <get-y>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: Test#<init>(){}
+  //   Public signature: /Test.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  private constructor() /* primary */
+
+}
+

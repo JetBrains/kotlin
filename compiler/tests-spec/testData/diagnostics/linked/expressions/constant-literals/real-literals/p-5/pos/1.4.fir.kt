@@ -1,3 +1,13 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-100
+ * MAIN LINK: expressions, constant-literals, real-literals -> paragraph 5 -> sentence 1
+ * NUMBER: 4
+ * DESCRIPTION: A type checking of a real literal with omitted a whole-number part and an exponent mark.
+ * HELPERS: checkType
+ */
+
 // TESTCASE NUMBER: 1
 val value_1 = .0e0 checkType { check<Double>() }
 

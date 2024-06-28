@@ -1,22 +1,10 @@
 @kotlin.Metadata
-final class<Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function1<TT;TS;>;>  A$b$C$f$1 {
-    // source: 'genericLocalClass.kt'
-    public final @org.jetbrains.annotations.Nullable <(TT;)TS;> method invoke(p0: java.lang.Object): java.lang.Object
-    static <null> method <clinit>(): void
-    <null> method <init>(): void
-    enclosing method A$b$C.f()V
-    public final static field <null> INSTANCE: A$b$C$f$1
-    inner (anonymous) class A$b$C$f$1
-    inner (local) class A$b$C C
-}
-
-@kotlin.Metadata
 public final class<<S:Ljava/lang/Object;>Ljava/lang/Object;>  A$b$C {
     // source: 'genericLocalClass.kt'
+    private final static <<T:Ljava/lang/Object;S:Ljava/lang/Object;>(TT;)TS;> method f$g(p0: java.lang.Object): java.lang.Object
     public <null> method <init>(): void
     public final <null> method f(): void
     enclosing method A.b()V
-    inner (anonymous) class A$b$C$f$1
     inner (local) class A$b$C C
 }
 

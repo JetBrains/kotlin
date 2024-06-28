@@ -1,0 +1,71 @@
+// CHECK:
+//   Mangled name: A
+//   Public signature: /A|null[0]
+abstract class A : J, I {
+  // CHECK:
+  //   Mangled name: A#<init>(){}
+  //   Public signature: /A.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: A#foo(){}Child
+  //   Public signature: /A.foo|8517421086584195144[0]
+  //   Public signature debug description: foo(){}Child
+  abstract /* fake */ override fun foo(): Child
+
+}
+
+// CHECK:
+//   Mangled name: Base
+//   Public signature: /Base|null[0]
+open class Base {
+  // CHECK:
+  //   Mangled name: Base#<init>(){}
+  //   Public signature: /Base.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Child
+//   Public signature: /Child|null[0]
+class Child : Base {
+  // CHECK:
+  //   Mangled name: Child#<init>(){}
+  //   Public signature: /Child.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: J
+//   Public signature: /J|null[0]
+abstract class J {
+  // CHECK:
+  //   Mangled name: J#<init>(){}
+  //   Public signature: /J.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: J#foo(){}Child
+  //   Public signature: /J.foo|8517421086584195144[0]
+  //   Public signature debug description: foo(){}Child
+  abstract fun foo(): Child
+
+}
+
+// CHECK:
+//   Mangled name: I
+//   Public signature: /I|null[0]
+interface I {
+  // CHECK JVM_IR:
+  //   Mangled name: I#foo(){}Base
+  //   Public signature: /I.foo|-5590126600799232132[0]
+  //   Public signature debug description: foo(){}Base
+  abstract fun foo(): Base
+
+}

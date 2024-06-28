@@ -1,0 +1,40 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol a: R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+Smart Casts:
+    FirValueParameterSymbol a: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin.Any
+
+FILE: [ResolvedTo(IMPORTS)] onReference.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| !is R|Foo|) ->  {
+                ^test Unit
+            }
+        }
+
+        R|/check|(R|<local>/a|.R|/Foo.process|())
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun check([ResolvedTo(RAW_FIR)] condition: Boolean): R|kotlin/Unit| { LAZY_BLOCK }
+    public final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun process(): Boolean
+
+    }

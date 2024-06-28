@@ -117,7 +117,7 @@ internal abstract class TestReportService : BuildService<TestReportService.TestR
                     "${TestReportService::class.java.canonicalName}_${project.path}",
                     TestReportService::class.java
                 ) { spec ->
-                    spec.parameters.testTasksStateFile.set(project.buildDir.resolve("test-results/kotlin-test-tasks-state.bin"))
+                    spec.parameters.testTasksStateFile.set(project.layout.buildDirectory.file("test-results/kotlin-test-tasks-state.bin"))
                 }.also { serviceProvider ->
                     SingleActionPerProject.run(project, UsesTestReportService::class.java.name) {
                         project.tasks.withType<UsesTestReportService>().configureEach { task ->

@@ -71,6 +71,6 @@ fun functionWithoutBoxes(x: D, y: D) {
 // 1 INVOKESPECIAL D.<init> \(IILjava/lang/String;\)V
 // 2 INVOKESTATIC D.box-impl \(IILjava/lang/String;\)LD;
 // 3 INVOKESTATIC C.box-impl \(IILjava/lang/String;\)LC;
-// 1 public final static functionWithoutBoxes-GPBa7dw\(IILjava/lang/String;IILjava/lang/String;\)V
+// 1 public final static functionWithoutBoxes-d7Y4ALo\(IILjava/lang/String;IILjava/lang/String;\)V
 // 0 functionWithoutBoxes.*(\n {3}.*)*(\n {4}(NEW [ABCD]|.*(box|[ABCD]\.<init>|LA;|LB;|LC;|LD;)))
 // 1 privateAccess.*(\n   .+)*(\n    GETFIELD Regular\.x-x-x : I)(\n   .+)*(\n    INVOKEVIRTUAL Regular\.getX-x \(\)LC;)(\n   .+)*(\n    INVOKESPECIAL Regular\.getX \(\)LD;)

@@ -1,25 +1,4 @@
 // FILE: 1.kt
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$inlineFun$lambda2$1
-*L
-1#1,13:1
-*E
-
-SMAP
-1.kt
-Kotlin
-*S Kotlin
-*F
-+ 1 1.kt
-test/_1Kt$inlineFun$1
-*L
-1#1,13:1
-*E
 
 // FILE: 2.kt
 SMAP
@@ -52,7 +31,7 @@ test/_1Kt$inlineFun$lambda2$1
 + 2 1.kt
 test/_1Kt$inlineFun$1
 *L
-1#1,13:1
-7#2:14
+1#1,9:1
+7#2:10
 *E
 

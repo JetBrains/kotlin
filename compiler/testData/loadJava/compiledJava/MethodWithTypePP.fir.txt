@@ -1,5 +1,5 @@
 public final class MethodWithTypePP : R|kotlin/Any| {
-    public final fun <P : R|kotlin/Any!|, Q : R|ft<P & Any, P?>|> f(): R|kotlin/Unit|
+    public final fun <P : R|kotlin/Any!|, Q : R|P!|> f(): R|kotlin/Unit|
 
     public constructor(): R|test/MethodWithTypePP|
 

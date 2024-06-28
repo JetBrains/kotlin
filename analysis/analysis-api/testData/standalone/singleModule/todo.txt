@@ -1,2 +1,0 @@
-Resolved to:
-PsiMethod:TODO(reason: PsiType:String): PsiType:Void

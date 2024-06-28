@@ -1,6 +1,7 @@
 $TESTDATA_DIR$/overridingArgs.kt
 $TESTDATA_DIR$/java
 $FOREIGN_ANNOTATIONS_DIR$
+$JSR_305_DECLARATIONS$
 -d
 $TEMP_DIR$
 -Xnullability-annotations=@org.jetbrains.annotations\:warn

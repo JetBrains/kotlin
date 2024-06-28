@@ -1,8 +1,8 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM, NATIVE
 // TODO: Fir2Ir generates overrides as finals.
+// WORKS_WHEN_VALUE_CLASS
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Inlined(val value: Int)
 
 sealed interface A {

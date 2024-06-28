@@ -1,0 +1,2 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAlias.kt
+    public final [ResolvedTo(BODY_RESOLVE)] typealias A = <ERROR TYPE REF: Incomplete code>

@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// DIAGNOSTICS: -UNUSED_PARAMETER
 class Inv<E>
 class C<R> {
     fun bindTo(property: Inv<R>) {}

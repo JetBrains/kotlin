@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtValueArgument at (17,21-27)
+    NAMED_PARAMETER_NOT_FOUND      text ranges: [(151,152)]
+      PSI: KtValueArgument at (17,21-27)

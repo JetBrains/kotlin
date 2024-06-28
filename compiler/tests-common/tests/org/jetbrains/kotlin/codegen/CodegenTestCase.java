@@ -51,8 +51,8 @@ import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
-import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtilsKt.*;
+import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
@@ -89,7 +89,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 testJdkKind,
-                getBackend(),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
@@ -190,7 +189,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         initializedClassLoader = createClassLoader();
 
-        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
+        if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -304,7 +303,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         try {
             GenerationState generationState = GenerationUtils.compileFiles(
                     myFiles.getPsiFiles(), myEnvironment, getClassBuilderFactory(),
-                    new NoScopeRecordCliBindingTrace()
+                    new NoScopeRecordCliBindingTrace(myEnvironment.getProject())
             );
             classFileFactory = generationState.getFactory();
 
@@ -379,6 +378,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     @Override
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         setCustomDefaultJvmTarget(configuration);
+        configureIrFir(configuration);
     }
 
     protected ClassBuilderFactory getClassBuilderFactory() {
@@ -414,7 +414,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         configurationKind = extractConfigurationKind(files);
 
         CompilerConfiguration configuration = createConfiguration(
-                configurationKind, getTestJdkKind(files), getBackend(),
+                configurationKind, getTestJdkKind(files),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
@@ -451,7 +451,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                     configuration.get(JVMConfigurationKeys.JVM_TARGET),
                     configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
             );
-            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
+            boolean isJava9Module = false; // No Java modules in legacy tests
+            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory, isJava9Module);
 
             try {
                 runJavacTask(
@@ -489,41 +490,44 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
-        if (kotlinTarget != null && isJvmPreviewEnabled) {
-            javacOptions.add("--release");
-            javacOptions.add(kotlinTarget.getDescription());
-            javacOptions.add("--enable-preview");
-            return javacOptions;
+        if (kotlinTarget != null) {
+            if (isJvmPreviewEnabled) {
+                javacOptions.add("--release");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("--enable-preview");
+            } else {
+                javacOptions.add("-source");
+                javacOptions.add(kotlinTarget.getDescription());
+                javacOptions.add("-target");
+                javacOptions.add(kotlinTarget.getDescription());
+            }
         }
 
-        String javaTarget = CodegenTestUtil.computeJavaTarget(javacOptions, kotlinTarget);
-        if (javaTarget != null) {
-            javacOptions.add("-source");
-            javacOptions.add(javaTarget);
-            javacOptions.add("-target");
-            javacOptions.add(javaTarget);
-        }
         return javacOptions;
     }
 
     @NotNull
     @Override
-    protected TargetBackend getBackend() {
+    public TargetBackend getBackend() {
         return TargetBackend.JVM;
     }
 
     @Override
-    protected void doTest(@NotNull String filePath) throws Exception {
+    protected void doTest(@NotNull String filePath) {
         doTestWithTransformer(filePath, s -> s);
     }
 
-    protected void doTestWithTransformer(@NotNull String filePath, @NotNull Function<String, String> sourceTransformer) throws Exception {
+    protected void doTestWithTransformer(@NotNull String filePath, @NotNull Function<String, String> sourceTransformer) {
         File file = new File(filePath);
 
         String expectedText = sourceTransformer.apply(KtTestUtil.doLoadFile(file));
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
-        doMultiFileTest(file, testFiles);
+        try {
+            doMultiFileTest(file, testFiles);
+        } catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     @Override

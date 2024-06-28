@@ -1,11 +1,10 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_MULTI_MODULE_IR_AGAINST_OLD
 
 // (supported: JVM_IR, JS_IR(_E6))
 
 // WITH_STDLIB
-// !LANGUAGE: +InstantiationOfAnnotationClasses
+// LANGUAGE: +InstantiationOfAnnotationClasses
 
 // FILE: 1.kt
 

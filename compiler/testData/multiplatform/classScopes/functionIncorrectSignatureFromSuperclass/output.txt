@@ -1,16 +1,19 @@
 -- Common --
 Exit code: OK
 Output:
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/common.kt:1:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
+expect class Foo {
+^^^^^^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: actual class 'Foo' has no corresponding members for expected class members:
+compiler/testData/multiplatform/classScopes/functionIncorrectSignatureFromSuperclass/jvm.kt:5:14: error: 'actual class Foo : Base' has no corresponding members for expected class members:
 
-    public final expect fun function(b: ByteArray): Int
+    expect fun function(b: ByteArray): Int
 
     The following declaration is incompatible because return type is different:
-        public final fun function(b: ByteArray): Long
+        fun function(b: ByteArray): Long
 
 actual class Foo : Base()
-             ^
+             ^^^

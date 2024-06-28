@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 package h
 
 fun foo(i: Int) = i

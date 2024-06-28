@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
 data class ScopeClassDeclaration(
-    val scopes: List<FirScope>,
+    val scopes: Iterable<FirScope>,
     val containingDeclarations: List<FirDeclaration>,
     val topContainer: FirDeclaration? = null,
     val containerDeclaration: FirDeclaration? = null,

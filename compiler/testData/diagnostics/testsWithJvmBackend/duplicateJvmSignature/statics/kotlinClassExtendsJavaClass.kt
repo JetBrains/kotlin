@@ -1,5 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-
+// FIR_IDENTICAL
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: A.java
 
 public class A {
@@ -12,7 +12,7 @@ public class A {
 
 open class K : A() {
     val a = 1
-    <!ACCIDENTAL_OVERRIDE!>fun foo()<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo() {}<!>
     fun foo(i: Int) {}
     fun baz(i: Int) {}
 

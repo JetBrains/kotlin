@@ -1,1 +1,2 @@
-expected symbol: null
+expected symbols:
+

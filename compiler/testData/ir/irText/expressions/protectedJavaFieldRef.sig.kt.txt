@@ -1,0 +1,29 @@
+// CHECK:
+//   Mangled name: Derived
+//   Public signature: /Derived|null[0]
+class Derived : Base {
+  // CHECK:
+  //   Mangled name: Derived{}ref
+  //   Public signature: /Derived.ref|-1081516401990928556[0]
+  //   Public signature debug description: {}ref
+  val ref: KMutableProperty0<String?>
+    // CHECK JVM_IR:
+    //   Mangled name: Derived#<get-ref>(){}kotlin.reflect.KMutableProperty0<kotlin.String?>
+    //   Public signature: /Derived.ref.<get-ref>|-6985556442168523841[0]
+    //   Public signature debug description: <get-ref>(){}kotlin.reflect.KMutableProperty0<kotlin.String?>
+    get
+
+  // CHECK:
+  //   Mangled name: Derived#<init>(){}
+  //   Public signature: /Derived.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived#set(){}
+  //   Public signature: /Derived.set|-7365752122041802629[0]
+  //   Public signature debug description: set(){}
+  fun set(): Unit
+
+}
+

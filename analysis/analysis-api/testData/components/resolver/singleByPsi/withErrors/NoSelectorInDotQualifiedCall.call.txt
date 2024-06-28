@@ -1,0 +1,15 @@
+KtNameReferenceExpression(108,115): 'makeFoo'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = testing.Foo
+          symbol = testing/makeFoo(): testing.Foo
+          valueParameters = []
+          callableId = testing/makeFoo
+      typeArgumentsMapping = {}
+      argumentMapping = {}

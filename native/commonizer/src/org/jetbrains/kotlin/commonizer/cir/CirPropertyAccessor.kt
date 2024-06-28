@@ -7,6 +7,5 @@ package org.jetbrains.kotlin.commonizer.cir
 
 interface CirPropertyAccessor : CirHasAnnotations {
     val isDefault: Boolean
-    val isExternal: Boolean
     val isInline: Boolean
 }

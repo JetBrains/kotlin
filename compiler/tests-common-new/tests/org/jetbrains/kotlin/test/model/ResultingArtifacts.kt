@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.codegen.ClassFileFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -21,6 +23,11 @@ object BinaryArtifacts {
     class Jvm(val classFileFactory: ClassFileFactory, val fileInfos: Collection<SourceFileInfo>) : ResultingArtifact.Binary<Jvm>() {
         override val kind: BinaryKind<Jvm>
             get() = ArtifactKinds.Jvm
+    }
+
+    class JvmFromK1AndK2(val fromK1: Jvm, val fromK2: Jvm) : ResultingArtifact.Binary<JvmFromK1AndK2>() {
+        override val kind: BinaryKind<JvmFromK1AndK2>
+            get() = ArtifactKinds.JvmFromK1AndK2
     }
 
     sealed class Js : ResultingArtifact.Binary<Js>() {
@@ -49,7 +56,16 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Native
     }
 
-    class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
+    class Wasm(
+        val compilerResult: WasmCompilerResult,
+        val compilerResultWithDCE: WasmCompilerResult,
+        val compilerResultWithOptimizer: WasmCompilerResult?,
+    ) : ResultingArtifact.Binary<Wasm>() {
+        override val kind: BinaryKind<Wasm>
+            get() = ArtifactKinds.Wasm
+    }
+
+    class KLib(val outputFile: File, val reporter: BaseDiagnosticsCollector) : ResultingArtifact.Binary<KLib>() {
         override val kind: BinaryKind<KLib>
             get() = ArtifactKinds.KLib
     }

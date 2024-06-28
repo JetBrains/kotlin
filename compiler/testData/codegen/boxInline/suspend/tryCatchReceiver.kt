@@ -1,6 +1,7 @@
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // WITH_STDLIB
+
 // FILE: inlined.kt
 
 interface Flow<out T> {

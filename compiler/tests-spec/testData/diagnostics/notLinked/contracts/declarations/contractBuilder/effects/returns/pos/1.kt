@@ -1,5 +1,6 @@
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -FINAL_UPPER_BOUND
+// FIR_IDENTICAL
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -FINAL_UPPER_BOUND
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)

@@ -12,42 +12,42 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 open class DeepCopySymbolRemapperPreservingSignatures : DeepCopySymbolRemapper() {
     override fun visitClass(declaration: IrClass) {
         remapSymbol(classes, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrClassPublicSymbolImpl(sig) } ?: IrClassSymbolImpl()
+            IrClassSymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitConstructor(declaration: IrConstructor) {
         remapSymbol(constructors, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrConstructorPublicSymbolImpl(sig) } ?: IrConstructorSymbolImpl()
+            IrConstructorSymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
         remapSymbol(enumEntries, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrEnumEntryPublicSymbolImpl(sig) } ?: IrEnumEntrySymbolImpl()
+            IrEnumEntrySymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         remapSymbol(functions, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrSimpleFunctionPublicSymbolImpl(sig) } ?: IrSimpleFunctionSymbolImpl()
+            IrSimpleFunctionSymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitProperty(declaration: IrProperty) {
         remapSymbol(properties, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrPropertyPublicSymbolImpl(sig) } ?: IrPropertySymbolImpl()
+            IrPropertySymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         remapSymbol(typeAliases, declaration) { symbol ->
-            symbol.signature?.let { sig -> IrTypeAliasPublicSymbolImpl(sig) } ?: IrTypeAliasSymbolImpl()
+            IrTypeAliasSymbolImpl(signature = symbol.signature)
         }
         declaration.acceptChildrenVoid(this)
     }

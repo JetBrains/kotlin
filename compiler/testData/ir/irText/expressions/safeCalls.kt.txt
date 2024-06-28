@@ -1,14 +1,14 @@
 class Ref {
+  var value: Int
+    field = value
+    get
+    set
+
   constructor(value: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
-
-  var value: Int
-    field = value
-    get
-    set
 
 }
 
@@ -19,66 +19,67 @@ interface IHost {
 
 }
 
-fun test1(x: String?): Int? {
-  return { // BLOCK
-    val tmp0_safe_receiver: String? = x
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.<get-length>()
-    }
-  }
-}
-
-fun test2(x: String?): Int? {
-  return { // BLOCK
-    val tmp0_safe_receiver: String? = x
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.hashCode()
-    }
-  }
-}
-
-fun test3(x: String?, y: Any?): Boolean? {
-  return { // BLOCK
-    val tmp0_safe_receiver: String? = x
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.equals(other = y)
-    }
-  }
-}
-
-fun test4(x: Ref?) {
+fun box() {
   { // BLOCK
-    val tmp0_safe_receiver: Ref? = x
+    val tmp_0: Int = 42
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      else -> tmp0_safe_receiver.<set-value>(<set-?> = 0)
+      EQEQ(arg0 = tmp_0, arg1 = null) -> null
+      else -> tmp_0.foo()
     }
-  }
-}
-
-fun IHost.test5(s: String?): Int? {
-  return { // BLOCK
-    val tmp0_safe_receiver: String? = s
-    when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> (<this>, tmp0_safe_receiver).extLength()
-    }
-  }
+  } /*~> Unit */
 }
 
 fun Int.foo(): Int {
   return 239
 }
 
-fun box() {
-  { // BLOCK
-    val tmp0_safe_receiver: Int = 42
+fun test1(x: String?): Int? {
+  return { // BLOCK
+    val tmp_1: String? = x
     when {
-      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.foo()
+      EQEQ(arg0 = tmp_1, arg1 = null) -> null
+      else -> tmp_1.<get-length>()
     }
-  } /*~> Unit */
+  }
 }
+
+fun test2(x: String?): Int? {
+  return { // BLOCK
+    val tmp_2: String? = x
+    when {
+      EQEQ(arg0 = tmp_2, arg1 = null) -> null
+      else -> tmp_2.hashCode()
+    }
+  }
+}
+
+fun test3(x: String?, y: Any?): Boolean? {
+  return { // BLOCK
+    val tmp_3: String? = x
+    when {
+      EQEQ(arg0 = tmp_3, arg1 = null) -> null
+      else -> tmp_3.equals(other = y)
+    }
+  }
+}
+
+fun test4(x: Ref?) {
+  { // BLOCK
+    val tmp_4: Ref? = x
+    when {
+      EQEQ(arg0 = tmp_4, arg1 = null) -> null /*~> Unit */
+      else -> tmp_4.<set-value>(<set-?> = 0)
+    }
+  }
+}
+
+fun IHost.test5(s: String?): Int? {
+  return { // BLOCK
+    val tmp_5: String? = s
+    when {
+      EQEQ(arg0 = tmp_5, arg1 = null) -> null
+      else -> (<this>, tmp_5).extLength()
+    }
+  }
+}
+

@@ -1,0 +1,6 @@
+// CHECK JVM_IR:
+//   Mangled name: #f(kotlin.Any){}kotlin.String
+//   Public signature: /f|7796856655889654815[0]
+//   Public signature debug description: f(kotlin.Any){}kotlin.String
+fun f(x: Any): String
+

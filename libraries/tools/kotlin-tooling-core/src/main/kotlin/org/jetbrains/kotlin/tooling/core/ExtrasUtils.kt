@@ -26,7 +26,7 @@ import kotlin.reflect.typeOf
  * extrasKeyOf<String>("a") != extrasKeyOf<Int>("a")
  * ```
  */
-inline fun <reified T : Any> extrasKeyOf(name: String? = null): Extras.Key<T> =
+inline fun <reified T> extrasKeyOf(name: String? = null): Extras.Key<T> =
     Extras.Key(extrasTypeOf(), name)
 
 fun emptyExtras(): Extras = EmptyExtras
@@ -48,7 +48,7 @@ fun Iterable<Extras.Entry<*>>.toExtras(): Extras = ImmutableExtrasImpl(this)
 
 fun Iterable<Extras.Entry<*>>.toMutableExtras(): MutableExtras = MutableExtrasImpl(this)
 
-infix fun <T : Any> Extras.Key<T>.withValue(value: T): Extras.Entry<T> = Extras.Entry(this, value)
+infix fun <T> Extras.Key<T>.withValue(value: T): Extras.Entry<T> = Extras.Entry(this, value)
 
 operator fun Extras.plus(entry: Extras.Entry<*>): Extras = ImmutableExtrasImpl(this.entries + entry)
 
@@ -57,3 +57,10 @@ operator fun Extras.plus(entries: Iterable<Extras.Entry<*>>): Extras = Immutable
 inline fun <T : Any> MutableExtras.getOrPut(key: Extras.Key<T>, defaultValue: () -> T): T {
     return this[key] ?: defaultValue().also { this[key] = it }
 }
+
+inline fun <T> MutableExtras.getOrPutNullable(key: Extras.Key<T>, defaultValue: () -> T): T {
+    @Suppress("UNCHECKED_CAST")
+    if (key in this) return this[key] as T
+    return defaultValue().also { this[key] = it }
+}
+

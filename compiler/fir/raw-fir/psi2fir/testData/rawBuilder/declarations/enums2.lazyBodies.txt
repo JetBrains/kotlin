@@ -1,19 +1,19 @@
 FILE: enums2.kt
-    public? final? interface Some : R|kotlin/Any| {
+    public final? interface Some : R|kotlin/Any| {
     }
-    public? final? object O1 : Some {
+    public final? object O1 : Some {
         private constructor(): R|O1| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? object O2 : Some {
+    public final? object O2 : Some {
         private constructor(): R|O2| {
             LAZY_super<<implicit>>
         }
 
     }
-    public? final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+    public final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
         private constructor(x: Some): R|SomeEnum| {
             LAZY_super<R|kotlin/Enum<SomeEnum>|>
         }

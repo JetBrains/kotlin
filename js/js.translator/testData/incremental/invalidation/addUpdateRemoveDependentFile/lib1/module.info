@@ -25,5 +25,6 @@ STEP 6:
     modifications:
         D : l1b.kt
     removed inverse depends: l1a.kt
+    removed file: l1b.kt
 STEP 7:
     updated exports: l1a.kt

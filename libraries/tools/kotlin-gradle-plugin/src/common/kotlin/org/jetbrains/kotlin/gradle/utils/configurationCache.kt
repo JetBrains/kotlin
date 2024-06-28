@@ -8,37 +8,20 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.internal.StartParameterInternal
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheEnabled
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
-
-internal fun isProjectIsolationEnabled(gradle: Gradle) =
-    try {
-        (gradle.startParameter as? StartParameterInternal)?.isolatedProjects?.get()
-    } catch (_: IncompatibleClassChangeError) {
-        null
-    } ?: false
-
-internal fun isConfigurationCacheAvailable(gradle: Gradle) =
-    try {
-        val startParameters = gradle.startParameter
-        startParameters.javaClass.getMethod("isConfigurationCache").invoke(startParameters) as? Boolean
-    } catch (_: Exception) {
-        null
-    } ?: false
 
 internal fun Project.readSystemPropertyAtConfigurationTime(key: String): Provider<String> {
     return providers.systemProperty(key).usedAtConfigurationTime(configurationTimePropertiesAccessor)
 }
 
-internal fun unavailableValueError(propertyName: String): Nothing =
-    error("'$propertyName' should be available at configuration time but unavailable on configuration cache reuse")
-
 fun Task.notCompatibleWithConfigurationCacheCompat(reason: String) {
     val reportConfigurationCacheWarnings = try {
+        val requested = project.isConfigurationCacheEnabled
         val startParameters = project.gradle.startParameter as? StartParameterInternal
-        startParameters?.run { isConfigurationCache && !isConfigurationCacheQuiet } ?: false
+        requested && (startParameters?.isConfigurationCacheQuiet ?: false)
     } catch (_: IncompatibleClassChangeError) { // for cases when gradle is way too old
         false
     }

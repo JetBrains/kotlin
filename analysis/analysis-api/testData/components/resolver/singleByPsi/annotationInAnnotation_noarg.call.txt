@@ -1,0 +1,22 @@
+KtCallExpression(131,143): 'Annotation()'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = Annotation
+          symbol = <constructor>(vararg strings: kotlin.String): Annotation
+          valueParameters = [
+            KaVariableSignature:
+              name = strings
+              receiverType = null
+              returnType = kotlin.String
+              symbol = vararg strings: kotlin.String
+              callableId = null
+          ]
+          callableId = null
+      typeArgumentsMapping = {}
+      argumentMapping = {}

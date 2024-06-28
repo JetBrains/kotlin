@@ -1,0 +1,9 @@
+val testValue: kotlin.Int
+
+fun testFunction(): kotlin.Int
+
+class C
+
+interface I
+
+object O

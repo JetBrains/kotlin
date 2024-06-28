@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.backend.jvm
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.createEmptyExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -29,7 +29,7 @@ class JvmReflectSymbols(val context: JvmBackendContext) {
     private val javaLangReflect: FqName = FqName("java.lang.reflect")
 
     private val javaLangReflectPackage: IrPackageFragment =
-        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, javaLangReflect)
+        createEmptyExternalPackageFragment(context.state.module, javaLangReflect)
 
     val javaLangReflectField: IrClassSymbol =
         createJavaLangReflectClass(FqName("java.lang.reflect.Field")) { klass ->

@@ -1,0 +1,109 @@
+KtFile: 'forWithRange.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(0,9): 'package f'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(8,9): 'f'
+  NO_CANDIDATES
+
+KtImportList(9,9): ''
+  NO_CANDIDATES
+
+KtNamedFunction(11,56): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(20,22): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(23,56): '{'
+  NO_CANDIDATES
+
+KtForExpression(29,54): 'for (i in 1..<5) {'
+  NO_CANDIDATES
+
+KtParameter(34,35): 'i'
+  NO_CANDIDATES
+
+KtContainerNode(39,44): '1..<5'
+  NO_CANDIDATES
+
+KtBinaryExpression(39,44): '1..<5'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeUntil
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(39,40): '1'
+  NO_CANDIDATES
+
+KtOperationReferenceExpression(40,43): '..<'
+  KaApplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        dispatchReceiver = KaExplicitReceiverValue:
+          expression = 1
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.ranges.IntRange
+          symbol = kotlin/Int.rangeUntil(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.ranges.IntRange
+          valueParameters = [
+            KaVariableSignature:
+              name = other
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = other: kotlin.Int
+              callableId = null
+          ]
+          callableId = kotlin/Int.rangeUntil
+      typeArgumentsMapping = {}
+      argumentMapping = {
+        5 -> (KaVariableSignature:
+          name = other
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = other: kotlin.Int
+          callableId = null)
+      }
+    isInBestCandidates = true
+
+KtConstantExpression(43,44): '5'
+  NO_CANDIDATES
+
+KtContainerNodeForControlStructureBody(46,54): '{'
+  NO_CANDIDATES
+
+KtBlockExpression(46,54): '{'
+  NO_CANDIDATES

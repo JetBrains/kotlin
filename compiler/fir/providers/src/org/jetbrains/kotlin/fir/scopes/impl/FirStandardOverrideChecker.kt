@@ -6,47 +6,26 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
 class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractOverrideChecker() {
     private val context = session.typeContext
 
-    private fun isEqualTypes(substitutedCandidateType: ConeKotlinType, substitutedBaseType: ConeKotlinType): Boolean {
-        return with(context) {
-            val baseIsFlexible = substitutedBaseType.isFlexible()
-            val candidateIsFlexible = substitutedCandidateType.isFlexible()
-            if (baseIsFlexible == candidateIsFlexible) {
-                return AbstractTypeChecker.equalTypes(context, substitutedCandidateType, substitutedBaseType)
-            }
-            val lowerBound: SimpleTypeMarker
-            val upperBound: SimpleTypeMarker
-            val type: KotlinTypeMarker
-            if (baseIsFlexible) {
-                lowerBound = substitutedBaseType.lowerBoundIfFlexible()
-                upperBound = substitutedBaseType.upperBoundIfFlexible()
-                type = substitutedCandidateType
-            } else {
-                lowerBound = substitutedCandidateType.lowerBoundIfFlexible()
-                upperBound = substitutedCandidateType.upperBoundIfFlexible()
-                type = substitutedBaseType
-            }
-            AbstractTypeChecker.isSubtypeOf(context, lowerBound, type) && AbstractTypeChecker.isSubtypeOf(context, type, upperBound)
-        }
-    }
-
     private fun isEqualTypes(candidateType: ConeKotlinType, baseType: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         val substitutedCandidateType = substitutor.substituteOrSelf(candidateType)
         val substitutedBaseType = substitutor.substituteOrSelf(baseType)
-        return isEqualTypes(substitutedCandidateType, substitutedBaseType)
+        return AbstractTypeChecker.equalTypes(context, substitutedCandidateType, substitutedBaseType)
     }
 
     fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean {
@@ -80,9 +59,15 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         val substitutedOverrideType = substitutor.substituteOrSelf(overrideBound.coneType)
         val substitutedBaseType = substitutor.substituteOrSelf(baseBound.coneType)
 
-        if (isEqualTypes(substitutedOverrideType, substitutedBaseType)) return true
+        if (AbstractTypeChecker.equalTypes(context, substitutedOverrideType, substitutedBaseType)) return true
 
-        return overrideTypeParameter.symbol.resolvedBounds.any { bound -> isEqualTypes(bound.coneType, substitutedBaseType, substitutor) } &&
+        return overrideTypeParameter.symbol.resolvedBounds.any { bound ->
+            isEqualTypes(
+                bound.coneType,
+                substitutedBaseType,
+                substitutor
+            )
+        } &&
                 baseTypeParameter.symbol.resolvedBounds.any { bound -> isEqualTypes(bound.coneType, substitutedOverrideType, substitutor) }
     }
 
@@ -122,36 +107,64 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        return isOverriddenFunction(overrideCandidate, baseDeclaration, ignoreVisibility = false)
+    }
 
+    fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction, ignoreVisibility: Boolean): Boolean {
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
+        if (overrideCandidate.isSuspend != baseDeclaration.isSuspend) return false
+        if (baseDeclaration.isHiddenToOvercomeSignatureClash == true) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
-        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
-        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        if (!isEqualReceiverTypes(
-                overrideCandidate.receiverParameter?.typeRef,
-                baseDeclaration.receiverParameter?.typeRef,
-                substitutor,
-            )
-        ) return false
+        if (!commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)) return false
 
         return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
         }
     }
 
-    override fun isOverriddenProperty(
-        overrideCandidate: FirCallableDeclaration,
-        baseDeclaration: FirProperty
-    ): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+    override fun isOverriddenProperty(overrideCandidate: FirCallableDeclaration, baseDeclaration: FirProperty): Boolean {
+        return isOverriddenProperty(overrideCandidate, baseDeclaration, ignoreVisibility = false)
+    }
 
+    fun isOverriddenProperty(
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirProperty,
+        ignoreVisibility: Boolean,
+    ): Boolean {
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
+        return commonCallableChecks(overrideCandidate, baseDeclaration, substitutor, ignoreVisibility)
+    }
+
+    private fun FirStandardOverrideChecker.commonCallableChecks(
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirCallableDeclaration,
+        substitutor: ConeSubstitutor,
+        // Overload-ability is used to filter out equivalent calls (see ConeEquivalentCallConflictResolver) in which case visibility
+        // must be ignored.
+        ignoreVisibility: Boolean,
+    ): Boolean {
+        if (!ignoreVisibility && Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        if (overrideCandidate.contextReceivers.size != baseDeclaration.contextReceivers.size) return false
+
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        return isEqualReceiverTypes(overrideCandidate.receiverParameter?.typeRef, baseDeclaration.receiverParameter?.typeRef, substitutor)
+
+        return isEqualReceiverTypes(
+            overrideCandidate.receiverParameter?.typeRef,
+            baseDeclaration.receiverParameter?.typeRef,
+            substitutor
+        ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
+            isEqualTypes(memberParam.typeRef, selfParam.typeRef, substitutor)
+        }
+    }
+
+    override fun chooseIntersectionVisibility(
+        overrides: Collection<FirCallableSymbol<*>>,
+        dispatchClassSymbol: FirRegularClassSymbol?,
+    ): Visibility {
+        return chooseIntersectionVisibilityOrNull(overrides) ?: Visibilities.Unknown
     }
 }

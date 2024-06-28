@@ -5,45 +5,48 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 
-object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker() {
+object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression !is FirFunctionCall) return
         val functionName = expression.calleeReference.name.asString()
         val qualifiedType = targetClassMap[functionName] ?: return
 
-        if (expression.explicitReceiver?.isRedundant(qualifiedType) == true) {
+        if (expression.explicitReceiver?.isRedundant(qualifiedType, context.session) == true) {
             reporter.reportOn(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD, context)
         }
     }
 
-    private fun FirExpression.isRedundant(qualifiedClassId: ClassId): Boolean {
-        val thisType = if (this is FirConstExpression<*>) {
-            this.typeRef.coneType.classId
+    private fun FirExpression.isRedundant(qualifiedClassId: ClassId, session: FirSession): Boolean {
+        val thisType = if (this is FirLiteralExpression) {
+            this.resolvedType.classId
         } else {
             when {
-                typeRef.coneType is ConeFlexibleType -> null
+                resolvedType is ConeFlexibleType -> null
                 psi?.parent !is KtSafeQualifiedExpression
-                        && (psi is KtSafeQualifiedExpression || typeRef.coneType.isMarkedNullable) -> null
-                this.typeRef.coneType.isMarkedNullable -> null
-                else -> this.typeRef.coneType.classId
+                        && (psi is KtSafeQualifiedExpression || resolvedType.isMarkedNullable) -> null
+                this.resolvedType.isMarkedNullable -> null
+                else -> this.resolvedType.fullyExpandedClassId(session)
             }
         }
         return thisType == qualifiedClassId

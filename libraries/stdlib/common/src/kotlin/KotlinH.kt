@@ -8,12 +8,37 @@ package kotlin
 
 // From numbers.kt
 
-expect fun Double.isNaN(): Boolean
-expect fun Float.isNaN(): Boolean
-expect fun Double.isInfinite(): Boolean
-expect fun Float.isInfinite(): Boolean
-expect fun Double.isFinite(): Boolean
-expect fun Float.isFinite(): Boolean
+/**
+ * Returns `true` if the specified number is a
+ * Not-a-Number (NaN) value, `false` otherwise.
+ */
+public expect fun Double.isNaN(): Boolean
+
+/**
+ * Returns `true` if the specified number is a
+ * Not-a-Number (NaN) value, `false` otherwise.
+ */
+public expect fun Float.isNaN(): Boolean
+
+/**
+ * Returns `true` if this value is infinitely large in magnitude.
+ */
+public expect fun Double.isInfinite(): Boolean
+
+/**
+ * Returns `true` if this value is infinitely large in magnitude.
+ */
+public expect fun Float.isInfinite(): Boolean
+
+/**
+ * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
+ */
+public expect fun Double.isFinite(): Boolean
+
+/**
+ * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
+ */
+public expect fun Float.isFinite(): Boolean
 
 /**
  * Returns a bit representation of the specified floating-point value as [Long]
@@ -73,4 +98,6 @@ public expect fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
  *
  * The [lock] parameter is ignored.
  */
+@Deprecated("Synchronization on Any? object is supported only in Kotlin/JVM.", ReplaceWith("lazy(initializer)"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public expect fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T>

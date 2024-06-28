@@ -1,30 +1,18 @@
 sealed class Expr {
-  protected constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   class Const : Expr {
+    val number: Double
+      field = number
+      get
+
     constructor(number: Double) /* primary */ {
       super/*Expr*/()
       /* <init>() */
 
     }
 
-    val number: Double
-      field = number
-      get
-
   }
 
   class Sum : Expr {
-    constructor(e1: Expr, e2: Expr) /* primary */ {
-      super/*Expr*/()
-      /* <init>() */
-
-    }
-
     val e1: Expr
       field = e1
       get
@@ -32,6 +20,12 @@ sealed class Expr {
     val e2: Expr
       field = e2
       get
+
+    constructor(e1: Expr, e2: Expr) /* primary */ {
+      super/*Expr*/()
+      /* <init>() */
+
+    }
 
   }
 
@@ -44,4 +38,11 @@ sealed class Expr {
 
   }
 
+  protected constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
+

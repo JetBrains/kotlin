@@ -1,3 +1,4 @@
+// JVM_ABI_K1_K2_DIFF: KT-63984
 class A {
     var value: String = "fail1"
         private set

@@ -1,0 +1,267 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun func(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] fun func(): R|kotlin/Unit| {
+        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
+            ^function IntegerLiteral(1)
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
+        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
+            ^function IntegerLiteral(1)
+        }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONSTANT_EVALUATION)] fun func(): R|kotlin/Unit| {
+        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
+            ^function IntegerLiteral(1)
+        }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=lowlevel/Anno.position] position: String): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val position: String = R|<local>/position|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun func(): R|kotlin/Unit| {
+        @Anno[Unresolved](<strcat>(String(function ), prop#)) local final? [ResolvedTo(RAW_FIR)] fun <@Anno[Unresolved](<strcat>(String(type parameter ), prop#)) [ResolvedTo(RAW_FIR)] T : @Anno[Unresolved](<strcat>(String(bound type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested bound type ), prop#)) String>, @Anno[Unresolved](<strcat>(String(constraint type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested constraint type ), prop#)) Int>> @RECEIVER:Anno[Unresolved](<strcat>(String(receiver ), prop#)) @Anno[Unresolved](<strcat>(String(receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested receiver type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested receiver type ), prop#)) Int>>.function([ResolvedTo(RAW_FIR)] @Anno[Unresolved](<strcat>(String(parameter ), prop#)) param: @Anno[Unresolved](<strcat>(String(parameter type ), prop#)) Collection<@Anno[Unresolved](<strcat>(String(nested parameter type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested parameter type ), prop#)) String>> = IntegerLiteral(1)): @Anno[Unresolved](<strcat>(String(return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested return type ), prop#)) List<@Anno[Unresolved](<strcat>(String(nested nested return type ), prop#)) Int>> {
+            ^function IntegerLiteral(1)
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunction.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=lowlevel/Anno.position] position: R|kotlin/String|): R|lowlevel/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+    public final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
+        @R|lowlevel/Anno|[Types](position = <strcat>(String(function ), R|lowlevel/prop|)) local final [ResolvedTo(BODY_RESOLVE)] fun <@R|lowlevel/Anno|[Types](position = <strcat>(String(type parameter ), R|lowlevel/prop|)) [ResolvedTo(BODY_RESOLVE)] T : R|@R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>|, R|@R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>|> @RECEIVER:R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) R|@R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>|.function([ResolvedTo(BODY_RESOLVE)] @R|lowlevel/Anno|[Types](position = <strcat>(String(parameter ), R|lowlevel/prop|)) param: R|@R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>| = Int(1)): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+            ^function Int(1)
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] localFunction.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=lowlevel/Anno.position] position: R|kotlin/String|): R|lowlevel/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun func(): R|kotlin/Unit| {
+        @R|lowlevel/Anno|[Types](position = <strcat>(String(function ), R|lowlevel/prop|)) local final [ResolvedTo(BODY_RESOLVE)] fun <@R|lowlevel/Anno|[Types](position = <strcat>(String(type parameter ), R|lowlevel/prop|)) [ResolvedTo(BODY_RESOLVE)] T : R|@R|lowlevel/Anno|(position = <strcat>(String(bound type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested bound type ), R|lowlevel/prop|))  kotlin/String>|, R|@R|lowlevel/Anno|(position = <strcat>(String(constraint type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested constraint type ), R|lowlevel/prop|))  kotlin/Int>|> @RECEIVER:R|lowlevel/Anno|[Types](position = <strcat>(String(receiver ), R|lowlevel/prop|)) R|@R|lowlevel/Anno|(position = <strcat>(String(receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested receiver type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested receiver type ), R|lowlevel/prop|))  kotlin/Int>>|.function([ResolvedTo(BODY_RESOLVE)] @R|lowlevel/Anno|[Types](position = <strcat>(String(parameter ), R|lowlevel/prop|)) param: R|@R|lowlevel/Anno|(position = <strcat>(String(parameter type ), R|lowlevel/prop|))  kotlin/collections/Collection<@R|lowlevel/Anno|(position = <strcat>(String(nested parameter type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested parameter type ), R|lowlevel/prop|))  kotlin/String>>| = Int(1)): R|@R|lowlevel/Anno|(position = <strcat>(String(return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested return type ), R|lowlevel/prop|))  kotlin/collections/List<@R|lowlevel/Anno|(position = <strcat>(String(nested nested return type ), R|lowlevel/prop|))  kotlin/Int>>| {
+            ^function Int(1)
+        }
+
+    }

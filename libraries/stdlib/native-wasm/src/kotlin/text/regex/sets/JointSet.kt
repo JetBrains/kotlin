@@ -22,6 +22,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Represents group, which is alternation of other subexpression.
  * One should think about "group" in this model as JointSet opening group and corresponding FSet closing group.
@@ -73,9 +75,11 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
         val fSet = this.fSet
         if (!fSet.secondPassVisited) {
             val newFSet = fSet.processSecondPass()
+            @OptIn(ExperimentalNativeApi::class)
             assert(newFSet == fSet)
         }
 
+        @OptIn(ExperimentalNativeApi::class)
         children.replaceAll { child -> if (!child.secondPassVisited) child.processSecondPass() else child }
         return super.processSecondPassInternal()
     }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 
 abstract class FirErrorExpressionRenderer {
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
+    protected val printer: FirPrinter get() = components.printer
 
     abstract fun renderErrorExpression(errorExpression: FirErrorExpression)
 }

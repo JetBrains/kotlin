@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.getOrPut
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
@@ -26,8 +27,6 @@ import org.jetbrains.kotlin.name.Name
 private const val INLINE_CLASS_IMPL_SUFFIX = "-impl"
 
 class InlineClassLowering(val context: CommonBackendContext) {
-    private val transformedFunction = context.mapping.inlineClassMemberToStatic
-
     private fun isClassInlineLike(irClass: IrClass): Boolean = context.inlineClassesUtils.isClassInlineLike(irClass)
 
     val inlineClassDeclarationLowering = object : DeclarationTransformer {
@@ -105,7 +104,15 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                     }
                                     expression.transformChildrenVoid()
                                     if (isMemberFieldSet) {
-                                        return expression.value
+                                        return builder.irBlock {
+                                            if (!expression.value.isPure(true)) {
+                                                // Preserving side effects
+                                                +expression.value
+                                                // Adding empty block to provide Unit value.
+                                                // This is useful when original IrSetField is the last statement in a Unit-returning block.
+                                                +builder.irBlock {}
+                                            }
+                                        }
                                     }
                                     return expression
                                 }
@@ -311,8 +318,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
     }
 
     private fun getOrCreateStaticMethod(function: IrFunction): IrSimpleFunction =
-        transformedFunction.getOrPut(function) {
-            createStaticBodilessMethod(function)
+        function.staticMethod ?: createStaticBodilessMethod(function).also {
+            function.staticMethod = it
         }
 
     val inlineClassUsageLowering = object : BodyLoweringPass {
@@ -374,6 +381,9 @@ class InlineClassLowering(val context: CommonBackendContext) {
             function.parent,
             function.toInlineClassImplementationName(),
             function,
-            typeParametersFromContext = extractTypeParameters(function.parentAsClass)
+            typeParametersFromContext = extractTypeParameters(function.parentAsClass),
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 }
+
+private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(followAttributeOwner = false)

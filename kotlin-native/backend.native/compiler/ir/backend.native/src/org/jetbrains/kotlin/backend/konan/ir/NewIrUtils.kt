@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
-import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
-import org.jetbrains.kotlin.backend.konan.serialization.KonanFileMetadataSource
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
+import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
@@ -27,8 +26,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.atMostOne
 
 private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
     return signature == symbol.signature
@@ -47,29 +45,10 @@ fun IrClass.isNothing() = this.isClassTypeWithSignature(IdSignatureValues.nothin
 
 fun IrClass.getSuperInterfaces() = this.superClasses.map { it.owner }.filter { it.isInterface }
 
-// Note: psi2ir doesn't set `origin = FAKE_OVERRIDE` for fields and properties yet.
-val IrProperty.isReal: Boolean get() = this.descriptor.kind.isReal
-val IrField.isReal: Boolean get() = this.descriptor.kind.isReal
-
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
-
-inline fun <reified T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
-    val annotation = this.annotations.findAnnotation(fqName) ?: return null
-    for (index in 0 until annotation.valueArgumentsCount) {
-        val parameter = annotation.symbol.owner.valueParameters[index]
-        if (parameter.name == Name.identifier(argumentName)) {
-            val actual = annotation.getValueArgument(index) as? IrConst<*> ?: return null
-            return actual.value as T
-        }
-    }
-    return null
-}
 
 fun IrValueParameter.isInlineParameter(): Boolean =
     !this.isNoinline && (this.type.isFunction() || this.type.isSuspendFunction()) && !this.type.isMarkedNullable()
-
-val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
-    get() = generateSequence(this, { it.parent as? IrDeclaration })
 
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {
@@ -86,10 +65,10 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
     }
 }
 
-internal fun IrExpression.isBoxOrUnboxCall() =
-        (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+internal fun IrFunctionSymbol.isBoxOrUnboxFun() = owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 
-internal fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
+internal fun IrExpression.isBoxOrUnboxCall() =
+        (this is IrCall && symbol.isBoxOrUnboxFun())
 
 internal val IrFunctionAccessExpression.actualCallee: IrFunction
     get() {
@@ -105,24 +84,38 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 }
 
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
-val IrModuleFragment.konanLibrary
-    get() = (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
-val IrPackageFragment.konanLibrary
-    get() = if (this is IrFile)
-        this.konanLibrary
-    else
-        this.packageFragmentDescriptor.containingDeclaration.konanLibrary
-val IrFile.konanLibrary
-    get() = (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
+
+val IrPackageFragment.konanLibrary: KotlinLibrary?
+    get() {
+        if (this is IrFile) {
+            val fileMetadata = metadata as? DescriptorMetadataSource.File
+            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
+            moduleDescriptor?.konanLibrary?.let { return it }
+        }
+        return this.moduleDescriptor.konanLibrary
+    }
+// Any changes made to konanLibrary here should be ported to the containsDeclaration
+// function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt
 val IrDeclaration.konanLibrary: KotlinLibrary?
     get() {
         ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
         return when (val parent = parent) {
-            is IrFile -> parent.konanLibrary
-            is IrPackageFragment -> parent.packageFragmentDescriptor.containingDeclaration.konanLibrary
+            is IrPackageFragment -> parent.konanLibrary
             is IrDeclaration -> parent.konanLibrary
             else -> TODO("Unexpected declaration parent: $parent")
         }
     }
 
-fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrDeclaration.isFromInteropLibrary() = isFromCInteropLibrary()
+
+@Deprecated(
+        "Use isFromCInteropLibrary() instead",
+        ReplaceWith("moduleDescriptor.isFromCInteropLibrary()", "org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary"),
+        DeprecationLevel.ERROR
+)
+fun IrPackageFragment.isFromInteropLibrary() = moduleDescriptor.isFromCInteropLibrary()

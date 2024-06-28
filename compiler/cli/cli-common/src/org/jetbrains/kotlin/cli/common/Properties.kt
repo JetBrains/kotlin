@@ -46,7 +46,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
      * */
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
-    COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),
+    COMPILE_DAEMON_ENVIRONMENT_VARIABLES_FOR_TESTS("kotlin.daemon.environment.variables.for.tests"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
     LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
 
@@ -55,8 +55,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     USER_HOME("user.home", alwaysDirectAccess = true),
     JAVA_VERSION("java.specification.version", alwaysDirectAccess = true),
     JAVA_HOME("java.home", alwaysDirectAccess = true),
-    JAVA_CLASS_PATH("java.class.path", alwaysDirectAccess = true),
-    KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED("kotlin.js.compiler.legacy.force_enabled", alwaysDirectAccess = true)
+    JAVA_CLASS_PATH("java.class.path", alwaysDirectAccess = true)
     ;
 
     private fun <T> getProperFunction(custom: T?, default: T): T {

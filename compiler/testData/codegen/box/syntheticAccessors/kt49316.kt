@@ -1,4 +1,6 @@
-// IGNORE_BACKEND: JS, NATIVE
+// The test isn't passing when using K/N per-file caches and in order to fix it,
+// some hacks are required, which isn't worth it considering that test contains invalid code (reassign of val property).
+// DISABLE_NATIVE
 // IGNORE_BACKEND_K2: ANY
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
@@ -7,6 +9,11 @@
 //    at org.jetbrains.kotlin.js.translate.utils.TranslationUtils.assignmentToBackingField(TranslationUtils.java:250)
 //    at org.jetbrains.kotlin.js.translate.reference.BackingFieldAccessTranslator.translateAsSet(BackingFieldAccessTranslator.java:60)
 //    ...
+
+// DISABLE_IR_VISIBILITY_CHECKS: ANY
+// ^ Caused by this error:
+//   [IR VALIDATION] IrValidationBeforeLoweringPhase: The following element references a 'private' declaration that is invisible in the current scope.
+//   SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.Unit origin=null
 
 // FILE: kt49316.kt
 import a.*

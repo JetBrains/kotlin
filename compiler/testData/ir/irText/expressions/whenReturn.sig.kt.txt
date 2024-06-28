@@ -1,0 +1,10 @@
+// CHECK JVM_IR:
+//   Mangled name: #toString(kotlin.String){}kotlin.String
+//   Public signature: /toString|4425972968165869572[0]
+//   Public signature debug description: toString(kotlin.String){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: #toString(kotlin.String){}
+//   Public signature: /toString|-3383991056988645668[0]
+//   Public signature debug description: toString(kotlin.String){}
+fun toString(grade: String): String
+

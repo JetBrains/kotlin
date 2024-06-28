@@ -701,7 +701,7 @@ class CoroutineCodegenForNamedFunction private constructor(
 
     override fun generateKotlinMetadataAnnotation() {
         val publicAbi = InlineUtil.isInPublicInlineScope(classDescriptor)
-        writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { av ->
+        writeKotlinMetadata(v, state.config, KotlinClassHeader.Kind.SYNTHETIC_CLASS, publicAbi, 0) { av ->
             val serializer = DescriptorSerializer.createForLambda(
                 JvmSerializerExtension(v.serializationBindings, state), state.languageVersionSettings,
             )

@@ -1,10 +1,4 @@
 class Test1<T1 : Any?, T2 : Any?> {
-  constructor(x: T1, y: T2) /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
   val x: T1
     field = x
     get
@@ -13,29 +7,29 @@ class Test1<T1 : Any?, T2 : Any?> {
     field = y
     get
 
-}
-
-class Test2 {
-  constructor(x: Int, y: String) /* primary */ {
+  constructor(x: T1, y: T2) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class Test2 {
   val y: String
     field = y
     get
 
   inner class TestInner<Z : Any?> {
+    val z: Z
+      field = z
+      get
+
     constructor(z: Z) /* primary */ {
       super/*Any*/()
       /* <init>() */
 
     }
-
-    val z: Z
-      field = z
-      get
 
     constructor(z: Z, i: Int) {
       <this>.this/*TestInner*/<Z>(z = z)
@@ -43,15 +37,15 @@ class Test2 {
 
   }
 
-}
-
-class Test3 {
-  constructor(x: Int, y: String = "") /* primary */ {
+  constructor(x: Int, y: String) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
+}
+
+class Test3 {
   val x: Int
     field = x
     get
@@ -60,21 +54,28 @@ class Test3 {
     field = y
     get
 
+  constructor(x: Int, y: String = "") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
 }
 
 class Test4<T : Any?> {
+  val x: Int
+    field = x
+    get
+
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
 
-  val x: Int
-    field = x
-    get
-
   constructor(x: Int, y: Int = 42) {
     this/*Test4*/<T>(x = x.plus(other = y))
   }
 
 }
+

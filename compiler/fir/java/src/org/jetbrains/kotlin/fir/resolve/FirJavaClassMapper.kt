@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 @NoMutableState
 class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapper() {
@@ -30,4 +31,8 @@ class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapp
         if (classId == null) return null
         return JavaToKotlinClassMap.mapJavaToKotlin(classId.asSingleFqName())
     }
+
+    override val classTypealiasesThatDontCauseAmbiguity: Map<ClassId, ClassId> = mapOf(
+        JvmStandardClassIds.Annotations.Throws to JvmStandardClassIds.Annotations.ThrowsAlias,
+    )
 }

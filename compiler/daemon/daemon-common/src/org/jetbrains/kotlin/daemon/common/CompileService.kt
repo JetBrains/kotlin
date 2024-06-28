@@ -39,7 +39,7 @@ interface CompileService : Remote {
     }
 
     companion object {
-        val NO_SESSION: Int = 0
+        const val NO_SESSION: Int = 0
     }
 
     sealed class CallResult<out R> : Serializable {
@@ -80,8 +80,9 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
 
+    //Call with [withGC=true] can cause performance issue
     @Throws(RemoteException::class)
-    fun getUsedMemory(): CallResult<Long>
+    fun getUsedMemory(withGC: Boolean = true): CallResult<Long>
 
     @Throws(RemoteException::class)
     fun getDaemonOptions(): CallResult<DaemonOptions>

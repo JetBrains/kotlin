@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
-import org.jetbrains.kotlin.commonizer.CommonizerParameters
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.ResultsConsumer
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -20,20 +17,15 @@ internal class ModuleSerializer(
     private val destination: File,
 ) : ResultsConsumer {
     override fun consume(parameters: CommonizerParameters, target: CommonizerTarget, moduleResult: ResultsConsumer.ModuleResult) {
-        val librariesDestination = CommonizerOutputFileLayout.resolveCommonizedDirectory(destination, target)
-        when (moduleResult) {
-            is ResultsConsumer.ModuleResult.Commonized -> {
-                val libraryDestination = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)
-                writeLibrary(moduleResult.metadata, moduleResult.manifest, libraryDestination)
-            }
-            is ResultsConsumer.ModuleResult.Missing -> {
-                val missingModuleSourceLocation = moduleResult.originalLocation
-                val missingModuleDestinationLocation = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)
-                if (!missingModuleDestinationLocation.exists()) {
-                    missingModuleSourceLocation.copyRecursively(librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName))
-                }
-            }
-        }
+        val librariesDestination = CommonizerOutputFileLayout.resolveCommonizedDirectory(
+            destination,
+            target,
+        )
+        writeLibrary(
+            moduleResult.metadata,
+            moduleResult.manifest,
+            librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)
+        )
     }
 }
 

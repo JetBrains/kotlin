@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
-import org.jetbrains.kotlin.incremental.storage.InMemoryStorageWrapper
+import org.jetbrains.kotlin.incremental.storage.InMemoryStorageInterface
 import org.jetbrains.kotlin.konan.file.use
 import java.io.Closeable
 import java.io.File
@@ -47,7 +48,7 @@ interface CompilationTransaction : Closeable {
      */
     var executionThrowable: Throwable?
 
-    fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageWrapper<*, *>)
+    fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageInterface<*, *>)
 }
 
 fun CompilationTransaction.write(file: Path, writeAction: () -> Unit) {
@@ -85,7 +86,7 @@ inline fun <R> CompilationTransaction.runWithin(
 }
 
 abstract class BaseCompilationTransaction : CompilationTransaction {
-    private val inMemoryStorageWrappers = hashSetOf<InMemoryStorageWrapper<*, *>>()
+    private val inMemoryStorageWrappers = hashSetOf<InMemoryStorageInterface<*, *>>()
 
     protected var isSuccessful: Boolean = false
 
@@ -93,7 +94,7 @@ abstract class BaseCompilationTransaction : CompilationTransaction {
         isSuccessful = true
     }
 
-    override fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageWrapper<*, *>) {
+    override fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageInterface<*, *>) {
         inMemoryStorageWrappers.add(inMemoryStorageWrapper)
     }
 
@@ -116,7 +117,7 @@ abstract class BaseCompilationTransaction : CompilationTransaction {
     protected fun closeCachesManager() = runCatching {
         if (!isSuccessful) {
             for (wrapper in inMemoryStorageWrappers) {
-                wrapper.resetInMemoryChanges()
+                wrapper.clearChanges()
             }
         }
         cachesManager?.close()
@@ -163,7 +164,7 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
  * In the case of an unsuccessful compilation [stashDir] is also removed, but the backed-up files restored to their origin location.
  */
 class RecoverableCompilationTransaction(
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val stashDir: Path,
 ) : CompilationTransaction, BaseCompilationTransaction() {
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
@@ -175,7 +176,7 @@ class RecoverableCompilationTransaction(
      */
     override fun registerAddedOrChangedFile(outputFile: Path) {
         if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) return
-        reporter.measure(BuildTime.PRECISE_BACKUP_OUTPUT) {
+        reporter.measure(GradleBuildTime.PRECISE_BACKUP_OUTPUT) {
             if (Files.exists(outputFile)) {
                 stashFile(outputFile)
             } else {
@@ -197,7 +198,7 @@ class RecoverableCompilationTransaction(
             Files.delete(outputFile)
             return
         }
-        reporter.measure(BuildTime.PRECISE_BACKUP_OUTPUT) {
+        reporter.measure(GradleBuildTime.PRECISE_BACKUP_OUTPUT) {
             stashFile(outputFile)
         }
     }
@@ -219,7 +220,7 @@ class RecoverableCompilationTransaction(
      */
     private fun revertChanges() {
         reporter.debug { "Reverting changes" }
-        reporter.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+        reporter.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
             for ((originPath, relocatedPath) in fileRelocationRegistry) {
                 if (relocatedPath == null) {
                     if (Files.exists(originPath)) {
@@ -237,7 +238,7 @@ class RecoverableCompilationTransaction(
      */
     private fun cleanupStash() {
         reporter.debug { "Cleaning up stash" }
-        reporter.measure(BuildTime.CLEAN_BACKUP_STASH) {
+        reporter.measure(GradleBuildTime.CLEAN_BACKUP_STASH) {
             Files.walk(stashDir).use {
                 it.sorted(Comparator.reverseOrder())
                     .forEach(Files::delete)

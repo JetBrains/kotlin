@@ -1,0 +1,43 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : inlineChild.0.6.kt -> inlineChild.kt
+        U : inlineChildProxy.0.kt -> inlineChildProxy.kt
+        U : inlineFunction.0.6.kt -> inlineFunction.kt
+        U : inlineFunctionProxy.0.kt -> inlineFunctionProxy.kt
+        U : simpleChild.0.6.kt -> simpleChild.kt
+        U : simpleFunction.0.6.kt -> simpleFunction.kt
+    added file: inlineChild.kt, inlineChildProxy.kt, inlineFunction.kt, inlineFunctionProxy.kt, simpleChild.kt, simpleFunction.kt
+STEP 1:
+    dependencies: lib1
+    updated imports: inlineFunctionProxy.kt, simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineChildProxy.kt, inlineFunction.kt
+STEP 2:
+    dependencies: lib1
+    updated imports: inlineFunctionProxy.kt, inlineChildProxy.kt
+    modified ir: simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineFunction.kt
+STEP 3:
+    dependencies: lib1
+    updated imports: inlineFunctionProxy.kt, simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineChildProxy.kt, inlineFunction.kt
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : inlineChild.4.kt -> inlineChild.kt
+        U : inlineFunction.4.kt -> inlineFunction.kt
+        U : simpleChild.4.kt -> simpleChild.kt
+        U : simpleFunction.4.kt -> simpleFunction.kt
+    modified ir: simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineFunction.kt
+    updated imports: inlineFunctionProxy.kt, inlineChildProxy.kt
+STEP 5:
+    dependencies: lib1
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : inlineChild.0.6.kt -> inlineChild.kt
+        U : inlineFunction.0.6.kt -> inlineFunction.kt
+        U : simpleChild.0.6.kt -> simpleChild.kt
+        U : simpleFunction.0.6.kt -> simpleFunction.kt
+    modified ir: simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineFunction.kt
+    updated imports: inlineFunctionProxy.kt, inlineChildProxy.kt
+STEP 7:
+    dependencies: lib1
+    updated imports: inlineFunctionProxy.kt, simpleFunction.kt, simpleChild.kt, inlineChild.kt, inlineChildProxy.kt, inlineFunction.kt

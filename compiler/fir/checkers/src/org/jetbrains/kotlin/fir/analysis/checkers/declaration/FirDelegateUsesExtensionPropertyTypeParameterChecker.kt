@@ -7,24 +7,27 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 
-object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker() {
+object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val delegate = declaration.delegate as? FirFunctionCall ?: return
+        if (!declaration.isExtension) return
+        val delegate = declaration.delegate ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
-        val usedTypeParameterSymbol = delegate.typeRef.coneType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+        val usedTypeParameterSymbol = delegate.resolvedType.findUsedTypeParameterSymbol(parameters, delegate, context)
             ?: return
 
         reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol, context)
@@ -32,15 +35,14 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
 
     private fun ConeKotlinType.findUsedTypeParameterSymbol(
         typeParameterSymbols: HashSet<FirTypeParameterSymbol>,
-        delegate: FirFunctionCall,
+        delegate: FirExpression,
         context: CheckerContext,
-        reporter: DiagnosticReporter,
     ): FirTypeParameterSymbol? {
         val expandedDelegateClassLikeType =
-            delegate.typeRef.coneType.lowerBoundIfFlexible().fullyExpandedType(context.session)
+            delegate.resolvedType.lowerBoundIfFlexible().fullyExpandedType(context.session)
                 .unwrapDefinitelyNotNull() as? ConeClassLikeType ?: return null
-        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirRegularClassSymbol ?: return null
-        val delegateClassScope by lazy { delegateClassSymbol.unsubstitutedScope(context) }
+        val delegateClassSymbol = expandedDelegateClassLikeType.lookupTag.toSymbol(context.session) as? FirClassSymbol<*> ?: return null
+        val delegateClassScope by lazy(LazyThreadSafetyMode.NONE) { delegateClassSymbol.unsubstitutedScope(context) }
         for (it in typeArguments) {
             val theType = it.type ?: continue
             val argumentAsTypeParameterSymbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
@@ -56,7 +58,7 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
                     return argumentAsTypeParameterSymbol
                 }
             }
-            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(typeParameterSymbols, delegate, context, reporter)
+            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(typeParameterSymbols, delegate, context)
             if (usedTypeParameterSymbol != null) {
                 return usedTypeParameterSymbol
             }

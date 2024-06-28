@@ -4,6 +4,7 @@ package
 package foo {
 
     public sealed expect class SealedWithPlatformActuals : foo.SealedWithSharedActual {
+        protected constructor SealedWithPlatformActuals()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -127,6 +127,7 @@ public final class org/jetbrains/kotlin/tooling/core/ExtrasUtilsKt {
 	public static final fun extrasOf ()Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public static final fun extrasOf ([Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Lorg/jetbrains/kotlin/tooling/core/Extras;
 	public static final fun getOrPut (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static final fun getOrPutNullable (Lorg/jetbrains/kotlin/tooling/core/MutableExtras;Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public static final fun mutableExtrasOf ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public static final fun mutableExtrasOf ([Lorg/jetbrains/kotlin/tooling/core/Extras$Entry;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
 	public static final fun plus (Lorg/jetbrains/kotlin/tooling/core/Extras;Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/tooling/core/Extras;
@@ -145,6 +146,7 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtr
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/Interner {
+	public abstract fun clear ()V
 	public abstract fun getOrPut (Ljava/lang/Object;)Ljava/lang/Object;
 }
 

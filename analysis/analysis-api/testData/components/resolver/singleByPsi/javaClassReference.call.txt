@@ -1,0 +1,33 @@
+KtCallExpression(31,44): 'Array<String>'
+  KaErrorCallInfo:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        isImplicitInvoke = false
+        partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+          dispatchReceiver = null
+          extensionReceiver = null
+          signature = KaFunctionSignature:
+            receiverType = null
+            returnType = kotlin.Array<T>
+            symbol = <constructor>(size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
+            valueParameters = [
+              KaVariableSignature:
+                name = size
+                receiverType = null
+                returnType = kotlin.Int
+                symbol = size: kotlin.Int
+                callableId = null,
+              KaVariableSignature:
+                name = init
+                receiverType = null
+                returnType = kotlin.Function1<kotlin.Int, T>
+                symbol = init: kotlin.Function1<kotlin.Int, T>
+                callableId = null
+            ]
+            callableId = null
+        typeArgumentsMapping = {
+          T -> (kotlin.String)
+        }
+        argumentMapping = {}
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>

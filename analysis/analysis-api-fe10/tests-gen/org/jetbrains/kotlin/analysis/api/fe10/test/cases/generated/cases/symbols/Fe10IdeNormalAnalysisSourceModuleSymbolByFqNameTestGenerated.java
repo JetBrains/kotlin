@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,103 +28,121 @@ import java.util.regex.Pattern;
 @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName")
 @TestDataPath("$PROJECT_ROOT")
 public class Fe10IdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends AbstractSymbolByFqNameTest {
-    @NotNull
-    @Override
-    public AnalysisApiTestConfigurator getConfigurator() {
-        return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
-            new AnalysisApiTestConfiguratorFactoryData(
-                FrontendKind.Fe10,
-                TestModuleKind.Source,
-                AnalysisSessionMode.Normal,
-                AnalysisApiMode.Ide
-            )
-        );
+  @NotNull
+  @Override
+  public AnalysisApiTestConfigurator getConfigurator() {
+    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+      new AnalysisApiTestConfiguratorFactoryData(
+        FrontendKind.Fe10,
+        TestModuleKind.Source,
+        AnalysisSessionMode.Normal,
+        AnalysisApiMode.Ide
+      )
+    );
+  }
+
+  @Test
+  public void testAllFilesPresentInSymbolByFqName() {
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+  }
+
+  @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/class.kt");
+  }
+
+  @Test
+  @TestMetadata("classFromJdk.kt")
+  public void testClassFromJdk() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classFromJdk.kt");
+  }
+
+  @Test
+  @TestMetadata("enumEntry.kt")
+  public void testEnumEntry() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("fileWalkDirectionEnum.kt")
+  public void testFileWalkDirectionEnum() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
+  }
+
+  @Test
+  @TestMetadata("iterator.kt")
+  public void testIterator() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/iterator.kt");
+  }
+
+  @Test
+  @TestMetadata("kclass.kt")
+  public void testKclass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
+  }
+
+  @Test
+  @TestMetadata("listOf.kt")
+  public void testListOf() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");
+  }
+
+  @Test
+  @TestMetadata("memberFunction.kt")
+  public void testMemberFunction() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunction.kt");
+  }
+
+  @Test
+  @TestMetadata("memberFunctionWithOverloads.kt")
+  public void testMemberFunctionWithOverloads() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunctionWithOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedClass.kt")
+  public void testNestedClass() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorFromInterface.kt")
+  public void testSamConstructorFromInterface() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/samConstructorFromInterface.kt");
+  }
+
+  @Test
+  @TestMetadata("samConstructorFromTypeAlias.kt")
+  public void testSamConstructorFromTypeAlias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/samConstructorFromTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("typealias.kt")
+  public void testTypealias() {
+    runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
+  }
+
+  @Nested
+  @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled")
+  @TestDataPath("$PROJECT_ROOT")
+  public class WithTestCompilerPluginEnabled {
+    @Test
+    public void testAllFilesPresentInWithTestCompilerPluginEnabled() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @Test
-    public void testAllFilesPresentInSymbolByFqName() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    @TestMetadata("companionWithFoo_commonModule.kt")
+    public void testCompanionWithFoo_commonModule() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/companionWithFoo_commonModule.kt");
     }
 
     @Test
-    @TestMetadata("class.kt")
-    public void testClass() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/class.kt");
+    @TestMetadata("myInterfaceSupertype.kt")
+    public void testMyInterfaceSupertype() {
+      runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/myInterfaceSupertype.kt");
     }
-
-    @Test
-    @TestMetadata("classFromJdk.kt")
-    public void testClassFromJdk() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/classFromJdk.kt");
-    }
-
-    @Test
-    @TestMetadata("enumEntry.kt")
-    public void testEnumEntry() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/enumEntry.kt");
-    }
-
-    @Test
-    @TestMetadata("fileWalkDirectionEnum.kt")
-    public void testFileWalkDirectionEnum() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/fileWalkDirectionEnum.kt");
-    }
-
-    @Test
-    @TestMetadata("iterator.kt")
-    public void testIterator() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/iterator.kt");
-    }
-
-    @Test
-    @TestMetadata("kclass.kt")
-    public void testKclass() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
-    }
-
-    @Test
-    @TestMetadata("listOf.kt")
-    public void testListOf() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");
-    }
-
-    @Test
-    @TestMetadata("memberFunction.kt")
-    public void testMemberFunction() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("memberFunctionWithOverloads.kt")
-    public void testMemberFunctionWithOverloads() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/memberFunctionWithOverloads.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedClass.kt")
-    public void testNestedClass() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("typealias.kt")
-    public void testTypealias() throws Exception {
-        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
-    }
-
-    @Nested
-    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled")
-    @TestDataPath("$PROJECT_ROOT")
-    public class WithTestCompilerPluginEnabled {
-        @Test
-        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("myInterfaceSupertype.kt")
-        public void testMyInterfaceSupertype() throws Exception {
-            runTest("analysis/analysis-api/testData/symbols/symbolByFqName/withTestCompilerPluginEnabled/myInterfaceSupertype.kt");
-        }
-    }
+  }
 }

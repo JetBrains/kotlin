@@ -1,0 +1,19 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] topLevelProperty.kt
+    public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = R|/x|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

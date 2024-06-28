@@ -1,0 +1,6 @@
+/lambdaWithReceiver.kt:13:29: error: the feature "break continue in inline lambdas" is not supported in language versions 1.*, please use version 2.0 or later
+        if (name == "Kate") break
+                            ^^^^^
+/lambdaWithReceiver.kt:14:30: error: the feature "break continue in inline lambdas" is not supported in language versions 1.*, please use version 2.0 or later
+        if (name == "Masha") continue
+                             ^^^^^^^^

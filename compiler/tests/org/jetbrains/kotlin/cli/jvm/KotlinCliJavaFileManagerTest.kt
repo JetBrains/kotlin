@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.core.CoreJavaFileManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.search.GlobalSearchScope
 import junit.framework.TestCase
@@ -28,8 +27,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -202,7 +199,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
         @Suppress("UNUSED_VARIABLE") // used to implicitly initialize classpath/index in the manager
         val coreJavaFileFinder = VirtualFileFinder.SERVICE.getInstance(project)
-        val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+        val coreJavaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
@@ -218,7 +215,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     private fun assertCanFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
         val allScope = GlobalSearchScope.allScope(project)
 
-        val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
+        val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val stringRequest = classId.asSingleFqName().asString()
 
         val foundByClassId = (manager.findClass(classId, allScope) as JavaClassImpl).psi
@@ -233,7 +230,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     }
 
     private fun assertCannotFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
-        val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
+        val classId = ClassId(FqName(packageFQName), FqName(classFqName), isLocal = false)
         val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(project))
         TestCase.assertNull("Found, but shouldn't have: $classId", foundClass)
     }

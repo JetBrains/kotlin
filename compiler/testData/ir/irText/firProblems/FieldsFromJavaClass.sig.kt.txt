@@ -1,0 +1,6 @@
+// CHECK:
+//   Mangled name: #f(J;X;J1<kotlin.String>){}
+//   Public signature: /f|-2688577840123949128[0]
+//   Public signature debug description: f(J;X;J1<kotlin.String>){}
+fun f(j: J, x: X, j1: J1<String>): Unit
+

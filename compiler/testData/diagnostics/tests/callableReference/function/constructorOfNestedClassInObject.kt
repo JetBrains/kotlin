@@ -1,4 +1,5 @@
 // KT-15951 Callable reference to class constructor from object is not resolved
+// KT-63069
 
 object A {
     class Wrapper

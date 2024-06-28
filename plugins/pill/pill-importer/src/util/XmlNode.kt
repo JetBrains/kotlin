@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.pill.util
 
-import shadow.org.jdom2.Document
-import shadow.org.jdom2.Element
-import shadow.org.jdom2.output.Format
-import shadow.org.jdom2.output.XMLOutputter
+import org.jdom2.Document
+import org.jdom2.Element
+import org.jdom2.output.Format
+import org.jdom2.output.XMLOutputter
 
 fun xml(name: String, vararg args: Pair<String, Any>, block: XmlNode.() -> Unit = {}): XmlNode {
     return XmlNode(name, args.asList(), block)
@@ -19,7 +19,6 @@ class XmlNode(val name: String, private val args: List<Pair<String, Any>>, block
     private var value: Any? = null
 
     init {
-        @Suppress("UNUSED_EXPRESSION")
         block()
     }
 

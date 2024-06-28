@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.asSimpleType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.defaultPrimitiveValue
@@ -27,7 +29,7 @@ import kotlin.reflect.jvm.internal.toJavaClass
 
 /**
  * A caller that is used whenever the declaration has value classes in its parameter types or inline class in return type.
- * Each argument of an value class type is unboxed, and the return value (if it's of an inline class type) is boxed.
+ * Each argument of a value class type is unboxed, and the return value (if it's of an inline class type) is boxed.
  */
 internal class ValueClassAwareCaller<out M : Member?>(
     descriptor: CallableMemberDescriptor,
@@ -37,7 +39,11 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
     private val caller: Caller<M> = if (oldCaller is CallerImpl.Method.BoundStatic) {
         val receiverType = (descriptor.extensionReceiverParameter ?: descriptor.dispatchReceiverParameter)?.type
-        if (receiverType != null && receiverType.needsMfvcFlattening()) {
+        if (
+            receiverType != null &&
+            receiverType.needsMfvcFlattening() &&
+            (!isDefault || descriptor.valueParameters.any { it.declaresDefaultValue() })
+        ) {
             val unboxMethods = getMfvcUnboxMethods(receiverType.asSimpleType())!!
             val boundReceiverComponents = unboxMethods.map { it.invoke(oldCaller.boundReceiver) }.toTypedArray()
             @Suppress("UNCHECKED_CAST")
@@ -61,7 +67,17 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<List<Method>?>, val box: Method?)
 
     private val data: BoxUnboxData = run {
-        val box = descriptor.returnType!!.toInlineClass()?.getBoxMethod(descriptor)
+        val returnType = descriptor.returnType!!
+        val box = if (
+            descriptor is FunctionDescriptor && descriptor.isSuspend &&
+            returnType.substitutedUnderlyingType()?.let { KotlinBuiltIns.isPrimitiveType(it) } == true
+        ) {
+            // Suspend functions always return java.lang.Object, and value classes over primitives are already boxed there.
+            null
+        } else {
+            returnType.toInlineClass()?.getBoxMethod(descriptor)
+        }
+
         if (descriptor.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
@@ -92,7 +108,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         val flattenedShift = if (caller is CallerImpl.Method.BoundStaticMultiFieldValueClass) -caller.receiverComponentsCount else shift
 
-        val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor) { isValueClass() }
+        val kotlinParameterTypes: List<KotlinType> = makeKotlinParameterTypes(descriptor, caller.member) { isValueClass() }
 
         fun typeSize(type: KotlinType): Int = getMfvcUnboxMethods(type.asSimpleType())?.size ?: 1
 
@@ -173,7 +189,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
                 if (index in range) {
                     val method = unbox[index]?.single()
                     val arg = args[index]
-                    // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of a inline class type
+                    // Note that arg may be null in case we're calling a $default method, and it's an optional parameter of an inline class type
                     when {
                         method == null -> arg
                         arg != null -> method.invoke(arg)
@@ -186,6 +202,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val result = caller.call(unboxedArguments)
+        if (result === COROUTINE_SUSPENDED) return result
 
         // box is not null only for inline classes
         return box?.invoke(null, result) ?: result
@@ -258,7 +275,7 @@ private fun Caller<*>.checkParametersSize(
 }
 
 private fun makeKotlinParameterTypes(
-    descriptor: CallableMemberDescriptor, isSpecificClass: ClassDescriptor.() -> Boolean
+    descriptor: CallableMemberDescriptor, member: Member?, isSpecificClass: ClassDescriptor.() -> Boolean
 ): List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type
     if (extensionReceiverType != null) {
@@ -271,11 +288,30 @@ private fun makeKotlinParameterTypes(
     } else {
         val containingDeclaration = descriptor.containingDeclaration
         if (containingDeclaration is ClassDescriptor && containingDeclaration.isSpecificClass()) {
-            kotlinParameterTypes.add(containingDeclaration.defaultType)
+            if (member?.acceptsBoxedReceiverParameter() == true) {
+                // hack to forbid unboxing dispatchReceiver if it is used upcasted
+                // kotlinParameterTypes are used to determine shifts and calls according to whether type is MFVC/IC or not.
+                // If it is a MFVC/IC, boxes are unboxed. If the actual called member lies in the interface/DefaultImpls class,
+                // it accepts a boxed parameter as ex-dispatch receiver. Making the type nullable allows to prevent unboxing in this case.
+                kotlinParameterTypes.add(containingDeclaration.defaultType.makeNullable())
+            } else {
+                kotlinParameterTypes.add(containingDeclaration.defaultType)
+            }
         }
     }
 
     descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
+}
+
+private fun Member.acceptsBoxedReceiverParameter(): Boolean {
+    // Method implementation can be placed either in
+    //  * the value class itself,
+    //  * interface$DefaultImpls, 
+    //  * interface default method (Java 8+).
+    // Here we need to understand that it is the second or the third case. Both of the cases cannot be value classes,
+    // so the simplest solution is to check declaringClass for being a value class.
+    val clazz = declaringClass ?: return false
+    return !clazz.kotlin.isValue
 }
 
 internal fun <M : Member?> Caller<M>.createValueClassAwareCallerIfNeeded(

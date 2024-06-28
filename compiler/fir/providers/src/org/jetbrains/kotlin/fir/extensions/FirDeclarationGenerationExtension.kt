@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirLazyValue
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -31,7 +30,7 @@ import kotlin.reflect.KClass
  */
 abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExtension(session) {
     companion object {
-        val NAME = FirExtensionPointName("ExistingClassModification")
+        val NAME: FirExtensionPointName = FirExtensionPointName("ExistingClassModification")
     }
 
     final override val name: FirExtensionPointName
@@ -44,6 +43,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      *
      * If classId has `outerClassId.Companion` format then generated class should be a companion object
      */
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? = null
 
     open fun generateNestedClassLikeDeclaration(
@@ -61,7 +61,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     open fun hasPackage(packageFqName: FqName): Boolean = false
 
     /*
-     * Can be called after SUPERTYPES stage
+     * Can be called on SUPERTYPES stage
      *
      * `generate...` methods will be called only if `get...Names/ClassIds/CallableIds` returned corresponding
      *   declaration name
@@ -71,23 +71,23 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      */
     open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
     open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
+
+    @ExperimentalTopLevelDeclarationsGenerationApi
     open fun getTopLevelClassIds(): Set<ClassId> = emptySet()
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 
     // ----------------------------------- internal utils -----------------------------------
 
-    @FirExtensionApiInternals
-    val nestedClassifierNamesCache: FirCache<FirClassSymbol<*>, Set<Name>, NestedClassGenerationContext> =
-        session.firCachesFactory.createCache { symbol, context ->
-            getNestedClassifiersNames(symbol, context)
-        }
-
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
     val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =
         session.firCachesFactory.createLazyValue { getTopLevelClassIds() }
 
+    @OptIn(ExperimentalTopLevelDeclarationsGenerationApi::class)
     @FirExtensionApiInternals
     val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }

@@ -1,2 +1,0 @@
-Resolved to:
-0: (in java.util) <T : kotlin.Any!> Comparator(function: ((T & kotlin.Any..T?), (T & kotlin.Any..T?)) -> kotlin.Int): java.util.Comparator<T>

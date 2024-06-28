@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.text.StringsKt;
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.codegen.range.RangeValue;
 import org.jetbrains.kotlin.codegen.range.RangeValuesKt;
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
@@ -62,14 +59,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject;
-import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.*;
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
@@ -92,6 +84,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
+import org.jetbrains.kotlin.utils.exceptions.PlatformExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -139,6 +132,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     private final SwitchCodegenProvider switchCodegenProvider;
+    private final InlineScopesGenerator inlineScopesGenerator;
+
     private final TypeSystemCommonBackendContext typeSystem;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
@@ -173,6 +168,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
         this.switchCodegenProvider = new SwitchCodegenProvider(this);
         this.typeSystem = new ClassicTypeSystemContextImpl(state.getModule().getBuiltIns());
+
+        boolean inlineScopesEnabled = state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS);
+        this.inlineScopesGenerator = inlineScopesEnabled ? new InlineScopesGenerator() : null;
     }
 
     @Nullable
@@ -349,10 +347,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             return genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
         }
-        catch (ProcessCanceledException | CompilationException e) {
+        catch (CompilationException e) {
             throw e;
         }
         catch (Throwable e) {
+            PlatformExceptionUtilsKt.rethrowIntellijPlatformExceptionIfNeeded(e);
             throw new CompilationException("Failed to generate expression: " + selector.getClass().getSimpleName(), e, selector);
         }
     }
@@ -857,12 +856,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public ConstantValue<?> getCompileTimeConstant(@NotNull KtExpression expression) {
-        return getCompileTimeConstant(expression, bindingContext, state.getShouldInlineConstVals());
+        return getCompileTimeConstant(expression, bindingContext, state.getConfig().getShouldInlineConstVals());
     }
 
     @Nullable
     public ConstantValue<?> getPrimitiveOrStringCompileTimeConstant(@NotNull KtExpression expression) {
-        return getPrimitiveOrStringCompileTimeConstant(expression, bindingContext, state.getShouldInlineConstVals());
+        return getPrimitiveOrStringCompileTimeConstant(expression, bindingContext, state.getConfig().getShouldInlineConstVals());
     }
 
     @Nullable
@@ -1577,6 +1576,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return myLastLineNumber;
     }
 
+    @Override
+    public InlineScopesGenerator getInlineScopesGenerator() {
+        return inlineScopesGenerator;
+    }
+
     private boolean doFinallyOnReturn(@NotNull Label afterReturnLabel, @NotNull List<TryBlockStackElement> nestedTryBlocksWithoutFinally) {
         if(!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
@@ -1686,7 +1690,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             CallableMemberDescriptor descriptor = getContext().getContextDescriptor();
             NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
             boolean isNonLocalReturn = nonLocalReturn != null;
-            if (isNonLocalReturn && state.isInlineDisabled()) {
+            if (isNonLocalReturn && state.getConfig().isInlineDisabled()) {
                 state.getDiagnostics().report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression));
                 genThrow(v, "java/lang/UnsupportedOperationException",
                          "Non-local returns are not allowed with inlining disabled");
@@ -2309,9 +2313,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         boolean directAccessToGetter =
-                couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context, state.getShouldInlineConstVals());
+                couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context, state.getConfig().getShouldInlineConstVals());
         boolean directAccessToSetter =
-                couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, state.getShouldInlineConstVals());
+                couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, state.getConfig().getShouldInlineConstVals());
 
         if (fieldAccessorKind == AccessorKind.LATEINIT_INTRINSIC) {
             skipPropertyAccessors =
@@ -2669,7 +2673,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod method = typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
 
         if (method.getAsmMethod().getName().contains("-") &&
-            !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+            !state.getConfig().getUseOldManglingSchemeForFunctionsWithInlineClassesInSignatures()
         ) {
             Boolean classFileContainsMethod =
                     InlineClassesCodegenUtilKt.classFileContainsMethod(fd, state, method.getAsmMethod());
@@ -2707,8 +2711,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        if (AssertCodegenUtilKt.isAssertCall(resolvedCall) && !state.getAssertionsMode().equals(JVMAssertionsMode.LEGACY)) {
-            AssertCodegenUtilKt.generateAssert(state.getAssertionsMode(), resolvedCall, this, parentCodegen);
+        if (AssertCodegenUtilKt.isAssertCall(resolvedCall) && !state.getConfig().getAssertionsMode().equals(JVMAssertionsMode.LEGACY)) {
+            AssertCodegenUtilKt.generateAssert(state.getConfig().getAssertionsMode(), resolvedCall, this, parentCodegen);
             return;
         }
 
@@ -2778,7 +2782,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
-            if (state.getUseKotlinNothingValueException()) {
+            if (state.getConfig().getUseKotlinNothingValueException()) {
                 v.anew(Type.getObjectType("kotlin/KotlinNothingValueException"));
                 v.dup();
                 v.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false);
@@ -2881,7 +2885,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         // We should inline callable containing reified type parameters even if inline is disabled
         // because they may contain something to reify and straight call will probably fail at runtime
-        boolean shouldInline = isInline && (!state.isInlineDisabled() || InlineUtil.containsReifiedTypeParameters(descriptor));
+        boolean shouldInline = isInline && (!state.getConfig().isInlineDisabled() || InlineUtil.containsReifiedTypeParameters(descriptor));
         if (!shouldInline) return defaultCallGenerator;
 
         FunctionDescriptor original =
@@ -2897,7 +2901,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContext().getContextKind());
         if (signature.getAsmMethod().getName().contains("-") &&
-            !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+            !state.getConfig().getUseOldManglingSchemeForFunctionsWithInlineClassesInSignatures()
         ) {
             Boolean classFileContainsMethod =
                     InlineClassesCodegenUtilKt.classFileContainsMethod(functionDescriptor, state, signature.getAsmMethod());
@@ -2994,7 +2998,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         else if (receiverValue instanceof ExpressionReceiver) {
             ExpressionReceiver expressionReceiver = (ExpressionReceiver) receiverValue;
             StackValue stackValue = gen(expressionReceiver.getExpression());
-            if (!state.isReceiverAssertionsDisabled()) {
+            if (!state.getConfig().isReceiverAssertionsDisabled()) {
                 RuntimeAssertionInfo runtimeAssertionInfo =
                         bindingContext.get(JvmBindingContextSlices.RECEIVER_RUNTIME_ASSERTION_INFO, expressionReceiver);
                 stackValue = genNotNullAssertions(state, stackValue, runtimeAssertionInfo);
@@ -4402,7 +4406,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return StackValue.operation(base.type, base.kotlinType, v -> {
                 base.put(base.type, base.kotlinType, v);
                 v.dup();
-                if (state.getUnifiedNullChecks()) {
+                if (state.getConfig().getUnifiedNullChecks()) {
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false);
                 } else {
                     Label ok = new Label();
@@ -5162,7 +5166,7 @@ The "returned" value of try expression with no finally is either the last expres
             }
 
             CodegenUtilKt.generateAsCast(
-                    v, rightKotlinType, boxedRightType, safeAs, state.getUnifiedNullChecks()
+                    v, rightKotlinType, boxedRightType, safeAs, state.getConfig().getUnifiedNullChecks()
             );
 
             return Unit.INSTANCE;

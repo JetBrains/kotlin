@@ -10,6 +10,7 @@ const val benchmarkSize = 10000
 expect class ComplexNumber
 
 expect class ComplexNumbersBenchmark() {
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
     fun generateNumbersSequence(): List<ComplexNumber>
     fun sumComplex()
     fun subComplex()

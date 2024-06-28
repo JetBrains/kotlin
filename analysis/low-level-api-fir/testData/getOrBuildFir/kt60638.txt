@@ -1,0 +1,30 @@
+KT element: KtNameReferenceExpression
+FIR element: FirErrorNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<Expression 'isInterface' of type 'kotlin/Int' cannot be invoked as a function>#
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] kt60638.kt
+    package usage
+
+    public final [ResolvedTo(STATUS)] class MyType : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyType] constructor(): R|usage/MyType| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class MyClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor(): R|usage/MyClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val R|usage/MyClass|.isInterface: R|kotlin/Int|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(4)
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] type: R|usage/MyType|): R|kotlin/Unit| {
+        R|<local>/type|.<Expression 'isInterface' of type 'kotlin/Int' cannot be invoked as a function>#()
+    }

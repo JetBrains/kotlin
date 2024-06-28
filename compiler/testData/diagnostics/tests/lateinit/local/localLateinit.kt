@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +LateinitLocalVariables
+// LANGUAGE: +LateinitLocalVariables
 
 fun test() {
     lateinit var s: String

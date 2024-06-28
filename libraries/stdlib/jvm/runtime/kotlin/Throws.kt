@@ -22,4 +22,5 @@ package kotlin
  * ```
  */
 @SinceKotlin("1.4")
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT") // @Retention(BINARY) on expect needed for native target
 public actual typealias Throws = kotlin.jvm.Throws

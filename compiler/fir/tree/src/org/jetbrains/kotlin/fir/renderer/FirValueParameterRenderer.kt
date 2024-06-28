@@ -10,11 +10,12 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 open class FirValueParameterRenderer {
     internal lateinit var components: FirRendererComponents
-    protected val printer get() = components.printer
-    protected val visitor get() = components.visitor
-    private val annotationRenderer get() = components.annotationRenderer
-    protected val declarationRenderer get() = components.declarationRenderer
-    private val modifierRenderer get() = components.modifierRenderer
+    protected val printer: FirPrinter get() = components.printer
+    protected val visitor: FirRenderer.Visitor get() = components.visitor
+    private val annotationRenderer: FirAnnotationRenderer? get() = components.annotationRenderer
+    protected val declarationRenderer: FirDeclarationRenderer? get() = components.declarationRenderer
+    private val modifierRenderer: FirModifierRenderer? get() = components.modifierRenderer
+    protected val typeRenderer: ConeTypeRenderer get() = components.typeRenderer
 
     fun renderParameters(valueParameters: List<FirValueParameter>) {
         printer.print("(")
@@ -34,8 +35,13 @@ open class FirValueParameterRenderer {
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
             printer.print(valueParameter.name.toString() + ": ")
         }
-        valueParameter.returnTypeRef.accept(visitor)
+
+        renderParameterType(valueParameter)
         renderDefaultValue(valueParameter)
+    }
+
+    protected open fun renderParameterType(valueParameter: FirValueParameter) {
+        valueParameter.returnTypeRef.accept(visitor)
     }
 
     protected open fun renderDefaultValue(valueParameter: FirValueParameter) {

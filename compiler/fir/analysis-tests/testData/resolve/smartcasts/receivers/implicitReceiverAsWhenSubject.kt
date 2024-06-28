@@ -1,4 +1,4 @@
-// !DUMP_CFG
+// DUMP_CFG
 fun Any.test_1(): Int = when (this) {
     is List<*> -> this.size
     is String -> length

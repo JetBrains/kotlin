@@ -6,9 +6,9 @@
           @0:8..33 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FUNCTION' type=kotlin.annotation.AnnotationTarget
           @0:8..33 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_GETTER' type=kotlin.annotation.AnnotationTarget
           @0:8..33 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_SETTER' type=kotlin.annotation.AnnotationTarget
-    @1:20..63 CONSTRUCTOR visibility:public <> (description:kotlin.String) returnType:<root>.MyAnnotation [primary]
+    @1:38..63 CONSTRUCTOR visibility:public <> (description:kotlin.String) returnType:<root>.MyAnnotation [primary]
       @1:39..62 VALUE_PARAMETER name:description index:0 type:kotlin.String
-      @0:0..1:63 BLOCK_BODY
+      @1:38..63 BLOCK_BODY
         @0:0..1:63 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:0..1:63 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]'
     @1:39..62 PROPERTY name:description visibility:public modality:FINAL [val]

@@ -9,10 +9,12 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 /**
- * Base Kotlin plugin that is responsible for creating basic build services, configurations,
- * and other setup that is common for all Kotlin projects.
+ * The base interface for all Kotlin Gradle plugins.
  */
 interface KotlinBasePlugin : Plugin<Project> {
-    /** Gets the current version of the Kotlin Gradle plugin. */
+
+    /**
+     * The current plugin version.
+     */
     val pluginVersion: String
 }

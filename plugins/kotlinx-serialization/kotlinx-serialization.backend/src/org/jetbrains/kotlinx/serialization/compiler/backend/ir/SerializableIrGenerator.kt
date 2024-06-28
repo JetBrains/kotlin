@@ -6,13 +6,13 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.lower.irThrow
+import org.jetbrains.kotlin.backend.jvm.lower.isJvmOptimizableDelegate
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -55,7 +56,7 @@ class SerializableIrGenerator(
     private val IrClass.isInternalSerializable: Boolean get() = kind == ClassKind.CLASS && hasSerializableOrMetaAnnotationWithoutArgs()
 
     private val cachedChildSerializers: List<IrExpression?> =
-        irClass.companionObject()!!.createCachedChildSerializers(properties.serializableProperties)
+        irClass.companionObject()!!.createCachedChildSerializers(irClass, properties.serializableProperties)
 
     private val cachedChildSerializersProperty: IrProperty? =
         irClass.companionObject()!!.addCachedChildSerializersProperty(cachedChildSerializers)
@@ -82,8 +83,10 @@ class SerializableIrGenerator(
                     it is IrProperty && it.backingField != null -> {
                         if (it in serialDescs) {
                             current = it
-                        } else if (it.backingField?.initializer != null) {
-                            // skip transient lateinit or deferred properties (with null initializer)
+                        } else if (it.backingField?.initializer != null &&
+                            !(it.isJvmOptimizableDelegate() && compilerContext.platform.isJvm())
+                        ) {
+                            // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
                             val expression = initializerAdapter(it.backingField!!.initializer!!)
 
                             statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
@@ -91,7 +94,7 @@ class SerializableIrGenerator(
                         }
                     }
                     it is IrAnonymousInitializer -> {
-                        val statements = it.body.deepCopyWithVariables().statements
+                        val statements = it.body.deepCopyWithoutPatchingParents().statements
                         statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
                             .addAll(statements)
                     }
@@ -127,7 +130,7 @@ class SerializableIrGenerator(
             }
             when {
                 superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@addFunctionBody)
-                superClass.isInternalSerializable -> {
+                superClass.shouldHaveGeneratedMethods() -> {
                     startPropOffset = generateSuperSerializableCall(superClass, ctor.valueParameters, seenVarsOffset)
                 }
                 else -> generateSuperNonSerializableCall(superClass)
@@ -193,11 +196,11 @@ class SerializableIrGenerator(
         // internally generated serializer always declared inside serializable class
 
         val serialDescriptorGetter =
-            serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!
+            serializerIrClass.getPropertyGetter(SERIAL_DESC_FIELD)!!.owner
         return irGet(
-            serializerIrClass.defaultType,
+            serialDescriptorGetter.returnType,
             irGetObject(serializerIrClass),
-            serialDescriptorGetter.owner.symbol
+            serialDescriptorGetter.symbol
         )
     }
 
@@ -272,7 +275,7 @@ class SerializableIrGenerator(
         allValueParameters: List<IrValueParameter>,
         propertiesStart: Int
     ): Int {
-        check(superClass.isInternalSerializable)
+        check(superClass.shouldHaveGeneratedMethods())
         val superCtorRef = superClass.findSerializableSyntheticConstructor()
             ?: error("Class serializable internally should have special constructor with marker")
         val superProperties = serializablePropertiesForIrBackend(superClass).serializableProperties
@@ -338,7 +341,8 @@ class SerializableIrGenerator(
                             serial,
                             compilerContext,
                             arg.typeOrNull!!,
-                            genericIdx
+                            genericIdx,
+                            irClass
                         ) { it, _ ->
                             irGet(writeSelfFunction.valueParameters[3 + it])
                         }!!
@@ -368,7 +372,7 @@ class SerializableIrGenerator(
     }
 
     private fun generateSyntheticInternalConstructor() {
-        val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
+        val serializerDescriptor = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
         if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(LOAD, compilerContext.afterK2) }) {
             val constrDesc = irClass.constructors.find(IrConstructor::isSerializationCtor) ?: return
             generateInternalConstructor(constrDesc)
@@ -376,7 +380,7 @@ class SerializableIrGenerator(
     }
 
     private fun generateSyntheticMethods() {
-        val serializerDescriptor = irClass.classSerializer(compilerContext)?.owner ?: return
+        val serializerDescriptor = irClass.findSerializerForGeneratedMethods(compilerContext)?.owner ?: return
         if (irClass.shouldHaveSpecificSyntheticMethods { serializerDescriptor.findPluginGeneratedMethod(SAVE, compilerContext.afterK2) }) {
             val func = irClass.findWriteSelfMethod() ?: return
             func.origin = SERIALIZATION_PLUGIN_ORIGIN
@@ -390,7 +394,7 @@ class SerializableIrGenerator(
             irClass: IrClass,
             context: SerializationPluginContext,
         ) {
-            if (irClass.isInternalSerializable) {
+            if (irClass.shouldHaveGeneratedMethods()) {
                 SerializableIrGenerator(irClass, context).generate()
                 irClass.patchDeclarationParents(irClass.parent)
             } else {

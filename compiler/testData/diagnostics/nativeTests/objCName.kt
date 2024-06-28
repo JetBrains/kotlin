@@ -186,6 +186,17 @@ open class Derived2 : Derived() {
     override fun foo() {}
 }
 
+interface I1 {
+    @ObjCName("foo1")
+    fun foo()
+}
+
+interface DerivedI1 : I1 {
+    override fun foo()
+}
+
+abstract class KT64276 : Base(), DerivedI1 {}
+
 private const val exact = false
 private const val objcName = "nonLiteralArgsObjC"
 

@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrElementTransformer<IrFunction?> {
@@ -56,24 +54,8 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             // TODO: use more precise type arguments.
             val typeArguments = (0 until newCallee.typeParameters.size).map { irBuiltins.anyNType }
 
-            if (!argument.type.isNullable()) {
-                irCall(newCallee, typeArguments).apply {
-                    extensionReceiver = argument
-                }
-            } else {
-                irBlock(argument) {
-                    val tmp = irTemporary(argument)
-                    val call = irCall(newCallee, typeArguments).apply {
-                        extensionReceiver = irGet(tmp)
-                    }
-                    +irIfThenElse(call.type,
-                        irEqeqeq(irGet(tmp), irNull()),
-                        if (isToString)
-                            irString("null")
-                        else
-                            irInt(0),
-                        call)
-                }
+            irCallWithSubstitutedType(newCallee, typeArguments).apply {
+                extensionReceiver = argument
             }
         }
     }

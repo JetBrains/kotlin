@@ -1,0 +1,9 @@
+MODULE main
+	CLASS FooFoo.class
+		CLASS METADATA
+			FUNCTION bar(ILjava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.valueParameters
+					K1
+						(x: kotlin/Int, y: kotlin/String? /* = ... */)
+					K2
+						(x: kotlin/Int, y: kotlin/String?)

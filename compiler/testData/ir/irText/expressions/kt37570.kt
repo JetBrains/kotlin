@@ -1,4 +1,5 @@
 // FIR_IDENTICAL
+
 fun a() = "string"
 
 class A {

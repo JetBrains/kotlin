@@ -1,3 +1,5 @@
+import kotlin.io.path.createTempDirectory
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -7,6 +9,8 @@ dependencies {
     testApi(project(":kotlin-scripting-compiler"))
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit4)
     testApi(projectTests(":generators:test-generator"))
     testRuntimeOnly(toolsJar())
 }
@@ -26,7 +30,7 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJa
 val generateKotlinUseSiteFromJavaOnesForJspecifyTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKotlinUseSitesFromJavaOnesForJspecifyTestsKt")
 
 task<Exec>("downloadJspecifyTests") {
-    val tmpDirPath = createTempDir().absolutePath
+    val tmpDirPath = createTempDirectory().toAbsolutePath().toString()
     doFirst {
         executable("git")
         args("clone", "https://github.com/jspecify/jspecify/", tmpDirPath)

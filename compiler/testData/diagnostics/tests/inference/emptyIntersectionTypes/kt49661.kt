@@ -1,5 +1,4 @@
-// FIR_IDENTICAL
-// !LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
+// LANGUAGE: -ForbidInferringTypeVariablesIntoEmptyIntersection
 // RENDER_DIAGNOSTICS_FULL_TEXT
 open class Foo
 inline fun <reified T : Foo> g(): T? = null

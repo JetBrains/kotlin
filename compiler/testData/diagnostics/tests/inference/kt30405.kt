@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ExpectedTypeFromCast
-// !CHECK_TYPE
+// LANGUAGE: +ExpectedTypeFromCast
+// CHECK_TYPE
 // Issue: KT-30405
 
 inline fun <reified T> foo(): T {

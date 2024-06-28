@@ -1,0 +1,35 @@
+FILE fqName:<root> fileName:/listAssignmentInWhen.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:list type:kotlin.collections.MutableList<kotlin.Any?> [val]
+        CALL 'public final fun mutableListOf <T> (vararg elements: T of kotlin.collections.mutableListOf): kotlin.collections.MutableList<T of kotlin.collections.mutableListOf> declared in kotlin.collections' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+          <T>: kotlin.Any?
+          elements: VARARG type=kotlin.Array<out kotlin.Any?> varargElementType=kotlin.Any?
+            CONST String type=kotlin.String value="FAIL"
+      CALL 'public final fun foo (list: kotlin.collections.MutableList<kotlin.Any?>, condition: kotlin.Boolean): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        list: GET_VAR 'val list: kotlin.collections.MutableList<kotlin.Any?> declared in <root>.box' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+        condition: CONST Boolean type=kotlin.Boolean value=true
+      CALL 'public final fun foo (list: kotlin.collections.MutableList<kotlin.Any?>, condition: kotlin.Boolean): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        list: GET_VAR 'val list: kotlin.collections.MutableList<kotlin.Any?> declared in <root>.box' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+        condition: CONST Boolean type=kotlin.Boolean value=false
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
+          CALL 'public abstract fun get (index: kotlin.Int): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
+            $this: GET_VAR 'val list: kotlin.collections.MutableList<kotlin.Any?> declared in <root>.box' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+            index: CONST Int type=kotlin.Int value=0
+  FUN name:foo visibility:public modality:FINAL <> (list:kotlin.collections.MutableList<kotlin.Any?>, condition:kotlin.Boolean) returnType:kotlin.Unit
+    VALUE_PARAMETER name:list index:0 type:kotlin.collections.MutableList<kotlin.Any?>
+    VALUE_PARAMETER name:condition index:1 type:kotlin.Boolean
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun foo (list: kotlin.collections.MutableList<kotlin.Any?>, condition: kotlin.Boolean): kotlin.Unit declared in <root>'
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: GET_VAR 'condition: kotlin.Boolean declared in <root>.foo' type=kotlin.Boolean origin=null
+            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              CALL 'public abstract fun set (index: kotlin.Int, element: E of kotlin.collections.MutableList): E of kotlin.collections.MutableList declared in kotlin.collections.MutableList' type=kotlin.Any? origin=EQ
+                $this: GET_VAR 'list: kotlin.collections.MutableList<kotlin.Any?> declared in <root>.foo' type=kotlin.collections.MutableList<kotlin.Any?> origin=null
+                index: CONST Int type=kotlin.Int value=0
+                element: CONST String type=kotlin.String value="OK"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

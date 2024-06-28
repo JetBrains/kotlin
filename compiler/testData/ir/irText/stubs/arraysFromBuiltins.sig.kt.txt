@@ -1,0 +1,11 @@
+// CHECK:
+//   Mangled name: {}test
+//   Public signature: /test|-5712650070209114719[0]
+//   Public signature debug description: {}test
+val test: IntIterator
+  // CHECK JVM_IR:
+  //   Mangled name: #<get-test>(){}kotlin.collections.IntIterator
+  //   Public signature: /test.<get-test>|5296058918654080755[0]
+  //   Public signature debug description: <get-test>(){}kotlin.collections.IntIterator
+  get
+

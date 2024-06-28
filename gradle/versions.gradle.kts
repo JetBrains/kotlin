@@ -26,7 +26,7 @@ val androidStudioVersion = if (extra.has("versions.androidStudioRelease"))
 else
     null
 
-val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+val intellijVersion = extra["versions.intellijSdk"] as String
 val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
 if (intellijVersionDelimiterIndex == -1) {
     error("Invalid IDEA version $intellijVersion")

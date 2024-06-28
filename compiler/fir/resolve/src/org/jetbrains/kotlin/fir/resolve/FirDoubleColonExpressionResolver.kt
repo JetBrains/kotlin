@@ -9,11 +9,14 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.Variance
@@ -35,11 +38,6 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
     class Type(type: ConeKotlinType) : DoubleColonLHS(type)
 }
 
-
-// Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
-internal val FirFunctionCall.hasExplicitValueArguments: Boolean
-    get() = true // TODO: hasExplicitArgumentList || hasExplicitLambdaArguments
-
 class FirDoubleColonExpressionResolver(private val session: FirSession) {
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
@@ -48,7 +46,6 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun FirExpression.canBeConsideredProperExpression(): Boolean {
         return when {
             this is FirQualifiedAccessExpression && explicitReceiver?.canBeConsideredProperExpression() != true -> false
-            this is FirFunctionCall && !hasExplicitValueArguments -> false
             else -> true
         }
     }
@@ -56,7 +53,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     private fun FirExpression.canBeConsideredProperType(): Boolean {
         return when {
             this is FirFunctionCall &&
-                    explicitReceiver?.canBeConsideredProperType() != false -> !hasExplicitValueArguments
+                    explicitReceiver?.canBeConsideredProperType() != false -> false
             this is FirQualifiedAccessExpression &&
                     explicitReceiver?.canBeConsideredProperType() != false &&
                     calleeReference is FirNamedReference -> true
@@ -125,7 +122,7 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
     }
 
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
-        val type = expression.typeRef.coneType
+        val type = expression.resolvedType
 
         if (expression is FirResolvedQualifier) {
             val firClass = expression.expandedRegularClassIfAny() ?: return null
@@ -151,17 +148,28 @@ class FirDoubleColonExpressionResolver(private val session: FirSession) {
             firClassLikeDeclaration.symbol.toLookupTag(),
             Array(firClassLikeDeclaration.typeParameters.size) { index ->
                 val typeArgument = expression.typeArguments.getOrNull(index)
-                if (typeArgument == null) ConeStarProjection
-                else when (typeArgument) {
-                    is FirTypeProjectionWithVariance -> {
-                        val coneType = typeArgument.typeRef.coneType
-                        when (typeArgument.variance) {
-                            Variance.INVARIANT -> coneType
-                            Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
-                            Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
-                        }
+                if (typeArgument == null) {
+                    // We currently only support local classes with captured type parameters from non-classes
+                    // (i.e. local class in generic function).
+                    // TODO(KT-66344) Support inner classes
+                    val typeParameter = firClassLikeDeclaration.typeParameters[index]
+                    if (firClassLikeDeclaration.isLocal && typeParameter is FirOuterClassTypeParameterRef && typeParameter.symbol.containingDeclarationSymbol !is FirClassSymbol) {
+                        typeParameter.symbol.defaultType
+                    } else {
+                        ConeStarProjection
                     }
-                    else -> ConeStarProjection
+                } else {
+                    when (typeArgument) {
+                        is FirTypeProjectionWithVariance -> {
+                            val coneType = typeArgument.typeRef.coneType
+                            when (typeArgument.variance) {
+                                Variance.INVARIANT -> coneType
+                                Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
+                                Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
+                            }
+                        }
+                        else -> ConeStarProjection
+                    }
                 }
             },
             isNullable = resolvedExpression.isNullableLHSForCallableReference

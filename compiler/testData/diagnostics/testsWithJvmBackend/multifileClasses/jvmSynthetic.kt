@@ -3,8 +3,8 @@
 // FILE: f.kt
 
 @file:JvmName("Foo")
-@file:JvmMultifileClass
-<!NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC!>package test<!>
+<!NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC!>@file:JvmMultifileClass<!>
+package test
 
 fun f() {}
 
@@ -20,8 +20,8 @@ val g = ""
 // FILE: h.kt
 
 @file:JvmName("Foo")
-@file:JvmMultifileClass
-<!NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC!>package test<!>
+<!NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC!>@file:JvmMultifileClass<!>
+package test
 
 fun h() {}
 

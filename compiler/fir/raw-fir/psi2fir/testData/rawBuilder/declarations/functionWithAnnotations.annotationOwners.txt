@@ -1,0 +1,27 @@
+@NestedNestedParameterTypeAnnotation(<strcat>(String(nested nested ), prop#))
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@NestedParameterTypeAnnotation(<strcat>(String(nested ), prop#))
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@ParameterTypeAnnotation(<strcat>(prop#))
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@ParameterAnnotation(String(param))
+owner -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@DefaultValueAnnotation()
+owner -> FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@Anno(<strcat>(String(anonymousFunction return type ), prop#))
+owner -> FirNamedFunctionSymbol /foo
+context -> FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo
+
+@Anno(<strcat>(String(anonymousFunction parameter type ), prop#))
+owner -> FirNamedFunctionSymbol /foo
+context -> FirValueParameterSymbol <local>/i from FirAnonymousFunctionSymbol special/anonymous from FirValueParameterSymbol <local>/param1 from FirNamedFunctionSymbol /foo

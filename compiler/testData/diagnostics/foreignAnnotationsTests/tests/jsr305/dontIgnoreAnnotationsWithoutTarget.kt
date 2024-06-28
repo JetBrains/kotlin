@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +TypeEnhancementImprovementsInStrictMode
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// LANGUAGE: +TypeEnhancementImprovementsInStrictMode
+// DIAGNOSTICS: -UNUSED_PARAMETER
 // JSR305_GLOBAL_REPORT: strict
 
 // FILE: test/NonNullApi.java

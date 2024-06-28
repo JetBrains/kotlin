@@ -30,7 +30,7 @@ public final class PointBox {
     public final @org.jetbrains.annotations.NotNull method getValue(): DPoint
     public synthetic final method getValue-x(): double
     public synthetic final method getValue-y(): double
-    public final method setValue-sUp7gFk(p0: double, p1: double): void
+    public final method setValue-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.Metadata

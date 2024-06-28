@@ -1,0 +1,18 @@
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testArrayAccess1(<dynamic>){}
+//   Public signature: /testArrayAccess1|-7245796695879478116[0]
+//   Public signature debug description: testArrayAccess1(<dynamic>){}
+fun testArrayAccess1(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testArrayAccess2(<dynamic>){}
+//   Public signature: /testArrayAccess2|-1661569284054013352[0]
+//   Public signature debug description: testArrayAccess2(<dynamic>){}
+fun testArrayAccess2(d: dynamic): dynamic
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #testArrayAccess3(<dynamic>){}
+//   Public signature: /testArrayAccess3|1401503501141065915[0]
+//   Public signature debug description: testArrayAccess3(<dynamic>){}
+fun testArrayAccess3(d: dynamic): dynamic
+

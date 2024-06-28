@@ -12,15 +12,16 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -28,11 +29,11 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
-    private val disambiguationClassifier: String
+    private val disambiguationClassifier: String,
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
 
@@ -52,16 +53,12 @@ abstract class KotlinJsIrSubTarget(
     }
 
     internal fun configure() {
-        NpmResolverPlugin.apply(project)
-
+        configureTests()
         target.compilations.all {
             val npmProject = it.npmProject
-            it.kotlinOptions {
-                freeCompilerArgs += "$PER_MODULE_OUTPUT_NAME=${npmProject.name}"
-            }
+            @Suppress("DEPRECATION")
+            it.compilerOptions.options.freeCompilerArgs.add("$PER_MODULE_OUTPUT_NAME=${npmProject.name}")
         }
-
-        configureTests()
     }
 
     private val produceExecutable: Unit by lazy {
@@ -122,15 +119,16 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            testJs.dependsOn(binary.linkSyncTask)
-            testJs.inputFileProperty.fileProvider(
-                binary.linkSyncTask.flatMap { linkSyncTask ->
-                    binary.linkTask.flatMap { linkTask ->
-                        linkTask.outputFileProperty.map {
-                            linkSyncTask.destinationDir.resolve(it.name)
-                        }
-                    }
-                }
+            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                testJs.dependsOn(binary.linkSyncTask)
+                binary.mainFileSyncPath
+            } else {
+                testJs.dependsOn(binary.linkTask)
+                binary.mainFile
+            }
+
+            testJs.inputFileProperty.set(
+                inputFileProperty
             )
 
             configureTestDependencies(testJs)
@@ -181,9 +179,9 @@ abstract class KotlinJsIrSubTarget(
         configureBuild(compilation)
     }
 
-    protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
+    abstract fun configureRun(compilation: KotlinJsIrCompilation)
 
-    protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
+    abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
     private fun configureLibrary() {
         target.compilations.all { compilation ->
@@ -207,27 +205,21 @@ abstract class KotlinJsIrSubTarget(
 
                 val mode = binary.mode
 
-                val prepareJsLibrary = registerSubTargetTask<Copy>(
-                    disambiguateCamelCased(
-                        binary.name,
-                        PREPARE_JS_LIBRARY_TASK_NAME
-                    )
-                ) {
-                    it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
-                    it.from(binary.linkSyncTask)
-
-                    it.into(binary.distribution.directory)
-                }
-
-                val distributionTask = registerSubTargetTask<Task>(
+                val distributionTask = registerSubTargetTask<Copy>(
                     disambiguateCamelCased(
                         binary.name,
                         DISTRIBUTION_TASK_NAME
                     )
                 ) {
-                    it.dependsOn(prepareJsLibrary)
+                    if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                        it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                        it.from(binary.linkSyncTask)
+                    } else {
+                        it.from(binary.linkTask)
+                        it.from(project.tasks.named(compilation.processResourcesTaskName))
+                    }
 
-                    it.outputs.dir(project.newFileProperty { binary.distribution.directory })
+                    it.into(binary.distribution.outputDirectory)
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
@@ -239,7 +231,7 @@ abstract class KotlinJsIrSubTarget(
     internal inline fun <reified T : Task> registerSubTargetTask(
         name: String,
         args: List<Any> = emptyList(),
-        noinline body: (T) -> (Unit)
+        noinline body: (T) -> (Unit),
     ): TaskProvider<T> =
         project.registerTask(name, args) {
             it.group = taskGroupName
@@ -249,9 +241,6 @@ abstract class KotlinJsIrSubTarget(
     companion object {
         const val RUN_TASK_NAME = "run"
 
-        const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         const val DISTRIBUTION_TASK_NAME = "distribution"
-
-        const val PREPARE_JS_LIBRARY_TASK_NAME = "prepare"
     }
 }

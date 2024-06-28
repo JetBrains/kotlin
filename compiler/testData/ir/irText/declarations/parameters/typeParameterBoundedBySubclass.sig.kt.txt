@@ -1,0 +1,60 @@
+// CHECK:
+//   Mangled name: Base1
+//   Public signature: /Base1|null[0]
+abstract class Base1<T : Derived1> {
+  // CHECK:
+  //   Mangled name: Base1#<init>(){}
+  //   Public signature: /Base1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Base2
+//   Public signature: /Base2|null[0]
+abstract class Base2 {
+  // CHECK:
+  //   Mangled name: Base2#<init>(){}
+  //   Public signature: /Base2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Base2#foo(0:0){0§<Derived2>}
+  //   Public signature: /Base2.foo|-3916608809820920154[0]
+  //   Public signature debug description: foo(0:0){0§<Derived2>}
+  fun <T : Derived2> foo(x: T): Unit
+
+}
+
+// CHECK:
+//   Mangled name: Derived1
+//   Public signature: /Derived1|null[0]
+class Derived1 : Base1<Derived1> {
+  // CHECK:
+  //   Mangled name: Derived1#<init>(){}
+  //   Public signature: /Derived1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Derived2
+//   Public signature: /Derived2|null[0]
+class Derived2 : Base2 {
+  // CHECK:
+  //   Mangled name: Derived2#<init>(){}
+  //   Public signature: /Derived2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+  // CHECK:
+  //   Mangled name: Derived2#foo(0:0){0§<Derived2>}
+  //   Public signature: /Derived2.foo|-3916608809820920154[0]
+  //   Public signature debug description: foo(0:0){0§<Derived2>}
+  /* fake */ override fun <T : Derived2> foo(x: T): Unit
+
+}
+

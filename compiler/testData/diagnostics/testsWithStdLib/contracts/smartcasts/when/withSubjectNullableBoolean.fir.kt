@@ -1,13 +1,13 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !OPT_IN: kotlin.contracts.ExperimentalContracts
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// OPT_IN: kotlin.contracts.ExperimentalContracts
+// DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
 
 fun safeIsString(x: Any?): Boolean? {
-    <!WRONG_IMPLIES_CONDITION!>contract {
+    contract {
         returns(true) implies (x is String)
-    }<!>
+    }
     return x?.let { it is String }
 }
 

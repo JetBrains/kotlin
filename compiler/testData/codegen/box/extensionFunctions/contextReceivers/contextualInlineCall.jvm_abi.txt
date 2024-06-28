@@ -1,0 +1,61 @@
+MODULE main
+	CLASS ContextualInlineCallKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				contextualInlineCall.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 contextualInlineCall.kt
+				ContextualInlineCallKt
+				*L
+				1#1,40:1
+				11#1:41
+				14#1:42
+				17#1:43
+				20#1:44
+				26#1:45
+				25#1,2:46
+				*S KotlinDebug
+				*F
+				+ 1 contextualInlineCall.kt
+				ContextualInlineCallKt
+				*L
+				30#1:41
+				31#1:42
+				32#1:43
+				33#1:44
+				35#1:45
+				36#1:46,2
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				contextualInlineCall.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 contextualInlineCall.kt
+				ContextualInlineCallKt
+				*L
+				1#1,40:1
+				11#1:41
+				14#1:42
+				17#1:43
+				20#1:44
+				26#1:45
+				24#1,3:46
+				*S KotlinDebug
+				*F
+				+ 1 contextualInlineCall.kt
+				ContextualInlineCallKt
+				*L
+				30#1:41
+				31#1:42
+				32#1:43
+				33#1:44
+				35#1:45
+				36#1:46,3
+				*E
+				 } )

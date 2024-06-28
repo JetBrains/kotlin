@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
-import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClass
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -65,7 +68,7 @@ internal class KTypeGenerator(
                     // Leave upper bounds of non-reified type parameters as is, even if they are reified themselves.
                     irKTypeParameter(classifier.owner, leaveReifiedForLater = false, seenTypeParameters = seenTypeParameters)
                 }
-                else -> TODO("Unexpected classifier: $classifier")
+                is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
             }
 
             return irKTypeImpl(
@@ -108,7 +111,7 @@ internal class KTypeGenerator(
         val result = irConstantObject(symbols.kTypeParameterImpl.owner, mapOf(
                 "name" to irConstantString(typeParameter.name.asString()),
                 "containerFqName" to irConstantString(typeParameter.parentUniqueName),
-                "upperBounds" to irKTypeList(typeParameter.superTypes, leaveReifiedForLater, seenTypeParameters),
+                "upperBoundsArray" to irKTypeArray(typeParameter.superTypes, leaveReifiedForLater, seenTypeParameters),
                 "varianceId" to irConstantInt(mapVariance(typeParameter.variance)),
                 "isReified" to irConstantBoolean(typeParameter.isReified),
         ))
@@ -122,18 +125,15 @@ internal class KTypeGenerator(
             else -> parent.fqNameForIrSerialization.asString()
         }
 
-    private fun IrBuilderWithScope.irKTypeList(
+    private fun IrBuilderWithScope.irKTypeArray(
             types: List<IrType>,
             leaveReifiedForLater: Boolean,
             seenTypeParameters: MutableSet<IrTypeParameter>
     ): IrConstantValue {
         val itemType = symbols.kType.defaultType
-        val elements = irConstantArray(symbols.array.typeWith(itemType),
+        return irConstantArray(symbols.array.typeWith(itemType),
                 types.map { irKType(it, leaveReifiedForLater, seenTypeParameters) }
         )
-        return irConstantObject(symbols.arrayAsList.owner, mapOf(
-                "array" to elements
-        ))
     }
 
     // this constants are copypasted from KVarianceMapper.Companion in KTypeImpl.kt
@@ -180,8 +180,14 @@ internal fun IrBuilderWithScope.irKClass(context: KonanBackendContext, symbol: I
             this.symbol == context.ir.symbols.nativePointed || getSuperClassNotAny()?.isNativePointedChild() == true
 
     return when {
+        symbol.owner.isExternalObjCClass() ->
+            if (symbol.owner.isInterface)
+                irKClassUnsupported(context, "KClass for Objective-C protocols is not supported yet")
+            else
+                irConstantObject(symbols.kObjCClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+
         symbol.owner.isObjCClass() ->
-            irKClassUnsupported(context, "KClass for Objective-C classes is not supported yet")
+            irKClassUnsupported(context, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
 
         symbol.owner.isNativePointedChild() ->
             irKClassUnsupported(context, "KClass for interop types is not supported yet")

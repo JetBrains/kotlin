@@ -42,7 +42,7 @@ FILE: second.kt
     }
     public final val ONE: R|second/Second| = Q|second/Second|.R|second/Second.THREE|
         public get(): R|second/Second|
-    public final fun foo(f: R|first/First|): R|kotlin/Unit| {
+    public final fun foo(f: R|first/First|): R|kotlin/Int| {
         ^foo when (R|<local>/f|) {
             ==($subj$, R|second/ONE|) ->  {
                 Int(1)
@@ -53,7 +53,7 @@ FILE: second.kt
         }
 
     }
-    public final fun bar(s: R|second/Second|): R|kotlin/Unit| {
+    public final fun bar(s: R|second/Second|): R|kotlin/Int| {
         ^bar when (R|<local>/s|) {
             ==($subj$, R|first/THREE|) ->  {
                 Int(3)

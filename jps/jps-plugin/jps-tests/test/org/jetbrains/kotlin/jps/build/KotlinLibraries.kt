@@ -41,11 +41,11 @@ enum class KotlinJpsLibrary(val id: String, roots: () -> Array<File>) {
 
     JsStdLib(
         "KotlinJavaScript",
-        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibJarPath) }
+        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath) }
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsKotlinTestJarPath) }
+        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsKotlinTestKlibPath) }
     ),
     Lombok(
         "lombok",

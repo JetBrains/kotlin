@@ -9,6 +9,6 @@ fun test_1() {
 
 fun test_2() {
     <!UNRESOLVED_REFERENCE!>myRun<!> {
-        materialize()
+        <!CANNOT_INFER_PARAMETER_TYPE!>materialize<!>()
     }
 }
