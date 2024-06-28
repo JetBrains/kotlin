@@ -139,6 +139,12 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
   }
 
   @Test
+  @TestMetadata("dataClass.kt")
+  public void testDataClass() {
+    runTest("plugins/parcelize/parcelize-compiler/testData/box/dataClass.kt");
+  }
+
+  @Test
   @TestMetadata("duration.kt")
   public void testDuration() {
     runTest("plugins/parcelize/parcelize-compiler/testData/box/duration.kt");

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELAB
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_SHOULD_NOT_BE_ENUM_CLASS
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER_SHOULD_BE_OBJECT
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.PARCELER_TYPE_INCOMPATIBLE
@@ -116,6 +117,13 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
             PARCELABLE_TYPE_NOT_SUPPORTED,
             "Type is not directly supported by 'Parcelize'. " +
                     "Annotate the parameter type with '@RawValue' if you want it to be serialized using 'writeValue()'."
+        )
+
+        map.put(
+            PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED,
+            "Type is not directly supported by ''Parcelize'' because it contains an instance of {0}. " +
+                    "Add the ''@TypeParceler<{0}, ...>'' annotation to provide the missing serialization logic.",
+            RENDER_TYPE
         )
 
         map.put(

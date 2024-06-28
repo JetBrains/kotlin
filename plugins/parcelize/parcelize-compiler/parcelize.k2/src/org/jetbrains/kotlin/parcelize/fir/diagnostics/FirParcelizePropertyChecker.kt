@@ -14,18 +14,25 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.parcelize.BuiltinParcelableTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames
@@ -74,8 +81,13 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
 
         val session = context.session
         val customParcelerTypes = getCustomParcelerTypes(property.annotations + containingClassSymbol.annotations, session)
-        if (!checkParcelableType(type, customParcelerTypes, session)) {
+        val unsupported = checkParcelableType(type, customParcelerTypes, context)
+        if (type in unsupported) {
             reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED, context)
+        } else {
+            unsupported.forEach {
+                reporter.reportOn(property.returnTypeRef.source, KtErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED, it, context)
+            }
         }
     }
 
@@ -88,37 +100,74 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             }
         }
 
-    private fun checkParcelableType(type: ConeKotlinType, customParcelerTypes: Set<ConeKotlinType>, session: FirSession): Boolean {
+    // Returns the set of types that are *not* supported. This set can include types other than `type`
+    // if it is a generally supported container type that contains unsupported elements in this instantiation.
+    private fun checkParcelableType(
+        type: ConeKotlinType,
+        customParcelerTypes: Set<ConeKotlinType>,
+        context: CheckerContext
+    ): Set<ConeKotlinType> {
+        val session = context.session
         if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
-            return true
+            return emptySet()
         }
 
         val upperBound = type.getErasedUpperBound(session)
         val symbol = upperBound?.toRegularClassSymbol(session)
-            ?: return false
+            ?: return setOf(type)
 
         if (symbol.classKind.isSingleton || symbol.classKind.isEnumClass) {
-            return true
+            return emptySet()
         }
 
         val fqName = symbol.classId.asFqNameString()
         if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
-            return true
+            return emptySet()
         }
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
-            return upperBound.typeArguments.all { projection ->
-                projection.type?.let { checkParcelableType(it, customParcelerTypes, session) } ?: false
+            return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
+                val elementType = arg.type ?: session.builtinTypes.nullableAnyType.type
+                acc union checkParcelableType(elementType, customParcelerTypes, context)
             }
         }
 
-        return with(session.typeContext) {
-            type.anySuperTypeConstructor {
-                it is ConeKotlinType &&
-                        (it.classId?.asFqNameString() in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES ||
-                                it.isSomeFunctionType(session))
+        with(session.typeContext) {
+            if (type.anySuperTypeConstructor { it is ConeKotlinType && it.isParcelableSupertype(session) }) {
+                return emptySet()
             }
         }
+
+        if (symbol.isData) {
+            val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>().filter { it.fromPrimaryConstructor }
+            // Serialization uses the property getters, deserialization uses the constructor.
+            if (properties.all { it.isVisible(context) } && symbol.primaryConstructorSymbol(session)?.isVisible(context) == true) {
+                val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { (parameter, arg) ->
+                    when (arg) {
+                        is ConeKotlinType -> parameter to arg
+                        is ConeKotlinTypeProjectionOut -> parameter to arg.type
+                        else -> null
+                    }
+                }.toMap()
+                val substitutor = substitutorByMap(typeMapping, context.session)
+                return properties.fold(emptySet()) { acc, property ->
+                    acc union checkParcelableType(substitutor.substituteOrSelf(property.resolvedReturnType), customParcelerTypes, context)
+                }
+            }
+        }
+
+        return setOf(type)
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun FirCallableSymbol<*>.isVisible(context: CheckerContext): Boolean {
+        return context.session.visibilityChecker.isVisible(
+            fir,
+            context.session,
+            context.containingFile ?: return true,
+            context.containingDeclarations,
+            dispatchReceiver = null
+        )
     }
 
     private fun ConeKotlinType.getErasedUpperBound(session: FirSession): ConeClassLikeType? =
@@ -139,6 +188,9 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
             else ->
                 null
         }
+
+    private fun ConeKotlinType.isParcelableSupertype(session: FirSession): Boolean =
+        classId?.asFqNameString() in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES || isSomeFunctionType(session)
 
     private fun ConeKotlinType.hasParcelerAnnotation(session: FirSession): Boolean {
         for (annotation in customAnnotations) {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -221,6 +222,31 @@ class IrGenericParcelableParcelSerializer(private val parcelizeType: IrType) : I
     override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression {
         return parcelWriteParcelable(irGet(parcel), value, irGet(flags))
     }
+}
+
+// Parcel serializer for arbitrary data classes that only contain accessible parcelable members.
+class IrDataClassParcelSerializer(
+    private val type: IrType,
+    private val properties: List<Pair<IrPropertySymbol, IrParcelSerializer>>,
+) : IrParcelSerializer {
+    override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression =
+        irCall(type.classOrFail.owner.primaryConstructor!!.symbol, type).apply {
+            properties.forEachIndexed { index, (_, serializer) ->
+                putValueArgument(index, readParcelWith(serializer, parcel))
+            }
+        }
+
+    override fun AndroidIrBuilder.writeParcel(parcel: IrValueDeclaration, flags: IrValueDeclaration, value: IrExpression): IrExpression =
+        irBlock {
+            val temporary = irTemporary(value)
+            properties.forEach { (member, serializer) ->
+                val receiverValue = irGet(temporary)
+                val propertyValue = member.owner.getter?.let { irCall(it).apply { dispatchReceiver = receiverValue } }
+                    ?: member.owner.backingField?.let { irGetField(receiverValue, it) }
+                    ?: error("$member is a data class property with no backing field?")
+                +writeParcelWith(serializer, parcel, flags, propertyValue)
+            }
+        }
 }
 
 // Creates a serializer from a pair of parcel methods of the form reader(ClassLoader)T and writer(T)V.
@@ -433,7 +459,7 @@ class IrListParcelSerializer(
 
     private fun listSymbols(symbols: AndroidSymbols): ListSymbols {
         // If the IrClass refers to a concrete type, try to find a constructor with capacity or fall back
-        // the the default constructor if none exist.
+        // the default constructor if none exist.
         if (!irClass.isJvmInterface) {
             val constructor = irClass.constructors.find { constructor ->
                 constructor.valueParameters.size == 1 && constructor.valueParameters.single().type.isInt()
@@ -547,7 +573,7 @@ class IrMapParcelSerializer(
 
     private fun mapSymbols(symbols: AndroidSymbols): MapSymbols {
         // If the IrClass refers to a concrete type, try to find a constructor with capacity or fall back
-        // the the default constructor if none exist.
+        // the default constructor if none exist.
         if (!irClass.isJvmInterface) {
             val constructor = irClass.constructors.find { constructor ->
                 constructor.valueParameters.size == 1 && constructor.valueParameters.single().type.isInt()

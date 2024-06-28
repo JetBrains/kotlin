@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELER_FQN
@@ -163,7 +164,7 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
             }
         }
 
-        val abstractModifier = declaration.modifierList?.let { it.getModifier(KtTokens.ABSTRACT_KEYWORD) }
+        val abstractModifier = declaration.modifierList?.getModifier(KtTokens.ABSTRACT_KEYWORD)
         if (abstractModifier != null) {
             diagnosticHolder.report(ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(abstractModifier))
         }
@@ -217,7 +218,7 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty<KtParameter>()) {
-            checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)
+            checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper, languageVersionSettings)
         }
     }
 
@@ -225,7 +226,8 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
         parameter: KtParameter,
         containerClass: ClassDescriptor,
         diagnosticHolder: DiagnosticSink,
-        typeMapper: KotlinTypeMapper
+        typeMapper: KotlinTypeMapper,
+        languageVersionSettings: LanguageVersionSettings
     ) {
         if (!parameter.hasValOrVar()) {
             val reportElement = parameter.nameIdentifier ?: parameter
@@ -246,46 +248,72 @@ open class ParcelizeDeclarationChecker(val parcelizeAnnotations: List<FqName>) :
                     mappedType
                 }.toSet()
 
-            if (!checkParcelableType(type, customParcelerTypes)) {
-                val reportElement = parameter.typeReference ?: parameter.nameIdentifier ?: parameter
+            val unsupported = checkParcelableType(type, customParcelerTypes, containerClass, languageVersionSettings)
+            val reportElement = parameter.typeReference ?: parameter.nameIdentifier ?: parameter
+            if (type in unsupported) {
                 diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_NOT_SUPPORTED.on(reportElement))
+            } else {
+                unsupported.forEach {
+                    diagnosticHolder.report(ErrorsParcelize.PARCELABLE_TYPE_CONTAINS_NOT_SUPPORTED.on(reportElement, it))
+                }
             }
         }
     }
 
-    private fun checkParcelableType(type: KotlinType, customParcelerTypes: Set<KotlinType>): Boolean {
+    // Returns the set of types that are *not* supported. This set can include types other than `type`
+    // if it is a generally supported container type that contains unsupported elements in this instantiation.
+    private fun checkParcelableType(
+        type: KotlinType,
+        customParcelerTypes: Set<KotlinType>,
+        containerClass: ClassDescriptor,
+        languageVersionSettings: LanguageVersionSettings
+    ): Set<KotlinType> {
         if (type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES)
             || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
-            || type in customParcelerTypes) {
-            return true
-        }
+            || type in customParcelerTypes
+            || type.isBuiltinFunctionalTypeOrSubtype
+        ) return emptySet()
 
         val upperBound = type.getErasedUpperBound()
         val descriptor = upperBound.constructor.declarationDescriptor as? ClassDescriptor
-            ?: return false
+            ?: return setOf(type)
 
         if (descriptor.kind.isSingleton || descriptor.kind.isEnumClass) {
-            return true
+            return emptySet()
         }
 
         val fqName = descriptor.fqNameSafe.asString()
         if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
-            return true
+            return emptySet()
         }
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
-            return upperBound.arguments.all {
-                checkParcelableType(it.type, customParcelerTypes)
+            return upperBound.arguments.fold(emptySet()) { acc, arg ->
+                acc union checkParcelableType(arg.type, customParcelerTypes, containerClass, languageVersionSettings)
             }
         }
 
-        for (superFqName in BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES) {
-            if (type.matchesFqNameWithSupertypes(superFqName)) {
-                return true
+        if (BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
+            return emptySet()
+        }
+
+        if (descriptor.isData) {
+            val scope = descriptor.getMemberScope(type.arguments)
+            val primaryConstructor = descriptor.constructors.find { it.isPrimary } ?: return setOf(type)
+            val properties = primaryConstructor.valueParameters.map {
+                scope.getContributedVariables(it.name, NoLookupLocation.FOR_ALREADY_TRACKED).first()
+            }
+            // Serialization uses the property getters, deserialization uses the constructor.
+            if (DescriptorVisibilityUtils.isVisible(null, primaryConstructor, containerClass, languageVersionSettings) &&
+                properties.all { DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
+            ) {
+                return properties.fold(emptySet()) { acc, property ->
+                    acc union checkParcelableType(property.type, customParcelerTypes, containerClass, languageVersionSettings)
+                }
             }
         }
 
-        return type.isBuiltinFunctionalTypeOrSubtype
+        return setOf(type)
     }
 
     private fun KotlinType.getErasedUpperBound(): KotlinType =
