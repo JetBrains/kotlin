@@ -241,7 +241,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val propertiesProvider = PropertiesProvider(project)
 
         if (propertiesProvider.yarn) {
-            YarnPlugin.apply(project)
+            project.plugins.apply(YarnPlugin::class.java)
         }
     }
 

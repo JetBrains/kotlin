@@ -34,7 +34,7 @@ kotlin {
 //}
 
 rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin) {
-    def kotlinNodeJs = rootProject.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension)
+    def kotlinNodeJs = rootProject.extensions.getByType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExtension)
 
     tasks.register("runWebpack", Exec) {
         dependsOn(tasks.named('browserProductionWebpack'))

@@ -40,12 +40,21 @@ open class NodeJsExtension(
 
     override var downloadBaseUrl: String? by Property("https://nodejs.org/dist")
 
+    @Deprecated("Use downloadBaseUrl instead", ReplaceWith("downloadBaseUrl"))
+    var nodeDownloadBaseUrl by ::downloadBaseUrl
+
     // Release schedule: https://github.com/nodejs/Release
     // Actual LTS and Current versions: https://nodejs.org/en/download/
     // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
     override var version by Property("22.0.0")
 
+    @Deprecated("Use version instead", ReplaceWith("version"))
+    var nodeVersion by ::version
+
     override var command by Property("node")
+
+    @Deprecated("Use command instead", ReplaceWith("command"))
+    var nodeCommand by ::command
 
     internal val platform: org.gradle.api.provider.Property<Platform> = project.objects.property<Platform>()
 

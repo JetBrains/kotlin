@@ -25,9 +25,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTargetBase(target, "node"),
     KotlinJsNodeDsl {
 
-    private val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
     private val nodeJs = project.kotlinNodeJsExtension
-    private val nodeJsTaskProviders = project.rootProject.kotlinNodeJsRootExtension
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
@@ -70,8 +68,9 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureTestDependencies(test: KotlinJsTest) {
         test.dependsOn(nodeJs.nodeJsSetupTaskProvider)
         if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
             test.dependsOn(
-                nodeJsTaskProviders.npmInstallTaskProvider,
+                nodeJsRoot.npmInstallTaskProvider,
             )
             test.dependsOn(nodeJsRoot.packageManagerExtension.map { it.postInstallTasks })
         }
@@ -79,6 +78,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
         if (target.platformType != KotlinPlatformType.wasm) {
+            val nodeJsRoot = project.rootProject.kotlinNodeJsRootExtension
             if (test.testFramework == null) {
                 test.useMocha { }
             }
