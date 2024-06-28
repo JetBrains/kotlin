@@ -8,22 +8,18 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.backend.common.IrSpecialAnnotationsProvider
 import org.jetbrains.kotlin.backend.common.actualizer.IrExtraActualDeclarationExtractor
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.Fir2KlibMetadataSerializer
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -67,53 +63,6 @@ class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractFir2IrNonJ
 
     override val klibFactories: KlibMetadataFactories
         get() = error("Should not be called")
-
-    override fun transformInternal(
-        module: TestModule,
-        inputArtifact: FirOutputArtifact
-    ): IrBackendInput {
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
-        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
-
-        val irMangler = JvmIrMangler
-        val fir2IrExtensions = createFir2IrExtensions(configuration)
-
-        // Create and initialize the module and its dependencies
-        resolveLibraries(module, configuration)
-
-        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
-
-        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
-        val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(compilerConfiguration, diagnosticReporter)
-
-        val firResult = inputArtifact.toFirResult()
-        val fir2irResult = firResult.convertToIrAndActualize(
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            module.irGenerationExtensions(testServices),
-            irMangler,
-            createFir2IrVisibilityConverter(),
-            DefaultBuiltIns.Instance,
-            createTypeSystemContextProvider(),
-            createSpecialAnnotationsProvider(),
-            createExtraActualDeclarationExtractorInitializer(),
-        )
-
-        return createBackendInput(
-            module,
-            compilerConfiguration,
-            diagnosticReporter,
-            inputArtifact,
-            fir2irResult,
-            Fir2KlibMetadataSerializer(
-                compilerConfiguration,
-                firResult.outputs,
-                fir2irResult,
-                exportKDoc = false,
-                produceHeaderKlib = false,
-            ),
-        )
-    }
 
     override fun createBackendInput(
         module: TestModule,
