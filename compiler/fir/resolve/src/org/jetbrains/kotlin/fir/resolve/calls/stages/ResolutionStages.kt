@@ -575,7 +575,7 @@ internal object EagerResolveOfCallableReferences : ResolutionStage() {
                     check(atom.resultingReference is FirErrorReferenceWithCandidate)
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) check(atom in candidate.postponedAtoms)
 
-                    sink.yieldDiagnostic(UnsuccessfulCallableReferenceAtom)
+                    sink.yieldDiagnostic(UnsuccessfulCallableReferenceArgument)
                 } else when (applicability) {
                     CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
                         sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)
