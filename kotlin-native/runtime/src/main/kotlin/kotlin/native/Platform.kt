@@ -114,9 +114,10 @@ public object Platform {
         get() = Platform_getMemoryLeakChecker()
         set(value) = Platform_setMemoryLeakChecker(value)
 
+    @Deprecated("Cleaners leak checker is not available with the new GC")
     public var isCleanersLeakCheckerActive: Boolean
-        get() = Platform_getCleanersLeakChecker()
-        set(value) = Platform_setCleanersLeakChecker(value)
+        get() = false
+        set(_) {}
 
     /**
      * The number of logical processors available.
@@ -161,12 +162,6 @@ private external fun Platform_getMemoryLeakChecker(): Boolean
 
 @GCUnsafeCall("Konan_Platform_setMemoryLeakChecker")
 private external fun Platform_setMemoryLeakChecker(value: Boolean): Unit
-
-@GCUnsafeCall("Konan_Platform_getCleanersLeakChecker")
-private external fun Platform_getCleanersLeakChecker(): Boolean
-
-@GCUnsafeCall("Konan_Platform_setCleanersLeakChecker")
-private external fun Platform_setCleanersLeakChecker(value: Boolean): Unit
 
 @GCUnsafeCall("Konan_Platform_getAvailableProcessorsEnv")
 private external fun Platform_getAvailableProcessorsEnv(): String?

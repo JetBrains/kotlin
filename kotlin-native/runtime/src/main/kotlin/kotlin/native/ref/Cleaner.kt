@@ -7,9 +7,7 @@
 package kotlin.native.ref
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.concurrent.*
 import kotlin.native.internal.*
-import kotlinx.cinterop.NativePtr
 import kotlinx.cinterop.*
 
 /**
@@ -92,33 +90,26 @@ public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit):
         createCleanerImpl(resource, cleanupAction)
 
 @ExperimentalNativeApi
-@OptIn(ObsoleteWorkersApi::class)
-internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner {
-    val clean = {
-        // TODO: Maybe if this fails with exception, it should be (optionally) reported.
-        cleanupAction(resource)
-    }
-
-    // Make sure there's an extra reference to clean, so it's definitely alive when CleanerImpl is destroyed.
-    val cleanPtr = createStablePointer(clean)
-
-    // Make sure cleaner worker is initialized.
-    getCleanerWorker()
-
-    return CleanerImpl(cleanPtr)
+internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner = CleanerImpl {
+    // TODO: Maybe if this fails with exception, it should be (optionally) reported.
+    cleanupAction(resource)
 }
 
 @Suppress("DEPRECATION")
 @ExperimentalNativeApi
-@NoReorderFields
 @ExportTypeInfo("theCleanerImplTypeInfo")
 @HasFinalizer
 private class CleanerImpl(
-        private val cleanPtr: NativePtr,
-): Cleaner, kotlin.native.internal.Cleaner {}
+        clean: () -> Unit,
+) : Cleaner, kotlin.native.internal.Cleaner {
+    // [clean] lambda should be behind a StableRef: when CleanerImpl is being finalized, [clean]
+    // must still be kept alive.
+    private val cleanRef = StableRef.create(clean)
 
-
-@GCUnsafeCall("CreateStablePointer")
-@Escapes(0b01) // obj escapes into stable ref.
-external private fun createStablePointer(obj: Any): NativePtr
-
+    @ExportForCppRuntime("Kotlin_native_ref_CleanerImpl_finalize")
+    fun finalize() {
+        val clean = cleanRef.get()
+        cleanRef.dispose()
+        clean()
+    }
+}

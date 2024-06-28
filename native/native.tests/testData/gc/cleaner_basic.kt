@@ -43,7 +43,7 @@ fun testCleanerLambda() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
+    GC.collect() // free funBox
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -67,7 +67,7 @@ fun testCleanerAnonymousFunction() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
+    GC.collect() // free funBox
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
@@ -91,36 +91,11 @@ fun testCleanerFunctionReference() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
+    GC.collect() // free funBox
 
     assertNull(cleanerWeak!!.value)
     assertTrue(called.value)
     assertNull(funBoxWeak!!.value)
-}
-
-@Test
-fun testCleanerCleansWithoutGC() {
-    val called = AtomicBoolean(false);
-    var funBoxWeak: WeakReference<FunBox>? = null
-    var cleanerWeak: WeakReference<Cleaner>? = null
-    {
-        val cleaner = {
-            val funBox = FunBox { called.value = true }
-            funBoxWeak = WeakReference(funBox)
-            createCleaner(funBox) { it.call() }
-        }()
-        GC.collect()  // Make sure local funBox reference is gone
-        cleanerWeak = WeakReference(cleaner)
-        assertFalse(called.value)
-    }()
-
-    GC.collect()
-
-    assertNull(cleanerWeak!!.value)
-
-    waitCleanerWorker()
-
-    assertTrue(called.value)
 }
 
 val globalInt = AtomicInt(0)
@@ -137,7 +112,6 @@ fun testCleanerWithInt() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
 
     assertNull(cleanerWeak!!.value)
     assertEquals(42, globalInt.value)
@@ -157,10 +131,31 @@ fun testCleanerWithNativePtr() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
 
     assertNull(cleanerWeak!!.value)
     assertEquals(NativePtr.NULL + 42L, globalPtr.value)
+}
+
+@ThreadLocal
+var tlsValue = 1
+
+@Test
+fun testCleanerWithTLS() {
+    tlsValue = 2
+    val result = AtomicInt(0)
+    var cleanerWeak: WeakReference<Cleaner>? = null
+    {
+        val cleaner = createCleaner(result) {
+            it.value = tlsValue
+        }
+        cleanerWeak = WeakReference(cleaner)
+    }()
+
+    GC.collect()
+
+    assertNull(cleanerWeak!!.value)
+    assertEquals(2, tlsValue)
+    assertEquals(1, result.value)
 }
 
 @Test
@@ -179,11 +174,32 @@ fun testCleanerWithException() {
     }()
 
     GC.collect()
-    performGCOnCleanerWorker()
+    GC.collect() // free funBox
 
     assertNull(cleanerWeak!!.value)
     // Cleaners block started executing.
     assertTrue(called.value)
     // Even though the block failed, the captured funBox is freed.
     assertNull(funBoxWeak!!.value)
+}
+
+@ThreadLocal
+var tlsCleaner: Cleaner? = null
+
+@Test
+fun testCleanerInTLS() {
+    val worker = Worker.start()
+    val result = AtomicInt(0)
+
+    worker.execute(TransferMode.SAFE, {result}) { result ->
+        tlsCleaner = createCleaner(result) {
+            it.value = 1
+        }
+    }
+
+    worker.requestTermination().result
+    waitWorkerTermination(worker)
+    GC.collect()
+
+    assertEquals(1, result.value)
 }
