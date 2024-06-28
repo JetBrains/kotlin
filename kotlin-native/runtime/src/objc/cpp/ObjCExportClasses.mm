@@ -42,7 +42,7 @@ static void injectToRuntime();
   if (permanent) {
     RETURN_OBJ(refHolder.refPermanent());
   } else {
-    RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+    RETURN_OBJ(refHolder.ref());
   }
 }
 
@@ -102,18 +102,13 @@ static void injectToRuntime();
 
   if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
     candidate->refHolder.initAndAddRef(obj);
-    if (!isShareable(obj)) {
-      SetAssociatedObject(obj, candidate);
-    } else {
-      id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate);
-      if (old != nullptr) {
-        {
-          kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-          candidate->refHolder.releaseRef();
-          [candidate releaseAsAssociatedObject];
-        }
-        return objc_retain(old);
+    if (id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, candidate)) {
+      {
+        kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+        candidate->refHolder.releaseRef();
+        [candidate releaseAsAssociatedObject];
       }
+      return objc_retain(old);
     }
   } else {
     candidate->refHolder.initForPermanentObject(obj);
@@ -126,7 +121,7 @@ static void injectToRuntime();
   if (permanent) {
     [super retain];
   } else {
-    refHolder.addRef<ErrorPolicy::kTerminate>();
+    refHolder.addRef();
   }
   return self;
 }
@@ -135,7 +130,7 @@ static void injectToRuntime();
   if (permanent) {
     return [super _tryRetain];
   } else {
-    return refHolder.tryAddRef<ErrorPolicy::kTerminate>();
+    return refHolder.tryAddRef();
   }
 }
 
@@ -149,42 +144,15 @@ static void injectToRuntime();
 
 -(void)releaseAsAssociatedObject {
   RuntimeAssert(!permanent, "Cannot be called on permanent objects");
-
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    // No need for any special handling. Weak reference handling machinery
-    // has already cleaned up the reference to Kotlin object.
-    [super release];
-    return;
-  }
-
-  // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
-  // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
-  // using the [super release] call below.
-
-  // The deallocation involves running [self dealloc] which can contain arbitrary code.
-  // In particular, this code can retain and release [self]. Obj-C and Swift runtimes handle this
-  // gracefully (unless the object gets accessed after the deallocation of course), but Kotlin doesn't.
-  // Generally retaining and releasing Kotlin object that is being deallocated would lead to
-  // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
-  // To workaround this, detach the back ref from the Kotlin object:
-  refHolder.detach();
-
-  // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
-  // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
-  // The latter is generally ok because can be triggered only by user-defined Swift/Obj-C
-  // subclasses of Kotlin classes.
+  // No need for any special handling. Weak reference handling machinery
+  // has already cleaned up the reference to Kotlin object.
   [super release];
 }
 
 -(void)dealloc {
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    if (!permanent) {
-      refHolder.dealloc();
-    }
-    [super dealloc];
-    return;
+  if (!permanent) {
+    refHolder.dealloc();
   }
-
   [super dealloc];
 }
 
@@ -207,7 +175,7 @@ static void injectToRuntime();
     }
 
     // ref holds a strong reference to obj, no need to place obj onto a stack.
-    auto obj = refHolder.ref<ErrorPolicy::kTerminate>();
+    auto obj = refHolder.ref();
 
     id old = AtomicCompareAndSwapAssociatedObject(obj, nullptr, self);
     if (old == nil) {

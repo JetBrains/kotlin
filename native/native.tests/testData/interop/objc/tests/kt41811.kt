@@ -123,11 +123,6 @@ var localDeallocRetainAndAccessDeallocated = false
 
 @Test
 fun testKT41811WithAccess() {
-    // Legacy MM crashes with an assertion failure.
-    @OptIn(kotlin.ExperimentalStdlibApi::class)
-    if (!isExperimentalMM())
-        return
-
     // Attempt to make the state predictable:
     kotlin.native.internal.GC.collect()
 

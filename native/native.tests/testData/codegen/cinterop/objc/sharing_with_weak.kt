@@ -32,7 +32,6 @@ fun box(): String {
     val success = autoreleasepool {
         run()
     }
-    // Experimental MM supports arbitrary object sharing.
     return if (success) "OK" else "FAIL"
 }
 

@@ -42,7 +42,7 @@ void Kotlin_Interop_disposeStablePointer(KNativePtr pointer) {
 
 OBJ_GETTER(Kotlin_Interop_derefStablePointer, KNativePtr pointer) {
   KRefSharedHolder* holder = reinterpret_cast<KRefSharedHolder*>(pointer);
-  RETURN_OBJ(holder->ref<ErrorPolicy::kThrow>());
+  RETURN_OBJ(holder->ref());
 }
 
 OBJ_GETTER(Kotlin_CString_toKStringFromUtf8Impl, const char* cstring) {

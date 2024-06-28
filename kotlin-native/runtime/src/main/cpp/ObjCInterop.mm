@@ -65,7 +65,7 @@ BackRefFromAssociatedObject* getBackRef(id obj) {
 }
 
 OBJ_GETTER(toKotlinImp, id self, SEL _cmd) {
-  RETURN_OBJ(getBackRef(self)->ref<ErrorPolicy::kTerminate>());
+  RETURN_OBJ(getBackRef(self)->ref());
 }
 
 id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
@@ -87,7 +87,7 @@ id allocWithZoneImp(Class self, SEL _cmd, void* zone) {
 }
 
 id retainImp(id self, SEL _cmd) {
-  getBackRef(self)->addRef<ErrorPolicy::kTerminate>();
+  getBackRef(self)->addRef();
   return self;
 }
 
@@ -97,7 +97,7 @@ BOOL _tryRetainImp(id self, SEL _cmd) {
   // loading a reference to such an object from Obj-C weak reference now fails on "wrong" thread
   // unless the object is frozen.
   try {
-    return getBackRef(self)->tryAddRef<ErrorPolicy::kThrow>();
+    return getBackRef(self)->tryAddRef();
   } catch (ExceptionObjHolder& e) {
     // TODO: check for IncorrectDereferenceException and possible weak property access
     // Cannot use SourceInfo here, because CoreSymbolication framework (CSSymbolOwnerGetSymbolWithAddress)
@@ -116,39 +116,11 @@ void releaseImp(id self, SEL _cmd) {
 }
 
 void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
-  auto* classData = GetKotlinClassData(self);
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    // No need for any special handling. Weak reference handling machinery
-    // has already cleaned up the reference to Kotlin object.
-    // [super release]
-    Class clazz = classData->objcClass;
-    struct objc_super s = {self, clazz};
-    auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-    messenger(&s, @selector(release));
-    return;
-  }
+  // No need for any special handling. Weak reference handling machinery
+  // has already cleaned up the reference to Kotlin object.
 
-  // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
-  // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
-  // using the [super release] call below.
-
-  auto* backRef = getBackRef(self, classData);
-
-  // The deallocation involves running [self dealloc] which can contain arbitrary code.
-  // In particular, this code can retain and release [self]. Obj-C and Swift runtimes handle this
-  // gracefully (unless the object gets accessed after the deallocation of course), but Kotlin doesn't.
-  // For example, this happens in https://youtrack.jetbrains.com/issue/KT-41811, provoked by
-  // UIViewController.dealloc (which retains-releases self._view._viewDelegate == self) and UIView.dealloc.
-  // Generally retaining and releasing Kotlin object that is being deallocated would lead to
-  // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
-  // To workaround this, detach the back ref from the Kotlin object:
-  backRef->detach();
-
-  // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
-  // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
-  // The latter is generally ok, because by the time superclass dealloc gets launched, subclass state
-  // should already be deinitialized, and Kotlin methods operate on the subclass.
   // [super release]
+  auto* classData = GetKotlinClassData(self);
   Class clazz = classData->objcClass;
   struct objc_super s = {self, clazz};
   auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
@@ -291,9 +263,7 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddNSObjectOverride(false, newClass, @selector(release), (void*)&releaseImp);
   AddNSObjectOverride(false, newClass, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector,
       (void*)&releaseAsAssociatedObjectImp);
-  if (CurrentMemoryModel == MemoryModel::kExperimental) {
-    AddNSObjectOverride(false, newClass, @selector(dealloc), (void*)&deallocImp);
-  }
+  AddNSObjectOverride(false, newClass, @selector(dealloc), (void*)&deallocImp);
 
   AddMethods(newClass, info->instanceMethods, info->instanceMethodsNum);
   AddMethods(newMetaclass, info->classMethods, info->classMethodsNum);

@@ -359,19 +359,11 @@ void setupMocks(bool expectRegisteredThread = true) noexcept {
 
 } // namespace
 
-#define EXPERIMENTAL_MM_ONLY()                                        \
-    do {                                                              \
-        if (CurrentMemoryModel != MemoryModel::kExperimental) {       \
-            GTEST_SKIP() << "This test requires the Experimental MM"; \
-        }                                                             \
-    } while(false)
-
 #define ASSERTS_PASSED AllOf(Not(HasSubstr("FAIL")), Not(HasSubstr("runtime assert")))
 #define KOTLIN_HANDLER_RAN HasSubstr("Kotlin handler")
 #define NATIVE_HANDLER_RAN HasSubstr("Native handler")
 
 TEST(TerminationThreadStateDeathTest, TerminationInRunnableState) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 
@@ -384,7 +376,6 @@ TEST(TerminationThreadStateDeathTest, TerminationInRunnableState) {
 }
 
 TEST(TerminationThreadStateDeathTest, TerminationInNativeState) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 
@@ -399,7 +390,6 @@ TEST(TerminationThreadStateDeathTest, TerminationInNativeState) {
 }
 
 TEST(TerminationThreadStateDeathTest, TerminationInForeignThread) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks(/* expectRegisteredThread = */ false);
 
@@ -411,7 +401,6 @@ TEST(TerminationThreadStateDeathTest, TerminationInForeignThread) {
 }
 
 TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInRunnableState) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 
@@ -431,7 +420,6 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInRunnableState) {
 }
 
 TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInNativeState) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 
@@ -453,7 +441,6 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInNativeState) {
 }
 
 TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInForeignThread) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks(/* expectRegisteredThread = */ false);
 
@@ -480,7 +467,6 @@ TEST(TerminationThreadStateDeathTest, UnhandledKotlinExceptionInForeignThread) {
 }
 
 TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInNativeState) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 
@@ -496,7 +482,6 @@ TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInNativeState) {
 }
 
 TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInForeignThread) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks(/* expectRegisteredThread = */ false);
 
@@ -511,7 +496,6 @@ TEST(TerminationThreadStateDeathTest, UnhandledForeignExceptionInForeignThread) 
 
 // Model a filtering exception handler which terminates the program if an interop call throws a foreign exception.
 TEST(TerminationThreadStateDeathTest, TerminationInForeignExceptionCatch) {
-    EXPERIMENTAL_MM_ONLY();
     auto testBlock = []() {
         setupMocks();
 

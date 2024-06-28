@@ -131,14 +131,9 @@ extern "C" id Kotlin_ObjCExport_CreateRetainedNSStringFromKString(ObjHeader* str
       length:numBytes
       encoding:NSUTF16LittleEndianStringEncoding];
 
-    if (!isShareable(str)) {
-      SetAssociatedObject(str, candidate);
-    } else {
-      id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate);
-      if (old != nullptr) {
-        objc_release(candidate);
-        return objc_retain(old);
-      }
+    if (id old = AtomicCompareAndSwapAssociatedObject(str, nullptr, candidate)) {
+      objc_release(candidate);
+      return objc_retain(old);
     }
 
     return objc_retain(candidate);

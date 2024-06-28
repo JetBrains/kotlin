@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include "Common.h"
 #include "TypeInfo.h"
 #include "Memory.h"
 #include "Types.h"
@@ -11,8 +12,8 @@
 #include "MemorySharedRefs.hpp"
 #include "Natives.h"
 
-#define touchType(type) type touch##type;
-#define touchFunction(function) void* touch##function() { return reinterpret_cast<void*>(&::function); }
+#define touchType(type) RUNTIME_EXPORT type touch##type;
+#define touchFunction(function) RUNTIME_EXPORT void* touch##function() { return reinterpret_cast<void*>(&::function); }
 
 // Types and functions used by the compiler (at Runtime.kt and ContextUtils.kt)
 #ifdef __cplusplus
@@ -49,11 +50,6 @@ touchFunction(EnterFrame)
 touchFunction(LeaveFrame)
 touchFunction(SetCurrentFrame)
 touchFunction(CheckCurrentFrame)
-
-touchFunction(MutationCheck)
-touchFunction(CheckLifetimesConstraint)
-touchFunction(FreezeSubgraph)
-touchFunction(CheckGlobalsAccessible)
 
 touchFunction(LookupInterfaceTableRecord)
 touchFunction(IsSubtype)

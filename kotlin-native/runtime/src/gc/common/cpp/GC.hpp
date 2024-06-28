@@ -95,8 +95,6 @@ bool isMarked(ObjHeader* object) noexcept;
 // If the mark bit was unset, this will return `false`.
 bool tryResetMark(GC::ObjectData& objectData) noexcept;
 
-inline constexpr bool kSupportsMultipleMutators = true;
-
 } // namespace gc
 
 template <>

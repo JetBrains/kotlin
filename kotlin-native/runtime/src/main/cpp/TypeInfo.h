@@ -47,18 +47,10 @@ enum Konan_TypeFlags {
   TF_ACYCLIC   = 1 << 1,
   TF_INTERFACE = 1 << 2,
   TF_OBJC_DYNAMIC = 1 << 3,
-  TF_LEAK_DETECTOR_CANDIDATE = 1 << 4,
   TF_SUSPEND_FUNCTION = 1 << 5,
   TF_HAS_FINALIZER = 1 << 6,
-  TF_HAS_FREEZE_HOOK = 1 << 7,
   TF_REFLECTION_SHOW_PKG_NAME = 1 << 8, // If package name is available in reflection, e.g. in `KClass.qualifiedName`.
   TF_REFLECTION_SHOW_REL_NAME = 1 << 9 // If relative name is available in reflection, e.g. in `KClass.simpleName`.
-};
-
-// Flags per object instance.
-enum Konan_MetaFlags {
-  // If freeze attempt happens on such an object - throw an exception.
-  MF_NEVER_FROZEN = 1 << 0,
 };
 
 // Extended information about a type.

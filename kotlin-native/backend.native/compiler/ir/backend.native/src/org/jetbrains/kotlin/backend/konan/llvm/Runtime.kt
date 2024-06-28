@@ -19,11 +19,11 @@ class Runtime(private val llvmContext: LLVMContextRef, bitcodeFile: String) {
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
-    private fun getStructTypeOrNull(name: String) =
-            LLVMGetTypeByName(llvmModule, "struct.$name")
+    private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
+            LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")
                     ?: LLVMGetNamedGlobal(llvmModule, "touch$name")?.let(::LLVMGlobalGetValueType)
 
-    private fun getStructType(name: String) = getStructTypeOrNull(name)
+    private fun getStructType(name: String, isClass: Boolean = false) = getStructTypeOrNull(name, isClass)
             ?: error("type $name is not found in the Runtime module.")
 
     private fun createStructType(name: String, vararg fieldTypes: LLVMTypeRef): LLVMTypeRef {
@@ -106,7 +106,7 @@ class Runtime(private val llvmContext: LLVMContextRef, bitcodeFile: String) {
     val objCIVarListType by lazy { createOpaqueStructType("_ivar_list_t") }
     val objCPropListType by lazy { createOpaqueStructType("_prop_list_t") }
 
-    val kRefSharedHolderType by lazy { LLVMGetTypeByName(llvmModule, "class.KRefSharedHolder")!! }
+    val kRefSharedHolderType by lazy { getStructType("KRefSharedHolder", isClass = true) }
     val blockLiteralType by lazy { getStructType("Block_literal_1") }
     val blockDescriptorType by lazy { getStructType("Block_descriptor_1") }
 

@@ -19,7 +19,7 @@ struct InitNode {
   InitNode* next;
 };
 
-// For experimental MM, if runtime gets initialized, it will be in the native state after this.
+// If runtime gets initialized, it will be in the native state after this.
 RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded();
 void deinitRuntimeIfNeeded();
 

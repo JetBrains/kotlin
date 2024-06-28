@@ -96,10 +96,6 @@ struct ObjHeader {
 
   MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMetaAcquire()); }
 
-  ALWAYS_INLINE ObjHeader* GetWeakCounter();
-  ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
-
-
 #ifdef KONAN_OBJC_INTEROP
   ALWAYS_INLINE void* GetAssociatedObject() const;
   ALWAYS_INLINE void SetAssociatedObject(void* obj);
@@ -197,9 +193,6 @@ struct type_layout::descriptor<ArrayBody> {
 
 } // namespace kotlin
 
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
-
 static inline ObjHeader* const kInitializingSingleton = reinterpret_cast<ObjHeader*>(1);
 ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
     return reinterpret_cast<uintptr_t>(obj) <= 1;
@@ -207,12 +200,7 @@ ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
 
 struct FrameOverlay;
 
-// Legacy MM only:
-class ForeignRefManager;
-typedef ForeignRefManager* ForeignRefContext;
-
 namespace kotlin::mm {
-// New MM only:
 struct RawSpecialRef;
 } // namespace kotlin::mm
 
@@ -239,7 +227,6 @@ struct MemoryState;
 
 MemoryState* InitMemory();
 void DeinitMemory(MemoryState*, bool destroyRuntime);
-void RestoreMemory(MemoryState*);
 void ClearMemoryForTests(MemoryState*);
 
 //
@@ -286,16 +273,6 @@ void InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) 
 //    in intermediate frames when throwing
 //
 
-// NOTE: Must match `MemoryModel` in `Platform.kt`
-enum class MemoryModel {
-    kStrict = 0,
-    kRelaxed = 1,
-    kExperimental = 2,
-};
-
-// Controls the current memory model, is compile-time constant.
-extern const MemoryModel CurrentMemoryModel;
-
 // Zeroes heap location.
 void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Zeroes an array.
@@ -312,12 +289,9 @@ OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expec
 bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) RUNTIME_NOTHROW;
 OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) RUNTIME_NOTHROW;
 
-// Updates heap/static data in one array.
-void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex, int toIndex, int count) RUNTIME_NOTHROW;
 // Updates location if it is null, atomically.
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
-OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 // Called on frame enter, if it has object slots.
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Called on frame leave, if it has object slots.
@@ -327,10 +301,6 @@ void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
 ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
-// Clears object subgraph references from memory subsystem, and optionally
-// checks if subgraph referenced by given root is disjoint from the rest of
-// object graph, i.e. no external references exists.
-bool ClearSubgraphReferences(ObjHeader* root, bool checked) RUNTIME_NOTHROW;
 // Creates a stable pointer out of the object.
 void* CreateStablePointer(ObjHeader* obj) RUNTIME_NOTHROW;
 // Disposes a stable pointer to the object.
@@ -339,13 +309,6 @@ void DisposeStablePointer(void* pointer) RUNTIME_NOTHROW;
 OBJ_GETTER(DerefStablePointer, void*) RUNTIME_NOTHROW;
 // Move stable pointer ownership.
 OBJ_GETTER(AdoptStablePointer, void*) RUNTIME_NOTHROW;
-// Check mutability state.
-void MutationCheck(ObjHeader* obj);
-void CheckLifetimesConstraint(ObjHeader* obj, ObjHeader* pointee) RUNTIME_NOTHROW;
-// Freeze object subgraph.
-void FreezeSubgraph(ObjHeader* obj);
-// Ensure this object shall block freezing.
-void EnsureNeverFrozen(ObjHeader* obj);
 // Add TLS object storage, called by the generated code.
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
@@ -355,36 +318,12 @@ void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
 ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
 
-// APIs for the async GC.
-void GC_RegisterWorker(void* worker) RUNTIME_NOTHROW;
-void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
-void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
-
 void Kotlin_native_internal_GC_collect(ObjHeader*);
-void Kotlin_native_internal_GC_collectCyclic(ObjHeader*);
-void Kotlin_native_internal_GC_suspend(ObjHeader*);
-void Kotlin_native_internal_GC_resume(ObjHeader*);
-void Kotlin_native_internal_GC_stop(ObjHeader*);
-void Kotlin_native_internal_GC_start(ObjHeader*);
-void Kotlin_native_internal_GC_setThreshold(ObjHeader*, int32_t value);
-int32_t Kotlin_native_internal_GC_getThreshold(ObjHeader*);
-void Kotlin_native_internal_GC_setCollectCyclesThreshold(ObjHeader*, int64_t value);
-int64_t Kotlin_native_internal_GC_getCollectCyclesThreshold(ObjHeader*);
-void Kotlin_native_internal_GC_setThresholdAllocations(ObjHeader*, int64_t value);
-int64_t Kotlin_native_internal_GC_getThresholdAllocations(ObjHeader*);
 void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, bool value);
 bool Kotlin_native_internal_GC_getTuneThreshold(ObjHeader*);
-OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, ObjHeader*);
-OBJ_GETTER(Kotlin_native_internal_GC_findCycle, ObjHeader*, ObjHeader* root);
-bool Kotlin_native_internal_GC_getCyclicCollector(ObjHeader* gc);
-void Kotlin_native_internal_GC_setCyclicCollector(ObjHeader* gc, bool value);
 RUNTIME_NOTHROW bool Kotlin_native_runtime_Debugging_dumpMemory(ObjHeader*, int fd);
 
-bool Kotlin_Any_isShareable(ObjHeader* thiz);
-void Kotlin_Any_share(ObjHeader* thiz);
 void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
-
-void CheckGlobalsAccessible();
 
 // Sets state of the current thread to NATIVE (used by the new MM).
 CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
@@ -460,14 +399,12 @@ namespace kotlin {
 namespace mm {
 
 // Returns the MemoryState for the current thread.
-// For the new MM, the current thread must be attached to the runtime.
-// For the legacy MM, returns nullptr if called on a thread that is not attached to the runtime.
+// The current thread must be attached to the runtime.
 // Try not to use it very often, as (1) thread local access can be slow on some platforms,
 // (2) TLS gets deallocated before our thread destruction hooks run.
 MemoryState* GetMemoryState() noexcept;
 
-
-// TODO: Replace with direct access to ThreadRegistry when the legacy MM is gone.
+// TODO: Replace with direct access to ThreadRegistry.
 // Checks if the current thread is attached to the runtime.
 // This function accesses a TLS variable, so it must not be called from a thread destructor.
 bool IsCurrentThreadRegistered() noexcept;
@@ -589,8 +526,6 @@ public:
 private:
     ThreadStateGuard backingGuard_;
 };
-
-extern const bool kSupportsMultipleMutators;
 
 void initGlobalMemory() noexcept;
 

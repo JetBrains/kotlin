@@ -36,10 +36,6 @@ RUNTIME_WEAK int32_t Kotlin_enableSafepointSignposts = 0;
 RUNTIME_WEAK int32_t Kotlin_globalDataLazyInit = 1;
 RUNTIME_WEAK int32_t Kotlin_swiftExport = 0;
 
-ALWAYS_INLINE compiler::DestroyRuntimeMode compiler::destroyRuntimeMode() noexcept {
-    return static_cast<compiler::DestroyRuntimeMode>(1);
-}
-
 ALWAYS_INLINE bool compiler::gcMutatorsCooperate() noexcept {
     return Kotlin_gcMutatorsCooperate != 0;
 }
@@ -51,11 +47,6 @@ ALWAYS_INLINE uint32_t compiler::auxGCThreads() noexcept {
 ALWAYS_INLINE uint32_t compiler::concurrentMarkMaxIterations() noexcept {
     return Kotlin_concurrentMarkMaxIterations;
 }
-
-ALWAYS_INLINE compiler::WorkerExceptionHandling compiler::workerExceptionHandling() noexcept {
-    return static_cast<compiler::WorkerExceptionHandling>(1);
-}
-
 
 ALWAYS_INLINE bool compiler::suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept {
     return Kotlin_suspendFunctionsFromAnyThreadFromObjC != 0;
