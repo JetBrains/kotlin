@@ -7,8 +7,6 @@ import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.tools.solib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.konan.target.finalLinkCommands
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -35,30 +33,18 @@ native {
     }
     val objSet = sourceSets["callbacks"]!!.transform(".c" to ".$obj")
 
+    val ldflags = mutableListOf<String>()
+    if (HostManager.hostIsMac) {
+        ldflags.addAll(listOf("-Xlinker", "-lto_library", "-Xlinker", "KT-69382"))
+    }
+
     target(solib("callbacks"), objSet) {
-        val ldflags = listOf(
-            "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
-            "${nativeDependencies.libffiPath}/lib/libffi.$lib",
-            "-lclangext"
-        )
-        if (HostManager.hostIsMac) {
-            tool(
-                *hostPlatform.linker.finalLinkCommands(
-                    objectFiles = ruleInAll().toList(),
-                    executable = ruleOut(),
-                    libraries = emptyList(),
-                    linkerArgs = ldflags,
-                    optimize = false,
-                    debug = false,
-                    kind = LinkerOutputKind.DYNAMIC_LIBRARY,
-                    outputDsymBundle = layout.buildDirectory.dir("5").get().asFile.path,
-                    mimallocEnabled = false,
-                )[0].argsWithExecutable.toTypedArray()
-            )
-        } else {
-            tool(*hostPlatform.clangForJni.clangCXX("").toTypedArray())
-            flags("-shared", "-o", ruleOut(), *ruleInAll())
-        }
+        tool(*hostPlatform.clangForJni.clangCXX_WithXcode16Hacks(layout.buildDirectory.dir("2").get().asFile, "").toTypedArray())
+        flags("-shared",
+              "-o",ruleOut(), *ruleInAll(),
+              "-L${project(":kotlin-native:libclangext").layout.buildDirectory.get().asFile}",
+              "${nativeDependencies.libffiPath}/lib/libffi.$lib",
+              "-lclangext", *ldflags.toTypedArray())
     }
     tasks.named(solib("callbacks")).configure {
         dependsOn(":kotlin-native:libclangext:${lib("clangext")}")
