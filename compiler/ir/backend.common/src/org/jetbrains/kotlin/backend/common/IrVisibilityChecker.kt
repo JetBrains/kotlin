@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.moduleDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -21,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isPublishedApi
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrTypeTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -30,7 +33,6 @@ import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
  * Verifies that all expressions and types that reference declarations, the referenced declaration is actually visible in that scope.
@@ -120,14 +122,10 @@ internal class IrVisibilityChecker(
         val classOfReferenced = referencedDeclaration.parentClassOrNull
         val visibility = referencedDeclaration.visibility.delegate
 
-        fun IrAnnotationContainer.isPublishedApi() = hasAnnotation(StandardClassIds.Annotations.PublishedApi)
-
         val effectiveVisibility = visibility.toEffectiveVisibilityOrNull(
             container = classOfReferenced?.symbol,
             forClass = true,
-            ownerIsPublishedApi = referencedDeclaration.run {
-                isPublishedApi() || this is IrSimpleFunction && correspondingPropertySymbol?.owner?.isPublishedApi() == true
-            }
+            ownerIsPublishedApi = referencedDeclaration.isPublishedApi(),
         )
 
         val isVisible = when (effectiveVisibility) {
