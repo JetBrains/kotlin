@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -80,7 +83,7 @@ internal object ArgumentCheckingProcessor {
         sourceForReceiver: KtSourceElement? = null,
     ) {
         val argumentContext = ArgumentContext(candidate, candidate.csBuilder, expectedType, sink, context, isReceiver, isDispatch)
-        argumentContext.resolvePlainArgumentType(atom, argumentType, sourceForReceiver = sourceForReceiver)
+        argumentContext.resolvePlainArgumentType(atom.expression, argumentType, sourceForReceiver = sourceForReceiver)
     }
 
     fun createResolvedLambdaAtomDuringCompletion(
@@ -111,12 +114,12 @@ internal object ArgumentCheckingProcessor {
             is ConeSafeCallAtom -> when (val selector = argument.selector) {
                 // Assignment
                 null -> checkApplicabilityForArgumentType(
-                    argument,
+                    argument.expression,
                     StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
                     SimpleConstraintSystemConstraintPosition,
                 )
                 else -> resolvePlainExpressionArgument(
-                    selector,
+                    selector.expression,
                     useNullableArgumentType = true
                 )
             }
@@ -128,11 +131,11 @@ internal object ArgumentCheckingProcessor {
             is ConeBlockAtom -> resolveBlockArgument(argument)
 
             is ConeErrorExpressionAtom -> when (val wrappedExpression = argument.subAtom) {
-                null -> resolvePlainExpressionArgument(argument)
+                null -> resolvePlainExpressionArgument(argument.expression)
                 else -> resolveArgumentExpression(wrappedExpression)
             }
 
-            is ConeResolvedAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument)
+            is ConeResolvedAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument.expression)
 
             is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${argument::class.java}")
         }
@@ -143,7 +146,7 @@ internal object ArgumentCheckingProcessor {
         if (lastExpression == null) {
             val newContext = this.copy(isReceiver = false, isDispatch = false)
             newContext.checkApplicabilityForArgumentType(
-                atom,
+                atom.expression,
                 atom.expression.resolvedType,
                 SimpleConstraintSystemConstraintPosition,
             )
@@ -153,26 +156,24 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
-        atom: ConeCallAtom,
+        expression: FirExpression,
         useNullableArgumentType: Boolean = false
     ) {
         if (expectedType == null) return
-        val expression = atom.expression
 
         // TODO: this check should be eliminated, KT-65085
         if (expression is FirArrayLiteral && !expression.isResolved) return
 
         val argumentType = expression.resolvedType
-        resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
+        resolvePlainArgumentType(expression, argumentType, useNullableArgumentType)
     }
 
     private fun ArgumentContext.resolvePlainArgumentType(
-        atom: ConeCallAtom,
+        expression: FirExpression,
         argumentType: ConeKotlinType,
         useNullableArgumentType: Boolean = false,
         sourceForReceiver: KtSourceElement? = null,
     ) {
-        val expression = atom.expression
         val position = when {
             isReceiver -> ConeReceiverConstraintPosition(expression, sourceForReceiver)
             else -> ConeArgumentConstraintPosition(expression)
@@ -197,18 +198,17 @@ internal object ArgumentCheckingProcessor {
             }
         }
 
-        checkApplicabilityForArgumentType(atom, argumentTypeForApplicabilityCheck, position)
+        checkApplicabilityForArgumentType(expression, argumentTypeForApplicabilityCheck, position)
     }
 
     private fun ArgumentContext.checkApplicabilityForArgumentType(
-        atom: ConeCallAtom,
+        expression: FirExpression,
         argumentTypeBeforeCapturing: ConeKotlinType,
         position: ConstraintPosition,
     ) {
         if (expectedType == null) return
 
         val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argumentTypeBeforeCapturing, expectedType, session)
-        val expression = atom.expression
 
         fun subtypeError(actualExpectedType: ConeKotlinType): ResolutionDiagnostic {
             if (expression.isNullLiteral && actualExpectedType.nullability == ConeNullability.NOT_NULL) {
