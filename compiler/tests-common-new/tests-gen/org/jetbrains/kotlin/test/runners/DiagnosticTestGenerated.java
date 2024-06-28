@@ -19244,9 +19244,21 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("kt69040.kt")
+        public void testKt69040() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/kt69040.kt");
+        }
+
+        @Test
         @TestMetadata("labaledCall.kt")
         public void testLabaledCall() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/labaledCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaBelongsToOuterCall.kt")
+        public void testLambdaBelongsToOuterCall() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaBelongsToOuterCall.kt");
         }
 
         @Test
