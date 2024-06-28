@@ -72,7 +72,7 @@ abstract class AbstractFir2IrNonJvmResultsConverter(
             }
         }
 
-    private fun transformInternal(
+    protected open fun transformInternal(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
