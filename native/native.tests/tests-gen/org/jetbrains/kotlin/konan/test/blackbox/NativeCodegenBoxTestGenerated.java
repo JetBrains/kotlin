@@ -9673,6 +9673,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("smartcastOnThisInInitializationSection.kt")
+      public void testSmartcastOnThisInInitializationSection() {
+        runTest("compiler/testData/codegen/box/controlflow/smartcastOnThisInInitializationSection.kt");
+      }
+
+      @Test
       @TestMetadata("unreachable1.kt")
       public void testUnreachable1() {
         runTest("compiler/testData/codegen/box/controlflow/unreachable1.kt");

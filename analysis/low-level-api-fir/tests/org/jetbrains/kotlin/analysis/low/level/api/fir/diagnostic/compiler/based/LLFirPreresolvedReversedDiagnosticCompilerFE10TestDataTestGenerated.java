@@ -8615,6 +8615,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
       }
 
       @Test
+      @TestMetadata("smartcastOnThisInInitializationSection.kt")
+      public void testSmartcastOnThisInInitializationSection() {
+        runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartcastOnThisInInitializationSection.kt");
+      }
+
+      @Test
       @TestMetadata("throwInLambda.kt")
       public void testThrowInLambda() {
         runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");
