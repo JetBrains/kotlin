@@ -223,6 +223,7 @@ sealed class ClangArgs(
                 "-stdlib=libc++",
                 // KT-57848
                 "-Dat_quick_exit=atexit", "-Dquick_exit=exit",
+                "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS"
         )
         else -> emptyArray()
     }
