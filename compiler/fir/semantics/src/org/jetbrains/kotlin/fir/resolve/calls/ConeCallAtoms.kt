@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.isResolved
 import org.jetbrains.kotlin.name.Name
 
 abstract class ConeCallAtom {
@@ -18,6 +19,10 @@ abstract class ConeCallAtom {
 }
 
 class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
+    init {
+        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
+    }
+
     override val expression: FirExpression
         get() = fir
 }
