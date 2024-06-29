@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseSimpleFunctionCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
     isImplicitInvoke: Boolean,
 ) : KaSimpleFunctionCall {
@@ -29,6 +29,5 @@ class KaBaseSimpleFunctionCall(
     override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaFunctionSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
     override val isImplicitInvoke: Boolean by validityAsserted(isImplicitInvoke)
-    override val argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
-            by validityAsserted(argumentMapping)
+    override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> by validityAsserted(argumentMapping)
 }

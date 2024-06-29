@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 class KaBaseDelegatedConstructorCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
     kind: KaDelegatedConstructorCall.Kind,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
     typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType>,
 ) : KaDelegatedConstructorCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
     override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> by validityAsserted(typeArgumentsMapping)
     override val kind: KaDelegatedConstructorCall.Kind by validityAsserted(kind)
-    override val argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
-            by validityAsserted(argumentMapping)
+    override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> by validityAsserted(argumentMapping)
 }

@@ -579,13 +579,14 @@ internal class KaFe10Resolver(
     private fun CallableDescriptor?.isSynthesizedPropertyFromJavaAccessors() =
         this is PropertyDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionSignature<*>): LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
+    private fun ResolvedCall<*>.createArgumentMapping(signature: KaFunctionSignature<*>): Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> {
         val parameterSignatureByName = signature.valueParameters.associateBy {
             // ResolvedCall.valueArguments have their names affected by the `@ParameterName` annotations,
             // so we use `name` instead of `symbol.name`
             it.name
         }
-        val result = LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
+
+        val result = linkedMapOf<KtExpression, KaVariableSignature<KaValueParameterSymbol>>()
         for ((parameter, arguments) in valueArguments) {
             val parameterSymbol = KaFe10DescValueParameterSymbol(parameter, analysisContext)
 
@@ -594,7 +595,8 @@ internal class KaFe10Resolver(
                 result[expression] = parameterSignatureByName[parameterSymbol.name] ?: continue
             }
         }
-        return result
+
+        return result.ifEmpty { emptyMap() }
     }
 
     private fun createCallInfo(
