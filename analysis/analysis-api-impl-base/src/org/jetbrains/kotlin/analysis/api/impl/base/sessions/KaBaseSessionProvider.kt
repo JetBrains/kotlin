@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtilCore
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.impl.base.lifetime.KaBaseLifetimeTracker
 import org.jetbrains.kotlin.analysis.api.impl.base.permissions.KaBaseWriteActionStartedChecker
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.platform.lifetime.KotlinLifetimeTokenFa
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.analysis.api.platform.permissions.KaAnalysisPermissionChecker
 
+@KaImplementationDetail
 abstract class KaBaseSessionProvider(project: Project) : KaSessionProvider(project) {
     // We cache several services to avoid repeated `getService` calls in `analyze`.
     @KaCachedService

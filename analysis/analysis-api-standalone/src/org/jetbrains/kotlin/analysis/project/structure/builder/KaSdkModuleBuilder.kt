@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.project.structure.builder
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
@@ -17,6 +18,7 @@ import kotlin.contracts.contract
 public class KtSdkModuleBuilder(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment
 ) : KtLibraryModuleBuilder(kotlinCoreProjectEnvironment) {
+    @OptIn(KaImplementationDetail::class)
     public fun addBinaryRootsFromJdkHome(jdkHome: Path, isJre: Boolean) {
         val jdkRoots = LibraryUtils.findClassesFromJdkHome(jdkHome, isJre)
         addBinaryRoots(jdkRoots)

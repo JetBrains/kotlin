@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolLocation
 import kotlin.reflect.KClass
 
+@KaImplementationDetail
 class KaCannotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
     IllegalStateException("Could not create a symbol pointer for local symbol $identifier") {
     constructor(klass: KClass<*>) : this(klass.java.simpleName)
 }
 
+@KaImplementationDetail
 class KaUnsupportedSymbolLocation(identifier: String, location: KaSymbolLocation) : IllegalStateException(
     "For symbol with kind = KaSymbolLocation.${location.name} was $identifier"
 ) {

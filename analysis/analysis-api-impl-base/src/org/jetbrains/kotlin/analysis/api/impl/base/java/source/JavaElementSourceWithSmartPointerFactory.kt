@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.analysis.api.impl.base.java.source
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource
 
+@KaImplementationDetail
 class JavaElementSourceWithSmartPointerFactory(project: Project) : JavaElementSourceFactory() {
     private val smartTypePointerManager = SmartTypePointerManager.getInstance(project)
     private val smartPsiPointerManager = SmartPointerManager.getInstance(project)

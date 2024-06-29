@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.contracts.description
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractConstantValue.KaContractConstantType
 import org.jetbrains.kotlin.analysis.api.contracts.description.KaContractParameterValue
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaParameterSymbol
 
+@KaImplementationDetail
 class KaBaseContractConstantValue(
     private val backingConstantType: KaContractConstantType,
     override val token: KaLifetimeToken,
@@ -25,6 +27,7 @@ class KaBaseContractConstantValue(
     override fun hashCode(): Int = backingConstantType.hashCode()
 }
 
+@KaImplementationDetail
 class KaBaseContractParameterValue(private val backingParameterSymbol: KaParameterSymbol) : KaContractParameterValue {
     override val token: KaLifetimeToken get() = backingParameterSymbol.token
 

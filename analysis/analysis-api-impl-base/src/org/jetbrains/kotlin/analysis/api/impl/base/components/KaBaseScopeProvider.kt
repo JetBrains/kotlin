@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.components
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver
 import org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KaScopeWithKind
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
+@KaImplementationDetail
 class KaBaseScopeContext(
     scopes: List<KaScopeWithKind>,
     implicitReceivers: List<KaImplicitReceiver>,
@@ -24,6 +26,7 @@ class KaBaseScopeContext(
     override val scopes: List<KaScopeWithKind> by validityAsserted(scopes)
 }
 
+@KaImplementationDetail
 class KaBaseImplicitReceiver(
     private val backingType: KaType,
     ownerSymbol: KaSymbol,

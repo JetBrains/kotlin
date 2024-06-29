@@ -31,6 +31,7 @@ import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.ListenerDescriptor
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
@@ -357,6 +358,7 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KaImplementationDetail::class)
     private fun getVirtualFileUrlsForLibraryRootsRecursively(
         roots: Collection<Path>,
         environment: KotlinCoreProjectEnvironment,
