@@ -5,7 +5,8 @@ import kotlin.test.assertEquals
 
 var global = S("")
 
-inline class S(val x: String?) {
+@JvmInline
+value class S(val x: String?) {
     var nonNullTest: S
         get() = S("${global.x}$x")
         set(value) {
@@ -19,7 +20,8 @@ inline class S(val x: String?) {
         }
 }
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     var nonNullTest: S
         get() = S("${global.x}$x")
         set(value) {
@@ -33,7 +35,8 @@ inline class Z(val x: Int) {
         }
 }
 
-inline class A(val x: Any) {
+@JvmInline
+value class A(val x: Any) {
     var nonNullTest: S
         get() = S("${global.x}$x")
         set(value) {

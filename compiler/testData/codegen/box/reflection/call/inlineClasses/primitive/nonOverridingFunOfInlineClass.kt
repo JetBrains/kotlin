@@ -3,15 +3,18 @@
 
 import kotlin.test.assertEquals
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 
-inline class S(val x: String) {
+@JvmInline
+value class S(val x: String) {
     fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 
-inline class A(val x: Any) {
+@JvmInline
+value class A(val x: Any) {
     fun test(a: Int, b: Z, c: Z?) = "$x$a${b.x}${c!!.x}"
 }
 

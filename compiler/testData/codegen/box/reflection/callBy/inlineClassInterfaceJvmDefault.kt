@@ -12,7 +12,8 @@ interface IIC {
     fun f(i1: Int = 1): Int
 }
 
-inline class IC(val x: Int) : IIC {
+@JvmInline
+value class IC(val x: Int) : IIC {
     override fun f(i1: Int) = x + i1
 }
 

@@ -7,7 +7,8 @@ import kotlin.reflect.full.callSuspend
 import kotlin.test.assertEquals
 import helpers.*
 
-inline class Z(val value: Int)
+@JvmInline
+value class Z(val value: Int)
 
 class C {
     private var value: Z = Z(0)
