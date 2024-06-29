@@ -22,7 +22,7 @@ context(KaSession)
 @OptIn(KaExperimentalApi::class)
 internal fun KaSymbol.getObjCDeprecationStatus(): String? {
     return deprecationStatus?.toDeprecationAttribute() ?: if (this.isConstructor) {
-        this.containingSymbol?.deprecationStatus?.toDeprecationAttribute()
+        this.containingDeclaration?.deprecationStatus?.toDeprecationAttribute()
     } else null
 }
 

@@ -134,7 +134,7 @@ internal fun KaType.mapToReferenceTypeIgnoringNullability(): ObjCNonNullReferenc
     }
 
     if (fullyExpandedType is KaTypeParameterType) {
-        val definingSymbol = fullyExpandedType.symbol.containingSymbol
+        val definingSymbol = fullyExpandedType.symbol.containingDeclaration
 
         if (definingSymbol is KaCallableSymbol) {
             return ObjCIdType

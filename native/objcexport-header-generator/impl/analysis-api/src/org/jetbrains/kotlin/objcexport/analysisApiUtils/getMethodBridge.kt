@@ -26,7 +26,7 @@ context(KaSession, KtObjCExportSession)
 internal fun KaFunctionSymbol.getFunctionMethodBridge(): MethodBridge {
 
     val valueParameters = mutableListOf<MethodBridgeValueParameter>()
-    val isInner = (containingSymbol as? KaNamedClassSymbol)?.isInner ?: false
+    val isInner = (containingDeclaration as? KaNamedClassSymbol)?.isInner ?: false
 
     this.receiverParameter?.apply {
         valueParameters += bridgeParameter(this.type)

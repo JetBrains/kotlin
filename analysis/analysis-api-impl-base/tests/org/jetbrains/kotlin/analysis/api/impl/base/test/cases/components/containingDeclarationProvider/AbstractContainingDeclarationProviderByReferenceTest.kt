@@ -26,7 +26,7 @@ abstract class AbstractContainingDeclarationProviderByReferenceTest : AbstractAn
         analyseForTest(mainFile) {
             val ktSymbol = referenceExpression.mainReference.resolveToSymbol() ?: error("Reference is not resolved")
 
-            val actualString = generateSequence(ktSymbol) { it.containingSymbol }
+            val actualString = generateSequence(ktSymbol) { it.containingDeclaration }
                 .filterIsInstance<KaDeclarationSymbol>()
                 .joinToString("\n") { render(it) }
 

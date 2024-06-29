@@ -22,8 +22,8 @@ abstract class AbstractContainingDeclarationProviderForSetterParameterTest : Abs
             val propertySymbol = (declaration as KtProperty).symbol as KaPropertySymbol
             val setterSymbol = propertySymbol.setter!!
             val setterParameterSymbol = setterSymbol.valueParameters.single()
-            testServices.assertions.assertEquals(propertySymbol, setterSymbol.containingSymbol)
-            testServices.assertions.assertEquals(setterSymbol, setterParameterSymbol.containingSymbol)
+            testServices.assertions.assertEquals(propertySymbol, setterSymbol.containingDeclaration)
+            testServices.assertions.assertEquals(setterSymbol, setterParameterSymbol.containingDeclaration)
         }
     }
 }

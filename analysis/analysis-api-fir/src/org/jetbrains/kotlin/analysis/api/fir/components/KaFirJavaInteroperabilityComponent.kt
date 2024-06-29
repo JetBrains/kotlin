@@ -268,10 +268,10 @@ internal class KaFirJavaInteroperabilityComponent(
 
                 val containingSymbolOrSelf = when (symbol) {
                     is KaValueParameterSymbol -> {
-                        symbol.containingSymbol as? KaFunctionSymbol ?: symbol
+                        symbol.containingDeclaration as? KaFunctionSymbol ?: symbol
                     }
                     is KaPropertyAccessorSymbol -> {
-                        symbol.containingSymbol as? KaPropertySymbol ?: symbol
+                        symbol.containingDeclaration as? KaPropertySymbol ?: symbol
                     }
                     is KaBackingFieldSymbol -> symbol.owningProperty
                     else -> symbol

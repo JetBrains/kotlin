@@ -31,7 +31,7 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
                     val parentDeclaration = currentPath.lastOrNull()
                     val currentDeclarationSymbol = dcl.symbol
                     val expectedParentDeclarationSymbol = parentDeclaration?.symbol
-                    val actualParentDeclarationSymbol = currentDeclarationSymbol.containingSymbol
+                    val actualParentDeclarationSymbol = currentDeclarationSymbol.containingDeclaration
 
                     if (dcl is KtScriptInitializer) {
                         testServices.assertions.assertTrue(currentDeclarationSymbol is KaScriptSymbol)

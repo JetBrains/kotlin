@@ -56,7 +56,7 @@ private fun KaClassLikeSymbol.getObjCName(
             .handleSpecialNames("get")
     }
 
-    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
+    containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         return containingClass.getObjCName() + objCName.capitalizeAsciiOnly()
     }
 
@@ -78,7 +78,7 @@ private fun KaClassLikeSymbol.getSwiftName(
         return swiftName
     }
 
-    containingSymbol?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
+    containingDeclaration?.let { it as? KaClassLikeSymbol }?.let { containingClass ->
         val containingClassSwiftName = containingClass.getSwiftName()
         return buildString {
             if (canBeInnerSwift()) {

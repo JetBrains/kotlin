@@ -77,7 +77,7 @@ context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaSymbol.isSealedClassConstructor(): Boolean {
     if (this !is KaConstructorSymbol) return false
-    val containingSymbol = this.containingSymbol ?: return false
+    val containingSymbol = this.containingDeclaration ?: return false
     return containingSymbol.modality == KaSymbolModality.SEALED
 }
 
@@ -91,7 +91,7 @@ private fun KaSymbol.isComponentNMethod(): Boolean {
 
     if (this !is KaNamedFunctionSymbol) return false
     if (!this.isOperator) return false
-    val containingClassSymbol = this.containingSymbol as? KaNamedClassSymbol ?: return false
+    val containingClassSymbol = this.containingDeclaration as? KaNamedClassSymbol ?: return false
     if (!containingClassSymbol.isData) return false
     return DataClassResolver.isComponentLike(this.name)
 }
@@ -107,7 +107,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByAnnotation(): Boolean {
 context(KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 private fun KaClassSymbol.isHiddenFromObjCByAnnotation(): Boolean {
-    val containingSymbol = containingSymbol
+    val containingSymbol = containingDeclaration
     if (containingSymbol is KaClassSymbol && containingSymbol.isHiddenFromObjCByAnnotation()) return true
     return this.containsHidesFromObjCAnnotation()
 }
@@ -155,7 +155,7 @@ private fun KaCallableSymbol.isHiddenFromObjCByDeprecation(): Boolean {
         return true
     }
 
-    val containingClassSymbol = containingSymbol as? KaClassSymbol
+    val containingClassSymbol = containingDeclaration as? KaClassSymbol
     if (containingClassSymbol?.deprecationStatus?.deprecationLevel == DeprecationLevelValue.HIDDEN) {
         return true
     }
@@ -179,7 +179,7 @@ private fun KaClassSymbol.isHiddenFromObjCByDeprecation(): Boolean {
     // Note: ObjCExport requires enclosing class of exposed class to be exposed.
     // Also in Kotlin hidden class members (including other classes) aren't directly accessible.
     // So hide a class if its enclosing class is hidden:
-    val containingSymbol = containingSymbol
+    val containingSymbol = containingDeclaration
     if (containingSymbol is KaClassSymbol && containingSymbol.isHiddenFromObjCByDeprecation()) {
         return true
     }

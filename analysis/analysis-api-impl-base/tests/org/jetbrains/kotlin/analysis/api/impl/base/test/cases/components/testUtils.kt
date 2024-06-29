@@ -294,7 +294,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
     }
 
     printCollection(scope.declarations.toList(), separator = "\n\n") { symbol ->
-        val containingDeclaration = symbol.containingSymbol as KaClassLikeSymbol
+        val containingDeclaration = symbol.containingDeclaration as KaClassLikeSymbol
         append(symbol.render(renderer))
         append(" fromClass ")
         append(containingDeclaration.classId?.asString())
@@ -302,7 +302,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             appendLine()
             withIndent {
                 printCollection(symbol.typeParameters, separator = "\n") { typeParameter ->
-                    val containingDeclarationForTypeParameter = typeParameter.containingSymbol
+                    val containingDeclarationForTypeParameter = typeParameter.containingDeclaration
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForTypeParameter?.qualifiedNameString())
@@ -314,7 +314,7 @@ internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String
             appendLine()
             withIndent {
                 printCollection(symbol.valueParameters, separator = "\n") { typeParameter ->
-                    val containingDeclarationForValueParameter = typeParameter.containingSymbol
+                    val containingDeclarationForValueParameter = typeParameter.containingDeclaration
                     append(typeParameter.render(renderer))
                     append(" from ")
                     append(containingDeclarationForValueParameter?.qualifiedNameString())
