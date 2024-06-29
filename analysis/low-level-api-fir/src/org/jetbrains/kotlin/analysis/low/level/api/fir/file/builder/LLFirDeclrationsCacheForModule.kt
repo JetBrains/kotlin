@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.google.common.collect.MapMaker
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.ThreadSafe
 import java.util.concurrent.ConcurrentMap
 
 /**
