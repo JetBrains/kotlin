@@ -4,28 +4,35 @@
 import kotlin.reflect.KCallable
 import kotlin.test.assertEquals
 
-inline class Z(val x: Int) {
+@JvmInline
+value class Z(val x: Int) {
     constructor(a: Int, b: Int) : this(a + b)
 }
 
-inline class L(val x: Long) {
+@JvmInline
+value class L(val x: Long) {
     constructor(a: Long, b: Long) : this(a + b)
 }
 
-inline class S1(val x: String) {
+@JvmInline
+value class S1(val x: String) {
     constructor(a: String, b: String) : this(a + b)
 }
 
-inline class S2(val x: String?) {
+@JvmInline
+value class S2(val x: String?) {
     constructor(a: String?, b: String?) : this(a!! + b!!)
 }
 
-inline class A(val x: Any) {
+@JvmInline
+value class A(val x: Any) {
     constructor(a: String, b: String) : this(a + b)
 }
 
-inline class Z2(val z: Z)
-inline class Z3(val z: Z?)
+@JvmInline
+value class Z2(val z: Z)
+@JvmInline
+value class Z3(val z: Z?)
 
 fun box(): String {
     val ctorZ1_1: (Int) -> Z = ::Z
