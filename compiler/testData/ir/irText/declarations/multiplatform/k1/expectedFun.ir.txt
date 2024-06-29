@@ -3,4 +3,3 @@ FILE fqName:<root> fileName:/expectedFun.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
-  FUN name:f visibility:public modality:FINAL <> () returnType:kotlin.String [expect]

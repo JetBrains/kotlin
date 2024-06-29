@@ -177,6 +177,8 @@ class IrMangledNameAndSignatureDumpHandler(
                 bodyPrintingStrategy = BodyPrintingStrategy.NO_BODIES,
                 printUnitReturnType = true,
                 stableOrder = true,
+                // Expect declarations exist in K1 IR just before serialization, but won't be serialized. Though, dumps should be same before and after
+                printExpectDeclarations = module.languageVersionSettings.languageVersion.usesK2,
             ),
         )
     }
@@ -307,9 +309,11 @@ class IrMangledNameAndSignatureDumpHandler(
             }
         }
 
-        override fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer): Boolean {
+        override fun willPrintElement(element: IrElement, container: IrDeclaration?, printer: Printer, options: KotlinLikeDumpOptions): Boolean {
             if (element !is IrDeclaration) return true
             if (element is IrAnonymousInitializer) return false
+
+            if (element.isExpect && !options.printExpectDeclarations) return false
 
             // Don't print synthetic property-less fields for delegates and context receivers. Ex:
             // class Foo {

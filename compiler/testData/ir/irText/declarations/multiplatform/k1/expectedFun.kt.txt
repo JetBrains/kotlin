@@ -2,4 +2,3 @@ fun f(): String {
   return "OK"
 }
 
-expect fun f(): String
