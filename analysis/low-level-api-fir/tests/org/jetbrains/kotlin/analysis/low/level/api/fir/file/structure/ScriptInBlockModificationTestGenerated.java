@@ -246,6 +246,30 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   }
 
   @Test
+  @TestMetadata("memberSetterWithTypeWithBodyFakeFieldDeclarationScript.kts")
+  public void testMemberSetterWithTypeWithBodyFakeFieldDeclarationScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyFakeFieldDeclarationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyFakeFieldScript.kts")
+  public void testMemberSetterWithTypeWithBodyFakeFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyFakeFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyFieldScript.kts")
+  public void testMemberSetterWithTypeWithBodyFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithTypeWithBodyNearFieldScript.kts")
+  public void testMemberSetterWithTypeWithBodyNearFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyNearFieldScript.kts");
+  }
+
+  @Test
   @TestMetadata("memberSetterWithTypeWithBodyScript.kts")
   public void testMemberSetterWithTypeWithBodyScript() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithBodyScript.kts");
@@ -267,6 +291,30 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   @TestMetadata("memberSetterWithTypeWithoutBodyWithoutNameScript.kts")
   public void testMemberSetterWithTypeWithoutBodyWithoutNameScript() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithTypeWithoutBodyWithoutNameScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyFakeFieldDeclarationScript.kts")
+  public void testMemberSetterWithoutTypeWithBodyFakeFieldDeclarationScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyFakeFieldDeclarationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyFakeFieldScript.kts")
+  public void testMemberSetterWithoutTypeWithBodyFakeFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyFakeFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyFieldScript.kts")
+  public void testMemberSetterWithoutTypeWithBodyFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("memberSetterWithoutTypeWithBodyNearFieldScript.kts")
+  public void testMemberSetterWithoutTypeWithBodyNearFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/memberSetterWithoutTypeWithBodyNearFieldScript.kts");
   }
 
   @Test
@@ -339,6 +387,30 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   @TestMetadata("topLevelFunctionWithoutTypeWithoutBodyScript.kts")
   public void testTopLevelFunctionWithoutTypeWithoutBodyScript() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelFunctionWithoutTypeWithoutBodyScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyFakeFieldDeclarationScript.kts")
+  public void testTopLevelGetterWithTypeWithBodyFakeFieldDeclarationScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyFakeFieldDeclarationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyFakeFieldScript.kts")
+  public void testTopLevelGetterWithTypeWithBodyFakeFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyFakeFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyFieldScript.kts")
+  public void testTopLevelGetterWithTypeWithBodyFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearFieldScript.kts")
+  public void testTopLevelGetterWithTypeWithBodyNearFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelGetterWithTypeWithBodyNearFieldScript.kts");
   }
 
   @Test
@@ -426,6 +498,30 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   }
 
   @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyFakeFieldScript.kts")
+  public void testTopLevelSetterWithTypeWithBodyFakeFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyFakeFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyFakeFieldScriptDeclaration.kts")
+  public void testTopLevelSetterWithTypeWithBodyFakeFieldScriptDeclaration() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyFakeFieldScriptDeclaration.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyFieldScript.kts")
+  public void testTopLevelSetterWithTypeWithBodyFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithTypeWithBodyNearFieldScript.kts")
+  public void testTopLevelSetterWithTypeWithBodyNearFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyNearFieldScript.kts");
+  }
+
+  @Test
   @TestMetadata("topLevelSetterWithTypeWithBodyScript.kts")
   public void testTopLevelSetterWithTypeWithBodyScript() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithBodyScript.kts");
@@ -447,6 +543,30 @@ public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBloc
   @TestMetadata("topLevelSetterWithTypeWithoutBodyWithoutNameScript.kts")
   public void testTopLevelSetterWithTypeWithoutBodyWithoutNameScript() {
     runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithTypeWithoutBodyWithoutNameScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyFakeFieldDeclarationScript.kts")
+  public void testTopLevelSetterWithoutTypeWithBodyFakeFieldDeclarationScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyFakeFieldDeclarationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyFakeFieldScript.kts")
+  public void testTopLevelSetterWithoutTypeWithBodyFakeFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyFakeFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyFieldScript.kts")
+  public void testTopLevelSetterWithoutTypeWithBodyFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("topLevelSetterWithoutTypeWithBodyNearFieldScript.kts")
+  public void testTopLevelSetterWithoutTypeWithBodyNearFieldScript() {
+    runTest("analysis/low-level-api-fir/testData/inBlockModification/topLevelSetterWithoutTypeWithBodyNearFieldScript.kts");
   }
 
   @Test
