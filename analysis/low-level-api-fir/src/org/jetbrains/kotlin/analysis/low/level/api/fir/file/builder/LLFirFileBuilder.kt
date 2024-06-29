@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
@@ -13,9 +12,10 @@ import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.ThreadSafe
 
 /**
- * Responsible for building [FirFile] by [KtFile]
+ * Responsble for building [FirFile] by [KtFile]
  */
 @ThreadSafe
 internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
