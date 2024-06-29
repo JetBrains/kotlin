@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
@@ -44,6 +46,9 @@ import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 import java.util.stream.Collectors
+
+const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
+const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
 
 abstract class WasmAbstractInvalidationTest(
     private val targetBackend: TargetBackend,
@@ -250,6 +255,37 @@ abstract class WasmAbstractInvalidationTest(
             }
         }
 
+        fun wrapWithModuleEmulationMarkers(content: String, moduleKind: ModuleKind, moduleId: String): String {
+            val escapedModuleId = StringUtil.escapeStringCharacters(moduleId)
+
+            return when (moduleKind) {
+                ModuleKind.COMMON_JS -> "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
+                        "$content\n" +
+                        "$KOTLIN_TEST_INTERNAL.endModule(\"$escapedModuleId\");"
+
+                ModuleKind.AMD, ModuleKind.UMD ->
+                    "if (typeof $KOTLIN_TEST_INTERNAL !== \"undefined\") { " +
+                            "$KOTLIN_TEST_INTERNAL.setModuleId(\"$escapedModuleId\"); }\n" +
+                            "$content\n"
+
+                ModuleKind.PLAIN, ModuleKind.ES -> content
+            }
+        }
+
+        private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
+            writeText(wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
+        }
+
+        private fun prepareExternalJsFiles(): MutableList<String> {
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
+                file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
+                    val externalModule = buildDir.resolve(file.name)
+                    externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)
+                    externalModule.canonicalPath
+                }
+            }
+        }
+
         fun execute() {
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
@@ -314,6 +350,8 @@ abstract class WasmAbstractInvalidationTest(
 
                 val runnerFile = File(buildDir, "test.mjs")
                 runnerFile.writeText(testRunnerContent)
+
+                prepareExternalJsFiles()
 
                 WasmVM.NodeJs.run(
                     "./test.mjs",
