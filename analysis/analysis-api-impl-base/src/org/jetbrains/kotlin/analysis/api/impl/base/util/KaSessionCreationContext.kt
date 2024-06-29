@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 
+@KaImplementationDetail
 interface KaSessionCreationContext<T : KaSession> {
     val analysisSessionProvider: () -> T
 }
@@ -31,6 +33,7 @@ private class KaSessionCreationContextImpl<T : KaSession> : () -> T, KaSessionCr
     }
 }
 
+@KaImplementationDetail
 fun <T : KaSession> createSession(block: KaSessionCreationContext<T>.() -> T): T {
     val box = KaSessionCreationContextImpl<T>()
     val session = block(box)

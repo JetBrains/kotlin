@@ -18,6 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.URLUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
  Copy of corresponding classes from IntelliJ source repository.
  We cannot reuse them directly as not all those methods are parts of intellij-core which is used in Analysis API
 */
+@KaImplementationDetail
 class JdkClassFinder {
     // copy of 'com.intellij.openapi.projectRoots.impl.JavaSdkImpl.findClasses'
     static @NotNull List<String> findClasses(@NotNull Path jdkHome, boolean isJre) {

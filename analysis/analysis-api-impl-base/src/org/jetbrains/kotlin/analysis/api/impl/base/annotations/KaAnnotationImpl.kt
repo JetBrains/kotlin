@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 import java.util.Objects
 
+@KaImplementationDetail
 class KaAnnotationImpl(
     classId: ClassId?,
     psi: KtCallElement?,

@@ -14,9 +14,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@KaImplementationDetail
 object LibraryUtils {
     /**
      * Get all [VirtualFile]s inside the given [jar] (of [Path])

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 import java.util.Objects
 
+@KaImplementationDetail
 class KaBaseNamedAnnotationValue(
     private val backingName: Name,
     private val backingExpression: KaAnnotationValue,
