@@ -57,7 +57,9 @@ private class TestGenerator(
         if (irFile.declarations.isEmpty()) return
         ArrayList(irFile.declarations).forEach {
             if (it is IrClass) {
-                generateTestCalls(it) { if (groupByPackage) suiteForPackage(it) else context.createTestContainerFun(it) }
+                context.irFactory.stageController.restrictTo(it) {
+                    generateTestCalls(it) { if (groupByPackage) suiteForPackage(it) else context.createTestContainerFun(it) }
+                }
             }
 
             // TODO top-level functions
@@ -68,8 +70,9 @@ private class TestGenerator(
 
     private fun suiteForPackage(container: IrDeclaration): IrSimpleFunction {
         val irFile = container.file
+        val fn = context.createTestContainerFun(container)
         return packageSuites.getOrPut(irFile.packageFqName) {
-            context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), context.createTestContainerFun(container))
+            context.suiteFun!!.createInvocation(irFile.packageFqName.asString(), fn)
         }
     }
 
@@ -80,13 +83,12 @@ private class TestGenerator(
     ): IrSimpleFunction {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
-        val function = context.irFactory.stageController.restrictTo(parentFunction) {
-            context.irFactory.buildFun {
-                this.name = Name.identifier("$name test fun")
-                this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
-                this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-            }
+        val function = context.irFactory.buildFun {
+            this.name = Name.identifier("$name test fun")
+            this.returnType = if (this@createInvocation == context.suiteFun!!) context.irBuiltIns.unitType else context.irBuiltIns.anyNType
+            this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
         }
+
         function.parent = parentFunction
         function.body = body
 
@@ -208,23 +210,21 @@ private class TestGenerator(
                 )
             }
 
-            val afterFunction = context.irFactory.stageController.restrictTo(fn) {
-                context.irFactory.buildFun {
-                    this.name = Name.identifier("${irClass.name.asString()} after test fun")
-                    this.returnType = context.irBuiltIns.unitType
-                    this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
-                }.apply {
-                    parent = fn
-                    this.body = context.irFactory.createBlockBody(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        afterFuns.memoryOptimizedMap {
-                            JsIrBuilder.buildCall(it.symbol).apply {
-                                dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
-                            }
+            val afterFunction = context.irFactory.buildFun {
+                this.name = Name.identifier("${irClass.name.asString()} after test fun")
+                this.returnType = context.irBuiltIns.unitType
+                this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                parent = fn
+                this.body = context.irFactory.createBlockBody(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    afterFuns.memoryOptimizedMap {
+                        JsIrBuilder.buildCall(it.symbol).apply {
+                            dispatchReceiver = JsIrBuilder.buildGetValue(classVal.symbol)
                         }
-                    )
-                }
+                    }
+                )
             }
 
             val refType = IrSimpleTypeImpl(context.ir.symbols.functionN(0), false, emptyList(), emptyList())
