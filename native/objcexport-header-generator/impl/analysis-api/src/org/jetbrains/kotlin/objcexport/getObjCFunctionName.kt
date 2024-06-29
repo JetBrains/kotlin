@@ -14,7 +14,7 @@ context(KaSession, KtObjCExportSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 fun KaFunctionSymbol.getObjCFunctionName(): ObjCExportFunctionName {
     val annotationName =
-        if (this is KaPropertyAccessorSymbol) containingSymbol?.resolveObjCNameAnnotation()
+        if (this is KaPropertyAccessorSymbol) containingDeclaration?.resolveObjCNameAnnotation()
         else resolveObjCNameAnnotation()
     return ObjCExportFunctionName(
         swiftName = getObjCFunctionName(annotationName?.swiftName),

@@ -25,7 +25,7 @@ public class SirParentProviderImpl(
 
     override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationContainer {
         val symbol = this@getSirParent
-        val parentSymbol = with(ktAnalysisSession) { symbol.containingSymbol }
+        val parentSymbol = with(ktAnalysisSession) { symbol.containingDeclaration }
 
         return if (parentSymbol == null) {
             // top level function. -> parent is either extension for package, of plain module in case of <root> package

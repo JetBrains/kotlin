@@ -131,11 +131,11 @@ internal val KaFunctionSymbol.objCReceiverType: KaType?
             dispatchReceiverType
         } else if (isExtension) {
             if (receiverParameter?.type?.isMappedObjCType == true) receiverParameter?.type
-            else if ((containingSymbol as? KaNamedClassSymbol)?.isInner == true) receiverParameter?.type
+            else if ((containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameter?.type
             else if (receiverParameter?.type?.isObjCNothing == true) return receiverParameter?.type
             else null
         } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
-            val property = containingSymbol as KaPropertySymbol
+            val property = containingDeclaration as KaPropertySymbol
             val isExtension = property.isExtension
             val receiverType = property.receiverType
             if (isExtension) {

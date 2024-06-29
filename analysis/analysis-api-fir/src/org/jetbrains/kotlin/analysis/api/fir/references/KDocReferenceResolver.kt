@@ -121,7 +121,7 @@ internal object KDocReferenceResolver {
         var currentSymbol = symbol
 
         repeat(steps) {
-            currentSymbol = currentSymbol.containingSymbol as? KaClassSymbol ?: return null
+            currentSymbol = currentSymbol.containingDeclaration as? KaClassSymbol ?: return null
         }
 
         return currentSymbol
