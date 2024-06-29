@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class Fe10SyntheticPropertyAccessorReference(
+internal class Fe10SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     getter: Boolean
 ) : SyntheticPropertyAccessorReference(expression, getter), KtFe10Reference {

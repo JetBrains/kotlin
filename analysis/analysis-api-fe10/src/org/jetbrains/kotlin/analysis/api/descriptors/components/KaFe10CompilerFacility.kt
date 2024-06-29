@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.KaCodeCompilationException
 import org.jetbrains.kotlin.analysis.api.components.KaCompilationResult
 import org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfN
  * This should be enabled if the compiled file could refer to symbols defined in another file of the same module.
  * Such symbols are not compiled (only the file is passed to the backend) and so they cannot be linked from a dependency.
  */
+@KaNonPublicApi
 val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey<Boolean>("stub unbound IR symbols")
 
 internal class KaFe10CompilerFacility(

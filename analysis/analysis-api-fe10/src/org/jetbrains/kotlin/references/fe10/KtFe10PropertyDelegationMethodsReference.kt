@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtFe10PropertyDelegationMethodsReference(
+internal class KtFe10PropertyDelegationMethodsReference(
     expression: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(expression), KtFe10Reference {
 

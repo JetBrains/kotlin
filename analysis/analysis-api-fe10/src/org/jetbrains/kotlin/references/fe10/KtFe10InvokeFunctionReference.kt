@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
-class KtFe10InvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFe10Reference {
+internal class KtFe10InvokeFunctionReference(expression: KtCallExpression) : KtInvokeFunctionReference(expression), KtFe10Reference {
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val call = element.getCall(context)

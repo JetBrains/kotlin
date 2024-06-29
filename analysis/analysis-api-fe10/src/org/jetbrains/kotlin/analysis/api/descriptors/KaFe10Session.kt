@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaGlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
-class KaFe10Session(
+internal class KaFe10Session(
     val analysisContext: Fe10AnalysisContext,
     override val useSiteModule: KaModule,
     token: KaLifetimeToken,

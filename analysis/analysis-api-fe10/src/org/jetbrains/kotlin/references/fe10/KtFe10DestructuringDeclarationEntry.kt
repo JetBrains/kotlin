@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtFe10DestructuringDeclarationEntry(
+internal class KtFe10DestructuringDeclarationEntry(
     element: KtDestructuringDeclarationEntry
 ) : KtDestructuringDeclarationReference(element), KtFe10Reference {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
+internal class KaFe10DescFunctionSymbolPointer<T : KaFunctionSymbol>(
     private val callableId: CallableId,
     private val signature: String
 ) : KaSymbolPointer<T>() {

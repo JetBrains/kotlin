@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 // used in IDEA K1 evaluator
 @Suppress("unused")
+@KaNonPublicApi
 fun KaSession.getInlineFunctionAnalyzer(analyzeOnlyReifiedInlineFunctions: Boolean): InlineFunctionAnalyzer {
     require(this is KaFe10Session) {
         "K2 implementation shouldn't call this code"
@@ -20,6 +22,7 @@ fun KaSession.getInlineFunctionAnalyzer(analyzeOnlyReifiedInlineFunctions: Boole
     return InlineFunctionAnalyzer(analysisContext, analyzeOnlyReifiedInlineFunctions)
 }
 
+@KaNonPublicApi
 class InlineFunctionAnalyzer(
     private val analysisContext: Fe10AnalysisContext,
     private val analyzeOnlyReifiedInlineFunctions: Boolean,

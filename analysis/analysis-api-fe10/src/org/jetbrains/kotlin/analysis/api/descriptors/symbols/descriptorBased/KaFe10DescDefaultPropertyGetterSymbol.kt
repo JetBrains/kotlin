@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.CallableId
 
-class KaFe10DescDefaultPropertyGetterSymbol(
+internal class KaFe10DescDefaultPropertyGetterSymbol(
     private val propertyDescriptor: PropertyDescriptor,
     override val analysisContext: Fe10AnalysisContext
 ) : KaPropertyGetterSymbol(), KaFe10Symbol {

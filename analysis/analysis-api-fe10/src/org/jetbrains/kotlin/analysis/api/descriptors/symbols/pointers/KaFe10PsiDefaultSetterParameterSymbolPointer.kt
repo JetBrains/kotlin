@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 
-class KaFe10PsiDefaultSetterParameterSymbolPointer(
+internal class KaFe10PsiDefaultSetterParameterSymbolPointer(
     private val propertySymbolPointer: KaPsiBasedSymbolPointer<KaPropertySetterSymbol>,
 ) : KaSymbolPointer<KaValueParameterSymbol>() {
     @KaImplementationDetail

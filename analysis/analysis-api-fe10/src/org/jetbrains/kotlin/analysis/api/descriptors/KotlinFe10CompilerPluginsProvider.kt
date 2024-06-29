@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.extensions.internal.InternalNonStableExtensionPoints
 import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 
 @Suppress("unused")
-class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
+internal class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
     override fun <T : Any> getRegisteredExtensions(module: KaSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> {
         return extensionType.getInstances(module.project)
     }

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
-class KaFe10ExpressionTypeProvider(
+internal class KaFe10ExpressionTypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaSessionComponent<KaFe10Session>(), KaExpressionTypeProvider, KaFe10SessionComponent {
     private companion object {

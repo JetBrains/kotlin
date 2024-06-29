@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.references.fe10.util.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference> {
+internal object KtFe10PolyVariantResolver : ResolveCache.PolyVariantResolver<KtReference> {
     class KotlinResolveResult(element: PsiElement) : PsiElementResolveResult(element)
 
     private fun resolveToPsiElements(ref: KtFe10Reference): Collection<PsiElement> {
