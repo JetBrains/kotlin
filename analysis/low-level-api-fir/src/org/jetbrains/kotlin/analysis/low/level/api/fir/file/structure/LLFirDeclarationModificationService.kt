@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.api.platform.analysisMessageBus
 import org.jetbrains.kotlin.analysis.api.platform.modification.KotlinModificationTopics
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -25,8 +29,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -157,10 +160,10 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      *
      * @param element is an element that we want to/did already modify, remove, or add.
      * Some examples:
-     * * [element] is [KtNamedFunction][org.jetbrains.kotlin.psi.KtNamedFunction] if we
-     * dropped body ([KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression]) of this function
-     * * [element] is [KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression] if we replaced one body-expression with another one
-     * * [element] is [KtBlockExpression][org.jetbrains.kotlin.psi.KtBlockExpression] if added a body to the function without body
+     * * [element] is [KtNamedFunction][KtNamedFunction] if we
+     * dropped body ([KtBlockExpression][KtBlockExpression]) of this function
+     * * [element] is [KtBlockExpression][KtBlockExpression] if we replaced one body-expression with another one
+     * * [element] is [KtBlockExpression][KtBlockExpression] if added a body to the function without body
      * * [element] is the parent of an already removed element, while [ModificationType.ElementRemoved] will contain the removed element
      *
      * @param modificationType additional information to make more accurate decisions
@@ -199,6 +202,7 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
 
         val isOutOfBlockChange = element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
                 || modificationType.isContractRemoval()
+                || modificationType.isBackingFieldAccessChange(inBlockModificationOwner)
 
         return when {
             !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
@@ -232,6 +236,16 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
      */
     private fun ModificationType.isContractRemoval(): Boolean =
         this is ModificationType.ElementRemoved && (removedElement as? KtExpression)?.isContractDescriptionCallPsiCheck() == true
+
+    /**
+     * Backing field access changes are always out-of-block modifications.
+     *
+     * @see potentiallyAffectsPropertyBackingFieldResolution
+     */
+    private fun ModificationType.isBackingFieldAccessChange(inBlockModificationOwner: KtAnnotated): Boolean =
+        inBlockModificationOwner is KtPropertyAccessor &&
+                this is ModificationType.ElementRemoved &&
+                removedElement.potentiallyAffectsPropertyBackingFieldResolution()
 
     private fun inBlockModification(declaration: KtAnnotated, ktModule: KaModule) {
         val resolveSession = ktModule.getFirResolveSession(project)
@@ -386,11 +400,19 @@ private val hasFirBodyKey = Key.create<Boolean?>("HAS_FIR_BODY")
 internal fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclaration? {
     return when (val declaration = getNonLocalContainingOrThisDeclaration()) {
         is KtNamedFunction -> declaration.takeIf { function ->
-            function.isReanalyzableContainer() && isElementInsideBody(declaration = function, child = this)
+            function.isReanalyzableContainer() && isElementInsideBody(
+                declaration = function,
+                child = this,
+                canHaveBackingFieldAccess = false,
+            )
         }
 
         is KtPropertyAccessor -> declaration.takeIf { accessor ->
-            accessor.isReanalyzableContainer() && isElementInsideBody(declaration = accessor, child = this)
+            accessor.isReanalyzableContainer() && isElementInsideBody(
+                declaration = accessor,
+                child = this,
+                canHaveBackingFieldAccess = true,
+            )
         }
 
         is KtProperty -> declaration.takeIf { property ->
@@ -401,10 +423,77 @@ internal fun PsiElement.getNonLocalReanalyzableContainingDeclaration(): KtDeclar
     }
 }
 
-private fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiElement): Boolean {
+/**
+ * # Regular access
+ *
+ * ```kotlin
+ * val i: Int
+ *   get() {
+ *     field // Depending on the existence of this access, the property will have or not the backing field
+ *     return 0
+ *   }
+ * ```
+ *
+ * # Leading local declaration
+ *
+ * ```kotlin
+ * val i: Int
+ *   get() {
+ *     // Also, we cannot just ignore such local declarations existence as they may change the resolution
+ *     // of backing field. With this declaration,
+ *     // the next `field` access will be resolved into this local property,
+ *     // so there will be no any access to the backing field and,
+ *     // as the result, there will be no backing field at all
+ *     val field = 1
+ *     field
+ *     return 0
+ *   }
+ * ```
+ *
+ * # Implicit receiver
+ *
+ * ```kotlin
+ * class MyClass(val field: String)
+ * fun action(block: () -> Unit) {}
+ * fun actionWithReceiver(block: MyClass.() -> Unit) {}
+ *
+ * val prop: Int
+ *   get() {
+ *     // Here we can safely change `action` to `actionWithReceiver` and vise versa
+ *     // as `field` in both cases will be resolved into the backing field
+ *     // as it has higher priority than a property from an implicit receiver
+ *     action {
+ *       field
+ *     }
+ *
+ *     return 0
+ *   }
+ * ```
+ */
+private fun PsiElement.potentiallyAffectsPropertyBackingFieldResolution(): Boolean {
+    var hasFieldText = false
+    this.accept(object : PsiRecursiveElementWalkingVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is LeafPsiElement && element.textMatches(StandardNames.BACKING_FIELD.asString())) {
+                hasFieldText = true
+                stopWalking()
+            } else {
+                super.visitElement(element)
+            }
+        }
+    })
+
+    return hasFieldText
+}
+
+private fun isElementInsideBody(declaration: KtDeclarationWithBody, child: PsiElement, canHaveBackingFieldAccess: Boolean): Boolean {
     val body = declaration.bodyExpression ?: return false
-    if (!body.isAncestor(child)) return false
-    return !isInsideContract(body = body, child = child)
+    return when {
+        !body.isAncestor(child) -> false
+        isInsideContract(body = body, child = child) -> false
+        canHaveBackingFieldAccess && child.potentiallyAffectsPropertyBackingFieldResolution() -> false
+        else -> true
+    }
 }
 
 private fun isInsideContract(body: KtExpression, child: PsiElement): Boolean {

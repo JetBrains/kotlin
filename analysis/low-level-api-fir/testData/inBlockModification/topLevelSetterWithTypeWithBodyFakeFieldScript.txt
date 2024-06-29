@@ -1,12 +1,1 @@
-BEFORE MODIFICATION:
-public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(1)
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        [ResolvedTo(BODY_RESOLVE)] lval field: R|kotlin/Int| = R|<local>/value|
-        R|<local>/field|
-    }
-
-AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = Int(1)
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-    public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE
