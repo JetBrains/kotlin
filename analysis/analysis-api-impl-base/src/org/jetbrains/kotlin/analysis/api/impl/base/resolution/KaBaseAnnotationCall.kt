@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 @KaImplementationDetail
 class KaBaseAnnotationCall(
     private val backingPartiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol>,
-    argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
+    argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>,
 ) : KaAnnotationCall {
     override val token: KaLifetimeToken get() = backingPartiallyAppliedSymbol.token
 
@@ -31,6 +31,5 @@ class KaBaseAnnotationCall(
     override val partiallyAppliedSymbol: KaPartiallyAppliedFunctionSymbol<KaConstructorSymbol> get() = withValidityAssertion { backingPartiallyAppliedSymbol }
 
     override val typeArgumentsMapping: Map<KaTypeParameterSymbol, KaType> get() = withValidityAssertion { emptyMap() }
-    override val argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
-            by validityAsserted(argumentMapping)
+    override val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>> by validityAsserted(argumentMapping)
 }

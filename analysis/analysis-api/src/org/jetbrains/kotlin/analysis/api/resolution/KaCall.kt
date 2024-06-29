@@ -45,8 +45,10 @@ public sealed interface KaFunctionCall<S : KaFunctionSymbol> : KaCallableMemberC
     /**
      * The mapping from argument to parameter declaration. In case of vararg parameters, multiple arguments may be mapped to the same
      * [KaValueParameterSymbol].
+     *
+     * The map has stable order.
      */
-    public val argumentMapping: LinkedHashMap<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
+    public val argumentMapping: Map<KtExpression, KaVariableSignature<KaValueParameterSymbol>>
 }
 
 /**
