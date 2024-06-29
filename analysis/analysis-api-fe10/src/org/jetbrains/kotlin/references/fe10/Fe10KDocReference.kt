@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class Fe10KDocReference(element: KDocName) : KDocReference(element), KtFe10Reference {
+internal class Fe10KDocReference(element: KDocName) : KDocReference(element), KtFe10Reference {
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> =
         KtFe10ReferenceResolutionHelper.getInstance().resolveKDocLink(element)

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components.base
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 
-interface KaFe10SessionComponent {
+internal interface KaFe10SessionComponent {
     val analysisSession: KaFe10Session
 
     val analysisContext: Fe10AnalysisContext

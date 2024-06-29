@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
-object DescriptorToSourceUtilsIde {
+internal object DescriptorToSourceUtilsIde {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), finds any of them. It can find declarations in builtins or decompiled code.
     fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtFe10ArrayAccessReference(expression: KtArrayAccessExpression) : KtArrayAccessReference(expression), KtFe10Reference {
+internal class KtFe10ArrayAccessReference(expression: KtArrayAccessExpression) : KtArrayAccessReference(expression), KtFe10Reference {
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
         return super<KtFe10Reference>.isReferenceToImportAlias(alias)
     }

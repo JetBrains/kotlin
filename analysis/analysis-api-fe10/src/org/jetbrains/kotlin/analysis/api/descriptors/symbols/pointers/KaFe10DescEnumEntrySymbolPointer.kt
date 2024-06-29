@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-class KaFe10DescEnumEntrySymbolPointer(private val classId: ClassId, private val entryName: Name) : KaSymbolPointer<KaEnumEntrySymbol>() {
+internal class KaFe10DescEnumEntrySymbolPointer(
+    private val classId: ClassId,
+    private val entryName: Name,
+) : KaSymbolPointer<KaEnumEntrySymbol>() {
     @KaImplementationDetail
     override fun restoreSymbol(analysisSession: KaSession): KaEnumEntrySymbol? {
         check(analysisSession is KaFe10Session)

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.psi.KtClassInitializer
 
-class KaFe10PsiClassInitializerSymbol(
+internal class KaFe10PsiClassInitializerSymbol(
     override val psi: KtClassInitializer,
     override val analysisContext: Fe10AnalysisContext
 ) : KaClassInitializerSymbol(), KaFe10Symbol {

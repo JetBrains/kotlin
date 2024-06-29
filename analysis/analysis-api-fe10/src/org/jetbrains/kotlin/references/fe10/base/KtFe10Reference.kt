@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.references.fe10.base
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.source.resolve.ResolveCache
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.unwrappedTargets
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 
+@KaImplementationDetail
 interface KtFe10Reference : KtReference {
     override val resolver: ResolveCache.PolyVariantResolver<KtReference>
         get() = KtFe10PolyVariantResolver

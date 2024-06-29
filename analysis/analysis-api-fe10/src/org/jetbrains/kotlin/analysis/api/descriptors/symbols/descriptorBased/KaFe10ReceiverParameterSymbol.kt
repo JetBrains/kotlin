@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 
-class KaFe10ReceiverParameterSymbol(
+internal class KaFe10ReceiverParameterSymbol(
     override val descriptor: ReceiverParameterDescriptor,
     override val analysisContext: Fe10AnalysisContext,
 ) : KaReceiverParameterSymbol(), KaFe10DescSymbol<ReceiverParameterDescriptor> {

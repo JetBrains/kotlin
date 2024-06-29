@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtCollectionLiteralExpression
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtFe10CollectionLiteralReference(
+internal class KtFe10CollectionLiteralReference(
     expression: KtCollectionLiteralExpression
 ) : KtCollectionLiteralReference(expression), KtFe10Reference {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
