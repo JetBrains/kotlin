@@ -17,13 +17,4 @@ interface KotlinJsDceCompilerToolOptions : org.jetbrains.kotlin.gradle.dsl.Kotli
      */
     @get:org.gradle.api.tasks.Input
     val devMode: org.gradle.api.provider.Property<kotlin.Boolean>
-
-    /**
-     * Output directory.
-     *
-     * Default value: null
-     */
-    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.ERROR)
-    @get:org.gradle.api.tasks.Internal
-    val outputDirectory: org.gradle.api.provider.Property<kotlin.String>
 }

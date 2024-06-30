@@ -13,7 +13,6 @@ internal object KotlinJsDceCompilerToolOptionsHelper {
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.fillCompilerArguments(from, args)
         args.devMode = from.devMode.get()
-        args.outputDirectory = from.outputDirectory.orNull
     }
 
     internal fun syncOptionsAsConvention(
@@ -22,6 +21,5 @@ internal object KotlinJsDceCompilerToolOptionsHelper {
     ) {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.syncOptionsAsConvention(from, into)
         into.devMode.convention(from.devMode)
-        into.outputDirectory.convention(from.outputDirectory)
     }
 }

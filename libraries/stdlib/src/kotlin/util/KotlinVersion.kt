@@ -79,5 +79,5 @@ public class KotlinVersion(public val major: Int, public val minor: Int, public 
 // this class is ignored during classpath normalization when considering whether to recompile dependencies in Kotlin build
 private object KotlinVersionCurrentValue {
     @kotlin.jvm.JvmStatic
-    fun get(): KotlinVersion = KotlinVersion(2, 0, 255) // value is written here automatically during build
+    fun get(): KotlinVersion = KotlinVersion(2, 1, 255) // value is written here automatically during build
 }

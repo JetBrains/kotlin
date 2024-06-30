@@ -300,28 +300,23 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompiler
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
 	public abstract fun getDevMode ()Lorg/gradle/api/provider/Property;
-	public abstract fun getOutputDirectory ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonToolOptions {
 	public abstract fun getDevMode ()Z
 	public abstract fun getOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceCompilerToolOptions;
-	public abstract fun getOutputDirectory ()Ljava/lang/String;
 	public abstract fun setDevMode (Z)V
-	public abstract fun setOutputDirectory (Ljava/lang/String;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions$DefaultImpls {
 	public static fun getAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
 	public static fun getDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
 	public static fun getFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Ljava/util/List;
-	public static fun getOutputDirectory (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Ljava/lang/String;
 	public static fun getSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
 	public static fun getVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;)Z
 	public static fun setAllWarningsAsErrors (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
 	public static fun setDevMode (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
 	public static fun setFreeCompilerArgs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Ljava/util/List;)V
-	public static fun setOutputDirectory (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Ljava/lang/String;)V
 	public static fun setSuppressWarnings (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
 	public static fun setVerbose (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsDceOptions;Z)V
 }

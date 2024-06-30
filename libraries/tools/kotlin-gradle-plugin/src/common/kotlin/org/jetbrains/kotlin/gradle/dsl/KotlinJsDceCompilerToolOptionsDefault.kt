@@ -11,8 +11,4 @@ internal abstract class KotlinJsDceCompilerToolOptionsDefault @javax.inject.Inje
 
     override val devMode: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
-
-    @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.ERROR)
-    override val outputDirectory: org.gradle.api.provider.Property<kotlin.String> =
-        objectFactory.property(kotlin.String::class.java)
 }
