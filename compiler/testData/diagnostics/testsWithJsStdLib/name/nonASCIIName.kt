@@ -1,4 +1,4 @@
-// FIR_IDENTICAL
+// Note: JsAllowInvalidCharsIdentifiersEscaping
 
 interface <!NAME_CONTAINS_ILLEGAL_CHARS!>I𝔹<!>
 
