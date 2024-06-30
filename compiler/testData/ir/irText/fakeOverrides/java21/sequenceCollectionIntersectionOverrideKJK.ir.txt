@@ -595,11 +595,11 @@ FILE fqName:<root> fileName:/1.kt
         public open fun toString (): @[EnhancedNullability] kotlin.String declared in java.util.LinkedList
         public open fun toString (): kotlin.String declared in kotlin.collections.List
       $this: VALUE_PARAMETER name:<this> type:java.util.AbstractCollection<@[FlexibleNullability] kotlin.Int?>
-    FUN name:addFirst visibility:public modality:OPEN <> ($this:<root>.B, e:kotlin.Int?) returnType:kotlin.Unit
+    FUN name:addFirst visibility:public modality:OPEN <> ($this:<root>.B, e:kotlin.Int) returnType:kotlin.Unit
       overridden:
         public open fun addFirst (p0: @[FlexibleNullability] E of java.util.LinkedList?): kotlin.Unit declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:<root>.B
-      VALUE_PARAMETER name:e index:0 type:kotlin.Int?
+      VALUE_PARAMETER name:e index:0 type:kotlin.Int
       BLOCK_BODY
     FUN name:remove visibility:public modality:OPEN <> ($this:<root>.B) returnType:kotlin.Int
       overridden:
@@ -1346,9 +1346,6 @@ FILE fqName:<root> fileName:/1.kt
       CALL 'public open fun addFirst (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         p0: CONST Int type=kotlin.Int value=1
-      CALL 'public open fun addLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        p0: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=null
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
@@ -1377,12 +1374,9 @@ FILE fqName:<root> fileName:/1.kt
         CALL 'public open fun remove (element: kotlin.Int): kotlin.Boolean declared in <root>.B' type=kotlin.Boolean origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
           element: CONST Int type=kotlin.Int value=1
-      CALL 'public open fun addFirst (e: kotlin.Int?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+      CALL 'public open fun addFirst (e: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
         $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         e: CONST Int type=kotlin.Int value=1
-      CALL 'public open fun addLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
-        $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
-        p0: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.B' type=@[FlexibleNullability] kotlin.Int? origin=null
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
@@ -1414,9 +1408,6 @@ FILE fqName:<root> fileName:/1.kt
       CALL 'public open fun addFirst (p0: kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
         p0: CONST Int type=kotlin.Int value=1
-      CALL 'public open fun addLast (p0: kotlin.Int?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
-        $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
-        p0: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): kotlin.Int? declared in <root>.C' type=kotlin.Int? origin=null
           $this: GET_VAR 'c: <root>.C declared in <root>.test' type=<root>.C origin=null
@@ -1448,9 +1439,6 @@ FILE fqName:<root> fileName:/1.kt
       CALL 'public open fun addFirst (p0: kotlin.Int?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
         $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
         p0: CONST Int type=kotlin.Int value=1
-      CALL 'public open fun addLast (e: kotlin.Int?): kotlin.Unit declared in <root>.D' type=kotlin.Unit origin=null
-        $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null
-        e: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): kotlin.Int? declared in <root>.D' type=kotlin.Int? origin=null
           $this: GET_VAR 'd: <root>.D declared in <root>.test' type=<root>.D origin=null

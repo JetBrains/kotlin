@@ -33,16 +33,16 @@ class B<T : Any?> : LinkedList<T> {
   /* fake */ override fun addAll(p0: Int, p1: @EnhancedNullability Collection<out @EnhancedNullability T>): Boolean
 
   // CHECK:
-  //   Mangled name: B#addFirst(1:0?){}
-  //   Public signature: /B.addFirst|488016460427541499[0]
-  //   Public signature debug description: addFirst(1:0?){}
-  /* fake */ override fun addFirst(p0: T?): Unit
+  //   Mangled name: B#addFirst(1:0{EnhancedNullability}){}
+  //   Public signature: /B.addFirst|2931512432431528311[0]
+  //   Public signature debug description: addFirst(1:0{EnhancedNullability}){}
+  /* fake */ override fun addFirst(p0: @EnhancedNullability T): Unit
 
   // CHECK:
-  //   Mangled name: B#addLast(1:0?){}
-  //   Public signature: /B.addLast|-4936773708797202842[0]
-  //   Public signature debug description: addLast(1:0?){}
-  /* fake */ override fun addLast(p0: T?): Unit
+  //   Mangled name: B#addLast(1:0{EnhancedNullability}){}
+  //   Public signature: /B.addLast|5897532682231190289[0]
+  //   Public signature debug description: addLast(1:0{EnhancedNullability}){}
+  /* fake */ override fun addLast(p0: @EnhancedNullability T): Unit
 
   // CHECK:
   //   Mangled name: B#clear(){}
@@ -249,10 +249,10 @@ class B<T : Any?> : LinkedList<T> {
   /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability T
 
   // CHECK JVM_IR:
-  //   Mangled name: B#removeFirst(){}1:0?
-  //   Public signature: /B.removeFirst|2714501603705913501[0]
-  //   Public signature debug description: removeFirst(){}1:0?
-  /* fake */ override fun removeFirst(): T?
+  //   Mangled name: B#removeFirst(){}1:0{EnhancedNullability}
+  //   Public signature: /B.removeFirst|-5814337365175607247[0]
+  //   Public signature debug description: removeFirst(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeFirst(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: B#removeFirstOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -267,10 +267,10 @@ class B<T : Any?> : LinkedList<T> {
   /* fake */ override fun removeIf(p0: @EnhancedNullability Predicate<in @EnhancedNullability T?>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: B#removeLast(){}1:0?
-  //   Public signature: /B.removeLast|1239876537281211503[0]
-  //   Public signature debug description: removeLast(){}1:0?
-  /* fake */ override fun removeLast(): T?
+  //   Mangled name: B#removeLast(){}1:0{EnhancedNullability}
+  //   Public signature: /B.removeLast|7804032615763368733[0]
+  //   Public signature debug description: removeLast(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeLast(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: B#removeLastOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -392,16 +392,16 @@ class C<T : Any?> : LinkedList<T> {
   /* fake */ override fun addAll(p0: Int, p1: @EnhancedNullability Collection<out @EnhancedNullability T>): Boolean
 
   // CHECK:
-  //   Mangled name: C#addFirst(1:0?){}
-  //   Public signature: /C.addFirst|488016460427541499[0]
-  //   Public signature debug description: addFirst(1:0?){}
-  /* fake */ override fun addFirst(p0: T?): Unit
+  //   Mangled name: C#addFirst(1:0{EnhancedNullability}){}
+  //   Public signature: /C.addFirst|2931512432431528311[0]
+  //   Public signature debug description: addFirst(1:0{EnhancedNullability}){}
+  /* fake */ override fun addFirst(p0: @EnhancedNullability T): Unit
 
   // CHECK:
-  //   Mangled name: C#addLast(1:0?){}
-  //   Public signature: /C.addLast|-4936773708797202842[0]
-  //   Public signature debug description: addLast(1:0?){}
-  /* fake */ override fun addLast(p0: T?): Unit
+  //   Mangled name: C#addLast(1:0{EnhancedNullability}){}
+  //   Public signature: /C.addLast|5897532682231190289[0]
+  //   Public signature debug description: addLast(1:0{EnhancedNullability}){}
+  /* fake */ override fun addLast(p0: @EnhancedNullability T): Unit
 
   // CHECK:
   //   Mangled name: C#clear(){}
@@ -596,10 +596,10 @@ class C<T : Any?> : LinkedList<T> {
   /* fake */ override fun removeAll(p0: Collection<@EnhancedNullability T>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: C#removeFirst(){}1:0?
-  //   Public signature: /C.removeFirst|2714501603705913501[0]
-  //   Public signature debug description: removeFirst(){}1:0?
-  /* fake */ override fun removeFirst(): T?
+  //   Mangled name: C#removeFirst(){}1:0{EnhancedNullability}
+  //   Public signature: /C.removeFirst|-5814337365175607247[0]
+  //   Public signature debug description: removeFirst(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeFirst(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: C#removeFirstOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -614,10 +614,10 @@ class C<T : Any?> : LinkedList<T> {
   /* fake */ override fun removeIf(p0: @EnhancedNullability Predicate<in @EnhancedNullability T?>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: C#removeLast(){}1:0?
-  //   Public signature: /C.removeLast|1239876537281211503[0]
-  //   Public signature debug description: removeLast(){}1:0?
-  /* fake */ override fun removeLast(): T?
+  //   Mangled name: C#removeLast(){}1:0{EnhancedNullability}
+  //   Public signature: /C.removeLast|7804032615763368733[0]
+  //   Public signature debug description: removeLast(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeLast(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: C#removeLastOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -751,16 +751,16 @@ class D<T : Any?> : LinkedList<T> {
   /* fake */ override fun addAll(p0: Int, p1: @EnhancedNullability Collection<out @EnhancedNullability T>): Boolean
 
   // CHECK:
-  //   Mangled name: D#addFirst(1:0?){}
-  //   Public signature: /D.addFirst|488016460427541499[0]
-  //   Public signature debug description: addFirst(1:0?){}
-  /* fake */ override fun addFirst(p0: T?): Unit
+  //   Mangled name: D#addFirst(1:0{EnhancedNullability}){}
+  //   Public signature: /D.addFirst|2931512432431528311[0]
+  //   Public signature debug description: addFirst(1:0{EnhancedNullability}){}
+  /* fake */ override fun addFirst(p0: @EnhancedNullability T): Unit
 
   // CHECK:
-  //   Mangled name: D#addLast(1:0?){}
-  //   Public signature: /D.addLast|-4936773708797202842[0]
-  //   Public signature debug description: addLast(1:0?){}
-  /* fake */ override fun addLast(p0: T?): Unit
+  //   Mangled name: D#addLast(1:0{EnhancedNullability}){}
+  //   Public signature: /D.addLast|5897532682231190289[0]
+  //   Public signature debug description: addLast(1:0{EnhancedNullability}){}
+  /* fake */ override fun addLast(p0: @EnhancedNullability T): Unit
 
   // CHECK:
   //   Mangled name: D#clear(){}
@@ -961,10 +961,10 @@ class D<T : Any?> : LinkedList<T> {
   /* fake */ override operator fun removeAt(p0: Int): @EnhancedNullability T
 
   // CHECK JVM_IR:
-  //   Mangled name: D#removeFirst(){}1:0?
-  //   Public signature: /D.removeFirst|2714501603705913501[0]
-  //   Public signature debug description: removeFirst(){}1:0?
-  /* fake */ override fun removeFirst(): T?
+  //   Mangled name: D#removeFirst(){}1:0{EnhancedNullability}
+  //   Public signature: /D.removeFirst|-5814337365175607247[0]
+  //   Public signature debug description: removeFirst(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeFirst(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: D#removeFirstOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -979,10 +979,10 @@ class D<T : Any?> : LinkedList<T> {
   /* fake */ override fun removeIf(p0: @EnhancedNullability Predicate<in @EnhancedNullability T?>): Boolean
 
   // CHECK JVM_IR:
-  //   Mangled name: D#removeLast(){}1:0?
-  //   Public signature: /D.removeLast|1239876537281211503[0]
-  //   Public signature debug description: removeLast(){}1:0?
-  /* fake */ override fun removeLast(): T?
+  //   Mangled name: D#removeLast(){}1:0{EnhancedNullability}
+  //   Public signature: /D.removeLast|7804032615763368733[0]
+  //   Public signature debug description: removeLast(){}1:0{EnhancedNullability}
+  /* fake */ override fun removeLast(): @EnhancedNullability T
 
   // CHECK JVM_IR:
   //   Mangled name: D#removeLastOccurrence(kotlin.Any?){}kotlin.Boolean
@@ -1080,3 +1080,4 @@ class D<T : Any?> : LinkedList<T> {
 //   Public signature: /test|-3081490037894831523[0]
 //   Public signature debug description: test(B<kotlin.Int>;C<kotlin.Int?>;D<kotlin.Int>){}
 fun test(b: B<Int>, c: C<Int?>, d: D<Int>): Unit
+

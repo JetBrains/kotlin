@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/main.kt
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.Bar'
                 GET_OBJECT 'CLASS OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun FooReturn (): @[MyComposable] some.MyComposableFunction0<kotlin.Unit> declared in p3' type=@[MyComposable] some.MyComposableFunction0<kotlin.Unit> origin=null
+        $this: CALL 'public final fun FooReturn (): some.MyComposableFunction0<kotlin.Unit> declared in p3' type=some.MyComposableFunction0<kotlin.Unit> origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

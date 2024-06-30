@@ -32,16 +32,16 @@ FILE fqName:<root> fileName:/1.kt
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
       VALUE_PARAMETER name:p1 index:1 type:@[EnhancedNullability] kotlin.collections.Collection<out @[EnhancedNullability] kotlin.Int>
-    FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:addFirst visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun addFirst (p0: @[FlexibleNullability] E of java.util.LinkedList?): kotlin.Unit declared in java.util.LinkedList
+        public open fun addFirst (p0: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Unit declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
-      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
-    FUN FAKE_OVERRIDE name:addLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] kotlin.Int
+    FUN FAKE_OVERRIDE name:addLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[EnhancedNullability] kotlin.Int) returnType:kotlin.Unit [fake_override]
       overridden:
-        public open fun addLast (p0: @[FlexibleNullability] E of java.util.LinkedList?): kotlin.Unit declared in java.util.LinkedList
+        public open fun addLast (p0: @[EnhancedNullability] E of java.util.LinkedList): kotlin.Unit declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
-      VALUE_PARAMETER name:p0 index:0 type:@[FlexibleNullability] kotlin.Int?
+      VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] kotlin.Int
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:kotlin.Unit [fake_override]
       overridden:
         public open fun clear (): kotlin.Unit declared in java.util.LinkedList
@@ -222,9 +222,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeAt (p0: kotlin.Int): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
       VALUE_PARAMETER name:p0 index:0 type:kotlin.Int
-    FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
+    FUN FAKE_OVERRIDE name:removeFirst visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       overridden:
-        public open fun removeFirst (): @[FlexibleNullability] E of java.util.LinkedList? declared in java.util.LinkedList
+        public open fun removeFirst (): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:removeFirstOccurrence visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
@@ -237,9 +237,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.List?>): kotlin.Boolean declared in java.util.List
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableCollection<kotlin.Int>
       VALUE_PARAMETER name:p0 index:0 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
-    FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
+    FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>) returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       overridden:
-        public open fun removeLast (): @[FlexibleNullability] E of java.util.LinkedList? declared in java.util.LinkedList
+        public open fun removeLast (): @[EnhancedNullability] E of java.util.LinkedList declared in java.util.LinkedList
       $this: VALUE_PARAMETER name:<this> type:java.util.LinkedList<kotlin.Int>
     FUN FAKE_OVERRIDE name:removeLastOccurrence visibility:public modality:OPEN <> ($this:java.util.LinkedList<kotlin.Int>, p0:@[FlexibleNullability] kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:

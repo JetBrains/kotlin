@@ -1,6 +1,5 @@
 // DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
 // accidentally reported (K1 only) on x.addFirst/addLast/removeFirst/removeLast
-// FULL_JDK
 // ISSUE: KT-68193
 // ISSUE: KT-67804
 
@@ -15,11 +14,11 @@ abstract class A1<E5> : LinkedList<E5>() {
 }
 
 abstract class A2<E6> : LinkedList<E6>()  {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: E6?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: E6?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: E6?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): E6? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): E6? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E6?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>E6?<!> = super.removeLast()
 }
 
 abstract class A3 : LinkedList<String>() {
@@ -31,9 +30,9 @@ abstract class A3 : LinkedList<String>() {
 }
 
 abstract class A4 : LinkedList<String>() {
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addFirst(element: String?) {}
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun addLast(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addFirst(element: String?) {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun addLast(element: String?) {}
 
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeFirst(): String? = super.removeFirst()
-    <!WRONG_NULLABILITY_FOR_JAVA_OVERRIDE!>override<!> fun removeLast(): String? = super.removeLast()
+    override fun removeFirst(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeFirst()
+    override fun removeLast(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = super.removeLast()
 }

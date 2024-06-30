@@ -657,9 +657,6 @@ FILE fqName:<root> fileName:/1.kt
       CALL 'public open fun addFirst (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
         p0: CONST Int type=kotlin.Int value=3
-      CALL 'public open fun addLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=null
-        $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null
-        p0: CONST Null type=kotlin.Nothing? value=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun removeFirst (): @[FlexibleNullability] kotlin.Int? declared in <root>.A' type=@[FlexibleNullability] kotlin.Int? origin=null
           $this: GET_VAR 'a: <root>.A declared in <root>.test' type=<root>.A origin=null

@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-// ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // DIAGNOSTICS: -JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE
 // accidentally reported (K1 only) on x.addFirst/addLast/removeFirst/removeLast
 // ISSUE: KT-68193
