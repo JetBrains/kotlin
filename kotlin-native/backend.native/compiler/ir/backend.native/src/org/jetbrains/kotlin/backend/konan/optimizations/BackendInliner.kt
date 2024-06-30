@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
-import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
@@ -464,8 +463,147 @@ internal class BackendInliner(
 
     }
 
+    fun run4(): Map<IrFunction, Set<IrFunction>> {
+        // Compute call sites ids.
+        var id = 0
+        val callSiteIds = mutableMapOf<CallGraphNode.CallSite, Int>()
+        for (callGraphNode in callGraph.directEdges.values) {
+            callGraphNode.callSites
+                    .filter { !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee) }
+                    .forEach { callSiteIds[it] = id++ }
+        }
+
+        // Find backward edges.
+        val forbiddenToInline = BitSet()
+        val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
+        val stack = rootSet.toMutableList()
+        for (root in stack)
+            computationStates[root] = ComputationState.NEW
+        while (stack.isNotEmpty()) {
+            val functionSymbol = stack.peek()!!
+            val state = computationStates[functionSymbol]!!
+            val callSites = callGraph.directEdges[functionSymbol]!!.callSites.filter {
+                !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
+            }
+            when (state) {
+                ComputationState.NEW -> {
+                    computationStates[functionSymbol] = ComputationState.PENDING
+                    for (callSite in callSites) {
+                        val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+                        if (computationStates[calleeSymbol] == null || computationStates[calleeSymbol] == ComputationState.NEW) {
+                            computationStates[calleeSymbol] = ComputationState.NEW
+                            stack.push(calleeSymbol)
+                        }
+                    }
+                }
+
+                ComputationState.PENDING -> {
+                    stack.pop()
+                    computationStates[functionSymbol] = ComputationState.DONE
+                    for (callSite in callSites) {
+                        val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+                        if (computationStates[calleeSymbol] != ComputationState.DONE)
+                            forbiddenToInline.set(callSiteIds[callSite]!!)
+//
+//                        val calleeIrFunction = calleeSymbol.irFunction ?: continue
+//                        if ((calleeIrFunction.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION && !options.inlineBoxUnbox)
+//                                || calleeIrFunction.hasAnnotation(noInline)
+//                                || (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) == true
+//                                || (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) == true // TODO: Is it worth trying to support?
+//                                || (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+//                                    it.parentClassOrNull?.isSingleFieldValueClass == true || it.backingField != null
+//                                } == true
+//                                || (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } == true
+//                                || (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) == true
+//                        ) {
+//                            forbiddenToInline.set(callSiteInfos[callSite]!!)
+//                        }
+                    }
+                }
+
+                ComputationState.DONE -> {
+                    stack.pop()
+                }
+            }
+        }
+
+        val functionSizes = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, Int>()
+        callGraph.directEdges.keys.forEach { functionSymbol ->
+            val function = moduleDFG.functions[functionSymbol]!!
+            functionSizes[functionSymbol] = function.body.allScopes.sumOf { it.nodes.size }
+        }
+
+        val handledFunctions = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+        callGraph.directEdges.keys.forEach { functionSymbol ->
+            val irFunction = functionSymbol.irFunction ?: return@forEach
+            val function = moduleDFG.functions[functionSymbol]!!
+            var isALoop = false
+            function.body.forEachNonScopeNode { node ->
+                if (node is DataFlowIR.Node.Call && node.callee == functionSymbol)
+                    isALoop = true
+            }
+            if (isALoop
+                    || (irFunction.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION && !options.inlineBoxUnbox)
+                    || irFunction.hasAnnotation(noInline)
+                    || (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) == true
+                    || (irFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) == true // TODO: Is it worth trying to support?
+                    || (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+                        it.parentClassOrNull?.isSingleFieldValueClass == true || it.backingField != null
+                    } == true
+                    || (irFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } == true
+                    || (irFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) == true
+            ) {
+                handledFunctions.add(functionSymbol)
+            }
+        }
+
+        val inliningPolicy = BitSet()
+        val threshold = 33
+        while (true) {
+            val smallestSize = functionSizes
+                    .filter { it.key !in handledFunctions }
+                    .minOf { it.value }
+            if (smallestSize > threshold) break
+
+            val justInlinedFunctions = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+            callGraph.directEdges.forEach { (functionSymbol, callGraphNode) ->
+                val callSites = callGraphNode.callSites.filter {
+                    !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
+                }
+                var functionSize = functionSizes[functionSymbol]!!
+                if (functionSize == smallestSize)
+                    justInlinedFunctions.add(functionSymbol)
+                for (callSite in callSites) {
+                    val callSiteId = callSiteIds[callSite]!!
+                    val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
+                    val calleeSize = functionSizes[calleeSymbol]!!
+                    if (calleeSize == smallestSize && calleeSymbol !in handledFunctions && !forbiddenToInline[callSiteId]) {
+                        inliningPolicy.set(callSiteId)
+                        functionSize = functionSize - 1 + calleeSize
+                    }
+                }
+                functionSizes[functionSymbol] = functionSize
+            }
+
+            handledFunctions.addAll(justInlinedFunctions)
+        }
+
+        val result = mutableMapOf<IrFunction, Set<IrFunction>>()
+        for ((functionSymbol, callGraphNode) in callGraph.directEdges) {
+            val irFunction = functionSymbol.irFunction ?: continue
+            result[irFunction] = callGraphNode.callSites
+                    .filter {
+                        !it.isVirtual && callGraph.directEdges.containsKey(it.actualCallee)
+                                && inliningPolicy[callSiteIds[it]!!]
+                    }
+                    .map { it.actualCallee.irFunction!! }
+                    .toSet()
+        }
+        return result
+    }
+
     fun run() {
-        ///*val allFunctionsToInline = */run2()
+        val allFunctionsToInline = run4()
         val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
         val stack = rootSet.toMutableList()
         for (root in stack)
@@ -520,28 +658,28 @@ internal class BackendInliner(
                         val calleeIrFunction = calleeSymbol.irFunction ?: continue
                         val callee = moduleDFG.functions[calleeSymbol]!!
 
-                        var isALoop = false
-                        callee.body.forEachNonScopeNode { node ->
-                            if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
-                                isALoop = true
-                        }
-
-                        val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
-//                        //if (irFunction.name.asString() == "foo")
-//                        println("        $isALoop $calleeSize")
-                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
-                        val shouldInline = !isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
-                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
-                                && !calleeIrFunction.hasAnnotation(noInline)
-                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
-                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
-                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
-                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
-                        } != true
-                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
-                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
-                        /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/
-                        //val shouldInline = calleeIrFunction in allFunctionsToInline[irFunction]!! && !isALoop
+//                        var isALoop = false
+//                        callee.body.forEachNonScopeNode { node ->
+//                            if (node is DataFlowIR.Node.Call && node.callee == calleeSymbol)
+//                                isALoop = true
+//                        }
+//
+//                        val calleeSize = callee.body.allScopes.sumOf { it.nodes.size }
+////                        //if (irFunction.name.asString() == "foo")
+////                        println("        $isALoop $calleeSize")
+//                        val threshold = if (calleeIrFunction is IrSimpleFunction) 33 else 33
+//                        val shouldInline = !isALoop && calleeSize <= threshold // TODO: To a function. Also use relative criterion along with the absolute one.
+//                                && (calleeIrFunction.origin != DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION || options.inlineBoxUnbox)
+//                                && !calleeIrFunction.hasAnnotation(noInline)
+//                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(noInline) != true
+//                                && (calleeIrFunction as? IrSimpleFunction)?.overrides(invokeSuspendFunction.owner) != true // TODO: Is it worth trying to support?
+//                                && (calleeIrFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.let {
+//                            it.parentClassOrNull?.isSingleFieldValueClass == true && it.backingField != null
+//                        } != true
+//                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.let { it.isArray || it.symbol == string } != true
+//                                && (calleeIrFunction as? IrConstructor)?.constructedClass?.getAllSuperclasses()?.contains(throwable.owner) != true
+//                        /*&& irFunction.fileOrNull?.path?.endsWith("tt.kt") == true*/
+                        val shouldInline = calleeIrFunction in allFunctionsToInline[irFunction]!!// && !isALoop
                         if (shouldInline) {
                             if (functionsToInline.add(calleeIrFunction)) {
 //                                if (calleeIrFunction is IrConstructor && calleeIrFunction.constructedClass.name.asString() == "ConcurrentModificationException") {
