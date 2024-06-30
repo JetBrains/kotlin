@@ -29,10 +29,8 @@ import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.io.File
 import javax.xml.parsers.SAXParserFactory
-import kotlin.test.Ignore
 
 @WithMutedInDatabaseRunTest
-@Ignore("Enable when KT-69280 is fixed")
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
         val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
