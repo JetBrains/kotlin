@@ -28,6 +28,6 @@ enum class KotlinVersion(val version: String) {
                 ?: throw IllegalArgumentException("Unknown Kotlin version: $version")
 
         @JvmStatic
-        val DEFAULT = KOTLIN_2_0
+        val DEFAULT = KOTLIN_2_1
     }
 }
