@@ -898,7 +898,7 @@ internal abstract class FunctionGenerationContext(
         resultSlot: LLVMValueRef? = null
     ): LLVMValueRef {
         val typeInfo = codegen.typeInfoValue(irClass)
-        return if (lifetime == Lifetime.STACK) {
+        return if (lifetime == Lifetime.STACK && LLVMIsConstant(count) != 0) {
             stackLocalsManager.allocArray(irClass, count)
         } else {
             call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
