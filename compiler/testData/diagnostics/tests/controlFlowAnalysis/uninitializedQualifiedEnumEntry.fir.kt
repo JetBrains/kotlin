@@ -22,8 +22,8 @@ enum class SomeEnum12(var x: Int) {
 enum class SomeEnum21(var x: Int) {
     A(1) {
         init {
-            A.x = 10
-            SomeEnum21.A.x = 10
+            <!UNINITIALIZED_ENUM_ENTRY!>A<!>.x = 10
+            SomeEnum21.<!UNINITIALIZED_ENUM_ENTRY!>A<!>.x = 10
             <!UNINITIALIZED_ENUM_ENTRY!>B<!>.x = 10
         }
     },
@@ -33,8 +33,8 @@ enum class SomeEnum21(var x: Int) {
 enum class SomeEnum22(var x: Int) {
     A(1) {
         init {
-            A.x = 10
-            SomeEnum22.A.x = 10
+            <!UNINITIALIZED_ENUM_ENTRY!>A<!>.x = 10
+            SomeEnum22.<!UNINITIALIZED_ENUM_ENTRY!>A<!>.x = 10
             SomeEnum22.<!UNINITIALIZED_ENUM_ENTRY!>B<!>.x = 10
         }
     },
@@ -48,8 +48,8 @@ enum class SomeEnum3(var x: Int) {
         init {
             A.x = 10
             SomeEnum3.A.x = 10
-            B.x = 10
-            SomeEnum3.B.x = 10
+            <!UNINITIALIZED_ENUM_ENTRY!>B<!>.x = 10
+            SomeEnum3.<!UNINITIALIZED_ENUM_ENTRY!>B<!>.x = 10
         }
     };
 }

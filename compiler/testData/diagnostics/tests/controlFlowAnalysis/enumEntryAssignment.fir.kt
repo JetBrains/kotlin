@@ -3,7 +3,7 @@ enum class Some {
     A {
         init {
             <!VAL_REASSIGNMENT!>A<!> = null!!
-            <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>B<!> = null!!
+            <!VAL_REASSIGNMENT!>B<!> = null!!
         }
     },
     B {
@@ -14,8 +14,8 @@ enum class Some {
     };
 
     init {
-        <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>A<!> = null!!
-        <!UNINITIALIZED_ENUM_ENTRY, VAL_REASSIGNMENT!>B<!> = null!!
+        <!VAL_REASSIGNMENT!>A<!> = null!!
+        <!VAL_REASSIGNMENT!>B<!> = null!!
     }
 }
 

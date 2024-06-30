@@ -12,7 +12,7 @@ val sb = StringBuilder()
 enum class Zzz {
     Z {
         init {
-            sb.appendLine(Z.name)
+            sb.appendLine(this.name)
         }
     }
 }

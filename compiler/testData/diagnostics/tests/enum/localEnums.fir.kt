@@ -5,7 +5,7 @@ fun foo() {
         FOO,
         BAR
     }
-    val foo = A.<!UNINITIALIZED_ENUM_ENTRY!>FOO<!>
+    val foo = A.FOO
     val b = object {
         <!WRONG_MODIFIER_TARGET!>enum<!> class B {}
     }
