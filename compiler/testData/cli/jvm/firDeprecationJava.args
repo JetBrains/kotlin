@@ -1,6 +1,4 @@
 $TESTDATA_DIR$/firDeprecationJava.kt
 $TESTDATA_DIR$/firDeprecationJava
--language-version
-2.0
 -d
 $TEMP_DIR$
