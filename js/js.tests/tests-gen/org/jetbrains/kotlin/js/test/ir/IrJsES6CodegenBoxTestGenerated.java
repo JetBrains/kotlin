@@ -15216,6 +15216,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
     }
 
     @Test
+    @TestMetadata("enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt")
+    public void testEnumEntriesCompatibilityCheckNoPrioritizedEnumEntries() {
+      runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntriesInCompanion.kt")
     public void testEnumEntriesInCompanion() {
       runTest("compiler/testData/codegen/box/enum/enumEntriesInCompanion.kt");

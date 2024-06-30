@@ -19476,6 +19476,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt")
+    public void testEnumEntriesCompatibilityCheckNoPrioritizedEnumEntries() {
+      runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntriesFromJava.kt")
     public void testEnumEntriesFromJava() {
       runTest("compiler/testData/codegen/box/enum/enumEntriesFromJava.kt");

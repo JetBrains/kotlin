@@ -1,4 +1,4 @@
-// LANGUAGE: -EnumEntries
+// LANGUAGE: -EnumEntries, -PrioritizedEnumEntries
 // WITH_STDLIB
 
 package pckg

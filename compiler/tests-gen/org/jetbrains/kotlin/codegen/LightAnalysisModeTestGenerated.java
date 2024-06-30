@@ -16183,6 +16183,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheck.kt");
     }
 
+    @TestMetadata("enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt")
+    public void testEnumEntriesCompatibilityCheckNoPrioritizedEnumEntries() {
+      runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheckNoPrioritizedEnumEntries.kt");
+    }
+
     @TestMetadata("enumEntriesFromJava.kt")
     public void testEnumEntriesFromJava() {
       runTest("compiler/testData/codegen/box/enum/enumEntriesFromJava.kt");
