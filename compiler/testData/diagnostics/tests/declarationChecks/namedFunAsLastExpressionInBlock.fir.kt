@@ -26,15 +26,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named8(): Int {return 1}<!>
-        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named9() = 1<!>
+        0 -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named8(): Int {return 1}<!>
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named9() = 1<!>
     }
 
     val x31 = when (1) {
         0 -> {
             fun named10(): Int {return 1}
         }
-        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named11() = 1<!>
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_ERROR!>fun named11() = 1<!>
     }
 
     val x4 = {
