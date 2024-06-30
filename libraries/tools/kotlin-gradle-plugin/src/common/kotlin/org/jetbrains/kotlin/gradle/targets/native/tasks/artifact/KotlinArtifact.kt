@@ -8,15 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.named
@@ -86,7 +83,7 @@ internal fun Project.registerLibsDependencies(target: KonanTarget, artifactName:
     configurations.maybeCreateResolvable(librariesConfigurationName).apply {
         isVisible = false
         isTransitive = true
-        configureAttributesFor(project, target)
+        configureNativeLinkAttributes(project, target)
     }
     deps.forEach { dependencies.add(librariesConfigurationName, it) }
     return librariesConfigurationName
@@ -97,19 +94,14 @@ internal fun Project.registerExportDependencies(target: KonanTarget, artifactNam
     configurations.maybeCreateResolvable(exportConfigurationName).apply {
         isVisible = false
         isTransitive = false
-        configureAttributesFor(project, target)
+        configureNativeLinkAttributes(project, target)
     }
     deps.forEach { dependencies.add(exportConfigurationName, it) }
     return exportConfigurationName
 }
 
-private fun Configuration.configureAttributesFor(project: Project, target: KonanTarget) = with (project) {
+private fun Configuration.configureNativeLinkAttributes(project: Project, target: KonanTarget) {
     attributes.setAttribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     attributes.setAttribute(KotlinNativeTarget.konanTargetAttribute, target.name)
     attributes.setAttribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
-    if (kotlinPropertiesProvider.enableUnpackedKlibs) {
-        attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, unpackedKlibLibraryElements())
-    } else {
-        attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, packedKlibLibraryElements())
-    }
 }
