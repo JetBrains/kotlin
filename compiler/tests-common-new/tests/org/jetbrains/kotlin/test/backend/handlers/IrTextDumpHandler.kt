@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 
 class IrTextDumpHandler(
@@ -116,9 +117,9 @@ class IrTextDumpHandler(
 
         val builder = baseDumper.builderForModule(module.name)
         val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(module)
-        val orderedTestFileToIrFile = if (dumpOptions.stableOrder)
-            testFileToIrFile.sortedBy { it.second.fileEntry.name }
-        else testFileToIrFile
+        val orderedTestFileToIrFile = testFileToIrFile.applyIf(dumpOptions.stableOrder) {
+            sortedBy { it.second.fileEntry.name }
+        }
         for ((testFile, irFile) in orderedTestFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
             var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)

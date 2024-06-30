@@ -1,3 +1,12 @@
+// FILE: a.kt
+package a
+
+// CHECK:
+//   Mangled name: a#test(){}
+//   Public signature: a/test|6620506149988718649[0]
+//   Public signature debug description: test(){}
+fun test(): Unit
+
 // FILE: b.kt
 package b
 
@@ -38,16 +47,3 @@ object Obj {
 //   Mangled name: b.ObjTA
 //   Public signature: b/ObjTA|null[0]
 typealias ObjTA = Obj
-// FILE: a.kt
-package a
-
-// CHECK JVM_IR:
-//   Mangled name: a#test(){}
-//   Public signature: a/test|6620506149988718649[0]
-//   Public signature debug description: test(){}
-// CHECK JS_IR NATIVE:
-//   Mangled name: a#test(){}
-//   Public signature: a/test|6620506149988718649[0]
-//   Public signature debug description: test(){}
-fun test(): Unit
-

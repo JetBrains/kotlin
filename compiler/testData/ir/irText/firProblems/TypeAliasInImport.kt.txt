@@ -1,3 +1,13 @@
+// FILE: a.kt
+package a
+
+fun test() {
+  Obj.method()
+  Obj.<get-prop>() /*~> Unit */
+  Obj.method()
+  Obj.<get-prop>() /*~> Unit */
+}
+
 // FILE: b.kt
 package b
 
@@ -18,12 +28,3 @@ object Obj {
 }
 
 typealias ObjTA = Obj
-// FILE: a.kt
-package a
-
-fun test() {
-  Obj.method()
-  Obj.<get-prop>() /*~> Unit */
-  Obj.method()
-  Obj.<get-prop>() /*~> Unit */
-}

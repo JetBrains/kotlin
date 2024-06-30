@@ -1,3 +1,5 @@
+// FILE: common.kt
+
 // FILE: platform.kt
 
 // CHECK:
@@ -41,6 +43,4 @@ open class B : A {
   override fun foo(): Unit
 
 }
-
-// FILE: common.kt
 

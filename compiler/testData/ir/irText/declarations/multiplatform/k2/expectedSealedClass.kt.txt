@@ -1,3 +1,5 @@
+// FILE: common.kt
+
 // FILE: platform.kt
 
 class Add : Ops {
@@ -17,6 +19,4 @@ sealed class Ops {
   }
 
 }
-
-// FILE: common.kt
 

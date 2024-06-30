@@ -1,3 +1,5 @@
+// FILE: lib.kt
+
 // FILE: main.kt
 
 // CHECK:
@@ -131,6 +133,3 @@ enum class MyEnum : Enum<MyEnum> {
     /* fake */ override get(): Int
 
 }
-
-// FILE: lib.kt
-

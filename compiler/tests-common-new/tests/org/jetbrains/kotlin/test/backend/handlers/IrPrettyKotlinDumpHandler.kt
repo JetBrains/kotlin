@@ -91,7 +91,7 @@ internal fun dumpModuleKotlinLike(
     }.map { it.second }
     val printFileName = filteredIrFiles.size > 1 || allModules.size > 1
     val modifiedOptions = options.copy(printFileName = printFileName)
-    for (irFile in filteredIrFiles) {
+    for (irFile in filteredIrFiles.sortedBy { it.fileEntry.name }) {
         builder.append(irFile.dumpKotlinLike(modifiedOptions))
     }
 }
