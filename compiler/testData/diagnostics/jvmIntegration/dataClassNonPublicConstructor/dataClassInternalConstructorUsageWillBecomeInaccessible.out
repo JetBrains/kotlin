@@ -1,2 +1,2 @@
-warning: '-progressive' is meaningful only for the latest language version (2.0), while this build uses 1.9
+warning: '-progressive' is meaningful only for the latest language version (2.1), while this build uses 1.9
 Compiler behavior in such mode is undefined; please, consider moving to the latest stable version or turning off progressive mode.
