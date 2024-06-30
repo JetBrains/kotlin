@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// LANGUAGE: +InlineClasses, -JvmInlineValueClasses, -JsExternalPropertyParameters
 // DIAGNOSTICS: +ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 
 external inline class <!WRONG_EXTERNAL_DECLARATION!>C(<!EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER!>val a: Int<!>)<!> {
