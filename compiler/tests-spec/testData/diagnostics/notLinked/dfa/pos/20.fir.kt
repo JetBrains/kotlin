@@ -30,8 +30,8 @@ fun case_2(x: Any) {
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (true && x !is Class) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_1
     }
 }
 
@@ -50,8 +50,8 @@ fun case_4(x: Any) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (false || !(x !is Class.NestedClass?)) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.<!UNRESOLVED_REFERENCE!>prop_4<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>?.prop_4
     }
 }
 

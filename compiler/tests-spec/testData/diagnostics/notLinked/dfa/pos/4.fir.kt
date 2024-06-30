@@ -178,7 +178,7 @@ fun case_14() {
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasString) {
     val t = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>if (true && <!SENSELESS_COMPARISON!>x != null<!>) "" else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Nothing")!>x<!>
     }<!>
 }
 
