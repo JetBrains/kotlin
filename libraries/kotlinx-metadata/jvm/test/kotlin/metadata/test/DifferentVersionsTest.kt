@@ -28,6 +28,7 @@ class DifferentVersionsTest {
     )
 
     @Test
+    @Ignore("Enable when KT-69280 is fixed")
     fun readsCurrentVersion() {
         assertContentEquals(JvmMetadataVersion.INSTANCE.toArray(), metadata.metadataVersion)
         assertIs<KotlinClassMetadata.Class>(KotlinClassMetadata.readStrict(metadata))
