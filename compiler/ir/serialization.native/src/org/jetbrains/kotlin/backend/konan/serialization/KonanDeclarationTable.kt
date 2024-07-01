@@ -31,7 +31,7 @@ class KonanDeclarationTable(
     // TODO: We should get rid of this extension point in favor of proper support in IR-based mangler.
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {
-        // TODO: this is a workaround, need to find a better fix
+        // TODO: this is a workaround for KT-69563, need to find a better fix
         try {
             if (declaration.isFromCInteropLibrary()) {
                 return signatureIdComposer.computeSignature(declaration)
