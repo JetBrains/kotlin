@@ -1,9 +1,5 @@
 FILE fqName:<root> fileName:/ArrayMap.kt
   CLASS CLASS name:ArrayMap modality:SEALED visibility:public superTypes:[kotlin.collections.Iterable<T of <root>.ArrayMap>]
-    sealedSubclasses:
-      CLASS CLASS name:ArrayMapImpl modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.ArrayMapImpl>]
-      CLASS OBJECT name:EmptyArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<kotlin.Nothing>]
-      CLASS CLASS name:OneElementArrayMap modality:FINAL visibility:internal superTypes:[<root>.ArrayMap<T of <root>.OneElementArrayMap>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ArrayMap<T of <root>.ArrayMap>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     CONSTRUCTOR visibility:protected <> () returnType:<root>.ArrayMap<T of <root>.ArrayMap> [primary]

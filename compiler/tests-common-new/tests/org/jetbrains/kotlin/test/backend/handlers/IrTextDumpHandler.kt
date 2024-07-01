@@ -154,7 +154,9 @@ class IrTextDumpHandler(
         val moduleStructure = testServices.moduleStructure
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(moduleStructure.modules.first().getDumpExtension())
-        checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
+        // After KT-54028, sealed subclasses are not deserialized, but IR dumps should be same before and after deserialization.
+        // Hence, test data should have no such clauses, and they should be filtered out of actualDump
+        checkOneExpectedFile(defaultExpectedFile, filterOutSealedSubclasses(baseDumper.generateResultingDump()))
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
@@ -169,5 +171,23 @@ class IrTextDumpHandler(
     private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
         return computeDumpExtension(this, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
     }
-}
 
+    private fun filterOutSealedSubclasses(actualDump: String): String =
+        buildString {
+            val SEALED_SUBCLASSES_CLAUSE = "sealedSubclasses:"
+            var ongoingSealedSubclassesClauseIndent: String? = null
+            for (line in actualDump.lines()) {
+                if (ongoingSealedSubclassesClauseIndent == null) {
+                    if (line.trim() == SEALED_SUBCLASSES_CLAUSE) {
+                        ongoingSealedSubclassesClauseIndent = line.substringBefore(SEALED_SUBCLASSES_CLAUSE)
+                    } else
+                        appendLine(line)
+                } else {
+                    if (!line.startsWith("$ongoingSealedSubclassesClauseIndent  CLASS") ) {
+                        ongoingSealedSubclassesClauseIndent = null
+                        appendLine(line)
+                    }
+                }
+            }
+        }
+}

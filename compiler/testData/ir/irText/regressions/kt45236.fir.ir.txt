@@ -1,7 +1,5 @@
 FILE fqName:<root> fileName:/kt45236.kt
   CLASS CLASS name:NetRequestStatus modality:SEALED visibility:public superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NetRequestStatus<T of <root>.NetRequestStatus>
     TYPE_PARAMETER name:T index:0 variance:out superTypes:[kotlin.Any] reified:false
     CLASS CLASS name:Error modality:FINAL visibility:public [data] superTypes:[<root>.NetRequestStatus<T of <root>.NetRequestStatus.Error>]

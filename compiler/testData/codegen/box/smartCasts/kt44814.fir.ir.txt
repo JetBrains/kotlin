@@ -70,9 +70,6 @@ FILE fqName:<root> fileName:/kt44814.kt
         public open fun toString (): kotlin.String declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
-      CLASS CLASS name:FirPsiModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.ASTNode>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
     TYPE_PARAMETER name:Node index:0 variance: superTypes:[kotlin.Any] reified:false
     PROPERTY name:node visibility:public modality:FINAL [val]
@@ -209,9 +206,6 @@ FILE fqName:<root> fileName:/kt44814.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirModifierList modality:SEALED visibility:internal superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
-      CLASS CLASS name:FirPsiModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList
     PROPERTY name:modifiers visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:modifiers type:kotlin.collections.List<<root>.FirModifier<*>> visibility:private [final]
@@ -547,9 +541,6 @@ FILE fqName:<root> fileName:/kt44814.kt
         public open fun toString (): kotlin.String declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirSourceElement modality:SEALED visibility:public superTypes:[kotlin.Any]
-    sealedSubclasses:
-      CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
-      CLASS CLASS name:FirPsiSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirSourceElement
     CONSTRUCTOR visibility:protected <> () returnType:<root>.FirSourceElement [primary]
       BLOCK_BODY
