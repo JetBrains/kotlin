@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val x = test()
     if (stepId == 4) {
         // this is known issue, that return type doesn not affect IdSignature

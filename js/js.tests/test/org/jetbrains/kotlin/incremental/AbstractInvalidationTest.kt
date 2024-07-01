@@ -300,7 +300,7 @@ abstract class AbstractInvalidationTest(
                     testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
-                    testFunctionArgs = "$stepId",
+                    testFunctionArgs = "$stepId, false",
                     expectedResult = "OK",
                     withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD),
                     entryModulePath = jsFiles.last()

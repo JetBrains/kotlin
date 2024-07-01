@@ -4,4 +4,4 @@ export declare class MyClass {
     get stepId(): number;
     baz(): number;
 }
-export declare function box(stepId: number): string;
+export declare function box(stepId: number, isWasm: boolean): string;

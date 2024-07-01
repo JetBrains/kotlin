@@ -1,6 +1,6 @@
 inline fun callIt(f: () -> Int) = f()
 
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val a = object : ClassA() {
         override fun test1() = "object::test1".castTo<String>()
         override fun test2() = 2.castTo<String>()

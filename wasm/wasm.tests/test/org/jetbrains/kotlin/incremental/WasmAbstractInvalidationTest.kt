@@ -334,7 +334,7 @@ abstract class WasmAbstractInvalidationTest(
                     let boxTestPassed = false;
                     try {
                         let jsModule = await import('./${mainModuleInfo.moduleName}.mjs');
-                        let result = jsModule.$BOX_FUNCTION_NAME(${projStep.id});
+                        let result = jsModule.$BOX_FUNCTION_NAME(${projStep.id}, true);
                         if (result.toLowerCase() != "ok") {
                             throw new Error(result);
                         }

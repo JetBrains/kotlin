@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val prop = testProp(B())
     if (prop != stepId) {
         return "Fail prop: $prop != $stepId"

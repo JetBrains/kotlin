@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val expected = if (stepId == 5) stepId - 1 else stepId
 
     var got = simpleFunction()

@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val enums = testEnums()
     when (stepId) {
         0 -> if (enums.toString() != "[A, B, A, B]") return "Fail, got $enums"

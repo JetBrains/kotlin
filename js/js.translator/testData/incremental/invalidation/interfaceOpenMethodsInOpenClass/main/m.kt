@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val expected = when (stepId) {
         0 -> 9
         1 -> 11

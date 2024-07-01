@@ -1,4 +1,4 @@
-fun box(stepId: Int) = when (stepId) {
+fun box(stepId: Int, isWasm: Boolean) = when (stepId) {
         0 -> "OK"
         1 -> checkLog {
             suite("Test1") {

@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val a = ClassABC()
     when (stepId) {
         0, 4 -> {

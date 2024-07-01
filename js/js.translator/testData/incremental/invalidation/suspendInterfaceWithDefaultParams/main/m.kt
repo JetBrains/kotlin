@@ -28,4 +28,4 @@ fun runCoroutine(coroutine: suspend () -> String): String {
     return result
 }
 
-fun box(stepId: Int) = runCoroutine { suspendBox(stepId) }
+fun box(stepId: Int, isWasm: Boolean) = runCoroutine { suspendBox(stepId) }

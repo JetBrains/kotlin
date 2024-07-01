@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val lib1Common = stepId
     val lib1 = lib1Common + 1
     val lib2Common = lib1Common + stepId + 1

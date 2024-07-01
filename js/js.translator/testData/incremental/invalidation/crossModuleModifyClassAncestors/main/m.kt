@@ -1,6 +1,6 @@
 fun B.message() = p1 + p2 + p3 + f1() + f2() + f3()
 
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val a = A().p2 + A().f2()
     val c = C().message()
     val d = D().message()

@@ -5,4 +5,4 @@ export declare class MyClass {
     get stepId(): number;
     qux(): number;
 }
-export declare function box(stepId: number): string;
+export declare function box(stepId: number, isWasm: boolean): string;

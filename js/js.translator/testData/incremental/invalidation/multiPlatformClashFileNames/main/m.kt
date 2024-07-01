@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val expectCommon = if (stepId < 2) 0 else stepId
     var got = commonWrapper()
     if (expectCommon != got) {

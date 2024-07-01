@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     val s = doTest()
     when (stepId) {
         0 -> if (s == "class SuspendFunction0") return "OK"

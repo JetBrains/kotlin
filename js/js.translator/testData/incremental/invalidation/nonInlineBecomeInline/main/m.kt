@@ -1,4 +1,4 @@
-fun box(stepId: Int): String {
+fun box(stepId: Int, isWasm: Boolean): String {
     when (stepId) {
         0, 3 -> if (foo() != 42) return "Fail"
         1 -> if (foo() != 33) return "Fail"
