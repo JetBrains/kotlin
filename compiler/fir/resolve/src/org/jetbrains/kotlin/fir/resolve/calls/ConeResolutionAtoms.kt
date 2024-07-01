@@ -62,9 +62,10 @@ sealed class ConeCallAtom : AbstractConeCallAtom() {
 }
 
 class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
-    init {
-        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
-    }
+// TODO: investigate possibility to enable this check. KT-69557
+//    init {
+//        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
+//    }
 
     override val expression: FirExpression
         get() = fir
