@@ -60,19 +60,6 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
-//TODO
-//import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromObjCClassId
-//import org.jetbrains.kotlin.GeneratedDeclarationKey
-//import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-//import org.jetbrains.kotlin.descriptors.ClassDescriptor
-//import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
-//import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
-//import org.jetbrains.kotlin.ir.builders.irBlockBody
-//import org.jetbrains.kotlin.ir.builders.irReturn
-//import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-//import org.jetbrains.kotlin.ir.util.*
-//import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
-
 object ComposeCompilerKey : GeneratedDeclarationKey()
 
 abstract class AbstractComposeLowering(
