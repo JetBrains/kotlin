@@ -128,7 +128,7 @@ internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
         else if ((symbol.containingDeclaration as? KaNamedClassSymbol)?.isInner == true) receiverParameterType
         else if (receiverParameterType != null && isObjCNothing(receiverParameterType)) return receiverParameterType
         else null
-    } else if (this is KaPropertyGetterSymbol || this is KaPropertySetterSymbol) {
+    } else if (symbol is KaPropertyGetterSymbol || symbol is KaPropertySetterSymbol) {
         val property = symbol.containingDeclaration as KaPropertySymbol
         val isExtension = property.isExtension
         val receiverType = property.receiverType
