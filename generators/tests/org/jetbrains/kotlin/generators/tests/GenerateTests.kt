@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.allopen.*
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
-import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBytecodeListingTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
@@ -184,22 +180,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractAndroidBytecodeShapeTest> {
                 model("codegen/bytecodeShape", recursive = false, extension = null)
-            }
-
-            testClass<AbstractParcelBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBoxTest> {
-                model("parcel/box", targetBackend = TargetBackend.JVM_IR)
-            }
-
-            testClass<AbstractParcelBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM)
-            }
-
-            testClass<AbstractParcelIrBytecodeListingTest> {
-                model("parcel/codegen", targetBackend = TargetBackend.JVM_IR)
             }
         }
 

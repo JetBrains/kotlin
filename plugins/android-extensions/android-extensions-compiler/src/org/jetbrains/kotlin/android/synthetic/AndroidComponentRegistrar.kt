@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.android.synthetic
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import kotlinx.android.extensions.CacheImplementation
-import org.jetbrains.kotlin.android.parcel.*
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidExtensionsExpressionCodegenExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidIrExtension
 import org.jetbrains.kotlin.android.synthetic.codegen.CliAndroidOnDestroyClassBuilderInterceptorExtension
-import org.jetbrains.kotlin.android.synthetic.codegen.ParcelableClinitClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.android.synthetic.diagnostic.AndroidExtensionPropertiesCallChecker
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.AndroidVariant
@@ -42,7 +39,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.utils.decodePluginOptions
 
@@ -114,17 +110,6 @@ class AndroidComponentRegistrar : ComponentRegistrar {
                 ?: throw IllegalStateException(errorMessage)
         }
 
-        fun registerParcelExtensions(project: Project) {
-            ExpressionCodegenExtension.registerExtension(project, ParcelableCodegenExtension())
-            IrGenerationExtension.registerExtension(project, ParcelableIrGeneratorExtension())
-            SyntheticResolveExtension.registerExtension(project, ParcelableResolveExtension())
-            @Suppress("DEPRECATION_ERROR")
-            org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension.registerExtension(
-                project, ParcelableClinitClassBuilderInterceptorExtension()
-            )
-            StorageComponentContainerContributor.registerExtension(project, ParcelizeDeclarationCheckerComponentContainerContributor())
-        }
-
         private fun parseVariant(s: String): AndroidVariant? {
             val parts = s.split(';')
             if (parts.size < 2) return null
@@ -174,10 +159,6 @@ class AndroidComponentRegistrar : ComponentRegistrar {
         val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
-        if (AndroidExtensionsFeature.PARCELIZE in features) {
-            registerParcelExtensions(project)
-        }
-
         if (AndroidExtensionsFeature.VIEWS in features) {
             registerViewExtensions(configuration, isExperimental, project)
         }
@@ -190,17 +171,6 @@ class AndroidExtensionPropertiesComponentContainerContributor : StorageComponent
     ) {
         if (platform.isJvm()) {
             container.useInstance(AndroidExtensionPropertiesCallChecker())
-        }
-    }
-}
-
-class ParcelizeDeclarationCheckerComponentContainerContributor : StorageComponentContainerContributor {
-    override fun registerModuleComponents(
-        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
-    ) {
-        if (platform.isJvm()) {
-            container.useInstance(ParcelableDeclarationChecker())
-            container.useInstance(ParcelableAnnotationChecker())
         }
     }
 }
