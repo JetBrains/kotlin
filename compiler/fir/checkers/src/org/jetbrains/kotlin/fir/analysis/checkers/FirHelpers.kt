@@ -161,6 +161,20 @@ fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol?
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
  * The containing symbol is resolved using the declaration-site session.
+ * For example:
+ *
+ * ```kotlin
+ * expect class MyClass {
+ *     fun test() // (1)
+ * }
+ *
+ * actual class MyClass {
+ *     actual fun test() {} // (2)
+ * }
+ * ```
+ *
+ * Calling [getContainingClassSymbol] for the symbol of `(1)` will return
+ * `expect class MyClass`, but calling it for `(2)` will give `actual class MyClass`.
  */
 fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? = when (this) {
     is FirCallableSymbol<*> -> containingClassLookupTag()?.toSymbol(moduleData.session)
