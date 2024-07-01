@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithCallableCopyReturnTypeUpdater
@@ -141,9 +142,11 @@ private fun ConeClassLikeType.classScope(
     val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
-        else -> substitutorByMap(
+        else -> ConeSubstitutorByMap.create(
             createSubstitutionForScope(fir.typeParameters, fullyExpandedType, useSiteSession),
             useSiteSession,
+            allowIdenticalSubstitution = false,
+            substituteFlexibleTypeParameterWithNullable = true,
         )
     }
 

@@ -240,13 +240,15 @@ fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
 class ConeSubstitutorByMap private constructor(
     // Used only for sake of optimizations at org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
     val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
-    private val useSiteSession: FirSession
+    private val useSiteSession: FirSession,
+    private val substituteFlexibleTypeParameterWithNullable: Boolean,
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
     companion object {
         fun create(
             substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
             useSiteSession: FirSession,
             allowIdenticalSubstitution: Boolean = true,
+            substituteFlexibleTypeParameterWithNullable: Boolean = false,
         ): ConeSubstitutor {
             if (substitution.isEmpty()) return Empty
 
@@ -259,7 +261,7 @@ class ConeSubstitutorByMap private constructor(
                     return Empty
                 }
             }
-            return ConeSubstitutorByMap(substitution, useSiteSession)
+            return ConeSubstitutorByMap(substitution, useSiteSession, substituteFlexibleTypeParameterWithNullable)
         }
     }
 
@@ -275,7 +277,7 @@ class ConeSubstitutorByMap private constructor(
     }
 
     override fun substituteOrNull(type: ConeKotlinType): ConeKotlinType? {
-        if (type is ConeFlexibleType) {
+        if (substituteFlexibleTypeParameterWithNullable && type is ConeFlexibleType) {
             // (T & Any ... T?) with T = String? gives just String?
             val lowerBound = type.lowerBound
             if (lowerBound is ConeDefinitelyNotNullType) {
