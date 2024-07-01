@@ -2,8 +2,8 @@
 class AAA {
     inline fun <reified T> myFunction() {
         <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>localDeclarations<!>()
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE!>privatePropInline<!>
-        <!NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateVarPropInline<!> = ""
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privatePropInline<!>
+        <!NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE, NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE!>privateVarPropInline<!> = ""
     }
 
     private <!NOTHING_TO_INLINE!>inline<!> fun localDeclarations(): Boolean {

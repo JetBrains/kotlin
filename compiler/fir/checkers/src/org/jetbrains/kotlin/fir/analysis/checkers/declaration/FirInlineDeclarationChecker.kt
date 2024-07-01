@@ -147,6 +147,17 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 return FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE
             }
 
+            if (accessedSymbol is FirPropertySymbol) {
+                if (context.callsOrAssignments.elementAtOrNull(context.callsOrAssignments.lastIndex - 1)
+                        .let { it is FirVariableAssignment && it.lValue == accessExpression } &&
+                    accessedSymbol.setterSymbol?.isInline == true
+                ) {
+                    return FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE
+                } else if (accessedSymbol.getterSymbol?.isInline == true) {
+                    return FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE
+                }
+            }
+
             return FirErrors.NON_PUBLIC_CALL_FROM_PUBLIC_INLINE
         }
 
