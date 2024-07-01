@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 internal val LLVMValueRef.type: LLVMTypeRef
@@ -280,7 +281,7 @@ fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
     }
 }
 
-fun parseBitcodeFile(llvmContext: LLVMContextRef, path: String): LLVMModuleRef = memScoped {
+internal fun parseBitcodeFile(phaseContext: PhaseContext, llvmContext: LLVMContextRef, path: String): LLVMModuleRef = memScoped {
     val bufRef = alloc<LLVMMemoryBufferRefVar>()
     val errorRef = allocPointerTo<ByteVar>()
 
@@ -293,7 +294,10 @@ fun parseBitcodeFile(llvmContext: LLVMContextRef, path: String): LLVMModuleRef =
     try {
 
         val moduleRef = alloc<LLVMModuleRefVar>()
-        val parseRes = LLVMParseBitcodeInContext2(llvmContext, memoryBuffer, moduleRef.ptr)
+        val diagnosticHandler = DefaultLlvmDiagnosticHandler(phaseContext)
+        val parseRes = withLlvmDiagnosticHandler(llvmContext, diagnosticHandler) {
+            LLVMParseBitcodeInContext2(llvmContext, memoryBuffer, moduleRef.ptr)
+        }
         if (parseRes != 0) {
             throw Error(parseRes.toString())
         }

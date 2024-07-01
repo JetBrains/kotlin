@@ -7,15 +7,20 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
-interface RuntimeAware {
+internal interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(private val llvmContext: LLVMContextRef, bitcodeFile: String) {
-    val llvmModule: LLVMModuleRef = parseBitcodeFile(llvmContext, bitcodeFile)
+internal class Runtime(
+        phaseContext: PhaseContext,
+        private val llvmContext: LLVMContextRef,
+        bitcodeFile: String
+) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
     val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmCallable> = HashMap()
 
