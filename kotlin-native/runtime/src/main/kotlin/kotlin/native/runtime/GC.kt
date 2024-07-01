@@ -223,8 +223,6 @@ public object GC {
      * This information is supposed to be used for testing and debugging purposes only
      *
      * Can return null, if there was no garbage collection runs yet.
-     *
-     * Legacy MM: Always returns null
      */
     @ExperimentalStdlibApi
     public val lastGCInfo: GCInfo?

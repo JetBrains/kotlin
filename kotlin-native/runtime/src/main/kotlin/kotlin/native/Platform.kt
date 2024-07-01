@@ -82,7 +82,7 @@ public object Platform {
         get() = CpuArchitecture.values()[Platform_getCpuArchitecture()]
 
     /**
-     * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL]
+     * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL].
      */
     @Deprecated("This propery always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
     @Suppress("DEPRECATION")

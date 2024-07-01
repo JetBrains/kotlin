@@ -137,9 +137,6 @@ fun testIncrementorObjC() {
 // Doing everything testIncrementorKt does, but via ObjC dynamic dispatch and in a new NSThread
 @Test
 fun testIncrementorObjCInNewThread() {
-    if (!isExperimentalMM()) // Cross-thread stuff doesn't work with the legacy MM
-        return
-
     val incrementor = IncrementorViaObjCInNewThread()
     assertEquals(0, incrementor.counter.intValue)
 
@@ -190,9 +187,6 @@ fun testIncrementorMix() {
 // Mixing Kt and ObjC accesses when ObjC happens in a different thread
 @Test
 fun testIncrementorMixInNewThread() {
-    if (!isExperimentalMM()) // Cross-thread stuff doesn't work with the legacy MM
-        return
-
     val objc = IncrementorViaObjCInNewThread()
     val kt = objc.impl
     assertEquals(0, kt.counter.intValue)

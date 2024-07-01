@@ -49,14 +49,10 @@ fun testCollectFrozen() {
     val (refOwner, refWeak, refValueWeak) = getOwnerAndWeaksFrozen(3)
 
     refOwner.value = null
-    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        // This runs the finalizer on the WorkerBoundReference<A>, which schedules removing A from the root set
-        GC.collect()
-        // This actually frees A
-        GC.collect()
-    } else {
-        GC.collect()
-    }
+    // This runs the finalizer on the WorkerBoundReference<A>, which schedules removing A from the root set
+    GC.collect()
+    // This actually frees A
+    GC.collect()
 
     // Last reference to WorkerBoundReference is gone, so it and it's referent are destroyed.
     assertNull(refWeak.value)
@@ -269,16 +265,12 @@ fun collectCyclicGarbageWithAtomicsFrozen() {
     val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomicsFrozen()
 
     dispose(ref1Owner)
-    if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        // Finalizes WorkerBoundReference<C2> and schedules C2 removal from the root set
-        GC.collect()
-        // Frees C2, finalizes WorkerBoundReference<C1> and schedules C1 removal from the root set
-        GC.collect()
-        // Frees C1
-        GC.collect()
-    } else {
-        GC.collect()
-    }
+    // Finalizes WorkerBoundReference<C2> and schedules C2 removal from the root set
+    GC.collect()
+    // Frees C2, finalizes WorkerBoundReference<C1> and schedules C1 removal from the root set
+    GC.collect()
+    // Frees C1
+    GC.collect()
 
     assertNull(ref1Weak.value)
     assertNull(ref2Weak.value)

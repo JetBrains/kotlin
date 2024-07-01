@@ -178,8 +178,6 @@ public actual inline fun Throwable.printStackTrace(): Unit = printStackTrace()
 /**
  * Adds the specified exception to the list of exceptions that were
  * suppressed in order to deliver this exception.
- *
- * Legacy MM: does nothing if this [Throwable] is frozen.
  */
 @SinceKotlin("1.4")
 public actual fun Throwable.addSuppressed(exception: Throwable) {

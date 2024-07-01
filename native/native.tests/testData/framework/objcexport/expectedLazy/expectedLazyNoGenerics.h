@@ -482,7 +482,6 @@ __attribute__((swift_name("DeallocRetainKt")))
 + (void)assertNullValue:(id _Nullable)value __attribute__((swift_name("assertNull(value:)")));
 + (KtKotlinWeakReference *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
 + (void)garbageCollect __attribute__((swift_name("garbageCollect()")));
-+ (BOOL)isExperimentalMM __attribute__((swift_name("isExperimentalMM()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -3349,7 +3348,6 @@ __attribute__((swift_name("ValuesKt")))
 @property (class, readonly) float infFloatVal __attribute__((swift_name("infFloatVal")));
 @property (class) int32_t intVar __attribute__((swift_name("intVar")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));
-@property (class, readonly) BOOL isExperimentalMM __attribute__((swift_name("isExperimentalMM")));
 @property (class) id lateinitIntVar __attribute__((swift_name("lateinitIntVar")));
 @property (class, readonly) NSString *lazyVal __attribute__((swift_name("lazyVal")));
 @property (class, readonly) int64_t longInt __attribute__((swift_name("longInt")));

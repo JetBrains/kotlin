@@ -43,7 +43,6 @@ public typealias ReportUnhandledExceptionHook = Function1<Throwable, Unit>
  * be consistent with a default behaviour when no hooks are set.
  *
  * Set or default hook is also invoked by [processUnhandledException].
- * With the legacy MM the hook must be a frozen lambda so that it could be called from any thread/worker.
  */
 @ExperimentalNativeApi
 public fun setUnhandledExceptionHook(hook: ReportUnhandledExceptionHook?): ReportUnhandledExceptionHook? {

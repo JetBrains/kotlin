@@ -75,16 +75,13 @@ fun box() : String {
     if (::y.getAndAddFieldLocal(1L) != 2L) return "FAIL Long: 8"
     if (y != 3L) return "FAIL Long: 9"
 
-
-    if (isExperimentalMM()) {
-        if (::z.compareAndSetField(a, b) != true) return "FAIL String: 1"
-        if (::z.compareAndSetField(a, b) != false) return "FAIL String: 2"
-        if (::z.compareAndExchangeField(b, a) != b) return "FAIL String: 3"
-        if (::z.compareAndExchangeField(b, a) != a) return "FAIL String: 4"
-        if (::z.getAndSetField(c) != a) return "FAIL String: 5"
-        if (::z.getAndSetField(a) != c) return "FAIL String: 6"
-        if (z != a) return "FAIL String: 7"
-    }
+    if (::z.compareAndSetField(a, b) != true) return "FAIL String: 1"
+    if (::z.compareAndSetField(a, b) != false) return "FAIL String: 2"
+    if (::z.compareAndExchangeField(b, a) != b) return "FAIL String: 3"
+    if (::z.compareAndExchangeField(b, a) != a) return "FAIL String: 4"
+    if (::z.getAndSetField(c) != a) return "FAIL String: 5"
+    if (::z.getAndSetField(a) != c) return "FAIL String: 6"
+    if (z != a) return "FAIL String: 7"
 
     if (::t.compareAndSetField(true, false) != true) return "FAIL Bool: 1"
     if (::t.compareAndSetField(true, false) != false) return "FAIL Bool: 2"
