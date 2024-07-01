@@ -122,10 +122,7 @@ class IrTextDumpHandler(
         }
         for ((testFile, irFile) in orderedTestFileToIrFile) {
             if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
-            var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
-            if (actualDump.isEmpty()) {
-                actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, dumpOptions)
-            }
+            val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, dumpOptions)
             builder.append(actualDump)
         }
 
