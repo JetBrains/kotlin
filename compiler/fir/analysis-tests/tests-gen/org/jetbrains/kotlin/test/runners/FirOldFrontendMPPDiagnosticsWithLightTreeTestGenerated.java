@@ -350,6 +350,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("missingActual.kt")
+  public void testMissingActual() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/missingActual.kt");
+  }
+
+  @Test
   @TestMetadata("modifierApplicability.kt")
   public void testModifierApplicability() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
