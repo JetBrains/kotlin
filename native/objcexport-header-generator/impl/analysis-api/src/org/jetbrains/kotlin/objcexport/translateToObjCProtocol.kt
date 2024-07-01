@@ -42,7 +42,7 @@ fun ObjCExportContext.translateToObjCProtocol(symbol: KaClassSymbol): ObjCProtoc
 
 internal fun ObjCExportContext.superProtocols(symbol: KaClassSymbol): List<String> {
     return kaSession.getDeclaredSuperInterfaceSymbols(symbol)
-        .filter { it.isVisibleInObjC() }
+        .filter { kaSession.isVisibleInObjC(it) }
         .map { superInterface -> getObjCClassOrProtocolName(superInterface).objCName }
         .toList()
 }

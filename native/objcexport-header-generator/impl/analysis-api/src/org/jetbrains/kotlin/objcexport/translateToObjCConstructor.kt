@@ -24,7 +24,7 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
     val result = with(kaSession) { symbol.declaredMemberScope }
         .constructors
         .filter { !it.hasExportForCompilerAnnotation }
-        .filter { it.isVisibleInObjC() }
+        .filter { kaSession.isVisibleInObjC(it) }
         .sortedWith(StableCallableOrder)
         .flatMap { constructor ->
             val objCConstructor = buildObjCMethod(constructor)
@@ -63,7 +63,7 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
 
     // Hide "unimplemented" super constructors:
     with(kaSession) { kaSession.getSuperClassSymbolNotAny(symbol)?.memberScope }?.constructors.orEmpty()
-        .filter { it.isVisibleInObjC() }
+        .filter { kaSession.isVisibleInObjC(it) }
         .forEach { superClassConstructor ->
             val translatedSuperClassConstructor = buildObjCMethod(superClassConstructor, unavailable = true)
             if (result.none { it.name == translatedSuperClassConstructor.name }) {

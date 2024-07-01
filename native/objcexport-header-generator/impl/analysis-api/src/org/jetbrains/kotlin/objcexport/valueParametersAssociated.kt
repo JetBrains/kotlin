@@ -113,7 +113,8 @@ data class KtObjCParameterData(
  *
  * Also see [isObjCProperty]
  */
-internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol): KaType? {
+internal fun KaSession.getObjCReceiverType(symbol: KaFunctionSymbol?): KaType? {
+    if (symbol == null) return null
     return if (symbol.isConstructor) {
         /**
          * Edge case for supporting inner classes parameter.

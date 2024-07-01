@@ -26,6 +26,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
  */
 fun KaSession.isObjCBaseCallable(symbol: KaCallableSymbol): Boolean {
     return symbol.allOverriddenSymbols.none { overriddenSymbol ->
-        overriddenSymbol.isVisibleInObjC()
+        isVisibleInObjC(overriddenSymbol)
     }
 }

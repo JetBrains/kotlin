@@ -145,13 +145,13 @@ private class KtObjCExportHeaderGenerator(
         2) Super interface / superclass symbol export stubs (result of translation) have to be present in the stubs list before the
         original stub
          */
-        kaSession.getDeclaredSuperInterfaceSymbols(symbol).filter { it.isVisibleInObjC() }.forEach { superInterfaceSymbol ->
+        kaSession.getDeclaredSuperInterfaceSymbols(symbol).filter { kaSession.isVisibleInObjC(it) }.forEach { superInterfaceSymbol ->
             translateClassOrObjectSymbol(superInterfaceSymbol)?.let {
                 objCProtocolForwardDeclarations += it.name
             }
         }
 
-        kaSession.getSuperClassSymbolNotAny(symbol)?.takeIf { it.isVisibleInObjC() }?.let { superClassSymbol ->
+        kaSession.getSuperClassSymbolNotAny(symbol)?.takeIf { kaSession.isVisibleInObjC(it) }?.let { superClassSymbol ->
             translateClassOrObjectSymbol(superClassSymbol)?.let {
                 objCClassForwardDeclarations += it.name
             }

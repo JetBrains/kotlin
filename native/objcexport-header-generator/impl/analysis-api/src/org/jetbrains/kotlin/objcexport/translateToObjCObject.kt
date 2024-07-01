@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.objcexport.extras.requiresForwardDeclaration
 
 fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? {
     require(symbol.classKind == KaClassKind.OBJECT || symbol.classKind == KaClassKind.COMPANION_OBJECT)
-    if (!symbol.isVisibleInObjC()) return null
+    if (!kaSession.isVisibleInObjC(symbol)) return null
 
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL

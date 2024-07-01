@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
  * - [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportMapperKt.isBaseMethod]
  */
 internal fun KaSession.getBaseMethod(function: KaNamedFunctionSymbol): KaNamedFunctionSymbol {
-    val overriddenSymbols = function.allOverriddenSymbols.filter { symbol -> symbol.isVisibleInObjC() }.toList()
+    val overriddenSymbols = function.allOverriddenSymbols.filter { symbol -> isVisibleInObjC(symbol) }.toList()
     return if (overriddenSymbols.isEmpty()) function
     else overriddenSymbols.last() as KaNamedFunctionSymbol
 }

@@ -38,7 +38,7 @@ class ObjCReceiverTypeTest(
             val innerClassConstructor = innerClass.memberScope.constructors.first()
 
             assertEquals(
-                innerClassConstructor.getObjCReceiverType()?.expandedSymbol?.classId,
+                getObjCReceiverType(innerClassConstructor)?.expandedSymbol?.classId,
                 outerClass.classId
             )
         }
@@ -64,7 +64,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                foo.getObjCReceiverType()?.expandedSymbol?.classId
+                getObjCReceiverType(foo)?.expandedSymbol?.classId
             )
         }
     }
@@ -90,7 +90,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames._boolean.toSafe()),
-                getter?.getObjCReceiverType()?.expandedSymbol?.classId
+                getObjCReceiverType(getter)?.expandedSymbol?.classId
             )
         }
     }
@@ -117,7 +117,7 @@ class ObjCReceiverTypeTest(
 
             assertEquals(
                 ClassId.topLevel(StandardNames.FqNames.string.toSafe()),
-                setter?.getObjCReceiverType()?.expandedSymbol?.classId
+                getObjCReceiverType(setter)?.expandedSymbol?.classId
             )
         }
     }
@@ -144,9 +144,9 @@ class ObjCReceiverTypeTest(
             val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
             val getter = fooClass.memberScope.getPropertyOrFail("prop").getter
 
-            assertEquals(buildClassType(StandardClassIds.Boolean), foo.getObjCReceiverType())
-            assertEquals(buildClassType(StandardClassIds.String), setter?.getObjCReceiverType())
-            assertEquals(buildClassType(StandardClassIds.String), getter?.getObjCReceiverType())
+            assertEquals(buildClassType(StandardClassIds.Boolean), getObjCReceiverType(foo))
+            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(setter))
+            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(getter))
         }
     }
 }

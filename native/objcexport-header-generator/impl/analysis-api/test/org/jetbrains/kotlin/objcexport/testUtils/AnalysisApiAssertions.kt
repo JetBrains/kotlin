@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import kotlin.test.fail
 
 
+@JvmName("getClassOrFailKaSession")
 fun KaSession.getClassOrFail(file: KtFile, name: String): KaNamedClassSymbol {
     return getClassOrFail(file.symbol.fileScope, name)
 }
@@ -30,13 +31,12 @@ fun KtFile.getFunctionOrFail(name: String, kaSession: KaSession): KaNamedFunctio
     return getFunctionOrFail(with(kaSession) { file.symbol.fileScope }, name)
 }
 
-
 fun KtFile.getPropertyOrFail(name: String, kaSession: KaSession): KaPropertySymbol {
     val file = this
     return getPropertyOrFail(with(kaSession) { file.symbol.fileScope }, name)
 }
 
-
+@JvmName("getClassOrFailKaScope")
 fun KaScope.getClassOrFail(name: String): KaNamedClassSymbol {
     return getClassOrFail(this, name)
 }
@@ -55,6 +55,7 @@ fun KaSession.getFunctionOrFail(file: KtFile, name: String): KaNamedFunctionSymb
 }
 
 
+@JvmName("getPropertyOrFailKaSession")
 fun KaSession.getPropertyOrFail(file: KtFile, name: String): KaPropertySymbol {
     return getPropertyOrFail(file.symbol.fileScope, name)
 }
@@ -64,10 +65,12 @@ fun KaClassSymbol.getFunctionOrFail(name: String, kaSession: KaSession): KaNamed
     return getFunctionOrFail(with(kaSession) { symbol.memberScope }, name)
 }
 
+@JvmName("getFunctionOrFailKaScope")
 fun KaScope.getFunctionOrFail(name: String): KaNamedFunctionSymbol {
     return getFunctionOrFail(this, name)
 }
 
+@JvmName("getPropertyOrFailKaScope")
 fun KaScope.getPropertyOrFail(name: String): KaPropertySymbol {
     return getPropertyOrFail(this, name)
 }
@@ -90,6 +93,7 @@ fun getPropertyOrFail(scope: KaScope, name: String): KaPropertySymbol {
     return symbol
 }
 
+@JvmName("getFunctionOrFailKaSession")
 fun KaSession.getFunctionOrFail(symbol: KaClassSymbol, name: String): KaNamedFunctionSymbol {
     return getFunctionOrFail(symbol.memberScope, name)
 }

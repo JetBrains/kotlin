@@ -18,9 +18,9 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 
-internal fun KaSymbol.isVisibleInObjC(): Boolean = when (this) {
-    is KaCallableSymbol -> this.isVisibleInObjC()
-    is KaClassSymbol -> this.isVisibleInObjC()
+internal fun KaSession.isVisibleInObjC(symbol: KaSymbol?): Boolean = when (symbol) {
+    is KaCallableSymbol -> isVisibleInObjC(symbol)
+    is KaClassSymbol -> isVisibleInObjC(symbol)
     else -> false
 }
 

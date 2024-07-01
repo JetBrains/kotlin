@@ -91,17 +91,17 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
             val classA = getClassOrFail(file, "A")
             val fooA = getFunctionOrFail(classA.memberScope, "foo")
-            assertEquals(listOf("IllegalStateException"), fooA.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getEffectiveThrows(fooA).mapName())
             assertEquals(listOf("IllegalStateException"), getDefinedThrows(fooA).mapName())
 
             val classB = getClassOrFail(file, "B")
             val fooB = getFunctionOrFail(classB.memberScope, "foo")
-            assertEquals(listOf("IllegalStateException"), fooB.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getEffectiveThrows(fooB).mapName())
             assertEquals(listOf("RuntimeException"), getDefinedThrows(fooB).mapName())
 
             val classC = getClassOrFail(file, "C")
             val fooC = getFunctionOrFail(classC.memberScope, "foo")
-            assertEquals(listOf("IllegalStateException"), fooC.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getEffectiveThrows(fooC).mapName())
             assertEquals(listOf("IndexOutOfBoundsException"), getDefinedThrows(fooC).mapName())
         }
     }
@@ -116,7 +116,7 @@ class ThrowsAnnotationTest(private val inlineSourceCodeAnalysis: InlineSourceCod
 
         analyze(file) {
             val foo = getClassOrFail(file, "Foo").memberScope.constructors.first()
-            assertEquals(listOf("IllegalStateException"), foo.getEffectiveThrows().mapName())
+            assertEquals(listOf("IllegalStateException"), getEffectiveThrows(foo).mapName())
             assertEquals(listOf("IllegalStateException"), getDefinedThrows(foo).mapName())
         }
     }

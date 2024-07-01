@@ -29,7 +29,7 @@ internal fun KaSession.getAllClassOrObjectSymbols(file: KaFileSymbol): List<KaCl
     return file.fileScope.classifiers
         .filterIsInstance<KaClassSymbol>()
         .flatMap { classSymbol ->
-            if (classSymbol.isVisibleInObjC()) listOf(classSymbol) + getAllClassOrObjectSymbols(classSymbol)
+            if (isVisibleInObjC(classSymbol)) listOf(classSymbol) + getAllClassOrObjectSymbols(classSymbol)
             else emptyList()
         }
         .toList()

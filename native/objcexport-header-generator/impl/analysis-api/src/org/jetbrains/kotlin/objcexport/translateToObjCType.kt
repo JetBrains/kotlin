@@ -75,7 +75,7 @@ internal fun ObjCExportContext.mapToReferenceTypeIgnoringNullability(type: KaTyp
             return ObjCIdType
         }
 
-        if (type.symbol?.isVisibleInObjC() == false) {
+        if (isVisibleInObjC(type.symbol) == false) {
             return ObjCIdType
         }
 

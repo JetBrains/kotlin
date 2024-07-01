@@ -25,7 +25,7 @@ class GetInlineTargetTypeOrNullTest(
         val file = inlineSourceCodeAnalysis.createKtFile("class Foo")
         analyze(file) {
             val foo = getClassOrFail(file, "Foo")
-            assertNull(foo.getInlineTargetTypeOrNull())
+            assertNull(getInlineTargetTypeOrNull(foo))
         }
     }
 
@@ -39,7 +39,7 @@ class GetInlineTargetTypeOrNullTest(
 
         analyze(file) {
             val foo = getClassOrFail(file, "Foo")
-            val inlineTargetType = assertNotNull(foo.getInlineTargetTypeOrNull())
+            val inlineTargetType = assertNotNull(getInlineTargetTypeOrNull(foo))
             assertEquals(DefaultTypeClassIds.INT, inlineTargetType.classIdOrFail())
         }
     }
@@ -57,7 +57,7 @@ class GetInlineTargetTypeOrNullTest(
 
         analyze(file) {
             val foo = getPropertyOrFail(file, "foo")
-            assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
+            assertEquals(DefaultTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
         }
     }
 
@@ -74,8 +74,8 @@ class GetInlineTargetTypeOrNullTest(
 
         analyze(file) {
             val foo = getPropertyOrFail(file, "foo")
-            assertEquals(DefaultTypeClassIds.INT, foo.returnType.getInlineTargetTypeOrNull().classIdOrFail())
-            assertTrue(foo.returnType.getInlineTargetTypeOrNull()?.isMarkedNullable ?: false)
+            assertEquals(DefaultTypeClassIds.INT, getInlineTargetTypeOrNull(foo.returnType).classIdOrFail())
+            assertTrue(getInlineTargetTypeOrNull(foo.returnType)?.isMarkedNullable ?: false)
         }
     }
 
