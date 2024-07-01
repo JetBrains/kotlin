@@ -9,11 +9,6 @@ import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
-private fun LLVMValueRef.isFunctionCall() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
-
-private fun LLVMValueRef.isExternalFunction() = LLVMGetFirstBasicBlock(this) == null
-
-
 private fun LLVMValueRef.isLLVMBuiltin(): Boolean {
     val name = this.name ?: return false
     return name.startsWith("llvm.")

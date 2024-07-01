@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContext
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.getBasicBlocks
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.getInstructions
-import org.jetbrains.kotlin.backend.konan.llvm.name
 
 private fun filterLoads(block: LLVMBasicBlockRef, variable: LLVMValueRef) = getInstructions(block)
         .mapNotNull { LLVMIsALoadInst(it) }
@@ -36,6 +36,6 @@ internal fun removeMultipleThreadDataLoads(context: BitcodePostProcessingContext
 
     getFunctions(context.llvm.module)
             .filter { it.name?.startsWith("kfun:") == true }
-            .filterNot { LLVMIsDeclaration(it) == 1 }
+            .filter { it.isDefinition() }
             .forEach { process(it, currentThreadTLV) }
 }

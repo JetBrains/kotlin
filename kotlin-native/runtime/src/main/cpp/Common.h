@@ -42,6 +42,7 @@
   #define ALWAYS_INLINE __attribute__((always_inline))
 #endif
 #define NO_INLINE __attribute__((noinline))
+#define PERFORMANCE_INLINE __attribute__((annotate("performance_inline")))
 
 #define OPTNONE __attribute__((optnone))
 

@@ -55,7 +55,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val auxGCThreads by uintOption()
 
-    val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
+    val linkRuntime by option<RuntimeLinkageStrategy>()
 
     val bundleId by stringOption()
     val bundleShortVersionString by stringOption()
@@ -90,6 +90,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val swiftExport by booleanOption()
 
     val genericSafeCasts by booleanOption()
+
+    val smallBinary by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

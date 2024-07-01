@@ -133,7 +133,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 private fun linkAllDependencies(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>) {
     val (runtimeModules, additionalModules) = collectLlvmModules(generationState, generatedBitcodeFiles)
     // TODO: Possibly slow, maybe to a separate phase?
-    val optimizedRuntimeModules = RuntimeLinkageStrategy.pick(generationState, runtimeModules).run()
+    val optimizedRuntimeModules = linkRuntimeModules(generationState, runtimeModules)
 
     // When the main module `generationState.llvmModule` is very large it is much faster to
     // link all the auxiliary modules together first before linking with the main module.

@@ -342,6 +342,10 @@ fun setFunctionNoInline(function: LLVMValueRef) {
     addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.NoInline)
 }
 
+fun setFunctionAlwaysInline(function: LLVMValueRef) {
+    addLlvmFunctionEnumAttribute(function, LlvmFunctionAttribute.AlwaysInline)
+}
+
 internal fun addLlvmFunctionEnumAttribute(function: LLVMValueRef, attrKindId: LLVMAttributeKindId, value: Long = 0) {
     val attribute = createLlvmEnumAttribute(LLVMGetTypeContext(function.type)!!, attrKindId, value)
     addLlvmFunctionAttribute(function, attribute)
@@ -397,3 +401,9 @@ fun LLVMModuleRef.getName(): String = memScoped {
     val sizeVar = alloc<size_tVar>()
     LLVMGetModuleIdentifier(this@getName, sizeVar.ptr)!!.toKStringFromUtf8()
 }
+
+fun LLVMValueRef.isDefinition() = LLVMIsDeclaration(this) == 0
+
+fun LLVMValueRef.isFunctionCall() = LLVMIsACallInst(this) != null || LLVMIsAInvokeInst(this) != null
+
+fun LLVMValueRef.isExternalFunction() = LLVMGetFirstBasicBlock(this) == null

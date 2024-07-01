@@ -62,7 +62,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+
+    val smallBinary: Boolean get() = configuration.get(BinaryOptions.smallBinary)
+            ?: (target.needSmallBinary() || debug)
+
     val assertsEnabled = configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
+
     val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
         when {
             it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
@@ -422,6 +427,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     }.map {
         File(distribution.defaultNatives(target)).child(it).absolutePath
+    }
+
+    internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
+        // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
+        val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
+        configuration.get(BinaryOptions.linkRuntime) ?: defaultStrategy
     }
 
     internal val launcherNativeLibraries: List<String> = distribution.launcherFiles.map {
