@@ -209,6 +209,7 @@ sealed interface TestRunCheck {
         val prefixes: String
             get() {
                 val testTarget = settings.get<KotlinNativeTargets>().testTarget
+                val optimizationMode = settings.get<OptimizationMode>()
                 val checkPrefixes = buildList {
                     add("CHECK")
                     add("CHECK-${testTarget.abiInfoString}")
@@ -216,14 +217,13 @@ sealed interface TestRunCheck {
                     if (testTarget.family.isAppleFamily) {
                         add("CHECK-APPLE")
                     }
-                    if (testTarget.needSmallBinary()) {
+                    if (testTarget.needSmallBinary() || optimizationMode == OptimizationMode.DEBUG) {
                         add("CHECK-SMALLBINARY")
                     } else {
                         add("CHECK-BIGBINARY")
                     }
                 }
-                val optimizationMode = settings.get<OptimizationMode>().name
-                val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optimizationMode" }
+                val checkPrefixesWithOptMode = checkPrefixes.map { "$it-${optimizationMode.name}" }
                 val cacheMode = settings.get<CacheMode>().alias
                 val checkPrefixesWithCacheMode = checkPrefixes.map { "$it-CACHE_$cacheMode" }
                 return (checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode).joinToString(",")

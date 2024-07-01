@@ -51,7 +51,6 @@ sealed class ClangArgs(
                     "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },
                     "REPORT_BACKTRACE_TO_IOS_CRASH_LOG".takeIf { target.supportsIosCrashLog() },
-                    "NEED_SMALL_BINARY".takeIf { target.needSmallBinary() },
                     "SUPPORTS_GRAND_CENTRAL_DISPATCH".takeIf { target.supportsGrandCentralDispatch },
                     "SUPPORTS_SIGNPOSTS".takeIf { target.supportsSignposts },
             ).map { "KONAN_$it=1" }
