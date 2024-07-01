@@ -88,6 +88,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val swiftExport by booleanOption()
 
     val genericSafeCasts by booleanOption()
+
+    val smallBinary by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
