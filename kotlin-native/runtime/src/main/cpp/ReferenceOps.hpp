@@ -45,10 +45,10 @@ public:
 
     ObjHeader** location() const noexcept { return &ref_; }
 
-    ALWAYS_INLINE operator ObjHeader*() const noexcept { return load(); }
-    ALWAYS_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
+    PERFORMANCE_INLINE operator ObjHeader*() const noexcept { return load(); }
+    PERFORMANCE_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
 
-    ALWAYS_INLINE ObjHeader* load() const noexcept {
+    PERFORMANCE_INLINE ObjHeader* load() const noexcept {
 #if STRICT_ATOMICS_IN_HEAP
         // Consume stores in the object, that were released on the object's allocation
         // See `ObjectOps.cpp`
@@ -63,7 +63,7 @@ public:
 #endif
     }
 
-    ALWAYS_INLINE void store(ObjHeader* desired) noexcept {
+    PERFORMANCE_INLINE void store(ObjHeader* desired) noexcept {
 #if STRICT_ATOMICS_IN_HEAP
         storeAtomic(desired, std::memory_order_relaxed);
 #else
@@ -71,23 +71,23 @@ public:
 #endif
     }
 
-    ALWAYS_INLINE auto atomic() noexcept {
+    PERFORMANCE_INLINE auto atomic() noexcept {
         return std_support::atomic_ref{ref_};
     }
-    ALWAYS_INLINE auto atomic() const noexcept {
+    PERFORMANCE_INLINE auto atomic() const noexcept {
         return std_support::atomic_ref{ref_};
     }
 
-    ALWAYS_INLINE ObjHeader* loadAtomic(std::memory_order order) const noexcept {
+    PERFORMANCE_INLINE ObjHeader* loadAtomic(std::memory_order order) const noexcept {
         return atomic().load(order);
     }
-    ALWAYS_INLINE void storeAtomic(ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE void storeAtomic(ObjHeader* desired, std::memory_order order) noexcept {
         atomic().store(desired, order);
     }
-    ALWAYS_INLINE ObjHeader* exchange(ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE ObjHeader* exchange(ObjHeader* desired, std::memory_order order) noexcept {
         return atomic().exchange(desired, order);
     }
-    ALWAYS_INLINE bool compareAndExchange(ObjHeader*& expected, ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE bool compareAndExchange(ObjHeader*& expected, ObjHeader* desired, std::memory_order order) noexcept {
         return atomic().compare_exchange_strong(expected, desired, order);
     }
 
@@ -117,9 +117,9 @@ public:
     void beforeStore(ObjHeader* value) noexcept;
     void afterStore(ObjHeader* value) noexcept;
 
-    ALWAYS_INLINE operator ObjHeader*() noexcept { return load(); }
+    PERFORMANCE_INLINE operator ObjHeader*() noexcept { return load(); }
 
-    ALWAYS_INLINE ObjHeader* load() noexcept {
+    PERFORMANCE_INLINE ObjHeader* load() noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeLoad();
         auto result = direct_.load();
@@ -127,7 +127,7 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE ObjHeader* loadAtomic(std::memory_order order) noexcept {
+    PERFORMANCE_INLINE ObjHeader* loadAtomic(std::memory_order order) noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeLoad();
         auto result = direct_.loadAtomic(order);
@@ -135,23 +135,23 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
+    PERFORMANCE_INLINE ObjHeader* operator=(ObjHeader* desired) noexcept { store(desired); return desired; }
 
-    ALWAYS_INLINE void store(ObjHeader* desired) noexcept {
+    PERFORMANCE_INLINE void store(ObjHeader* desired) noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeStore(desired);
         direct_.store(desired);
         afterStore(desired);
     }
 
-    ALWAYS_INLINE void storeAtomic(ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE void storeAtomic(ObjHeader* desired, std::memory_order order) noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeStore(desired);
         direct_.storeAtomic(desired, order);
         afterStore(desired);
     }
 
-    ALWAYS_INLINE ObjHeader* exchange(ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE ObjHeader* exchange(ObjHeader* desired, std::memory_order order) noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeLoad();
         beforeStore(desired);
@@ -161,7 +161,7 @@ public:
         return result;
     }
 
-    ALWAYS_INLINE bool compareAndExchange(ObjHeader*& expected, ObjHeader* desired, std::memory_order order) noexcept {
+    PERFORMANCE_INLINE bool compareAndExchange(ObjHeader*& expected, ObjHeader* desired, std::memory_order order) noexcept {
         AssertThreadState(ThreadState::kRunnable);
         beforeLoad();
         beforeStore(desired);

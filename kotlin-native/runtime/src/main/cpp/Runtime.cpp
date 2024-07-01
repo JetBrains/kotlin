@@ -68,7 +68,7 @@ constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
 
-inline bool isValidRuntime() {
+PERFORMANCE_INLINE inline bool isValidRuntime() {
   return ::runtimeState != kInvalidRuntime;
 }
 
@@ -82,7 +82,9 @@ enum GlobalRuntimeStatus {
 
 std::atomic<GlobalRuntimeStatus> globalRuntimeStatus = kGlobalRuntimeUninitialized;
 
-RuntimeState* initRuntime() {
+void Kotlin_deinitRuntimeCallback(void* argument);
+
+NO_INLINE RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
   initObjectPool();
   RuntimeState* result = new RuntimeState();
@@ -110,6 +112,9 @@ RuntimeState* initRuntime() {
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");
   result->status = RuntimeStatus::kRunning;
+
+  // Register runtime deinit function at thread cleanup.
+  konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
 
   return result;
 }
@@ -177,11 +182,9 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
   initTailNode = next;
 }
 
-RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
+PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {
   if (!isValidRuntime()) {
     initRuntime();
-    // Register runtime deinit function at thread cleanup.
-    konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
   }
 }
 

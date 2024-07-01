@@ -42,7 +42,7 @@ std::unique_lock<mm::ThreadRegistry::Mutex> mm::ThreadRegistry::Lock() noexcept 
     return list_.Lock();
 }
 
-ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
+PERFORMANCE_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
     return CurrentThreadDataNode()->Get();
 }
 

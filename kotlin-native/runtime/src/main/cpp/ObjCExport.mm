@@ -92,14 +92,14 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 
 namespace {
 
-ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
+PERFORMANCE_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
   auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd)>(&objc_msgSend);
   msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector);
 }
 
 } // namespace
 
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
+extern "C" PERFORMANCE_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
   RuntimeAssert(associatedObject != nullptr, "Kotlin_ObjCExport_releaseAssociatedObject(nullptr)");
   // May already be in the native state if was scheduled on the main queue.
   NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
@@ -274,7 +274,7 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
 }
 
-extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
+extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj) {
   const TypeInfo* typeInfo = getOrCreateTypeInfo(object_getClass(obj));
   RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, typeInfo, objc_retain(obj));
 }
@@ -449,7 +449,7 @@ extern "C" id objc_autorelease(id self);
 // but doesn't require any balancing release operation.
 // It might use autorelease though, which will be suboptimal.
 template <bool retain>
-static ALWAYS_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
+static PERFORMANCE_INLINE id Kotlin_ObjCExport_refToObjCImpl(ObjHeader* obj) {
   kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
 
   if (obj == nullptr) return nullptr;
@@ -487,12 +487,12 @@ extern "C" id Kotlin_ObjCExport_refToLocalObjC(ObjHeader* obj) {
 }
 
 // The function is marked with noexcept, so any exception reaching it will cause std::terminate.
-extern "C" ALWAYS_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) noexcept {
+extern "C" PERFORMANCE_INLINE id Kotlin_Interop_refToObjC(ObjHeader* obj) noexcept {
   return Kotlin_ObjCExport_refToObjCImpl<false>(obj);
 }
 
 // The function is marked with noexcept, so any exception reaching it will cause std::terminate.
-extern "C" ALWAYS_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noexcept {
+extern "C" PERFORMANCE_INLINE OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj) noexcept {
   // TODO: consider removing this function.
   RETURN_RESULT_OF(Kotlin_ObjCExport_refFromObjC, obj);
 }

@@ -56,9 +56,9 @@ public:
 
         static constexpr auto kAllowHeapToStackRefs = false;
 
-        static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
+        ALWAYS_INLINE static void clear(AnyQueue& queue) noexcept { RuntimeAssert(queue.localEmpty(), "Mark queue must be empty"); }
 
-        static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        static PERFORMANCE_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
             auto* obj = queue.tryPop();
             if (obj) {
                 auto object = alloc::objectForObjectData(*obj);
@@ -68,7 +68,7 @@ public:
             return nullptr;
         }
 
-        static ALWAYS_INLINE bool tryEnqueue(AnyQueue& queue, ObjHeader* object) noexcept {
+        static PERFORMANCE_INLINE bool tryEnqueue(AnyQueue& queue, ObjHeader* object) noexcept {
             auto& objectData = alloc::objectDataForObject(object);
             bool pushed = queue.tryPush(objectData);
             if (pushed) {
@@ -77,7 +77,7 @@ public:
             return pushed;
         }
 
-        static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
+        static PERFORMANCE_INLINE bool tryMark(ObjHeader* object) noexcept {
             auto& objectData = alloc::objectDataForObject(object);
             bool pushed = objectData.tryMark();
             if (pushed) {
@@ -86,7 +86,7 @@ public:
             return pushed;
         }
 
-        static ALWAYS_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        static PERFORMANCE_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
             auto process = object->type_info()->processObjectInMark;
             RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
             process(static_cast<void*>(&markQueue), object);

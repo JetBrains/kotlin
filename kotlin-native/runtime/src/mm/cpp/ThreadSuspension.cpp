@@ -25,7 +25,7 @@ namespace {
 
 std::atomic<mm::internal::SuspensionReason> mm::internal::gSuspensionRequestReason = nullptr;
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(const char* reason, mm::ThreadData& threadData) noexcept
     : reason_(reason), threadData_(threadData), pauseStartTimeMicros_(konan::getTimeMicros())
 {
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
@@ -34,11 +34,11 @@ ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(c
     RuntimeLogDebug({logging::Tag::kPause}, "Suspending mutation (%s)", reason_);
 }
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
     if (!resumed) resume();
 }
 
-ALWAYS_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexcept {
+PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexcept {
     RuntimeAssert(!resumed, "Must not be resumed yet");
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
     RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
@@ -84,7 +84,7 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
     }
 }
 
-ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
+PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(const char* reason) noexcept {
     return MutatorPauseHandle(reason, threadData_);
 }
 

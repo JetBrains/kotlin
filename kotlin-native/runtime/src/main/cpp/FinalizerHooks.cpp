@@ -31,15 +31,15 @@ NO_INLINE void RunFinalizerHooksImpl(ObjHeader* object, const TypeInfo* type) no
 
 } // namespace
 
-ALWAYS_INLINE bool kotlin::HasFinalizers(ObjHeader* object) noexcept {
+PERFORMANCE_INLINE bool kotlin::HasFinalizers(ObjHeader* object) noexcept {
     return object->has_meta_object() || HasFinalizersDataInObject(object);
 }
 
-ALWAYS_INLINE bool kotlin::HasFinalizersDataInObject(ObjHeader* object) noexcept {
+PERFORMANCE_INLINE bool kotlin::HasFinalizersDataInObject(ObjHeader* object) noexcept {
     return (object->type_info()->flags_ & TF_HAS_FINALIZER) != 0;
 }
 
-ALWAYS_INLINE void kotlin::RunFinalizers(ObjHeader* object) noexcept {
+PERFORMANCE_INLINE void kotlin::RunFinalizers(ObjHeader* object) noexcept {
     auto* type = object->type_info();
     if ((type->flags_ & TF_HAS_FINALIZER) != 0) {
         // This is a cold path.
