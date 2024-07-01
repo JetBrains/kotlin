@@ -627,6 +627,8 @@ fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinT
 
 /**
  * The containing symbol is resolved using the declaration-site session.
+ * The semantics is similar to [FirBasedSymbol<*>.getContainingClassSymbol][org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol],
+ * see its KDoc for an example.
  */
 fun FirCallableDeclaration.getContainingClass(): FirRegularClass? =
     this.containingClassLookupTag()?.let { lookupTag ->
