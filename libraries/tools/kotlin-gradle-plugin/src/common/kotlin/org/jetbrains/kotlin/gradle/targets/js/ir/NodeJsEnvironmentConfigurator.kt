@@ -30,17 +30,24 @@ class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
         val compilation = binary.compilation
         return NodeJsExec.create(compilation, binaryRunName) {
             group = subTarget.taskGroupName
-            dependsOn(project.tasks.named(subTarget.binarySyncTaskName(binary)))
 
             if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
                 sourceMapStackTraces = false
             }
 
-            val inputFile = project.objects.fileProperty().value(
-                subTarget.binarySyncOutput(binary).flatMap {
-                    it.file(binary.mainFileName)
+            val inputFile = if ((compilation.target as KotlinJsIrTarget).wasmTargetType == KotlinWasmTargetType.WASI) {
+                if (binary is ExecutableWasm && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
+                    dependsOn(binary.optimizeTask)
+                    binary.mainOptimizedFile
+                } else {
+                    dependsOn(binary.linkTask)
+                    binary.mainFile
                 }
-            )
+            } else {
+                dependsOn(binary.linkSyncTask)
+                binary.mainFileSyncPath
+            }
+
             inputFileProperty.set(
                 inputFile
             )

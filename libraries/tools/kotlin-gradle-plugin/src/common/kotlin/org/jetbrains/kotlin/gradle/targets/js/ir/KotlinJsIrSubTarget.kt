@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -77,61 +78,6 @@ abstract class KotlinJsIrSubTarget(
             }
         }
 
-        val mainCompilation = target.compilations.matching { it.isMain() }
-
-        target.compilations.all { compilation ->
-            compilation.binaries.all { binary ->
-                val taskName = binarySyncTaskName(binary)
-                if (project.locateTask<IncrementalSyncTask>(taskName) == null) {
-
-                    project.registerTask<DefaultIncrementalSyncTask>(
-                        taskName
-                    ) { task ->
-                        fun fromLinkTask() {
-                            task.from.from(
-                                binary.linkTask.flatMap { linkTask ->
-                                    linkTask.destinationDirectory
-                                }
-                            )
-                        }
-                        when (binary) {
-                            is ExecutableWasm -> {
-                                if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                    task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                    task.dependsOn(binary.optimizeTask)
-                                } else {
-                                    fromLinkTask()
-                                }
-                            }
-                            is LibraryWasm -> {
-                                if (compilation.isMain() && binary.mode == KotlinJsBinaryMode.PRODUCTION) {
-                                    task.from.from(binary.optimizeTask.flatMap { it.outputFileProperty.map { it.asFile.parentFile } })
-                                    task.dependsOn(binary.optimizeTask)
-                                } else {
-                                    fromLinkTask()
-                                }
-                            }
-                            else -> {
-                                fromLinkTask()
-                            }
-                        }
-
-                        task.duplicatesStrategy = DuplicatesStrategy.WARN
-
-                        task.from.from(project.tasks.named(binary.compilation.processResourcesTaskName))
-
-                        if (compilation.isTest()) {
-                            mainCompilation.all {
-                                task.from.from(project.tasks.named(it.processResourcesTaskName))
-                            }
-                        }
-
-                        task.destinationDirectory.set(binarySyncOutput(binary).mapToFile())
-                    }
-                }
-            }
-        }
-
         configureTests()
     }
 
@@ -185,8 +131,16 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
+            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                testJs.dependsOn(binary.linkSyncTask)
+                binary.mainFileSyncPath
+            } else {
+                testJs.dependsOn(binary.linkTask)
+                binary.mainFile
+            }
+
             testJs.inputFileProperty.set(
-                this.binaryInputFile(binary)
+                inputFileProperty
             )
 
             configureTestDependencies(testJs, binary)

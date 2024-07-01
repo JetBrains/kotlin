@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
@@ -25,8 +26,14 @@ abstract class JsEnvironmentConfigurator<RunTask : Task>(protected val subTarget
             .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .matching { it is Executable }
             .all { productionExecutable ->
-                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(
+                val assembleTask = if (subTarget.target.wasmTargetType == KotlinWasmTargetType.WASI) {
+                    (productionExecutable as WasmBinary).optimizeTask
+                } else {
                     project.tasks.named(subTarget.binarySyncTaskName(productionExecutable))
+                }
+
+                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(
+                    assembleTask
                 )
             }
     }

@@ -46,19 +46,11 @@ abstract class KotlinD8Ir @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return project.objects.fileProperty().fileProvider(
-            project.tasks.named<IncrementalSyncTask>(binarySyncTaskName(binary)).map {
-                it.destinationDirectory.get().resolve(binary.mainFileName.get())
-            }
-        )
+        return binary.mainFileSyncPath
     }
 
     override fun binarySyncTaskName(binary: JsIrBinary): String {
-        return disambiguateCamelCased(
-            binary.compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            binary.name,
-            COMPILE_SYNC
-        )
+        return binary.linkSyncTaskName
     }
 
     override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {

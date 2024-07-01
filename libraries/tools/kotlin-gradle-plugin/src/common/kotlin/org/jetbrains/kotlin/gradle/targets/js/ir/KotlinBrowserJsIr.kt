@@ -46,7 +46,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         )
         test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
 
-        test.dependsOn(binary.npmProjectLinkSyncTaskName())
+        test.dependsOn(binary.linkSyncTask)
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {

@@ -27,9 +27,7 @@ class D8EnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
             group = subTarget.taskGroupName
             dependsOn(project.tasks.named(subTarget.binarySyncTaskName(binary)))
             val inputFile = project.objects.fileProperty().value(
-                subTarget.binarySyncOutput(binary).flatMap {
-                    it.file(binary.mainFileName)
-                }
+                binary.mainFileSyncPath
             )
             inputFileProperty.set(
                 inputFile

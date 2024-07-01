@@ -16,11 +16,11 @@ abstract class KotlinJsIrNpmBasedSubTarget(
 ) : KotlinJsIrSubTarget(target, disambiguationClassifier) {
 
     override fun binaryInputFile(binary: JsIrBinary): Provider<RegularFile> {
-        return binary.npmProjectMainFileSyncPath()
+        return binary.mainFileSyncPath
     }
 
     override fun binarySyncTaskName(binary: JsIrBinary): String {
-        return binary.npmProjectLinkSyncTaskName()
+        return binary.linkSyncTaskName
     }
 
     override fun binarySyncOutput(binary: JsIrBinary): Provider<Directory> {

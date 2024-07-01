@@ -146,21 +146,21 @@ constructor(
             .get()
 
     internal val configureTestSideEffect: Unit by lazy {
-//        val mainCompilation = compilations.matching { it.isMain() }
+        val mainCompilation = compilations.matching { it.isMain() }
 
         compilations.matching { it.isTest() }
             .all { testCompilation ->
-                testCompilation.binaries.executableIrInternal(testCompilation)
+                val testBinaries = testCompilation.binaries.executableIrInternal(testCompilation)
 
-//                if (wasmTargetType != KotlinWasmTargetType.WASI) {
-//                    testBinaries.forEach { binary ->
-//                        binary.linkSyncTask.configure { task ->
-//                            mainCompilation.all {
-//                                task.from.from(project.tasks.named(it.processResourcesTaskName))
-//                            }
-//                        }
-//                    }
-//                }
+                if (wasmTargetType != KotlinWasmTargetType.WASI) {
+                    testBinaries.forEach { binary ->
+                        binary.linkSyncTask.configure { task ->
+                            mainCompilation.all {
+                                task.from.from(project.tasks.named(it.processResourcesTaskName))
+                            }
+                        }
+                    }
+                }
             }
     }
 
@@ -176,12 +176,12 @@ constructor(
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
-//                    val syncTask = binary.linkSyncTask
+                    val syncTask = binary.linkSyncTask
                     val tsValidationTask = registerTypeScriptCheckTask(binary)
 
                     binary.linkTask.configure {
 
-//                        it.finalizedBy(syncTask)
+                        it.finalizedBy(syncTask)
 
                         if (binary.generateTs) {
                             it.finalizedBy(tsValidationTask)
@@ -253,6 +253,7 @@ constructor(
     //d8
     private val d8LazyDelegate = lazy {
 //        commonLazy
+        NodeJsRootPlugin.apply(project.rootProject)
 
         addSubTarget(KotlinD8Ir::class.java) {
             configureSubTarget()

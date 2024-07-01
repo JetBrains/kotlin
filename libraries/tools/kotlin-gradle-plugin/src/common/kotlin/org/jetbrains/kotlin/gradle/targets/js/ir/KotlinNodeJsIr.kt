@@ -53,7 +53,7 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 nodeJsTaskProviders.npmInstallTaskProvider,
             )
             test.dependsOn(nodeJs.packageManagerExtension.map { it.postInstallTasks })
-            test.dependsOn(binary.npmProjectLinkSyncTaskName())
+            test.dependsOn(binary.linkSyncTask)
         }
         test.dependsOn(binary.linkTask)
     }
