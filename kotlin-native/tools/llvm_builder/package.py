@@ -143,6 +143,8 @@ def construct_cmake_flags(
 
     if host_is_darwin():
         cmake_args.append('-DLLVM_ENABLE_LIBCXX=ON')
+        # Required when building with newer Xcodes to keep libc++ working.
+        cmake_args.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=10.15')
         if building_bootstrap:
             # Don't waste time by doing unnecessary work for throwaway toolchain.
             cmake_args.extend([
