@@ -202,12 +202,13 @@ internal object FloatingPointParser {
 
             var exponentOffset = end + 1
             if (s[exponentOffset] == '+') {
-                if (s[exponentOffset + 1] == '-') {
-                    throw NumberFormatException(s)
-                }
                 exponentOffset++ // skip the plus sign
                 if (exponentOffset == length)
                     throw NumberFormatException(s)
+
+                if (s[exponentOffset] == '-') {
+                    throw NumberFormatException(s)
+                }
             }
             val strExp = s.substring(exponentOffset, length)
             try {
@@ -221,7 +222,9 @@ internal object FloatingPointParser {
                 for (i in strExp.indices) {
                     ch = strExp[i]
                     if (ch < '0' || ch > '9') {
-                        if (i == 0 && ch == '-')
+                        // minus character is only valid
+                        // if it is not the only one in the exponent string
+                        if (i == 0 && ch == '-' && strExp.length > 1)
                             continue
                         // ex contains the exponent substring only so throw
                         // a new exception with the correct string.
