@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -140,6 +142,21 @@ class PostponedArgumentsAnalyzer(
 
             // For Unit-coercion
             !rawReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(rawReturnType) -> unitType
+
+            // Supplying the expected type for lambda effectively makes it being resolved in the FULL completion mode.
+            // For non-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: calls inside return
+            // statements are not aware of type variables of the "main" call.
+            // But for PCLA, we resolve everything within a common CS; thus it's ok.
+            //
+            // The main purpose of this condition is actually forcing lambda analysis in return statements, so we might gather
+            // constraints for the builder-related type variable from the nested lambdas.
+            //
+            // For more details, see #analysis-mode-for-return-statements-of-a-pcla-lambda at [docs/fir/pcla.md]
+            //
+            // NB: It's explicitly put below the unit case
+            // (see testData/diagnostics/tests/inference/pcla/lambdaBelongsToOuterCallUnitConstraint.kt)
+            withPCLASession && resolutionContext.session.languageVersionSettings.supportsFeature(LanguageFeature.PCLAEnhancementsIn21) ->
+                substitute(rawReturnType)
 
             else -> null
         }

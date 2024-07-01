@@ -417,6 +417,81 @@ In the third (and sometimes in the second) situation, we start regular lambda an
 not fixed as for value parameter, but that seems meaningless because almost any call inside the lambda might require the member scope
 of the receiver, thus need to fix its result type.
 
+## Analysis mode for return statements of a PCLA lambda
+
+In most of the use cases we know for PCLA, the return type of the lambda is Unit, so all the return statements are being analyzed in a 
+FULL (to be precise [PCLA_POSTPONED_CALL](#pcla_postponed_call-completion-mode)).
+
+But there are some of them 
+(e.g., [KT-68940](https://youtrack.jetbrains.com/issue/KT-68940/K2-IllegalArgumentException-All-variables-should-be-fixed-to-something)) 
+where the return type might contain not-fixed type variables.
+
+For **non**-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: 
+calls inside return statements are not aware of type variables of the containing call.
+
+But for PCLA, we resolve everything within a common CS; thus it's ok. 
+Moreover, in some situations which look quite reasonable, it's even preferable to force e.g. lambda analysis in the return statements
+to gather more constraints for the builder type variables.
+
+```kotlin
+interface Base
+class Derived1 : Base
+class Derived2 : Base
+
+fun <E> myBuildSet(transformer: (MutableSet<E>) -> MutableSet<E>): MutableSet<E> = TODO()
+
+fun main() {
+    myBuildSet { builder ->
+        builder.add(Derived1())
+
+        // Return-statement of the lambda
+        // Expected type: MutableSet<Ev> has a not-fixed type variable
+        builder.let {
+            it.add(Derived2()) // Should be OK
+
+            it
+        }
+    }
+}
+```
+
+By default, (e.g., in non-PCLA context) we would postpone the lambda in the `let` call, and after exiting PCLA for `myBuildSet` would fix `Ev`
+into the only existing constraint at that moment, i.e., to `Base1` and then when got back to the nested lambda analysis would report
+a `TYPE_MISMATCH` in the `it.add(Derived2())` because the variable has been already fixed to less permissive type.
+
+But that looks counter-intuitive, and moreover, the example above was green in Builder Inference implementation in K1.
+
+Thus, for PCLA, we decided to analyze return statements with FULL completion mode even if the lambda return type contains not-yet-inferred
+type variables.
+
+Though, this solutuion is not totally universal: it might make some more "red" than it is if we postponed the nested lambdas in return 
+statements.
+
+For example:
+```kotlin
+fun <E> myBuildSet2(transformer: (MutableSet<E>) -> E): MutableSet<E> = TODO()
+
+fun main(b: Boolean) {
+    myBuildSet2 { builder ->
+        if (b) {
+            return@myBuildSet2 { arg ->
+                arg.length // Unresolved reference: `.length` because we don't have proper constraints here
+            }
+        }
+        builder.add({ x: String -> })
+    }
+}
+```
+
+There, we start the analysis of the first lambda analysis before we'd come to the second one where the type hint is given, thus having
+an unresolved reference.
+
+But it's been decided to go with this solution, thus allowing inferring to a green code within the first example with `myBuildSet`.
+**NB:** This second example didn't work in K1.
+
+For details, see `expectedTypeForReturnArguments` definition at
+`org.jetbrains.kotlin.fir.resolve.inference.PostponedArgumentsAnalyzer.analyzeLambda`.
+
 ## On demand variable fixation
 
 Unlike non-PCLA context, here there might be legit situations when someone needs to look into member scope of some type variable.

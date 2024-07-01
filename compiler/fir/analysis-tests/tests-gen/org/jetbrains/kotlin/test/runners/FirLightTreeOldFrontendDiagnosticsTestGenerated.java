@@ -19256,6 +19256,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("lambdaBelongsToOuterCallAdditionalFixedVariable.kt")
+        public void testLambdaBelongsToOuterCallAdditionalFixedVariable() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaBelongsToOuterCallAdditionalFixedVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaBelongsToOuterCallUnitConstraint.kt")
+        public void testLambdaBelongsToOuterCallUnitConstraint() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaBelongsToOuterCallUnitConstraint.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaParameterForBareType.kt")
         public void testLambdaParameterForBareType() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/lambdaParameterForBareType.kt");
@@ -19576,6 +19588,64 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
           @TestMetadata("simpleGreen.kt")
           public void testSimpleGreen() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/csForks/simpleGreen.kt");
+          }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForceLambdaCompletionFromReturnStatement {
+          @Test
+          public void testAllFilesPresentInForceLambdaCompletionFromReturnStatement() {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
+          }
+
+          @Test
+          @TestMetadata("differentBehaviorWhenSpecifiedArgument.kt")
+          public void testDifferentBehaviorWhenSpecifiedArgument() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/differentBehaviorWhenSpecifiedArgument.kt");
+          }
+
+          @Test
+          @TestMetadata("differentBehaviorWhenSpecifiedArgument20.kt")
+          public void testDifferentBehaviorWhenSpecifiedArgument20() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/differentBehaviorWhenSpecifiedArgument20.kt");
+          }
+
+          @Test
+          @TestMetadata("earlyReturn.kt")
+          public void testEarlyReturn() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/earlyReturn.kt");
+          }
+
+          @Test
+          @TestMetadata("earlyReturn20.kt")
+          public void testEarlyReturn20() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/earlyReturn20.kt");
+          }
+
+          @Test
+          @TestMetadata("multiLambdas.kt")
+          public void testMultiLambdas() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/multiLambdas.kt");
+          }
+
+          @Test
+          @TestMetadata("multiLambdas20.kt")
+          public void testMultiLambdas20() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/multiLambdas20.kt");
+          }
+
+          @Test
+          @TestMetadata("noPostponedAtomForNestedLambda.kt")
+          public void testNoPostponedAtomForNestedLambda() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/noPostponedAtomForNestedLambda.kt");
+          }
+
+          @Test
+          @TestMetadata("noPostponedAtomForNestedLambda20.kt")
+          public void testNoPostponedAtomForNestedLambda20() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/forceLambdaCompletionFromReturnStatement/noPostponedAtomForNestedLambda20.kt");
           }
         }
 
