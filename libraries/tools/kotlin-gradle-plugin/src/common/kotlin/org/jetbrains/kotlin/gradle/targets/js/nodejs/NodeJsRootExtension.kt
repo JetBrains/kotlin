@@ -65,7 +65,6 @@ open class NodeJsRootExtension(
     @Deprecated("Use version from NodeJsPlugin (not NodeJsRootPlugin) instead")
     var nodeVersion by nodeJs::version
 
-    @Deprecated("Use version from NodeJsPlugin (not NodeJsRootPlugin) instead")
     var version by nodeJs::version
 
     @Deprecated("Use command from NodeJsPlugin (not NodeJsRootPlugin) instead")
