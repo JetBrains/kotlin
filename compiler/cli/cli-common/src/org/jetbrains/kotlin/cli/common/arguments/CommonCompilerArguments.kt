@@ -697,6 +697,16 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
         }
 
     @Argument(
+        value = "-Xnon-local-break-continue",
+        description = "Enable experimental non-local break and continue."
+    )
+    var nonLocalBreakContinue = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xmulti-dollar-interpolation",
         description = "Enable experimental multi-dollar interpolation."
     )
@@ -856,6 +866,10 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (contextReceivers) {
                 put(LanguageFeature.ContextReceivers, LanguageFeature.State.ENABLED)
+            }
+
+            if (nonLocalBreakContinue) {
+                put(LanguageFeature.BreakContinueInInlineLambdas, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {
