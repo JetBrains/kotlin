@@ -175,5 +175,5 @@ private external fun Platform_getAvailableProcessorsEnv(): String?
 private external fun Platform_getAvailableProcessors(): Int
 
 @ExperimentalStdlibApi
-@Deprecated("Only EXPERIMENTAL memory model has remained")
+@Deprecated("This property always returns true, its usages can be safely removed.", ReplaceWith("true"))
 public fun isExperimentalMM(): Boolean = true
