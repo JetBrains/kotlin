@@ -28430,6 +28430,12 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
         }
 
         @Test
+        @TestMetadata("implicitActualizationToBinaryJava.kt")
+        public void testImplicitActualizationToBinaryJava() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/implicitActualization/implicitActualizationToBinaryJava.kt");
+        }
+
+        @Test
         @TestMetadata("implicitActualizationToBinaryKotlin.kt")
         public void testImplicitActualizationToBinaryKotlin() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/implicitActualization/implicitActualizationToBinaryKotlin.kt");
