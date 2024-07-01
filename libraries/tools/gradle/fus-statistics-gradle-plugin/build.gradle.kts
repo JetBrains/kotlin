@@ -1,5 +1,7 @@
 plugins {
     id("gradle-plugin-common-configuration")
+    //configuration should be done in Project.configureCommonPublicationSettingsForGradle
+    `maven-publish`
 }
 
 
@@ -8,14 +10,11 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin"))
 }
 
-
-gradlePlugin {
-    plugins {
-        create("fus-statistics-gradle-plugin") {
-            id = "org.jetbrains.kotlin.fus-statistics-gradle-plugin"
-            displayName = "FusStatisticsPlugin"
-            description = displayName
-            implementationClass = "org.jetbrains.kotlin.gradle.fus.FusStatisticsPlugin"
+publishing {
+    publications {
+        create<MavenPublication>("Main") {
+            from(components["java"])
         }
     }
 }
+

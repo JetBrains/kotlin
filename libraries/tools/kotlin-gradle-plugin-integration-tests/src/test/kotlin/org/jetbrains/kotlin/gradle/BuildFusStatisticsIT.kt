@@ -92,7 +92,11 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
-                ${applyFusStatisticPlugin(it)}
+                ${addBuildScriptDependency()}    
+                    
+                $it
+                
+                ${applyFusStatisticPlugin()}
                 
                 ${createTestFusTaskClass()}
                 
@@ -114,23 +118,32 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
-    private fun applyFusStatisticPlugin(it: String) = it.replace(
-        "plugins {",
-        """
-                                   plugins {
-                                      id "org.jetbrains.kotlin.fus-statistics-gradle-plugin" version "${'$'}kotlin_version"
-                               """.trimIndent()
-    )
+    private fun addBuildScriptDependency() = """
+        buildscript {
+            dependencies {
+                classpath "org.jetbrains.kotlin:fus-statistics-gradle-plugin:${'$'}kotlin_version"
+            }
+        }
+    """.trimIndent()
 
-    private fun createTestFusTaskClass() = """import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
-                    class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService {
-                      private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
-    
-                      org.gradle.api.provider.Property getFusStatisticsBuildService(){
-                        return fusStatisticsBuildService
-                      }
-    
-                    }"""
+    private fun applyFusStatisticPlugin() = """
+        plugins.apply("org.jetbrains.kotlin.fus-statistics-gradle-plugin")
+    """.trimIndent()
+
+    private fun createTestFusTaskClass() = """
+        import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
+        import org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService
+
+        class TestFusTask extends DefaultTask implements UsesGradleBuildFusStatisticsService {
+
+            private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
+
+            Property getFusStatisticsBuildService(){
+                return fusStatisticsBuildService
+            }
+
+        }
+    """.trimIndent()
 
     @DisplayName("test override metrics for fus-statistics-gradle-plugin")
     @GradleTest
@@ -140,7 +153,11 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
         project("simpleProject", gradleVersion) {
             buildGradle.modify {
                 """
-                ${applyFusStatisticPlugin(it)}
+                ${addBuildScriptDependency()}    
+                    
+                $it
+                
+                ${applyFusStatisticPlugin()}
                 
                 ${createTestFusTaskClass()}
                 
