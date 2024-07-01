@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.targets.UNPACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
@@ -67,12 +68,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             project.copyCommonizeCInteropForIdeTask()
         }
 
-        val interopOutput =
-            if (!project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-                project.files(interopTask.map { it.outputFileProvider })
-            } else {
-                project.files(maybeCreateKlibPackingTask(compilation, interop.classifier, interopTask).map { it.archiveFile })
-            }
+        val interopOutput = project.files(interopTask.map { it.outputFileProvider })
         with(compilation) {
             compileDependencyFiles += interopOutput
             if (isMain()) {
@@ -86,6 +82,14 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                         classifier = interop.classifier,
                         klibProducingTask = interopTask,
                     )
+
+                    // TODO(alakotka): Add unpacked cinterop to secondary variant of KotlinNativeTarget.apiElements in [SecondaryVariantsForUnpackedCompilerOutputs]
+                    if (compilation.target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
+                        val apiElementsName = compilation.target.apiElementsConfigurationName
+                        val apiElements = project.configurations.getByName(apiElementsName)
+                        apiElements.outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
+                            .artifact(interopOutput) { it.builtBy(interopTask) }
+                    }
                 }
 
                 // We cannot add the interop library in an compilation output because in this case

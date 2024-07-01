@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.UNPACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setAttribute
@@ -108,13 +107,6 @@ internal fun createKlibArtifact(
         compilation.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
         artifacts.add(klibArtifact)
         attributes.setAttribute(compilation.project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
-
-        if (compilation.target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-            outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
-                .artifact(klibProducingTask.flatMap { it.klibFile }) {
-                    it.builtBy(klibProducingTask)
-                }
-        }
     }
 }
 

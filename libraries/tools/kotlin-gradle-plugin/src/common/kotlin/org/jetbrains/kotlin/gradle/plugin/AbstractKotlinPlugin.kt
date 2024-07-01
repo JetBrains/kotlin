@@ -183,9 +183,10 @@ internal abstract class AbstractKotlinPlugin(
 
 
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
-                    project.configurations
-                        .findByName(javaSourceSet.apiElementsConfigurationName)
-                        ?.addSecondaryOutgoingJvmClassesVariant(project, kotlinCompilation)
+// TODO(alakotka): verify if it is necessary
+//                    project.configurations
+//                        .findByName(javaSourceSet.apiElementsConfigurationName)
+//                        ?.addSecondaryOutgoingJvmClassesVariant(project, kotlinCompilation)
 
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)

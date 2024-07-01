@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.addSecondaryOutgoingJvmClassesVariant
 import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 import org.jetbrains.kotlin.gradle.utils.setAttribute
@@ -51,16 +49,6 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
             runtimeConfiguration?.let { extendsFrom(it) }
         }
         usesPlatformOf(target)
-        if (target.platformType == KotlinPlatformType.jvm) {
-            addSecondaryOutgoingJvmClassesVariant(
-                project,
-                mainCompilation,
-                addArtifactsToVariantCreatedByJavaLibraryPlugin = true
-            )
-        }
-        if (target.producesPlatformKlib && target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-            addUnpackedKlibSecondaryOutgoingVariant(project)
-        }
     }
 
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION")

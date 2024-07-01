@@ -15,6 +15,7 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.CLASSES_SECONDARY_VARIANT_NAME
 
 const val COMPILE_ONLY = "compileOnly"
@@ -105,49 +106,3 @@ internal fun ConfigurationContainer.maybeCreateDependencyScope(
     name: String,
     configurationOnCreate: Configuration.() -> Unit = {},
 ): Configuration = findDependencyScope(name) ?: createDependencyScope(name, configurationOnCreate).get()
-
-internal fun Configuration.addSecondaryOutgoingJvmClassesVariant(
-    project: Project,
-    kotlinCompilation: KotlinCompilation<*>,
-    addArtifactsToVariantCreatedByJavaLibraryPlugin: Boolean = false,
-) {
-    if (!project.kotlinPropertiesProvider.addSecondaryClassesVariant) return
-
-    val apiClassesVariant = outgoing.variants.maybeCreate(CLASSES_SECONDARY_VARIANT_NAME)
-    apiClassesVariant.attributes.attribute(
-        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-        project.objects.named(LibraryElements.CLASSES)
-    )
-
-    project.whenEvaluated {
-        // Java-library plugin already has done all required work here
-        if (!addArtifactsToVariantCreatedByJavaLibraryPlugin && project.plugins.hasPlugin("java-library")) return@whenEvaluated
-
-        kotlinCompilation.output.classesDirs.files.forEach { classesDir ->
-            apiClassesVariant.artifact(classesDir) {
-                it.type = ArtifactTypeDefinition.JVM_CLASS_DIRECTORY
-                it.builtBy(kotlinCompilation.output.classesDirs.buildDependencies)
-            }
-        }
-    }
-}
-
-internal const val UNPACKED_KLIB_VARIANT_NAME = "unpacked-klib"
-
-internal const val PACKED_KLIB_ATTRIBUTE = "packed-klib"
-internal const val UNPACKED_KLIB_ATTRIBUTE = "unpacked-klib"
-
-internal fun Project.packedKlibLibraryElements() = objects.named(LibraryElements::class.java, PACKED_KLIB_ATTRIBUTE)
-
-internal fun Project.unpackedKlibLibraryElements() = objects.named(LibraryElements::class.java, UNPACKED_KLIB_ATTRIBUTE)
-
-internal fun Configuration.addUnpackedKlibSecondaryOutgoingVariant(
-    project: Project,
-    primaryVariantAttribute: LibraryElements = project.packedKlibLibraryElements(),
-    secondaryVariantAttribute: LibraryElements = project.unpackedKlibLibraryElements(),
-) {
-    attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, primaryVariantAttribute)
-    outgoing.variants.create(UNPACKED_KLIB_VARIANT_NAME) { variant ->
-        variant.attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, secondaryVariantAttribute)
-    }
-}

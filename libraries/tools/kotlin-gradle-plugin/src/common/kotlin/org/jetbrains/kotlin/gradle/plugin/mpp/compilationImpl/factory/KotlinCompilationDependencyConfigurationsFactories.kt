@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_PATH
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resolve.KotlinTargetResourcesResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
+import org.jetbrains.kotlin.gradle.artifacts.KlibPackaging
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
@@ -173,11 +173,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
                 attributes.setAttribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
             }
             if (target.producesPlatformKlib) {
-                if (target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-                    attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.project.unpackedKlibLibraryElements())
-                } else {
-                    attributes.setAttribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, target.project.packedKlibLibraryElements())
-                }
+                KlibPackaging.setAttributeTo(target.project, attributes)
             }
             description = "Compile classpath for $compilationCoordinates."
         }

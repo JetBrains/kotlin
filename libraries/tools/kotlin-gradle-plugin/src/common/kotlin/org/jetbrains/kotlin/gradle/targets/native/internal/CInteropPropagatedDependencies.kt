@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskDependency
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompila
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
+import org.jetbrains.kotlin.gradle.utils.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
@@ -67,51 +70,65 @@ internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: Default
 internal fun Project.getPlatformCinteropDependenciesOrEmpty(
     sourceSet: DefaultKotlinSourceSet,
     compilationFilter: (KotlinNativeCompilation) -> Boolean = { true },
-): FileCollection {
-    return filesProvider files@{
-        /*
-        compatibility metadata variant will still register
-        a 'KotlinMetadataCompilation for 'commonMain' which is irrelevant here
-        */
-        val compilations = sourceSet.internal.compilations
-            .filter { compilation -> compilation !is KotlinMetadataCompilation }
+): FileCollection = getPlatformCinteropOutputsOrEmpty(sourceSet, compilationFilter).asFileCollection(this)
 
-        /* Participating in multiple compilations? -> can't propagate -> should be commonized */
-        val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
+internal fun Project.getPlatformCinteropOutputsOrEmpty(
+    sourceSet: DefaultKotlinSourceSet,
+    compilationFilter: (KotlinNativeCompilation) -> Boolean = { true },
+): List<CInteropOutput> {
+    /*
+    compatibility metadata variant will still register
+    a 'KotlinMetadataCompilation for 'commonMain' which is irrelevant here
+    */
+    val compilations = sourceSet.internal.compilations
+        .filter { compilation -> compilation !is KotlinMetadataCompilation }
 
-        /* Apple-specific cinterops can't be produced on non-MacOs machines, so just return an empty dependencies collection */
-        if (!compilation.target.konanTarget.enabledOnCurrentHostForKlibCompilation(kotlinPropertiesProvider)) return@files emptySet<File>()
+    /* Participating in multiple compilations? -> can't propagate -> should be commonized */
+    val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return emptyList()
 
-        (compilation.associatedCompilations + compilation)
-            .filterIsInstance<KotlinNativeCompilation>()
-            .filter(compilationFilter)
-            .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }
-    }
+    /* Apple-specific cinterops can't be produced on non-MacOs machines, so just return an empty dependencies collection */
+    if (!compilation.target.konanTarget.enabledOnCurrentHostForKlibCompilation(kotlinPropertiesProvider)) return emptyList()
+
+    return (compilation.associatedCompilations + compilation)
+        .filterIsInstance<KotlinNativeCompilation>()
+        .filter(compilationFilter)
+        .flatMap { relevantCompilation -> getAllCInteropOutputs(relevantCompilation) }
+        .distinctBy { it.key }
 }
 
-private fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: KotlinSharedNativeCompilation) = filesProvider files@{
+internal fun Project.getPropagatedCInteropDependenciesOrEmpty(compilation: KotlinSharedNativeCompilation): FileCollection {
     val compilations = compilation.getImplicitlyDependingNativeCompilations()
-    val platformCompilation = compilations.singleOrNull() ?: return@files emptySet<File>()
-    getAllCInteropOutputFiles(platformCompilation)
+    val platformCompilation = compilations.singleOrNull() ?: return files()
+    return getAllCInteropOutputs(platformCompilation).asFileCollection(this)
 }
 
-private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilation): FileCollection {
-    val cinteropTasks = compilation.cinterops.map { interop -> interop.interopProcessingTaskName }
-        .mapNotNull { taskName -> tasks.findByName(taskName) as? CInteropProcess }
+private fun Project.getAllCInteropOutputs(compilation: KotlinNativeCompilation): List<CInteropOutput> {
+    return compilation.cinterops.mapNotNull { interop ->
+        val interopTask = tasks.findByName(interop.interopProcessingTaskName)
+        if (interopTask !is CInteropProcess) return@mapNotNull null
 
-    if (project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-        // this part of import isn't ready for working with unpacked klibs
-        return project.filesProvider {
-            cinteropTasks.map { interopTask ->
-                maybeCreateKlibPackingTask(
-                    compilation,
-                    interopTask.settings.classifier,
-                    interopTask.outputFileProvider,
-                    interopTask
-                )
-            }
-        }
+        CInteropOutput(
+            buildPath = compilation.project.currentBuildId().buildPathCompat,
+            projectPath = compilation.project.path,
+            targetName = compilation.target.name,
+            compilationName = compilation.name,
+            cinteropName = interop.name,
+            klibLocation = filesProvider(interopTask) { interopTask.outputFileProvider },
+        )
     }
-    return project.filesProvider { cinteropTasks.map { it.outputFileProvider } }
-        .builtBy(*cinteropTasks.toTypedArray())
+}
+
+internal class CInteropOutput(
+    val buildPath: String,
+    val projectPath: String,
+    val targetName: String,
+    val compilationName: String,
+    val cinteropName: String,
+    val klibLocation: FileCollection,
+) {
+    val key: String get() = "$buildPath/$projectPath/$targetName/$compilationName/$cinteropName"
+}
+
+private fun List<CInteropOutput>.asFileCollection(project: Project) = project.filesProvider {
+    map { it.klibLocation }
 }

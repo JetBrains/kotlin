@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.artifacts
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.wasmDecamelizedDefaultNameOrNull
-import org.jetbrains.kotlin.gradle.utils.UNPACKED_KLIB_VARIANT_NAME
 import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 
@@ -33,11 +31,4 @@ internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, 
     }
 
     target.createPublishArtifact(jsKlibTask, KLIB_TYPE, apiElements, runtimeElements)
-
-    if (target.project.kotlinPropertiesProvider.enableUnpackedKlibs) {
-        apiElements.outgoing.variants.getByName(UNPACKED_KLIB_VARIANT_NAME)
-            .artifact(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider.flatMap { it.destinationDirectory }) {
-                // ...
-            }
-    }
 }

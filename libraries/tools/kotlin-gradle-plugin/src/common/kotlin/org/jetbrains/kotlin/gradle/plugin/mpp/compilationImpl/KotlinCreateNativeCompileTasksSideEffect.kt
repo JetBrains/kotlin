@@ -66,7 +66,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.enabledOnCurrentHostForKlibCompilationProperty.set(project.provider {
             task.konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
         })
-        // for metadata tasks we should provide unpacked klib
+        // for metadata tasks we should always provide unpacked klib
         task.produceUnpackedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.enableUnpackedKlibs)
     }
 
