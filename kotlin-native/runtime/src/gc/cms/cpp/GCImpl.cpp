@@ -31,7 +31,7 @@ void gc::GC::ThreadData::onThreadRegistration() noexcept {
     impl_->gc().onThreadRegistration();
 }
 
-ALWAYS_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {
+PERFORMANCE_INLINE void gc::GC::ThreadData::onAllocation(ObjHeader* object) noexcept {
     impl().gc().barriers().onAllocation(object);
 }
 
@@ -58,12 +58,12 @@ bool gc::GC::FinalizersThreadIsRunning() noexcept {
 }
 
 // static
-ALWAYS_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
+PERFORMANCE_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* object) noexcept {
     gc::internal::processObjectInMark<gc::mark::ConcurrentMark::MarkTraits>(state, object);
 }
 
 // static
-ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
+PERFORMANCE_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
     gc::internal::processArrayInMark<gc::mark::ConcurrentMark::MarkTraits>(state, array);
 }
 
@@ -87,19 +87,19 @@ bool gc::GC::mainThreadFinalizerProcessorAvailable() noexcept {
     return impl_->gc().mainThreadFinalizerProcessor().available();
 }
 
-ALWAYS_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+PERFORMANCE_INLINE void gc::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
     barriers::beforeHeapRefUpdate(ref, value);
 }
 
-ALWAYS_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
+PERFORMANCE_INLINE OBJ_GETTER(gc::weakRefReadBarrier, std::atomic<ObjHeader*>& weakReferee) noexcept {
     RETURN_OBJ(gc::barriers::weakRefReadBarrier(weakReferee));
 }
 
-bool gc::isMarked(ObjHeader* object) noexcept {
+PERFORMANCE_INLINE bool gc::isMarked(ObjHeader* object) noexcept {
     return alloc::objectDataForObject(object).marked();
 }
 
-ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
+PERFORMANCE_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
     return objectData.tryResetMark();
 }
 

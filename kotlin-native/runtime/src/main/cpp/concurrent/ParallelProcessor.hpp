@@ -27,26 +27,26 @@ class ParallelProcessor : private Pinned {
 private:
     class Batch {
     public:
-        ALWAYS_INLINE bool empty() const noexcept {
+        PERFORMANCE_INLINE bool empty() const noexcept {
             return elems_.empty();
         }
 
-        ALWAYS_INLINE bool full() const noexcept {
+        PERFORMANCE_INLINE bool full() const noexcept {
             return elemsCount_ == kBatchSize;
         }
 
-        ALWAYS_INLINE std::size_t elementsCount() const noexcept {
+        PERFORMANCE_INLINE std::size_t elementsCount() const noexcept {
             return elemsCount_;
         }
 
-        ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
+        PERFORMANCE_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
             RuntimeAssert(!full(), "Batch overflow");
             const bool pushed = elems_.try_push_front(value);
             elemsCount_ += static_cast<int>(pushed);
             return pushed;
         }
 
-        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
+        PERFORMANCE_INLINE typename ListImpl::pointer tryPop() noexcept {
             auto popped = elems_.try_pop_front();
             if (popped) {
                 --elemsCount_;
@@ -77,15 +77,15 @@ private:
 
     class LocalQueue : private Pinned {
     public:
-        ALWAYS_INLINE bool localEmpty() const noexcept {
+        PERFORMANCE_INLINE bool localEmpty() const noexcept {
             return localQueue_.empty();
         }
 
-        ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
+        PERFORMANCE_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
             return localQueue_.try_push_front(value);
         }
 
-        ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
+        PERFORMANCE_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
             return localQueue_.try_pop_front();
         }
 
@@ -103,11 +103,11 @@ public:
             RuntimeAssert(retainsNoWork(), "A queue must be empty");
         }
 
-        ALWAYS_INLINE bool retainsNoWork() const noexcept {
+        PERFORMANCE_INLINE bool retainsNoWork() const noexcept {
             return batch_.empty() && overflowList().empty();
         }
 
-        ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
+        PERFORMANCE_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
             if (batch_.full()) {
                 bool released = dispatcher_.releaseBatch(std::move(batch_));
                 if (!released) {
@@ -123,7 +123,7 @@ public:
          * Tries to transfer all the tasks stored in this WorkSource locally into the shared ParallelProcessor's storage.
          * @return `true` iff this WorkSource doesn't contain any local tasks anymore.
          */
-        ALWAYS_INLINE bool forceFlush() noexcept {
+        PERFORMANCE_INLINE bool forceFlush() noexcept {
             while (true) {
                 if (!batch_.empty()) {
                     bool released = dispatcher_.releaseBatch(std::move(batch_));
@@ -171,7 +171,7 @@ public:
             RuntimeLogDebug({ kTagBalancing }, "Worker registered");
         }
 
-        ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
+        PERFORMANCE_INLINE typename ListImpl::pointer tryPop() noexcept {
             if (this->batch_.empty()) {
                 while (true) {
                     bool acquired = this->dispatcher_.acquireBatch(this->batch_);

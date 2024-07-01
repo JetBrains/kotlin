@@ -77,7 +77,7 @@ bool gc::BarriersThreadData::shouldMarkNewObjects() const noexcept {
     return markHandle_.has_value();
 }
 
-ALWAYS_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
+PERFORMANCE_INLINE void gc::BarriersThreadData::onAllocation(ObjHeader* allocated) {
     if (compiler::concurrentWeakSweep()) {
         bool shouldMark = shouldMarkNewObjects();
         bool barriersEnabled = weakRefBarrier.load(std::memory_order_relaxed) != nullptr;

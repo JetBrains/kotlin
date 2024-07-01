@@ -96,7 +96,7 @@ void processUnhandledException(KRef exception) noexcept {
 
 } // namespace
 
-ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
+PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
     RETURN_OBJ(static_cast<ExceptionObjHolder*>(holder)->GetExceptionObject());
 }
 

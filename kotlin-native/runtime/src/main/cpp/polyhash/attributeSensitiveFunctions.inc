@@ -1,7 +1,7 @@
 // These functions should be included inside Traits with correct attributes (e.g. via #pragma clang attribute push).
 
 template<typename Traits>
-ALWAYS_INLINE static void polyHashTail(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+PERFORMANCE_INLINE static void polyHashTail(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
     using U16VecType = typename Traits::U16VecType;
@@ -19,7 +19,7 @@ ALWAYS_INLINE static void polyHashTail(int& n, uint16_t const*& str, typename Tr
 }
 
 template<typename Traits>
-ALWAYS_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+PERFORMANCE_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
     using U16VecType = typename Traits::U16VecType;
@@ -50,7 +50,7 @@ ALWAYS_INLINE static void polyHashUnroll2(int& n, uint16_t const*& str, typename
 }
 
 template<typename Traits>
-ALWAYS_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+PERFORMANCE_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
     using U16VecType = typename Traits::U16VecType;
@@ -91,7 +91,7 @@ ALWAYS_INLINE static void polyHashUnroll4(int& n, uint16_t const*& str, typename
 }
 
 template<typename Traits>
-ALWAYS_INLINE static void polyHashUnroll8(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
+PERFORMANCE_INLINE static void polyHashUnroll8(int& n, uint16_t const*& str, typename Traits::Vec128Type& res, uint32_t const* b, uint32_t const* p) {
     using VecType = typename Traits::VecType;
     using Vec128Type = typename Traits::Vec128Type;
     using U16VecType = typename Traits::U16VecType;

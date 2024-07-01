@@ -93,7 +93,7 @@ bool gc::barriers::BarriersThreadData::shouldMarkNewObjects() const noexcept {
     return markHandle_.has_value();
 }
 
-ALWAYS_INLINE void gc::barriers::BarriersThreadData::onAllocation(ObjHeader* allocated) {
+PERFORMANCE_INLINE void gc::barriers::BarriersThreadData::onAllocation(ObjHeader* allocated) {
     BarriersLogDebug(currentPhaseRelaxed(), "Allocation %p", allocated);
     if (shouldMarkNewObjects()) {
         auto& objectData = alloc::objectDataForObject(allocated);
@@ -143,7 +143,7 @@ NO_INLINE void beforeHeapRefUpdateSlowPath(mm::DirectRefAccessor ref, ObjHeader*
 
 } // namespace
 
-ALWAYS_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
+PERFORMANCE_INLINE void gc::barriers::beforeHeapRefUpdate(mm::DirectRefAccessor ref, ObjHeader* value) noexcept {
     auto phase = currentPhase();
     BarriersLogDebug(phase, "Write *%p <- %p (%p overwritten)", ref.location(), value, ref.load());
     if (__builtin_expect(phase == BarriersPhase::kMarkClosure, false)) {
@@ -175,7 +175,7 @@ NO_INLINE ObjHeader* weakRefReadInWeakSweepSlowPath(ObjHeader* weakReferee) noex
 
 } // namespace
 
-ALWAYS_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*>& weakReferee) noexcept {
+PERFORMANCE_INLINE ObjHeader* gc::barriers::weakRefReadBarrier(std::atomic<ObjHeader*>& weakReferee) noexcept {
     if (__builtin_expect(currentPhase() != BarriersPhase::kDisabled, false)) {
         // Mark dispatcher requires weak reads be protected by the following:
         auto weakReadProtector = markDispatcher().weakReadProtector();

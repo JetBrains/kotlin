@@ -10,7 +10,7 @@
 
 #if KONAN_OBJC_INTEROP
 
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
+extern "C" void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
 #endif // KONAN_OBJC_INTEROP
 
