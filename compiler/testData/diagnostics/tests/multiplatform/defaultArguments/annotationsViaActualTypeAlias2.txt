@@ -12,7 +12,9 @@ public final annotation class A : kotlin.Annotation {
 }
 
 public final expect annotation class Anno : kotlin.Annotation {
-    public constructor Anno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ stra: kotlin.Array<kotlin.String> = ..., /*22*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*23*/ ea: kotlin.Array<E> = ...)
+    public constructor Anno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ a: A = ..., /*22*/ stra: kotlin.Array<kotlin.String> = ..., /*23*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*24*/ ea: kotlin.Array<E> = ..., /*25*/ aa: kotlin.Array<A> = ...)
+    public expect final val a: A
+    public expect final val aa: kotlin.Array<A>
     public expect final val b: kotlin.Byte
     public expect final val ba: kotlin.ByteArray
     public expect final val c: kotlin.Char
@@ -101,7 +103,9 @@ public final enum class E : kotlin.Enum<E> {
 }
 
 public final annotation class Jnno : kotlin.Annotation {
-    public constructor Jnno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ stra: kotlin.Array<kotlin.String> = ..., /*22*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*23*/ ea: kotlin.Array<E> = ...)
+    public constructor Jnno(/*0*/ b: kotlin.Byte = ..., /*1*/ c: kotlin.Char = ..., /*2*/ d: kotlin.Double = ..., /*3*/ f: kotlin.Float = ..., /*4*/ i: kotlin.Int = ..., /*5*/ i2: kotlin.Int = ..., /*6*/ j: kotlin.Long = ..., /*7*/ j2: kotlin.Long = ..., /*8*/ s: kotlin.Short = ..., /*9*/ z: kotlin.Boolean = ..., /*10*/ ba: kotlin.ByteArray = ..., /*11*/ ca: kotlin.CharArray = ..., /*12*/ da: kotlin.DoubleArray = ..., /*13*/ fa: kotlin.FloatArray = ..., /*14*/ ia: kotlin.IntArray = ..., /*15*/ ja: kotlin.LongArray = ..., /*16*/ sa: kotlin.ShortArray = ..., /*17*/ za: kotlin.BooleanArray = ..., /*18*/ str: kotlin.String = ..., /*19*/ k: kotlin.reflect.KClass<*> = ..., /*20*/ e: E = ..., /*21*/ a: A = ..., /*22*/ stra: kotlin.Array<kotlin.String> = ..., /*23*/ ka: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*24*/ ea: kotlin.Array<E> = ..., /*25*/ aa: kotlin.Array<A> = ...)
+    public final val a: A
+    public final val aa: kotlin.Array<A>
     public final val b: kotlin.Byte
     public final val ba: kotlin.ByteArray
     public final val c: kotlin.Char
