@@ -97,7 +97,7 @@ fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeInterse
     return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
-fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
 
