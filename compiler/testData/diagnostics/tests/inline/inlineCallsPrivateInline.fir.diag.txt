@@ -1,3 +1,9 @@
 /inlineCallsPrivateInline.fir.kt:(94,111): error: Public-API inline function cannot access non-public-API inline function as it could transitively access non-public-API declarations.
 
-/inlineCallsPrivateInline.fir.kt:(133,139): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
+/inlineCallsPrivateInline.fir.kt:(122,139): error: Public-API inline function cannot access non-public-API property.
+
+/inlineCallsPrivateInline.fir.kt:(148,168): error: Public-API inline function cannot access non-public-API inline property accessor as it could transitively access non-public-API declarations.
+
+/inlineCallsPrivateInline.fir.kt:(148,168): error: Public-API inline function cannot access non-public-API property.
+
+/inlineCallsPrivateInline.fir.kt:(193,199): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
