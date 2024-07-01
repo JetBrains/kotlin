@@ -84,7 +84,7 @@ public object Platform {
     /**
      * Memory model binary was compiled with. Always [MemoryModel.EXPERIMENTAL]
      */
-    @Deprecated("Only EXPERIMENTAL memory model has remained")
+    @Deprecated("This propery always returns MemoryModel.EXPERIMENTAL, its usages can be safely removed.", ReplaceWith("MemoryModel.EXPERIMENTAL"))
     @Suppress("DEPRECATION")
     public val memoryModel: MemoryModel
         get() = MemoryModel.EXPERIMENTAL
