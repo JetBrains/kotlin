@@ -41,6 +41,7 @@ import java.io.File
 class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    private val isDeserializedInput: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -161,7 +162,12 @@ class IrTextDumpHandler(
 
     private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
         if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
+//            if (!isDeserializedInput)
+                assertions.assertEqualsToFile(expectedFile, actualDump)
+//            else {
+//                val expectedDump = filterOutSealedSubclasses(expectedFile.readText())
+//                assertions.assertEquals(expectedDump.trim(), actualDump.trim())
+//            }
         } else {
             assertions.assertFileDoesntExist(expectedFile, DUMP_IR)
         }
@@ -170,5 +176,24 @@ class IrTextDumpHandler(
     private fun TestModule.getDumpExtension(ignoreFirIdentical: Boolean = false): String {
         return computeDumpExtension(this, if (byteCodeListingEnabled) DUMP_EXTENSION2 else DUMP_EXTENSION, ignoreFirIdentical)
     }
+
+    private fun filterOutSealedSubclasses(testData: String): String =
+        buildString {
+            val SEALED_SUBCLASSES_CLAUSE = "sealedSubclasses:"
+            var ongoingSealedSubclassesClauseIndent: String? = null
+            for (line in testData.lines()) {
+                if (ongoingSealedSubclassesClauseIndent == null) {
+                    if (line.trim() == SEALED_SUBCLASSES_CLAUSE) {
+                        ongoingSealedSubclassesClauseIndent = line.substringBefore(SEALED_SUBCLASSES_CLAUSE)
+                    } else
+                        appendLine(line)
+                } else {
+                    if (!line.startsWith("$ongoingSealedSubclassesClauseIndent  CLASS") ) {
+                        ongoingSealedSubclassesClauseIndent = null
+                        appendLine(line)
+                    }
+                }
+            }
+        }
 }
 

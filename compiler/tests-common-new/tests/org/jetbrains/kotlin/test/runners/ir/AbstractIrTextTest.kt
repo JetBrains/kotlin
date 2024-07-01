@@ -102,7 +102,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
         facadeStep(converter)
 
-        irHandlersStep { useIrTextHandlers(this@configuration) }
+        irHandlersStep { useIrTextHandlers(this@configuration, isDeserializedInput = false) }
 
         klibFacades?.let { klibSteps(it) }
     }
@@ -111,14 +111,15 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
         facadeStep(backendFacade)
         klibArtifactsHandlersStep()
         facadeStep(deserializerFacade)
-        deserializedIrHandlersStep { useIrTextHandlers(this@klibSteps) }
+        deserializedIrHandlersStep { useIrTextHandlers(this@klibSteps, isDeserializedInput = true) }
     }
 
     private fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers(
         testConfigurationBuilder: TestConfigurationBuilder,
+        isDeserializedInput: Boolean,
     ) where InputArtifactKind : BackendKind<IrBackendInput> {
         useHandlers(
-            ::IrTextDumpHandler,
+            ::IrTextDumpHandler.bind(isDeserializedInput),
             ::IrTreeVerifierHandler,
             ::IrPrettyKotlinDumpHandler,
             ::IrSourceRangesDumpHandler,
