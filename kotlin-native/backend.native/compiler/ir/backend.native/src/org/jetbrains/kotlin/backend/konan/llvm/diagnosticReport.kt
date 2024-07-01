@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 
 internal open class DefaultLlvmDiagnosticHandler(
-        private val context: PhaseContext,
-        private val policy: Policy = Policy.Default
+        private val loggingContext: LoggingContext,
+        private val messageCollector: MessageCollector,
+        private val policy: Policy = Policy.Default,
 ) : LlvmDiagnosticHandler {
     interface Policy {
         fun suppressWarning(diagnostic: LlvmDiagnostic): Boolean = false
@@ -23,14 +24,14 @@ internal open class DefaultLlvmDiagnosticHandler(
         diagnostics.forEach {
             when (it.severity) {
                 LlvmDiagnostic.Severity.ERROR -> throw Error(it.message)
-                LlvmDiagnostic.Severity.WARNING -> if (context.inVerbosePhase || !policy.suppressWarning(it)) {
-                    context.messageCollector.report(CompilerMessageSeverity.WARNING, it.message)
+                LlvmDiagnostic.Severity.WARNING -> if (loggingContext.inVerbosePhase || !policy.suppressWarning(it)) {
+                    messageCollector.report(CompilerMessageSeverity.WARNING, it.message)
                 } else {
                     // else block is required by the compiler.
                 }
                 LlvmDiagnostic.Severity.REMARK,
                 LlvmDiagnostic.Severity.NOTE -> {
-                    context.log { "${it.severity}: ${it.message}" }
+                    loggingContext.log { "${it.severity}: ${it.message}" }
                 }
             }.also {} // Make exhaustive.
         }
