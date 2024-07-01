@@ -8,8 +8,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 import kotlin.test.assertEquals
 
-@JvmInline
-value class Z(val value: String)
+inline class Z(val value: String)
 
 fun check(expected: String, actual: KType) {
     assertEquals(expected, actual.toString())
