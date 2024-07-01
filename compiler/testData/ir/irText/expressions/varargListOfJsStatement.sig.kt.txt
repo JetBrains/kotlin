@@ -1,0 +1,132 @@
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
+class Bar : SourceInfoAwareJsNode, SomeOtherInterface {
+  // CHECK:
+  //   Mangled name: Bar#<init>(){}
+  //   Public signature: /Bar.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: Foo
+//   Public signature: /Foo|null[0]
+class Foo : SourceInfoAwareJsNode, SomeOtherInterface {
+  // CHECK:
+  //   Mangled name: Foo#<init>(){}
+  //   Public signature: /Foo.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: JsExport
+//   Public signature: /JsExport|null[0]
+class JsExport : SourceInfoAwareJsNode, JsStatement {
+  // CHECK:
+  //   Mangled name: JsExport#<init>(){}
+  //   Public signature: /JsExport.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: JsNonJsNode
+//   Public signature: /JsNonJsNode|null[0]
+class JsNonJsNode : NonJsNode, JsStatement {
+  // CHECK:
+  //   Mangled name: JsNonJsNode#<init>(){}
+  //   Public signature: /JsNonJsNode.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: JsVars
+//   Public signature: /JsVars|null[0]
+class JsVars : SourceInfoAwareJsNode, JsStatement {
+  // CHECK:
+  //   Mangled name: JsVars#<init>(){}
+  //   Public signature: /JsVars.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: NonJsNode
+//   Public signature: /NonJsNode|null[0]
+abstract class NonJsNode {
+  // CHECK:
+  //   Mangled name: NonJsNode#<init>(){}
+  //   Public signature: /NonJsNode.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: SourceInfoAwareJsNode
+//   Public signature: /SourceInfoAwareJsNode|null[0]
+abstract class SourceInfoAwareJsNode : JsNode {
+  // CHECK:
+  //   Mangled name: SourceInfoAwareJsNode#<init>(){}
+  //   Public signature: /SourceInfoAwareJsNode.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: JsNode
+//   Public signature: /JsNode|null[0]
+interface JsNode {
+}
+
+// CHECK:
+//   Mangled name: JsStatement
+//   Public signature: /JsStatement|null[0]
+interface JsStatement : JsNode {
+}
+
+// CHECK:
+//   Mangled name: SomeOtherInterface
+//   Public signature: /SomeOtherInterface|null[0]
+interface SomeOtherInterface {
+}
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #listOfFooBar(){}
+//   Public signature: /listOfFooBar|-2132939493019270148[0]
+//   Public signature debug description: listOfFooBar(){}
+// CHECK JVM_IR:
+//   Mangled name: #listOfFooBar(){}kotlin.collections.List<SomeOtherInterface>
+//   Public signature: /listOfFooBar|-6400596854346409150[0]
+//   Public signature debug description: listOfFooBar(){}kotlin.collections.List<SomeOtherInterface>
+fun listOfFooBar(): List<SomeOtherInterface>
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #listOfVarsExport(){}
+//   Public signature: /listOfVarsExport|-7269711162655089618[0]
+//   Public signature debug description: listOfVarsExport(){}
+// CHECK JVM_IR:
+//   Mangled name: #listOfVarsExport(){}kotlin.collections.List<JsStatement>
+//   Public signature: /listOfVarsExport|1267146565236756293[0]
+//   Public signature debug description: listOfVarsExport(){}kotlin.collections.List<JsStatement>
+fun listOfVarsExport(): List<JsStatement>
+
+// CHECK JS_IR NATIVE:
+//   Mangled name: #listOfVarsNonJsNode(){}
+//   Public signature: /listOfVarsNonJsNode|-1524521566578269376[0]
+//   Public signature debug description: listOfVarsNonJsNode(){}
+// CHECK JVM_IR:
+//   Mangled name: #listOfVarsNonJsNode(){}kotlin.collections.List<JsStatement>
+//   Public signature: /listOfVarsNonJsNode|5366135427259105272[0]
+//   Public signature debug description: listOfVarsNonJsNode(){}kotlin.collections.List<JsStatement>
+fun listOfVarsNonJsNode(): List<JsStatement>
+

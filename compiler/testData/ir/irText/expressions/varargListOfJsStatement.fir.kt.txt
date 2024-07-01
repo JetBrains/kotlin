@@ -1,0 +1,83 @@
+class Bar : SourceInfoAwareJsNode, SomeOtherInterface {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Foo : SourceInfoAwareJsNode, SomeOtherInterface {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsExport : SourceInfoAwareJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsNonJsNode : NonJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*NonJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+class JsVars : SourceInfoAwareJsNode, JsStatement {
+  constructor() /* primary */ {
+    super/*SourceInfoAwareJsNode*/()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class NonJsNode {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+abstract class SourceInfoAwareJsNode : JsNode {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface JsNode {
+}
+
+interface JsStatement : JsNode {
+}
+
+interface SomeOtherInterface {
+}
+
+fun listOfFooBar(): List<SomeOtherInterface> {
+  return listOf<Any>(elements = [Foo(), Bar()])
+}
+
+fun listOfVarsExport(): List<JsStatement> {
+  return listOf<JsNode>(elements = [JsVars(), JsExport()])
+}
+
+fun listOfVarsNonJsNode(): List<JsStatement> {
+  return listOf<JsStatement>(elements = [JsVars(), JsNonJsNode()])
+}

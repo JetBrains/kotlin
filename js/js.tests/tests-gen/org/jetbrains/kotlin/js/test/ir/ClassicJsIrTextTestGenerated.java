@@ -2019,6 +2019,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
+    @TestMetadata("varargListOfJsStatement.kt")
+    public void testVarargListOfJsStatement() {
+      runTest("compiler/testData/ir/irText/expressions/varargListOfJsStatement.kt");
+    }
+
+    @Test
     @TestMetadata("varargWithImplicitCast.kt")
     public void testVarargWithImplicitCast() {
       runTest("compiler/testData/ir/irText/expressions/varargWithImplicitCast.kt");
