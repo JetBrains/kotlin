@@ -51,9 +51,10 @@ class FirRenderer(
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
+    override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
     private val lineBreakAfterContextReceivers: Boolean = true,
     private val renderFieldAnnotationSeparately: Boolean = true,
-    override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
+    private val renderVarargTypes: Boolean = false,
 ) : FirRendererComponents {
 
     override val visitor: Visitor = Visitor()
@@ -754,6 +755,17 @@ class FirRenderer(
         override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression) {
             print("vararg(")
             renderSeparated(varargArgumentsExpression.arguments, visitor)
+
+            if (renderVarargTypes) {
+                if (varargArgumentsExpression.arguments.isNotEmpty()) {
+                    print("; ")
+                }
+                print("type = ")
+                typeRenderer.render(varargArgumentsExpression.resolvedType)
+                print(", elementType = ")
+                typeRenderer.render(varargArgumentsExpression.coneElementTypeOrNull!!)
+            }
+
             print(")")
         }
 

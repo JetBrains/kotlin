@@ -150,7 +150,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
 
         val javaFirDump = StringBuilder().also { builder ->
-            val renderer = FirRenderer(builder)
+            val renderer = FirRenderer(builder, renderVarargTypes = true)
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
                 val classId = psiClass.classId(parentFqName)
