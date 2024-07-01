@@ -152,13 +152,6 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
     }
 }
 
-fun IrType.toArrayOrPrimitiveArrayType(builtins: Fir2IrBuiltinSymbolsContainer): IrType {
-    return when {
-        isPrimitiveType() -> builtins.primitiveArrayForType[this]?.defaultType ?: error("$this not in primitiveArrayForType")
-        else -> builtins.arrayClass.typeWith(this)
-    }
-}
-
 val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
     get() = IrSimpleTypeImpl(
         classifier = this,
