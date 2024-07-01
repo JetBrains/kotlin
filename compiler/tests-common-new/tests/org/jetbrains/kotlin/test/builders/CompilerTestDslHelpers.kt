@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.DESERIALIZED_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
@@ -36,6 +37,7 @@ object CompilerStepsNames {
 
     const val CONVERTER_STEP_NAME = "converter"
     const val RAW_IR_HANDLERS_STEP_NAME = "raw IR handlers"
+    const val DESERIALIZED_IR_HANDLERS_STEP_NAME = "deserialized IR handlers"
 
     const val JVM_BACKEND_STEP_NAME = "jvm backend"
     const val JVM_ARTIFACTS_HANDLERS_STEP_NAME = "jvm artifacts handlers"
@@ -95,6 +97,12 @@ inline fun TestConfigurationBuilder.irHandlersStep(
     init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
 ) {
     namedHandlersStep(RAW_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
+}
+
+inline fun TestConfigurationBuilder.deserializedIrHandlersStep(
+    init: HandlersStepBuilder<IrBackendInput, BackendKinds.IrBackend>.() -> Unit = {}
+) {
+    namedHandlersStep(DESERIALIZED_IR_HANDLERS_STEP_NAME, BackendKinds.IrBackend, init)
 }
 
 inline fun TestConfigurationBuilder.jvmArtifactsHandlersStep(

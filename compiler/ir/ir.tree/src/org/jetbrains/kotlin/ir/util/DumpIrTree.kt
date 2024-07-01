@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -37,9 +38,9 @@ fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
-    if (shouldSkipDump()) return ""
+    val correctedLineNumber = if (shouldSkipDump()) UNDEFINED_OFFSET else lineNumber
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, options), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, correctedLineNumber, sb, options), null)
     return sb.toString()
 }
 

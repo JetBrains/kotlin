@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.test.model.AnalysisHandler
+import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
@@ -141,7 +142,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
                     if (step.inputArtifactKind != step.outputArtifactKind) {
-                        dependencyProvider.registerArtifact(module, result.outputArtifact)
+                        if (step.facade !is DeserializerFacade<*, *>) // DeserializerFacade produces second artifact with kind IrBackend
+                            dependencyProvider.registerArtifact(module, result.outputArtifact)
                     }
                     inputArtifact = result.outputArtifact
                 }
