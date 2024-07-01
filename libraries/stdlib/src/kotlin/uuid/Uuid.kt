@@ -433,7 +433,7 @@ private fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, count: Int) {
 }
 
 private fun String.checkHyphenAt(index: Int) {
-    require(this[index] == '-') { "Expected '-' (hyphen) at index 8, but was ${this[index]}" }
+    require(this[index] == '-') { "Expected '-' (hyphen) at index $index, but was '${this[index]}'" }
 }
 
 private fun Long.toByteArray(dst: ByteArray, dstOffset: Int) {

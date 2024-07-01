@@ -118,9 +118,14 @@ class UuidTest {
             if (uuidString[i] == '-') {
                 assertFailsWith<IllegalArgumentException> {
                     Uuid.parse(uuidString.substring(0..<i) + "+" + uuidString.substring(i + 1))
+                }.also { exception ->
+                    assertEquals("Expected '-' (hyphen) at index $i, but was '+'", exception.message)
                 }
+
                 assertFailsWith<IllegalArgumentException> {
                     Uuid.parse(uuidString.substring(0..<i) + "0" + uuidString.substring(i + 1))
+                }.also { exception ->
+                    assertEquals("Expected '-' (hyphen) at index $i, but was '0'", exception.message)
                 }
             }
         }
