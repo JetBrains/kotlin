@@ -380,6 +380,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("missingActual.kt")
+  public void testMissingActual() {
+    runTest("compiler/testData/diagnostics/tests/multiplatform/missingActual.kt");
+  }
+
+  @Test
   @TestMetadata("modifierApplicability.kt")
   public void testModifierApplicability() {
     runTest("compiler/testData/diagnostics/tests/multiplatform/modifierApplicability.kt");
