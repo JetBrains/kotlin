@@ -32,8 +32,56 @@ public class LitmusKtTestsGenerated extends AbstractNativeBlackBoxTest {
   }
 
   @Test
-  @TestMetadata("SB.kt")
-  public void testSB() {
-    runTest("native/litmuskt/repo-tests/testData/standalone/SB.kt");
+  @TestMetadata("ArrayVolatile.kt")
+  public void testArrayVolatile() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/ArrayVolatile.kt");
+  }
+
+  @Test
+  @TestMetadata("Atomicity.kt")
+  public void testAtomicity() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/Atomicity.kt");
+  }
+
+  @Test
+  @TestMetadata("Coherence.kt")
+  public void testCoherence() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/Coherence.kt");
+  }
+
+  @Test
+  @TestMetadata("IndependentReadsOfIndependentWrites.kt")
+  public void testIndependentReadsOfIndependentWrites() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/IndependentReadsOfIndependentWrites.kt");
+  }
+
+  @Test
+  @TestMetadata("LoadBuffering.kt")
+  public void testLoadBuffering() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/LoadBuffering.kt");
+  }
+
+  @Test
+  @TestMetadata("MessagePassing.kt")
+  public void testMessagePassing() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/MessagePassing.kt");
+  }
+
+  @Test
+  @TestMetadata("StoreBuffering.kt")
+  public void testStoreBuffering() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/StoreBuffering.kt");
+  }
+
+  @Test
+  @TestMetadata("UnsafePublication.kt")
+  public void testUnsafePublication() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/UnsafePublication.kt");
+  }
+
+  @Test
+  @TestMetadata("WordTearing.kt")
+  public void testWordTearing() {
+    runTest("native/litmuskt/repo-tests/testData/standalone/WordTearing.kt");
   }
 }

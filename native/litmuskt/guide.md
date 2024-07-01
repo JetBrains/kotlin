@@ -27,5 +27,6 @@ In `./native/litmuskt`:
 1. Remove `testsuite/src/.../generated/LitmusTestRegistry.kt` and `.../LitmusTestExtensions.kt`
 1. Remove `WordTearingNative.kt` test (or find a way to make it compile, with `Bitset` being obsolete and `@ObsoleveNativeApi` being internal)
 1. Make sure the wrappers are still correct, in case there were API-breaking changes
+1. Keep the `core/nativeMain/src/.../RepoUtils.kt` file in the new version
 
 And that should be it. If something fails, read the generated HTML, it is the only place with detailed error message and stacktrace.

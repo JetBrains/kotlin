@@ -827,6 +827,7 @@ tasks {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-standalone:test")
         dependsOn(":native:swift:swift-export-ide:test")
+        dependsOn(":litmuskt:repo-tests:nativeTest")
     }
 
     // These are unit tests of Native compiler
