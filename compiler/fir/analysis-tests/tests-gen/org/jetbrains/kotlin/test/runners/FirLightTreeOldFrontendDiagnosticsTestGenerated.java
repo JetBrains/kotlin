@@ -38327,9 +38327,9 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
       }
 
       @Test
-      @TestMetadata("newListMethodsImmutable.kt")
-      public void testNewListMethodsImmutable() {
-        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable.kt");
+      @TestMetadata("newListMethodsImmutable20.kt")
+      public void testNewListMethodsImmutable20() {
+        runTest("compiler/testData/diagnostics/tests/testsWithJava21/newListMethodsImmutable20.kt");
       }
 
       @Test

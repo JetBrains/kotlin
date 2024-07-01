@@ -1,11 +1,13 @@
 // ISSUE: KT-64640, KT-65441
+// LANGUAGE_VERSION: 2.0
+// ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 
 fun bar(x: List<String>) {
     x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
     x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
-    x.<!UNRESOLVED_REFERENCE!>removeFirst<!>()
-    x.<!UNRESOLVED_REFERENCE!>removeLast<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeFirst<!>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>removeLast<!>()
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
     x.<!FUNCTION_CALL_EXPECTED!>first<!>
@@ -50,13 +52,13 @@ fun baz(x: ArrayDeque<String>, y: LinkedHashSet<String>, z: java.util.LinkedList
     removed5 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
     var removed6 = z.removeLast()
     removed6 = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>
-    var got9 = z.<!DEPRECATION!>getFirst<!>()
+    var got9 = z.getFirst()
     got9 = null
-    var got10 = z.<!DEPRECATION!>getLast<!>()
+    var got10 = z.getLast()
     got10 = null
-    var got11 = z.<!DEPRECATION!>first<!>
+    var got11 = z.first
     got11 = null
-    var got12 = z.<!DEPRECATION!>last<!>
+    var got12 = z.last
     got12 = null
 }
 
