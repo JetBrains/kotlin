@@ -45,7 +45,7 @@ public enum class CpuArchitecture(public val bitness: Int) {
  */
 // NOTE: Must match `MemoryModel` in `Memory.h`
 @ExperimentalNativeApi
-@Deprecated("Only EXPERIMENTAL memory model has remained")
+@Deprecated("The only possible value returned in runtime is MemoryModel.EXPERIMENTAL now. The usages of this enum can be safely removed.")
 public enum class MemoryModel {
     STRICT,
     RELAXED,
