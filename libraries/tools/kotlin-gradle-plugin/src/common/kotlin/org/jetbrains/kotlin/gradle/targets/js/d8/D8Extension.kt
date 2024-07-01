@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
-open class D8Extension(@Transient val rootProject: Project) : AbstractSettings<D8Env>() {
-    init {
-        check(rootProject.rootProject == rootProject)
-    }
+open class D8Extension(@Transient val project: Project) : AbstractSettings<D8Env>() {
 
-    private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
-        rootProject.logger.kotlinInfo("Storing cached files in $it")
+    private val gradleHome = project.gradle.gradleUserHomeDir.also {
+        project.logger.kotlinInfo("Storing cached files in $it")
     }
 
     override var download: Boolean by Property(true)
@@ -44,7 +41,7 @@ open class D8Extension(@Transient val rootProject: Project) : AbstractSettings<D
     override var command by Property("d8")
 
     val setupTaskProvider: TaskProvider<D8SetupTask>
-        get() = rootProject.tasks.withType(D8SetupTask::class.java).named(D8SetupTask.NAME)
+        get() = project.tasks.withType(D8SetupTask::class.java).named(D8SetupTask.NAME)
 
     override fun finalizeConfiguration(): D8Env {
         val requiredVersionName = "v8-${D8Platform.platform}-$edition-$version"

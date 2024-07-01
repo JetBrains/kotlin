@@ -19,10 +19,6 @@ open class D8Plugin : Plugin<Project> {
     override fun apply(project: Project) {
         MultiplePluginDeclarationDetector.detect(project)
 
-        check(project == project.rootProject) {
-            "D8RootPlugin can be applied only to root project"
-        }
-
         project.plugins.apply(BasePlugin::class.java)
 
         val settings = project.extensions.create(EXTENSION_NAME, D8Extension::class.java, project)
@@ -46,10 +42,9 @@ open class D8Plugin : Plugin<Project> {
     companion object {
         const val TASKS_GROUP_NAME: String = "d8"
 
-        fun apply(rootProject: Project): D8Extension {
-            check(rootProject == rootProject.rootProject)
-            rootProject.plugins.apply(D8Plugin::class.java)
-            return rootProject.extensions.getByName(EXTENSION_NAME) as D8Extension
+        fun apply(project: Project): D8Extension {
+            project.plugins.apply(D8Plugin::class.java)
+            return project.extensions.getByName(EXTENSION_NAME) as D8Extension
         }
 
         val Project.kotlinD8Extension: D8Extension

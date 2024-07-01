@@ -106,6 +106,9 @@ open class NodeJsRootExtension(
     val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>
         get() = project.tasks.withType(KotlinNpmCachesSetup::class.java).named(KotlinNpmCachesSetup.NAME)
 
+    @Deprecated("Use nodeJsSetupTaskProvider from NodeJsPlugin (not NodeJsRootPlugin) instead")
+    val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask> by nodeJs::nodeJsSetupTaskProvider
+
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJsRoot"
     }
