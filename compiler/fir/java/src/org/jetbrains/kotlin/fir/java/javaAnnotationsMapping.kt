@@ -118,8 +118,8 @@ inline fun buildVarargArgumentsExpressionWithTargets(
             isNullable = false,
             ConeAttributes.Empty
         )
-        coneTypeOrNull = elementConeType
-        coneElementTypeOrNull = elementConeType.createOutArrayType()
+        coneTypeOrNull = elementConeType.createOutArrayType()
+        coneElementTypeOrNull = elementConeType
     }.build()
 }
 

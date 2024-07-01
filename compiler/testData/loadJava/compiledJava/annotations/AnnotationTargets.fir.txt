@@ -1,7 +1,7 @@
 public open class AnnotationTargets : R|kotlin/Any| {
     public constructor(): R|test/AnnotationTargets|
 
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class annotation : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class annotation : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.annotation|
 
     }
@@ -9,35 +9,35 @@ public open class AnnotationTargets : R|kotlin/Any| {
         public constructor(): R|test/AnnotationTargets.base|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CONSTRUCTOR; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class constructor : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CONSTRUCTOR; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class constructor : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.constructor|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FIELD; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class field : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FIELD; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class field : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.field|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class local : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class local : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.local|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class method : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class method : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.method|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class multiple : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.FIELD, kotlin/annotation/AnnotationTarget.CONSTRUCTOR, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class multiple : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.multiple|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class packag : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class packag : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.packag|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class parameter : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class parameter : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.parameter|
 
     }
-    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FILE; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) public final annotation class type : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FILE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) public final annotation class type : R|kotlin/Annotation| {
         public constructor(): R|test/AnnotationTargets.type|
 
     }

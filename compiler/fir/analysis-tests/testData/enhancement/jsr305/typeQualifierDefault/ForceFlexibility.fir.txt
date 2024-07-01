@@ -10,11 +10,11 @@
     public constructor(): R|spr/ForceFlexibility|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FILE; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(java/lang/annotation/ElementType.METHOD, java/lang/annotation/ElementType.PARAMETER)) public final annotation class NonNullApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.CLASS, kotlin/annotation/AnnotationTarget.FILE; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|() @R|javax/annotation/meta/TypeQualifierDefault|(value = <implicitArrayOf>(java/lang/annotation/ElementType.METHOD, java/lang/annotation/ElementType.PARAMETER)) public final annotation class NonNullApi : R|kotlin/Annotation| {
     public constructor(): R|spr/NonNullApi|
 
 }
-@R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/annotation/AnnotationTarget, elementType = kotlin/Array<out kotlin/annotation/AnnotationTarget>)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|(when = javax/annotation/meta/When.MAYBE) @R|javax/annotation/meta/TypeQualifierNickname|() public final annotation class Nullable : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = vararg(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER, kotlin/annotation/AnnotationTarget.FUNCTION, kotlin/annotation/AnnotationTarget.PROPERTY_GETTER, kotlin/annotation/AnnotationTarget.PROPERTY_SETTER; type = kotlin/Array<out kotlin/annotation/AnnotationTarget>, elementType = kotlin/annotation/AnnotationTarget)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.RUNTIME) @R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/Nonnull|(when = javax/annotation/meta/When.MAYBE) @R|javax/annotation/meta/TypeQualifierNickname|() public final annotation class Nullable : R|kotlin/Annotation| {
     public constructor(): R|spr/Nullable|
 
 }
