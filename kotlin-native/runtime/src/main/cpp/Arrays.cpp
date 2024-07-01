@@ -27,14 +27,14 @@ extern "C" void checkRangeIndexes(KInt from, KInt to, KInt size);
 
 namespace {
 
-ALWAYS_INLINE inline void mutabilityCheck(KConstRef thiz) {
+PERFORMANCE_INLINE inline void mutabilityCheck(KConstRef thiz) {
   // TODO: optimize it!
   if (!thiz->local() && isPermanentOrFrozen(thiz)) {
       ThrowInvalidMutabilityException(thiz);
   }
 }
 
-ALWAYS_INLINE inline void boundsCheck(const ArrayHeader* array, KInt index) {
+PERFORMANCE_INLINE inline void boundsCheck(const ArrayHeader* array, KInt index) {
   // We couldn't have created an array bigger than max KInt value.
   // So if index is < 0, conversion to an unsigned value would make it bigger
   // than the array size.
@@ -89,7 +89,7 @@ inline T PrimitiveArrayGet(KConstRef thiz, KInt index) {
 }
 
 template<bool BoundsCheck = true>
-ALWAYS_INLINE const KRef* Kotlin_Array_get_value(KConstRef thiz, KInt index) {
+PERFORMANCE_INLINE const KRef* Kotlin_Array_get_value(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (BoundsCheck)
     boundsCheck(array, index);
@@ -97,7 +97,7 @@ ALWAYS_INLINE const KRef* Kotlin_Array_get_value(KConstRef thiz, KInt index) {
 }
 
 template<bool BoundsCheck = true>
-ALWAYS_INLINE void Kotlin_Array_set_value(KRef thiz, KInt index, KConstRef value) {
+PERFORMANCE_INLINE void Kotlin_Array_set_value(KRef thiz, KInt index, KConstRef value) {
   ArrayHeader* array = thiz->array();
   if (BoundsCheck)
     boundsCheck(array, index);
@@ -106,7 +106,7 @@ ALWAYS_INLINE void Kotlin_Array_set_value(KRef thiz, KInt index, KConstRef value
 }
 
 template<bool BoundsCheck = true>
-ALWAYS_INLINE KByte Kotlin_ByteArray_get_value(KConstRef thiz, KInt index) {
+PERFORMANCE_INLINE KByte Kotlin_ByteArray_get_value(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
   if (BoundsCheck)
     boundsCheck(array, index);
@@ -114,7 +114,7 @@ ALWAYS_INLINE KByte Kotlin_ByteArray_get_value(KConstRef thiz, KInt index) {
 }
 
 template<bool BoundsCheck = true>
-ALWAYS_INLINE void Kotlin_ByteArray_set_value(KRef thiz, KInt index, KByte value) {
+PERFORMANCE_INLINE void Kotlin_ByteArray_set_value(KRef thiz, KInt index, KByte value) {
   ArrayHeader* array = thiz->array();
   if (BoundsCheck)
     boundsCheck(array, index);

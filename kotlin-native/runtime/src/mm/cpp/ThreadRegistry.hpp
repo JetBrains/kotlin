@@ -39,7 +39,7 @@ public:
     // (2) TLS gets deallocated before our thread destruction hooks run.
     // Using this after `Unregister` for the thread has been called is undefined behaviour.
     // Using this by a thread which is not attached to the Kotlin runtime is undefined behaviour.
-    ALWAYS_INLINE ThreadData* CurrentThreadData() const noexcept;
+    ThreadData* CurrentThreadData() const noexcept;
     Node* CurrentThreadDataNode() const noexcept {
         RuntimeAssert(currentThreadDataNode_ != nullptr, "Thread is not attached to the runtime");
         return currentThreadDataNode_;

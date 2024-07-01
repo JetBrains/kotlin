@@ -28,14 +28,6 @@
 #include "PointerBits.h"
 #include "Utils.hpp"
 
-#if KONAN_NEED_SMALL_BINARY
-  // Currently, codegen places a lot of unnecessary calls to MM functions.
-  // By forcing NO_INLINE on these functions we keep binaries from growing too big.
-  #define CODEGEN_INLINE_POLICY NO_INLINE
-#else
-  #define CODEGEN_INLINE_POLICY ALWAYS_INLINE
-#endif
-
 typedef enum {
   // Must match to permTag() in Kotlin.
   OBJECT_TAG_PERMANENT_CONTAINER = 1 << 0,
@@ -96,14 +88,11 @@ struct ObjHeader {
 
   MetaObjHeader* meta_object_or_null() const noexcept { return AsMetaObject(typeInfoOrMetaAcquire()); }
 
-  ALWAYS_INLINE ObjHeader* GetWeakCounter();
-  ALWAYS_INLINE ObjHeader* GetOrSetWeakCounter(ObjHeader* counter);
-
 
 #ifdef KONAN_OBJC_INTEROP
-  ALWAYS_INLINE void* GetAssociatedObject() const;
-  ALWAYS_INLINE void SetAssociatedObject(void* obj);
-  ALWAYS_INLINE void* CasAssociatedObject(void* expectedObj, void* obj);
+  void* GetAssociatedObject() const;
+  void SetAssociatedObject(void* obj);
+  void* CasAssociatedObject(void* expectedObj, void* obj);
 #endif
 
   inline bool local() const {
@@ -197,8 +186,8 @@ struct type_layout::descriptor<ArrayBody> {
 
 } // namespace kotlin
 
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
+bool isPermanentOrFrozen(const ObjHeader* obj);
+bool isShareable(const ObjHeader* obj);
 
 static inline ObjHeader* const kInitializingSingleton = reinterpret_cast<ObjHeader*>(1);
 ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
@@ -325,7 +314,7 @@ void LeaveFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
 // Set current frame in case if exception caught.
 void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
-ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
+void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
 // Clears object subgraph references from memory subsystem, and optionally
 // checks if subgraph referenced by given root is disjoint from the rest of
@@ -387,17 +376,17 @@ void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 void CheckGlobalsAccessible();
 
 // Sets state of the current thread to NATIVE (used by the new MM).
-CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
+RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
 // Sets state of the current thread to RUNNABLE (used by the new MM).
-CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
 // No-inline versions of the functions above are used in debug mode to workaround KT-67567 
 // by outlining certain CAS instructions from user code:
 NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debug();
 NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_debug();
 
 // Safe point callbacks from Kotlin code generator.
-CODEGEN_INLINE_POLICY void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
-CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
+void Kotlin_mm_safePointFunctionPrologue() RUNTIME_NOTHROW;
+void Kotlin_mm_safePointWhileLoopBody() RUNTIME_NOTHROW;
 
 RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter);
 
@@ -485,11 +474,11 @@ inline ThreadState GetThreadState() noexcept {
 }
 
 // Switches the state of the given thread to `newState` and returns the previous thread state.
-ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
+ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState, bool reentrant = false) noexcept;
 
 // Asserts that the given thread is in the given state.
-ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
-ALWAYS_INLINE void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
+void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
+void AssertThreadState(MemoryState* thread, std::initializer_list<ThreadState> expected) noexcept;
 
 // Asserts that the current thread is in the the given state.
 ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
@@ -551,7 +540,7 @@ private:
 // No-op for old GC.
 class CalledFromNativeGuard final : private Pinned {
 public:
-    ALWAYS_INLINE CalledFromNativeGuard(bool reentrant = false) noexcept;
+    CalledFromNativeGuard(bool reentrant = false) noexcept;
 
     ~CalledFromNativeGuard() noexcept {
         SwitchThreadState(thread_, oldState_, reentrant_);
@@ -604,8 +593,8 @@ void compactObjectPoolInCurrentThread() noexcept;
 
 } // namespace kotlin
 
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object);
+RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object);
 
 #endif // RUNTIME_MEMORY_H

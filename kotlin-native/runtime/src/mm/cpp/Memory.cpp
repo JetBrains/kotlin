@@ -31,17 +31,9 @@
 
 using namespace kotlin;
 
-ObjHeader* ObjHeader::GetWeakCounter() {
-    RuntimeFail("Only for legacy MM");
-}
-
-ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
-    RuntimeFail("Only for legacy MM");
-}
-
 #ifdef KONAN_OBJC_INTEROP
 
-void* ObjHeader::GetAssociatedObject() const {
+PERFORMANCE_INLINE void* ObjHeader::GetAssociatedObject() const {
     auto metaObject = meta_object_or_null();
     if (metaObject == nullptr) {
         return nullptr;
@@ -49,7 +41,7 @@ void* ObjHeader::GetAssociatedObject() const {
     return mm::ExtraObjectData::FromMetaObjHeader(metaObject).AssociatedObject().load(std::memory_order_acquire);
 }
 
-void ObjHeader::SetAssociatedObject(void* obj) {
+PERFORMANCE_INLINE void ObjHeader::SetAssociatedObject(void* obj) {
     auto& extraObject = mm::ExtraObjectData::FromMetaObjHeader(meta_object());
     // TODO: Consider additional filtering based on types:
     //       * have some kind of an allowlist that can be populated by the user
@@ -64,7 +56,7 @@ void ObjHeader::SetAssociatedObject(void* obj) {
     return extraObject.AssociatedObject().store(obj, std::memory_order_release);
 }
 
-void* ObjHeader::CasAssociatedObject(void* expectedObj, void* obj) {
+PERFORMANCE_INLINE void* ObjHeader::CasAssociatedObject(void* expectedObj, void* obj) {
     auto& extraObject = mm::ExtraObjectData::FromMetaObjHeader(meta_object());
     bool success = extraObject.AssociatedObject().compare_exchange_strong(expectedObj, obj);
     // TODO: Consider additional filtering outlined above.
@@ -88,13 +80,13 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     alloc::destroyExtraObjectData(extraObject);
 }
 
-ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
+PERFORMANCE_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
     // TODO: Freeze TF_IMMUTABLE objects upon creation.
     if (!compiler::freezingChecksEnabled()) return false;
     return mm::IsFrozen(obj) || ((obj->type_info()->flags_ & TF_IMMUTABLE) != 0);
 }
 
-ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
+PERFORMANCE_INLINE bool isShareable(const ObjHeader* obj) {
     // TODO: Remove when legacy MM is gone.
     return true;
 }
@@ -160,7 +152,7 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
     mm::RefAccessor<false>{location} = nullptr;
 }
 
@@ -171,42 +163,42 @@ extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
     }
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
     mm::StackRefAccessor{location} = nullptr;
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
     mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
     mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
     mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
     ObjHeader* actual = expectedValue;
     mm::RefAccessor<false>{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
     RETURN_OBJ(actual);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
     return mm::RefAccessor<false>{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
     RETURN_OBJ(mm::RefAccessor<false>{location}.exchange(newValue, std::memory_order_seq_cst));
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex,
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex,
                                                                            int toIndex, int count) {
     RuntimeFail("Only for legacy MM");
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
     UpdateStackRef(returnSlot, object);
 }
 
@@ -241,7 +233,7 @@ extern "C" RUNTIME_NOTHROW FrameOverlay* getCurrentFrame() {
     return threadData->shadowStack().getCurrentFrame();
 }
 
-extern "C" RUNTIME_NOTHROW ALWAYS_INLINE void CheckCurrentFrame(ObjHeader** frame) {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void CheckCurrentFrame(ObjHeader** frame) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
     return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
@@ -585,11 +577,11 @@ extern "C" RUNTIME_NOTHROW NO_INLINE void Kotlin_mm_safePointFunctionPrologue() 
     mm::safePoint();
 }
 
-extern "C" RUNTIME_NOTHROW CODEGEN_INLINE_POLICY void Kotlin_mm_safePointWhileLoopBody() {
+extern "C" RUNTIME_NOTHROW PERFORMANCE_INLINE void Kotlin_mm_safePointWhileLoopBody() {
     mm::safePoint();
 }
 
-extern "C" CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
@@ -597,7 +589,7 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debu
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
-extern "C" CODEGEN_INLINE_POLICY RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
@@ -613,7 +605,7 @@ bool kotlin::mm::IsCurrentThreadRegistered() noexcept {
     return ThreadRegistry::IsCurrentThreadRegistered();
 }
 
-ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
+PERFORMANCE_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentrant) noexcept : reentrant_(reentrant) {
     Kotlin_initRuntimeIfNeeded();
     thread_ = mm::GetMemoryState();
     oldState_ = SwitchThreadState(thread_, ThreadState::kRunnable, reentrant_);
@@ -629,15 +621,15 @@ bool kotlin::FinalizersThreadIsRunning() noexcept {
     return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
 }
 
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
+RUNTIME_NOTHROW extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object) {
     gc::GC::processObjectInMark(state, object);
 }
 
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
+RUNTIME_NOTHROW extern "C" void Kotlin_processArrayInMark(void* state, ObjHeader* object) {
     gc::GC::processArrayInMark(state, object->array());
 }
 
-RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
+RUNTIME_NOTHROW extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
     // Empty object. Nothing to do.
     // TODO: Try to generate it in the code generator.
 }
