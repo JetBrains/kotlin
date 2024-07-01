@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Generates visible synthetic accessor functions for symbols that are otherwise inaccessible, for example,
@@ -38,17 +38,13 @@ import java.util.concurrent.ConcurrentHashMap
  *    Please consider this fact when you want to change its implementation.
  */
 open class SyntheticAccessorGenerator<Context : BackendContext>(protected val context: Context) {
-    private data class FieldKey(val field: IrField, val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
+    private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
-    private data class FunctionKey(
-        val function: IrFunction,
-        val parent: IrDeclarationParent,
-        val superQualifierSymbol: IrClassSymbol?
-    )
-
-    private val functionMap = ConcurrentHashMap<FunctionKey, IrFunction>()
-    private val getterMap = ConcurrentHashMap<FieldKey, IrSimpleFunction>()
-    private val setterMap = ConcurrentHashMap<FieldKey, IrSimpleFunction>()
+    companion object {
+        private var IrFunction.syntheticAccessors: MutableMap<AccessorKey, IrFunction>? by irAttribute(followAttributeOwner = false)
+        private var IrField.getterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+        private var IrField.setterSyntheticAccessors: MutableMap<AccessorKey, IrSimpleFunction>? by irAttribute(followAttributeOwner = false)
+    }
 
     fun getSyntheticFunctionAccessor(expression: IrFunctionAccessExpression, scopes: List<ScopeWithIr>): IrFunction {
         return if (expression is IrCall)
@@ -115,7 +111,8 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         // For the call to super.g in function i, the accessor to A.g must be produced in C. Therefore, we
         // cannot use the function symbol (A.g in the example) by itself as the key since there should be
         // one accessor per dispatch receiver (i.e., parent of the accessor).
-        return functionMap.getOrPut(FunctionKey(function, parent, superQualifierSymbol)) {
+        val functionMap = function.syntheticAccessors ?: hashMapOf<AccessorKey, IrFunction>().also { function.syntheticAccessors = it }
+        return functionMap.getOrPut(AccessorKey(parent, superQualifierSymbol)) {
             when (function) {
                 is IrConstructor ->
                     function.makeConstructorAccessor()
@@ -210,11 +207,12 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
         }
 
     fun getSyntheticGetter(expression: IrGetField, scopes: List<ScopeWithIr>): IrSimpleFunction {
-        val dispatchReceiverType = expression.receiver?.type
-        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
+        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
         val field = expression.symbol.owner
         val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopes) as IrClass
-        return getterMap.getOrPut(FieldKey(field, parent, expression.superQualifierSymbol)) {
+        val getterMap =
+            field.getterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.getterSyntheticAccessors = it }
+        return getterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
             makeGetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
@@ -266,11 +264,12 @@ open class SyntheticAccessorGenerator<Context : BackendContext>(protected val co
     }
 
     fun getSyntheticSetter(expression: IrSetField, scopes: List<ScopeWithIr>): IrSimpleFunction {
-        val dispatchReceiverType = expression.receiver?.type
-        val dispatchReceiverClassSymbol = dispatchReceiverType?.classifierOrNull as? IrClassSymbol
+        val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
         val field = expression.symbol.owner
         val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopes) as IrClass
-        return setterMap.getOrPut(FieldKey(field, parent, expression.superQualifierSymbol)) {
+        val setterMap =
+            field.setterSyntheticAccessors ?: hashMapOf<AccessorKey, IrSimpleFunction>().also { field.setterSyntheticAccessors = it }
+        return setterMap.getOrPut(AccessorKey(parent, expression.superQualifierSymbol)) {
             makeSetterAccessor(field, parent, expression.superQualifierSymbol)
         }
     }
