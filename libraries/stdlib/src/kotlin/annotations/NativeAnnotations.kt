@@ -49,8 +49,7 @@ public expect annotation class CName(val externName: String = "", val shortName:
     AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
-@OptionalExpectation
-public expect annotation class FreezingIsDeprecated
+public annotation class FreezingIsDeprecated
 
 /**
  * Instructs the Kotlin compiler to use a custom Objective-C and/or Swift name for this class, property, parameter or function.
