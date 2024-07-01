@@ -335,6 +335,7 @@ enum class LanguageFeature(
 
     // 2.2
 
+    BreakContinueInInlineLambdas(KOTLIN_2_2), // KT-1436
     UnstableSmartcastOnDelegatedProperties(KOTLIN_2_2, kind = BUG_FIX), // KT-57417
     ReferencesToSyntheticJavaProperties(KOTLIN_2_2), // KT-8575
     ForbidUsingExpressionTypesWithInaccessibleContent(KOTLIN_2_2, kind = BUG_FIX), // KT-66691
@@ -374,7 +375,6 @@ enum class LanguageFeature(
 
     // Experimental features
 
-    BreakContinueInInlineLambdas(null), // KT-1436
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),
     PackagePrivateFileClassesWithAllPrivateMembers(null), // Disabled until the breaking change is approved by the committee, see KT-10884.
     BooleanElvisBoundSmartCasts(null), // see KT-26357 for details
