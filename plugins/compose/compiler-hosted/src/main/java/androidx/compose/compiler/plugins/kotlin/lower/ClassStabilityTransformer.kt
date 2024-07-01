@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 enum class StabilityBits(val bits: Int) {
@@ -84,7 +85,7 @@ class ClassStabilityTransformer(
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
 
-        if (!unstableClassesWarning.isNullOrEmpty()) {
+        if (!context.platform.isJvm() && !unstableClassesWarning.isNullOrEmpty()) {
             val classIds = unstableClassesWarning.mapTo(mutableSetOf()) { it.fqNameSafe.toString() }
             val classesConcatenated = classIds.sorted().joinToString("\n")
             messageCollector.report(
