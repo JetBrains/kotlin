@@ -133,15 +133,15 @@ private class SyntheticAccessorTransformer(
         }
     }
 
-    private fun <T : IrFunctionSymbol> T.save(): T {
-        assert(owner.fileOrNull == irFile || processingIrInlinedFun) {
+    private fun <T : IrFunction> T.save(): T {
+        assert(fileOrNull == irFile || processingIrInlinedFun) {
             "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                     "While lowering this file: ${irFile.render()}\n" +
-                    "Trying to add this accessor: ${owner.render()}"
+                    "Trying to add this accessor: ${render()}"
         }
 
-        if (owner.fileOrNull == irFile) {
-            pendingAccessorsToAdd += this.owner
+        if (fileOrNull == irFile) {
+            pendingAccessorsToAdd += this
         }
         return this
     }
@@ -168,16 +168,16 @@ private class SyntheticAccessorTransformer(
         val accessor = when {
             generateReflectiveAccess -> return super.visitFunctionAccess(expression)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(callee) ->
-                accessorGenerator.getSyntheticConstructorOfSealedClass(callee).symbol
+                accessorGenerator.getSyntheticConstructorOfSealedClass(callee)
             callee is IrConstructor && accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(callee) ->
-                accessorGenerator.getSyntheticConstructorWithMangledParams(callee).symbol
+                accessorGenerator.getSyntheticConstructorWithMangledParams(callee)
             !expression.symbol.isAccessible(withSuper, thisSymbol) ->
                 accessorGenerator.getSyntheticFunctionAccessor(expression, allScopes).save()
 
             else ->
                 return super.visitFunctionAccess(expression)
         }
-        return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor))
+        return super.visitExpression(accessorGenerator.modifyFunctionAccessExpression(expression, accessor.symbol))
     }
 
     private fun shouldGenerateReflectiveAccess(expression: IrFunctionAccessExpression, withSuper: Boolean) =
@@ -206,14 +206,13 @@ private class SyntheticAccessorTransformer(
         if (implFunSymbol.isAccessibleFromSyntheticProxy(thisSymbol))
             return call
 
-        val accessorSymbol = accessorGenerator.getSyntheticFunctionAccessor(implFunRef, allScopes).save()
-        val accessorFun = accessorSymbol.owner
+        val accessor = accessorGenerator.getSyntheticFunctionAccessor(implFunRef, allScopes).save()
         val accessorRef =
             IrFunctionReferenceImpl(
                 implFunRef.startOffset, implFunRef.endOffset, implFunRef.type,
-                accessorSymbol,
-                accessorFun.typeParameters.size,
-                accessorFun.valueParameters.size,
+                accessor.symbol,
+                accessor.typeParameters.size,
+                accessor.valueParameters.size,
                 implFunRef.reflectionTarget, implFunRef.origin
             )
 
@@ -230,7 +229,7 @@ private class SyntheticAccessorTransformer(
         for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
         }
-        if (accessorFun is IrConstructor) {
+        if (accessor is IrConstructor) {
             accessorRef.putValueArgument(accessorArgIndex, accessorGenerator.createAccessorMarkerArgument())
         }
 
@@ -267,7 +266,7 @@ private class SyntheticAccessorTransformer(
 
         return super.visitExpression(
             modifyGetterExpression(
-                expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save()
+                expression, accessorGenerator.getSyntheticGetter(expression, allScopes).save().symbol
             )
         )
     }
@@ -293,7 +292,7 @@ private class SyntheticAccessorTransformer(
 
         return super.visitExpression(
             modifySetterExpression(
-                expression, accessorGenerator.getSyntheticSetter(expression, allScopes).save()
+                expression, accessorGenerator.getSyntheticSetter(expression, allScopes).save().symbol
             )
         )
     }
@@ -301,11 +300,11 @@ private class SyntheticAccessorTransformer(
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         when {
             accessorGenerator.isOrShouldBeHiddenSinceHasMangledParams(declaration) -> {
-                accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).symbol.save()
+                accessorGenerator.getSyntheticConstructorWithMangledParams(declaration).save()
                 declaration.visibility = DescriptorVisibilities.PRIVATE
             }
             accessorGenerator.isOrShouldBeHiddenAsSealedClassConstructor(declaration) -> {
-                accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).symbol.save()
+                accessorGenerator.getSyntheticConstructorOfSealedClass(declaration).save()
                 declaration.visibility = DescriptorVisibilities.PRIVATE
             }
         }
