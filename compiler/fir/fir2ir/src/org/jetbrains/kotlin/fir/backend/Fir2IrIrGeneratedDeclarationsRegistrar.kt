@@ -66,6 +66,12 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrConstructorCall>) {
+        require(declaration.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+            "FAKE_OVERRIDE declarations are not preserved in metadata and should not be marked with annotations"
+        }
+        require(declaration.startOffset >= 0 && declaration.endOffset >= 0) {
+            "Declaration's startOffset and/or endOffset should be positive in order to mark declaration with annotations (otherwise it is generated declaration and would not appear in metadata)"
+        }
         require(annotations.all { it.typeArgumentsCount == 0 && it.hasOnlySupportedAnnotationArgumentTypes() }) {
             "Saving annotations with arguments from IR to metadata is only supported for basic constants. See KT-58968"
         }
