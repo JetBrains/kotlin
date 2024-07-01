@@ -109,6 +109,11 @@ open class NodeJsRootExtension(
     @Deprecated("Use nodeJsSetupTaskProvider from NodeJsPlugin (not NodeJsRootPlugin) instead")
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask> by nodeJs::nodeJsSetupTaskProvider
 
+    @Deprecated("Use NodeJsExtension instead")
+    fun requireConfigured(): NodeJsEnv {
+        return nodeJs.requireConfigured()
+    }
+
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJsRoot"
     }
