@@ -59,7 +59,6 @@ open class NodeJsRootExtension(
     @Deprecated("Use downloadBaseUrl from NodeJsPlugin (not NodeJsRootPlugin) instead")
     var nodeDownloadBaseUrl by nodeJs::downloadBaseUrl
 
-    @Deprecated("Use downloadBaseUrl from NodeJsPlugin (not NodeJsRootPlugin) instead")
     var downloadBaseUrl: String? by nodeJs::downloadBaseUrl
 
     @Deprecated("Use version from NodeJsPlugin (not NodeJsRootPlugin) instead")
