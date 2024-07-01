@@ -70,7 +70,10 @@ private fun getSourceElementFromDescriptor(topLevelDeclaration: IrDeclaration): 
     } else {
         // There can be no descriptor. So take if with caution.
         val symbol = topLevelDeclaration.symbol
-        if (symbol.hasDescriptor) symbol.descriptor else null
+        if (symbol.hasDescriptor)
+            symbol.descriptor.takeUnless { it is IrBasedDeclarationDescriptor<*> }
+        else
+            null
     }
 
     return (topLevelDeclarationDescriptor?.containingDeclaration as? PackageFragmentDescriptor)?.source
