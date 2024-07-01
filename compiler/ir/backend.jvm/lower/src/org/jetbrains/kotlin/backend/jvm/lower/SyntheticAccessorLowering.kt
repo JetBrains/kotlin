@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
@@ -119,7 +120,7 @@ private class SyntheticAccessorTransformer(
     val irFile: IrFile,
     val pendingAccessorsToAdd: MutableSet<IrFunction>
 ) : IrElementTransformerVoidWithContext() {
-    private val accessorGenerator = context.cachedDeclarations.syntheticAccessorGenerator
+    private val accessorGenerator = JvmSyntheticAccessorGenerator(context)
     private val inlineScopeResolver: IrInlineScopeResolver = irFile.findInlineCallSites(context)
     private var processingIrInlinedFun = false
 
