@@ -441,9 +441,10 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
     ): IrConstructor {
         val symbol = getIrConstructorSymbol(constructor.symbol, potentiallyExternal = !isLocal)
+        val irParent1 = irParent()
         return callablesGenerator.createIrConstructor(
             constructor,
-            irParent(),
+            irParent1,
             symbol,
             predefinedOrigin,
             allowLazyDeclarationsCreation = false
@@ -459,7 +460,7 @@ class Fir2IrDeclarationStorage(
         getCachedIrConstructorSymbol(constructor)?.let { return it }
 
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
-        val symbol = IrConstructorSymbolImpl()
+        val symbol = IrConstructorSymbolImpl() // unbound instance
         if (potentiallyExternal) {
             val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
             if (irParent.isExternalParent()) {
@@ -472,6 +473,8 @@ class Fir2IrDeclarationStorage(
                 ).also {
                     check(it is Fir2IrLazyConstructor)
                 }
+            } else {
+                println()
             }
         }
         cacheIrConstructorSymbol(constructor, symbol)

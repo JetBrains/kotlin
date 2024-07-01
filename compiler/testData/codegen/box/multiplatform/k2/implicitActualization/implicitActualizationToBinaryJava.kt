@@ -6,31 +6,31 @@
 // TARGET_PLATFORM: Common
 // FILE: common.kt
 
-open class CommonBase { // copy-paste
-    fun commonFakeOverride(): Int = 2
-    open fun commonOverride(): Int = null!! // 7
-}
+// open class CommonBase { // copy-paste
+//     fun commonFakeOverride(): Int = 2
+//     open fun commonOverride(): Int = null!! // 7
+// }
 
 @OptIn(ExperimentalMultiplatform::class)
 @kotlin.jvm.ImplicitlyActualizedByJvmDeclaration
-expect class Foo() : CommonBase {
+expect class Foo() {
     fun foo(): Int // 5
 }
 
-fun common(): Int = Foo().foo() * Foo().commonFakeOverride() * Foo().commonOverride()
+fun common(): Int = Foo().foo() //* Foo().commonFakeOverride() * Foo().commonOverride()
 
 // MODULE: lib()()()
 // FILE: Foo.java
-public class Foo extends CommonBase {
+public class Foo {
     public int foo() { return 5; }
     // @Override public int commonOverride() { return 7; }
 }
 
-// FILE: lib.kt
-open class CommonBase { // copy-paste
-    fun commonFakeOverride(): Int = 2
-    open fun commonOverride(): Int = null!! // 7
-}
+// // FILE: lib.kt
+// open class CommonBase { // copy-paste
+//     fun commonFakeOverride(): Int = 2
+//     open fun commonOverride(): Int = null!! // 7
+// }
 
 // MODULE: platform(lib)()(common)
 // FILE: jvm.kt
