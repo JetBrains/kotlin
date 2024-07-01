@@ -1,7 +1,6 @@
+// ISSUE: KT-63846
 // IGNORE_BACKEND_K2: WASM
-
 // DUMP_IR
-// ^ Note that K2 IR dump has incorrectly inferred type arguments: KT-63846.
 
 interface A
 open class B : A

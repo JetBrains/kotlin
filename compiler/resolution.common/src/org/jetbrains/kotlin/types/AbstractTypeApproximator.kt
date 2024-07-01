@@ -289,6 +289,15 @@ abstract class AbstractTypeApproximator(
             "Supertypes for intersection type should not be empty: $type"
         }
 
+        val upperBoundForApproximation = type.getUpperBoundForApproximationOfIntersectionType()
+
+        if (toSuper && upperBoundForApproximation != null &&
+            (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE ||
+                    conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE)
+        ) {
+            return approximateToSuperType(upperBoundForApproximation, conf) ?: upperBoundForApproximation
+        }
+
         var thereIsApproximation = false
         val newTypes = typeConstructor.supertypes().map {
             val newType = if (toSuper) approximateToSuperType(it, conf, depth) else approximateToSubType(it, conf, depth)
@@ -308,7 +317,6 @@ abstract class AbstractTypeApproximator(
             TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED -> if (!thereIsApproximation) {
                 return null
             } else {
-                val upperBoundForApproximation = type.getUpperBoundForApproximationOfIntersectionType()
                 intersectTypes(newTypes, upperBoundForApproximation, toSuper, conf, depth)
             }
             TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)

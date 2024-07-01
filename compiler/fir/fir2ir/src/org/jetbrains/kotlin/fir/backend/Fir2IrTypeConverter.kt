@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.unexpandedConeClassLikeType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.substituteIntersectionTypesToUpperBoundsOrSelf
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -155,7 +154,7 @@ class Fir2IrTypeConverter(
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
                 val expandedType = fullyExpandedType(session)
-                val approximatedType = approximateType(expandedType)
+                val approximatedType = expandedType.approximateForIrOrSelf(c)
 
                 if (approximatedType is ConeTypeParameterType && conversionScope.shouldEraseType(approximatedType)) {
                     // This hack is about type parameter leak in case of generic delegated property
@@ -260,7 +259,7 @@ class Fir2IrTypeConverter(
         val commonSupertype = session.typeContext.commonSuperTypeOrNull(resolvedBounds.map { it.type })!!
         val resultType = (commonSupertype as? ConeClassLikeType)?.replaceArgumentsWithStarProjections()
             ?: commonSupertype
-        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.let { approximateType(it) } ?: resultType
+        val approximatedType = (commonSupertype as? ConeSimpleKotlinType)?.let { it.approximateForIrOrSelf(c) } ?: resultType
         return approximatedType.toIrType(c)
     }
 
@@ -335,11 +334,6 @@ class Fir2IrTypeConverter(
     // TODO: candidate for removal
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {
         return classIdToSymbolMap[classId] ?: getArrayClassSymbol(classId)
-    }
-
-    private fun approximateType(type: ConeSimpleKotlinType): ConeKotlinType {
-        if (type is ConeClassLikeType && type.typeArguments.isEmpty()) return type
-        return type.substituteIntersectionTypesToUpperBoundsOrSelf(session).approximateForIrOrSelf(c)
     }
 }
 
