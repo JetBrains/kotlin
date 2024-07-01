@@ -28,9 +28,6 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
     private val nodeJs = kotlinJsTest.project.rootProject.kotlinNodeJsExtension
 
     @Transient
-    private val nodeJsEnv = nodeJs.requireConfigured()
-
-    @Transient
     override val compilation: KotlinJsIrCompilation = kotlinJsTest.compilation
 
     private val projectLayout = kotlinJsTest.project.layout
@@ -44,7 +41,7 @@ internal class KotlinWasmNode(kotlinJsTest: KotlinJsTest) : KotlinJsTestFramewor
             }
         }
 
-    override val executable: Provider<String> = kotlinJsTest.project.provider { nodeJsEnv.executable }
+    override val executable: Provider<String> = kotlinJsTest.project.provider { nodeJs.requireConfigured().executable }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,

@@ -57,8 +57,6 @@ class KotlinKarma(
 
     @Transient
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
-    @Transient
-    private val nodeJsEnv = nodeJs.requireConfigured()
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDirectory }
     private val versions = nodeJs.versions
 
@@ -81,7 +79,7 @@ class KotlinKarma(
     override val workingDir: Provider<Directory>
         get() = npmProjectDir
 
-    override val executable: Provider<String> = project.provider { nodeJsEnv.executable }
+    override val executable: Provider<String> = project.provider { nodeJs.requireConfigured().executable }
 
     override fun getPath() = "$basePath:kotlinKarma"
 
