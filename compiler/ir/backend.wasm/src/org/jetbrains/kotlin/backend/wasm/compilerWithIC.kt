@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -38,6 +37,14 @@ open class WasmCompilerWithIC(
     init {
         val irBuiltIns = mainModule.irBuiltins
         val symbolTable = (irBuiltIns as IrBuiltInsOverDescriptors).symbolTable
+
+        //Hack - pre-load functional interfaces in case if IrLoader cut its count
+        repeat(25) {
+            mainModule.irBuiltins.functionN(it)
+            mainModule.irBuiltins.suspendFunctionN(it)
+            mainModule.irBuiltins.kFunctionN(it)
+            mainModule.irBuiltins.kSuspendFunctionN(it)
+        }
 
         context = WasmBackendContext(
             mainModule.descriptor,
