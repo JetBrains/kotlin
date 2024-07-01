@@ -18,4 +18,8 @@ data class NodeJsEnv(
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"
+
+    @Deprecated("Use executable instead", ReplaceWith("executable"))
+    val nodeExecutable
+        get() = executable
 }
