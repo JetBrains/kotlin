@@ -102,6 +102,13 @@ public object Platform {
         get() = Platform_isFreezingEnabled()
 
     /**
+     * Representation of the name used to invoke the program executable.
+     * [null] if the Kotlin code was compiled to a native library and the executable is not a Kotlin program.
+     */
+    public val programName: String?
+        get() = Platform_getProgramName()
+
+    /**
      * If the memory leak checker is activated, by default `true` in debug mode, `false` in release.
      * When memory leak checker is activated, and leak is detected during last Kotlin context
      * deinitialization process - error message with leak information is printed and application
@@ -160,6 +167,9 @@ private external fun Platform_isDebugBinary(): Boolean
 
 @GCUnsafeCall("Konan_Platform_isFreezingEnabled")
 private external fun Platform_isFreezingEnabled(): Boolean
+
+@GCUnsafeCall("Konan_Platform_getProgramName")
+private external fun Platform_getProgramName(): String?
 
 @GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
 private external fun Platform_getMemoryLeakChecker(): Boolean

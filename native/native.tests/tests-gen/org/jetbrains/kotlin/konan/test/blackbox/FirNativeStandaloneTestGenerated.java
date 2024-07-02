@@ -275,6 +275,12 @@ public class FirNativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest
     public void testMainOverloadingNoArgs() {
       runTest("native/native.tests/testData/standalone/entryPoint/mainOverloadingNoArgs.kt");
     }
+
+    @Test
+    @TestMetadata("programName.kt")
+    public void testProgramName() {
+      runTest("native/native.tests/testData/standalone/entryPoint/programName.kt");
+    }
   }
 
   @Nested
