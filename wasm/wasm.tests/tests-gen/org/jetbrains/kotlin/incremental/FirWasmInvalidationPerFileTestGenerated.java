@@ -33,7 +33,7 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
 
   @Test
   public void testAllFilesPresentInInvalidation() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash|jsCodeWithConstStringFromOtherModule"), TargetBackend.WASM, false);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), Pattern.compile("abstractClassWithJsExport|classWithJsExport|inlineFunctionAnnotations|interfaceWithJsExport|jsExportWithMultipleFiles|typeScriptExportsPerFile|typeScriptExportsPerModule|fileNameClash|jsCode|jsCodeWithConstString|jsModuleAnnotation|jsModuleAnnotationOnObjectWithUsage|jsName|fileNameCaseClash|jsCodeWithConstStringFromOtherModule|moveExternalDeclarationsBetweenFiles|inlineFunctionCircleUsage"), TargetBackend.WASM, false);
   }
 
   @Test
@@ -253,12 +253,6 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
   }
 
   @Test
-  @TestMetadata("inlineFunctionCircleUsage")
-  public void testInlineFunctionCircleUsage() {
-    runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionCircleUsage/");
-  }
-
-  @Test
   @TestMetadata("inlineFunctionDefaultParams")
   public void testInlineFunctionDefaultParams() {
     runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
@@ -352,12 +346,6 @@ public class FirWasmInvalidationPerFileTestGenerated extends AbstractFirWasmInva
   @TestMetadata("moveAndModifyInlineFunction")
   public void testMoveAndModifyInlineFunction() {
     runTest("js/js.translator/testData/incremental/invalidation/moveAndModifyInlineFunction/");
-  }
-
-  @Test
-  @TestMetadata("moveExternalDeclarationsBetweenFiles")
-  public void testMoveExternalDeclarationsBetweenFiles() {
-    runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
   }
 
   @Test

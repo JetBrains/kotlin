@@ -69,6 +69,8 @@ fun main(args: Array<String>) {
                     "jsName",
                     "fileNameCaseClash",
                     "jsCodeWithConstStringFromOtherModule",
+                    "moveExternalDeclarationsBetweenFiles",
+                    "inlineFunctionCircleUsage",
                 )
                 model(
                     "incremental/invalidation/",
