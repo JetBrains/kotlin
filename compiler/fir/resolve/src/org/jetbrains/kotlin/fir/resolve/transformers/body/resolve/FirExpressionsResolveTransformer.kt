@@ -1782,14 +1782,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return anonymousObjectExpression
     }
 
-    override fun transformAnonymousFunctionExpression(
-        anonymousFunctionExpression: FirAnonymousFunctionExpression,
-        data: ResolutionMode
-    ): FirStatement {
-        dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
-        return anonymousFunctionExpression.transformAnonymousFunction(transformer, data)
-    }
-
     // ------------------------------------------------------------------------------------------------
 
     internal fun storeTypeFromCallee(access: FirQualifiedAccessExpression, isLhsOfAssignment: Boolean) {

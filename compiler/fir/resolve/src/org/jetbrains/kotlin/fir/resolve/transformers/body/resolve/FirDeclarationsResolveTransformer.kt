@@ -1065,6 +1065,14 @@ open class FirDeclarationsResolveTransformer(
         return result
     }
 
+    override fun transformAnonymousFunctionExpression(
+        anonymousFunctionExpression: FirAnonymousFunctionExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
+        return anonymousFunctionExpression.transformAnonymousFunction(transformer, data)
+    }
+
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: ResolutionMode

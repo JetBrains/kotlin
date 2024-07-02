@@ -578,10 +578,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     override fun transformAnonymousFunctionExpression(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: ResolutionMode,
-    ): FirStatement = expressionTransformation(
+    ): FirStatement = declarationTransformation(
         anonymousFunctionExpression,
         data,
-        FirExpressionsResolveTransformer::transformAnonymousFunctionExpression,
+        FirDeclarationsResolveTransformer::transformAnonymousFunctionExpression,
     )
 
     override fun transformValueParameter(
