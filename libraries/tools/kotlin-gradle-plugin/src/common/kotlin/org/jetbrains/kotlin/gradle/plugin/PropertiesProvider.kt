@@ -99,7 +99,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property("kotlin.build.report.http.include_git_branch.name").orNull?.toBoolean() ?: false
 
     val buildReportHttpUseExecutor: Boolean
-        get() = property("kotlin.build.report.http.use.executor").orNull?.toBoolean() ?: false
+        get() = property("kotlin.internal.build.report.http.use.executor").orNull?.toBoolean() ?: false
 
     val buildReportIncludeCompilerArguments: Boolean
         get() = booleanProperty("kotlin.build.report.include_compiler_arguments") ?: true
