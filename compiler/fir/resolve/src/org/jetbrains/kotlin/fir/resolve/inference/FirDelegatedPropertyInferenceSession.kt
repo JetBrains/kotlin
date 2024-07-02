@@ -76,7 +76,7 @@ class FirDelegatedPropertyInferenceSession(
         call: T,
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode,
-    ) where T : FirResolvable, T : FirStatement {
+    ) where T : FirResolvable, T : FirExpression {
         if (wasCompletionRun || !call.isAnyOfDelegateOperators()) return
 
         requireCallIsDelegateOperator(call)

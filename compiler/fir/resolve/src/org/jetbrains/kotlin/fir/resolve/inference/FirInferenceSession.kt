@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
@@ -27,7 +27,7 @@ abstract class FirInferenceSession {
         call: T,
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode
-    ) where T : FirResolvable, T : FirStatement
+    ) where T : FirResolvable, T : FirExpression
 
     open fun runLambdaCompletion(candidate: Candidate, forOverloadByLambdaReturnType: Boolean, block: () -> Unit): ConstraintStorage? {
         block()
@@ -59,7 +59,7 @@ abstract class FirInferenceSession {
                 call: T,
                 resolutionMode: ResolutionMode,
                 completionMode: ConstraintSystemCompletionMode,
-            ) where T : FirResolvable, T : FirStatement {
+            ) where T : FirResolvable, T : FirExpression {
                 // Do nothing
             }
         }

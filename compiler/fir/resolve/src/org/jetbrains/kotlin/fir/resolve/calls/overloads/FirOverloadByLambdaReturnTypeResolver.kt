@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateChosenUsingOverloadResolutionByLambdaAnnotation
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
@@ -37,7 +37,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         qualifiedAccess: T,
         allCandidates: Collection<Candidate>,
         bestCandidates: Set<Candidate>
-    ): Set<Candidate> where T : FirStatement, T : FirResolvable {
+    ): Set<Candidate> where T : FirExpression, T : FirResolvable {
         if (bestCandidates.size <= 1) return bestCandidates
 
         return reduceCandidatesImpl(
@@ -51,7 +51,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         call: T,
         reducedCandidates: Set<Candidate>,
         allCandidates: Collection<Candidate>
-    ): Set<Candidate>? where T : FirResolvable, T : FirStatement {
+    ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
         val candidatesWithAnnotation = allCandidates.filter { candidate ->
             (candidate.symbol.fir as FirAnnotationContainer).annotations.any {
                 it.annotationTypeRef.coneType.classId == OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
@@ -73,7 +73,7 @@ class FirOverloadByLambdaReturnTypeResolver(
     private fun <T> analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType(
         call: T,
         candidates: Set<Candidate>,
-    ): Set<Candidate>? where T : FirResolvable, T : FirStatement {
+    ): Set<Candidate>? where T : FirResolvable, T : FirExpression {
         if (candidates.any { !it.isSuccessful }) return candidates
         val lambdas = candidates.flatMap { candidate ->
             candidate.postponedAtoms
