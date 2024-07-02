@@ -942,7 +942,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 val kotlinVersion = defaultBuildOptions.kotlinVersion
                 val pomText = publishedPom.readText().replace(Regex("\\s+"), "")
                 assertTrue { "kotlinx-html-js</artifactId><version>0.7.5</version><scope>compile</scope>" in pomText }
-                assertTrue { "kotlin-stdlib-js</artifactId><version>$kotlinVersion</version><scope>runtime</scope>" in pomText }
+                assertTrue { "kotlin-stdlib-js</artifactId><scope>runtime</scope>" in pomText }
 
                 assertFileExists(moduleDir.resolve("kotlin-js-plugin-1.0-sources.jar"))
 

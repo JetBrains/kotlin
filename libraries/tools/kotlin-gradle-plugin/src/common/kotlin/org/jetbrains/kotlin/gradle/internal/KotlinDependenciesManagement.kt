@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.dsl.DependencyConstraintHandler
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
@@ -25,31 +24,6 @@ internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
-
-private val coreLibrariesNames = setOf(
-    "kotlin-stdlib",
-    "kotlin-stdlib-common",
-    "kotlin-stdlib-jdk7",
-    "kotlin-stdlib-jdk8",
-    "kotlin-stdlib-js",
-    "kotlin-stdlib-jvm-minimal-for-test",
-    "kotlin-stdlib-wasm",
-    "kotlin-stdlib-wasm-js",
-    "kotlin-stdlib-wasm-wasi",
-    "kotlin-test",
-    "kotlin-test-annotations-common",
-    "kotlin-test-common",
-    "kotlin-test-js",
-    "kotlin-test-js-runner",
-    "kotlin-test-junit",
-    "kotlin-test-junit5",
-    "kotlin-test-testing",
-    "kotlin-test-wasm",
-    "kotlin-test-wasm-js",
-    "kotlin-test-wasm-wasi",
-    "kotlin-dom-api-compat",
-    "kotlin-reflect",
-)
 
 internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
     val kotlinExtension = project.kotlinExtension
@@ -88,36 +62,23 @@ private fun ConfigurationContainer.configureDefaultVersionsResolutionStrategy(
     coreLibrariesVersion: Provider<String>,
     constraintsHandler: DependencyConstraintHandler,
 ) = configureEach { configuration ->
-    // Using old way to constraint the dependency because of "compile" and "runtime" configurations
-    // are not working well with constraints
-    if (GradleVersion.current() < GradleVersion.version("7.0")) {
-        configuration.withDependencies { dependencySet ->
-            dependencySet
-                .withType<ExternalDependency>()
-                .all { dependency ->
-                    if (dependency.group == KOTLIN_MODULE_GROUP &&
-                        dependency.version.isNullOrEmpty()
+    configuration.withDependencies { dependencySet ->
+        dependencySet
+            .withType<ExternalDependency>()
+            .all { dependency ->
+                if (dependency.group == KOTLIN_MODULE_GROUP &&
+                    dependency.version.isNullOrEmpty()
+                ) {
+                    constraintsHandler.add(
+                        configuration.name,
+                        dependency.module.toString()
                     ) {
-                        dependency.version {
-                            it.require(coreLibrariesVersion.get())
-                        }
-                    }
-                }
-        }
-    } else {
-        if (!configuration.isCanBeResolved && !configuration.isCanBeConsumed) {
-            // While usage of withDependencies is not required here
-            // it is a workaround for https://github.com/gradle/gradle/issues/29651
-            configuration.withDependencies {
-                for (coreLibrariesName in coreLibrariesNames) {
-                    constraintsHandler.add(configuration.name, "org.jetbrains.kotlin:$coreLibrariesName") {
                         it.version { constraint ->
-                            constraint.prefer(coreLibrariesVersion.get())
+                            constraint.require(coreLibrariesVersion.get())
                         }
                     }
                 }
             }
-        }
     }
 }
 

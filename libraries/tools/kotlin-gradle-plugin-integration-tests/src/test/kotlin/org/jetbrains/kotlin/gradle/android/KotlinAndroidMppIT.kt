@@ -486,7 +486,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                         )
                         assertContains(
                             pomText,
-                            "<artifactId>kotlin-reflect</artifactId><version>${buildOptions.kotlinVersion}</version><scope>runtime</scope>"
+                            "<artifactId>kotlin-reflect</artifactId><scope>runtime</scope>"
                         )
                     }
                 }
