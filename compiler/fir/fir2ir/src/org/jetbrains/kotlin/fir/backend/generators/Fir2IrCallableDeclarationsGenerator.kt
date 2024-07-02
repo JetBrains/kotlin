@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirConflictsExpressionChecker.isDestructuredParameter
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.backend.utils.convertCatching
@@ -851,6 +852,7 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
             givenOrigin != null -> givenOrigin
             variable.name == SpecialNames.ITERATOR -> IrDeclarationOrigin.FOR_LOOP_ITERATOR
             variable.name.isSpecial -> IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            variable.isDestructuredParameter() -> IrDeclarationOrigin.IR_DESTRUCTURED_PARAMETER_VARIABLE
             else -> IrDeclarationOrigin.DEFINED
         }
         val isLateInit = if (variable is FirProperty) variable.isLateInit else false
