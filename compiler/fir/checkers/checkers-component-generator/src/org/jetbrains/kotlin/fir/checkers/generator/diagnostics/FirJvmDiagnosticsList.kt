@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.*
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -217,6 +216,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
         val INAPPLICABLE_JVM_FIELD_WARNING by warning<KtAnnotationEntry> {
             parameter<String>("message")
+        }
+        val SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE by deprecationError<PsiElement>(ProhibitSynchronizationByValueClassesAndPrimitives) {
+            parameter<ConeKotlinType>("valueClassOrPrimitive")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
