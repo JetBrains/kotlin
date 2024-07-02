@@ -5,9 +5,16 @@
 
 package org.jetbrains.kotlin.fir.declarations.utils
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -82,3 +89,15 @@ val FirNamedFunctionSymbol.isMethodOfAny: Boolean
     }
 
 val FirConstructorSymbol.isErrorPrimaryConstructor get() = fir is FirErrorPrimaryConstructor
+
+fun FirStatement.isDestructuredParameter() = this is FirVariable && getDestructuredParameter() != null
+
+fun FirVariable.getDestructuredParameter(): FirValueParameterSymbol? {
+    val initializer = initializer
+    if (initializer !is FirComponentCall) return null
+    if (initializer.source?.kind !is KtFakeSourceElementKind.DesugaredComponentFunctionCall) return null
+    val receiver = initializer.dispatchReceiver ?: initializer.extensionReceiver ?: return null
+    if (receiver !is FirPropertyAccessExpression) return null
+    val calleeReference = receiver.calleeReference as? FirResolvedNamedReference ?: return null
+    return calleeReference.resolvedSymbol as? FirValueParameterSymbol
+}
