@@ -1267,7 +1267,7 @@ private fun <K, V : Any> LinkedHashMap<out K, out V?>.filterValuesNotNull(): Lin
     return result
 }
 
-fun <V> LinkedHashMap<ConeCallAtom, V>.unwrapAtoms(): LinkedHashMap<FirExpression, V> {
+fun <V> LinkedHashMap<ConeResolutionAtom, V>.unwrapAtoms(): LinkedHashMap<FirExpression, V> {
     return mapKeysToLinkedMap { it.expression }
 }
 
@@ -1275,6 +1275,6 @@ inline fun <K1, K2, V> LinkedHashMap<K1, V>.mapKeysToLinkedMap(transform: (K1) -
     return mapKeysTo(LinkedHashMap()) { transform(it.key) }
 }
 
-private fun Collection<ConeCallAtom>.unwrapAtoms(): List<FirExpression> {
+private fun Collection<ConeResolutionAtom>.unwrapAtoms(): List<FirExpression> {
     return map { it.expression }
 }

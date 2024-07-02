@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.fir.resolve.calls.*
 
-fun ConeCallAtom.processCandidatesAndPostponedAtoms(
+fun ConeResolutionAtom.processCandidatesAndPostponedAtoms(
     candidateProcessor: (Candidate) -> Unit,
     postponedAtomsProcessor: (ConePostponedResolvedAtom) -> Unit
 ) {
@@ -15,7 +15,7 @@ fun ConeCallAtom.processCandidatesAndPostponedAtoms(
     context.processCandidatesAndPostponedAtoms(this)
 }
 
-fun ConeCallAtom.processPostponedAtoms(postponedAtomsProcessor: (ConePostponedResolvedAtom) -> Unit) {
+fun ConeResolutionAtom.processPostponedAtoms(postponedAtomsProcessor: (ConePostponedResolvedAtom) -> Unit) {
     processCandidatesAndPostponedAtoms(candidateProcessor = {}, postponedAtomsProcessor)
 }
 
@@ -23,14 +23,14 @@ private class Context(
     val candidateProcessor: (Candidate) -> Unit,
     val postponedAtomsProcessor: (ConePostponedResolvedAtom) -> Unit
 ) {
-    val visited: MutableSet<ConeCallAtom> = mutableSetOf()
+    val visited: MutableSet<ConeResolutionAtom> = mutableSetOf()
 }
 
-private fun Context.processCandidatesAndPostponedAtoms(atom: ConeCallAtom?) {
+private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?) {
     if (atom == null) return
     if (!visited.add(atom)) return
     when (atom) {
-        is ConeResolvedAtom -> {}
+        is ConeSimpleLeafResolutionAtom -> {}
 
         // lambdas
         is ConeResolvedLambdaAtom -> {

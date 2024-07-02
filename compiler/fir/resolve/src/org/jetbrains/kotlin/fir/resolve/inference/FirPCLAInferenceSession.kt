@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
@@ -121,7 +121,7 @@ class FirPCLAInferenceSession(
     }
 
     fun integrateChildSession(
-        childCalls: Collection<ConeCallAtom>,
+        childCalls: Collection<ConeResolutionAtom>,
         childStorage: ConstraintStorage,
         onCompletionResultsWriting: (ConeSubstitutor) -> Unit,
     ) {
@@ -344,14 +344,14 @@ class FirTypeVariablesAfterPCLATransformer(private val substitutor: ConeSubstitu
      *   and receivers of candidates are not direct FIR children of calls, so they won't be visited during regular transformChildren
      */
     private fun processCandidate(candidate: Candidate) {
-        candidate.dispatchReceiver = ConeCallAtom.createRawAtom(
+        candidate.dispatchReceiver = ConeResolutionAtom.createRawAtom(
             candidate.dispatchReceiver?.expression?.transform(this, data = null)
         )
-        candidate.chosenExtensionReceiver = ConeCallAtom.createRawAtom(
+        candidate.chosenExtensionReceiver = ConeResolutionAtom.createRawAtom(
             candidate.chosenExtensionReceiver?.expression?.transform(this, data = null)
         )
         candidate.contextReceiverArguments = candidate.contextReceiverArguments?.map {
-            ConeCallAtom.createRawAtom(it.expression.transform(this, data = null))
+            ConeResolutionAtom.createRawAtom(it.expression.transform(this, data = null))
         }
     }
 }

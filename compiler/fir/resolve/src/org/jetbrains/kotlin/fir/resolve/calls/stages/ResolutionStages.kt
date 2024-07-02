@@ -150,7 +150,7 @@ object CheckExtensionReceiver : ResolutionStage() {
 }
 
 private fun prepareReceivers(
-    argumentExtensionReceiver: ConeCallAtom,
+    argumentExtensionReceiver: ConeResolutionAtom,
     expectedType: ConeKotlinType,
     context: ResolutionContext,
 ): ReceiverDescription {
@@ -164,7 +164,7 @@ private fun prepareReceivers(
 }
 
 private data class ReceiverDescription(
-    val atom: ConeCallAtom,
+    val atom: ConeResolutionAtom,
     val type: ConeKotlinType,
 )
 
@@ -237,7 +237,7 @@ object CheckContextReceivers : ResolutionStage() {
                     ?: towerDataElement.contextReceiverGroup?.map { it.receiverExpression }
             }
 
-        val resultingContextReceiverArguments = mutableListOf<ConeCallAtom>()
+        val resultingContextReceiverArguments = mutableListOf<ConeResolutionAtom>()
         for (expectedType in contextReceiverExpectedTypes) {
             val matchingReceivers = candidate.findClosestMatchingReceivers(expectedType, receiverGroups, context)
             when (matchingReceivers.size) {
@@ -302,7 +302,7 @@ private fun Candidate.findClosestMatchingReceivers(
     for (receiverGroup in receiverGroups) {
         val currentResult =
             receiverGroup
-                .map { prepareReceivers(ConeCallAtom.createRawAtom(it), expectedType, context) }
+                .map { prepareReceivers(ConeResolutionAtom.createRawAtom(it), expectedType, context) }
                 .filter { system.isSubtypeConstraintCompatible(it.type, expectedType, SimpleConstraintSystemConstraintPosition) }
 
         if (currentResult.isNotEmpty()) return currentResult
@@ -503,7 +503,7 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
-        val arguments = callInfo.arguments.map { ConeCallAtom.createRawAtom(it) }
+        val arguments = callInfo.arguments.map { ConeResolutionAtom.createRawAtom(it) }
         val mapping = context.bodyResolveComponents.mapArguments(
             arguments,
             function,
@@ -519,7 +519,7 @@ internal object MapArguments : ResolutionStage() {
         sink.yieldIfNeed()
     }
 
-    private fun List<ConeCallAtom>.unwrapNamedArgumentsForDynamicCall(function: FirFunction): List<ConeCallAtom> {
+    private fun List<ConeResolutionAtom>.unwrapNamedArgumentsForDynamicCall(function: FirFunction): List<ConeResolutionAtom> {
         if (function.origin != FirDeclarationOrigin.DynamicScope) return this
         return map { (it as? ConeNamedArgumentAtom)?.subAtom ?: it }
     }

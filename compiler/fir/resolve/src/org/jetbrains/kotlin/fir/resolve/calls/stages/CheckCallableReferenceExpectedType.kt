@@ -227,8 +227,8 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
      */
     var defaults = 0
     var varargMappingState = VarargMappingState.UNMAPPED
-    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<ConeCallAtom>>()
-    val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeCallAtom>>()
+    val mappedArguments = linkedMapOf<FirValueParameter, ResolvedCallArgument<ConeResolutionAtom>>()
+    val mappedVarargElements = linkedMapOf<FirValueParameter, MutableList<ConeResolutionAtom>>()
     val mappedArgumentTypes = arrayOfNulls<ConeKotlinType?>(fakeArguments.size)
 
     for ((valueParameter, resolvedArgument) in argumentMapping.parameterToCallArgumentMap) {
@@ -385,7 +385,7 @@ private fun createFakeArgumentsForReference(
     expectedArgumentCount: Int,
     inputTypes: List<ConeKotlinType>,
     unboundReceiverCount: Int
-): List<ConeCallAtom> {
+): List<ConeResolutionAtom> {
     var afterVararg = false
     var varargComponentType: ConeKotlinType? = null
     var vararg = false
@@ -414,7 +414,7 @@ private fun createFakeArgumentsForReference(
         } else {
             FirFakeArgumentForCallableReference(index)
         }
-        ConeCallAtom.createRawAtom(argument)
+        ConeResolutionAtom.createRawAtom(argument)
     }
 }
 

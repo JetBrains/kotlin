@@ -29,18 +29,18 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 //  -------------------------- Atoms --------------------------
 
-sealed class ConeCallAtom : AbstractConeCallAtom() {
+sealed class ConeResolutionAtom : AbstractConeResolutionAtom() {
     companion object {
         @JvmName("createRawAtomNullable")
-        fun createRawAtom(expression: FirExpression?): ConeCallAtom? {
+        fun createRawAtom(expression: FirExpression?): ConeResolutionAtom? {
             return expression?.let { createRawAtom(it) }
         }
 
-        fun createRawAtom(expression: FirExpression): ConeCallAtom {
+        fun createRawAtom(expression: FirExpression): ConeResolutionAtom {
             return when (expression) {
                 is FirAnonymousFunctionExpression -> ConeRawLambdaAtom(expression)
                 is FirCallableReferenceAccess -> when {
-                    expression.isResolved -> ConeResolvedAtom(expression)
+                    expression.isResolved -> ConeSimpleLeafResolutionAtom(expression)
                     else -> ConeRawCallableReferenceAtom(expression)
                 }
                 is FirSafeCallExpression -> ConeSafeCallAtom(
@@ -48,20 +48,20 @@ sealed class ConeCallAtom : AbstractConeCallAtom() {
                     createRawAtom((expression.selector as? FirExpression)?.unwrapSmartcastExpression())
                 )
                 is FirResolvable -> when (val candidate = expression.candidate()) {
-                    null -> ConeResolvedAtom(expression)
+                    null -> ConeSimpleLeafResolutionAtom(expression)
                     else -> ConeAtomWithCandidate(expression, candidate)
                 }
                 is FirNamedArgumentExpression -> ConeNamedArgumentAtom(expression, createRawAtom(expression.expression))
                 is FirSpreadArgumentExpression -> ConeSpreadExpressionAtom(expression, createRawAtom(expression.expression))
                 is FirErrorExpression -> ConeErrorExpressionAtom(expression, createRawAtom(expression.expression))
                 is FirBlock -> ConeBlockAtom(expression, createRawAtom(expression.lastExpression))
-                else -> ConeResolvedAtom(expression)
+                else -> ConeSimpleLeafResolutionAtom(expression)
             }
         }
     }
 }
 
-class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
+class ConeSimpleLeafResolutionAtom(override val fir: FirExpression) : ConeResolutionAtom() {
 // TODO: investigate possibility to enable this check. KT-69557
 //    init {
 //        check(fir.isResolved) { "ConeResolvedAtom should be created only for resolved expressions" }
@@ -71,22 +71,22 @@ class ConeResolvedAtom(override val fir: FirExpression) : ConeCallAtom() {
         get() = fir
 }
 
-class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeCallAtom?) : ConeCallAtom() {
+class ConeSafeCallAtom(override val fir: FirSafeCallExpression, val selector: ConeResolutionAtom?) : ConeResolutionAtom() {
     override val expression: FirSafeCallExpression
         get() = fir
 }
 
-class ConeErrorExpressionAtom(override val fir: FirErrorExpression, val subAtom: ConeCallAtom?) : ConeCallAtom() {
+class ConeErrorExpressionAtom(override val fir: FirErrorExpression, val subAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
     override val expression: FirErrorExpression
         get() = fir
 }
 
-class ConeBlockAtom(override val fir: FirBlock, val lastExpressionAtom: ConeCallAtom?) : ConeCallAtom() {
+class ConeBlockAtom(override val fir: FirBlock, val lastExpressionAtom: ConeResolutionAtom?) : ConeResolutionAtom() {
     override val expression: FirBlock
         get() = fir
 }
 
-sealed class ConeWrappedExpressionAtom(val subAtom: ConeCallAtom) : ConeCallAtom() {
+sealed class ConeWrappedExpressionAtom(val subAtom: ConeResolutionAtom) : ConeResolutionAtom() {
     abstract override val fir: FirWrappedArgumentExpression
     abstract override val expression: FirWrappedArgumentExpression
 
@@ -96,7 +96,7 @@ sealed class ConeWrappedExpressionAtom(val subAtom: ConeCallAtom) : ConeCallAtom
 
 class ConeSpreadExpressionAtom(
     override val fir: FirSpreadArgumentExpression,
-    subAtom: ConeCallAtom
+    subAtom: ConeResolutionAtom
 ) : ConeWrappedExpressionAtom(subAtom) {
     override val expression: FirSpreadArgumentExpression
         get() = fir
@@ -104,7 +104,7 @@ class ConeSpreadExpressionAtom(
 
 class ConeNamedArgumentAtom(
     override val fir: FirNamedArgumentExpression,
-    subAtom: ConeCallAtom
+    subAtom: ConeResolutionAtom
 ) : ConeWrappedExpressionAtom(subAtom) {
     override val expression: FirNamedArgumentExpression
         get() = fir
@@ -118,12 +118,12 @@ class ConeNamedArgumentAtom(
 class ConeAtomWithCandidate(
     override val fir: FirResolvable,
     val candidate: Candidate
-) : ConeCallAtom() {
+) : ConeResolutionAtom() {
     override val expression: FirExpression
         get() = fir as FirExpression
 }
 
-class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression) : ConeCallAtom() {
+class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression) : ConeResolutionAtom() {
     override val fir: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConePostponedResolvedAtom? = null
@@ -133,7 +133,7 @@ class ConeRawLambdaAtom(override val expression: FirAnonymousFunctionExpression)
         }
 }
 
-class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess) : ConeCallAtom() {
+class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess) : ConeResolutionAtom() {
     override val expression: FirCallableReferenceAccess
         get() = fir
 
@@ -144,7 +144,7 @@ class ConeRawCallableReferenceAtom(override val fir: FirCallableReferenceAccess)
         }
 }
 
-sealed class ConePostponedResolvedAtom : ConeCallAtom(), PostponedResolvedAtomMarker {
+sealed class ConePostponedResolvedAtom : ConeResolutionAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<ConeKotlinType>
     abstract override val outputType: ConeKotlinType?
     override var analyzed: Boolean = false
@@ -179,7 +179,7 @@ class ConeResolvedLambdaAtom(
     override var expectedType: ConeKotlinType? = expectedType
         private set
 
-    lateinit var returnStatements: Collection<ConeCallAtom>
+    lateinit var returnStatements: Collection<ConeResolutionAtom>
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {
@@ -337,7 +337,7 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
     }
 }
 
-fun ConeCallAtom.unwrap(): ConeCallAtom {
+fun ConeResolutionAtom.unwrap(): ConeResolutionAtom {
     return when (this) {
         is ConeWrappedExpressionAtom -> subAtom
         else -> this

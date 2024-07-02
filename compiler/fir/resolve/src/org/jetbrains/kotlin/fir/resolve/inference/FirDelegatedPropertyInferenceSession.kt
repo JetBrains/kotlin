@@ -121,7 +121,7 @@ class FirDelegatedPropertyInferenceSession(
 
             integrateChildSession(
                 buildList {
-                    addIfNotNull(ConeCallAtom.createRawAtom(delegateExpression))
+                    addIfNotNull(ConeResolutionAtom.createRawAtom(delegateExpression))
                     partiallyResolvedCalls.mapTo(this) { (expression, candidate) ->
                         ConeAtomWithCandidate(expression, candidate)
                     }

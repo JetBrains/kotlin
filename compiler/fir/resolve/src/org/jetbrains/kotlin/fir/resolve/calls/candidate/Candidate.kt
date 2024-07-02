@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls.candidate
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -39,10 +38,10 @@ class Candidate(
     // - in case a use-site receiver is explicit
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
     // OR we may have here a kind of ImplicitReceiverValue (non-statics only)
-    override var dispatchReceiver: ConeCallAtom?,
+    override var dispatchReceiver: ConeResolutionAtom?,
     // In most cases, it contains zero or single element
     // More than one, only in case of context receiver group
-    val givenExtensionReceiverOptions: List<ConeCallAtom>,
+    val givenExtensionReceiverOptions: List<ConeResolutionAtom>,
     override val explicitReceiverKind: ExplicitReceiverKind,
     private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -52,7 +51,7 @@ class Candidate(
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
     bodyResolveContext: BodyResolveContext,
-) : AbstractCallCandidate<ConeCallAtom>() {
+) : AbstractCallCandidate<ConeResolutionAtom>() {
 
     // ---------------------------------------- Symbol ----------------------------------------
 
@@ -147,19 +146,19 @@ class Candidate(
 
     // ---------------------------------------- Argument mapping ----------------------------------------
 
-    private var _arguments: List<ConeCallAtom>? = null
-    val arguments: List<ConeCallAtom>
+    private var _arguments: List<ConeResolutionAtom>? = null
+    val arguments: List<ConeResolutionAtom>
         get() = _arguments ?: error("Argument list is not initialized yet")
 
-    private var _argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>? = null
+    private var _argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>? = null
     override val argumentMappingInitialized: Boolean
         get() = _argumentMapping != null
-    override val argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>
+    override val argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>
         get() = _argumentMapping ?: error("Argument mapping is not initialized yet")
 
     fun initializeArgumentMapping(
-        arguments: List<ConeCallAtom>,
-        argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>,
+        arguments: List<ConeResolutionAtom>,
+        argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>,
     ) {
         require(_argumentMapping == null) { "Argument mapping already initialized" }
         _argumentMapping = argumentMapping
@@ -167,7 +166,7 @@ class Candidate(
     }
 
     @UpdatingCandidateInvariants
-    fun updateArgumentMapping(argumentMapping: LinkedHashMap<ConeCallAtom, FirValueParameter>) {
+    fun updateArgumentMapping(argumentMapping: LinkedHashMap<ConeResolutionAtom, FirValueParameter>) {
         _argumentMapping = argumentMapping
     }
 
@@ -188,7 +187,7 @@ class Candidate(
 
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
-    val postponedPCLACalls: MutableList<ConeCallAtom> = mutableListOf()
+    val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()
     val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = mutableListOf()
 
     // Currently, it's only about completion results writing for property delegation inference info
@@ -230,9 +229,9 @@ class Candidate(
 
     // ---------------------------------------- Receivers ----------------------------------------
 
-    override var chosenExtensionReceiver: ConeCallAtom? = givenExtensionReceiverOptions.singleOrNull()
+    override var chosenExtensionReceiver: ConeResolutionAtom? = givenExtensionReceiverOptions.singleOrNull()
 
-    var contextReceiverArguments: List<ConeCallAtom>? = null
+    var contextReceiverArguments: List<ConeResolutionAtom>? = null
 
     // FirExpressionStub can be located here in case of callable reference resolution
     fun dispatchReceiverExpression(): FirExpression? {
@@ -261,8 +260,8 @@ class Candidate(
         contextReceiverArguments = contextReceiverArguments?.map { it.tryToSetSourceForImplicitReceiver() }
     }
 
-    private fun ConeCallAtom.tryToSetSourceForImplicitReceiver(): ConeCallAtom {
-        if (this !is ConeResolvedAtom) return this
+    private fun ConeResolutionAtom.tryToSetSourceForImplicitReceiver(): ConeResolutionAtom {
+        if (this !is ConeSimpleLeafResolutionAtom) return this
 
         fun FirExpression.tryToSetSourceForImplicitReceiver(): FirExpression? {
             return when {
@@ -280,7 +279,7 @@ class Candidate(
         }
 
         val newExpression = this.expression.tryToSetSourceForImplicitReceiver() ?: return this
-        return ConeResolvedAtom(newExpression)
+        return ConeSimpleLeafResolutionAtom(newExpression)
     }
 
     // ---------------------------------------- Backing field ----------------------------------------

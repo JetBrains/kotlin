@@ -57,7 +57,7 @@ internal object ArgumentCheckingProcessor {
 
     fun resolveArgumentExpression(
         candidate: Candidate,
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         expectedType: ConeKotlinType?,
         sink: CheckerSink,
         context: ResolutionContext,
@@ -70,7 +70,7 @@ internal object ArgumentCheckingProcessor {
 
     fun resolvePlainArgumentType(
         candidate: Candidate,
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
         expectedType: ConeKotlinType?,
         sink: CheckerSink,
@@ -100,7 +100,7 @@ internal object ArgumentCheckingProcessor {
 
     // -------------------------------------------- Real implementation --------------------------------------------
 
-    private fun ArgumentContext.resolveArgumentExpression(argument: ConeCallAtom) {
+    private fun ArgumentContext.resolveArgumentExpression(argument: ConeResolutionAtom) {
         when (argument) {
             // x?.bar() is desugared to `x SAFE-CALL-OPERATOR { $not-null-receiver$.bar() }`
             //
@@ -132,7 +132,7 @@ internal object ArgumentCheckingProcessor {
                 else -> resolveArgumentExpression(wrappedExpression)
             }
 
-            is ConeResolvedAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument)
+            is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(argument)
 
             is ConePostponedResolvedAtom -> error("Unexpected type of atom: ${argument::class.java}")
         }
@@ -153,7 +153,7 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         useNullableArgumentType: Boolean = false
     ) {
         if (expectedType == null) return
@@ -167,7 +167,7 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.resolvePlainArgumentType(
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
         useNullableArgumentType: Boolean = false,
         sourceForReceiver: KtSourceElement? = null,
@@ -201,7 +201,7 @@ internal object ArgumentCheckingProcessor {
     }
 
     private fun ArgumentContext.checkApplicabilityForArgumentType(
-        atom: ConeCallAtom,
+        atom: ConeResolutionAtom,
         argumentTypeBeforeCapturing: ConeKotlinType,
         position: ConstraintPosition,
     ) {

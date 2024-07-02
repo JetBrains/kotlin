@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
 
 data class ReturnArgumentsAnalysisResult(
-    val returnArguments: Collection<ConeCallAtom>,
+    val returnArguments: Collection<ConeResolutionAtom>,
     val additionalConstraints: ConstraintStorage?,
 )
 

@@ -81,8 +81,8 @@ class CandidateFactory private constructor(
 
         val result = Candidate(
             symbol,
-            ConeCallAtom.createRawAtom(dispatchReceiver),
-            givenExtensionReceiverOptions.map { ConeCallAtom.createRawAtom(it) },
+            ConeResolutionAtom.createRawAtom(dispatchReceiver),
+            givenExtensionReceiverOptions.map { ConeResolutionAtom.createRawAtom(it) },
             explicitReceiverKind,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
