@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationPerFileTest
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationPerFileWithPLTest
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageWithICTestCase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.*
@@ -78,6 +79,14 @@ fun main(args: Array<String>) {
                     targetBackend = TargetBackend.WASM,
                     recursive = false,
                     excludedPattern = jsTargetedInvalidationTests.joinToString("|")
+                )
+            }
+            testClass<AbstractFirWasmInvalidationPerFileWithPLTest> {
+                model(
+                    "incremental/invalidationWithPL/",
+                    pattern = "^([^_](.+))$",
+                    targetBackend = TargetBackend.WASM,
+                    recursive = false,
                 )
             }
         }

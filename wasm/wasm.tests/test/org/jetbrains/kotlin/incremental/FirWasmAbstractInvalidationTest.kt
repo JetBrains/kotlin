@@ -16,7 +16,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -25,6 +30,22 @@ import java.nio.charset.Charset
 
 abstract class AbstractFirWasmInvalidationPerFileTest :
     FirWasmAbstractInvalidationTest(TargetBackend.WASM, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
+
+abstract class AbstractFirWasmInvalidationPerFileWithPLTest :
+    FirWasmAbstractInvalidationWithPLTest(JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFirWithPL/perFile")
+
+abstract class FirWasmAbstractInvalidationWithPLTest(granularity: JsGenerationGranularity, workingDirPath: String) :
+    FirWasmAbstractInvalidationTest(
+        TargetBackend.WASM,
+        granularity,
+        workingDirPath
+    ) {
+    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+        val config = super.createConfiguration(moduleName, language, moduleKind)
+        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        return config
+    }
+}
 
 abstract class FirWasmAbstractInvalidationTest(
     targetBackend: TargetBackend,
