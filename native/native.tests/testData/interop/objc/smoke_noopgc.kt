@@ -119,7 +119,7 @@ class Bar : Foo() {
     }
 }
 
-@Suppress("CONFLICTING_OBJC_OVERLOADS")
+@Suppress("CONFLICTING_OBJC_OVERLOADS", "CONFLICTING_OVERLOADS")
 class MutablePairImpl(first: Int, second: Int) : NSObject(), MutablePairProtocol {
     private var elements = intArrayOf(first, second)
 
