@@ -33,7 +33,7 @@ interface WithLogger {
  * - [org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter] - to be used in Gradle plugins.
  * - [org.jetbrains.kotlin.cli.common.messages.CompilerLoggerAdapter] - to be used in all flavors of the Kotlin compiler. Can be accessed
  *   via [org.jetbrains.kotlin.cli.common.messages.toLogger] and [org.jetbrains.kotlin.cli.common.messages.getLogger].
- * - [org.jetbrains.kotlin.backend.common.IrMessageLoggerAdapter] - to be used in those parts of the compiler where
+ * - [org.jetbrains.kotlin.backend.common.MessageCollectorAdapter] - to be used in those parts of the compiler where
  *   [org.jetbrains.kotlin.cli.common.messages.CompilerLoggerAdapter] is not available. Can be accessed via
  *   [org.jetbrains.kotlin.backend.common.toLogger].
  */
