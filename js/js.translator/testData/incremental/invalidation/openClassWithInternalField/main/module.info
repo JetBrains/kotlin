@@ -4,5 +4,8 @@ STEP 0:
         U : B.0.kt -> B.kt
         U : m.0.kt -> m.kt
     added file: m.kt, B.kt
-STEP 1..3:
+STEP 1:
     dependencies: lib1
+STEP 2..3:
+    dependencies: lib1
+    updated imports <wasm>: B.kt

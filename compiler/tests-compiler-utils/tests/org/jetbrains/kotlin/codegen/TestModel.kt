@@ -135,7 +135,7 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
 
 private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
 
-class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
+class ProjectInfoParser(infoFile: File, private val target: String?) : InfoParser<ProjectInfo>(infoFile) {
     private val moduleKindMap = mapOf(
         "plain" to ModuleKind.PLAIN,
         "commonjs" to ModuleKind.COMMON_JS,
@@ -155,7 +155,12 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             if (splitIndex < 0) throwSyntaxError(line)
 
             val split = line.split(":")
-            val op = split[0]
+            val opWithTarget = split[0]
+            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            if (opTarget != null && opTarget != target) {
+                ++lineCounter
+                return@loop false
+            }
 
             if (op.matches(STEP_PATTERN.toRegex())) {
                 return@loop true // break the loop
@@ -198,7 +203,9 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             if (splitIndex < 0) throwSyntaxError(line)
 
             val split = line.split(":")
-            val op = split[0]
+            val opWithTarget = split[0]
+            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            if (opTarget != null && opTarget != target) return@loop false
 
             when {
                 op == MODULES_LIST -> libraries += split[1].splitAndTrim()
@@ -238,7 +245,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
     }
 }
 
-class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
+class ModuleInfoParser(infoFile: File, private val target: String) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
         val modifications = mutableListOf<ModuleInfo.Modification>()
@@ -282,13 +289,24 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
 
             val opIndex = line.indexOf(':')
             if (opIndex < 0) throwSyntaxError(line)
-            val op = line.substring(0, opIndex)
+            val opWithTarget = line.substring(0, opIndex)
+
+            val (op, opTarget) = parseOpAndTarget(opWithTarget) ?: throwSyntaxError(line)
+            if (opTarget != null && opTarget != target) {
+                if (op == MODIFICATIONS) parseModifications()
+                return@loop false
+            }
 
             fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
 
             val expectedState = DirtyFileState.entries.find { it.str == op }
             if (expectedState != null) {
-                expectedFileStats[expectedState.str] = getOpArgs().toSet()
+                val stats = expectedFileStats[expectedState.str]
+                if (stats == null) {
+                    expectedFileStats[expectedState.str] = getOpArgs().toSet()
+                } else {
+                    expectedFileStats[expectedState.str] = stats + getOpArgs()
+                }
             } else {
                 when (op) {
                     DEPENDENCIES -> getOpArgs().forEach { regularDependencies += it }
@@ -348,4 +366,15 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
 
         return result
     }
+}
+
+private fun parseOpAndTarget(opWithTarget: String): Pair<String, String?>? {
+    val targetStartIndex = opWithTarget.indexOf("<")
+    val targetEndIndex = opWithTarget.indexOf(">")
+    if (targetEndIndex == -1) return opWithTarget to null
+    if (targetStartIndex + 1 >= targetEndIndex) return null
+
+    val op = opWithTarget.substring(0, targetStartIndex).trim()
+    val target = opWithTarget.substring(targetStartIndex + 1, targetEndIndex)
+    return op to target
 }

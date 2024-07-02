@@ -84,7 +84,7 @@ object PartialLinkageTestUtils {
             val projectName = testDir.name
 
             val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
-            val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
+            val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile, "").parse(projectName)
 
             if (isIgnoredTest(projectInfo)) {
                 return onIgnoredTest() // Ignore muted tests.
@@ -96,7 +96,7 @@ object PartialLinkageTestUtils {
                     KtUsefulTestCase.assertExists(moduleTestDir)
 
                     val moduleInfoFile = File(moduleTestDir, MODULE_INFO_FILE)
-                    val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
+                    val moduleInfo = ModuleInfoParser(moduleInfoFile, "").parse(moduleName)
 
                     val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
 

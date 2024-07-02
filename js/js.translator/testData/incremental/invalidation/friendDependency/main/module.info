@@ -11,6 +11,7 @@ STEP 1:
 STEP 2:
     dependencies: lib1
     friends: lib1
+    updated imports <wasm>: test.kt, publicClass.kt
 STEP 3:
     dependencies: lib1
     friends: lib1

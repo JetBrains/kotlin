@@ -15,6 +15,7 @@ STEP 3:
     updated imports: test.kt
 STEP 4:
     dependencies: lib1
+    updated imports <wasm>: test.kt
 STEP 5:
     dependencies: lib1
     modifications:
@@ -22,11 +23,13 @@ STEP 5:
     modified ir: test.kt
 STEP 6:
     dependencies: lib1
+    updated imports <wasm>: test.kt
 STEP 7:
     dependencies: lib1
     updated imports: test.kt
 STEP 8:
     dependencies: lib1
+    updated imports <wasm>: test.kt
 STEP 9:
     dependencies: lib1
     modifications:

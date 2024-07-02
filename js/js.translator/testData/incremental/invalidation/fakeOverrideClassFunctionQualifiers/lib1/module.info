@@ -15,8 +15,9 @@ STEP 3:
     modifications:
         U : l1.3.kt -> l1.kt
     modified ir: l1.kt
+    updated exports <wasm>: l1.kt
 STEP 4:
-    updated exports: l1.kt
+    updated exports <js>: l1.kt
 STEP 5:
     modifications:
         U : l1.5.kt -> l1.kt
@@ -46,3 +47,4 @@ STEP 11:
     modifications:
         U : l1.0.kt -> l1.kt
     modified ir: l1.kt
+    updated exports <wasm>: l1.kt

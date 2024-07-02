@@ -23,6 +23,7 @@ STEP 4:
     updated imports: inlineFunctionProxy.kt, inlineChildProxy.kt
 STEP 5:
     dependencies: lib1
+    updated imports <wasm>: inlineChild.kt, simpleChild.kt
 STEP 6:
     dependencies: lib1
     modifications:

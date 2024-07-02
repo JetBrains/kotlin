@@ -99,11 +99,11 @@ abstract class AbstractInvalidationTest(
     }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
-        return ProjectInfoParser(infoFile).parse(testName)
+        return ProjectInfoParser(infoFile, "js").parse(testName)
     }
 
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
-        return ModuleInfoParser(infoFile).parse(moduleName)
+        return ModuleInfoParser(infoFile, "js").parse(moduleName)
     }
 
     private val File.filesInDir

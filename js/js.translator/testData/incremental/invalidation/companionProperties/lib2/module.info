@@ -11,8 +11,10 @@ STEP 1:
         U : l2.1.kt -> l2.kt
     added file: l2int.kt
     modified ir: l2.kt
+    updated imports <wasm>: l2string.kt
 STEP 2:
     dependencies: lib1
+    updated imports <wasm>: l2int.kt, l2string.kt
 STEP 3:
     dependencies: lib1
     modifications:
@@ -28,8 +30,10 @@ STEP 4:
         U : l2string.4.kt -> l2string.kt
     added file: l2func.kt
     modified ir: l2.kt, l2string.kt
+    updated imports <wasm>: l2pair.kt, l2int.kt
 STEP 5:
     dependencies: lib1
+    updated imports <wasm>: l2pair.kt, l2int.kt, l2func.kt
 STEP 6:
     dependencies: lib1
     modifications:
@@ -43,6 +47,7 @@ STEP 7:
         D : l2string.kt
         D : l2func.kt
     removed file: l2pair.kt, l2string.kt, l2func.kt
+    updated imports <wasm>: l2int.kt
 STEP 8:
     dependencies: lib1
     updated imports: l2int.kt
