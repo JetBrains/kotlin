@@ -102,10 +102,10 @@ fun MappedByteBuffer.parseCentralDirectory(): List<ZipEntryDescription> {
 
         currentOffset += 46 + fileNameLength + extraLength + fileCommentLength
 
-        // We support version needed to extract 10 and 20. However, there are zip
+        // We support version needed to extract 1.0, 2.0 and 4.5. However, there are zip
         // files in the eco-system with entries with invalid version to extract
-        // of 0. Therefore, we just check that the version is between 0 and 20.
-        require(versionNeededToExtract in 0..20) {
+        // of 0. Therefore, we just check that the version is between 0 and 20 and additionally for version 4.5.
+        require(versionNeededToExtract in 0..20 || versionNeededToExtract == 45) {
             "Unexpected versionNeededToExtract ($versionNeededToExtract) at $name"
         }
 
