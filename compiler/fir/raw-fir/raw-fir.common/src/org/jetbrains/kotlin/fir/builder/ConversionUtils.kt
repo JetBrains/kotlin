@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames.DESTRUCTURED_VARIABLE
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
@@ -298,15 +299,20 @@ fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVari
         }
     }
 
-fun FirVariable.toComponentCall(
-    entrySource: KtSourceElement?,
+fun FirVariable.toDestructuringAccessExpression(
+    originalEntrySource: KtSourceElement?,
+    entryName: Name,
     index: Int,
-): FirComponentCall {
-    return buildComponentCall {
-        val componentCallSource = entrySource?.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
-        source = componentCallSource
-        explicitReceiver = generateResolvedAccessExpression(componentCallSource, this@toComponentCall)
-        componentIndex = index + 1
+): FirDestructuringAccessExpression {
+    val destructuredVariableCallSource = originalEntrySource?.fakeElement(KtFakeSourceElementKind.DestructuredVariable)
+    return buildDestructuringAccessExpression {
+        entrySource = originalEntrySource
+        source = destructuredVariableCallSource
+        calleeReference = buildSimpleNamedReference { this.name = DESTRUCTURED_VARIABLE }
+        explicitReceiver =
+            generateResolvedAccessExpression(destructuredVariableCallSource, this@toDestructuringAccessExpression)
+        position = index
+        destructuredPropertyName = entryName
     }
 }
 

@@ -40,6 +40,6 @@ FILE: annotated.kt
     }
     public? final? fun bar(two: Two): R|kotlin/Unit| {
         lval <destruct>: <implicit> = two#
-        @Ann() lval x: <implicit> = R|<local>/<destruct>|.component1#()
-        @Ann() lval y: <implicit> = R|<local>/<destruct>|.component2#()
+        @Ann() lval x: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+        @Ann() lval y: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
     }

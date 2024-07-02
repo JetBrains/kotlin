@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvoca
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -44,8 +46,10 @@ import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.descriptorUtil.NAME_BASED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -1788,6 +1792,73 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement {
         dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
         return anonymousFunctionExpression.transformAnonymousFunction(transformer, data)
+    }
+
+    override fun transformDestructuringAccessExpression(
+        destructuringAccessExpression: FirDestructuringAccessExpression,
+        data: ResolutionMode,
+    ): FirStatement {
+        val receiver =
+            destructuringAccessExpression.explicitReceiver as? FirPropertyAccessExpression ?: return destructuringAccessExpression
+        val entrySource = destructuringAccessExpression.source ?: return destructuringAccessExpression
+        val isNameBasedDestructuring = receiver.isNameBasedDestructuring()
+        return when {
+            // This branch is required for migration. Usages of '_' in name-based destructuring will be deprecated later.
+            isNameBasedDestructuring && destructuringAccessExpression.destructuredPropertyName == UNDERSCORE_FOR_UNUSED_VAR -> destructuringAccessExpression.buildComponentCall(
+                receiver,
+                entrySource
+            )
+            isNameBasedDestructuring -> destructuringAccessExpression.buildPropertyAccessExpression(receiver, entrySource)
+            else -> destructuringAccessExpression.buildComponentCall(receiver, entrySource)
+        }
+    }
+
+    private fun FirDestructuringAccessExpression.buildPropertyAccessExpression(
+        receiver: FirPropertyAccessExpression,
+        entrySource: KtSourceElement,
+    ): FirStatement {
+        val destructuringSource = source ?: return this
+        val propertyAccessExpression = buildPropertyAccessExpression {
+            source = entrySource
+            explicitReceiver = receiver
+            this.calleeReference = buildSimpleNamedReference {
+                source = destructuringSource
+                name = destructuredPropertyName
+            }
+        }
+        callResolver.resolveVariableAccessAndSelectCandidate(
+            propertyAccessExpression,
+            isUsedAsReceiver = false,
+            isUsedAsGetClassReceiver = false,
+            callSite = propertyAccessExpression,
+            resolutionMode = ResolutionMode.ContextIndependent
+        )
+        return propertyAccessExpression
+    }
+
+    private fun FirDestructuringAccessExpression.buildComponentCall(
+        receiver: FirPropertyAccessExpression,
+        entrySource: KtSourceElement,
+    ): FirComponentCall {
+        return buildComponentCall {
+            val index = position
+            val componentCallSource = entrySource.fakeElement(KtFakeSourceElementKind.DesugaredComponentFunctionCall)
+            source = componentCallSource
+            explicitReceiver = receiver
+            componentIndex = index + 1
+        }
+    }
+
+    private fun FirExpression.isNameBasedDestructuring(): Boolean {
+        if (this !is FirPropertyAccessExpression) return false
+        val calleeReference = this.calleeReference
+        if (calleeReference !is FirResolvedNamedReference) return false
+        val valueParameterResolvedSymbol = calleeReference.resolvedSymbol
+        if (valueParameterResolvedSymbol !is FirCallableSymbol) return false
+        val explicitReceiver = valueParameterResolvedSymbol.resolvedReturnType.toSymbol(session) ?: return false
+        if (explicitReceiver !is FirRegularClassSymbol) return false
+        if (!explicitReceiver.isData) return false
+        return explicitReceiver.resolvedAnnotationClassIds.contains(NAME_BASED_ANNOTATION_CLASS_ID)
     }
 
     // ------------------------------------------------------------------------------------------------

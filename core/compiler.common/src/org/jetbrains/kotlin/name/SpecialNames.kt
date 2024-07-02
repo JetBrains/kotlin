@@ -56,6 +56,9 @@ object SpecialNames {
     val DESTRUCT = Name.special("<destruct>")
 
     @JvmField
+    val DESTRUCTURED_VARIABLE = Name.special("<destructuredProperty>")
+
+    @JvmField
     val LOCAL = Name.special("<local>")
 
     @JvmField

@@ -17,6 +17,7 @@ val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
 val BUILDER_INFERENCE_ANNOTATION_FQ_NAME = FqName("kotlin.BuilderInference")
 
+val NAME_BASED_ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("NameBased"))
 val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("OverloadResolutionByLambdaReturnType"))
 val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME = OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID.asSingleFqName()
 

@@ -5,11 +5,11 @@ FILE: scriptStatementLevelDestructuringWithAnnotation.kts
             when () {
                 Boolean(true) ->  {
                     @DestrAnno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(0).to#(IntegerLiteral(1))
-                    @LeftAnno(<strcat>(String(a ), prop#)) lval a: <implicit> = R|<local>/<destruct>|.component1#()
-                    @RightAnno(<strcat>(String(b ), prop#)) lval b: <implicit> = R|<local>/<destruct>|.component2#()
+                    @LeftAnno(<strcat>(String(a ), prop#)) lval a: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+                    @RightAnno(<strcat>(String(b ), prop#)) lval b: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
                     @Destr2Anno(<strcat>(String(destr 1 ), prop#)) lval <destruct>: <implicit> = IntegerLiteral(2).to#(IntegerLiteral(3))
-                    @SecondLeftAnno(<strcat>(String(c ), prop#)) lval c: <implicit> = R|<local>/<destruct>|.component1#()
-                    @SecondRightAnno(<strcat>(String(d ), prop#)) lval d: <implicit> = R|<local>/<destruct>|.component2#()
+                    @SecondLeftAnno(<strcat>(String(c ), prop#)) lval c: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+                    @SecondRightAnno(<strcat>(String(d ), prop#)) lval d: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
                 }
             }
 
@@ -17,3 +17,4 @@ FILE: scriptStatementLevelDestructuringWithAnnotation.kts
 
         public? final? fun foo(): R|kotlin/Unit| {
         }
+

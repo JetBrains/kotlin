@@ -178,6 +178,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitFunctionCall(componentCall)
     }
 
+    override fun visitDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression) {
+        visitQualifiedAccessExpression(destructuringAccessExpression)
+    }
+
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
         visitExpression(smartCastExpression)
     }

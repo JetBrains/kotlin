@@ -84,8 +84,8 @@ FILE: for.kt
             lval <iterator>: <implicit> = set#.iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
                 lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
-                lval x: <implicit> = R|<local>/<destruct>|.component1#()
-                lval y: <implicit> = R|<local>/<destruct>|.component2#()
+                lval x: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+                lval y: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
                  {
                     println#(<strcat>(String(x = ), x#, String( y = ), y#))
                 }

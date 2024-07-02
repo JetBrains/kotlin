@@ -39719,6 +39719,34 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/nameBasedDestructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NameBasedDestructuring {
+    @Test
+    public void testAllFilesPresentInNameBasedDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/nameBasedDestructuring"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuring.kt")
+    public void testNameBasedDestructuring() {
+      runTest("compiler/testData/codegen/box/nameBasedDestructuring/nameBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringInFor.kt")
+    public void testNameBasedDestructuringInFor() {
+      runTest("compiler/testData/codegen/box/nameBasedDestructuring/nameBasedDestructuringInFor.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringInLambdas.kt")
+    public void testNameBasedDestructuringInLambdas() {
+      runTest("compiler/testData/codegen/box/nameBasedDestructuring/nameBasedDestructuringInLambdas.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
   @TestDataPath("$PROJECT_ROOT")
   public class NonLocalReturns {

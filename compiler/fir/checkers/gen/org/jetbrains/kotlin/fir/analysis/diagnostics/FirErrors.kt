@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtExpression
@@ -725,6 +726,8 @@ object FirErrors {
     val OPTIONAL_EXPECTATION_NOT_ON_EXPECTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("OPTIONAL_EXPECTATION_NOT_ON_EXPECTED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
 
     // Destructuring declaration
+    val WRONG_DESTRUCTURED_PROPERTY_NAME: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_DESTRUCTURED_PROPERTY_NAME", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDestructuringDeclarationEntry::class)
+    val UNNECESSARY_UNDERSCORE: KtDiagnosticFactory0 = KtDiagnosticFactory0("UNNECESSARY_UNDERSCORE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtDestructuringDeclarationEntry::class)
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtDestructuringDeclaration::class)
     val COMPONENT_FUNCTION_MISSING: KtDiagnosticFactory2<Name, ConeKotlinType> = KtDiagnosticFactory2("COMPONENT_FUNCTION_MISSING", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)
     val COMPONENT_FUNCTION_AMBIGUITY: KtDiagnosticFactory2<Name, Collection<FirBasedSymbol<*>>> = KtDiagnosticFactory2("COMPONENT_FUNCTION_AMBIGUITY", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class)

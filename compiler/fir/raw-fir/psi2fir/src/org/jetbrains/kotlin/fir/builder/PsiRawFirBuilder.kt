@@ -206,12 +206,13 @@ open class PsiRawFirBuilder(
             (this as KtAnnotated).extractAnnotationsTo(target)
         }
 
-        override fun createComponentCall(
+        override fun createDestructuringAccessExpression(
             container: FirVariable,
             entrySource: KtSourceElement?,
+            entryName: Name,
             index: Int,
         ): FirExpression = buildOrLazyExpression(entrySource) {
-            super.createComponentCall(container, entrySource, index)
+            return super.createDestructuringAccessExpression(container, entrySource, entryName, index)
         }
 
         private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =

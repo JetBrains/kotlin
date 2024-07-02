@@ -803,6 +803,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformComponentCall(componentCall, data)
     }
 
+    open fun transformDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression, data: D): FirStatement {
+        return transformElement(destructuringAccessExpression, data)
+    }
+
+    final override fun visitDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression, data: D): FirStatement {
+        return transformDestructuringAccessExpression(destructuringAccessExpression, data)
+    }
+
     open fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: D): FirStatement {
         return transformElement(smartCastExpression, data)
     }

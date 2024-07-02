@@ -803,6 +803,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(componentCall)
     }
 
+    final override fun visitDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression, data: Nothing?) {
+        visitDestructuringAccessExpression(destructuringAccessExpression)
+    }
+
+    open fun visitDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression) {
+        visitElement(destructuringAccessExpression)
+    }
+
     final override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: Nothing?) {
         visitSmartCastExpression(smartCastExpression)
     }

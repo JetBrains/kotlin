@@ -1405,6 +1405,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
+        val WRONG_DESTRUCTURED_PROPERTY_NAME by error<KtDestructuringDeclarationEntry>()
+
+        val UNNECESSARY_UNDERSCORE by warning<KtDestructuringDeclarationEntry>()
+
         val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error<KtDestructuringDeclaration>()
         val COMPONENT_FUNCTION_MISSING by error<PsiElement> {
             parameter<Name>("missingFunctionName")

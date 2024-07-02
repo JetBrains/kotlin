@@ -256,6 +256,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
 
     /**
+     * val (a,b) = x --> val a = x.component1(); val b = x.component2() or  a = x.a; val b = x.b, depends on the type of destructuring
+     */
+    object DestructuredVariable : KtFakeSourceElementKind()
+
+    /**
      * `val (a,b) = x` --> `val a = x.component1(); val b = x.component2()`
      * where componentN calls will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
      */

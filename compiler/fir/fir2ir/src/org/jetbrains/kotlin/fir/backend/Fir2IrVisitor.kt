@@ -1420,7 +1420,7 @@ class Fir2IrVisitor(
                                 ?: error("Unexpected shape of for loop body: missing body statements")
 
                             val (destructuredLoopVariables, realStatements) = loopBodyStatements.drop(1).partition {
-                                it is FirProperty && it.initializer is FirComponentCall
+                                it is FirProperty && it.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
                             }
                             val firExpression = realStatements.singleOrNull() as? FirExpression
                                 ?: error("Unexpected shape of for loop body: must be single real loop statement, but got ${realStatements.size}")

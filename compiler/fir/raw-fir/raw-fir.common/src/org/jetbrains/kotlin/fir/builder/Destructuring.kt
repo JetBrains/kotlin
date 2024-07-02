@@ -28,8 +28,13 @@ interface DestructuringContext<T> {
     val T.name: Name
     val T.source: KtSourceElement
     fun T.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>)
-    fun createComponentCall(container: FirVariable, entrySource: KtSourceElement?, index: Int): FirExpression {
-        return container.toComponentCall(entrySource, index)
+    fun createDestructuringAccessExpression(
+        container: FirVariable,
+        entrySource: KtSourceElement?,
+        entryName: Name,
+        index: Int,
+    ): FirExpression {
+        return container.toDestructuringAccessExpression(entrySource, entryName, index)
     }
 }
 
@@ -79,7 +84,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = entry.returnTypeRef
             name = entry.name
-            initializer = createComponentCall(container, entry.source, index)
+            initializer = createDestructuringAccessExpression(container, entry.source, entry.name, index)
             this.isVar = isVar
             source = entry.source
             isLocal = localEntries

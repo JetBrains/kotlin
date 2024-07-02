@@ -24,16 +24,16 @@ FILE: destructuring.kt
     }
     public? final? fun foo(some: Some): R|kotlin/Unit| {
         lval <destruct>: <implicit> = some#
-        lvar x: <implicit> = R|<local>/<destruct>|.component1#()
-        lvar y: <implicit> = R|<local>/<destruct>|.component2#()
-        lvar z: String = R|<local>/<destruct>|.component3#()
+        lvar x: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+        lvar y: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+        lvar z: String = <destructuredProperty>#R|<local>/<destruct>|
         x#++
         *=(y#, Double(2.0))
         z# = String()
     }
     public? final? fun bar(some: Some): R|kotlin/Unit| {
         lval <destruct>: <implicit> = some#
-        lval a: <implicit> = R|<local>/<destruct>|.component1#()
-        lval <unused var>: <implicit> = R|<local>/<destruct>|.component2#()
-        lval _: <implicit> = R|<local>/<destruct>|.component3#()
+        lval a: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+        lval <unused var>: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+        lval _: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
     }

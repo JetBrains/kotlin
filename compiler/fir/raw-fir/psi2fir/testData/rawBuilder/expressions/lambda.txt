@@ -28,8 +28,8 @@ FILE: lambda.kt
         }
 
         use#(<L> = use@fun <implicit>.<anonymous>(<destruct>: <implicit>): <implicit> <inline=Unknown>  {
-            lval x: <implicit> = R|<local>/<destruct>|.component1#()
-            lval y: <implicit> = R|<local>/<destruct>|.component2#()
+            lval x: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
+            lval y: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
              {
                 x#.plus#(y#)
             }

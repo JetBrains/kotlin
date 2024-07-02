@@ -432,7 +432,7 @@ FILE: [ResolvedTo(IMPORTS)] destructEntry.kts
             public? [ResolvedTo(RAW_FIR)] get(): MyPair
 
         [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = pair#
-        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = R|<local>/<destruct>|.component1#()
+        public final [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val left: <implicit> = <destructuredProperty>#R|<local>/<destruct>|
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val right: <implicit> = LAZY_EXPRESSION

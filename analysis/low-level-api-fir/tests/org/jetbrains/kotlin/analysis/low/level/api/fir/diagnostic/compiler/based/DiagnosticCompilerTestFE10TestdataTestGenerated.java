@@ -12471,6 +12471,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
       public void testDestructuringInWhenSubject() {
         runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInWhenSubject.kt");
       }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringWithWrongPropertyNames.kt")
+      public void testNameBasedDestructuringWithWrongPropertyNames() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/nameBasedDestructuringWithWrongPropertyNames.kt");
+      }
     }
 
     @Nested

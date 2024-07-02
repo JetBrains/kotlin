@@ -314,6 +314,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitComponentCall(componentCall: FirComponentCall, data: D): R =
         visitElement(componentCall, data)
 
+    open fun visitDestructuringAccessExpression(destructuringAccessExpression: FirDestructuringAccessExpression, data: D): R =
+        visitElement(destructuringAccessExpression, data)
+
     open fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: D): R =
         visitElement(smartCastExpression, data)
 

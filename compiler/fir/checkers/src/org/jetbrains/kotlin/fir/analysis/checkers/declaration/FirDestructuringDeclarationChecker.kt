@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -28,6 +25,8 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.resolve.descriptorUtil.NAME_BASED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -42,8 +41,61 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         // val (`destructuring_declaration_entry`, ...) = ...
         if (source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) return
 
+        val originalExpression = declaration.initializer?.explicitReceiverOfQualifiedAccess ?: return
+        val firClassSymbol = originalExpression.resolvedType.toRegularClassSymbol(context.session)
+        val isNameBasedDestructuring = firClassSymbol?.hasAnnotation(NAME_BASED_ANNOTATION_CLASS_ID, context.session) ?: false
+
+        if (isNameBasedDestructuring) {
+            checkNameBasedDestructuring(declaration, context, reporter)
+        } else {
+            checkPositionalDestructuring(declaration, originalExpression, context, reporter)
+        }
+    }
+
+    private fun checkInitializer(
+        source: KtSourceElement,
+        initializer: FirExpression?,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        val needToReport =
+            when (initializer) {
+                null -> true
+                is FirErrorExpression -> initializer.diagnostic is ConeSyntaxDiagnostic
+                else -> false
+            }
+        if (needToReport) {
+            reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, context)
+        }
+    }
+
+    private fun checkNameBasedDestructuring(
+        declaration: FirProperty,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
+        val initializer = declaration.initializer ?: return
+        when {
+            declaration.name == UNDERSCORE_FOR_UNUSED_VAR -> reporter.reportOn(
+                declaration.source,
+                FirErrors.UNNECESSARY_UNDERSCORE,
+                context
+            )
+            initializer.resolvedType.hasError() -> reporter.reportOn(
+                declaration.source,
+                FirErrors.WRONG_DESTRUCTURED_PROPERTY_NAME,
+                context
+            )
+        }
+    }
+
+    private fun checkPositionalDestructuring(
+        declaration: FirProperty,
+        originalExpression: FirQualifiedAccessExpression,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+    ) {
         val componentCall = declaration.initializer as? FirComponentCall ?: return
-        val originalExpression = componentCall.explicitReceiverOfQualifiedAccess ?: return
         val originalDestructuringDeclaration = originalExpression.resolvedVariable ?: return
         val originalDestructuringDeclarationOrInitializer =
             when (originalDestructuringDeclaration) {
@@ -88,23 +140,6 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         }
     }
 
-    private fun checkInitializer(
-        source: KtSourceElement,
-        initializer: FirExpression?,
-        reporter: DiagnosticReporter,
-        context: CheckerContext
-    ) {
-        val needToReport =
-            when (initializer) {
-                null -> true
-                is FirErrorExpression -> initializer.diagnostic is ConeSyntaxDiagnostic
-                else -> false
-            }
-        if (needToReport) {
-            reporter.reportOn(source, FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, context)
-        }
-    }
-
     private fun checkComponentCall(
         source: KtSourceElement,
         destructuringDeclarationType: ConeKotlinType,
@@ -113,7 +148,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         componentCall: FirComponentCall,
         destructuringDeclaration: FirVariable,
         reporter: DiagnosticReporter,
-        context: CheckerContext
+        context: CheckerContext,
     ) {
         when (diagnostic) {
             is ConeUnresolvedNameError -> {

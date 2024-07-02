@@ -849,6 +849,13 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("componentIndex", int)
     }
 
+    val destructuringAccessExpression: Element by element(Expression) {
+        parent(qualifiedAccessExpression)
+        +field("position", int)
+        +field("destructuredPropertyName", nameType)
+        +field("entrySource", sourceElementType, nullable = true)
+    }
+
     val smartCastExpression: Element by element(Expression) {
         parent(expression)
 
