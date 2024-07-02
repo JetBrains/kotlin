@@ -33,8 +33,8 @@ kotlin.target.compilations {
     }
 
     val benchmark by creating {
+        associateWith(main)
         defaultSourceSet.dependencies {
-            associateWith(main)
             implementation(kotlin("reflect"))
         }
     }

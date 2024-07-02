@@ -254,6 +254,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         val platformLikeCompileDependenciesConfiguration = project.configurations.detachedResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
+        platformLikeCompileDependenciesConfiguration.dependencyConstraints.addAll(sourceSet.resolvableMetadataConfiguration.allDependencyConstraints)
 
         if (withDependencies != null) {
             platformLikeCompileDependenciesConfiguration.withDependencies { deps ->

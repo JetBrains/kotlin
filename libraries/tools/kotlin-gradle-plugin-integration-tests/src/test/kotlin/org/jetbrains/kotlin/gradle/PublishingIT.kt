@@ -64,7 +64,6 @@ class PublishingIT : KGPBaseTest() {
                     pomText.contains(
                         "<groupId>org.jetbrains.kotlin</groupId>" +
                                 "<artifactId>kotlin-reflect</artifactId>" +
-                                "<version>${buildOptions.kotlinVersion}</version>" +
                                 "<scope>compile</scope>"
                     )
                 }
@@ -142,7 +141,6 @@ class PublishingIT : KGPBaseTest() {
                     |    <dependency>
                     |      <groupId>org.jetbrains.kotlin</groupId>
                     |      <artifactId>kotlin-stdlib</artifactId>
-                    |      <version>${buildOptions.kotlinVersion}</version>
                     |      <scope>compile</scope>
                     |    </dependency>
                     |  </dependencies>

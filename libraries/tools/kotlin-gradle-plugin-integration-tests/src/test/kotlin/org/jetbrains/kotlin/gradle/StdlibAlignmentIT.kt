@@ -107,9 +107,9 @@ class StdlibAlignmentIT : KGPBaseTest() {
             build("dependencies", "--configuration", "compileClasspath") {
                 assertOutputContains(
                     """
-                    |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
-                    |     \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
-                    |          +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> ${constrainedAlignmentVersion}
+                    |+--- org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2
+                    ||    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.5.2
+                    ||         +--- org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.30 -> $constrainedAlignmentVersion
                     """.trimMargin().normalizeLineEndings()
                 )
             }
