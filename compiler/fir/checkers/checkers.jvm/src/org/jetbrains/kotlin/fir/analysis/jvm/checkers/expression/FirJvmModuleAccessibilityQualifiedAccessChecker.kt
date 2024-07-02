@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.java.JavaBinarySourceElement
 import org.jetbrains.kotlin.fir.modules.javaModuleResolverProvider
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
@@ -38,7 +38,7 @@ object FirJvmModuleAccessibilityQualifiedAccessChecker : FirQualifiedAccessExpre
 
         val containingClass = callableSymbol.containingClassLookupTag()
         if (containingClass != null) {
-            val containingClassSymbol = containingClass.toFirRegularClassSymbol(context.session) ?: return
+            val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
             checkClassAccess(context, containingClassSymbol, expression, reporter)
         } else {
             val containerSource = callableSymbol.containerSource as? JvmPackagePartSource ?: return

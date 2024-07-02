@@ -626,7 +626,7 @@ fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinT
 
 fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =
     this.containingClassLookupTag()?.let { lookupTag ->
-        lookupTag.toFirRegularClassSymbol(session)?.fir
+        lookupTag.toRegularClassSymbol(session)?.fir
     }
 
 internal fun FirFunction.areNamedArgumentsForbiddenIgnoringOverridden(): Boolean =

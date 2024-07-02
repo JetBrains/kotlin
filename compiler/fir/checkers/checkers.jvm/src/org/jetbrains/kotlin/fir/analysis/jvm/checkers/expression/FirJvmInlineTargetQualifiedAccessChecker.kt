@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toReference
 import org.jetbrains.kotlin.fir.java.jvmTargetProvider
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -59,7 +59,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
 
         val containingClass = callableSymbol.containingClassLookupTag()
         val binaryClass = if (containingClass != null) {
-            val containingClassSymbol = containingClass.toFirRegularClassSymbol(context.session) ?: return
+            val containingClassSymbol = containingClass.toRegularClassSymbol(context.session) ?: return
 
             @OptIn(SymbolInternals::class)
             val sourceElement = containingClassSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement ?: return

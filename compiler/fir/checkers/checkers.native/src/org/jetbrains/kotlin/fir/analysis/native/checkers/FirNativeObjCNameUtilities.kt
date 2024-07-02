@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.retrieveDirectOverriddenOf
@@ -82,7 +82,7 @@ object FirNativeObjCNameUtilities {
         val objCNames = overriddenSymbols.map { it.getFirstBaseSymbol(context).getObjCNames(context.session) }
         if (!objCNames.allNamesEquals()) {
             val containingDeclarations = overriddenSymbols.mapNotNull {
-                it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+                it.containingClassLookupTag()?.toRegularClassSymbol(context.session)
             }
             reporter.reportOn(
                 declarationToReport.source,

@@ -26,18 +26,16 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.resolve.toRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.irFlag
@@ -192,7 +190,7 @@ class Fir2IrDeclarationStorage(
                 return FakeOverrideIdentifier(
                     originalSymbol,
                     dispatchReceiverLookupTag,
-                    dispatchReceiverLookupTag.toFirRegularClass(c.session)?.isExpect == true
+                    dispatchReceiverLookupTag.toRegularClass(c.session)?.isExpect == true
                 )
             }
         }
@@ -1054,7 +1052,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun FirCallableDeclaration.computeExternalOrigin(): IrDeclarationOrigin {
-        val containingClass = containingClassLookupTag()?.toFirRegularClass(session)
+        val containingClass = containingClassLookupTag()?.toRegularClass(session)
         return when (containingClass?.isJavaOrEnhancement) {
             true -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB

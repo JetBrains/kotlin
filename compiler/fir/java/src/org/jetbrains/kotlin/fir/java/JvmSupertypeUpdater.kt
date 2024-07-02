@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater.DelegatedConstructorCallTransformer.Companion.recordType
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -98,7 +98,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
                 delegatedConstructorCall.replaceConstructedTypeRef(constructedTypeRef.resolvedTypeFromPrototype(recordType))
             }
 
-            val recordConstructorSymbol = recordType.lookupTag.toFirRegularClassSymbol(session)
+            val recordConstructorSymbol = recordType.lookupTag.toRegularClassSymbol(session)
                 ?.unsubstitutedScope(session, data, withForcedTypeCalculator = false, memberRequiredPhase = null)
                 ?.getDeclaredConstructors()
                 ?.firstOrNull { it.fir.valueParameters.isEmpty() }

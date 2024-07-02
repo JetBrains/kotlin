@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 
@@ -44,7 +44,7 @@ internal fun FirBasedSymbol<*>.getContainingKtModule(firResolveSession: LLFirRes
     val target = when (this) {
         is FirCallableSymbol -> {
             // callable fake overrides have use-site FirModuleData
-            dispatchReceiverClassLookupTagOrNull()?.toFirRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
+            dispatchReceiverClassLookupTagOrNull()?.toRegularClassSymbol(firResolveSession.useSiteFirSession) ?: this
         }
         else -> this
     }

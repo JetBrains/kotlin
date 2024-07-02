@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     if (isLocal) {
-        return (this as? FirRegularClass)?.containingClassForLocalAttr?.toFirRegularClass(session)
+        return (this as? FirRegularClass)?.containingClassForLocalAttr?.toRegularClass(session)
     } else {
         val classId = symbol.classId
         val parentId = classId.relativeClassName.parent()
@@ -36,7 +36,7 @@ fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirCl
 
 fun FirClassLikeSymbol<FirClassLikeDeclaration>.getContainingDeclaration(session: FirSession): FirClassLikeSymbol<FirClassLikeDeclaration>? {
     if (isLocal) {
-        return (this as? FirRegularClassSymbol)?.containingClassForLocalAttr?.toFirRegularClassSymbol(session)
+        return (this as? FirRegularClassSymbol)?.containingClassForLocalAttr?.toRegularClassSymbol(session)
     } else {
         val parentId = classId.relativeClassName.parent()
         if (!parentId.isRoot) {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -101,7 +101,7 @@ object FirOptInUsageBaseChecker {
                 else -> null
             }
             result.addIfNotNull(
-                annotationType.lookupTag.toFirRegularClassSymbol(
+                annotationType.lookupTag.toRegularClassSymbol(
                     session
                 )?.loadExperimentalityForMarkerAnnotation(session, className)
             )

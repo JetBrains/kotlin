@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -62,7 +62,7 @@ abstract class FirOverridesBackwardCompatibilityHelper : FirSessionComponent {
         additionalCheck(originalMemberSymbol)?.let { return it }
 
         if (!originalMemberSymbol.isAbstract) {
-            val containingClass = originalMemberSymbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+            val containingClass = originalMemberSymbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)
             if (containingClass?.isInterface == false) {
                 return false
             }

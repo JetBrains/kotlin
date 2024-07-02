@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isIntersectionOverride
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
@@ -126,7 +126,7 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             notRefinedSupers: List<FirCallableSymbol<*>>,
             context: CheckerContext
         ) {
-            val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) }
+            val containingDeclarations = notRefinedSupers.mapNotNull { it.containingClassLookupTag()?.toRegularClassSymbol(context.session) }
             if (annotations.isEmpty()) {
                 reportOn(declaration.source, INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE, declaration.symbol, containingDeclarations, context)
             } else {

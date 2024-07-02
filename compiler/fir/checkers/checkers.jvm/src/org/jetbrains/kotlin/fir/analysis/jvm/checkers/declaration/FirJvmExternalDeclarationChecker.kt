@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
@@ -64,7 +64,7 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker(MppCheckerK
             return
         }
 
-        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+        val containingClassSymbol = declaration.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)
         if (containingClassSymbol != null) {
             if (containingClassSymbol.isInterface) {
                 reporter.reportOn(declaration.source, FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE, context)

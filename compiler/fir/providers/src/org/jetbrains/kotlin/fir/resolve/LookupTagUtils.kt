@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -70,13 +69,13 @@ fun ConeClassLikeLookupTag.toClassSymbol(session: FirSession): FirClassSymbol<*>
 /**
  * @see toSymbol
  */
-fun ConeClassLikeLookupTag.toFirRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
+fun ConeClassLikeLookupTag.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? =
     toSymbol(session) as? FirRegularClassSymbol
 
 
 fun FirClassLikeSymbol<*>.getClassAndItsOuterClassesWhenLocal(session: FirSession): Set<FirClassLikeSymbol<*>> =
     generateSequence(this.takeIf { it.isLocal }) {
-        if (it.isInner) it.getContainingClassLookupTag()?.toFirRegularClassSymbol(session) else null
+        if (it.isInner) it.getContainingClassLookupTag()?.toRegularClassSymbol(session) else null
     }.toSet()
 
 @OptIn(LookupTagInternals::class)
@@ -85,7 +84,7 @@ fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol
 }
 
 @SymbolInternals
-fun ConeClassLikeLookupTag.toFirRegularClass(session: FirSession): FirRegularClass? = toFirRegularClassSymbol(session)?.fir
+fun ConeClassLikeLookupTag.toRegularClass(session: FirSession): FirRegularClass? = toRegularClassSymbol(session)?.fir
 
 fun ConeKotlinType.withParameterNameAnnotation(parameter: FirFunctionTypeParameter, session: FirSession): ConeKotlinType {
     val name = parameter.name

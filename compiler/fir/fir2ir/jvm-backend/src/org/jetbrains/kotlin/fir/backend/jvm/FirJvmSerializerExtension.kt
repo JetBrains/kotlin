@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -294,7 +293,7 @@ open class FirJvmSerializerExtension(
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
         if (!hasJvmFieldAnnotation(session)) return false
 
-        val containerSymbol = (dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toFirRegularClassSymbol(session)
+        val containerSymbol = (dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.toRegularClassSymbol(session)
         // Note: companions are anyway forbidden in local classes
         if (containerSymbol == null || !containerSymbol.isCompanion || containerSymbol.isLocal) {
             return false

@@ -633,7 +633,7 @@ class BodyResolveContext(
 
         if (withContextSensitiveResolution) {
             val subjectClassSymbol = (subjectType as? ConeClassLikeType)
-                ?.lookupTag?.toFirRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
+                ?.lookupTag?.toRegularClassSymbol(session)?.takeIf { it.fir.classKind == ClassKind.ENUM_CLASS }
             val whenSubjectImportingScope = subjectClassSymbol?.let {
                 FirWhenSubjectImportingScope(it.classId, session, sessionHolder.scopeSession)
             }

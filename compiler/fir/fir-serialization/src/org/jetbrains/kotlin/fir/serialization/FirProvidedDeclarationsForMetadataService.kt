@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.FqName
 
@@ -79,7 +78,7 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
         mutableMapOf()
 
     override fun registerDeclaration(declaration: FirCallableDeclaration) {
-        val containingClass = declaration.containingClassLookupTag()?.toFirRegularClass(session)
+        val containingClass = declaration.containingClassLookupTag()?.toRegularClass(session)
         if (containingClass == null) {
             val list = topLevelsCache.getOrPut(declaration.symbol.callableId.packageName) { mutableListOf() }
             list += declaration

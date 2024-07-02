@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctionsWithBaseScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -104,7 +104,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             reporter.reportOn(
                 declaration.source,
                 FirNativeErrors.INCOMPATIBLE_THROWS_INHERITED,
-                inherited.mapNotNull { it.key.containingClassLookupTag()?.toFirRegularClassSymbol(context.session) },
+                inherited.mapNotNull { it.key.containingClassLookupTag()?.toRegularClassSymbol(context.session) },
                 context
             )
             return false
@@ -114,7 +114,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             ?: return true // Should not happen though.
 
         if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
-            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
+            val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toRegularClassSymbol(context.session)
             if (containingClassSymbol != null) {
                 reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
             }
@@ -152,7 +152,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
             }
         }
 
-        val currentScope = function.symbol.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)?.unsubstitutedScope(context)
+        val currentScope = function.symbol.containingClassLookupTag()?.toRegularClassSymbol(context.session)?.unsubstitutedScope(context)
         if (currentScope != null) {
             getInheritedThrows(throwsAnnotation, MemberWithBaseScope(function.symbol, currentScope))
         }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -94,7 +94,7 @@ object OperatorFunctionChecks {
             object : Check() {
                 override fun check(function: FirSimpleFunction, session: FirSession, scopeSession: ScopeSession?): String? {
                     if (scopeSession == null) return null
-                    val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
+                    val containingClassSymbol = function.containingClassLookupTag()?.toRegularClassSymbol(session) ?: return null
                     val customEqualsSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
                     if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)

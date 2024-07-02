@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -76,7 +76,7 @@ private fun ConeSimpleKotlinType.valueClassRepresentationTypeMarkersList(session
 }
 
 fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
-    containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
+    containingClassLookupTag()?.toRegularClassSymbol(session)?.run {
         val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
         with(this@isTypedEqualsInValueClass) {
             contextReceivers.isEmpty() && receiverParameter == null

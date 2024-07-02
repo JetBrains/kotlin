@@ -107,7 +107,7 @@ class FirSamResolver(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass = type.lookupTag.toFirRegularClass(session) ?: return null
+        val firRegularClass = type.lookupTag.toRegularClass(session) ?: return null
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
@@ -377,7 +377,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
         // Note: we search only for names in this function, so substitution is not needed      V
         lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session, substituteTypes = false)
             .mapNotNullTo(mutableListOf(this)) {
-                (it.lookupTag.toFirRegularClassSymbol(session))?.fir
+                (it.lookupTag.toRegularClassSymbol(session))?.fir
             }
 
     val samCandidateNames = mutableSetOf<Name>()

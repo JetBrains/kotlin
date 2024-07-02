@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -209,7 +209,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 isRaw -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.toRegularClassSymbol(session)?.typeParameterSymbols
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when {
                         mode.insideAnnotation -> Array(classifier.allTypeParametersNumber()) { ConeStarProjection }
@@ -221,7 +221,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.toRegularClassSymbol(session)?.typeParameterSymbols
                     Array(typeArguments.size) { index ->
                         // TODO: check this
                         val newMode = if (mode.insideAnnotation) FirJavaTypeConversionMode.DEFAULT else mode
@@ -278,7 +278,7 @@ private fun JavaClassifierType.argumentsMakeSenseOnlyForMutableContainer(
 
     if (!typeArguments.lastOrNull().isSuperWildcard()) return false
     val mutableLastParameterVariance =
-        mutableClassId.toLookupTag().toFirRegularClassSymbol(session)?.typeParameterSymbols?.lastOrNull()?.variance
+        mutableClassId.toLookupTag().toRegularClassSymbol(session)?.typeParameterSymbols?.lastOrNull()?.variance
             ?: return false
 
     return mutableLastParameterVariance != Variance.OUT_VARIANCE
