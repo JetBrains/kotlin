@@ -709,8 +709,7 @@ internal object CheckCallModifiers : ResolutionStage() {
 internal object CheckHiddenDeclaration : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
-        /** Actual declarations are checked by [FirDeprecationChecker] */
-        if (symbol.isActual) return
+
         if (symbol.isDeprecatedHidden(context, callInfo) ||
             (symbol is FirConstructorSymbol && symbol.typeAliasForConstructor?.isDeprecatedHidden(context, callInfo) == true) ||
             isHiddenForThisCallSite(symbol, callInfo, candidate, context.session, sink)

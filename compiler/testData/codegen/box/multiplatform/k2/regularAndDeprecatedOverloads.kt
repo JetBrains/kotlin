@@ -31,12 +31,12 @@ fun <T> Array<T>.g(): String = f()
     "Make it matchable with expect `f` function (K2) but decrease priority to avoid `OVERLOAD_RESOLUTION_AMBIGUITY` when calling it from platform source-set",
     level = DeprecationLevel.HIDDEN
 )
-actual fun <T> Array<T>.f(): String = <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
+actual fun <T> Array<T>.f(): String = f()
 
 fun <T> Array<out T>.f() = "OK"
 
 fun box(): String {
     if (Array(1) { _ -> ""}.g() != "OK") return "FAIL"
 
-    return Array(0) { _ -> "" }.<!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
+    return Array(0) { _ -> "" }.f()
 }
