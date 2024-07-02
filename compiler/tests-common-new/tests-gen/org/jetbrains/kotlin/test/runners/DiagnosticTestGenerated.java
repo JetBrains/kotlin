@@ -43803,6 +43803,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
       }
 
       @Test
+      @TestMetadata("nullableSubjectWithIsCheck.kt")
+      public void testNullableSubjectWithIsCheck() {
+        runTest("compiler/testData/diagnostics/tests/when/nullableSubjectWithIsCheck.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyNotInitialized.kt")
       public void testPropertyNotInitialized() {
         runTest("compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt");
