@@ -2,7 +2,6 @@
 assert(
     listOf("Hello", "World")
     |
-    false
     [Hello, World]
         .map { it.lowercase() }
          |
@@ -11,7 +10,8 @@ assert(
          |
          world
         .length == 4
-         |
+         |      |
+         |      false
          5
 )
 ---

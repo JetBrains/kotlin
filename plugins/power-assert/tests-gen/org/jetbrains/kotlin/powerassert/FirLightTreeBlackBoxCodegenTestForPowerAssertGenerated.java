@@ -301,6 +301,12 @@ public class FirLightTreeBlackBoxCodegenTestForPowerAssertGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("ReverseIndent.kt")
+    public void testReverseIndent() {
+      runTest("plugins/power-assert/testData/codegen/format/ReverseIndent.kt");
+    }
+
+    @Test
     @TestMetadata("Tabs.kt")
     public void testTabs() {
       runTest("plugins/power-assert/testData/codegen/format/Tabs.kt");

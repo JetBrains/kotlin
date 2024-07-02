@@ -16,7 +16,7 @@ fun test1(a: Any): String {
       }
       val tmp_4: Boolean = EQEQ(arg0 = tmp_2, arg1 = 5)
       assert(value = tmp_4, lazyMessage = local fun <anonymous>(): String {
-        return "\nassert((a as? String)?.length == 5)\n        | |            |      |" + "\n        | |            |      " + tmp_4 + "\n        | |            " + tmp_2 + "\n        | " + tmp_1 + "\n        " + tmp_0 + "\n"
+        return "\nassert((a as? String)?.length == 5)" + "\n        | |            |      |" + "\n        | |            |      " + tmp_4 + "\n        | |            " + tmp_2 + "\n        | " + tmp_1 + "\n        " + tmp_0 + "\n"
       }
 )
     }
@@ -33,7 +33,7 @@ fun test2(a: Any): String {
         return local fun <anonymous>(): Any {
           return ""
         }
-.invoke() + "\nrequireNotNull(a as? String) { \"\" }\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
+.invoke() + "\nrequireNotNull(a as? String) { \"\" }" + "\n               | |" + "\n               | " + tmp_6 + "\n               " + tmp_5 + "\n"
       }
 )
     } /*~> Unit */
