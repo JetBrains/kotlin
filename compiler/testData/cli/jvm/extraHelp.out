@@ -86,8 +86,6 @@ where advanced options include:
                              This option is deprecated and will be deleted in future versions.
                              It has no effect when -language-version is 2.0 or higher.
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
-  -Xno-kotlin-nothing-value-exception
-                             Don't use KotlinNothingValueException, which has been available since 1.4.
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xno-optimize              Disable optimizations.

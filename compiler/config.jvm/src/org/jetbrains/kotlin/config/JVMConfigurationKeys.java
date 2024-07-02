@@ -118,9 +118,6 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> DO_NOT_CLEAR_BINDING_CONTEXT =
             CompilerConfigurationKey.create("When using the IR backend, do not clear BindingContext between psi2ir and lowerings");
 
-    public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
-            CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
-
     public static final CompilerConfigurationKey<Boolean> NO_RESET_JAR_TIMESTAMPS =
             CompilerConfigurationKey.create("Do not reset timestamps in jar entries");
 

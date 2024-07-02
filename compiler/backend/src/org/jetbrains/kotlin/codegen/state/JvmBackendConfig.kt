@@ -37,10 +37,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
                 JvmClosureGenerationScheme.INDY
             else JvmClosureGenerationScheme.CLASS
 
-    val useKotlinNothingValueException: Boolean =
-        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
-                !configuration.getBoolean(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION)
-
     // In 1.6, `typeOf` became stable and started to rely on a few internal stdlib functions which were missing before 1.6.
     val stableTypeOf: Boolean =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_6

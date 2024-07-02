@@ -2782,13 +2782,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
-            if (state.getConfig().getUseKotlinNothingValueException()) {
-                v.anew(Type.getObjectType("kotlin/KotlinNothingValueException"));
-                v.dup();
-                v.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false);
-            } else {
-                v.aconst(null);
-            }
+            v.anew(Type.getObjectType("kotlin/KotlinNothingValueException"));
+            v.dup();
+            v.invokespecial("kotlin/KotlinNothingValueException", "<init>", "()V", false);
             v.athrow();
         }
     }

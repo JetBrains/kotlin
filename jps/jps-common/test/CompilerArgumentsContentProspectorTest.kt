@@ -153,7 +153,6 @@ class CompilerArgumentsContentProspectorTest {
             K2JVMCompilerArguments::sanitizeParentheses,
             K2JVMCompilerArguments::allowNoSourceFiles,
             K2JVMCompilerArguments::emitJvmTypeAnnotations,
-            K2JVMCompilerArguments::noKotlinNothingValueException,
             K2JVMCompilerArguments::noResetJarTimestamps,
             K2JVMCompilerArguments::noUnifiedNullChecks,
             K2JVMCompilerArguments::useOldInlineClassesManglingScheme,
