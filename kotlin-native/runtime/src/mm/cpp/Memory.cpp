@@ -671,3 +671,7 @@ void kotlin::initObjectPool() noexcept {
 void kotlin::compactObjectPoolInCurrentThread() noexcept {
     alloc::compactObjectPoolInCurrentThread();
 }
+
+void kotlin::reportProfile() noexcept {
+    mm::GlobalData::Instance().profilers().report();
+}

@@ -24,6 +24,8 @@
 #include "Memory.h"
 #include "FixedBlockPage.hpp"
 #include "GCApi.hpp"
+#include "ThreadData.hpp"
+#include "profiler/Profiler.hpp"
 
 namespace kotlin::alloc {
 
@@ -116,6 +118,7 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
+    ProfilerHit(mm::ThreadRegistry::Instance().CurrentThreadData()->profilers().allocSize(), {size});
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
     if (cellCount <= FixedBlockPage::MAX_BLOCK_SIZE) {
         return AllocateInFixedBlockPage(cellCount);

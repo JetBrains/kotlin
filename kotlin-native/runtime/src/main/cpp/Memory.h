@@ -598,6 +598,8 @@ void OnMemoryAllocation(size_t totalAllocatedBytes) noexcept;
 void initObjectPool() noexcept;
 void compactObjectPoolInCurrentThread() noexcept;
 
+void reportProfile() noexcept;
+
 } // namespace kotlin
 
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processObjectInMark(void* state, ObjHeader* object);

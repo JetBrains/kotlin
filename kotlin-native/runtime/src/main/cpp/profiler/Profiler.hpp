@@ -145,32 +145,38 @@ public:
             : allocationProfilerData_(profilers.allocationProfiler_)
             , safePointProfilerData_(profilers.safePointProfiler_)
             , specialRefProfilerData_(profilers.specialRefProfiler_)
+            , allocSizeProfilerData_(profilers.allocSizeProfiler_)
             {}
 
         auto& allocation() noexcept { return allocationProfilerData_; }
         auto& safePoint() noexcept { return safePointProfilerData_; }
         auto& specialRef() noexcept { return specialRefProfilerData_; }
+        auto& allocSize() noexcept { return allocSizeProfilerData_; }
 
         void publish() {
             allocationProfilerData_.publish();
             safePointProfilerData_.publish();
             specialRefProfilerData_.publish();
+            allocSizeProfilerData_.publish();
         }
     private:
         Profiler<AllocationEventTraits>::ThreadData allocationProfilerData_;
         Profiler<SafePointEventTraits>::ThreadData safePointProfilerData_;
         Profiler<SpecialRefEventTraits>::ThreadData specialRefProfilerData_;
+        Profiler<AllocSizeEventTraits>::ThreadData allocSizeProfilerData_;
     };
 
     void report() {
         allocationProfiler_.report();
         safePointProfiler_.report();
         specialRefProfiler_.report();
+        allocSizeProfiler_.report();
     }
 private:
     Profiler<AllocationEventTraits> allocationProfiler_{};
     Profiler<SafePointEventTraits> safePointProfiler_{};
     Profiler<SpecialRefEventTraits> specialRefProfiler_{};
+    Profiler<AllocSizeEventTraits> allocSizeProfiler_{};
 };
 
 } // namespace kotlin::profiler

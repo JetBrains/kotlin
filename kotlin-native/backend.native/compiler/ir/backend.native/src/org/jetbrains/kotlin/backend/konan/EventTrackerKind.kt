@@ -9,6 +9,7 @@ enum class EventTrackerKind(val ord: Int, val defaultBacktraceDepth: Int) {
     Allocation(0, 2),
     SafePoint(1, 2),
     SpecialRef(2, 2),
+    AllocSize(2, 0),
     ;
 
     companion object {

@@ -13,6 +13,7 @@ enum class EventKind : int32_t {
     kAllocation = 0,
     kSafePoint = 1,
     kSpecialRef = 2,
+    kAllocSize = 3,
 };
 
 namespace internal {
@@ -115,6 +116,24 @@ public:
     using Event = SpecialRefOp;
 };
 
+class AllocSizeEventTraits : public internal::EventTraits<EventKind::kAllocSize> {
+public:
+    static constexpr auto kName = "AllocSize";
+
+    struct Alloc {
+        auto operator==(const Alloc& other) const noexcept { return size_ == other.size_; }
+        auto operator!=(const Alloc& other) const noexcept { return !operator==(other); }
+
+        auto toString() const -> std::string {
+            return std::to_string(size_) + " bytes";
+        }
+
+        std::size_t size_;
+    };
+
+    using Event = Alloc;
+};
+
 }
 
 template<>
@@ -135,5 +154,12 @@ template<>
 struct std::hash<kotlin::profiler::SpecialRefEventTraits::Event> {
     std::size_t operator()(const kotlin::profiler::SpecialRefEventTraits::Event& e) const noexcept {
         return kotlin::CombineHash(static_cast<std::size_t>(e.kind_), static_cast<std::size_t>(e.op_));
+    }
+};
+
+template<>
+struct std::hash<kotlin::profiler::AllocSizeEventTraits::Event> {
+    std::size_t operator()(const kotlin::profiler::AllocSizeEventTraits::Event& e) const noexcept {
+        return e.size_;
     }
 };

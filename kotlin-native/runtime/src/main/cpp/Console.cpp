@@ -101,6 +101,8 @@ void Kotlin_io_Console_println0ToStdErr() {
 }
 
 OBJ_GETTER0(Kotlin_io_Console_readLine) {
+    reportProfile();
+    RETURN_OBJ(nullptr);
     char data[4096];
     int32_t result;
     {
