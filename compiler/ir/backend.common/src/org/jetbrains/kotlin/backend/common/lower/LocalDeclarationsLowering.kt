@@ -70,6 +70,7 @@ open class LocalDeclarationsLowering(
     val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
+    val remapTypesInExtractedLocalFunctions: Boolean = true,
 ) : BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -310,11 +311,16 @@ open class LocalDeclarationsLowering(
                     val original = localContext.declaration
 
                     this.body = original.body
-                    this.body?.let { localContext.remapTypes(it) }
 
-                    original.valueParameters.filter { v -> v.defaultValue != null }.forEach { argument ->
-                        val body = argument.defaultValue!!
-                        localContext.remapTypes(body)
+                    if (remapTypesInExtractedLocalFunctions) {
+                        this.body?.let { localContext.remapTypes(it) }
+                    }
+
+                    for (argument in original.valueParameters) {
+                        val body = argument.defaultValue ?: continue
+                        if (remapTypesInExtractedLocalFunctions) {
+                            localContext.remapTypes(body)
+                        }
                         oldParameterToNew[argument]!!.defaultValue = body
                     }
                     acceptChildren(SetDeclarationsParentVisitor, this)
