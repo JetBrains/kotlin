@@ -518,7 +518,13 @@ internal object MapArguments : ResolutionStage() {
 
     private fun List<ConeResolutionAtom>.unwrapNamedArgumentsForDynamicCall(function: FirFunction): List<ConeResolutionAtom> {
         if (function.origin != FirDeclarationOrigin.DynamicScope) return this
-        return map { (it as? ConeNamedArgumentAtom)?.subAtom ?: it }
+        return map {
+            if (it is ConeResolutionAtomWithSingleChild && it.expression is FirNamedArgumentExpression) {
+                it.subAtom ?: error("SubAtom for named argument is null")
+            } else {
+                it
+            }
+        }
     }
 }
 

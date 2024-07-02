@@ -105,7 +105,6 @@ internal object ArgumentCheckingProcessor {
             is ConeRawCallableReferenceAtom -> preprocessCallableReference(atom)
 
             is ConeRawLambdaAtom -> preprocessLambdaArgument(atom)
-            is ConeWrappedExpressionAtom -> resolveArgumentExpression(atom.subAtom)
 
             is ConeSimpleLeafResolutionAtom, is ConeAtomWithCandidate -> resolvePlainExpressionArgument(atom)
 

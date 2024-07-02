@@ -67,7 +67,5 @@ private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?
         }
 
         is ConeResolutionAtomWithSingleChild -> processCandidatesAndPostponedAtoms(atom.subAtom)
-        // complex expressions
-        is ConeWrappedExpressionAtom -> processCandidatesAndPostponedAtoms(atom.subAtom)
     }
 }

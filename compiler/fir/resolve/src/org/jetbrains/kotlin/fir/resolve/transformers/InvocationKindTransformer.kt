@@ -13,12 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.unwrap
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 
@@ -44,7 +40,7 @@ fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
     if (byParameter.isEmpty() && !isInline) return
 
     for ((argument, parameter) in argumentMapping) {
-        val lambda = argument.unwrap().fir as? FirAnonymousFunction ?: continue
+        val lambda = argument.expression.unwrapAnonymousFunctionExpression() ?: continue
         val kind = byParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {
             // Inline functional parameters have to be called in-place; that's the only permitted operation on them.
             isInline && !parameter.isNoinline && !parameter.isCrossinline &&
