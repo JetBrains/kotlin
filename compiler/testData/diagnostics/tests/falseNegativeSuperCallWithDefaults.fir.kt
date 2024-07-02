@@ -1,6 +1,5 @@
 // ISSUE: KT-69463
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_NON_REVERSED_RESOLVE
 
 // MODULE: common
 // FILE: common.kt
@@ -18,6 +17,6 @@ open class FooFoo(val a: Foo): Foo by a
 
 class Final(f:Foo): FooFoo(f) {
     override fun test(a: Int) {
-        super.test()
+        super.<!SUPER_CALL_WITH_DEFAULT_PARAMETERS!>test<!>()
     }
 }
